@@ -38,10 +38,10 @@ public class DbcpDataSource extends BasicDataSource {
     }
 
     @Override
-    public void setJdbcUrl(String url) {
+    public void setJdbcUrl(final String url) {
         try {
             DataSourceHelper.setUrl(this.ds, url);
-        } catch (Throwable e1) {
+        } catch (final Throwable e1) {
             super.setUrl(url);
         }
     }

@@ -31,7 +31,7 @@ import java.io.Serializable;
 public class IntraVmHandle implements Serializable, HomeHandle, Handle {
     protected Object theProxy;
 
-    public IntraVmHandle(Object proxy) {
+    public IntraVmHandle(final Object proxy) {
         this.theProxy = proxy;
     }
 
@@ -71,12 +71,12 @@ public class IntraVmHandle implements Serializable, HomeHandle, Handle {
             * allow the application server to handle it.
             */
         } else {
-            BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy);
+            final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy);
             if (theProxy instanceof EJBObject) {
-                ApplicationServer applicationServer = ServerFederation.getApplicationServer();
+                final ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHandle(handler.getProxyInfo());
             } else if (theProxy instanceof EJBHome) {
-                ApplicationServer applicationServer = ServerFederation.getApplicationServer();
+                final ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHomeHandle(handler.getProxyInfo());
             } else {
                 throw new OpenEJBRuntimeException("Invalid proxy type. Handles are only supported by EJBObject types in EJB 1.1");

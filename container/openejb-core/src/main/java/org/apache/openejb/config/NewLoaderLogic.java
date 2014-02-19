@@ -192,7 +192,7 @@ public class NewLoaderLogic {
                     return true;
                 }
             }
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             // no-op
         }
 
@@ -251,7 +251,7 @@ public class NewLoaderLogic {
 
                 logger.info("Loaded classpath exclusions from: " + exclusionsFile.getAbsolutePath());
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // ignored
         } finally {
             IO.close(fis);
@@ -313,7 +313,7 @@ public class NewLoaderLogic {
 
             logger.debug("Loaded default.exclusions");
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // ignored
         } finally {
             IO.close(is);
@@ -353,13 +353,13 @@ public class NewLoaderLogic {
                     list.add(sanitize(value));
                 }
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             logger.warning("readInputStreamList: Failed to read provided stream");
         } finally {
             if (null != reader) {
                 try {
                     reader.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -540,7 +540,7 @@ public class NewLoaderLogic {
                     logger.info("Matched: " + url);
                 }
             }
-        } catch (IOException e1) {
+        } catch (final IOException e1) {
             e1.printStackTrace();
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }

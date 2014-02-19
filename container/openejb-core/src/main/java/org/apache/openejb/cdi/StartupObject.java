@@ -35,11 +35,11 @@ public class StartupObject {
     private final List<BeanContext> beanContexts;
     private final WebContext webContext;
 
-    public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts) {
+    public StartupObject(final AppContext appContext, final AppInfo appInfo, final List<BeanContext> beanContexts) {
         this(appContext, appInfo, beanContexts, null);
     }
 
-    public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts, WebContext webContext) {
+    public StartupObject(final AppContext appContext, final AppInfo appInfo, final List<BeanContext> beanContexts, final WebContext webContext) {
         assert appContext != null;
         assert appInfo != null;
         assert beanContexts != null;

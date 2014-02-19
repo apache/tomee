@@ -24,7 +24,7 @@ import java.util.List;
 public class CircularReferencesException extends RuntimeException {
     private final List<List> circuits;
 
-    public CircularReferencesException(List<List> circuits) {
+    public CircularReferencesException(final List<List> circuits) {
         this.circuits = circuits;
     }
 

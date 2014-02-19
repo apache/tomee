@@ -24,12 +24,12 @@ import java.io.PrintWriter;
 public class NamingException extends javax.naming.NamingException {
     private OpenEJBException delegate;
 
-    public NamingException(String message, OpenEJBException delegateArg) {
+    public NamingException(final String message, final OpenEJBException delegateArg) {
         super(message);
         delegate = delegateArg;
     }
 
-    public NamingException(String message, Throwable rootCause) {
+    public NamingException(final String message, final Throwable rootCause) {
         super();
         delegate = new OpenEJBException(message, rootCause);
     }
@@ -42,11 +42,11 @@ public class NamingException extends javax.naming.NamingException {
         delegate.printStackTrace();
     }
 
-    public void printStackTrace(PrintStream stream) {
+    public void printStackTrace(final PrintStream stream) {
         delegate.printStackTrace(stream);
     }
 
-    public void printStackTrace(PrintWriter writer) {
+    public void printStackTrace(final PrintWriter writer) {
         delegate.printStackTrace(writer);
     }
 }

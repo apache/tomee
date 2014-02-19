@@ -45,7 +45,7 @@ public class JtaQuery implements Query {
     private boolean underTx = false;
     private Query query = null;
 
-    public JtaQuery(EntityManager entityManager, JtaEntityManager jtaEntityManager, Method method, Object... args) {
+    public JtaQuery(final EntityManager entityManager, final JtaEntityManager jtaEntityManager, final Method method, final Object... args) {
         this.entityManager = entityManager;
         this.jtaEntityManager = jtaEntityManager;
         this.method = method;
@@ -272,49 +272,49 @@ public class JtaQuery implements Query {
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameter(java.lang.String)
      */
-    public Parameter<?> getParameter(String name) {
+    public Parameter<?> getParameter(final String name) {
         return query.getParameter(name);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameter(int)
      */
-    public Parameter<?> getParameter(int position) {
+    public Parameter<?> getParameter(final int position) {
         return query.getParameter(position);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameter(java.lang.String, java.lang.Class)
      */
-    public <T> Parameter<T> getParameter(String name, Class<T> type) {
+    public <T> Parameter<T> getParameter(final String name, final Class<T> type) {
         return query.getParameter(name, type);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameter(int, java.lang.Class)
      */
-    public <T> Parameter<T> getParameter(int position, Class<T> type) {
+    public <T> Parameter<T> getParameter(final int position, final Class<T> type) {
         return query.getParameter(position, type);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameterValue(javax.persistence.Parameter)
      */
-    public <T> T getParameterValue(Parameter<T> param) {
+    public <T> T getParameterValue(final Parameter<T> param) {
         return query.getParameterValue(param);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameterValue(java.lang.String)
      */
-    public Object getParameterValue(String name) {
+    public Object getParameterValue(final String name) {
         return query.getParameterValue(name);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#getParameterValue(int)
      */
-    public Object getParameterValue(int position) {
+    public Object getParameterValue(final int position) {
         return query.getParameterValue(position);
     }
 
@@ -328,7 +328,7 @@ public class JtaQuery implements Query {
     /* (non-Javadoc)
      * @see javax.persistence.Query#isBound(javax.persistence.Parameter)
      */
-    public boolean isBound(Parameter<?> param) {
+    public boolean isBound(final Parameter<?> param) {
         return query.isBound(param);
     }
 
@@ -395,7 +395,7 @@ public class JtaQuery implements Query {
     /* (non-Javadoc)
      * @see javax.persistence.Query#unwrap(java.lang.Class)
      */
-    public <T> T unwrap(Class<T> cls) {
+    public <T> T unwrap(final Class<T> cls) {
         return query.unwrap(cls);
     }
 }

@@ -36,7 +36,7 @@ public class Stats {
     }
 
     @Managed
-    public void setSampleSize(int i) {
+    public void setSampleSize(final int i) {
         samples.setWindowSize(i);
     }
 
@@ -140,7 +140,7 @@ public class Stats {
         return samples.getValues();
     }
 
-    public void record(long time) {
+    public void record(final long time) {
         event.record();
         samples.addValue(time);
     }

@@ -31,7 +31,7 @@ public class WikiGenerator {
 
     private PrintWriter out;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         System.out.println();
         System.out.println();
         System.out.println();
@@ -46,11 +46,11 @@ public class WikiGenerator {
 
     protected ServicesJar servicesJar;
 
-    public WikiGenerator(String providerName, PrintWriter printWriter) throws OpenEJBException {
+    public WikiGenerator(final String providerName, final PrintWriter printWriter) throws OpenEJBException {
         this(JaxbOpenejb.readServicesJar(providerName), printWriter);
     }
 
-    public WikiGenerator(ServicesJar servicesJar, PrintWriter out) {
+    public WikiGenerator(final ServicesJar servicesJar, final PrintWriter out) {
         this.servicesJar = servicesJar;
         this.out = out;
     }
@@ -58,15 +58,15 @@ public class WikiGenerator {
     public void generate() throws Exception {
 
         // generate containers
-        List<ServiceProvider> serviceProvider = servicesJar.getServiceProvider();
+        final List<ServiceProvider> serviceProvider = servicesJar.getServiceProvider();
         Collections.sort(serviceProvider, new Comparator<ServiceProvider>() {
             @Override
-            public int compare(ServiceProvider o1, ServiceProvider o2) {
+            public int compare(final ServiceProvider o1, final ServiceProvider o2) {
                 return grade(o2) - grade(o1);
             }
 
-            private int grade(ServiceProvider i) {
-                String name = i.getClassName();
+            private int grade(final ServiceProvider i) {
+                final String name = i.getClassName();
                 if (name.contains("stateless")) return 10;
                 if (name.contains("stateful")) return 9;
                 if (name.contains("singleton")) return 8;
@@ -76,15 +76,15 @@ public class WikiGenerator {
             }
         });
 
-        for (ServiceProvider provider : serviceProvider) {
+        for (final ServiceProvider provider : serviceProvider) {
             if ("Container".equals(provider.getService())) {
                 generateService(provider, "Container");
             }
         }
         out.println();
 
-        ArrayList<String> seen = new ArrayList<String>();
-        for (ServiceProvider provider : servicesJar.getServiceProvider()) {
+        final ArrayList<String> seen = new ArrayList<String>();
+        for (final ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Resource".equals(provider.getService())) {
 
                 if (seen.containsAll(provider.getTypes())) continue;
@@ -98,8 +98,8 @@ public class WikiGenerator {
         out.flush();
     }
 
-    private void generateService(ServiceProvider provider, String serviceType) {
-        String type = provider.getTypes().get(0);
+    private void generateService(final ServiceProvider provider, final String serviceType) {
+        final String type = provider.getTypes().get(0);
         out.println("# " + type + " <small>" + serviceType + " </small>");
         out.println();
         out.println("Declarable in openejb.xml via");
@@ -111,14 +111,14 @@ public class WikiGenerator {
         out.println();
         out.println("    Foo = new://" + provider.getService() + "?type=" + type + "");
         out.println();
-        SuperProperties properties = (SuperProperties) provider.getProperties();
+        final SuperProperties properties = (SuperProperties) provider.getProperties();
 
-        Map<String, String> defaults = new LinkedHashMap<String, String>();
+        final Map<String, String> defaults = new LinkedHashMap<String, String>();
 
         if (properties.size() > 0) {
             out.println("## Properties");
             out.println();
-            for (Object key : properties.keySet()) {
+            for (final Object key : properties.keySet()) {
                 if (key instanceof String) {
                     final String name = (String) key;
 
@@ -147,7 +147,7 @@ public class WikiGenerator {
             out.println("## Default declaration");
 
             out.println("    <" + provider.getService() + " id=\"" + provider.getId() + "\" type=\"" + type + "\">");
-            for (Map.Entry<String, String> entry : defaults.entrySet()) {
+            for (final Map.Entry<String, String> entry : defaults.entrySet()) {
                 out.print("        ");
                 out.print(entry.getKey());
                 out.print(" = ");

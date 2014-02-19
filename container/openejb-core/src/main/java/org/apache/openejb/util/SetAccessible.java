@@ -26,7 +26,7 @@ import java.security.PrivilegedAction;
 public class SetAccessible implements PrivilegedAction {
     private final AccessibleObject object;
 
-    public SetAccessible(AccessibleObject object) {
+    public SetAccessible(final AccessibleObject object) {
         this.object = object;
     }
 
@@ -35,7 +35,7 @@ public class SetAccessible implements PrivilegedAction {
         return object;
     }
 
-    public static <T extends AccessibleObject> T on(T object){
+    public static <T extends AccessibleObject> T on(final T object){
         return (T) AccessController.doPrivileged(new SetAccessible(object));
     }
 }

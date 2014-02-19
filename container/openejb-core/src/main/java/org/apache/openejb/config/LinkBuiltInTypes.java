@@ -45,27 +45,27 @@ import java.util.Map;
 public class LinkBuiltInTypes implements DynamicDeployer {
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
             if (consumer == null) continue;
 
             link(consumer);
         }
 
-        for (WebModule module : appModule.getWebModules()) {
+        for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
             if (consumer == null) continue;
 
             link(consumer);
         }
 
-        for (EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
             if (ejbJar == null) continue;
 
-            for (EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 link(consumer);
             }
         }
@@ -74,10 +74,10 @@ public class LinkBuiltInTypes implements DynamicDeployer {
 
     }
 
-    private void link(JndiConsumer consumer) {
+    private void link(final JndiConsumer consumer) {
 
 
-        Map<String, String> links = new HashMap<String, String>();
+        final Map<String, String> links = new HashMap<String, String>();
 
         add(links, BeanManager.class);
         add(links, Validator.class);
@@ -89,11 +89,11 @@ public class LinkBuiltInTypes implements DynamicDeployer {
         add(links, TimerService.class);
         add(links, WebServiceContext.class);
 
-        List<JndiReference> refs = new ArrayList<JndiReference>();
+        final List<JndiReference> refs = new ArrayList<JndiReference>();
         refs.addAll(consumer.getResourceRef());
         refs.addAll(consumer.getResourceEnvRef());
 
-        for (JndiReference ref : refs) {
+        for (final JndiReference ref : refs) {
             final String link = links.get(ref.getType());
 
             if (link == null) continue;
@@ -108,10 +108,10 @@ public class LinkBuiltInTypes implements DynamicDeployer {
         }
     }
 
-    private void add(Map<String, String> links, Class<?> type, Class... aliases) {
+    private void add(final Map<String, String> links, final Class<?> type, final Class... aliases) {
         links.put(type.getName(), "java:comp/"+type.getSimpleName());
 
-        for (Class clazz : aliases) {
+        for (final Class clazz : aliases) {
             links.put(clazz.getName(), "java:comp/"+type.getSimpleName());
         }
     }

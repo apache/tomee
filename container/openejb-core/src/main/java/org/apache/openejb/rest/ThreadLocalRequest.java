@@ -31,19 +31,19 @@ public class ThreadLocalRequest extends AbstractRestThreadLocalProxy<Request>
         super(Request.class);
     }
 
-    public ResponseBuilder evaluatePreconditions(EntityTag eTag) {
+    public ResponseBuilder evaluatePreconditions(final EntityTag eTag) {
         return get().evaluatePreconditions(eTag);
     }
 
-    public ResponseBuilder evaluatePreconditions(Date lastModified) {
+    public ResponseBuilder evaluatePreconditions(final Date lastModified) {
         return get().evaluatePreconditions(lastModified);
     }
 
-    public ResponseBuilder evaluatePreconditions(Date lastModified, EntityTag eTag) {
+    public ResponseBuilder evaluatePreconditions(final Date lastModified, final EntityTag eTag) {
         return get().evaluatePreconditions(lastModified, eTag);
     }
 
-    public Variant selectVariant(List<Variant> vars) throws IllegalArgumentException {
+    public Variant selectVariant(final List<Variant> vars) throws IllegalArgumentException {
         return get().selectVariant(vars);
     }
 

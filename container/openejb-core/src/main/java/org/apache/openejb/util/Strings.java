@@ -22,55 +22,55 @@ package org.apache.openejb.util;
 public class Strings {
 
 
-    public static String lc(String string){
+    public static String lc(final String string){
         return lowercase(string);
     }
 
-    public static String lowercase(String string) {
+    public static String lowercase(final String string) {
         if (string == null) return null;
 
-        StringBuilder sb = new StringBuilder(string);
+        final StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < sb.length(); i++) {
               sb.setCharAt(i, Character.toLowerCase(sb.charAt(i)));
         }
         return sb.toString();
     }
 
-    public static String uc(String string){
+    public static String uc(final String string){
         return uppercase(string);
     }
 
-    public static String uppercase(String string) {
+    public static String uppercase(final String string) {
         if (string == null) return null;
 
-        StringBuilder sb = new StringBuilder(string);
+        final StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < sb.length(); i++) {
               sb.setCharAt(i, Character.toUpperCase(sb.charAt(i)));
         }
         return sb.toString();
     }
 
-    public static String ucfirst(String string){
+    public static String ucfirst(final String string){
         if (string == null) return null;
 
-        StringBuilder sb = new StringBuilder(string);
+        final StringBuilder sb = new StringBuilder(string);
         if (sb.length() > 0){
             sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
         }
         return sb.toString();
     }
 
-    public static String lcfirst(String string){
+    public static String lcfirst(final String string){
         if (string == null) return null;
 
-        StringBuilder sb = new StringBuilder(string);
+        final StringBuilder sb = new StringBuilder(string);
         if (sb.length() > 0){
             sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
         }
         return sb.toString();
     }
 
-    public static String camelCase(String string) {
+    public static String camelCase(final String string) {
         return camelCase(string, "-");
     }
 
@@ -78,19 +78,19 @@ public class Strings {
         final StringBuilder sb = new StringBuilder();
         final String[] strings = string.split(delimiter);
 
-        for (String s : strings) {
-            int l = sb.length();
+        for (final String s : strings) {
+            final int l = sb.length();
             sb.append(s);
             sb.setCharAt(l, Character.toUpperCase(sb.charAt(l)));
         }
         return sb.toString();
     }
 
-    public static boolean checkNullBlankString(String stringToCheck) {
+    public static boolean checkNullBlankString(final String stringToCheck) {
         return stringToCheck == null || "".equals(stringToCheck.trim());
     }
 
-    public static String replaceNullOrBlankStringWithNonBreakingSpace(String stringToCheckForNull) {
+    public static String replaceNullOrBlankStringWithNonBreakingSpace(final String stringToCheckForNull) {
         if (stringToCheckForNull == null || stringToCheckForNull.equals("")) {
             return "&nbsp;";
         } else {
@@ -98,8 +98,8 @@ public class Strings {
         }
     }
 
-    public static String lastPart(String className, char sep) {
-        int idx = className.lastIndexOf(sep);
+    public static String lastPart(final String className, final char sep) {
+        final int idx = className.lastIndexOf(sep);
         if (idx >= 0) {
             return className.substring(idx + 1, className.length());
         }

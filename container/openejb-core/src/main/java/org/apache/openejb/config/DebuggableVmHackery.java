@@ -45,21 +45,21 @@ import java.util.Map;
  */
 class DebuggableVmHackery implements DynamicDeployer {
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            EjbJar ejbJar = ejbModule.getEjbJar();
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final EjbJar ejbJar = ejbModule.getEjbJar();
+            final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+            final Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
             ejbJar.setRelationships(null);
 
-            List<String> removed = new ArrayList<String>();
+            final List<String> removed = new ArrayList<String>();
 
-            for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
-                String ejbName = bean.getEjbName();
-                EjbDeployment ejbDeployment = deployments.get(ejbName);
+                final String ejbName = bean.getEjbName();
+                final EjbDeployment ejbDeployment = deployments.get(ejbName);
 
 
                 pruneRefs(bean, ejbDeployment);
@@ -76,10 +76,10 @@ class DebuggableVmHackery implements DynamicDeployer {
                 openejbJar.removeEjbDeployment(ejbDeployment);
                 removed.add(ejbName);
 
-                AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
+                final AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
                 if (assemblyDescriptor != null){
-                    for (MethodPermission permission : copy(assemblyDescriptor.getMethodPermission())) {
-                        for (Method method : copy(permission.getMethod())) {
+                    for (final MethodPermission permission : copy(assemblyDescriptor.getMethodPermission())) {
+                        for (final Method method : copy(permission.getMethod())) {
                             if (method.getEjbName().equals(ejbName)) {
                                 permission.getMethod().remove(method);
                             }
@@ -89,8 +89,8 @@ class DebuggableVmHackery implements DynamicDeployer {
                         }
                     }
 
-                    for (ContainerTransaction transaction : copy(assemblyDescriptor.getContainerTransaction())) {
-                        for (Method method : copy(transaction.getMethod())) {
+                    for (final ContainerTransaction transaction : copy(assemblyDescriptor.getContainerTransaction())) {
+                        for (final Method method : copy(transaction.getMethod())) {
                             if (method.getEjbName().equals(ejbName)) {
                                 transaction.getMethod().remove(method);
                             }
@@ -100,7 +100,7 @@ class DebuggableVmHackery implements DynamicDeployer {
                         }
                     }
 
-                    for (InterceptorBinding binding : copy(assemblyDescriptor.getInterceptorBinding())) {
+                    for (final InterceptorBinding binding : copy(assemblyDescriptor.getInterceptorBinding())) {
                         if (binding.getEjbName().equals(ejbName)) {
                             assemblyDescriptor.getInterceptorBinding().remove(binding);
                         }
@@ -109,12 +109,12 @@ class DebuggableVmHackery implements DynamicDeployer {
             }
 
             // Drop any ejb ref to with an ejb-link to a removed ejb
-            for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
                 bean.getEjbLocalRefMap().keySet().removeAll(removed);
                 bean.getEjbRefMap().keySet().removeAll(removed);
             }
 
-            for (Interceptor interceptor : ejbJar.getInterceptors()) {
+            for (final Interceptor interceptor : ejbJar.getInterceptors()) {
                 pruneRefs(interceptor, new EjbDeployment());
             }
 
@@ -122,23 +122,23 @@ class DebuggableVmHackery implements DynamicDeployer {
         return appModule;
     }
 
-    private void pruneRefs(JndiConsumer bean, EjbDeployment ejbDeployment) {
-        for (ResourceRef ref : copy(bean.getResourceRef())) {
+    private void pruneRefs(final JndiConsumer bean, final EjbDeployment ejbDeployment) {
+        for (final ResourceRef ref : copy(bean.getResourceRef())) {
             if (ref.getResType().startsWith("javax.jms.")){
-                ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+                final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
                 ejbDeployment.getResourceLink().remove(resourceLink);
                 bean.getResourceRef().remove(ref);
             }
         }
 
-        for (ResourceEnvRef ref : bean.getResourceEnvRef()) {
-            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+        for (final ResourceEnvRef ref : bean.getResourceEnvRef()) {
+            final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
             ejbDeployment.getResourceLink().remove(resourceLink);
         }
         bean.getResourceEnvRef().clear();
 
-        for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
-            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+        for (final MessageDestinationRef ref : bean.getMessageDestinationRef()) {
+            final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
             ejbDeployment.getResourceLink().remove(resourceLink);
         }
         bean.getMessageDestinationRef().clear();
@@ -147,7 +147,7 @@ class DebuggableVmHackery implements DynamicDeployer {
         bean.getPersistenceUnitRef().clear();
     }
 
-    public <T> List<T> copy(Collection<T> list) {
+    public <T> List<T> copy(final Collection<T> list) {
         return new ArrayList<T>(list);
     }
 }

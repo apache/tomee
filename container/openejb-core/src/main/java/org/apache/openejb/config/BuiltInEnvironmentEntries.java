@@ -33,27 +33,27 @@ import java.util.Map;
 
 public class BuiltInEnvironmentEntries implements DynamicDeployer {
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
             if (consumer == null) continue;
 
             add(consumer, module, appModule);
         }
 
-        for (WebModule module : appModule.getWebModules()) {
+        for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
             if (consumer == null) continue;
 
             add(consumer, module, appModule);
         }
 
-        for (EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
             if (ejbJar == null) continue;
 
-            for (EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 add(consumer, module, appModule);
             }
         }
@@ -61,7 +61,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
         return appModule;
     }
 
-    private void add(JndiConsumer jndi, DeploymentModule module, DeploymentModule app) {
+    private void add(final JndiConsumer jndi, final DeploymentModule module, final DeploymentModule app) {
 
         // Standard names
         add(jndi.getEnvEntryMap(), new EnvEntry().name("java:module/ModuleName").value(module.getModuleId()).type(String.class));
@@ -80,7 +80,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
 
     }
 
-    private <E extends JndiReference> void add(Map<String, E> map, E entry) {
+    private <E extends JndiReference> void add(final Map<String, E> map, final E entry) {
         final E existing = map.get(entry.getKey());
 
         map.put(entry.getKey(), entry);

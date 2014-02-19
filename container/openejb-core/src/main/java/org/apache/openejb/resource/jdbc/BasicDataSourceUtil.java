@@ -32,9 +32,9 @@ public final class BasicDataSourceUtil {
         // no-op
     }
 
-    public static DataSourcePlugin getDataSourcePlugin(String jdbcUrl) throws SQLException {
+    public static DataSourcePlugin getDataSourcePlugin(final String jdbcUrl) throws SQLException {
         // determine the vendor based on the jdbcUrl stirng "jdbc:${Vendor}:properties"
-        String vendor = getJdbcName(jdbcUrl);
+        final String vendor = getJdbcName(jdbcUrl);
 
         // no vendor so no plugin
         if (vendor == null) return null;
@@ -42,10 +42,10 @@ public final class BasicDataSourceUtil {
         // find the plugin class
         String pluginClassName = null;
         try {
-            ResourceFinder finder = new ResourceFinder("META-INF");
-            Map<String,String> plugins = finder.mapAvailableStrings(DataSourcePlugin.class.getName());
+            final ResourceFinder finder = new ResourceFinder("META-INF");
+            final Map<String,String> plugins = finder.mapAvailableStrings(DataSourcePlugin.class.getName());
             pluginClassName = plugins.get(vendor);
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             // couldn't determine the plugins, which isn't fatal
         }
 
@@ -56,11 +56,11 @@ public final class BasicDataSourceUtil {
 
         // create the plugin
         try {
-            Class pluginClass = Class.forName(pluginClassName);
+            final Class pluginClass = Class.forName(pluginClassName);
             return  (DataSourcePlugin) pluginClass.newInstance();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new SQLException("Unable to load data source helper class '" + pluginClassName + "' for database '" + vendor + "'");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw (SQLException) new SQLException("Unable to create data source helper class '" + pluginClassName + "' for database '" + vendor + "'").initCause(e);
         }
     }
@@ -76,7 +76,7 @@ public final class BasicDataSourceUtil {
         jdbcUrl = jdbcUrl.substring("jdbc:".length());
 
         // return text up to first ":" if present
-        int index = jdbcUrl.indexOf(':');
+        final int index = jdbcUrl.indexOf(':');
 
         // It is ok to have no trailing ':'.  This may be a url like jdbc:specialDB.
         if (index >= 0) {
@@ -96,18 +96,18 @@ public final class BasicDataSourceUtil {
      * @throws SQLException
      *             if the driver can not be found.
      */
-    public static PasswordCipher getPasswordCipher(String passwordCipherClass) throws SQLException {
+    public static PasswordCipher getPasswordCipher(final String passwordCipherClass) throws SQLException {
         // Load the password cipher class
         Class<? extends PasswordCipher> pwdCipher;
 
         // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.org.apache.openejb.resource.jdbc.cipher.PasswordCipher
-        ResourceFinder finder = new ResourceFinder("META-INF/");
-        Map<String, Class<? extends PasswordCipher>> impls;
+        final ResourceFinder finder = new ResourceFinder("META-INF/");
+        final Map<String, Class<? extends PasswordCipher>> impls;
         try {
             impls = finder.mapAllImplementations(PasswordCipher.class);
             
-        } catch (Throwable t) {
-            String message = 
+        } catch (final Throwable t) {
+            final String message =
                 "Password cipher '" + passwordCipherClass +
                 "' not found in META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher.";
             throw new SQLException(message, t);
@@ -121,7 +121,7 @@ public final class BasicDataSourceUtil {
             try {
                 final String clazz = new BufferedReader(new InputStreamReader(url.openStream())).readLine().trim();
                 pwdCipher = tccl.loadClass(clazz).asSubclass(PasswordCipher.class);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignored
             }
         }
@@ -133,21 +133,21 @@ public final class BasicDataSourceUtil {
                 try {
                     pwdCipher = Class.forName(passwordCipherClass).asSubclass(PasswordCipher.class);
                     
-                } catch (ClassNotFoundException cnfe) {
+                } catch (final ClassNotFoundException cnfe) {
                     pwdCipher = tccl.loadClass(passwordCipherClass).asSubclass(PasswordCipher.class);
                 }
-            } catch (Throwable t) {
-                String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
+            } catch (final Throwable t) {
+                final String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
                 throw new SQLException(message, t);
             }
         }
 
         // Create an instance
-        PasswordCipher cipher;
+        final PasswordCipher cipher;
         try {
             cipher = pwdCipher.newInstance();
-        } catch (Throwable t) {
-            String message = "Cannot create password cipher instance";
+        } catch (final Throwable t) {
+            final String message = "Cannot create password cipher instance";
             throw new SQLException(message, t);
         }
 

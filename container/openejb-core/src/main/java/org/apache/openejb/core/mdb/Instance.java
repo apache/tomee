@@ -27,7 +27,7 @@ public class Instance {
     public final Map<String,Object> interceptors;
     public final CreationalContext creationalContext;
 
-    public Instance(Object bean, Map<String, Object> interceptors, CreationalContext creationalContext) {
+    public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {
         this.bean = bean;
         this.interceptors = interceptors;
         this.creationalContext = creationalContext;

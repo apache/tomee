@@ -26,11 +26,11 @@ import java.util.WeakHashMap;
 public class ServiceRefData {
     private static final WeakHashMap<Object,ServiceRefData> registry = new WeakHashMap<Object,ServiceRefData>();
 
-    public static ServiceRefData getServiceRefData(Object key) {
+    public static ServiceRefData getServiceRefData(final Object key) {
         return registry.get(key);
     }
 
-    public static ServiceRefData putServiceRefData(Object key, ServiceRefData value) {
+    public static ServiceRefData putServiceRefData(final Object key, final ServiceRefData value) {
         return registry.put(key, value);
     }
 
@@ -43,7 +43,7 @@ public class ServiceRefData {
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public ServiceRefData(String id, QName serviceQName, Class<? extends Service> serviceClass, QName portQName, Class<?> referenceClass, URL wsdlURL, List<HandlerChainData> handlerChains, List<PortRefData> portRefs) {
+    public ServiceRefData(final String id, final QName serviceQName, final Class<? extends Service> serviceClass, final QName portQName, final Class<?> referenceClass, final URL wsdlURL, final List<HandlerChainData> handlerChains, final List<PortRefData> portRefs) {
         this.id = id;
         this.serviceQName = serviceQName;
         this.serviceClass = serviceClass;

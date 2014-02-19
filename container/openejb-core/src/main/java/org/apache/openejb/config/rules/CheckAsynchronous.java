@@ -39,22 +39,22 @@ import java.util.concurrent.Future;
  */
 public class CheckAsynchronous extends ValidationBase {
 
-    public void validate(EjbModule module) {
-        Set<String> applicationExceptions = new HashSet<String>();
-        for (ApplicationException applicationException : module.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
+    public void validate(final EjbModule module) {
+        final Set<String> applicationExceptions = new HashSet<String>();
+        for (final ApplicationException applicationException : module.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
             applicationExceptions.add(applicationException.getExceptionClass());
         }
-        for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
             Class<?> ejbClass = null;
             try {
                 ejbClass = loadClass(bean.getEjbClass());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 continue;
             }
             if (bean instanceof SessionBean) {
-                SessionBean session = (SessionBean) bean;
-                for (AsyncMethod asyncMethod : session.getAsyncMethod()) {
-                    Method method = getMethod(ejbClass, asyncMethod);
+                final SessionBean session = (SessionBean) bean;
+                for (final AsyncMethod asyncMethod : session.getAsyncMethod()) {
+                    final Method method = getMethod(ejbClass, asyncMethod);
                     if (method == null) {
                         fail(bean, "asynchronous.missing", asyncMethod.getMethodName(), ejbClass.getName(), getParameters(asyncMethod.getMethodParams()));
                     } else {
@@ -62,21 +62,21 @@ public class CheckAsynchronous extends ValidationBase {
                     }
                 }
 
-                for (String className : session.getAsynchronousClasses()) {
+                for (final String className : session.getAsynchronousClasses()) {
                     try {
-                        Class<?> cls = loadClass(className);
-                        for (Method method : cls.getDeclaredMethods()) {
+                        final Class<?> cls = loadClass(className);
+                        for (final Method method : cls.getDeclaredMethods()) {
                             if (Modifier.isPublic(method.getModifiers()) && !method.isSynthetic()) {
                                 checkAsynchronousMethod(session, ejbClass, method, applicationExceptions);
                             }
                         }
-                    } catch (OpenEJBException e) {
+                    } catch (final OpenEJBException e) {
                         //ignore ?
                     }
                 }
             } else {
-                ClassFinder classFinder = new ClassFinder(ejbClass);
-                for (Method method : classFinder.findAnnotatedMethods(Asynchronous.class)) {
+                final ClassFinder classFinder = new ClassFinder(ejbClass);
+                for (final Method method : classFinder.findAnnotatedMethods(Asynchronous.class)) {
                     ignoredMethodAnnotation("Asynchronous", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
                 if (ejbClass.getAnnotation(Asynchronous.class) != null) {
@@ -86,13 +86,13 @@ public class CheckAsynchronous extends ValidationBase {
         }
     }
 
-    private void checkAsynchronousMethod(SessionBean bean, Class<?> ejbClass, Method method, Set<String> applicationExceptions) {
-        Class<?> retType = method.getReturnType();
+    private void checkAsynchronousMethod(final SessionBean bean, final Class<?> ejbClass, final Method method, final Set<String> applicationExceptions) {
+        final Class<?> retType = method.getReturnType();
         if (retType != void.class && retType != Future.class) {
             fail(bean, "asynchronous.badReturnType", method.getName(), retType.getName(), ejbClass.getName());
         }
         if (retType == void.class) {
-            String invalidThrowCauses = checkThrowCauses(method.getExceptionTypes(), applicationExceptions);
+            final String invalidThrowCauses = checkThrowCauses(method.getExceptionTypes(), applicationExceptions);
             if (invalidThrowCauses != null) {
                 fail(bean, "asynchronous.badExceptionType", method.getName(), ejbClass.getName(), invalidThrowCauses);
             }
@@ -105,9 +105,9 @@ public class CheckAsynchronous extends ValidationBase {
      * @param applicationExceptions
      * @return
      */
-    private String checkThrowCauses(Class<?>[] exceptionTypes, Set<String> applicationExceptions) {
+    private String checkThrowCauses(final Class<?>[] exceptionTypes, final Set<String> applicationExceptions) {
         StringBuilder buffer = null;
-        for (Class<?> exceptionType : exceptionTypes) {
+        for (final Class<?> exceptionType : exceptionTypes) {
             if (applicationExceptions.contains(exceptionType.getName()) || !Exception.class.isAssignableFrom(exceptionType) || RuntimeException.class.isAssignableFrom(exceptionType)) {
                 continue;
             }
@@ -120,23 +120,23 @@ public class CheckAsynchronous extends ValidationBase {
         return buffer == null ? null : buffer.toString();
     }
 
-    private Method getMethod(Class<?> clazz, AsyncMethod asyncMethod) {
+    private Method getMethod(final Class<?> clazz, final AsyncMethod asyncMethod) {
         try {
-            MethodParams methodParams = asyncMethod.getMethodParams();
-            Class<?>[] parameterTypes;
+            final MethodParams methodParams = asyncMethod.getMethodParams();
+            final Class<?>[] parameterTypes;
             if (methodParams != null) {
                 parameterTypes = new Class[methodParams.getMethodParam().size()];
                 int arrayIndex = 0;
-                for (String parameterType : methodParams.getMethodParam()) {
+                for (final String parameterType : methodParams.getMethodParam()) {
                     parameterTypes[arrayIndex++] = loadClass(parameterType);
                 }
             } else {
                 parameterTypes = new Class[0];
             }
             return clazz.getMethod(asyncMethod.getMethodName(), parameterTypes);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return null;
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new OpenEJBRuntimeException(e);
         }
     }

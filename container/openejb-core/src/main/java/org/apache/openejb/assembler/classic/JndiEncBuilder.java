@@ -114,11 +114,11 @@ public class JndiEncBuilder {
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, Collection<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader) throws OpenEJBException {
         this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, Collection<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String transactionType, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
@@ -134,7 +134,7 @@ public class JndiEncBuilder {
         return useCrossClassLoaderRef;
     }
 
-    public void setUseCrossClassLoaderRef(boolean useCrossClassLoaderRef) {
+    public void setUseCrossClassLoaderRef(final boolean useCrossClassLoaderRef) {
         this.useCrossClassLoaderRef = useCrossClassLoaderRef;
     }
 
@@ -142,18 +142,18 @@ public class JndiEncBuilder {
         return client;
     }
 
-    public void setClient(boolean client) {
+    public void setClient(final boolean client) {
         this.client = client;
     }
 
-    public Context build(JndiScope type) throws OpenEJBException {
-        Map<String, Object> bindings = buildBindings(type);
+    public Context build(final JndiScope type) throws OpenEJBException {
+        final Map<String, Object> bindings = buildBindings(type);
 
         return build(bindings);
     }
 
-    public Context build(Map<String, Object> bindings) throws SystemException {
-        JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
+    public Context build(final Map<String, Object> bindings) throws SystemException {
+        final JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
 
         if (SystemInstance.get().hasProperty("openejb.geronimo")) {
             return jndiFactory.createComponentContext(new HashMap());
@@ -162,8 +162,8 @@ public class JndiEncBuilder {
         return jndiFactory.createComponentContext(bindings);
     }
 
-    public Map<String, Object> buildBindings(JndiScope type) throws OpenEJBException {
-        Map<String, Object> bindings = buildMap(type);
+    public Map<String, Object> buildBindings(final JndiScope type) throws OpenEJBException {
+        final Map<String, Object> bindings = buildMap(type);
         switch (type) {
             case comp:
                 addSpecialCompBindings(bindings);
@@ -182,21 +182,21 @@ public class JndiEncBuilder {
     }
 
     public Map<String, Object> buildMap(final JndiScope scope) throws OpenEJBException {
-        Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
+        final Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
 
         // get JtaEntityManagerRegistry
-        JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
+        final JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
-        for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
+        for (final EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
-            Reference reference;
+            final Reference reference;
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.ejbDeploymentId == null) {
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
-                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_REMOTE);
+                final String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_REMOTE);
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                     reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {
@@ -206,24 +206,24 @@ public class JndiEncBuilder {
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (EjbReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
-            Reference reference;
+        for (final EjbReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
+            final Reference reference;
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.ejbDeploymentId == null) {
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
-                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_LOCAL);
+                final String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_LOCAL);
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (EnvEntryInfo entry : jndiEnc.envEntries) {
+        for (final EnvEntryInfo entry : jndiEnc.envEntries) {
 
             if (entry.location != null) {
-                Reference reference = buildReferenceLocation(entry.location);
+                final Reference reference = buildReferenceLocation(entry.location);
                 bindings.put(normalize(entry.referenceName), reference);
                 continue;
             }
@@ -234,8 +234,8 @@ public class JndiEncBuilder {
             }
 
             try {
-                Class type = Classes.deprimitivize(getType(entry.type, entry));
-                Object obj;
+                final Class type = Classes.deprimitivize(getType(entry.type, entry));
+                final Object obj;
                 if (type == String.class)
                     obj = new String(entry.value);
                 else if (type == Double.class) {
@@ -253,7 +253,7 @@ public class JndiEncBuilder {
                 } else if (type == Byte.class) {
                     obj = new Byte(entry.value);
                 } else if (type == Character.class) {
-                    StringBuilder sb = new StringBuilder(entry.value + " ");
+                    final StringBuilder sb = new StringBuilder(entry.value + " ");
                     obj = new Character(sb.charAt(0));
                 } else if (type == URL.class) {
                     obj = new URL(entry.value);
@@ -266,42 +266,42 @@ public class JndiEncBuilder {
                 }
 
                 bindings.put(normalize(entry.referenceName), obj);
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 throw new IllegalArgumentException("The env-entry-value for entry " + entry.referenceName + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage(), e);
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException("URL for reference " + entry.referenceName + " was not a valid URL: " + entry.value, e);
             }
         }
 
-        for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
+        for (final ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
             if (!(referenceInfo instanceof ContextReferenceInfo)) {
                 if (referenceInfo.location != null) {
-                    Reference reference = buildReferenceLocation(referenceInfo.location);
+                    final Reference reference = buildReferenceLocation(referenceInfo.location);
                     bindings.put(normalize(referenceInfo.referenceName), reference);
                     continue;
                 }
 
-                Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
+                final Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
 
-                Object reference;
+                final Object reference;
                 if (URL.class.equals(type)) {
                     reference = new URLReference(referenceInfo.resourceID);
                 } else if (type.isAnnotationPresent(ManagedBean.class)) {
-                    ManagedBean managed = type.getAnnotation(ManagedBean.class);
-                    String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
+                    final ManagedBean managed = type.getAnnotation(ManagedBean.class);
+                    final String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
                     reference = new LinkRef("module/" + name);
                 } else if (referenceInfo.resourceID != null) {
-                    String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
+                    final String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                     reference = new IntraVmJndiReference(jndiName);
                 } else {
-                    String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
+                    final String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
                     reference = new IntraVmJndiReference(jndiName);
                 }
 
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
                 final Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
-                Object reference;
+                final Object reference;
 
                 if (Request.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.REQUEST);
@@ -331,10 +331,10 @@ public class JndiEncBuilder {
             }
         }
 
-        for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
+        for (final ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
 
             if (referenceInfo.location != null) {
-                Reference reference = buildReferenceLocation(referenceInfo.location);
+                final Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
@@ -343,22 +343,22 @@ public class JndiEncBuilder {
             final Object reference;
 
             if (EJBContext.class.isAssignableFrom(type)) {
-                String jndiName = "comp/EJBContext";
+                final String jndiName = "comp/EJBContext";
                 reference = new LinkRef(jndiName);
 
                 // Let the container bind this into JNDI
                 if (jndiName.equals(referenceInfo.referenceName)) continue;
             } else if (Validator.class.equals(type)) {
-                String jndiName = "comp/Validator";
+                final String jndiName = "comp/Validator";
                 reference = new LinkRef(jndiName);
             } else if (ValidatorFactory.class.equals(type)) {
-                String jndiName = "comp/ValidatorFactory";
+                final String jndiName = "comp/ValidatorFactory";
                 reference = new LinkRef(jndiName);
             } else if (WebServiceContext.class.equals(type)) {
-                String jndiName = "comp/WebServiceContext";
+                final String jndiName = "comp/WebServiceContext";
                 reference = new LinkRef(jndiName);
             } else if (TimerService.class.equals(type)) {
-                String jndiName = "comp/TimerService";
+                final String jndiName = "comp/TimerService";
                 reference = new LinkRef(jndiName);
 
                 // TODO Bind the BeanManager
@@ -373,51 +373,51 @@ public class JndiEncBuilder {
             } else if (UserTransaction.class.equals(type)) {
                 reference = new IntraVmJndiReference("comp/UserTransaction");
             } else if (referenceInfo.resourceID != null) {
-                String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
+                final String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
+                final String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
+        for (final PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
             if (referenceInfo.location != null) {
-                Reference reference = buildReferenceLocation(referenceInfo.location);
+                final Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
 
-            String jndiName = PersistenceBuilder.getOpenEJBJndiName(referenceInfo.unitId);
-            Reference reference = new IntraVmJndiReference(jndiName);
+            final String jndiName = PersistenceBuilder.getOpenEJBJndiName(referenceInfo.unitId);
+            final Reference reference = new IntraVmJndiReference(jndiName);
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
+        for (final PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
             if (contextInfo.location != null) {
-                Reference reference = buildReferenceLocation(contextInfo.location);
+                final Reference reference = buildReferenceLocation(contextInfo.location);
                 bindings.put(normalize(contextInfo.referenceName), reference);
                 continue;
             }
 
-            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            EntityManagerFactory factory;
+            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            final EntityManagerFactory factory;
             try {
-                String jndiName = PersistenceBuilder.getOpenEJBJndiName(contextInfo.unitId);
+                final String jndiName = PersistenceBuilder.getOpenEJBJndiName(contextInfo.unitId);
                 factory = (EntityManagerFactory) context.lookup(jndiName);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new OpenEJBException("PersistenceUnit '" + contextInfo.unitId + "' not found for EXTENDED ref '" + contextInfo.referenceName + "'");
             }
 
-            JtaEntityManager jtaEntityManager = new JtaEntityManager(contextInfo.persistenceUnitName, jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
-            Reference reference = new PersistenceContextReference(jtaEntityManager);
+            final JtaEntityManager jtaEntityManager = new JtaEntityManager(contextInfo.persistenceUnitName, jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+            final Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), reference);
         }
 
-        for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
+        for (final ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
             if (referenceInfo.location != null) {
-                Reference reference = buildReferenceLocation(referenceInfo.location);
+                final Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
@@ -427,7 +427,7 @@ public class JndiEncBuilder {
             if (referenceInfo.serviceType != null) {
                 try {
                     serviceClass = classLoader.loadClass(referenceInfo.serviceType).asSubclass(Service.class);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new OpenEJBException("Could not load service type class " + referenceInfo.serviceType, e);
                 }
             }
@@ -437,7 +437,7 @@ public class JndiEncBuilder {
             if (referenceInfo.referenceType != null) {
                 try {
                     referenceClass = classLoader.loadClass(referenceInfo.referenceType);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new OpenEJBException("Could not load reference type class " + referenceInfo.referenceType, e);
                 }
             }
@@ -452,7 +452,7 @@ public class JndiEncBuilder {
             if (referenceInfo.wsdlFile != null) {
                 try {
                     wsdlUrl = new URL(referenceInfo.wsdlFile);
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     wsdlUrl = classLoader.getResource(referenceInfo.wsdlFile);
                     if (wsdlUrl == null) {
                         logger.warning("Error obtaining WSDL: " + referenceInfo.wsdlFile, e);
@@ -462,9 +462,9 @@ public class JndiEncBuilder {
             }
 
             // port refs
-            List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
-            for (PortRefInfo portRefInfo : referenceInfo.portRefs) {
-                PortRefData portRef = new PortRefData();
+            final List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
+            for (final PortRefInfo portRefInfo : referenceInfo.portRefs) {
+                final PortRefData portRef = new PortRefData();
                 portRef.setQName(portRefInfo.qname);
                 portRef.setServiceEndpointInterface(portRefInfo.serviceEndpointInterface);
                 portRef.setEnableMtom(portRefInfo.enableMtom);
@@ -479,7 +479,7 @@ public class JndiEncBuilder {
             }
 
             if (!client) {
-                Reference reference = new JaxWsServiceReference(referenceInfo.id,
+                final Reference reference = new JaxWsServiceReference(referenceInfo.id,
                         referenceInfo.serviceQName,
                         serviceClass, referenceInfo.portQName,
                         referenceClass,
@@ -489,7 +489,7 @@ public class JndiEncBuilder {
                         injections);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
-                ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.id,
+                final ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.id,
                         referenceInfo.serviceQName,
                         serviceClass, referenceInfo.portQName,
                         referenceClass,
@@ -500,16 +500,16 @@ public class JndiEncBuilder {
             }
         }
 
-        OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
 
         if (config != null) {
 
-            for (ResourceInfo resource : config.facilities.resources) {
-                String jndiName = resource.jndiName;
+            for (final ResourceInfo resource : config.facilities.resources) {
+                final String jndiName = resource.jndiName;
                 if (jndiName != null && !jndiName.isEmpty() && isNotGobalOrIsHoldByThisApp(resource, scope)) {
-                    String refName = "openejb/Resource/" + resource.id;
-                    Object reference = new IntraVmJndiReference(refName);
-                    String boundName = normalize(jndiName);
+                    final String refName = "openejb/Resource/" + resource.id;
+                    final Object reference = new IntraVmJndiReference(refName);
+                    final String boundName = normalize(jndiName);
                     bindings.put(boundName, reference);
                 }
             }
@@ -525,9 +525,9 @@ public class JndiEncBuilder {
                 || info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope);
     }
 
-    private void addSpecialCompBindings(Map<String, Object> bindings) {
+    private void addSpecialCompBindings(final Map<String, Object> bindings) {
         // bind TransactionManager
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         bindings.put("comp/TransactionManager", transactionManager);
 
         // bind TransactionSynchronizationRegistry
@@ -542,12 +542,12 @@ public class JndiEncBuilder {
 
         // bind UserTransaction if bean managed transactions
         if (beanManagedTransactions) {
-            UserTransaction userTransaction = new CoreUserTransaction(transactionManager);
+            final UserTransaction userTransaction = new CoreUserTransaction(transactionManager);
             bindings.put("comp/UserTransaction", userTransaction);
         }
     }
 
-    private void addSpecialModuleBindings(Map<String, Object> bindings) {
+    private void addSpecialModuleBindings(final Map<String, Object> bindings) {
         if (moduleId != null) {
             bindings.put("module/ModuleName", moduleId);
         }
@@ -557,7 +557,7 @@ public class JndiEncBuilder {
         }
     }
 
-    private void addSpecialAppBindings(Map<String, Object> bindings) {
+    private void addSpecialAppBindings(final Map<String, Object> bindings) {
         if (moduleId != null) {
             bindings.put("app/AppName", moduleId);
         }
@@ -567,55 +567,55 @@ public class JndiEncBuilder {
         }
     }
 
-    private void addSpecialGlobalBindings(Map<String, Object> bindings) {
+    private void addSpecialGlobalBindings(final Map<String, Object> bindings) {
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("global/dummy", "dummy");
         }
     }
 
-    public static boolean bindingExists(Context context, Name contextName) {
+    public static boolean bindingExists(final Context context, final Name contextName) {
         try {
             return context.lookup(contextName) != null;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // no-op
         }
         return false;
     }
 
-    private Reference buildReferenceLocation(ReferenceLocationInfo location) {
+    private Reference buildReferenceLocation(final ReferenceLocationInfo location) {
         if (location.jndiProviderId != null) {
-            String subContextName = "openejb/remote_jndi_contexts/" + location.jndiProviderId;
+            final String subContextName = "openejb/remote_jndi_contexts/" + location.jndiProviderId;
             return new JndiReference(subContextName, location.jndiName);
         } else {
             return new JndiUrlReference(location.jndiName);
         }
     }
 
-    private String normalize(String name) {
+    private String normalize(final String name) {
         //currently all names seem to be normalized properly
         return name;
     }
 
-    private Class getType(String type, InjectableInfo injectable) throws OpenEJBException {
+    private Class getType(final String type, final InjectableInfo injectable) throws OpenEJBException {
         if (type != null) {
             try {
                 return classLoader.loadClass(type.trim());
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new OpenEJBException("Unable to load type '" + type + "' for " + injectable.referenceName);
             }
         }
         return inferType(injectable);
     }
 
-    private Class inferType(InjectableInfo injectable) throws OpenEJBException {
-        for (InjectionInfo injection : injectable.targets) {
+    private Class inferType(final InjectableInfo injectable) throws OpenEJBException {
+        for (final InjectionInfo injection : injectable.targets) {
             try {
-                Class<?> target = classLoader.loadClass(injection.className.trim());
+                final Class<?> target = classLoader.loadClass(injection.className.trim());
                 return IntrospectionSupport.getPropertyType(target, injection.propertyName.trim());
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // ignore
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 // ignore
             }
         }
@@ -625,7 +625,7 @@ public class JndiEncBuilder {
     private static class Ref implements EjbResolver.Reference, Serializable {
         private final EjbReferenceInfo info;
 
-        public Ref(EjbReferenceInfo info) {
+        public Ref(final EjbReferenceInfo info) {
             this.info = info;
         }
 

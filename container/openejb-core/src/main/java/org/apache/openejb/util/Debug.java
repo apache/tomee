@@ -45,25 +45,25 @@ import java.util.TreeMap;
  */
 public class Debug {
 
-    public static String printStackTrace(Throwable t) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static String printStackTrace(final Throwable t) {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         t.printStackTrace(new PrintStream(baos));
         return new String(baos.toByteArray());
     }
 
-    public static Map<String,Object> contextToMap(Context context) throws NamingException {
-        Map<String, Object> map = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+    public static Map<String,Object> contextToMap(final Context context) throws NamingException {
+        final Map<String, Object> map = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         contextToMap(context, "", map);
         return map;
     }
 
-    public static void contextToMap(Context context, String baseName, Map<String,Object> results) throws NamingException {
-        NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
+    public static void contextToMap(final Context context, final String baseName, final Map<String,Object> results) throws NamingException {
+        final NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
         while (namingEnumeration.hasMoreElements()) {
-            Binding binding = namingEnumeration.nextElement();
-            String name = binding.getName();
-            String fullName = baseName + name;
-            Object object = binding.getObject();
+            final Binding binding = namingEnumeration.nextElement();
+            final String name = binding.getName();
+            final String fullName = baseName + name;
+            final Object object = binding.getObject();
             results.put(fullName, object);
             if (object instanceof Context) {
                 contextToMap((Context) object, fullName + "/", results);
@@ -71,34 +71,34 @@ public class Debug {
         }
     }
 
-    public static Map<String,Object> printContext(Context context) throws NamingException {
+    public static Map<String,Object> printContext(final Context context) throws NamingException {
         return printContext(context, System.out);
     }
 
-    public static Map<String,Object> printContext(Context context, PrintStream out) throws NamingException {
-        Map<String, Object> map = contextToMap(context);
-        for (Entry<String, Object> entry : map.entrySet()) {
+    public static Map<String,Object> printContext(final Context context, final PrintStream out) throws NamingException {
+        final Map<String, Object> map = contextToMap(context);
+        for (final Entry<String, Object> entry : map.entrySet()) {
             out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
         }
         return map;
     }
 
-    public static Map<String,Object> printContextValues(Context context) throws NamingException {
+    public static Map<String,Object> printContextValues(final Context context) throws NamingException {
         return printContextValues(context, System.out);
     }
 
-    public static Map<String,Object> printContextValues(Context context, PrintStream out) throws NamingException {
-        Map<String, Object> map = contextToMap(context);
-        for (Entry<String, Object> entry : map.entrySet()) {
+    public static Map<String,Object> printContextValues(final Context context, final PrintStream out) throws NamingException {
+        final Map<String, Object> map = contextToMap(context);
+        for (final Entry<String, Object> entry : map.entrySet()) {
             out.println(entry.getKey() + "=" + entry.getValue());
         }
         return map;
     }
 
-    public static List<Field> getFields(Class clazz){
+    public static List<Field> getFields(final Class clazz){
         if (clazz == null) return Collections.EMPTY_LIST;
 
-        List<Field> fields = new ArrayList<Field>();
+        final List<Field> fields = new ArrayList<Field>();
 
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
 
@@ -120,7 +120,7 @@ public class Debug {
             private final long time = System.currentTimeMillis();
             private final List<StackTraceElement> elements;
 
-            private Event(List<StackTraceElement> elements) {
+            private Event(final List<StackTraceElement> elements) {
                 this.elements = Collections.unmodifiableList(elements);
             }
 
@@ -139,35 +139,35 @@ public class Debug {
                 final OutputStream write = IO.write(file);
 
                 report(write);
-            } catch (FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
 
-        public static void report(OutputStream write) {
+        public static void report(final OutputStream write) {
             final PrintStream stream = new PrintStream(write);
             report(stream);
             stream.close();
         }
 
-        public static void report(PrintStream stream) {
+        public static void report(final PrintStream stream) {
             trace.print(stream);
 
             stream.print("<br/><ul>");
-            for (Trace.Event event : trace.events) {
+            for (final Trace.Event event : trace.events) {
                 stream.println(event);
             }
             stream.print("</ul>");
         }
 
         public static void mark() {
-            Throwable throwable = new Exception().fillInStackTrace();
-            List<StackTraceElement> stackTraceElements = new ArrayList<StackTraceElement>(Arrays.asList(throwable.getStackTrace()));
+            final Throwable throwable = new Exception().fillInStackTrace();
+            final List<StackTraceElement> stackTraceElements = new ArrayList<StackTraceElement>(Arrays.asList(throwable.getStackTrace()));
             Collections.reverse(stackTraceElements);
 
-            Iterator<StackTraceElement> iterator = stackTraceElements.iterator();
+            final Iterator<StackTraceElement> iterator = stackTraceElements.iterator();
             while (iterator.hasNext()) {
-                StackTraceElement element = iterator.next();
+                final StackTraceElement element = iterator.next();
                 if (!element.getClassName().startsWith("org.apache")) iterator.remove();
                 if (element.getClassName().endsWith("Debug") && element.getMethodName().equals("mark")) iterator.remove();
             }
@@ -175,10 +175,10 @@ public class Debug {
             trace.link(stackTraceElements);
         }
 
-        public void print(PrintStream out) {
-            Set<Node> seen = new HashSet<Node>();
+        public void print(final PrintStream out) {
+            final Set<Node> seen = new HashSet<Node>();
 
-            for (Node node : elements.values()) {
+            for (final Node node : elements.values()) {
                 if (node.parent == null) {
                     out.println("<ul>");
                     print(seen, out, node, "- ");
@@ -187,17 +187,17 @@ public class Debug {
             }
         }
 
-        private void print(Set<Node> seen, PrintStream out, Node node, String s) {
+        private void print(final Set<Node> seen, final PrintStream out, final Node node, final String s) {
             if (!seen.add(node)) return;
 
             out.print("<li>\n");
 
-            StackTraceElement e = node.getElement();
+            final StackTraceElement e = node.getElement();
             out.printf("<b>%s</b> <i>%s <font color='gray'>(%s)</font></i>\n", escape(e.getMethodName()), reverse(e.getClassName()), e.getLineNumber());
 
             if (node.children.size()> 0) {
                 out.println("<ul>");
-                for (Node child : node.children) {
+                for (final Node child : node.children) {
                     print(seen, out, child, s);
                 }
                 out.println("</ul>");
@@ -206,24 +206,24 @@ public class Debug {
             out.print("</li>\n");
         }
 
-        private String escape(String methodName) {
+        private String escape(final String methodName) {
             return methodName.replace("<","&lt;").replace(">","&gt;");
         }
 
-        private void printTxt(Set<Node> seen, PrintStream out, Node node, String s) {
+        private void printTxt(final Set<Node> seen, final PrintStream out, final Node node, String s) {
             if (!seen.add(node)) return;
 
             out.print(s);
-            StackTraceElement e = node.getElement();
+            final StackTraceElement e = node.getElement();
             out.printf("**%s** *%s* (%s)\n", e.getMethodName(), reverse(e.getClassName()), e.getLineNumber());
             s = "  " + s;
-            for (Node child : node.children) {
+            for (final Node child : node.children) {
                 print(seen, out, child, s);
             }
         }
 
-        private String reverse2(String className) {
-            List<String> list = Arrays.asList(className.split("\\."));
+        private String reverse2(final String className) {
+            final List<String> list = Arrays.asList(className.split("\\."));
             Collections.reverse(list);
 
             String string = Join.join(".", list);
@@ -244,7 +244,7 @@ public class Debug {
             private final List<Node> children = new ArrayList<Node>();
 
 
-            public Node(StackTraceElement element) {
+            public Node(final StackTraceElement element) {
                 this.element = element;
                 this.trace = element.toString();
             }
@@ -257,7 +257,7 @@ public class Debug {
                 return element;
             }
 
-            public Node addChild(Node node) {
+            public Node addChild(final Node node) {
                 node.parent = this;
                 children.add(node);
                 return node;
@@ -269,9 +269,9 @@ public class Debug {
             trace.elements.clear();
         }
 
-        public void link(List<StackTraceElement> elements) {
+        public void link(final List<StackTraceElement> elements) {
             events.add(new Event(elements));
-            Iterator<StackTraceElement> iterator = elements.iterator();
+            final Iterator<StackTraceElement> iterator = elements.iterator();
             if (!iterator.hasNext()) return;
 
             Node parent = get(iterator.next());
@@ -282,8 +282,8 @@ public class Debug {
             }
         }
 
-        private Node get(StackTraceElement element) {
-            String key = element.toString();
+        private Node get(final StackTraceElement element) {
+            final String key = element.toString();
             Node node = elements.get(key);
             if (node == null) {
                 node = new Node(element);

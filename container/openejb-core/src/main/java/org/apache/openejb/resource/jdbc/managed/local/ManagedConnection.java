@@ -97,7 +97,7 @@ public class ManagedConnection implements InvocationHandler {
 
             // get the already bound connection to the current transaction
             // or enlist this one in the tx
-            int status = transaction.getStatus();
+            final int status = transaction.getStatus();
             if (isUnderTransaction(status)) {
                 final Connection connection = connectionByTx.get(transaction);
                 if (connection != delegate) {
@@ -109,9 +109,9 @@ public class ManagedConnection implements InvocationHandler {
                         currentTransaction = transaction;
                         try {
                             transaction.enlistResource(getXAResource());
-                        } catch (RollbackException ignored) {
+                        } catch (final RollbackException ignored) {
                             // no-op
-                        } catch (SystemException e) {
+                        } catch (final SystemException e) {
                             throw new SQLException("Unable to enlist connection the transaction", e);
                         }
 
@@ -134,7 +134,7 @@ public class ManagedConnection implements InvocationHandler {
             }
 
             return invoke(method, delegate, args);
-        } catch (InvocationTargetException ite) {
+        } catch (final InvocationTargetException ite) {
             throw ite.getTargetException();
         }
     }
@@ -142,7 +142,7 @@ public class ManagedConnection implements InvocationHandler {
     private static Object invoke(final Method method, final Connection delegate, final Object[] args) throws Throwable {
         try {
             return method.invoke(delegate, args);
-        } catch (InvocationTargetException ite) {
+        } catch (final InvocationTargetException ite) {
             throw ite.getCause();
         }
     }
@@ -172,7 +172,7 @@ public class ManagedConnection implements InvocationHandler {
         return null;
     }
 
-    private static boolean isUnderTransaction(int status) {
+    private static boolean isUnderTransaction(final int status) {
         return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
     }
 
@@ -185,7 +185,7 @@ public class ManagedConnection implements InvocationHandler {
             if (!connection.isClosed()) {
                 connection.close();
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             // no-op
         }
     }
@@ -205,7 +205,7 @@ public class ManagedConnection implements InvocationHandler {
         private final Connection connection;
         private final Map<Transaction, Connection> mapToCleanup;
 
-        public ClosingSynchronization(final Connection delegate, Map<Transaction, Connection> connByTx) {
+        public ClosingSynchronization(final Connection delegate, final Map<Transaction, Connection> connByTx) {
             connection = delegate;
             mapToCleanup = connByTx;
         }
@@ -216,12 +216,12 @@ public class ManagedConnection implements InvocationHandler {
         }
 
         @Override
-        public void afterCompletion(int status) {
+        public void afterCompletion(final int status) {
             close(connection);
             try {
                 final Transaction tx = OpenEJB.getTransactionManager().getTransaction();
                 mapToCleanup.remove(tx);
-            } catch (SystemException ignored) {
+            } catch (final SystemException ignored) {
                 // no-op
             }
         }

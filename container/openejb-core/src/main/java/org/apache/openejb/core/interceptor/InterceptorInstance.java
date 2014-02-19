@@ -23,12 +23,12 @@ public class InterceptorInstance {
     private final Object interceptor;
     private final InterceptorData data;
 
-    public InterceptorInstance(Object interceptor, InterceptorData data) {
+    public InterceptorInstance(final Object interceptor, final InterceptorData data) {
         this.interceptor = interceptor;
         this.data = data;
     }
 
-    public InterceptorInstance(Object interceptor) {
+    public InterceptorInstance(final Object interceptor) {
         this(interceptor, InterceptorData.scan(interceptor.getClass()));
     }
 

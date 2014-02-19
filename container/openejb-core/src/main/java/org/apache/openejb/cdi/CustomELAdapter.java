@@ -31,7 +31,7 @@ public class CustomELAdapter implements ELAdaptor {
 
     private final AppContext appContext;
 
-    public CustomELAdapter(AppContext appContext) {
+    public CustomELAdapter(final AppContext appContext) {
         this.appContext = appContext;
     }
 
@@ -41,7 +41,7 @@ public class CustomELAdapter implements ELAdaptor {
     }
 
     @Override
-    public ExpressionFactory getOwbWrappedExpressionFactory(ExpressionFactory expressionFactory) {
+    public ExpressionFactory getOwbWrappedExpressionFactory(final ExpressionFactory expressionFactory) {
         if (!appContext.isCdiEnabled()) return expressionFactory;
         return new WrappedExpressionFactory(expressionFactory);
     }

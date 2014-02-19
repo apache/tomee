@@ -31,7 +31,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     private final String relatedProperty;
     private final BeanContext relatedInfo;
 
-    public SingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
+    public SingleValuedCmr(final EntityBean source, final String sourceProperty, final Class<Bean> relatedType, final String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
         this.source = source;
@@ -41,7 +41,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
         this.relatedInfo = Cmp2Util.getBeanContext(relatedType);
     }
 
-    public Proxy get(Bean entity) throws EJBException {
+    public Proxy get(final Bean entity) throws EJBException {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
                     "this entity does not have a cmr field for the relationship");
@@ -49,12 +49,12 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
 
         if (entity == null) return null;
 
-        Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
+        final Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
-    public Bean set(Bean oldBean, Proxy newValue) throws EJBException {
-        Bean newBean = Cmp2Util.<Bean>getEntityBean(newValue);
+    public Bean set(final Bean oldBean, final Proxy newValue) throws EJBException {
+        final Bean newBean = Cmp2Util.<Bean>getEntityBean(newValue);
         if (newValue != null && newBean == null) {
             // todo verify that this is the only way null can be returned
             throw new IllegalArgumentException("A deleted bean can not be assigned to a relationship");
@@ -68,7 +68,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
 
             if (newValue != null) {
                 // set the back reference in the new related bean
-                Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
+                final Object oldBackRef = toCmp2Entity(newBean).OpenEJB_addCmr(relatedProperty, source);
 
                 // if the new related beas was related to another bean, we need
                 // to clear the back reference in that old bean
@@ -80,11 +80,11 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
         return newBean;
     }
 
-    public void deleted(Bean oldBean) throws EJBException {
+    public void deleted(final Bean oldBean) throws EJBException {
         set(oldBean, null);
     }
 
-    private Cmp2Entity toCmp2Entity(Object object) {
+    private Cmp2Entity toCmp2Entity(final Object object) {
         return (Cmp2Entity) object;
     }
 }

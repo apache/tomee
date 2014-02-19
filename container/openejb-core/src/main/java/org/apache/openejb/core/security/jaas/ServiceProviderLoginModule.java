@@ -54,14 +54,14 @@ public class ServiceProviderLoginModule implements LoginModule {
         public final String pass;
         public final Set<String> groups = new HashSet<String>();
 
-        private UserData(String user, String pass) {
+        private UserData(final String user, final String pass) {
             this.user = user;
             this.pass = pass;
         }
     }
 
     @Override
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String, ?> sharedState, final Map<String, ?> options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
         this.loader = ServiceLoader.load(LoginProvider.class);
@@ -74,9 +74,9 @@ public class ServiceProviderLoginModule implements LoginModule {
         callbacks[1] = new PasswordCallback("Password: ", false);
         try {
             this.callbackHandler.handle(callbacks);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException(ioe.getMessage());
-        } catch (UnsupportedCallbackException uce) {
+        } catch (final UnsupportedCallbackException uce) {
             throw new LoginException(uce.getMessage() + " not available to obtain information from user");
         }
 
@@ -115,7 +115,7 @@ public class ServiceProviderLoginModule implements LoginModule {
     public boolean commit() throws LoginException {
         this.principals.add(new UserPrincipal(this.userData.user));
 
-        for (String myGroup : this.userData.groups) {
+        for (final String myGroup : this.userData.groups) {
             principals.add(new GroupPrincipal(myGroup));
         }
 

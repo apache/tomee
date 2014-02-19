@@ -37,7 +37,7 @@ public class LoggingSqlDataSource implements InvocationHandler {
         final Object result;
         try {
             result = method.invoke(delegate, args);
-        } catch (InvocationTargetException ite) {
+        } catch (final InvocationTargetException ite) {
             throw ite.getCause();
         }
 

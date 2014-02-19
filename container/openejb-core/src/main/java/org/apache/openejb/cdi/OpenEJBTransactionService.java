@@ -54,11 +54,11 @@ public class OpenEJBTransactionService implements TransactionService {
 
     @Override
     public Transaction getTransaction() {
-        TransactionManager manager = getTransactionManager();
+        final TransactionManager manager = getTransactionManager();
         if(manager != null) {
             try {
                 return manager.getTransaction();
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 logger.error(e.getMessage(), e);
             }
         }
@@ -75,7 +75,7 @@ public class OpenEJBTransactionService implements TransactionService {
         UserTransaction ut;
         try {
             ut = (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             logger.debug("User transaction is not bound to context, lets create it");
             ut = new CoreUserTransaction(getTransactionManager());
 
@@ -94,7 +94,7 @@ public class OpenEJBTransactionService implements TransactionService {
                 new EventMetadataImpl(observer.getObservedType(), null, qualifiers.toArray(new Annotation[qualifiers.size()])));
     }
 
-    public void setWebBeansContext(WebBeansContext webBeansContext) {
+    public void setWebBeansContext(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
     }
 

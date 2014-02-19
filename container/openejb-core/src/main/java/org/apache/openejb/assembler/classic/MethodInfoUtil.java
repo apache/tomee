@@ -55,27 +55,27 @@ public class MethodInfoUtil {
      * @return
      * @throws IllegalStateException if the method is not found in this class or any of its parent classes
      */
-    public static Method toMethod(Class clazz, NamedMethodInfo info) {
-        List<Class> parameterTypes = new ArrayList<Class>();
+    public static Method toMethod(Class clazz, final NamedMethodInfo info) {
+        final List<Class> parameterTypes = new ArrayList<Class>();
 
         if (info.methodParams != null){
-            for (String paramType : info.methodParams) {
+            for (final String paramType : info.methodParams) {
                 try {
                     parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
-                } catch (ClassNotFoundException cnfe) {
+                } catch (final ClassNotFoundException cnfe) {
                     throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
                 }
             }
         }
 
-        Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
+        final Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
 
         IllegalStateException noSuchMethod = null;
         while (clazz != null) {
             try {
-                Method method = clazz.getDeclaredMethod(info.methodName, parameters);
+                final Method method = clazz.getDeclaredMethod(info.methodName, parameters);
                 return SetAccessible.on(method);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 if (noSuchMethod == null) {
                     noSuchMethod = new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
                 }
@@ -86,13 +86,13 @@ public class MethodInfoUtil {
         throw noSuchMethod;
     }
 
-    public static List<Method> matchingMethods(Method signature, Class clazz) {
-        List<Method> list = new ArrayList<Method>();
-        METHOD: for (Method method : clazz.getMethods()) {
+    public static List<Method> matchingMethods(final Method signature, final Class clazz) {
+        final List<Method> list = new ArrayList<Method>();
+        METHOD: for (final Method method : clazz.getMethods()) {
             if (!method.getName().equals(signature.getName())) continue;
 
-            Class<?>[] methodTypes = method.getParameterTypes();
-            Class<?>[] signatureTypes = signature.getParameterTypes();
+            final Class<?>[] methodTypes = method.getParameterTypes();
+            final Class<?>[] signatureTypes = signature.getParameterTypes();
 
             if (methodTypes.length != signatureTypes.length) continue;
 
@@ -104,13 +104,13 @@ public class MethodInfoUtil {
         return list;
     }
 
-    public static List<Method> matchingMethods(MethodInfo mi, Class clazz) {
-        Method[] methods = clazz.getMethods();
+    public static List<Method> matchingMethods(final MethodInfo mi, final Class clazz) {
+        final Method[] methods = clazz.getMethods();
 
         return matchingMethods(mi, methods);
     }
 
-    public static List<Method> matchingMethods(MethodInfo mi, Method[] methods) {
+    public static List<Method> matchingMethods(final MethodInfo mi, final Method[] methods) {
 
         List<Method> filtered = filterByLevel(mi, methods);
 
@@ -119,8 +119,8 @@ public class MethodInfoUtil {
         return filtered;
     }
 
-    private static List<Method> filterByView(MethodInfo mi, List<Method> filtered) {
-        View view = view(mi);
+    private static List<Method> filterByView(final MethodInfo mi, final List<Method> filtered) {
+        final View view = view(mi);
         switch(view){
             case CLASS:{
                 return filterByClass(mi, filtered);
@@ -130,10 +130,10 @@ public class MethodInfoUtil {
         return filtered;
     }
 
-    private static List<Method> filterByClass(MethodInfo mi, List<Method> methods) {
-        ArrayList<Method> list = new ArrayList<Method>();
-        for (Method method : methods) {
-            String className = method.getDeclaringClass().getName();
+    private static List<Method> filterByClass(final MethodInfo mi, final List<Method> methods) {
+        final ArrayList<Method> list = new ArrayList<Method>();
+        for (final Method method : methods) {
+            final String className = method.getDeclaringClass().getName();
             if (mi.className.equals(className)){
                 list.add(method);
             }
@@ -141,8 +141,8 @@ public class MethodInfoUtil {
         return list;
     }
 
-    private static List<Method> filterByLevel(MethodInfo mi, Method[] methods) {
-        Level level = level(mi);
+    private static List<Method> filterByLevel(final MethodInfo mi, final Method[] methods) {
+        final Level level = level(mi);
 
         switch(level){
             case BEAN:
@@ -160,21 +160,21 @@ public class MethodInfoUtil {
         return Collections.EMPTY_LIST;
     }
 
-    public static Method getMethod(Class clazz, MethodInfo info) {
-        ClassLoader cl = clazz.getClassLoader();
+    public static Method getMethod(final Class clazz, final MethodInfo info) {
+        final ClassLoader cl = clazz.getClassLoader();
 
-        List<Class> params = new ArrayList<Class>();
-        for (String methodParam : info.methodParams) {
+        final List<Class> params = new ArrayList<Class>();
+        for (final String methodParam : info.methodParams) {
             try {
                 params.add(getClassForParam(methodParam, cl));
-            } catch (ClassNotFoundException cnfe) {
+            } catch (final ClassNotFoundException cnfe) {
                 // no-op
             }
         }
         Method method = null;
         try {
             method = clazz.getMethod(info.methodName, params.toArray(new Class[params.size()]));
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return null;
         }
 
@@ -185,9 +185,9 @@ public class MethodInfoUtil {
         return method;
     }
 
-    private static List<Method> filterByName(Method[] methods, String methodName) {
-        List<Method> list = new ArrayList<Method>();
-        for (Method method : methods) {
+    private static List<Method> filterByName(final Method[] methods, final String methodName) {
+        final List<Method> list = new ArrayList<Method>();
+        for (final Method method : methods) {
             if (method.getName().equals(methodName)){
                 list.add(method);
             }
@@ -195,9 +195,9 @@ public class MethodInfoUtil {
         return list;
     }
 
-    private static List<Method> filterByNameAndParams(Method[] methods, MethodInfo mi) {
-        List<Method> list = new ArrayList<Method>();
-        for (Method method : methods) {
+    private static List<Method> filterByNameAndParams(final Method[] methods, final MethodInfo mi) {
+        final List<Method> list = new ArrayList<Method>();
+        for (final Method method : methods) {
             if (matches(method, mi)){
                 list.add(method);
             }
@@ -216,11 +216,11 @@ public class MethodInfoUtil {
      * @param infos
      * @return a normalized list of new MethodPermissionInfo objects
      */
-    public static List<MethodPermissionInfo> normalizeMethodPermissionInfos(List<MethodPermissionInfo> infos){
-        List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
-        for (MethodPermissionInfo oldInfo : infos) {
-            for (MethodInfo methodInfo : oldInfo.methods) {
-                MethodPermissionInfo newInfo = new MethodPermissionInfo();
+    public static List<MethodPermissionInfo> normalizeMethodPermissionInfos(final List<MethodPermissionInfo> infos){
+        final List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+        for (final MethodPermissionInfo oldInfo : infos) {
+            for (final MethodInfo methodInfo : oldInfo.methods) {
+                final MethodPermissionInfo newInfo = new MethodPermissionInfo();
                 newInfo.description = oldInfo.description;
                 newInfo.methods.add(methodInfo);
                 newInfo.roleNames.addAll(oldInfo.roleNames);
@@ -236,7 +236,7 @@ public class MethodInfoUtil {
         return normalized;
     }
 
-    private static Class getClassForParam(String className, ClassLoader cl) throws ClassNotFoundException {
+    private static Class getClassForParam(final String className, final ClassLoader cl) throws ClassNotFoundException {
 
         if (className.equals("int")) {
             return Integer.TYPE;
@@ -259,17 +259,17 @@ public class MethodInfoUtil {
 
     }
 
-    public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, BeanContext beanContext) {
-        Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
+    public static Map<Method, MethodAttributeInfo> resolveAttributes(final List<? extends MethodAttributeInfo> infos, final BeanContext beanContext) {
+        final Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
 
-        Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
+        final Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
 
-        for (MethodAttributeInfo attributeInfo : infos) {
-            for (MethodInfo methodInfo : attributeInfo.methods) {
+        for (final MethodAttributeInfo attributeInfo : infos) {
+            for (final MethodInfo methodInfo : attributeInfo.methods) {
 
                 if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
 
-                    List<Method> methods = new ArrayList<Method>();
+                    final List<Method> methods = new ArrayList<Method>();
 
                     if (methodInfo.methodIntf == null) {
                         methods.addAll(matchingMethods(methodInfo, wildCardView));
@@ -279,7 +279,7 @@ public class MethodInfoUtil {
                         if (beanContext.getRemoteInterface() != null) {
                             methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
                         }
-                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                        for (final Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("LocalHome")) {
@@ -288,14 +288,14 @@ public class MethodInfoUtil {
                         if (beanContext.getLocalInterface() != null) {
                             methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
                         }
-                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                        for (final Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
                         methods.addAll(matchingMethods(methodInfo, beanContext.getServiceEndpointInterface()));
                     }
 
-                    for (Method method : methods) {
+                    for (final Method method : methods) {
                         if (containerMethod(method)) {
                             continue;
                         }
@@ -308,17 +308,17 @@ public class MethodInfoUtil {
         return attributes;
     }
 
-    public static Map<ViewMethod, MethodAttributeInfo> resolveViewAttributes(List<? extends MethodAttributeInfo> infos, BeanContext beanContext) {
-        Map<ViewMethod, MethodAttributeInfo> attributes = new LinkedHashMap<ViewMethod, MethodAttributeInfo>();
+    public static Map<ViewMethod, MethodAttributeInfo> resolveViewAttributes(final List<? extends MethodAttributeInfo> infos, final BeanContext beanContext) {
+        final Map<ViewMethod, MethodAttributeInfo> attributes = new LinkedHashMap<ViewMethod, MethodAttributeInfo>();
 
-        Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
+        final Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
 
-        for (MethodAttributeInfo attributeInfo : infos) {
-            for (MethodInfo methodInfo : attributeInfo.methods) {
+        for (final MethodAttributeInfo attributeInfo : infos) {
+            for (final MethodInfo methodInfo : attributeInfo.methods) {
 
                 if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
 
-                    List<Method> methods = new ArrayList<Method>();
+                    final List<Method> methods = new ArrayList<Method>();
 
                     if (methodInfo.methodIntf == null) {
                         methods.addAll(matchingMethods(methodInfo, wildCardView));
@@ -328,7 +328,7 @@ public class MethodInfoUtil {
                         if (beanContext.getRemoteInterface() != null) {
                             methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
                         }
-                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                        for (final Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("LocalHome")) {
@@ -337,14 +337,14 @@ public class MethodInfoUtil {
                         if (beanContext.getLocalInterface() != null) {
                             methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
                         }
-                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                        for (final Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
                         methods.addAll(matchingMethods(methodInfo, beanContext.getServiceEndpointInterface()));
                     }
 
-                    for (Method method : methods) {
+                    for (final Method method : methods) {
                         if (containerMethod(method)) {
                             continue;
                         }
@@ -368,7 +368,7 @@ public class MethodInfoUtil {
         private final String view;
         private final Method method;
 
-        public ViewMethod(String view, Method method) {
+        public ViewMethod(final String view, final Method method) {
             this.view = view;
             this.method = method;
         }
@@ -382,11 +382,11 @@ public class MethodInfoUtil {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            ViewMethod that = (ViewMethod) o;
+            final ViewMethod that = (ViewMethod) o;
 
             if (!method.equals(that.method)) return false;
             if (view != null ? !view.equals(that.view) : that.view != null) return false;
@@ -407,7 +407,7 @@ public class MethodInfoUtil {
         }
     }
 
-    private static boolean containerMethod(Method method) {
+    private static boolean containerMethod(final Method method) {
         return (method.getDeclaringClass() == EJBObject.class ||
                 method.getDeclaringClass() == EJBHome.class ||
                 method.getDeclaringClass() == EJBLocalObject.class ||
@@ -415,10 +415,10 @@ public class MethodInfoUtil {
                 !method.getName().equals("remove");
     }
 
-    private static List<Method> getWildCardView(BeanContext info) {
-        List<Method> methods = new ArrayList<Method>();
+    private static List<Method> getWildCardView(final BeanContext info) {
+        final List<Method> methods = new ArrayList<Method>();
 
-        List<Method> beanMethods = asList(info.getBeanClass().getMethods());
+        final List<Method> beanMethods = asList(info.getBeanClass().getMethods());
         methods.addAll(beanMethods);
 
         if (info.getRemoteInterface() != null) {
@@ -444,28 +444,28 @@ public class MethodInfoUtil {
             methods.addAll(exclude(beanMethods, info.getServiceEndpointInterface().getMethods()));
         }
 
-        for (Class intf : info.getBusinessRemoteInterfaces()) {
+        for (final Class intf : info.getBusinessRemoteInterfaces()) {
             methods.addAll(exclude(beanMethods, intf.getMethods()));
         }
 
-        for (Class intf : info.getBusinessLocalInterfaces()) {
+        for (final Class intf : info.getBusinessLocalInterfaces()) {
             methods.addAll(exclude(beanMethods, intf.getMethods()));
         }
 
         // Remove methods that cannot be controlled by the user
-        Iterator<Method> iterator = methods.iterator();
+        final Iterator<Method> iterator = methods.iterator();
         while (iterator.hasNext()) {
-            Method method = iterator.next();
+            final Method method = iterator.next();
             if (containerMethod(method)) iterator.remove();
         }
 
         return methods;
     }
 
-    private static List<Method> exclude(List<Method> excludes, Method[] methods) {
-        ArrayList<Method> list = new ArrayList<Method>();
+    private static List<Method> exclude(final List<Method> excludes, final Method[] methods) {
+        final ArrayList<Method> list = new ArrayList<Method>();
 
-        for (Method method : methods) {
+        for (final Method method : methods) {
             if (!matches(excludes, method)){
                 list.add(method);
             }
@@ -473,9 +473,9 @@ public class MethodInfoUtil {
         return list;
     }
 
-    private static boolean matches(List<Method> excludes, Method method) {
-        for (Method excluded : excludes) {
-            boolean match = match(method, excluded);
+    private static boolean matches(final List<Method> excludes, final Method method) {
+        for (final Method excluded : excludes) {
+            final boolean match = match(method, excluded);
             if (match){
                 return true;
             }
@@ -483,7 +483,7 @@ public class MethodInfoUtil {
         return false;
     }
 
-    public static boolean match(Method methodA, Method methodB) {
+    public static boolean match(final Method methodA, final Method methodB) {
         if (!methodA.getName().equals(methodB.getName())) return false;
 
         if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
@@ -491,22 +491,22 @@ public class MethodInfoUtil {
         }
 
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
-            Class<?> a = methodA.getParameterTypes()[i];
-            Class<?> b = methodB.getParameterTypes()[i];
+            final Class<?> a = methodA.getParameterTypes()[i];
+            final Class<?> b = methodB.getParameterTypes()[i];
             if (!a.equals(b)) return false;
         }
         return true;
     }
 
-    public static boolean matches(Method method, MethodInfo methodInfo) {
+    public static boolean matches(final Method method, final MethodInfo methodInfo) {
         return matches(method, methodInfo.methodName, methodInfo.methodParams);
     }
 
-    public static boolean matches(Method method, NamedMethodInfo methodInfo) {
+    public static boolean matches(final Method method, final NamedMethodInfo methodInfo) {
         return matches(method, methodInfo.methodName, methodInfo.methodParams);
     }
 
-    public static boolean matches(Method method, String methodName, List<String> methodParams) {
+    public static boolean matches(final Method method, final String methodName, final List<String> methodParams) {
 
         if (!methodName.equals(method.getName())) {
             return false;
@@ -523,10 +523,10 @@ public class MethodInfoUtil {
         }
 
         // match parameters names
-        Class<?>[] parameterTypes = method.getParameterTypes();
+        final Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> parameterType = parameterTypes[i];
-            String methodParam = methodParams.get(i);
+            final Class<?> parameterType = parameterTypes[i];
+            final String methodParam = methodParams.get(i);
             if (!methodParam.equals(getName(parameterType)) && !methodParam.equals(parameterType.getName())) {
                 return false;
             }
@@ -535,7 +535,7 @@ public class MethodInfoUtil {
         return true;
     }
 
-    private static String getName(Class<?> type) {
+    private static String getName(final Class<?> type) {
         if (type.isArray()) {
             return getName(type.getComponentType()) + "[]"; // depend on JVM? type.getName() seems to work on Oracle one
         } else {
@@ -552,13 +552,13 @@ public class MethodInfoUtil {
         CLASS, ANY, INTERFACE;
     }
 
-    public static View view(MethodInfo methodInfo) {
+    public static View view(final MethodInfo methodInfo) {
         if (methodInfo.className != null && !methodInfo.className.equals("*")) return View.CLASS;
         if (methodInfo.methodIntf != null && !methodInfo.methodIntf.equals("*")) return View.INTERFACE;
         else return View.ANY;
     }
 
-    public static Level level(MethodInfo methodInfo) {
+    public static Level level(final MethodInfo methodInfo) {
         if (methodInfo.ejbName != null && methodInfo.ejbName.equals("*")) return Level.PACKAGE;
         if (methodInfo.methodName.equals("*")) return Level.BEAN;
         if (methodInfo.methodParams == null) return Level.OVERLOADED_METHOD;
@@ -567,15 +567,15 @@ public class MethodInfoUtil {
 
 
     public static class MethodPermissionComparator extends BaseComparator<MethodPermissionInfo> {
-        public int compare(MethodPermissionInfo a, MethodPermissionInfo b) {
+        public int compare(final MethodPermissionInfo a, final MethodPermissionInfo b) {
             return compare(a.methods.get(0), b.methods.get(0));
         }
     }
 
     public abstract static class BaseComparator<T> implements Comparator<T>{
-        public int compare(MethodInfo am, MethodInfo bm) {
-            Level levelA = level(am);
-            Level levelB = level(bm);
+        public int compare(final MethodInfo am, final MethodInfo bm) {
+            final Level levelA = level(am);
+            final Level levelB = level(bm);
 
             // Primary sort
             if (levelA != levelB) return levelA.ordinal() - levelB.ordinal();
@@ -586,7 +586,7 @@ public class MethodInfoUtil {
     }
 
 
-    public static String toString(MethodInfo i) {
+    public static String toString(final MethodInfo i) {
         String s = i.ejbName;
         s += " : ";
         s += i.methodIntf == null ? "*" : i.methodIntf;
@@ -604,7 +604,7 @@ public class MethodInfoUtil {
         return s;
     }
 
-    public static String toString(MethodPermissionInfo i) {
+    public static String toString(final MethodPermissionInfo i) {
         String s = toString(i.methods.get(0));
         if (i.unchecked){
             s += " Unchecked";
@@ -616,13 +616,13 @@ public class MethodInfoUtil {
         return s;
     }
 
-    public static String toString(MethodTransactionInfo i) {
+    public static String toString(final MethodTransactionInfo i) {
         String s = toString(i.methods.get(0));
         s += " " + i.transAttribute;
         return s;
     }
 
-    public static String toString(MethodConcurrencyInfo i) {
+    public static String toString(final MethodConcurrencyInfo i) {
         String s = toString(i.methods.get(0));
         s += " " + i.concurrencyAttribute;
         return s;

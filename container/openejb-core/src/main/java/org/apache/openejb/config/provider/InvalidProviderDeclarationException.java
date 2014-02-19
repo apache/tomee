@@ -26,7 +26,7 @@ public class InvalidProviderDeclarationException extends IllegalArgumentExceptio
     private final ID id;
     private final ServiceProvider provider;
 
-    public InvalidProviderDeclarationException(String s, ID id, ServiceProvider provider) {
+    public InvalidProviderDeclarationException(final String s, final ID id, final ServiceProvider provider) {
         super(String.format("%s - %s", id, s));
         this.id = id;
         this.provider = provider;

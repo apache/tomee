@@ -29,7 +29,7 @@ public class Instance {
     public final ReadWriteLock lock;
     public final CreationalContext creationalContext;
 
-    public Instance(Object bean, Map<String, Object> interceptors, CreationalContext creationalContext, ReadWriteLock lock) {
+    public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext, final ReadWriteLock lock) {
         this.bean = bean;
         this.interceptors = interceptors;
         this.lock = lock;

@@ -94,14 +94,14 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         if (altDD instanceof String) {
             try {
                 altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String) altDD).getBytes()), false);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read((URL) altDD), false);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
@@ -285,7 +285,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             for (final Entity entity : entityMappings.getEntity()) {
                 try {
                     entities.put(entity.getDescription(), new EntityData(entity));
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
                 }
             }

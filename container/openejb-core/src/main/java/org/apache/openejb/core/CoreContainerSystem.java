@@ -67,7 +67,7 @@ public class CoreContainerSystem implements ContainerSystem {
                 || !(jndiContext.lookup("openejb/global") instanceof Context)) {
                 throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present");
             }
-        } catch (NamingException exception) {
+        } catch (final NamingException exception) {
             throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present", exception);
         }
         SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);

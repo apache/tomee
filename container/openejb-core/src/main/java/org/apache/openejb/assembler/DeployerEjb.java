@@ -89,7 +89,7 @@ public class DeployerEjb implements Deployer {
             if (!unique.createNewFile()) {
                 throw new IOException("Failed to create file in temp: " + unique);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // same trying in work directory
             unique = new File(SystemInstance.get().getBase().getDirectory(), "work");
             if (unique.exists()) {
@@ -98,7 +98,7 @@ public class DeployerEjb implements Deployer {
                     if (!unique.createNewFile()) {
                         throw new IOException("Failed to create file in work: " + unique);
                     }
-                } catch (IOException e1) {
+                } catch (final IOException e1) {
                     throw new OpenEJBRuntimeException(e);
                 }
             } else {
@@ -239,7 +239,7 @@ public class DeployerEjb implements Deployer {
 
             return appInfo;
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // destroy the class loader for the failed application
             if (appModule != null) {
                 ClassLoaderUtil.destroyClassLoader(appModule.getJarLocation());
@@ -296,7 +296,7 @@ public class DeployerEjb implements Deployer {
         File config;
         try {
             config = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             config = null;
         }
         if (config == null || !config.getParentFile().exists()) {
@@ -344,7 +344,7 @@ public class DeployerEjb implements Deployer {
             }
             os = IO.write(config);
             JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, os);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("can't save the added app, will not be present next time you'll start", e);
         } finally {
             IO.close(os);
@@ -355,16 +355,16 @@ public class DeployerEjb implements Deployer {
     public void undeploy(final String moduleId) throws UndeployException, NoSuchApplicationException {
         try {
             assembler.destroyApplication(moduleId);
-        } catch (NoSuchApplicationException nsae) {
+        } catch (final NoSuchApplicationException nsae) {
             try {
                 assembler.destroyApplication(realLocation(moduleId));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 try {
                     assembler.destroyApplication(new File(moduleId).getAbsolutePath());
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     try {
                         assembler.destroyApplication(new File(realLocation(moduleId)).getAbsolutePath());
-                    } catch (Exception e3) {
+                    } catch (final Exception e3) {
                         throw nsae;
                     }
                 }
@@ -394,7 +394,7 @@ public class DeployerEjb implements Deployer {
             try {
                 assembler.destroyApplication(info);
                 assembler.createApplication(info);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }

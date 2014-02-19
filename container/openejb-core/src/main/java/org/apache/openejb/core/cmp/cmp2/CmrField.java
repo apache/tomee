@@ -26,7 +26,7 @@ public class CmrField {
     private final String relatedName;
     private final boolean synthetic;
 
-    public CmrField(String fieldName, String fieldType, String cmpImplClass, String local, String relatedName, boolean synthetic) {
+    public CmrField(final String fieldName, final String fieldType, final String cmpImplClass, final String local, final String relatedName, final boolean synthetic) {
         this.synthetic = synthetic;
         this.name = fieldName;
         if (fieldType == null) {
@@ -76,7 +76,7 @@ public class CmrField {
     }
 
     public String getDescriptor() {
-        Type collectionType = cmrStyle.getCollectionType();
+        final Type collectionType = cmrStyle.getCollectionType();
         if (collectionType == null) {
             return type.getDescriptor();
         }
@@ -84,7 +84,7 @@ public class CmrField {
     }
 
     public String getGenericSignature() {
-        Type collectionType = cmrStyle.getCollectionType();
+        final Type collectionType = cmrStyle.getCollectionType();
         if (collectionType == null) {
             return null;
         }
@@ -92,7 +92,7 @@ public class CmrField {
     }
 
     public String getProxyDescriptor() {
-        Type collectionType = cmrStyle.getCollectionType();
+        final Type collectionType = cmrStyle.getCollectionType();
         if (collectionType == null) {
             return proxyType.getDescriptor();
         }
@@ -108,19 +108,19 @@ public class CmrField {
     }
 
     public String getAccessorGenericSignature() {
-        Type collectionType = cmrStyle.getCollectionType();
+        final Type collectionType = cmrStyle.getCollectionType();
         if (collectionType == null) {
             return null;
         }
         return createSignature(cmrStyle.getAccessorType(), type, proxyType);
     }
 
-    private static String createSignature(Type type, Type... genericTypes) {
-        StringBuilder builder = new StringBuilder();
+    private static String createSignature(final Type type, final Type... genericTypes) {
+        final StringBuilder builder = new StringBuilder();
         builder.append("L").append(type.getInternalName());
         if (genericTypes.length > 0) {
             builder.append("<");
-            for (Type genericType : genericTypes) {
+            for (final Type genericType : genericTypes) {
                 builder.append(genericType.getDescriptor());
             }
             builder.append(">");

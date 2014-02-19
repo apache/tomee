@@ -82,9 +82,9 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     private void registerAsMbean(final String name) {
         try {
             jmxDs = new JMXBasicDataSource(name, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             jmxDs = null;
-        } catch (NoClassDefFoundError ncdfe) { // OSGi
+        } catch (final NoClassDefFoundError ncdfe) { // OSGi
             jmxDs = null;
         }
     }
@@ -112,7 +112,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      *
      * @param passwordCipher password codec value
      */
-    public void setPasswordCipher(String passwordCipher) {
+    public void setPasswordCipher(final String passwordCipher) {
         final ReentrantLock l = lock;
         l.lock();
         try {
@@ -133,7 +133,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
-    public void setUserName(String string) {
+    public void setUserName(final String string) {
         final ReentrantLock l = lock;
         l.lock();
         try {
@@ -153,7 +153,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
-    public void setJdbcDriver(String string) {
+    public void setJdbcDriver(final String string) {
         final ReentrantLock l = lock;
         l.lock();
         try {
@@ -173,7 +173,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
-    public void setJdbcUrl(String string) {
+    public void setJdbcUrl(final String string) {
         final ReentrantLock l = lock;
         l.lock();
         try {
@@ -183,12 +183,12 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
-    public void setDefaultTransactionIsolation(String s) {
+    public void setDefaultTransactionIsolation(final String s) {
         final ReentrantLock l = lock;
         l.lock();
         try {
             if (s == null || s.equals("")) return;
-            int level = IsolationLevels.getIsolationLevel(s);
+            final int level = IsolationLevels.getIsolationLevel(s);
             super.setDefaultTransactionIsolation(level);
         } finally {
             l.unlock();
@@ -215,15 +215,15 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
             // check password codec if available
             if (null != passwordCipher) {
-                PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
-                String plainPwd = cipher.decrypt(password.toCharArray());
+                final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+                final String plainPwd = cipher.decrypt(password.toCharArray());
 
                 // override previous password value
                 super.setPassword(plainPwd);
             }
 
             // get the plugin
-            DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(getUrl());
+            final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(getUrl());
 
             // configure this
             if (helper != null) {
@@ -238,20 +238,20 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
             if (helper == null || !helper.enableUserDirHack()) {
                 try {
                     return super.createDataSource();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     throw new SQLException("Failed to create DataSource", e);
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
-                Properties systemProperties = System.getProperties();
+                final Properties systemProperties = System.getProperties();
 
-                String userDir = systemProperties.getProperty("user.dir");
+                final String userDir = systemProperties.getProperty("user.dir");
                 try {
-                    File base = SystemInstance.get().getBase().getDirectory();
+                    final File base = SystemInstance.get().getBase().getDirectory();
                     systemProperties.setProperty("user.dir", base.getAbsolutePath());
                     try {
                         return super.createDataSource();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         throw new SQLException("Failed to create DataSource", e);
                     }
                 } finally {
@@ -271,7 +271,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         try {
             try {
                 unregisterMBean();
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
 
@@ -297,7 +297,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
             }
 
             return this.logger;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new SQLFeatureNotSupportedException();
         } finally {
             l.unlock();

@@ -28,12 +28,12 @@ public class LinkResolver<E> {
     private final Map<URI, E> byFullName = new TreeMap<URI, E>();
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
 
-    public boolean add(String modulePackageName, String name, E value) {
+    public boolean add(final String modulePackageName, final String name, final E value) {
         return add(URLs.uri(modulePackageName), name, value);
     }
 
-    public boolean add(URI moduleURI, String name, E value) {
-        URI uri = resolve(moduleURI, name);
+    public boolean add(final URI moduleURI, final String name, final E value) {
+        final URI uri = resolve(moduleURI, name);
 
         if (byFullName.containsKey(uri)) {
             // entry already exists
@@ -54,7 +54,7 @@ public class LinkResolver<E> {
         return true;
     }
 
-    private URI resolve(URI moduleURI, String name) {
+    private URI resolve(final URI moduleURI, String name) {
         name = name.replace(" ", "%20").replace("#", "%23");
         return moduleURI.resolve("#" + name);
     }
@@ -63,17 +63,17 @@ public class LinkResolver<E> {
         return byFullName.values();
     }
 
-    public Collection<E> values(String shortName) {
-        Collection<E> es = byShortName.get(shortName);
+    public Collection<E> values(final String shortName) {
+        final Collection<E> es = byShortName.get(shortName);
         return es != null? es: Collections.EMPTY_LIST;
     }
 
-    public E resolveLink(String link, String modulePackageName) {
-        URI moduleURI = URLs.uri(modulePackageName);
+    public E resolveLink(final String link, final String modulePackageName) {
+        final URI moduleURI = URLs.uri(modulePackageName);
         return resolveLink(link, moduleURI);
     }
 
-    public E resolveLink(String link, URI moduleUri) {
+    public E resolveLink(final String link, final URI moduleUri) {
         if (!link.contains("#")) {
             // check for a name in the current module
             E value = null;
@@ -99,7 +99,7 @@ public class LinkResolver<E> {
             return value;
         } else if (moduleUri != null) {
             // full (absolute) name
-            URI uri = moduleUri.resolve(link);
+            final URI uri = moduleUri.resolve(link);
             return byFullName.get(uri);
         } else {
             // Absolute reference in a standalone module

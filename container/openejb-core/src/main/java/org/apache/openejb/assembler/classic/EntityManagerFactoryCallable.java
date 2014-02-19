@@ -33,7 +33,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
     private final PersistenceUnitInfoImpl unitInfo;
     private ClassLoader appClassLoader;
 
-    public EntityManagerFactoryCallable(String persistenceProviderClassName, PersistenceUnitInfoImpl unitInfo, ClassLoader cl) {
+    public EntityManagerFactoryCallable(final String persistenceProviderClassName, final PersistenceUnitInfoImpl unitInfo, final ClassLoader cl) {
         this.persistenceProviderClassName = persistenceProviderClassName;
         this.unitInfo = unitInfo;
         this.appClassLoader = cl;
@@ -45,14 +45,14 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         Thread.currentThread().setContextClassLoader(appClassLoader);
         try {
             final Class<?> clazz = appClassLoader.loadClass(persistenceProviderClassName);
-            PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
+            final PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
             // Create entity manager factories with the validator factory
             final Map<String, Object> properties = new HashMap<String, Object>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
             }
-            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
             if (unitInfo.getProperties() != null
                     && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))

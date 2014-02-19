@@ -34,7 +34,7 @@ public final class ProxyEJB {
         try {
             return LocalBeanProxyFactory.newProxyInstance(beanContext.getModuleContext().getClassLoader(), new Handler(beanContext),
                         beanContext.getBeanClass(), IntraVmProxy.class, Serializable.class);
-        } catch (InternalError ie) { // try without intravmproxy which is maybe not loadable (in OSGi it can happen)
+        } catch (final InternalError ie) { // try without intravmproxy which is maybe not loadable (in OSGi it can happen)
             return LocalBeanProxyFactory.newProxyInstance(beanContext.getModuleContext().getClassLoader(), new Handler(beanContext),
                     beanContext.getBeanClass(), Serializable.class);
         }
@@ -60,13 +60,13 @@ public final class ProxyEJB {
         private transient WeakReference<BeanContext> beanContextRef;
         private final Object deploymentID;
 
-        public Handler(BeanContext bc) {
+        public Handler(final BeanContext bc) {
             beanContextRef = new WeakReference<BeanContext>(bc);
             deploymentID = bc.getDeploymentID();
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             final BeanContext beanContext = getBeanContext();
             final RpcContainer container = RpcContainer.class.cast(beanContext.getContainer());
 
@@ -77,7 +77,7 @@ public final class ProxyEJB {
 
 
         public BeanContext getBeanContext() {
-            BeanContext beanContext = beanContextRef.get();
+            final BeanContext beanContext = beanContextRef.get();
             if (beanContext == null|| beanContext.isDestroyed()){
                 beanContextRef.clear();
                 throw new IllegalStateException("Bean '" + deploymentID + "' has been undeployed.");

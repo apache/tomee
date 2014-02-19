@@ -97,13 +97,13 @@ public class JarExtractor {
 
         try {
             Files.mkdirs(destinationDir);
-        } catch (Files.FileRuntimeException e) {
+        } catch (final Files.FileRuntimeException e) {
             throw new IOException("Failed to create: " + destinationDir);
         }
 
         try {
             Zips.unzip(file, destinationDir);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // If something went wrong, delete extracted dir to keep things clean
             Files.delete(destinationDir);
             throw e;
@@ -153,7 +153,7 @@ public class JarExtractor {
                     ic = new FileInputStream(fileSrc).getChannel();
                     oc = new FileOutputStream(fileDest).getChannel();
                     ic.transferTo(0, ic.size(), oc);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);
                     result = false;
                 } finally {
@@ -226,7 +226,7 @@ public class JarExtractor {
             if (output != null) {
                 try {
                     output.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // Ignore
                 }
             }

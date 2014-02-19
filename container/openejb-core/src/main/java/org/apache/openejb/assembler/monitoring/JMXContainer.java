@@ -54,7 +54,7 @@ public class JMXContainer {
         final BeanContext[] beans = container.getBeanContexts();
         final String[] beanNames = new String[beans.length];
         int i = 0;
-        for (BeanContext bc : beans) {
+        for (final BeanContext bc : beans) {
             beanNames[i++] = new StringBuilder("bean-class: ").append(bc.getBeanClass().getName()).append(", ")
                     .append("ejb-name: ").append(bc.getEjbName()).append(", ")
                     .append("deployment-id: ").append(bc.getDeploymentID()).append(", ")
@@ -86,7 +86,7 @@ public class JMXContainer {
     public String[] getProperties() {
         final String[] properties = new String[info.properties.size()];
         int i = 0;
-        for (Map.Entry<Object, Object> entry : info.properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) {
             properties[i++] = new StringBuilder(entry.getKey().toString())
                     .append(" = ").append(entry.getValue().toString())
                     .toString();

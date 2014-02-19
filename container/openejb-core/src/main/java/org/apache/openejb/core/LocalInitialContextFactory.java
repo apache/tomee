@@ -59,7 +59,7 @@ public class LocalInitialContextFactory implements InitialContextFactory {
                 final Properties properties = new Properties();
                 properties.putAll(env);
                 init(properties);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw (NamingException) new NamingException("Attempted to load OpenEJB. " + e.getMessage()).initCause(e);
             }
         } finally {

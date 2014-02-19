@@ -27,15 +27,15 @@ import java.lang.reflect.Proxy;
  */
 public class EjbObjectInputStream extends ObjectInputStream {
 
-    public EjbObjectInputStream(InputStream in) throws IOException {
+    public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
     }
 
-    protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+    protected Class resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
         try {
             return Class.forName(classDesc.getName(), false, getClassloader());
-        } catch (ClassNotFoundException e) {
-            String n = classDesc.getName();
+        } catch (final ClassNotFoundException e) {
+            final String n = classDesc.getName();
             if (n.equals("boolean")) return boolean.class;
             if (n.equals("byte")) return byte.class;
             if (n.equals("char")) return char.class;
@@ -49,14 +49,14 @@ public class EjbObjectInputStream extends ObjectInputStream {
         }
     }
 
-    protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
-        Class[] cinterfaces = new Class[interfaces.length];
+    protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
+        final Class[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++)
             cinterfaces[i] = getClassloader().loadClass(interfaces[i]);
 
         try {
             return Proxy.getProxyClass(getClassloader(), cinterfaces);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
         }
     }

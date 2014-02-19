@@ -25,26 +25,26 @@ package org.apache.openejb.util.classloader;
 public class MultipleClassLoader extends ClassLoader implements ClassLoaderComparator {
     private final ClassLoader second;
 
-    public MultipleClassLoader(ClassLoader first, ClassLoader second) {
+    public MultipleClassLoader(final ClassLoader first, final ClassLoader second) {
         super(first);
         this.second = second;
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(final String name) throws ClassNotFoundException {
         try {
             return super.loadClass(name);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             if (second != getParent()) {
                 return loadClassSecond(name);
             }
             throw cnfe;
-        } catch (NoClassDefFoundError ncdfe) {
+        } catch (final NoClassDefFoundError ncdfe) {
             if (second != getParent()) {
                 return loadClassSecond(name);
             }
             throw ncdfe;
-        } catch (LinkageError le) {
+        } catch (final LinkageError le) {
             if (second != getParent()) {
                 return loadClassSecond(name);
             }
@@ -52,7 +52,7 @@ public class MultipleClassLoader extends ClassLoader implements ClassLoaderCompa
         }
     }
 
-    public Class<?> loadClassSecond(String name) throws ClassNotFoundException {
+    public Class<?> loadClassSecond(final String name) throws ClassNotFoundException {
         return second.loadClass(name);
     }
 

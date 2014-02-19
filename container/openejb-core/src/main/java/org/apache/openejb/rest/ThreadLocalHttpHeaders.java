@@ -57,7 +57,7 @@ public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHea
         return get().getAcceptableLanguages();
     }
 
-    public List<String> getRequestHeader(String name) {
+    public List<String> getRequestHeader(final String name) {
         return get().getRequestHeader(name);
     }
 

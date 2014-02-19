@@ -114,13 +114,13 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         final long start = System.nanoTime();
         try {
             delegate = entityManagerFactoryCallable.call();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
             LOGGER.info("assembler.buildingPersistenceUnit", unitInfoImpl.getPersistenceUnitName(), unitInfoImpl.getPersistenceProviderClassName(), time + "");
             if (LOGGER.isDebugEnabled()) {
-                for (Map.Entry<Object, Object> entry : unitInfoImpl.getProperties().entrySet()) {
+                for (final Map.Entry<Object, Object> entry : unitInfoImpl.getProperties().entrySet()) {
                     LOGGER.debug(entry.getKey() + "=" + entry.getValue());
                 }
             }
@@ -143,7 +143,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         EntityManager em;
         try {
             em = delegate.createEntityManager();
-        } catch (LinkageError le) {
+        } catch (final LinkageError le) {
             em = delegate.createEntityManager();
         }
 
@@ -154,11 +154,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
-    public EntityManager createEntityManager(Map map) {
+    public EntityManager createEntityManager(final Map map) {
         EntityManager em;
         try {
             em = delegate.createEntityManager(map);
-        } catch (LinkageError le) {
+        } catch (final LinkageError le) {
             em = delegate.createEntityManager(map);
         }
 
@@ -219,21 +219,21 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                 server.unregisterMBean(objectName);
             }
             server.registerMBean(mBeanify(), objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("can't register the mbean for the entity manager factory " + getPUname(), e);
-        } catch (NoClassDefFoundError ncdfe) {
+        } catch (final NoClassDefFoundError ncdfe) {
             objectName = null;
             LOGGER.error("can't register the mbean for the entity manager factory {0}", getPUname());
         }
     }
 
     private ObjectName generateObjectName() {
-        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("ObjectType", "persistence-unit");
         jmxName.set("PersistenceUnit", getPUname());
         objectName = jmxName.build();
 
-        MBeanServer server = LocalMBeanServer.get();
+        final MBeanServer server = LocalMBeanServer.get();
         if (server.isRegistered(objectName)) { // if 2 pu have the same name...a bit uglier but unique
             jmxName.set("PersistenceUnit", getPUname() + "(" + getId() + ")");
             objectName = jmxName.build();
@@ -259,7 +259,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             final MBeanServer server = LocalMBeanServer.get();
             try {
                 server.unregisterMBean(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException("can't unregister the mbean for the entity manager factory " + getPUname(), e);
             }
         }
@@ -272,34 +272,34 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public synchronized void reload() {
         try {
             createDelegate();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("can't replace EntityManagerFactory " + delegate, e);
         }
     }
 
-    public synchronized void setSharedCacheMode(SharedCacheMode mode) {
-        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+    public synchronized void setSharedCacheMode(final SharedCacheMode mode) {
+        final PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
         info.setSharedCacheMode(mode);
 
-        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
         if (properties.containsKey(JAVAX_PERSISTENCE_SHARED_CACHE_MODE)) {
             properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
         }
     }
 
-    public synchronized void setValidationMode(ValidationMode mode) {
-        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+    public synchronized void setValidationMode(final ValidationMode mode) {
+        final PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
         info.setValidationMode(mode);
 
-        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
         if (properties.containsKey(JAVAX_PERSISTENCE_VALIDATION_MODE)) {
             properties.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, mode.name());
         }
     }
 
-    public synchronized void setProvider(String providerRaw) {
+    public synchronized void setProvider(final String providerRaw) {
         final String provider = providerRaw.trim();
-        String newProvider;
+        final String newProvider;
         if ("hibernate".equals(provider)) {
             newProvider = "org.hibernate.ejb.HibernatePersistence";
         } else if ("openjpa".equals(provider)) {
@@ -315,38 +315,38 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         try {
             classLoader.loadClass(newProvider);
             entityManagerFactoryCallable.getUnitInfo().setPersistenceProviderClassName(newProvider);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOGGER.error("can't load new provider " + newProvider, e);
         }
     }
 
-    public synchronized void setTransactionType(PersistenceUnitTransactionType type) {
-        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+    public synchronized void setTransactionType(final PersistenceUnitTransactionType type) {
+        final PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
         info.setTransactionType(type);
 
-        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
         if (properties.containsKey(JAVAX_PERSISTENCE_TRANSACTION_TYPE)) {
             properties.setProperty(JAVAX_PERSISTENCE_TRANSACTION_TYPE, type.name());
         }
     }
 
-    public synchronized void setProperty(String key, String value) {
-        PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
+    public synchronized void setProperty(final String key, final String value) {
+        final PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
         if (unitInfo.getProperties() == null) {
             unitInfo.setProperties(new Properties());
         }
         unitInfo.getProperties().setProperty(key, value);
     }
 
-    public synchronized void removeProperty(String key) {
-        PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
+    public synchronized void removeProperty(final String key) {
+        final PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
         if (unitInfo.getProperties() != null) {
             unitInfo.getProperties().remove(key);
         }
     }
 
     public Properties getUnitProperties() {
-        PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
+        final PersistenceUnitInfoImpl unitInfo = entityManagerFactoryCallable.getUnitInfo();
         if (unitInfo.getProperties() != null) {
             return unitInfo.getProperties();
         }
@@ -357,7 +357,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         return entityManagerFactoryCallable.getUnitInfo().getMappingFileNames();
     }
 
-    public void addMappingFile(String file) {
+    public void addMappingFile(final String file) {
         if (new File(file).exists()) {
             entityManagerFactoryCallable.getUnitInfo().addMappingFileName(file);
         } else {
@@ -365,7 +365,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         }
     }
 
-    public void removeMappingFile(String file) {
+    public void removeMappingFile(final String file) {
         entityManagerFactoryCallable.getUnitInfo().getMappingFileNames().remove(file);
     }
 
@@ -373,11 +373,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         return entityManagerFactoryCallable.getUnitInfo().getJarFileUrls();
     }
 
-    public void addJarFileUrls(String file) {
+    public void addJarFileUrls(final String file) {
         if (new File(file).exists()) { // should we test real urls?
             try {
                 entityManagerFactoryCallable.getUnitInfo().getJarFileUrls().add(new URL(file));
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 LOGGER.error("url " + file + " is malformed");
             }
         } else {
@@ -385,10 +385,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         }
     }
 
-    public void removeJarFileUrls(String file) {
+    public void removeJarFileUrls(final String file) {
         try {
             entityManagerFactoryCallable.getUnitInfo().getJarFileUrls().remove(new URL(file));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             LOGGER.error("url " + file + " is malformed");
         }
     }
@@ -397,11 +397,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         return entityManagerFactoryCallable.getUnitInfo().getManagedClassNames();
     }
 
-    public void addManagedClasses(String clazz) {
+    public void addManagedClasses(final String clazz) {
         entityManagerFactoryCallable.getUnitInfo().getManagedClassNames().add(clazz);
     }
 
-    public void removeManagedClasses(String clazz) {
+    public void removeManagedClasses(final String clazz) {
         entityManagerFactoryCallable.getUnitInfo().getManagedClassNames().remove(clazz);
     }
 
@@ -409,7 +409,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         return entityManagerFactoryCallable.getUnitInfo();
     }
 
-    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
+    public void setExcludeUnlistedClasses(final boolean excludeUnlistedClasses) {
         entityManagerFactoryCallable.getUnitInfo().setExcludeUnlistedClasses(excludeUnlistedClasses);
     }
 
@@ -427,7 +427,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public static class JMXReloadableEntityManagerFactory {
         private ReloadableEntityManagerFactory reloadableEntityManagerFactory;
 
-        public JMXReloadableEntityManagerFactory(ReloadableEntityManagerFactory remf) {
+        public JMXReloadableEntityManagerFactory(final ReloadableEntityManagerFactory remf) {
             reloadableEntityManagerFactory = remf;
         }
 
@@ -439,93 +439,93 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
         @ManagedOperation
         @Description("change the current JPA provider")
-        public void setProvider(String provider) {
+        public void setProvider(final String provider) {
             reloadableEntityManagerFactory.setProvider(provider);
         }
 
         @ManagedOperation
         @Description("change the current transaction type")
-        public void setTransactionType(String type) {
+        public void setTransactionType(final String type) {
             try {
-                PersistenceUnitTransactionType tt = PersistenceUnitTransactionType.valueOf(type.toUpperCase());
+                final PersistenceUnitTransactionType tt = PersistenceUnitTransactionType.valueOf(type.toUpperCase());
                 reloadableEntityManagerFactory.setTransactionType(tt);
-            } catch (Exception iae) {
+            } catch (final Exception iae) {
                 // ignored
             }
         }
 
         @ManagedOperation
         @Description("create or modify a property of the persistence unit")
-        public void setProperty(String key, String value) {
+        public void setProperty(final String key, final String value) {
             reloadableEntityManagerFactory.setProperty(key, value);
         }
 
         @ManagedOperation
         @Description("remove a property of the persistence unit if it exists")
-        public void removeProperty(String key) {
+        public void removeProperty(final String key) {
             reloadableEntityManagerFactory.removeProperty(key);
         }
 
         @ManagedOperation
         @Description("add a mapping file")
-        public void addMappingFile(String file) {
+        public void addMappingFile(final String file) {
             reloadableEntityManagerFactory.addMappingFile(file);
         }
 
         @ManagedOperation
         @Description("remove a mapping file")
-        public void removeMappingFile(String file) {
+        public void removeMappingFile(final String file) {
             reloadableEntityManagerFactory.removeMappingFile(file);
         }
 
         @ManagedOperation
         @Description("add a managed class")
-        public void addManagedClass(String clazz) {
+        public void addManagedClass(final String clazz) {
             reloadableEntityManagerFactory.addManagedClasses(clazz);
         }
 
         @ManagedOperation
         @Description("remove a managed class")
-        public void removeManagedClass(String clazz) {
+        public void removeManagedClass(final String clazz) {
             reloadableEntityManagerFactory.removeManagedClasses(clazz);
         }
 
         @ManagedOperation
         @Description("add a jar file")
-        public void addJarFile(String file) {
+        public void addJarFile(final String file) {
             reloadableEntityManagerFactory.addJarFileUrls(file);
         }
 
         @ManagedOperation
         @Description("remove a jar file")
-        public void removeJarFile(String file) {
+        public void removeJarFile(final String file) {
             reloadableEntityManagerFactory.removeJarFileUrls(file);
         }
 
         @ManagedOperation
         @Description("change the shared cache mode if possible (value is ok)")
-        public void setSharedCacheMode(String value) {
+        public void setSharedCacheMode(final String value) {
             try {
-                SharedCacheMode mode = SharedCacheMode.valueOf(value.trim().toUpperCase());
+                final SharedCacheMode mode = SharedCacheMode.valueOf(value.trim().toUpperCase());
                 reloadableEntityManagerFactory.setSharedCacheMode(mode);
-            } catch (Exception iae) {
+            } catch (final Exception iae) {
                 // ignored
             }
         }
 
         @ManagedOperation
         @Description("exclude or not unlisted entities")
-        public void setExcludeUnlistedClasses(boolean value) {
+        public void setExcludeUnlistedClasses(final boolean value) {
             reloadableEntityManagerFactory.setExcludeUnlistedClasses(value);
         }
 
         @ManagedOperation
         @Description("change the validation mode if possible (value is ok)")
-        public void setValidationMode(String value) {
+        public void setValidationMode(final String value) {
             try {
-                ValidationMode mode = ValidationMode.valueOf(value.trim().toUpperCase());
+                final ValidationMode mode = ValidationMode.valueOf(value.trim().toUpperCase());
                 reloadableEntityManagerFactory.setValidationMode(mode);
-            } catch (Exception iae) {
+            } catch (final Exception iae) {
                 LOGGER.warning("Can't set validation mode " + value, iae);
                 reloadableEntityManagerFactory.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, value);
             }
@@ -533,10 +533,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
         @ManagedOperation
         @Description("dump the current configuration for this persistence unit in a file")
-        public void dump(String file) {
-            PersistenceUnitInfoImpl info = reloadableEntityManagerFactory.entityManagerFactoryCallable.getUnitInfo();
+        public void dump(final String file) {
+            final PersistenceUnitInfoImpl info = reloadableEntityManagerFactory.entityManagerFactoryCallable.getUnitInfo();
 
-            Persistence.PersistenceUnit pu = new Persistence.PersistenceUnit();
+            final Persistence.PersistenceUnit pu = new Persistence.PersistenceUnit();
             pu.setJtaDataSource(info.getJtaDataSourceName());
             pu.setNonJtaDataSource(info.getNonJtaDataSourceName());
             pu.getClazz().addAll(info.getManagedClassNames());
@@ -547,11 +547,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             pu.setExcludeUnlistedClasses(info.excludeUnlistedClasses());
             pu.setSharedCacheMode(PersistenceUnitCaching.fromValue(info.getSharedCacheMode().name()));
             pu.setValidationMode(PersistenceUnitValidationMode.fromValue(info.getValidationMode().name()));
-            for (URL url : info.getJarFileUrls()) {
+            for (final URL url : info.getJarFileUrls()) {
                 pu.getJarFile().add(url.toString());
             }
-            for (String key : info.getProperties().stringPropertyNames()) {
-                Persistence.PersistenceUnit.Properties.Property prop = new Persistence.PersistenceUnit.Properties.Property();
+            for (final String key : info.getProperties().stringPropertyNames()) {
+                final Persistence.PersistenceUnit.Properties.Property prop = new Persistence.PersistenceUnit.Properties.Property();
                 prop.setName(key);
                 prop.setValue(info.getProperties().getProperty(key));
                 if (pu.getProperties() == null) {
@@ -560,18 +560,18 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                 pu.getProperties().getProperty().add(prop);
             }
 
-            Persistence persistence = new Persistence();
+            final Persistence persistence = new Persistence();
             persistence.setVersion(info.getPersistenceXMLSchemaVersion());
             persistence.getPersistenceUnit().add(pu);
 
             try {
-                FileWriter writer = new FileWriter(file);
-                JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
-                Marshaller marshaller = jc.createMarshaller();
+                final FileWriter writer = new FileWriter(file);
+                final JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
+                final Marshaller marshaller = jc.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 marshaller.marshal(persistence, writer);
                 writer.close();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("can't dump pu " + reloadableEntityManagerFactory.getPUname() + " in file " + file, e);
             }
         }
@@ -611,11 +611,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                     reloadableEntityManagerFactory.getManagedClasses(), Info.CLASS);
         }
 
-        private TabularData buildTabularData(String typeName, String typeDescription, List<?> list, Info info) {
-            String[] names = new String[list.size()];
-            Object[] values = new Object[names.length];
+        private TabularData buildTabularData(final String typeName, final String typeDescription, final List<?> list, final Info info) {
+            final String[] names = new String[list.size()];
+            final Object[] values = new Object[names.length];
             int i = 0;
-            for (Object o : list) {
+            for (final Object o : list) {
                 names[i] = o.toString();
                 values[i++] = info.info(reloadableEntityManagerFactory.classLoader, o);
             }
@@ -625,20 +625,20 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         private enum Info {
             URL, NONE, FILE, CLASS;
 
-            public String info(ClassLoader cl, Object o) {
+            public String info(final ClassLoader cl, final Object o) {
                 switch (this) {
                     case URL:
                         try {
                             if (((URL) o).openConnection().getContentLength() > 0) {
                                 return "valid";
                             }
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             // ignored
                         }
                         return "not valid";
 
                     case FILE:
-                        File file;
+                        final File file;
                         if (o instanceof String) {
                             file = new File((String) o);
                         } else if (o instanceof File) {
@@ -652,7 +652,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                         try {
                             cl.loadClass((String) o);
                             return "loaded";
-                        } catch (ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException e) {
                             return "unloadable";
                         }
 

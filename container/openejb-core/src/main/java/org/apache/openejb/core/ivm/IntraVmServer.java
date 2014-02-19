@@ -28,31 +28,31 @@ import javax.ejb.HomeHandle;
 
 public class IntraVmServer implements ApplicationServer {
 
-    public EJBMetaData getEJBMetaData(ProxyInfo pi) {
-        BeanContext beanContext = pi.getBeanContext();
-        IntraVmMetaData metaData = new IntraVmMetaData(beanContext.getHomeInterface(), beanContext.getRemoteInterface(), beanContext.getComponentType());
+    public EJBMetaData getEJBMetaData(final ProxyInfo pi) {
+        final BeanContext beanContext = pi.getBeanContext();
+        final IntraVmMetaData metaData = new IntraVmMetaData(beanContext.getHomeInterface(), beanContext.getRemoteInterface(), beanContext.getComponentType());
 
         metaData.setEJBHome(getEJBHome(pi));
         return metaData;
     }
 
-    public Handle getHandle(ProxyInfo pi) {
+    public Handle getHandle(final ProxyInfo pi) {
         return new IntraVmHandle(getEJBObject(pi));
     }
 
-    public HomeHandle getHomeHandle(ProxyInfo pi) {
+    public HomeHandle getHomeHandle(final ProxyInfo pi) {
         return new IntraVmHandle(getEJBHome(pi));
     }
 
-    public EJBObject getEJBObject(ProxyInfo pi) {
+    public EJBObject getEJBObject(final ProxyInfo pi) {
         return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getBeanContext(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces(), pi.getInterface());
     }
 
-    public Object getBusinessObject(ProxyInfo pi) {
+    public Object getBusinessObject(final ProxyInfo pi) {
         return EjbObjectProxyHandler.createProxy(pi.getBeanContext(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces(), pi.getInterface());
     }
 
-    public EJBHome getEJBHome(ProxyInfo pi) {
+    public EJBHome getEJBHome(final ProxyInfo pi) {
         return (EJBHome) EjbHomeProxyHandler.createHomeProxy(pi.getBeanContext(), pi.getInterfaceType());
     }
 

@@ -26,7 +26,7 @@ import java.util.Hashtable;
  * @deprecated use org.apache.openejb.core.LocalInitialContext
  */
 public class LocalInitialContext extends org.apache.openejb.core.LocalInitialContext {
-    public LocalInitialContext(Hashtable env, LocalInitialContextFactory factory) throws NamingException {
+    public LocalInitialContext(final Hashtable env, final LocalInitialContextFactory factory) throws NamingException {
         super(env, factory);
     }
 }

@@ -55,17 +55,17 @@ public class JmsConnectionFactoryBuilder extends Resource {
 
     }
 
-    public JmsConnectionFactoryBuilder id(String id) {
+    public JmsConnectionFactoryBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public JmsConnectionFactoryBuilder withResourceAdapter(String resourceAdapter) {
+    public JmsConnectionFactoryBuilder withResourceAdapter(final String resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
         return this;
     }
 
-    public void setResourceAdapter(String resourceAdapter) {
+    public void setResourceAdapter(final String resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
@@ -73,12 +73,12 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return resourceAdapter;
     }
 
-    public JmsConnectionFactoryBuilder withTransactionSupport(String transactionSupport) {
+    public JmsConnectionFactoryBuilder withTransactionSupport(final String transactionSupport) {
         this.transactionSupport = transactionSupport;
         return this;
     }
 
-    public void setTransactionSupport(String transactionSupport) {
+    public void setTransactionSupport(final String transactionSupport) {
         this.transactionSupport = transactionSupport;
     }
 
@@ -86,12 +86,12 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return transactionSupport;
     }
 
-    public JmsConnectionFactoryBuilder withPoolMaxSize(int poolMaxSize) {
+    public JmsConnectionFactoryBuilder withPoolMaxSize(final int poolMaxSize) {
         this.poolMaxSize = poolMaxSize;
         return this;
     }
 
-    public void setPoolMaxSize(int poolMaxSize) {
+    public void setPoolMaxSize(final int poolMaxSize) {
         this.poolMaxSize = poolMaxSize;
     }
 
@@ -99,12 +99,12 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return poolMaxSize;
     }
 
-    public JmsConnectionFactoryBuilder withPoolMinSize(int poolMinSize) {
+    public JmsConnectionFactoryBuilder withPoolMinSize(final int poolMinSize) {
         this.poolMinSize = poolMinSize;
         return this;
     }
 
-    public void setPoolMinSize(int poolMinSize) {
+    public void setPoolMinSize(final int poolMinSize) {
         this.poolMinSize = poolMinSize;
     }
 
@@ -112,12 +112,12 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return poolMinSize;
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(Duration connectionMaxWaitTime) {
+    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(final Duration connectionMaxWaitTime) {
         this.connectionMaxWaitTime = connectionMaxWaitTime;
         return this;
     }
 
-    public void setConnectionMaxWaitTime(Duration connectionMaxWaitTime) {
+    public void setConnectionMaxWaitTime(final Duration connectionMaxWaitTime) {
         this.connectionMaxWaitTime = connectionMaxWaitTime;
     }
 
@@ -125,20 +125,20 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return connectionMaxWaitTime;
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(long time, TimeUnit unit) {
+    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(final long time, final TimeUnit unit) {
         return withConnectionMaxWaitTime(new Duration(time, unit));
     }
 
-    public void setConnectionMaxWaitTime(long time, TimeUnit unit) {
+    public void setConnectionMaxWaitTime(final long time, final TimeUnit unit) {
         setConnectionMaxWaitTime(new Duration(time, unit));
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(Duration connectionMaxIdleTime) {
+    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(final Duration connectionMaxIdleTime) {
         this.connectionMaxIdleTime = connectionMaxIdleTime;
         return this;
     }
 
-    public void setConnectionMaxIdleTime(Duration connectionMaxIdleTime) {
+    public void setConnectionMaxIdleTime(final Duration connectionMaxIdleTime) {
         this.connectionMaxIdleTime = connectionMaxIdleTime;
     }
 
@@ -146,11 +146,11 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return connectionMaxIdleTime;
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(long time, TimeUnit unit) {
+    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(final long time, final TimeUnit unit) {
         return withConnectionMaxIdleTime(new Duration(time, unit));
     }
 
-    public void setConnectionMaxIdleTime(long time, TimeUnit unit) {
+    public void setConnectionMaxIdleTime(final long time, final TimeUnit unit) {
         setConnectionMaxIdleTime(new Duration(time, unit));
     }
 

@@ -41,7 +41,7 @@ import javax.transaction.TransactionRequiredException;
 public class TxMandatory extends JtaTransactionPolicy {
     private final Transaction clientTx;
 
-    public TxMandatory(TransactionManager transactionManager) throws SystemException, ApplicationException {
+    public TxMandatory(final TransactionManager transactionManager) throws SystemException, ApplicationException {
         super(TransactionType.Mandatory, transactionManager);
 
         clientTx = getTransaction();

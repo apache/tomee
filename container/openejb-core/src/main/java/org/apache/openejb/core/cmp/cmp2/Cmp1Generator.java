@@ -40,7 +40,7 @@ public class Cmp1Generator implements Opcodes {
      *                  The name of the generated implementation class.
      * @param beanClass The source Bean class we're wrappering.
      */
-    public Cmp1Generator(String cmpImplClass, Class beanClass) {
+    public Cmp1Generator(final String cmpImplClass, final Class beanClass) {
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
 
@@ -63,7 +63,7 @@ public class Cmp1Generator implements Opcodes {
         // if we have an unknown pk, we need to add a field for the pk
         if (unknownPk) {
             // public Long OpenEJB_pk;
-            FieldVisitor fv = cw.visitField(ACC_PUBLIC, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
+            final FieldVisitor fv = cw.visitField(ACC_PUBLIC, "OpenEJB_pk", "Ljava/lang/Long;", null, null);
             fv.visitEnd();
         }
 
@@ -99,7 +99,7 @@ public class Cmp1Generator implements Opcodes {
         return unknownPk;
     }
 
-    public void setUnknownPk(boolean unknownPk) {
+    public void setUnknownPk(final boolean unknownPk) {
         this.unknownPk = unknownPk;
     }
 }

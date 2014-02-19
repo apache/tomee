@@ -188,11 +188,11 @@ public class ClassLoaderUtil {
                         jf = (JarFile) loader.get(jl);
                         files.add(jf.getName());
                         jf.close();
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         //If we got this far, this is probably not a JAR loader so skip it
                     }
                 }
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 //Not an Oracle VM
             }
         }
@@ -209,7 +209,7 @@ public class ClassLoaderUtil {
 
         try {
             nativeLibraries = classClassLoader.getDeclaredField("nativeLibraries");
-        } catch (NoSuchFieldException e1) {
+        } catch (final NoSuchFieldException e1) {
             //Ignore
         }
 
@@ -222,7 +222,7 @@ public class ClassLoaderUtil {
 
         try {
             obj = nativeLibraries.get(cl);
-        } catch (IllegalAccessException e1) {
+        } catch (final IllegalAccessException e1) {
             //Ignore
         }
 
@@ -245,11 +245,11 @@ public class ClassLoaderUtil {
 
                     try {
                         finalize.invoke(lib, new Object[0]);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -425,7 +425,7 @@ public class ClassLoaderUtil {
                     if (null != remove) {
                         logger.debug("Removed item from fileCache: " + remove);
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     logger.warning("Failed to remove item from fileCache: " + next);
                 }
             }
@@ -440,30 +440,30 @@ public class ClassLoaderUtil {
 
                     try {
                         ((ZipFile) next).close();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
 
                     if (null != remove) {
                         logger.debug("Removed item from urlCache: " + remove);
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     logger.warning("Failed to remove item from urlCache: " + next);
                 }
 
             }
 
-        } catch (ConcurrentModificationException e) {
+        } catch (final ConcurrentModificationException e) {
             if (attempt > 0) {
                 clearSunJarFileFactoryCacheImpl(jarLocation, attempt - 1);
             } else {
                 logger.error("Unable to clear Sun JarFileFactory cache after 5 attempts", e);
             }
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // not a sun vm
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             // different version of sun vm?
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             logger.error("Unable to clear Sun JarFileFactory cache", e);
         }
     }
@@ -495,7 +495,7 @@ public class ClassLoaderUtil {
             field.setAccessible(true);
             final Map cache = (Map) field.get(null);
             cache.clear();
-        } catch (Throwable ignored) {
+        } catch (final Throwable ignored) {
             // there is nothing a user could do about this anyway
         }
     }
@@ -505,7 +505,7 @@ public class ClassLoaderUtil {
             final Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
             final Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
             deRegisterMethod.invoke(null, classLoader);
-        } catch (Throwable ignored) {
+        } catch (final Throwable ignored) {
             // there is nothing a user could do about this anyway
         }
     }
@@ -554,7 +554,7 @@ public class ClassLoaderUtil {
             boolean list = false;
             try {
                 ClassLoaderUtil.class.getClassLoader().loadClass(impl);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 list = true;
             }
 
@@ -591,7 +591,7 @@ public class ClassLoaderUtil {
             } else {
                 logger.error(impl + " is not a classlaoder configurer, using default behavior");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Can't create classloader configurer " + impl + ", using default behavior");
         }
         return null;

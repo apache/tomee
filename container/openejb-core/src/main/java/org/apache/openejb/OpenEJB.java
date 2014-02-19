@@ -82,7 +82,7 @@ public final class OpenEJB {
                 Logger.configure();
 
                 OptionsLog.install();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException(e);
             }
             final SystemInstance system = SystemInstance.get();
@@ -125,10 +125,10 @@ public final class OpenEJB {
             final Assembler assembler;
             try {
                 assembler = (Assembler) SafeToolkit.getToolkit("OpenEJB").newInstance(className);
-            } catch (OpenEJBException oe) {
+            } catch (final OpenEJBException oe) {
                 logger.fatal("startup.assemblerCannotBeInstantiated", oe);
                 throw oe;
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 final String msg = messages.message("startup.openejbEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
@@ -136,10 +136,10 @@ public final class OpenEJB {
 
             try {
                 assembler.init(system.getProperties());
-            } catch (OpenEJBException oe) {
+            } catch (final OpenEJBException oe) {
                 logger.fatal("startup.assemblerFailedToInitialize", oe);
                 throw oe;
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 final String msg = messages.message("startup.assemblerEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
@@ -147,10 +147,10 @@ public final class OpenEJB {
 
             try {
                 assembler.build();
-            } catch (OpenEJBException oe) {
+            } catch (final OpenEJBException oe) {
                 logger.fatal("startup.assemblerFailedToBuild", oe);
                 throw oe;
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 final String msg = messages.message("startup.assemblerEncounterUnexpectedBuildError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);

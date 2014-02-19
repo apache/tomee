@@ -33,7 +33,7 @@ import java.util.Date;
 public class TimerImpl implements Timer, Serializable {
     private final TimerData timerData;
 
-    public TimerImpl(TimerData timerData) {
+    public TimerImpl(final TimerData timerData) {
         this.timerData = timerData;
     }
 
@@ -44,7 +44,7 @@ public class TimerImpl implements Timer, Serializable {
 
     public long getTimeRemaining() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        Date nextTimeout = timerData.getNextTimeout();
+        final Date nextTimeout = timerData.getNextTimeout();
         if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
         return timerData.getTimeRemaining();
     }
@@ -52,7 +52,7 @@ public class TimerImpl implements Timer, Serializable {
     public Date getNextTimeout() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
         
-        Date nextTimeout = timerData.getNextTimeout();
+        final Date nextTimeout = timerData.getNextTimeout();
         if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
         return timerData.getNextTimeout();
     }

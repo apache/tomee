@@ -150,14 +150,14 @@ public abstract class TimerData implements Serializable {
             timerService = (EjbTimerServiceImpl) in.readObject();
             info = in.readObject();
             trigger = AbstractTrigger.class.cast(in.readObject());
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IOException(e);
         }
 
         final String mtd = in.readUTF();
         final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         scheduler = timerService.getScheduler();
-        for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+        for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
             final MethodContext methodContext = it.next().getValue();
             /* this doesn't work in all cases
             if (methodContext.getSchedules().isEmpty()) {
@@ -185,7 +185,7 @@ public abstract class TimerData implements Serializable {
                         s.pauseTrigger(trigger.getKey());
                     }
                 }
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
             }
         }
@@ -226,7 +226,7 @@ public abstract class TimerData implements Serializable {
         newTimer = true;
         try {
             registerTimerDataSynchronization();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException("Failed to register new timer data synchronization", e);
         }
     }
@@ -248,14 +248,14 @@ public abstract class TimerData implements Serializable {
                 if (!s.isShutdown()) {
                     s.unscheduleJob(trigger.getKey());
                 }
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
             }
         }
         cancelled = true;
         try {
             registerTimerDataSynchronization();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException("Failed to register timer data synchronization on cancel", e);
         }
     }
@@ -302,7 +302,7 @@ public abstract class TimerData implements Serializable {
                 synchronizationRegistered = true;
                 return;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Unable to register timer data transaction synchronization", e);
         }
 
@@ -325,7 +325,7 @@ public abstract class TimerData implements Serializable {
             synchronizationRegistered = false;
             try {
                 transactionComplete(status == Status.STATUS_COMMITTED);
-            } catch (TimerStoreException e) {
+            } catch (final TimerStoreException e) {
                 throw new EJBException("Failed on afterCompletion", e);
             }
         }
@@ -343,7 +343,7 @@ public abstract class TimerData implements Serializable {
                 if (scheduler.checkExists(key)) {
                     return scheduler.getTrigger(key);
                 }
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 return null;
             }
         }
@@ -356,7 +356,7 @@ public abstract class TimerData implements Serializable {
         try {
             // give the trigger 1 ms to init itself to set correct nextTimeout value.
             Thread.sleep(1);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             log.warning("Interrupted exception when waiting 1ms for the trigger to init", e);
         }
 

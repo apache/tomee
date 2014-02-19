@@ -17,9 +17,9 @@
 package org.apache.openejb.core.cmp;
 
 public class CmpUtil {
-    public static String getCmpImplClassName(String abstractSchemaName, String ejbClass) {
+    public static String getCmpImplClassName(final String abstractSchemaName, final String ejbClass) {
         // locate the end of the package portion 
-        int packageEnd = ejbClass.lastIndexOf('.'); 
+        final int packageEnd = ejbClass.lastIndexOf('.');
         // we have a package, pull that out and add "openejb." in front of the package
         if (packageEnd != -1) {
             return "openejb." + ejbClass.substring(0, packageEnd + 1) + abstractSchemaName;

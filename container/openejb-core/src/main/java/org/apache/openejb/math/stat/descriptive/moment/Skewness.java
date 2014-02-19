@@ -76,7 +76,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
      *
      * @param original the {@code Skewness} instance to copy
      */
-    public Skewness(Skewness original) {
+    public Skewness(final Skewness original) {
         copy(original, this);
     }
 
@@ -103,11 +103,11 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
         if (moment.n < 3) {
             return Double.NaN;
         }
-        double variance = moment.m2 / (moment.n - 1);
+        final double variance = moment.m2 / (moment.n - 1);
         if (variance < 10E-20) {
             return 0.0d;
         } else {
-            double n0 = moment.getN();
+            final double n0 = moment.getN();
             return  n0 * moment.m3 /
             ((n0 - 1) * (n0 -2) * Math.sqrt(variance) * variance);
         }
@@ -154,9 +154,9 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
         double skew = Double.NaN;
 
         if (test(values, begin, length) && length > 2 ){
-            Mean mean = new Mean();
+            final Mean mean = new Mean();
             // Get the mean and the standard deviation
-            double m = mean.evaluate(values, begin, length);
+            final double m = mean.evaluate(values, begin, length);
 
             // Calc the std, this is implemented here instead
             // of using the standardDeviation method eliminate
@@ -178,7 +178,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
             accum3 /= variance * Math.sqrt(variance);
 
             // Get N
-            double n0 = length;
+            final double n0 = length;
 
             // Calculate skewness
             skew = n0 / ((n0 - 1) * (n0 - 2)) * accum3;
@@ -191,7 +191,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
      */
     @Override
     public Skewness copy() {
-        Skewness result = new Skewness();
+        final Skewness result = new Skewness();
         copy(this, result);
         return result;
     }
@@ -204,7 +204,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
      * @param dest Skewness to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Skewness source, Skewness dest) {
+    public static void copy(final Skewness source, final Skewness dest) {
         dest.moment = new ThirdMoment(source.moment.copy());
         dest.incMoment = source.incMoment;
     }

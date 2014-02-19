@@ -72,7 +72,7 @@ public class FourthMoment extends ThirdMoment implements Serializable{
      *
      * @param original the {@code FourthMoment} instance to copy
      */
-     public FourthMoment(FourthMoment original) {
+     public FourthMoment(final FourthMoment original) {
          super();
          copy(original, this);
      }
@@ -89,12 +89,12 @@ public class FourthMoment extends ThirdMoment implements Serializable{
             m1 = 0.0;
         }
 
-        double prevM3 = m3;
-        double prevM2 = m2;
+        final double prevM3 = m3;
+        final double prevM2 = m2;
 
         super.increment(d);
 
-        double n0 = n;
+        final double n0 = n;
 
         m4 = m4 - 4.0 * nDev * prevM3 + 6.0 * nDevSq * prevM2 +
             (n0 * n0 - 3 * (n0 -1)) * nDevSq * nDevSq * (n0 - 1) * n0;
@@ -122,7 +122,7 @@ public class FourthMoment extends ThirdMoment implements Serializable{
      */
     @Override
     public FourthMoment copy() {
-        FourthMoment result = new FourthMoment();
+        final FourthMoment result = new FourthMoment();
         copy(this, result);
         return result;
     }
@@ -135,7 +135,7 @@ public class FourthMoment extends ThirdMoment implements Serializable{
      * @param dest FourthMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(FourthMoment source, FourthMoment dest) {
+    public static void copy(final FourthMoment source, final FourthMoment dest) {
         ThirdMoment.copy(source, dest);
         dest.m4 = source.m4;
     }

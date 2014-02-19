@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class IntrospectionSupport {
     
-    public static boolean getProperties(Object target, Map<String, String> props,
+    public static boolean getProperties(final Object target, final Map<String, String> props,
             String optionPrefix) {
 
         boolean rc = false;
@@ -46,23 +46,23 @@ public class IntrospectionSupport {
         if (optionPrefix == null)
             optionPrefix = "";
 
-        Class clazz = target.getClass();
-        Method[] methods = clazz.getMethods();
+        final Class clazz = target.getClass();
+        final Method[] methods = clazz.getMethods();
         for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+            final Method method = methods[i];
             String name = method.getName();
-            Class type = method.getReturnType();
-            Class[] params = method.getParameterTypes();
+            final Class type = method.getReturnType();
+            final Class[] params = method.getParameterTypes();
             if (name.startsWith("get") && params.length == 0 && type != null
                     && isSettableType(type)) {
 
                 try {
 
-                    Object value = method.invoke(target, new Object[] {});
+                    final Object value = method.invoke(target, new Object[] {});
                     if (value == null)
                         continue;
 
-                    String strValue = convertToString(value, type);
+                    final String strValue = convertToString(value, type);
                     if (strValue == null)
                         continue;
 
@@ -71,7 +71,7 @@ public class IntrospectionSupport {
                     props.put(optionPrefix + name, strValue);
                     rc = true;
 
-                } catch (Throwable ignore) {
+                } catch (final Throwable ignore) {
                     // no-op
                 }
 
@@ -81,18 +81,18 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(Object target, Map props,
-            String optionPrefix) {
+    public static boolean setProperties(final Object target, final Map props,
+            final String optionPrefix) {
         boolean rc = false;
         if (target == null)
             throw new IllegalArgumentException("target was null.");
         if (props == null)
             throw new IllegalArgumentException("props was null.");
 
-        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
+        for (final Iterator iter = props.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             if (name.startsWith(optionPrefix)) {
-                Object value = props.get(name);
+                final Object value = props.get(name);
                 name = name.substring(optionPrefix.length());
                 if (setProperty(target, name, value)) {
                     iter.remove();
@@ -103,16 +103,16 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    public static Map extractProperties(Map props, String optionPrefix) {
+    public static Map extractProperties(final Map props, final String optionPrefix) {
         if (props == null)
             throw new IllegalArgumentException("props was null.");
 
-        HashMap<String, Object> rc = new HashMap<String, Object>(props.size());
+        final HashMap<String, Object> rc = new HashMap<String, Object>(props.size());
 
-        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
+        for (final Iterator iter = props.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             if (name.startsWith(optionPrefix)) {
-                Object value = props.get(name);
+                final Object value = props.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
                 iter.remove();
@@ -122,7 +122,7 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(Object target, Map props) {
+    public static boolean setProperties(final Object target, final Map props) {
         boolean rc = false;
 
         if (target == null)
@@ -130,8 +130,8 @@ public class IntrospectionSupport {
         if (props == null)
             throw new IllegalArgumentException("props was null.");
 
-        for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Entry) iter.next();
+        for (final Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
+            final Map.Entry entry = (Entry) iter.next();
             if (setProperty(target, (String) entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
@@ -141,10 +141,10 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    private static boolean setProperty(Object target, String name, Object value) {
+    private static boolean setProperty(final Object target, final String name, final Object value) {
         try {
-            Class clazz = target.getClass();
-            Method setter = findSetterMethod(clazz, name);
+            final Class clazz = target.getClass();
+            final Method setter = findSetterMethod(clazz, name);
             if (setter == null)
                 return false;
 
@@ -159,14 +159,14 @@ public class IntrospectionSupport {
                         .getParameterTypes()[0]) });
             }
             return true;
-        } catch (Throwable ignore) {
+        } catch (final Throwable ignore) {
             return false;
         }
     }
 
-    private static Object convert(Object value, Class type)
+    private static Object convert(final Object value, final Class type)
             throws URISyntaxException {
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
+        final PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {
             editor.setAsText(value.toString());
             return editor.getValue();
@@ -177,9 +177,9 @@ public class IntrospectionSupport {
         return null;
     }
 
-    private static String convertToString(Object value, Class type)
+    private static String convertToString(final Object value, final Class type)
             throws URISyntaxException {
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
+        final PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {
             editor.setValue(value);
             return editor.getAsText();
@@ -190,13 +190,13 @@ public class IntrospectionSupport {
         return null;
     }
 
-    private static Method findSetterMethod(Class clazz, String name) {
+    private static Method findSetterMethod(final Class clazz, String name) {
         // Build the method name.
         name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-        Method[] methods = clazz.getMethods();
+        final Method[] methods = clazz.getMethods();
         for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
-            Class[] params = method.getParameterTypes();
+            final Method method = methods[i];
+            final Class[] params = method.getParameterTypes();
             if (method.getName().equals(name) && params.length == 1
                     && isSettableType(params[0])) {
                 return method;
@@ -205,7 +205,7 @@ public class IntrospectionSupport {
         return null;
     }
 
-    private static boolean isSettableType(Class clazz) {
+    private static boolean isSettableType(final Class clazz) {
         if (PropertyEditorManager.findEditor(clazz) != null)
             return true;
         if (clazz == URI.class)
@@ -215,19 +215,19 @@ public class IntrospectionSupport {
         return false;
     }
 
-    public static String toString(Object target) {
+    public static String toString(final Object target) {
         return toString(target, Object.class);
     }
 
-    public static String toString(Object target, Class stopClass) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+    public static String toString(final Object target, final Class stopClass) {
+        final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         addFields(target, target.getClass(), stopClass, map);
-        StringBuilder buffer = new StringBuilder(simpleName(target.getClass()));
+        final StringBuilder buffer = new StringBuilder(simpleName(target.getClass()));
         buffer.append(" {");
-        Set entrySet = map.entrySet();
+        final Set entrySet = map.entrySet();
         boolean first = true;
-        for (Iterator iter = entrySet.iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
+        for (final Iterator iter = entrySet.iterator(); iter.hasNext();) {
+            final Map.Entry entry = (Map.Entry) iter.next();
             if (first) {
                 first = false;
             } else {
@@ -241,28 +241,28 @@ public class IntrospectionSupport {
         return buffer.toString();
     }
 
-    protected static void appendToString(StringBuilder buffer, Object value) {
+    protected static void appendToString(final StringBuilder buffer, final Object value) {
         buffer.append(value);
     }
 
-    public static String simpleName(Class clazz) {
+    public static String simpleName(final Class clazz) {
         String name = clazz.getName();
-        int p = name.lastIndexOf(".");
+        final int p = name.lastIndexOf(".");
         if (p >= 0) {
             name = name.substring(p + 1);
         }
         return name;
     }
 
-    private static void addFields(Object target, Class startClass,
-            Class stopClass, LinkedHashMap<String, Object> map) {
+    private static void addFields(final Object target, final Class startClass,
+            final Class stopClass, final LinkedHashMap<String, Object> map) {
 
         if (startClass != stopClass)
             addFields(target, startClass.getSuperclass(), stopClass, map);
 
-        Field[] fields = startClass.getDeclaredFields();
+        final Field[] fields = startClass.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
+            final Field field = fields[i];
             if (Modifier.isStatic(field.getModifiers())
                     || Modifier.isTransient(field.getModifiers())
                     || Modifier.isPrivate(field.getModifiers())) {
@@ -275,30 +275,30 @@ public class IntrospectionSupport {
                 if (o != null && o.getClass().isArray()) {
                     try {
                         o = Arrays.asList((Object[]) o);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         // no-op
                     }
                 }
                 map.put(field.getName(), o);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
         }
 
     }
     
-    public static Class getPropertyType(Class clazz, String propertyName) throws NoSuchFieldException {
+    public static Class getPropertyType(Class clazz, final String propertyName) throws NoSuchFieldException {
         do {
             try {
                 return clazz.getDeclaredField(propertyName).getType();
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 //look at superclass
             }
-            for (Method method: clazz.getDeclaredMethods()) {
+            for (final Method method: clazz.getDeclaredMethods()) {
                 if (method.getReturnType() == void.class && method.getParameterTypes().length == 1) {
-                    String methodName = method.getName();
+                    final String methodName = method.getName();
                     if (methodName.startsWith("set")) {
-                        String type = Introspector.decapitalize(methodName.substring(3));
+                        final String type = Introspector.decapitalize(methodName.substring(3));
                         if (propertyName.equals(type)) {
                             return method.getParameterTypes()[0];
                         }

@@ -34,51 +34,51 @@ import java.util.Map;
  */
 public class ApplyOpenejbJar implements DynamicDeployer {
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
-            Map<String, EjbDeployment> ejbDeployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+            final Map<String, EjbDeployment> ejbDeployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
-            for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+            for (final EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
 
                 // Get the OpenEJB deployment from openejb-jar.xml
-                EjbDeployment ejbDeployment = ejbDeployments.get(enterpriseBean.getEjbName());
+                final EjbDeployment ejbDeployment = ejbDeployments.get(enterpriseBean.getEjbName());
 
                 enterpriseBean.setId(ejbDeployment.getDeploymentId());
 
                 // Copy all links over to mappedName
 
-                for (ResourceRef ref : enterpriseBean.getResourceRef()) {
-                    ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+                for (final ResourceRef ref : enterpriseBean.getResourceRef()) {
+                    final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
                     if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
                         ref.setMappedName(resourceLink.getResId());
                     }
                 }
 
-                for (ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
-                    ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+                for (final ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
+                    final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
                     if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
                         ref.setMappedName(resourceLink.getResId());
                     }
                 }
 
-                for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
-                    ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+                for (final MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
+                    final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
                     if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
                         ref.setMappedName(resourceLink.getResId());
                     }
                 }
 
-                for (EjbRef ref : enterpriseBean.getEjbRef()) {
-                    EjbLink ejbLink = ejbDeployment.getEjbLink(ref.getName());
+                for (final EjbRef ref : enterpriseBean.getEjbRef()) {
+                    final EjbLink ejbLink = ejbDeployment.getEjbLink(ref.getName());
                     if (ejbLink != null && ejbLink.getDeployentId() != null /* don't overwrite with null */) {
                         ref.setMappedName(ejbLink.getDeployentId());
                     }
                 }
 
-                for (EjbLocalRef ref : enterpriseBean.getEjbLocalRef()) {
-                    EjbLink ejbLink = ejbDeployment.getEjbLink(ref.getName());
+                for (final EjbLocalRef ref : enterpriseBean.getEjbLocalRef()) {
+                    final EjbLink ejbLink = ejbDeployment.getEjbLink(ref.getName());
                     if (ejbLink != null && ejbLink.getDeployentId() != null /* don't overwrite with null */) {
                         ref.setMappedName(ejbLink.getDeployentId());
                     }

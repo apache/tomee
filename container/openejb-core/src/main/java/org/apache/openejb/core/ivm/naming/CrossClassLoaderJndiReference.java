@@ -25,7 +25,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class CrossClassLoaderJndiReference extends IntraVmJndiReference {
-    public CrossClassLoaderJndiReference(String jndiName) {
+    public CrossClassLoaderJndiReference(final String jndiName) {
         super(jndiName);
     }
 
@@ -33,22 +33,22 @@ public class CrossClassLoaderJndiReference extends IntraVmJndiReference {
         Object o = super.getObject();
         try {
             o = copy(o);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new NamingException("Error copying object into local class loader", e);
         }
         return o;
     }
 
-    private static Object copy(Object source) throws Exception {
+    private static Object copy(final Object source) throws Exception {
         IntraVmCopyMonitor.preCrossClassLoaderOperation();
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            ObjectOutputStream out = new ObjectOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+            final ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(source);
             out.close();
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream in = new EjbObjectInputStream(bais);
+            final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            final ObjectInputStream in = new EjbObjectInputStream(bais);
             return in.readObject();
         } finally {
             IntraVmCopyMonitor.postCrossClassLoaderOperation();

@@ -48,7 +48,7 @@ public class TxRequiresNew extends JtaTransactionPolicy {
     private final Transaction clientTx;
     private final Transaction currentTx;
 
-    public TxRequiresNew(TransactionManager transactionManager) throws SystemException {
+    public TxRequiresNew(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.RequiresNew, transactionManager);
 
         clientTx = suspendTransaction();

@@ -41,17 +41,17 @@ public class CmpEntityContainerBuilder extends Container {
 
     }
 
-    public CmpEntityContainerBuilder id(String id) {
+    public CmpEntityContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public CmpEntityContainerBuilder withCmpEngineFactory(String cmpEngineFactory) {
+    public CmpEntityContainerBuilder withCmpEngineFactory(final String cmpEngineFactory) {
         this.cmpEngineFactory = cmpEngineFactory;
         return this;
     }
 
-    public void setCmpEngineFactory(String cmpEngineFactory) {
+    public void setCmpEngineFactory(final String cmpEngineFactory) {
         this.cmpEngineFactory = cmpEngineFactory;
     }
 

@@ -80,16 +80,16 @@ public class IvmContext implements Context, Serializable {
         this(new NameNode(null, new ParsedName(""), null, null));
     }
 
-    public IvmContext(String nodeName) {
+    public IvmContext(final String nodeName) {
         this(new NameNode(null, new ParsedName(nodeName), null, null));
     }
 
-    public IvmContext(NameNode node) {
+    public IvmContext(final NameNode node) {
         mynode = node;
 //        mynode.setMyContext(this);
     }
 
-    public IvmContext(Hashtable<String, Object> environment) throws NamingException {
+    public IvmContext(final Hashtable<String, Object> environment) throws NamingException {
         this();
         if (environment == null)
             throw new NamingException("Invalid Argument");
@@ -98,19 +98,19 @@ public class IvmContext implements Context, Serializable {
 
     }
 
-    public Object lookup(String compositName) throws NamingException {
+    public Object lookup(final String compositName) throws NamingException {
         if (compositName.equals("")) {
             return this;
         }
 
-        String compoundName;
-        int index = compositName.indexOf(":");
+        final String compoundName;
+        final int index = compositName.indexOf(":");
         if (index > -1) {
 
-            String prefix = compositName.substring(0, index);
+            final String prefix = compositName.substring(0, index);
 
             String path = compositName.substring(index + 1);
-            ParsedName name = new ParsedName(path);
+            final ParsedName name = new ParsedName(path);
 
             if (prefix.equals("openejb")){
                 path = name.path();
@@ -145,7 +145,7 @@ public class IvmContext implements Context, Serializable {
         if (obj == null) {
             try {
                 obj = mynode.resolve(new ParsedName(compoundName));
-            } catch (NameNotFoundException nnfe) {
+            } catch (final NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
 
@@ -177,18 +177,18 @@ public class IvmContext implements Context, Serializable {
         return obj;
     }
 
-    protected Object federate(String compositName) throws NamingException {
-        ObjectFactory[] factories = getFederatedFactories();
-        for (ObjectFactory factory : factories) {
+    protected Object federate(final String compositName) throws NamingException {
+        final ObjectFactory[] factories = getFederatedFactories();
+        for (final ObjectFactory factory : factories) {
             try {
-                CompositeName name = new CompositeName(compositName);
-                Object obj = factory.getObjectInstance(null, name, null, null);
+                final CompositeName name = new CompositeName(compositName);
+                final Object obj = factory.getObjectInstance(null, name, null, null);
 
                 if (obj instanceof Context)
                     return ((Context) obj).lookup(compositName);
                 else if (obj != null)
                     return obj;
-            } catch (Exception doNothing) {
+            } catch (final Exception doNothing) {
                 // no-op
             }
         }
@@ -200,31 +200,31 @@ public class IvmContext implements Context, Serializable {
 
     public static ObjectFactory [] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
-            Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
-            String urlPackagePrefixes = getUrlPackagePrefixes();
+            final Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
+            final String urlPackagePrefixes = getUrlPackagePrefixes();
             if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
             }
-            for (StringTokenizer tokenizer = new StringTokenizer(urlPackagePrefixes, ":"); tokenizer.hasMoreTokens();) {
-                String urlPackagePrefix = tokenizer.nextToken();
-                String className = urlPackagePrefix + ".java.javaURLContextFactory";
+            for (final StringTokenizer tokenizer = new StringTokenizer(urlPackagePrefixes, ":"); tokenizer.hasMoreTokens();) {
+                final String urlPackagePrefix = tokenizer.nextToken();
+                final String className = urlPackagePrefix + ".java.javaURLContextFactory";
                 if (className.equals("org.apache.openejb.core.ivm.naming.java.javaURLContextFactory"))
                     continue;
                 try {
-                    ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
-                    Class factoryClass = Class.forName(className, true, cl);
-                    ObjectFactory factoryInstance = (ObjectFactory) factoryClass.newInstance();
+                    final ClassLoader cl = ClassLoaderUtil.getContextClassLoader();
+                    final Class factoryClass = Class.forName(className, true, cl);
+                    final ObjectFactory factoryInstance = (ObjectFactory) factoryClass.newInstance();
                     factories.add(factoryInstance);
-                } catch (ClassNotFoundException cnfe) {
+                } catch (final ClassNotFoundException cnfe) {
                     // no-op
 
-                } catch (Throwable e) {
-                    NamingException ne = new NamingException("Federation failed: Cannot instantiate " + className);
+                } catch (final Throwable e) {
+                    final NamingException ne = new NamingException("Federation failed: Cannot instantiate " + className);
                     ne.setRootCause(e);
                     throw ne;
                 }
             }
-            Object [] temp = factories.toArray();
+            final Object [] temp = factories.toArray();
             federatedFactories = new ObjectFactory[temp.length];
             System.arraycopy(temp, 0, federatedFactories, 0, federatedFactories.length);
         }
@@ -241,27 +241,27 @@ public class IvmContext implements Context, Serializable {
             if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
 
             try {
-                Enumeration<URL> resources = classLoader.getResources("jndi.properties");
+                final Enumeration<URL> resources = classLoader.getResources("jndi.properties");
                 while (urlPackagePrefixes == null && resources.hasMoreElements()) {
-                    URL resource = resources.nextElement();
-                    InputStream in = IO.read(resource);
+                    final URL resource = resources.nextElement();
+                    final InputStream in = IO.read(resource);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 }
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             }
         }
 
         // 3. ${java.home}/lib/jndi.properties
         if (urlPackagePrefixes == null) {
-            String javahome = System.getProperty("java.home");
+            final String javahome = System.getProperty("java.home");
             if (javahome != null) {
                 InputStream in = null;
                 try {
-                    File propertiesFile = new File(new File(javahome, "lib"), "jndi.properties");
+                    final File propertiesFile = new File(new File(javahome, "lib"), "jndi.properties");
                     in = IO.read(propertiesFile);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
-                } catch (FileNotFoundException ignored) {
+                } catch (final FileNotFoundException ignored) {
                     // no-op
                 } finally {
                     IO.close(in);
@@ -272,22 +272,22 @@ public class IvmContext implements Context, Serializable {
         return urlPackagePrefixes;
     }
 
-    private static String getUrlPackagePrefixes(InputStream in) {
+    private static String getUrlPackagePrefixes(final InputStream in) {
         try {
             final Properties properties = IO.readProperties(in, new Properties());
             return properties.getProperty(Context.URL_PKG_PREFIXES);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return null;
         }
     }
 
-    public Object lookup(Name compositName) throws NamingException {
+    public Object lookup(final Name compositName) throws NamingException {
         return lookup(compositName.toString());
     }
 
-    public void bind(String name, Object obj) throws NamingException {
+    public void bind(String name, final Object obj) throws NamingException {
         checkReadOnly();
-        int indx = name.indexOf(":");
+        final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -298,31 +298,31 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name))
             throw new NameAlreadyBoundException();
         else {
-            ParsedName parsedName = new ParsedName(name);
+            final ParsedName parsedName = new ParsedName(name);
             mynode.bind(parsedName, obj);
         }
     }
 
-    public void bind(Name name, Object obj) throws NamingException {
+    public void bind(final Name name, final Object obj) throws NamingException {
         bind(name.toString(), obj);
     }
 
-    public void rebind(String name, Object obj) throws NamingException {
+    public void rebind(final String name, final Object obj) throws NamingException {
         try {
             unbind(name);
-        } catch (NameNotFoundException e) {
+        } catch (final NameNotFoundException e) {
             // no-op
         }
         bind(name, obj);
     }
 
-    public void rebind(Name name, Object obj) throws NamingException {
+    public void rebind(final Name name, final Object obj) throws NamingException {
         rebind(name.toString(), obj);
     }
 
     public void unbind(String name) throws NamingException {
         checkReadOnly();
-        int indx = name.indexOf(":");
+        final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -336,12 +336,12 @@ public class IvmContext implements Context, Serializable {
         mynode.unbind(new ParsedName(name));
     }
 
-    public void unbind(Name name) throws NamingException {
+    public void unbind(final Name name) throws NamingException {
         unbind(name.toString());
     }
 
-    public void prune(String name) throws NamingException {
-        IvmContext ctx = (IvmContext) lookup(name);
+    public void prune(final String name) throws NamingException {
+        final IvmContext ctx = (IvmContext) lookup(name);
         ctx.prune();
     }
 
@@ -349,16 +349,16 @@ public class IvmContext implements Context, Serializable {
         mynode.prune();
     }
 
-    public void rename(String oldname, String newname) throws NamingException {
+    public void rename(final String oldname, final String newname) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void rename(Name oldname, Name newname) throws NamingException {
+    public void rename(final Name oldname, final Name newname) throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
 
-    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-        Object obj = lookup(name);
+    public NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
+        final Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
             return new MyListEnumeration(((IvmContext) obj).mynode);
         else {
@@ -366,12 +366,12 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
-        Object obj = lookup(name);
+    public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
+        final Object obj = lookup(name);
         if (obj.getClass() == IvmContext.class)
             return new MyBindingEnumeration(((IvmContext) obj).mynode);
         else {
@@ -379,21 +379,21 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
         return listBindings(name.toString());
     }
 
-    public void destroySubcontext(String name) throws NamingException {
+    public void destroySubcontext(final String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void destroySubcontext(Name name) throws NamingException {
+    public void destroySubcontext(final Name name) throws NamingException {
         destroySubcontext(name.toString());
     }
 
     public Context createSubcontext(String name) throws NamingException {
         checkReadOnly();
-        int indx = name.indexOf(":");
+        final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
           The ':' character will be in the path if its an absolute path name starting with the schema
@@ -407,46 +407,46 @@ public class IvmContext implements Context, Serializable {
             return mynode.createSubcontext(new ParsedName(name));
     }
 
-    public Context createSubcontext(Name name) throws NamingException {
+    public Context createSubcontext(final Name name) throws NamingException {
         return createSubcontext(name.toString());
     }
 
-    public Object lookupLink(String name) throws NamingException {
+    public Object lookupLink(final String name) throws NamingException {
         return lookup(name);
     }
 
-    public Object lookupLink(Name name) throws NamingException {
+    public Object lookupLink(final Name name) throws NamingException {
         return lookupLink(name.toString());
     }
 
-    public NameParser getNameParser(String name) throws NamingException {
+    public NameParser getNameParser(final String name) throws NamingException {
         return ContextUtil.NAME_PARSER;
     }
 
-    public NameParser getNameParser(Name name) throws NamingException {
+    public NameParser getNameParser(final Name name) throws NamingException {
         return getNameParser(name.toString());
     }
 
-    public String composeName(String name, String prefix) throws NamingException {
-        Name result = composeName(new CompositeName(name),
+    public String composeName(final String name, final String prefix) throws NamingException {
+        final Name result = composeName(new CompositeName(name),
                                   new CompositeName(prefix));
         return result.toString();
     }
 
-    public Name composeName(Name name, Name prefix) throws NamingException {
-        Name result = (Name) prefix.clone();
+    public Name composeName(final Name name, final Name prefix) throws NamingException {
+        final Name result = (Name) prefix.clone();
         result.addAll(name);
         return result;
     }
 
-    public Object addToEnvironment(String propName, Object propVal) throws NamingException {
+    public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         if (myEnv == null) {
             myEnv = new Hashtable<String, Object>(5);
         }
         return myEnv.put(propName, propVal);
     }
 
-    public Object removeFromEnvironment(String propName) throws NamingException {
+    public Object removeFromEnvironment(final String propName) throws NamingException {
         if (myEnv == null)
             return null;
         return myEnv.remove(propName);
@@ -474,14 +474,14 @@ public class IvmContext implements Context, Serializable {
 
     protected class MyBindingEnumeration extends MyNamingEnumeration {
 
-        public MyBindingEnumeration(NameNode parentNode) {
+        public MyBindingEnumeration(final NameNode parentNode) {
             super(parentNode);
         }
 
-        protected void buildEnumeration(Vector vect) {
+        protected void buildEnumeration(final Vector vect) {
             for (int i = 0; i < vect.size(); i++) {
-                NameNode node = (NameNode) vect.elementAt(i);
-                String className = node.getBinding().getClass().getName();
+                final NameNode node = (NameNode) vect.elementAt(i);
+                final String className = node.getBinding().getClass().getName();
                 vect.setElementAt(new Binding(node.getAtomicName(), className, node.getBinding()), i);
             }
             myEnum = vect.elements();
@@ -491,14 +491,14 @@ public class IvmContext implements Context, Serializable {
 
     protected class MyListEnumeration extends MyNamingEnumeration {
 
-        public MyListEnumeration(NameNode parentNode) {
+        public MyListEnumeration(final NameNode parentNode) {
             super(parentNode);
         }
 
-        protected void buildEnumeration(Vector vect) {
+        protected void buildEnumeration(final Vector vect) {
             for (int i = 0; i < vect.size(); i++) {
-                NameNode node = (NameNode) vect.elementAt(i);
-                String className = node.getBinding().getClass().getName();
+                final NameNode node = (NameNode) vect.elementAt(i);
+                final String className = node.getBinding().getClass().getName();
                 vect.setElementAt(new NameClassPair(node.getAtomicName(), className), i);
             }
             myEnum = vect.elements();
@@ -510,8 +510,8 @@ public class IvmContext implements Context, Serializable {
 
         Enumeration myEnum;
 
-        public MyNamingEnumeration(NameNode parentNode) {
-            Vector vect = new Vector();
+        public MyNamingEnumeration(final NameNode parentNode) {
+            final Vector vect = new Vector();
 
             NameNode node = parentNode.getSubTree();
 
@@ -528,7 +528,7 @@ public class IvmContext implements Context, Serializable {
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(NameNode node, Vector vect) {
+        protected void gatherNodes(final NameNode node, final Vector vect) {
             if (node.getLessTree() != null) {
                 vect.addElement(node.getLessTree());
                 gatherNodes(node.getLessTree(), vect);
@@ -560,7 +560,7 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public void tree(PrintStream out){
+    public void tree(final PrintStream out){
         mynode.tree("", out);
     }
 

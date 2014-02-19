@@ -60,7 +60,7 @@ import java.util.TreeSet;
 public abstract class JaxbOpenejb {
 
     @SuppressWarnings({"unchecked"})
-    public static <T> T create(Class<T> type) {
+    public static <T> T create(final Class<T> type) {
         if (type == null) throw new NullPointerException("type is null");
 
         if (type == ConnectionManager.class) {
@@ -93,7 +93,7 @@ public abstract class JaxbOpenejb {
         throw new IllegalArgumentException("Unknown type " + type.getName());
     }
 
-    public static <T> T create(String type) {
+    public static <T> T create(final String type) {
         if (type == null) throw new NullPointerException("type is null");
 
         if (type.equals("ConnectionManager")) {
@@ -139,13 +139,13 @@ public abstract class JaxbOpenejb {
             final String path2 = providerPath.replace('.', '/') + "/service-jar.xml";
             final List<String> paths = Arrays.asList(path1, path2);
 
-            for (String p : paths) {
+            for (final String p : paths) {
                 try {
                     final Enumeration<URL> resources = loader.getResources(p);
                     if (resources != null){
                         sources.addAll(Collections.list(resources));
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new OpenEJBException(String.format("Unable to scan for service-jar.xml file: getResource('%s')", p), e);
                 }
             }
@@ -158,18 +158,18 @@ public abstract class JaxbOpenejb {
         final ServicesJar servicesJar = new ServicesJar();
 
         {
-            for (URL url : sources) {
+            for (final URL url : sources) {
                 try {
                     final InputStream read = IO.read(url);
                     try {
                         final ServicesJar jar = parseServicesJar(read);
                         servicesJar.getServiceProvider().addAll(jar.getServiceProvider());
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new OpenEJBException("Unable to parse service-jar.xml file for provider " + providerPath + " at " + url, e);
                     } finally {
                         IO.close(read);
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new OpenEJBException("Unable to read service-jar.xml file for provider " + providerPath + " at " + url, e);
                 }
             }
@@ -178,26 +178,26 @@ public abstract class JaxbOpenejb {
         return servicesJar;
     }
 
-    public static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
-        InputSource inputSource = new InputSource(in);
+    public static ServicesJar parseServicesJar(final InputStream in) throws ParserConfigurationException, SAXException, IOException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
+        final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         final ServicesJar servicesJar1 = new ServicesJar();
 
         parser.parse(inputSource, new OpenEJBHandler(servicesJar1));
-        ServicesJar servicesJar = servicesJar1;
+        final ServicesJar servicesJar = servicesJar1;
         return servicesJar;
     }
 
-    public static Openejb readConfig(String configFile) throws OpenEJBException {
+    public static Openejb readConfig(final String configFile) throws OpenEJBException {
         InputStream in = null;
         try {
             if (configFile.startsWith("jar:")) {
-                URL url = new URL(configFile);
+                final URL url = new URL(configFile);
                 in = IO.read(url);
             } else if (configFile.startsWith("file:")) {
-                URL url = new URL(configFile);
+                final URL url = new URL(configFile);
                 in = IO.read(url);
             } else {
                 in = IO.read(new File(configFile));
@@ -208,9 +208,9 @@ public abstract class JaxbOpenejb {
             }
 
             return readConfig(new InputSource(in));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve location " + configFile, e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Unable to read OpenEJB configuration file at " + configFile, e);
         } finally {
             IO.close(in);
@@ -221,21 +221,21 @@ public abstract class JaxbOpenejb {
         return SaxOpenejb.parse(in);
     }
 
-    public static void writeConfig(String configFile, Openejb openejb) throws OpenEJBException {
+    public static void writeConfig(final String configFile, final Openejb openejb) throws OpenEJBException {
         OutputStream out = null;
         try {
-            File file = new File(configFile);
+            final File file = new File(configFile);
             out = IO.write(file);
             marshal(Openejb.class, openejb, out);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException(ConfigUtils.messages.format("conf.1040", configFile, e.getLocalizedMessage()), e);
-        } catch (MarshalException e) {
+        } catch (final MarshalException e) {
             if (e.getCause() instanceof IOException) {
                 throw new OpenEJBException(ConfigUtils.messages.format("conf.1040", configFile, e.getLocalizedMessage()), e);
             } else {
                 throw new OpenEJBException(ConfigUtils.messages.format("conf.1050", configFile, e.getLocalizedMessage()), e);
             }
-        } catch (ValidationException e) {
+        } catch (final ValidationException e) {
             /* TODO: Implement informative error handling here.
                The exception will say "X doesn't match the regular
                expression Y"
@@ -248,13 +248,13 @@ public abstract class JaxbOpenejb {
              * would think.
              */
             throw new OpenEJBException(ConfigUtils.messages.format("conf.1060", configFile, e.getLocalizedMessage()), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException(e);
         } finally {
             if (out != null) {
                 try {
                     out.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // no-op
                 }
             }
@@ -265,24 +265,24 @@ public abstract class JaxbOpenejb {
 
     private static Map<Class, JAXBContext> jaxbContexts = new HashMap<Class, JAXBContext>();
 
-    public static <T> String marshal(Class<T> type, Object object) throws JAXBException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         marshal(type, object, baos);
 
         return new String(baos.toByteArray());
     }
 
-    public static <T> void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
-        JAXBContext jaxbContext = getContext(type);
-        Marshaller marshaller = jaxbContext.createMarshaller();
+    public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
+        final JAXBContext jaxbContext = getContext(type);
+        final Marshaller marshaller = jaxbContext.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
         marshaller.marshal(object, out);
     }
 
-    public static <T> JAXBContext getContext(Class<T> type) throws JAXBException {
+    public static <T> JAXBContext getContext(final Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = jaxbContexts.get(type);
         if (jaxbContext == null) {
             jaxbContext = JAXBContextFactory.newInstance(type);
@@ -291,23 +291,23 @@ public abstract class JaxbOpenejb {
         return jaxbContext;
     }
 
-    public static <T> T unmarshal(Class<T> type, InputStream in, boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
+    public static <T> T unmarshal(final Class<T> type, final InputStream in, final boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
+        final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
-        JAXBContext ctx = getContext(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = getContext(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(ValidationEvent validationEvent) {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
                 System.out.println(validationEvent);
                 return false;
             }
         });
 
-        SAXSource source;
+        final SAXSource source;
         if (filter) {
-            NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+            final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
             xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
             source = new SAXSource(xmlFilter, inputSource);
         } else {
@@ -323,25 +323,25 @@ public abstract class JaxbOpenejb {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T> T unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    public static <T> T unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         return unmarshal(type, in, true);
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
 
-        public NamespaceFilter(XMLReader xmlReader) {
+        public NamespaceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            Set<String> publicIds = currentPublicId.get();
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
+            final Set<String> publicIds = currentPublicId.get();
             if (publicIds != null) {
                 publicIds.add(publicId);
             }
             return super.resolveEntity(publicId, systemId);
         }
 
-        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
             super.startElement("http://www.openejb.org/System/Configuration", localName, qname, atts);
         }
     }
@@ -417,7 +417,7 @@ public abstract class JaxbOpenejb {
         public void startDocument() throws SAXException {
         }
 
-        public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
             if (!localName.equals("ServiceProvider")) return;
 
             provider = new ServiceProvider();
@@ -427,7 +427,7 @@ public abstract class JaxbOpenejb {
             provider.setConstructor(att.getValue("", "constructor"));
             provider.setClassName(att.getValue("", "class-name"));
             provider.setParent(att.getValue("", "parent"));
-            String typesString = att.getValue("", "types");
+            final String typesString = att.getValue("", "types");
             if (typesString != null){
                 final ListAdapter listAdapter = new ListAdapter();
                 final List<String> types = listAdapter.unmarshal(typesString);
@@ -436,17 +436,17 @@ public abstract class JaxbOpenejb {
             servicesJar.getServiceProvider().add(provider);
         }
 
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(final char[] ch, final int start, final int length) throws SAXException {
             if (content == null) content = new StringBuilder();
             content.append(ch, start, length);
         }
 
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
             if (provider == null || content == null) return;
 
             try {
                 provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new SAXException(e);
             }
             provider = null;

@@ -31,7 +31,7 @@ public class PortRefData {
     public PortRefData() {
     }
 
-    public PortRefData(PortRefData src) {
+    public PortRefData(final PortRefData src) {
         qname = src.qname;
         serviceEndpointInterface = src.serviceEndpointInterface;
         enableMtom = src.enableMtom;
@@ -43,7 +43,7 @@ public class PortRefData {
         return qname;
     }
 
-    public void setQName(QName qname) {
+    public void setQName(final QName qname) {
         this.qname = qname;
     }
 
@@ -51,7 +51,7 @@ public class PortRefData {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String serviceEndpointInterface) {
+    public void setServiceEndpointInterface(final String serviceEndpointInterface) {
         this.serviceEndpointInterface = serviceEndpointInterface;
     }
 
@@ -59,7 +59,7 @@ public class PortRefData {
         return enableMtom;
     }
 
-    public void setEnableMtom(boolean value) {
+    public void setEnableMtom(final boolean value) {
         this.enableMtom = value;
     }
 

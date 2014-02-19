@@ -33,7 +33,7 @@ public class ScheduleData {
     private final ScheduleExpression expression;
     private final TimerConfig config;
 
-    public ScheduleData(TimerConfig config, ScheduleExpression expression) {
+    public ScheduleData(final TimerConfig config, final ScheduleExpression expression) {
         this.config = config;
         this.expression = expression;
     }

@@ -30,11 +30,11 @@ public class Lines {
         this(System.getProperty("line.separator"));
     }
 
-    public Lines(String cr) {
+    public Lines(final String cr) {
         this.cr = cr;
     }
 
-    public void add(Line line) {
+    public void add(final Line line) {
         if (!lines.isEmpty() && lines.iterator().next().getColumns().length != line.getColumns().length) {
             throw new IllegalArgumentException("columns should have all the same size");
         }
@@ -46,13 +46,13 @@ public class Lines {
         print(out, true);
     }
 
-    public void print(final PrintStream out, boolean headers) {
+    public void print(final PrintStream out, final boolean headers) {
         final Iterator<Line> it = lines.iterator();
         if (!it.hasNext()) {
             return;
         }
 
-        int[] max = max(lines);
+        final int[] max = max(lines);
         it.next().print(max, out, headers);
         while (it.hasNext()) {
             it.next().print(max, out);
@@ -60,10 +60,10 @@ public class Lines {
     }
 
     private static int[] max(final List<Line> lines) {
-        int[] max = new int[lines.iterator().next().getColumns().length];
-        for (Line line : lines) {
+        final int[] max = new int[lines.iterator().next().getColumns().length];
+        for (final Line line : lines) {
             for (int i = 0; i < max.length; i++) {
-                int ll = line.getColumns()[i].length();
+                final int ll = line.getColumns()[i].length();
                 if (max[i] == 0) { // init
                     max[i] = ll;
                 } else if (max[i] < ll) {

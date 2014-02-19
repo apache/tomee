@@ -53,15 +53,15 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
         if (mtd == null) {
             try { // openjpa
                 mtd = clazz.getMethod(GET_QUERY_STRING_MTD);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 try { // hibernate
                     unwrapQuery = clazz.getClassLoader().loadClass("org.hibernate.Query");
                     unwrapCache.put(clazz, unwrapQuery);
                     mtd = unwrapQuery.getMethod(GET_QUERY_STRING_MTD);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     try { // fallback
                         mtd = getClass().getMethod(GET_QUERY_STRING_MTD);
-                    } catch (NoSuchMethodException shouldntOccur) {
+                    } catch (final NoSuchMethodException shouldntOccur) {
                         // ignored
                     }
                 }
@@ -84,10 +84,10 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
 
         try {
             query = (String) mtd.invoke(realQuery);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 query = getQueryString();
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
         }
@@ -127,7 +127,7 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setMaxResults(int maxResult) {
+    public TypedQuery<T> setMaxResults(final int maxResult) {
         delegate.setMaxResults(maxResult);
         return this;
     }
@@ -138,7 +138,7 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setFirstResult(int startPosition) {
+    public TypedQuery<T> setFirstResult(final int startPosition) {
         delegate.setFirstResult(startPosition);
         return this;
     }
@@ -149,13 +149,13 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setHint(String hintName, Object value) {
+    public TypedQuery<T> setHint(final String hintName, final Object value) {
         delegate.setHint(hintName, value);
         return this;
     }
 
     @Override
-    public <E> TypedQuery<T> setParameter(Parameter<E> param, E value) {
+    public <E> TypedQuery<T> setParameter(final Parameter<E> param, final E value) {
         delegate.setParameter(param, value);
         return this;
     }
@@ -166,49 +166,49 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final Parameter<Calendar> param, final Calendar value, final TemporalType temporalType) {
         delegate.setParameter(param, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final Parameter<Date> param, final Date value, final TemporalType temporalType) {
         delegate.setParameter(param, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(String name, Object value) {
+    public TypedQuery<T> setParameter(final String name, final Object value) {
         delegate.setParameter(name, value);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(String name, Calendar value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final String name, final Calendar value, final TemporalType temporalType) {
         delegate.setParameter(name, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(String name, Date value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final String name, final Date value, final TemporalType temporalType) {
         delegate.setParameter(name, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(int position, Object value) {
+    public TypedQuery<T> setParameter(final int position, final Object value) {
         delegate.setParameter(position, value);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(int position, Calendar value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final int position, final Calendar value, final TemporalType temporalType) {
         delegate.setParameter(position, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<T> setParameter(int position, Date value, TemporalType temporalType) {
+    public TypedQuery<T> setParameter(final int position, final Date value, final TemporalType temporalType) {
         delegate.setParameter(position, value, temporalType);
         return this;
     }
@@ -219,47 +219,47 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public Parameter<?> getParameter(String name) {
+    public Parameter<?> getParameter(final String name) {
         return delegate.getParameter(name);
     }
 
     @Override
-    public <T> Parameter<T> getParameter(String name, Class<T> type) {
+    public <T> Parameter<T> getParameter(final String name, final Class<T> type) {
         return delegate.getParameter(name, type);
     }
 
     @Override
-    public Parameter<?> getParameter(int position) {
+    public Parameter<?> getParameter(final int position) {
         return delegate.getParameter(position);
     }
 
     @Override
-    public <T> Parameter<T> getParameter(int position, Class<T> type) {
+    public <T> Parameter<T> getParameter(final int position, final Class<T> type) {
         return delegate.getParameter(position, type);
     }
 
     @Override
-    public boolean isBound(Parameter<?> param) {
+    public boolean isBound(final Parameter<?> param) {
         return delegate.isBound(param);
     }
 
     @Override
-    public <T> T getParameterValue(Parameter<T> param) {
+    public <T> T getParameterValue(final Parameter<T> param) {
         return delegate.getParameterValue(param);
     }
 
     @Override
-    public Object getParameterValue(String name) {
+    public Object getParameterValue(final String name) {
         return delegate.getParameterValue(name);
     }
 
     @Override
-    public Object getParameterValue(int position) {
+    public Object getParameterValue(final int position) {
         return delegate.getParameterValue(position);
     }
 
     @Override
-    public TypedQuery<T> setFlushMode(FlushModeType flushMode) {
+    public TypedQuery<T> setFlushMode(final FlushModeType flushMode) {
         return delegate.setFlushMode(flushMode);
     }
 
@@ -269,7 +269,7 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setLockMode(LockModeType lockMode) {
+    public TypedQuery<T> setLockMode(final LockModeType lockMode) {
         return delegate.setLockMode(lockMode);
     }
 
@@ -279,7 +279,7 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     }
 
     @Override
-    public <T> T unwrap(Class<T> cls) {
+    public <T> T unwrap(final Class<T> cls) {
         return delegate.unwrap(cls);
     }
 }

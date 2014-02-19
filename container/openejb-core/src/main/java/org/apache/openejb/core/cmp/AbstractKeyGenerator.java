@@ -23,35 +23,35 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 public abstract class AbstractKeyGenerator implements KeyGenerator {
-    public static boolean isValidPkField(Field field) {
-        int modifiers = field.getModifiers();
+    public static boolean isValidPkField(final Field field) {
+        final int modifiers = field.getModifiers();
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    public static Field getField(Class clazz, String fieldName) throws OpenEJBException {
+    public static Field getField(final Class clazz, final String fieldName) throws OpenEJBException {
         try {
             return clazz.getField(fieldName);
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new OpenEJBException("Unable to get primary key field from entity bean class: " + clazz.getName(), e);
         }
     }
 
-    public static Object getFieldValue(Field field, Object object) throws EJBException {
+    public static Object getFieldValue(final Field field, final Object object) throws EJBException {
         if (field == null)  throw new NullPointerException("field is null");
         if (object == null)  throw new NullPointerException("object is null");
         try {
             return field.get(object);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Could not get field value for field " + field, e);
         }
     }
 
-    public static void setFieldValue(Field field, Object object, Object value) throws EJBException {
+    public static void setFieldValue(final Field field, final Object object, final Object value) throws EJBException {
         if (field == null)  throw new NullPointerException("field is null");
         if (object == null)  throw new NullPointerException("object is null");
         try {
             field.set(object, value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Could not set field value for field " + field, e);
         }
     }

@@ -45,8 +45,8 @@ public class GeneratedClientModules {
      * Add the auto-generated and linked ClientModule from each EjbModule
      */
     public static class Add implements DynamicDeployer {
-        public AppModule deploy(AppModule appModule) throws OpenEJBException {
-            for (EjbModule ejbModule : appModule.getEjbModules()) {
+        public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+            for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 if (ejbModule.getClientModule() != null) {
                     appModule.getClientModules().add(ejbModule.getClientModule());
                     ejbModule.setClientModule(null);
@@ -60,15 +60,15 @@ public class GeneratedClientModules {
      * Clean up any that didn't turn out to have any actual ejb clients
      */
     public static class Prune implements DynamicDeployer {
-        public AppModule deploy(AppModule appModule) throws OpenEJBException {
-            List<ClientModule> clientModules = new ArrayList<ClientModule>(appModule.getClientModules());
+        public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+            final List<ClientModule> clientModules = new ArrayList<ClientModule>(appModule.getClientModules());
 
-            for (ClientModule clientModule : clientModules) {
+            for (final ClientModule clientModule : clientModules) {
                 // we automatically add a ClientModule to every EjbModule
                 // if there didn't turn out to be any clients in the module
                 // just ingore it and remove it from the clientModule list
-                boolean haveMainClassAndDescriptor = clientModule.getMainClass() != null && clientModule.getApplicationClient() != null;
-                boolean haveAnnotatedClients = clientModule.getLocalClients().size() > 0 || clientModule.getRemoteClients().size() > 0;
+                final boolean haveMainClassAndDescriptor = clientModule.getMainClass() != null && clientModule.getApplicationClient() != null;
+                final boolean haveAnnotatedClients = clientModule.getLocalClients().size() > 0 || clientModule.getRemoteClients().size() > 0;
 
                 if (clientModule.isEjbModuleGenerated() && !haveMainClassAndDescriptor && !haveAnnotatedClients) {
                     appModule.getClientModules().remove(clientModule);

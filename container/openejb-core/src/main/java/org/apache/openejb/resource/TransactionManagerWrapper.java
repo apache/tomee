@@ -60,7 +60,7 @@ public class TransactionManagerWrapper implements TransactionManager {
     }
 
     @Override
-    public void resume(Transaction transaction) throws IllegalStateException, InvalidTransactionException, SystemException {
+    public void resume(final Transaction transaction) throws IllegalStateException, InvalidTransactionException, SystemException {
         delegate.resume(((TransactionWrapper) transaction).transaction);
     }
 
@@ -75,7 +75,7 @@ public class TransactionManagerWrapper implements TransactionManager {
     }
 
     @Override
-    public void setTransactionTimeout(int i) throws SystemException {
+    public void setTransactionTimeout(final int i) throws SystemException {
         delegate.setTransactionTimeout(i);
     }
 
@@ -101,7 +101,7 @@ public class TransactionManagerWrapper implements TransactionManager {
         }
 
         @Override
-        public boolean delistResource(final XAResource xaResource, int i) throws IllegalStateException, SystemException {
+        public boolean delistResource(final XAResource xaResource, final int i) throws IllegalStateException, SystemException {
             final XAResource wrapper = xaResourceWrapper.wrap(xaResource, name);
             return transaction.delistResource(wrapper, i);
         }
@@ -133,7 +133,7 @@ public class TransactionManagerWrapper implements TransactionManager {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }

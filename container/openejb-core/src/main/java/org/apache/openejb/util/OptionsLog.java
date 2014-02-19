@@ -50,27 +50,27 @@ public class OptionsLog implements Options.Log {
         return logger.isWarningEnabled();
     }
 
-    public void debug(String message) {
+    public void debug(final String message) {
         logger.debug(message);
     }
 
-    public void debug(String message, Throwable t) {
+    public void debug(final String message, final Throwable t) {
         logger.debug(message, t);
     }
 
-    public void info(String message) {
+    public void info(final String message) {
         logger.info(message);
     }
 
-    public void info(String message, Throwable t) {
+    public void info(final String message, final Throwable t) {
         logger.info(message, t);
     }
 
-    public void warning(String message) {
+    public void warning(final String message) {
         logger.warning(message);
     }
 
-    public void warning(String message, Throwable t) {
+    public void warning(final String message, final Throwable t) {
         logger.warning(message, t);
     }
 }

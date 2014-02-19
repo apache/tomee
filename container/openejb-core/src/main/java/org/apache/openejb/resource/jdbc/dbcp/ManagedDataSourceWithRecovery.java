@@ -31,7 +31,7 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     }
 
     @Override
-    public void setTransactionManager(TransactionManager transactionManager) {
+    public void setTransactionManager(final TransactionManager transactionManager) {
         this.suppliedTransactionManager = transactionManager;
     }
 

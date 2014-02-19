@@ -82,7 +82,7 @@ public class RemoteResourceMonitor implements DynamicMBean {
                 server.unregisterMBean(objectName);
             }
             server.registerMBean(this, objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
@@ -90,7 +90,7 @@ public class RemoteResourceMonitor implements DynamicMBean {
     public void unregister() {
         try {
             LocalMBeanServer.get().unregisterMBean(objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
@@ -124,18 +124,18 @@ public class RemoteResourceMonitor implements DynamicMBean {
     }
 
     @Override
-    public AttributeList getAttributes(String[] attributes) {
+    public AttributeList getAttributes(final String[] attributes) {
         return ATTRIBUTE_LIST;
     }
 
     @Override
-    public AttributeList setAttributes(AttributeList attributes) {
+    public AttributeList setAttributes(final AttributeList attributes) {
         return ATTRIBUTE_LIST;
     }
 
     private void buildMBeanInfo() {
         final List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
-        for (String host: hosts) {
+        for (final String host: hosts) {
             operationInfos.add(new MBeanOperationInfo(host, "ping host " + host, EMPTY_PARAMETERS, String.class.getName(), MBeanOperationInfo.INFO));
         }
         operationInfos.add(PING_INFO);
@@ -162,9 +162,9 @@ public class RemoteResourceMonitor implements DynamicMBean {
                 }
             }
             return "Can't ping host, timeout (30s)";
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             return "Can't find host: " + e.getMessage();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return "Can't ping host: " + e.getMessage();
         }
     }

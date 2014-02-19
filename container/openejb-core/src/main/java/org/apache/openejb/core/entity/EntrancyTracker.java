@@ -37,17 +37,17 @@ public class EntrancyTracker {
 
     private final TransactionSynchronizationRegistry synchronizationRegistry;
 
-    public EntrancyTracker(TransactionSynchronizationRegistry synchronizationRegistry) {
+    public EntrancyTracker(final TransactionSynchronizationRegistry synchronizationRegistry) {
         this.synchronizationRegistry = synchronizationRegistry;
     }
 
-    public void enter(BeanContext beanContext, Object primaryKey) throws ApplicationException {
+    public void enter(final BeanContext beanContext, final Object primaryKey) throws ApplicationException {
         if (primaryKey == null || beanContext.isReentrant()) {
             return;
         }
 
-        Object deploymentId = beanContext.getDeploymentID();
-        InstanceKey key = new InstanceKey(deploymentId, primaryKey);
+        final Object deploymentId = beanContext.getDeploymentID();
+        final InstanceKey key = new InstanceKey(deploymentId, primaryKey);
 
 
         Set<InstanceKey> inCall;
@@ -58,31 +58,31 @@ public class EntrancyTracker {
                 inCall = new HashSet<InstanceKey>();
                 synchronizationRegistry.putResource(EntrancyTracker.class, inCall);
             }
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             inCall = inCallThreadLocal.get();
         }
 
         if (!inCall.add(key)) {
-            ApplicationException exception = new ApplicationException(new RemoteException("Attempted reentrant access. " + "Bean " + deploymentId + " is not reentrant and instance " + primaryKey + " has already been entered : " +inCall));
+            final ApplicationException exception = new ApplicationException(new RemoteException("Attempted reentrant access. " + "Bean " + deploymentId + " is not reentrant and instance " + primaryKey + " has already been entered : " +inCall));
             exception.printStackTrace();
             throw exception;
         }
 
     }
 
-    public void exit(BeanContext beanContext, Object primaryKey) throws ApplicationException {
+    public void exit(final BeanContext beanContext, final Object primaryKey) throws ApplicationException {
         if (primaryKey == null || beanContext.isReentrant()) {
             return;
         }
 
-        Object deploymentId = beanContext.getDeploymentID();
-        InstanceKey key = new InstanceKey(deploymentId, primaryKey);
+        final Object deploymentId = beanContext.getDeploymentID();
+        final InstanceKey key = new InstanceKey(deploymentId, primaryKey);
 
         Set<InstanceKey> inCall = null;
         try {
             //noinspection unchecked
             inCall = (Set<InstanceKey>) synchronizationRegistry.getResource(EntrancyTracker.class);
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             inCall = inCallThreadLocal.get();
         }
 
@@ -96,16 +96,16 @@ public class EntrancyTracker {
         private final Object primaryKey;
 
 
-        public InstanceKey(Object deploymentId, Object primaryKey) {
+        public InstanceKey(final Object deploymentId, final Object primaryKey) {
             this.deploymentId = deploymentId;
             this.primaryKey = primaryKey;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            InstanceKey that = (InstanceKey) o;
+            final InstanceKey that = (InstanceKey) o;
 
             return deploymentId.equals(that.deploymentId) && primaryKey.equals(that.primaryKey);
         }

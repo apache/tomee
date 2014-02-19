@@ -88,7 +88,7 @@ public final class EjbTransactionUtil {
             try {
                 txPolicy.setRollbackOnly();
                 txPolicy.commit();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 threadContext.setDiscardInstance(true);
                 logger.error("Error rolling back transaction", e);
             }
@@ -98,7 +98,7 @@ public final class EjbTransactionUtil {
                 try {
                     threadContextTxPolicy.setRollbackOnly();
                     threadContextTxPolicy.commit();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     threadContext.setDiscardInstance(true);
                     logger.error("Error rolling back transaction", e);
                 }

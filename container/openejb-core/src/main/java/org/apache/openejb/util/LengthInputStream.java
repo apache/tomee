@@ -23,7 +23,7 @@ import java.io.InputStream;
 public class LengthInputStream extends FilterInputStream {
     private long length;
 
-    public LengthInputStream(InputStream in) throws IOException {
+    public LengthInputStream(final InputStream in) throws IOException {
         super(in);
     }
 
@@ -35,14 +35,14 @@ public class LengthInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public int read(final byte[] b) throws IOException {
         final int i = super.read(b);
         if (i > 0) length += i;
         return i;
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(final byte[] b, final int off, final int len) throws IOException {
         final int i = super.read(b, off, len);
         if (i > 0) length += i;
         return i;

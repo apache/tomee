@@ -64,12 +64,12 @@ public class Deploy {
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 
-    public static void main(String... args) throws SystemExitException {
+    public static void main(final String... args) throws SystemExitException {
 
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption(option("v", "version", "cmd.deploy.opt.version"));
         options.addOption(option("h", "help", "cmd.deploy.opt.help"));
         options.addOption(option("o", "offline", "cmd.deploy.opt.offline"));
@@ -79,11 +79,11 @@ public class Deploy {
         options.addOption(option("u", "undeploy", "cmd.deploy.opt.undeploy"));
         options.addOption(option(null, "dir", "cmd.deploy.opt.dir"));
 
-        CommandLine line;
+        final CommandLine line;
         try {
             // parse the command line arguments
             line = parser.parse(options, args);
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             help(options);
             throw new SystemExitException(-1);
         }
@@ -103,26 +103,26 @@ public class Deploy {
         }
         
         // make sure that the modules given on the command line are accessible
-        List<?> modules = line.getArgList();
-        for (Object module : modules) {
-            String path = (String) module;
-            File file = new File(path);
+        final List<?> modules = line.getArgList();
+        for (final Object module : modules) {
+            final String path = (String) module;
+            final File file = new File(path);
             try {
                 checkSource(file);
-            } catch (DeploymentTerminatedException e) {
+            } catch (final DeploymentTerminatedException e) {
                 System.out.println(e.getMessage());
                 // TODO: What is it for?
                 throw new SystemExitException(-100);
             }
         }
 
-        boolean offline = line.hasOption("offline");
+        final boolean offline = line.hasOption("offline");
 
-        File apps;
+        final File apps;
         try {
-            String dir = line.getOptionValue("dir", "apps");
+            final String dir = line.getOptionValue("dir", "apps");
             apps = SystemInstance.get().getBase().getDirectory(dir);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SystemExitException(-1);
         }
 
@@ -132,40 +132,40 @@ public class Deploy {
 
         Deployer deployer = null;
         if (!offline) {
-            Properties p = new Properties();
+            final Properties p = new Properties();
             p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-            String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
+            final String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
             p.put(Context.PROVIDER_URL, serverUrl);
 
             try {
-                InitialContext ctx = new InitialContext(p);
+                final InitialContext ctx = new InitialContext(p);
                 deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
-            } catch (ServiceUnavailableException e) {
+            } catch (final ServiceUnavailableException e) {
                 System.out.println(e.getCause().getMessage());
                 System.out.println(messages.format("cmd.deploy.serverOffline"));
                 throw new SystemExitException(-1);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl
                         + "', check the server logs to ensure it exists and has not been removed.");
                 throw new SystemExitException(-2);
             }
         }
 
-        boolean undeploy = line.hasOption("undeploy");
+        final boolean undeploy = line.hasOption("undeploy");
 
         // We increment the exit code once for every failed deploy
         int exitCode = 0;
-        for (Object obj : line.getArgList()) {
-            String path = (String) obj;
+        for (final Object obj : line.getArgList()) {
+            final String path = (String) obj;
 
-            File file = new File(path);
+            final File file = new File(path);
 
             File destFile = new File(apps, file.getName());
 
             try {
                 if (shouldUnpack(file)) {
-                    File unpacked = unpackedLocation(file, apps);
+                    final File unpacked = unpackedLocation(file, apps);
                     if (undeploy) {
                         undeploy(offline, unpacked, path, deployer);
                     }
@@ -183,13 +183,13 @@ public class Deploy {
                     continue;
                 }
 
-                String location;
+                final String location;
                 try {
                     location = destFile.getCanonicalPath();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new OpenEJBException(messages.format("cmd.deploy.fileNotFound", path));
                 }
-                AppInfo appInfo = deployer.deploy(location);
+                final AppInfo appInfo = deployer.deploy(location);
 
                 System.out.println(messages.format("cmd.deploy.successful", path, appInfo.path));
 
@@ -199,26 +199,26 @@ public class Deploy {
 
                 print(appInfo);
 
-            } catch (UndeployException e) {
+            } catch (final UndeployException e) {
                 System.out.println(messages.format("cmd.undeploy.failed", path));
                 e.printStackTrace(System.out);
                 exitCode++;
-            } catch (DeploymentTerminatedException e) {
+            } catch (final DeploymentTerminatedException e) {
                 System.out.println(e.getMessage());
                 exitCode++;
-            } catch (ValidationFailedException e) {
+            } catch (final ValidationFailedException e) {
                 System.out.println(messages.format("cmd.deploy.validationFailed", path));
                 int level = 2;
                 if (line.hasOption("debug")){
                     level = 3;
                 }
-                AppValidator appValidator = new AppValidator(level, false, true, false);
+                final AppValidator appValidator = new AppValidator(level, false, true, false);
                 appValidator.printResults(e);
                 exitCode++;
                 if (!delete(destFile)){
                     System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 System.out.println(messages.format("cmd.deploy.failed", path));
                 e.printStackTrace(System.out);
                 exitCode++;
@@ -233,7 +233,7 @@ public class Deploy {
         }
     }
 
-    private static void undeploy(boolean offline, File dest, String path, Deployer deployer) throws UndeployException, DeploymentTerminatedException {
+    private static void undeploy(final boolean offline, final File dest, final String path, final Deployer deployer) throws UndeployException, DeploymentTerminatedException {
         if (offline) {
             if (dest.exists()){
                 if (!delete(dest)){
@@ -243,69 +243,69 @@ public class Deploy {
         } else {
             try {
                 Undeploy.undeploy(path, dest, deployer);
-            } catch (NoSuchApplicationException nothingToUndeploy) {
+            } catch (final NoSuchApplicationException nothingToUndeploy) {
                 // no-op
             }
         }
     }
 
-    private static void print(AppInfo appInfo) {
+    private static void print(final AppInfo appInfo) {
         System.out.println("App(id=" + appInfo.path + ")");
 
-        for (EjbJarInfo info : appInfo.ejbJars) {
+        for (final EjbJarInfo info : appInfo.ejbJars) {
             System.out.println("    EjbJar(id=" + info.moduleName + ", path=" + info.path + ")");
-            for (EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
+            for (final EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
                 System.out.println("        Ejb(ejb-name=" + beanInfo.ejbName + ", id=" + beanInfo.ejbDeploymentId + ")");
-                for (String name : beanInfo.jndiNames) {
+                for (final String name : beanInfo.jndiNames) {
                     System.out.println("            Jndi(name=" + name + ")");
                 }
                 System.out.println("");
             }
-            for (InterceptorInfo interceptorInfo : info.interceptors) {
+            for (final InterceptorInfo interceptorInfo : info.interceptors) {
                 System.out.println("        Interceptor(class=" + interceptorInfo.clazz + ")");
             }
             System.out.println("");
         }
-        for (ClientInfo clientInfo : appInfo.clients) {
+        for (final ClientInfo clientInfo : appInfo.clients) {
             System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.path + ")");
             System.out.println("");
         }
-        for (ConnectorInfo connectorInfo : appInfo.connectors) {
+        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
             System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.path + ")");
             System.out.println("");
         }
-        for (WebAppInfo webAppInfo : appInfo.webApps) {
+        for (final WebAppInfo webAppInfo : appInfo.webApps) {
             System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.path + ")");
             System.out.println("");
         }
-        for (PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {
+        for (final PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {
             System.out.println("    PersistenceUnit(name=" + persistenceUnitInfo.name + ", provider=" + persistenceUnitInfo.provider+ ")");
             System.out.println("");
         }
     }
 
-    private static void checkSource(File file) throws DeploymentTerminatedException {
+    private static void checkSource(final File file) throws DeploymentTerminatedException {
         if (!file.exists()) {
             throw new DeploymentTerminatedException(messages.format("cmd.deploy.fileNotFound", file.getAbsolutePath()));
         }
     }
 
-    private static void checkDest(File destFile, File file) throws DeploymentTerminatedException {
+    private static void checkDest(final File destFile, final File file) throws DeploymentTerminatedException {
         if (destFile.exists()){
             throw new DeploymentTerminatedException(messages.format("cmd.deploy.destExists", file.getAbsolutePath(), destFile.getAbsolutePath()));
         }
     }
 
-    private static void copyFile(File file, File destFile) throws DeploymentTerminatedException {
+    private static void copyFile(final File file, final File destFile) throws DeploymentTerminatedException {
         try {
             IO.copy(file, destFile);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantCopy", file.getAbsolutePath(), destFile.getAbsolutePath()));
         }
     }
 
-    private static boolean shouldUnpack(File file) {
-        String name = file.getName();
+    private static boolean shouldUnpack(final File file) {
+        final String name = file.getName();
         if (name.endsWith(".ear") || name.endsWith(".rar") || name.endsWith(".rar")) {
             return true;
         }
@@ -323,13 +323,13 @@ public class Deploy {
             if (jarFile.getEntry("WEB-INF/web.xml") != null) {
                 return true;
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         } finally {
             if (jarFile != null) {
                 try {
                     jarFile.close();
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
             }
@@ -338,18 +338,18 @@ public class Deploy {
         return false;
     }
         
-    private static File unpack(File jarFile, File destinationDir) throws OpenEJBException, DeploymentTerminatedException {
+    private static File unpack(final File jarFile, final File destinationDir) throws OpenEJBException, DeploymentTerminatedException {
 
         try {
             checkDest(destinationDir, jarFile);
             JarExtractor.extract(jarFile, destinationDir);
             return destinationDir;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
         }
     }
 
-    private static File unpackedLocation(File jarFile, File destDir) {
+    private static File unpackedLocation(final File jarFile, final File destDir) {
         if (jarFile.isDirectory()) {
             return jarFile;
         }
@@ -361,33 +361,33 @@ public class Deploy {
             name += ".unpacked";
         }
 
-        File destinationDir = new File(destDir, name);
+        final File destinationDir = new File(destDir, name);
         return destinationDir;
     }
 
-    private static void help(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
+    private static void help(final Options options) {
+        final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("deploy [options] <file> [<file>...]", "\n"+i18n("cmd.deploy.description"), options, "\n");
     }
 
-    private static Option option(String shortOpt, String longOpt, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static Option option(String shortOpt, String longOpt, String argName, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String argName, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static String i18n(String key) {
+    private static String i18n(final String key) {
         return messages.format(key);
     }
 
     public static class DeploymentTerminatedException extends Exception {
-        public DeploymentTerminatedException(String message) {
+        public DeploymentTerminatedException(final String message) {
             super(message);
         }
 
-        public DeploymentTerminatedException(String message, Throwable cause) {
+        public DeploymentTerminatedException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }

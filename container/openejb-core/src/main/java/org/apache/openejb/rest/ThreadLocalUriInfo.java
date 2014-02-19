@@ -52,7 +52,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getPath();
     }
 
-    public String getPath(boolean decode) {
+    public String getPath(final boolean decode) {
         return get().getPath(decode);
     }
 
@@ -60,7 +60,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getPathSegments();
     }
 
-    public List<PathSegment> getPathSegments(boolean decode) {
+    public List<PathSegment> getPathSegments(final boolean decode) {
         return get().getPathSegments(decode);
     }
 
@@ -68,7 +68,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getQueryParameters();
     }
 
-    public MultivaluedMap<String, String> getQueryParameters(boolean decode) {
+    public MultivaluedMap<String, String> getQueryParameters(final boolean decode) {
         return get().getQueryParameters(decode);
     }
 
@@ -84,7 +84,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getPathParameters();
     }
 
-    public MultivaluedMap<String, String> getPathParameters(boolean decode) {
+    public MultivaluedMap<String, String> getPathParameters(final boolean decode) {
         return get().getPathParameters(decode);
     }
 
@@ -96,7 +96,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getMatchedURIs();
     }
 
-    public List<String> getMatchedURIs(boolean decode) {
+    public List<String> getMatchedURIs(final boolean decode) {
         return get().getMatchedURIs(decode);
     }
 

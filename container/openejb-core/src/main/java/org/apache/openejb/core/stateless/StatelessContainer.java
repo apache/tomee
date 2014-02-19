@@ -231,7 +231,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, operation, interceptors, instance.interceptors);
                 returnValue = interceptorStack.invoke(args);
             }
-        } catch (Throwable re) {// handle reflection exception
+        } catch (final Throwable re) {// handle reflection exception
             final ExceptionType exceptionType = beanContext.getExceptionType(re);
             if (exceptionType == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
@@ -249,10 +249,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         } finally {
             try {
                 afterInvoke(txPolicy, callContext);
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 callContext.setDiscardInstance(true);
                 throw e;
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 callContext.setDiscardInstance(true);
                 throw e;
             }

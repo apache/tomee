@@ -37,7 +37,7 @@ public class WebInitialContext implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if ("lookup".equals(method.getName()) && method.getParameterTypes().length == 1 && String.class.equals(method.getParameterTypes()[0])) {
             final Object lookedUp = bindings.get(normalize((String) args[0]));
             if (lookedUp != null) {

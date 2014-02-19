@@ -68,7 +68,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      *
      * @param original the {@code SumOfLogs} instance to copy
      */
-    public SumOfLogs(SumOfLogs original) {
+    public SumOfLogs(final SumOfLogs original) {
         copy(original, this);
     }
 
@@ -143,7 +143,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      */
     @Override
     public SumOfLogs copy() {
-        SumOfLogs result = new SumOfLogs();
+        final SumOfLogs result = new SumOfLogs();
         copy(this, result);
         return result;
     }
@@ -156,7 +156,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * @param dest SumOfLogs to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(SumOfLogs source, SumOfLogs dest) {
+    public static void copy(final SumOfLogs source, final SumOfLogs dest) {
         dest.n = source.n;
         dest.value = source.value;
     }

@@ -34,16 +34,16 @@ public class PassthroughFactory {
      * static method.
      */
     public static class Create {
-        public static Object create(Object instance) {
+        public static Object create(final Object instance) {
             return instance;
         }
     }
 
-    public static ObjectRecipe recipe(Object instance) {
-        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.Create.class);
+    public static ObjectRecipe recipe(final Object instance) {
+        final ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.Create.class);
         recipe.setFactoryMethod("create");
 
-        String param = "instance"+recipe.hashCode();
+        final String param = "instance"+recipe.hashCode();
 
         recipe.setConstructorArgNames(new String[]{param});
         recipe.setProperty(param, instance);

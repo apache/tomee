@@ -54,7 +54,7 @@ public class ThreadContext {
         for (final ThreadContextListener listener : listeners) {
             try {
                 listener.contextEntered(oldContext, newContext);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.warning("ThreadContextListener threw an exception", e);
             }
         }
@@ -80,7 +80,7 @@ public class ThreadContext {
         for (final ThreadContextListener listener : listeners) {
             try {
                 listener.contextExited(exitingContext, oldContext);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.debug("ThreadContextListener threw an exception", e);
             }
         }

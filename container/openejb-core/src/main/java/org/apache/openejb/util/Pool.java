@@ -131,7 +131,7 @@ public class Pool<T> {
                 if (!scheduler.awaitTermination(10000, MILLISECONDS)) {
                     Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //Ignore
             }
         }
@@ -200,7 +200,7 @@ public class Pool<T> {
             synchronized (pool) {
                 try {
                     entry = pool.removeFirst();
-                } catch (NoSuchElementException e) {
+                } catch (final NoSuchElementException e) {
                     return null;
                 }
             }
@@ -247,14 +247,14 @@ public class Pool<T> {
                 try {
                     if (push(obj, offset)) return true;
                     available.release();
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     available.release();
                     throw e;
                 }
             }
 
             return false;
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             e.printStackTrace();
         }
@@ -593,9 +593,9 @@ public class Pool<T> {
                     }
                     entries.add(entry);
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
-            } catch (TimeoutException e) {
+            } catch (final TimeoutException e) {
                 // pool has been drained
             }
 
@@ -774,7 +774,7 @@ public class Pool<T> {
                     if (expired.hasHardReference()) entry.harden();
                     push(entry);
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 // Retry and logging should be done in
                 // the Supplier implementation
                 discard(expired);

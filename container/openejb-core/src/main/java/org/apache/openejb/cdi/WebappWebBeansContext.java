@@ -25,7 +25,7 @@ public class WebappWebBeansContext extends WebBeansContext {
     private WebBeansContext parent;
     private BeanManagerImpl bm;
 
-    public WebappWebBeansContext(Map<Class<?>, Object> services, Properties properties, WebBeansContext webBeansContext) {
+    public WebappWebBeansContext(final Map<Class<?>, Object> services, final Properties properties, final WebBeansContext webBeansContext) {
         super(services, properties);
         parent = webBeansContext;
     }

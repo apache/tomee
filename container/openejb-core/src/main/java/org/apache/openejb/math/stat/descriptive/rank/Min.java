@@ -62,7 +62,7 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
      *
      * @param original the {@code Min} instance to copy
      */
-    public Min(Min original) {
+    public Min(final Min original) {
         copy(original, this);
     }
 
@@ -142,7 +142,7 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
      */
     @Override
     public Min copy() {
-        Min result = new Min();
+        final Min result = new Min();
         copy(this, result);
         return result;
     }
@@ -155,7 +155,7 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
      * @param dest Min to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Min source, Min dest) {
+    public static void copy(final Min source, final Min dest) {
         dest.n = source.n;
         dest.value = source.value;
     }

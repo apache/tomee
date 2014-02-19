@@ -65,7 +65,7 @@ public class CdiBuilder {
         try {
             WebBeansFinder.setSingletonService(SINGLETON_SERVICE);
             logger.info("Succeeded in installing singleton service");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //ignore
             // not logging the exception since it is nto an error
             logger.debug("Could not install our singleton service");

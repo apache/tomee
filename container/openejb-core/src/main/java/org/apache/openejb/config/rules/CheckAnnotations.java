@@ -33,46 +33,46 @@ public class CheckAnnotations extends ValidationBase {
     Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, CheckAnnotations.class);
 
     @Override
-    public void validate(AppModule appModule) {
+    public void validate(final AppModule appModule) {
         try {
 
-            for (EjbModule ejbModule : appModule.getEjbModules()) {
+            for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 module = ejbModule;
                 findClassesAnnotatedWithWebService(ejbModule);
             }
 
-            for (WebModule webModule : appModule.getWebModules()) {
+            for (final WebModule webModule : appModule.getWebModules()) {
                 module = webModule;
                 findClassesAnnotatedWithWebService(webModule);
             }
             
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error while validating @WebService annotation", e);
         }
 
 
     }
 
-    private void findClassesAnnotatedWithWebService(EjbModule ejbModule) {
+    private void findClassesAnnotatedWithWebService(final EjbModule ejbModule) {
                                                             
-        IAnnotationFinder finder = ejbModule.getFinder();
+        final IAnnotationFinder finder = ejbModule.getFinder();
         if (finder != null) {findIncorrectAnnotationAndWarn(finder,ejbModule.toString());}
     }
 
 
-    private void findClassesAnnotatedWithWebService(WebModule webModule) {
-        IAnnotationFinder finder = webModule.getFinder();
+    private void findClassesAnnotatedWithWebService(final WebModule webModule) {
+        final IAnnotationFinder finder = webModule.getFinder();
         if (finder != null) {findIncorrectAnnotationAndWarn(finder,webModule.toString());}
 
     }
 
-    private void findIncorrectAnnotationAndWarn(IAnnotationFinder finder, String component) {
-        List<Class<?>> webserviceAnnotatedClasses = finder.findAnnotatedClasses(WebService.class);
-        for (Class clazz : webserviceAnnotatedClasses) {
-            Annotation[] annotations = clazz.getDeclaredAnnotations();
+    private void findIncorrectAnnotationAndWarn(final IAnnotationFinder finder, final String component) {
+        final List<Class<?>> webserviceAnnotatedClasses = finder.findAnnotatedClasses(WebService.class);
+        for (final Class clazz : webserviceAnnotatedClasses) {
+            final Annotation[] annotations = clazz.getDeclaredAnnotations();
 
-            List<Annotation> declaredAnnotations = Arrays.asList(annotations);
-            for (Annotation declaredAnn : declaredAnnotations) {
+            final List<Annotation> declaredAnnotations = Arrays.asList(annotations);
+            for (final Annotation declaredAnn : declaredAnnotations) {
                 if (declaredAnn.annotationType().getName().equals("javax.ejb.Stateful")) {
                     warn(component, "annotation.invalid.stateful.webservice", clazz.getName());
                 }

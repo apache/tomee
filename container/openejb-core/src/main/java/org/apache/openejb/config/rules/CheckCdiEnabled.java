@@ -22,7 +22,7 @@ import org.apache.xbean.finder.IAnnotationFinder;
 import javax.inject.Inject;
 
 public class CheckCdiEnabled extends ValidationBase {
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
         if (ejbModule.getFinder() == null) {
             return;
         }

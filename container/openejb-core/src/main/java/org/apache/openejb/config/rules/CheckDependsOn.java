@@ -37,17 +37,17 @@ import java.util.Set;
  */
 public class CheckDependsOn extends ValidationBase {
 
-    public void validate(AppModule appModule) {
+    public void validate(final AppModule appModule) {
         module = appModule;
 
-        LinkResolver<Bean> app = new LinkResolver<Bean>();
+        final LinkResolver<Bean> app = new LinkResolver<Bean>();
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
-            Resolver<Bean> resolver = new Resolver(app, new LinkResolver<Bean>());
+            final Resolver<Bean> resolver = new Resolver(app, new LinkResolver<Bean>());
 
-            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                Bean b = new Bean(bean, ejbModule, ejbModule.getModuleUri(), resolver);
+            for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                final Bean b = new Bean(bean, ejbModule, ejbModule.getModuleUri(), resolver);
 
                 resolver.module.add(ejbModule.getModuleUri(), bean.getEjbName(), b);
 
@@ -57,17 +57,17 @@ public class CheckDependsOn extends ValidationBase {
 
         }
 
-        for (Bean bean : app.values()) {
-            EnterpriseBean enterpriseBean = bean.bean;
+        for (final Bean bean : app.values()) {
+            final EnterpriseBean enterpriseBean = bean.bean;
 
             if (!(enterpriseBean instanceof SessionBean)) continue;
 
-            SessionBean sessionBean = (SessionBean) enterpriseBean;
+            final SessionBean sessionBean = (SessionBean) enterpriseBean;
 
             if (sessionBean.getSessionType() != SessionType.SINGLETON) continue;
 
-            for (String ejbName : sessionBean.getDependsOn()) {
-                Bean referee = bean.resolveLink(ejbName);
+            for (final String ejbName : sessionBean.getDependsOn()) {
+                final Bean referee = bean.resolveLink(ejbName);
                 if (referee == null) {
                     bean.module.getValidation().fail(enterpriseBean.getEjbName(), "dependsOn.noSuchEjb", ejbName);
                 } else {
@@ -78,22 +78,22 @@ public class CheckDependsOn extends ValidationBase {
 
         try {
             References.sort(new ArrayList<Bean>(app.values()), new References.Visitor<Bean>() {
-                public String getName(Bean t) {
+                public String getName(final Bean t) {
                     return t.getId();
                 }
 
-                public Set<String> getReferences(Bean t) {
-                    LinkedHashSet<String> refs = new LinkedHashSet<String>();
-                    for (Bean bean : t.dependsOn) {
+                public Set<String> getReferences(final Bean t) {
+                    final LinkedHashSet<String> refs = new LinkedHashSet<String>();
+                    for (final Bean bean : t.dependsOn) {
                         refs.add(bean.getId());
                     }
                     return refs;
                 }
             });
-        } catch (CircularReferencesException e) {
-            for (List<Bean> circuit : e.getCircuits()) {
-                List<String> ejbNames = new ArrayList<String>(circuit.size());
-                for (Bean bean : circuit) {
+        } catch (final CircularReferencesException e) {
+            for (final List<Bean> circuit : e.getCircuits()) {
+                final List<String> ejbNames = new ArrayList<String>(circuit.size());
+                for (final Bean bean : circuit) {
                     ejbNames.add(bean.bean.getEjbName());
                 }
                 fail("EAR", "dependsOn.circuit", Join.join(" -> ", ejbNames), ejbNames.get(0));
@@ -106,13 +106,13 @@ public class CheckDependsOn extends ValidationBase {
         private final LinkResolver<T> module;
         private final LinkResolver<T> app;
 
-        public Resolver(LinkResolver<T> app, LinkResolver<T> module) {
+        public Resolver(final LinkResolver<T> app, final LinkResolver<T> module) {
             this.app = app;
             this.module = module;
         }
 
-        public T resolveLink(String link, URI moduleUri) {
-            T value = module.resolveLink(link, moduleUri);
+        public T resolveLink(final String link, final URI moduleUri) {
+            final T value = module.resolveLink(link, moduleUri);
             if (value != null) return value;
 
             return app.resolveLink(link, moduleUri);
@@ -126,14 +126,14 @@ public class CheckDependsOn extends ValidationBase {
         private final EjbModule module;
         private final Resolver<Bean> resolver;
 
-        public Bean(EnterpriseBean bean, EjbModule module, URI moduleUri, Resolver<Bean> resolver) {
+        public Bean(final EnterpriseBean bean, final EjbModule module, final URI moduleUri, final Resolver<Bean> resolver) {
             this.bean = bean;
             this.module = module;
             this.moduleUri = moduleUri;
             this.resolver = resolver;
         }
 
-        public Bean resolveLink(String ejbName) {
+        public Bean resolveLink(final String ejbName) {
             return resolver.resolveLink(ejbName, moduleUri);
         }
 

@@ -40,24 +40,24 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ActivationConfigPropertyOverride.class);
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         final Properties system = new Properties();
         system.putAll(SystemInstance.get().getProperties());
         system.putAll(appModule.getProperties());
         system.putAll(System.getProperties());
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            EjbJar ejbJar = ejbModule.getEjbJar();
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final EjbJar ejbJar = ejbModule.getEjbJar();
+            final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             final Properties module = new Properties();
             module.putAll(openejbJar.getProperties());
             module.putAll(system);
 
-            Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+            final Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
-            for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
                 final String ejbName = bean.getEjbName();
                 final EjbDeployment ejbDeployment = deployments.get(ejbName);
@@ -84,9 +84,9 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 if (mdb.getActivationConfig() == null) {
                     mdb.setActivationConfig(new ActivationConfig());
                 }
-                List<ActivationConfigProperty> activationConfigList = mdb.getActivationConfig().getActivationConfigProperty();
+                final List<ActivationConfigProperty> activationConfigList = mdb.getActivationConfig().getActivationConfigProperty();
 
-                for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+                for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
 
                     final Object property = entry.getKey() + "";
                     final Object value = entry.getValue() + "";
@@ -113,8 +113,8 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return appModule;
     }
 
-    private ActivationConfigProperty findActivationProperty(List<ActivationConfigProperty> activationConfigList, String nameOfProperty) {
-        for (ActivationConfigProperty activationProp : activationConfigList) {
+    private ActivationConfigProperty findActivationProperty(final List<ActivationConfigProperty> activationConfigList, final String nameOfProperty) {
+        for (final ActivationConfigProperty activationProp : activationConfigList) {
             if (activationProp.getActivationConfigPropertyName().equals(nameOfProperty)) {
                 return activationProp;
             }

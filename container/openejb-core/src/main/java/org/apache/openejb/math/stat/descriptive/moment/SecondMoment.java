@@ -64,7 +64,7 @@ public class SecondMoment extends FirstMoment implements Serializable {
      *
      * @param original the {@code SecondMoment} instance to copy
      */
-    public SecondMoment(SecondMoment original) {
+    public SecondMoment(final SecondMoment original) {
         super(original);
         this.m2 = original.m2;
     }
@@ -103,7 +103,7 @@ public class SecondMoment extends FirstMoment implements Serializable {
      */
     @Override
     public SecondMoment copy() {
-        SecondMoment result = new SecondMoment();
+        final SecondMoment result = new SecondMoment();
         copy(this, result);
         return result;
     }
@@ -116,7 +116,7 @@ public class SecondMoment extends FirstMoment implements Serializable {
      * @param dest SecondMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(SecondMoment source, SecondMoment dest) {
+    public static void copy(final SecondMoment source, final SecondMoment dest) {
         FirstMoment.copy(source, dest);
         dest.m2 = source.m2;
     }

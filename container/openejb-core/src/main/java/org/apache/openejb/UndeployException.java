@@ -31,15 +31,15 @@ public class UndeployException extends OpenEJBException {
     public UndeployException() {
     }
 
-    public UndeployException(String message) {
+    public UndeployException(final String message) {
         super(message);
     }
 
-    public UndeployException(String message, Throwable rootCause) {
+    public UndeployException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public UndeployException(Throwable rootCause) {
+    public UndeployException(final Throwable rootCause) {
         super(rootCause);
     }
 
@@ -47,19 +47,19 @@ public class UndeployException extends OpenEJBException {
         return causes;
     }
 
-    public void printStackTrace(PrintStream s) {
+    public void printStackTrace(final PrintStream s) {
         super.printStackTrace(s);
 
-        for (Throwable throwable : causes) {
+        for (final Throwable throwable : causes) {
             s.print("Nested caused by: ");
             throwable.printStackTrace(s);
         }
     }
     
-    public void printStackTrace(PrintWriter s) {
+    public void printStackTrace(final PrintWriter s) {
         super.printStackTrace(s);
 
-        for (Throwable throwable : causes) {
+        for (final Throwable throwable : causes) {
             s.print("Nested caused by: ");
             throwable.printStackTrace(s);
         }

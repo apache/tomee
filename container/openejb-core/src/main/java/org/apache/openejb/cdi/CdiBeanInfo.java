@@ -69,12 +69,12 @@ public class CdiBeanInfo implements JndiConsumer {
     }
 
 
-    public void setInjections(List<Injection> injections) {
+    public void setInjections(final List<Injection> injections) {
         this.injections = injections;
     }
 
 
-    public void setBeanName(String beanName) {
+    public void setBeanName(final String beanName) {
         this.beanName = beanName;
     }
 
@@ -82,7 +82,7 @@ public class CdiBeanInfo implements JndiConsumer {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -91,7 +91,7 @@ public class CdiBeanInfo implements JndiConsumer {
     private List<LifecycleCallback> afterCompletion;
     private Class<?> beanClass;
 
-    public void setBeanClass(Class<?> beanClass) {
+    public void setBeanClass(final Class<?> beanClass) {
         this.beanClass = beanClass;
     }
 
@@ -241,7 +241,7 @@ public class CdiBeanInfo implements JndiConsumer {
         return securityIdentity;
     }
 
-    public void setSecurityIdentity(SecurityIdentity value) {
+    public void setSecurityIdentity(final SecurityIdentity value) {
         this.securityIdentity = value;
     }
 

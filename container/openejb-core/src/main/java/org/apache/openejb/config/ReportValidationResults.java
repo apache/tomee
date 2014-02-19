@@ -41,32 +41,32 @@ public class ReportValidationResults implements DynamicDeployer {
         VERBOSE
     }
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        Level level = SystemInstance.get().getOptions().get(VALIDATION_LEVEL, Level.MEDIUM);
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+        final Level level = SystemInstance.get().getOptions().get(VALIDATION_LEVEL, Level.MEDIUM);
 
-        boolean hasErrors = appModule.hasErrors();
-        boolean hasFailures = appModule.hasFailures();
-        boolean hasWarnings = appModule.hasWarnings();
+        final boolean hasErrors = appModule.hasErrors();
+        final boolean hasFailures = appModule.hasFailures();
+        final boolean hasWarnings = appModule.hasWarnings();
 
         if (!hasErrors && !hasFailures && !hasWarnings) return appModule;
 
-        ValidationFailedException validationFailedException = null;
+        final ValidationFailedException validationFailedException = null;
 
-        List<ValidationContext> contexts = appModule.getValidationContexts();
+        final List<ValidationContext> contexts = appModule.getValidationContexts();
 
-        for (ValidationContext context : contexts) {
+        for (final ValidationContext context : contexts) {
             logResults(context, level);
         }
 
-        ValidationContext uberContext = new ValidationContext(appModule);
-        for (ValidationContext context : contexts) {
-            for (ValidationError error : context.getErrors()) {
+        final ValidationContext uberContext = new ValidationContext(appModule);
+        for (final ValidationContext context : contexts) {
+            for (final ValidationError error : context.getErrors()) {
                 uberContext.addError(error);
             }
-            for (ValidationFailure failure : context.getFailures()) {
+            for (final ValidationFailure failure : context.getFailures()) {
                 uberContext.addFailure(failure);
             }
-            for (ValidationWarning warning : context.getWarnings()) {
+            for (final ValidationWarning warning : context.getWarnings()) {
                 uberContext.addWarning(warning);
             }
         }
@@ -83,23 +83,23 @@ public class ReportValidationResults implements DynamicDeployer {
         throw  new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
     }
 
-    private void logResults(ValidationContext context, Level level) {
+    private void logResults(final ValidationContext context, final Level level) {
 
-        for (ValidationError e : context.getErrors()) {
+        for (final ValidationError e : context.getErrors()) {
             logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
         }
 
-        for (ValidationFailure e : context.getFailures()) {
+        for (final ValidationFailure e : context.getFailures()) {
             logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
         }
 
-        for (ValidationWarning e : context.getWarnings()) {
+        for (final ValidationWarning e : context.getWarnings()) {
             logger.warning(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
         }
 
         if (context.hasErrors() || context.hasFailures()) {
 
-            DeploymentModule module = context.getModule();
+            final DeploymentModule module = context.getModule();
             logger.error(String.format("Invalid %s(name=%s, path=%s)", context.getModuleType(), module.getModuleId(), module.getFile()));
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
         } else if (context.hasWarnings()) {

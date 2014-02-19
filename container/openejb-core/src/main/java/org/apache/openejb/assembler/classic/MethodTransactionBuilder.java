@@ -38,13 +38,13 @@ public class MethodTransactionBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodTransactionBuilder.class);
 
-    public void build(HashMap<String, BeanContext> deployments, List<MethodTransactionInfo> methodTransactions) throws OpenEJBException {
-        for (BeanContext beanContext : deployments.values()) {
+    public void build(final HashMap<String, BeanContext> deployments, final List<MethodTransactionInfo> methodTransactions) throws OpenEJBException {
+        for (final BeanContext beanContext : deployments.values()) {
             applyTransactionAttributes(beanContext, methodTransactions);
         }
     }
 
-    public static void applyTransactionAttributes(BeanContext beanContext, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
+    public static void applyTransactionAttributes(final BeanContext beanContext, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
 
         if (beanContext.isBeanManagedTransaction()) return;
 
@@ -52,15 +52,15 @@ public class MethodTransactionBuilder {
 
         final Map<MethodInfoUtil.ViewMethod, MethodAttributeInfo> attributes = resolveViewAttributes(methodTransactionInfos, beanContext);
 
-        Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodTransactionBuilder.class);
+        final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodTransactionBuilder.class);
         final boolean debug = log.isDebugEnabled();
 
-        for (Map.Entry<MethodInfoUtil.ViewMethod, MethodAttributeInfo> entry : attributes.entrySet()) {
+        for (final Map.Entry<MethodInfoUtil.ViewMethod, MethodAttributeInfo> entry : attributes.entrySet()) {
             final MethodInfoUtil.ViewMethod viewMethod = entry.getKey();
             final Method method = viewMethod.getMethod();
             final String view = viewMethod.getView();
 
-            MethodTransactionInfo transactionInfo = (MethodTransactionInfo) entry.getValue();
+            final MethodTransactionInfo transactionInfo = (MethodTransactionInfo) entry.getValue();
 
             if (debug) log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(transactionInfo));
 
@@ -78,11 +78,11 @@ public class MethodTransactionBuilder {
      *
      * @return a normalized list of new MethodTransactionInfo objects
      */
-    public static List<MethodTransactionInfo> normalize(List<MethodTransactionInfo> infos){
-        List<MethodTransactionInfo> normalized = new ArrayList<MethodTransactionInfo>();
-        for (MethodTransactionInfo oldInfo : infos) {
-            for (MethodInfo methodInfo : oldInfo.methods) {
-                MethodTransactionInfo newInfo = new MethodTransactionInfo();
+    public static List<MethodTransactionInfo> normalize(final List<MethodTransactionInfo> infos){
+        final List<MethodTransactionInfo> normalized = new ArrayList<MethodTransactionInfo>();
+        for (final MethodTransactionInfo oldInfo : infos) {
+            for (final MethodInfo methodInfo : oldInfo.methods) {
+                final MethodTransactionInfo newInfo = new MethodTransactionInfo();
                 newInfo.description = oldInfo.description;
                 newInfo.methods.add(methodInfo);
                 newInfo.transAttribute = oldInfo.transAttribute;
@@ -98,7 +98,7 @@ public class MethodTransactionBuilder {
     }
 
     public static class MethodTransactionComparator extends MethodInfoUtil.BaseComparator<MethodTransactionInfo> {
-        public int compare(MethodTransactionInfo a, MethodTransactionInfo b) {
+        public int compare(final MethodTransactionInfo a, final MethodTransactionInfo b) {
             return compare(a.methods.get(0), b.methods.get(0));
         }
     }

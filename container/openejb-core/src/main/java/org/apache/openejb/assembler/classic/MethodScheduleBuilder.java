@@ -30,11 +30,11 @@ public class MethodScheduleBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodScheduleBuilder.class.getPackage().getName());
 
-    public void build(BeanContext beanContext, EnterpriseBeanInfo beanInfo) {
+    public void build(final BeanContext beanContext, final EnterpriseBeanInfo beanInfo) {
         
-        Class<?> clazz = beanContext.getBeanClass();
+        final Class<?> clazz = beanContext.getBeanClass();
         
-        for (MethodScheduleInfo info : beanInfo.methodScheduleInfos) {
+        for (final MethodScheduleInfo info : beanInfo.methodScheduleInfos) {
             
             Method timeoutMethodOfSchedule = null;
             
@@ -46,7 +46,7 @@ public class MethodScheduleBuilder {
 
                 try {
                     timeoutMethodOfSchedule = MethodInfoUtil.toMethod(clazz, info.method);
-                } catch (IllegalStateException e) {
+                } catch (final IllegalStateException e) {
                     // method doesn't exist
                     logger.warning("Schedule method does not exist: " + info.method.methodName, e);
                     continue;
@@ -69,15 +69,15 @@ public class MethodScheduleBuilder {
         }
     }
     
-    private void addSchedulesToMethod(MethodContext methodContext, MethodScheduleInfo info){
+    private void addSchedulesToMethod(final MethodContext methodContext, final MethodScheduleInfo info){
         
         if (methodContext == null) {
             return;
         }
         
-        for (ScheduleInfo scheduleInfo : info.schedules) {
+        for (final ScheduleInfo scheduleInfo : info.schedules) {
 
-            ScheduleExpression expr = new ScheduleExpression();
+            final ScheduleExpression expr = new ScheduleExpression();
             expr.second(scheduleInfo.second == null ? "0" : scheduleInfo.second);
             expr.minute(scheduleInfo.minute == null ? "0" : scheduleInfo.minute);
             expr.hour(scheduleInfo.hour == null ? "0" : scheduleInfo.hour);
@@ -89,7 +89,7 @@ public class MethodScheduleBuilder {
             expr.start(scheduleInfo.start);
             expr.end(scheduleInfo.end);
 
-            TimerConfig config = new TimerConfig();
+            final TimerConfig config = new TimerConfig();
             config.setInfo(scheduleInfo.info);
             config.setPersistent(scheduleInfo.persistent);
 

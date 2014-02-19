@@ -29,18 +29,18 @@ import java.util.Set;
  */
 public class Jdk13ProxyFactory implements ProxyFactory {
 
-    public void init(Properties props) throws OpenEJBException {
+    public void init(final Properties props) throws OpenEJBException {
     }
 
-    public InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException {
+    public InvocationHandler getInvocationHandler(final Object proxy) throws IllegalArgumentException {
         return (InvocationHandler) Proxy.getInvocationHandler(proxy);
     }
 
-    public Class getProxyClass(Class interfce) throws IllegalArgumentException {
+    public Class getProxyClass(final Class interfce) throws IllegalArgumentException {
         return Proxy.getProxyClass(interfce.getClassLoader(), new Class[]{interfce});
     }
 
-    public Class getProxyClass(Class[] interfaces) throws IllegalArgumentException {
+    public Class getProxyClass(final Class[] interfaces) throws IllegalArgumentException {
         if (interfaces.length < 1) {
             throw new IllegalArgumentException("It's boring to implement 0 interfaces!");
         }
@@ -50,7 +50,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
     /*
      * Returns true if and only if the specified class was dynamically generated to be a proxy class using the getProxyClass method or the newProxyInstance method.
      */
-    public boolean isProxyClass(Class cl) {
+    public boolean isProxyClass(final Class cl) {
         return Proxy.isProxyClass(cl);
     }
 
@@ -58,15 +58,15 @@ public class Jdk13ProxyFactory implements ProxyFactory {
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class interfce, InvocationHandler h) throws IllegalArgumentException {
+    public Object newProxyInstance(final Class interfce, final InvocationHandler h) throws IllegalArgumentException {
         try {
             return Proxy.newProxyInstance(interfce.getClassLoader(), new Class[]{interfce}, h);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             final ClassLoader reconciliatedCl = reconciliate(interfce);
             try {
                 reconciliatedCl.loadClass(interfce.getName());
                 return Proxy.newProxyInstance(reconciliatedCl, new Class[]{interfce}, h);
-            } catch (ClassNotFoundException e2) {
+            } catch (final ClassNotFoundException e2) {
                 throw iae;
             }
         }
@@ -76,31 +76,31 @@ public class Jdk13ProxyFactory implements ProxyFactory {
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class[] interfaces, InvocationHandler handler) throws IllegalArgumentException {
+    public Object newProxyInstance(final Class[] interfaces, final InvocationHandler handler) throws IllegalArgumentException {
         if (interfaces.length < 1) {
             throw new IllegalArgumentException("It's boring to implement 0 interfaces!");
         }
 
         try {
             return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
-        } catch (IllegalArgumentException e) {
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        } catch (final IllegalArgumentException e) {
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             try {
-                Class tcclHomeClass = tccl.loadClass(interfaces[0].getName());
+                final Class tcclHomeClass = tccl.loadClass(interfaces[0].getName());
                 if (tcclHomeClass == interfaces[0]) {
                     return Proxy.newProxyInstance(tccl, interfaces, handler);
                 }
-            } catch (ClassNotFoundException e1) {
+            } catch (final ClassNotFoundException e1) {
                 // maybe all interfaces are not in the same classloader (OSGi)
                 // trying to reconciliate it here
-                ClassLoader reconciliatedCl = reconciliate(interfaces);
-                Class homeClass;
+                final ClassLoader reconciliatedCl = reconciliate(interfaces);
+                final Class homeClass;
                 try {
                     homeClass = reconciliatedCl.loadClass(interfaces[0].getName());
                     if (homeClass == interfaces[0]) {
                         return Proxy.newProxyInstance(reconciliatedCl, interfaces, handler);
                     }
-                } catch (ClassNotFoundException e2) {
+                } catch (final ClassNotFoundException e2) {
                     throw e;
                 }
             }
@@ -108,9 +108,9 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         }
     }
 
-    private static ClassLoader reconciliate(Class<?>... interfaces) {
-        Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
-        for (Class<?> clazz : interfaces) {
+    private static ClassLoader reconciliate(final Class<?>... interfaces) {
+        final Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
+        for (final Class<?> clazz : interfaces) {
             classloaders.add(clazz.getClassLoader());
         }
         return new MultipleClassLoadersClassLoader(classloaders.toArray(new ClassLoader[classloaders.size()]));
@@ -125,12 +125,12 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         }
 
         @Override
-        public Class<?> loadClass(String name) throws ClassNotFoundException {
+        public Class<?> loadClass(final String name) throws ClassNotFoundException {
             ClassNotFoundException ex = null;
-            for (ClassLoader cl : delegatingClassloaders) {
+            for (final ClassLoader cl : delegatingClassloaders) {
                 try {
                     return cl.loadClass(name);
-                } catch (ClassNotFoundException cnfe) {
+                } catch (final ClassNotFoundException cnfe) {
                     if (ex == null) {
                         ex = cnfe;
                     }

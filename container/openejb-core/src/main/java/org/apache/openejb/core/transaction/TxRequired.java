@@ -46,7 +46,7 @@ public class TxRequired extends JtaTransactionPolicy {
     private final Transaction clientTx;
     private final Transaction currentTx;
 
-    public TxRequired(TransactionManager transactionManager) throws SystemException {
+    public TxRequired(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.Required, transactionManager);
 
         clientTx = getTransaction();

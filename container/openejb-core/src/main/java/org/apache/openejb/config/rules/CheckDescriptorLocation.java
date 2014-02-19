@@ -37,17 +37,17 @@ import static org.apache.openejb.util.CollectionsUtil.safe;
 public class CheckDescriptorLocation extends ValidationBase {
 
     @Override
-    public void validate(AppModule appModule){
+    public void validate(final AppModule appModule){
 
-        List<String> validated = new ArrayList<String>();
+        final List<String> validated = new ArrayList<String>();
 
-        for(WebModule webModule: safe(appModule.getWebModules()))
+        for(final WebModule webModule: safe(appModule.getWebModules()))
         {
             validated.add(webModule.getModuleId());
             validateWebModule(webModule);
         }
 
-        for(EjbModule ejbModule: safe(appModule.getEjbModules()))
+        for(final EjbModule ejbModule: safe(appModule.getEjbModules()))
         {
             //without this check, CheckDescriptorLocationTest#testWarWithDescriptorInRoot() would fail
             if(!validated.contains(ejbModule.getModuleId()))
@@ -58,46 +58,46 @@ public class CheckDescriptorLocation extends ValidationBase {
 
     }
 
-    private void validateWebModule(DeploymentModule webModule) {
+    private void validateWebModule(final DeploymentModule webModule) {
         this.module= webModule;
-        List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","faces-config.xml");
-        File file = webModule.getFile();
+        final List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","faces-config.xml");
+        final File file = webModule.getFile();
         if (file != null) {
             try {
-                URL rootOfArchive=file.toURI().toURL();
-                URL metaInf=new URL(rootOfArchive.toExternalForm()+"META-INF/");
-                Map<String, URL> incorrectlyLocatedDescriptors = retrieveDescriptors(descriptorsToSearch, rootOfArchive, metaInf);
+                final URL rootOfArchive=file.toURI().toURL();
+                final URL metaInf=new URL(rootOfArchive.toExternalForm()+"META-INF/");
+                final Map<String, URL> incorrectlyLocatedDescriptors = retrieveDescriptors(descriptorsToSearch, rootOfArchive, metaInf);
                 warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"WEB-INF");
-            } catch (MalformedURLException ignored) {
+            } catch (final MalformedURLException ignored) {
                     //ignored
             }
         }
 
     }
 
-    public void validateEjbModule(DeploymentModule deploymentModule) {
+    public void validateEjbModule(final DeploymentModule deploymentModule) {
         this.module= deploymentModule;
-        List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","openejb-jar.xml","env-entries.properties");
-        File file = deploymentModule.getFile();
+        final List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","openejb-jar.xml","env-entries.properties");
+        final File file = deploymentModule.getFile();
         if (file != null) {
             try {
-                URL rootOfArchive=file.toURI().toURL();
-                Map<String, URL> incorrectlyLocatedDescriptors
+                final URL rootOfArchive=file.toURI().toURL();
+                final Map<String, URL> incorrectlyLocatedDescriptors
                         = retrieveDescriptors(descriptorsToSearch, rootOfArchive);
                 warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"META-INF");
-            } catch (MalformedURLException ignored) {
+            } catch (final MalformedURLException ignored) {
                   //ignored
             }
         }
 
     }
 
-    private static Map<String,URL> retrieveDescriptors(List<String> descriptorsToSearch, URL... locationsToSearch ){
+    private static Map<String,URL> retrieveDescriptors(final List<String> descriptorsToSearch, final URL... locationsToSearch ){
       final Map<String,URL>  descriptorAndWrongLocation = new HashMap<String,URL>();
-            ResourceFinder finder = new ResourceFinder(locationsToSearch);
-            for(String descriptor:descriptorsToSearch)
+            final ResourceFinder finder = new ResourceFinder(locationsToSearch);
+            for(final String descriptor:descriptorsToSearch)
             {
-                URL resource = finder.getResource(descriptor);
+                final URL resource = finder.getResource(descriptor);
                 if(resource!=null)
                 {
                    descriptorAndWrongLocation.put(descriptor,resource);
@@ -107,8 +107,8 @@ public class CheckDescriptorLocation extends ValidationBase {
         return descriptorAndWrongLocation;
     }
 
-    private void warnIncorrectLocationOfDescriptors(Map<String, URL> descriptorsPlacedInWrongLocation, String expectedLocation) {
-        for (Map.Entry<String, URL> map : descriptorsPlacedInWrongLocation.entrySet()) {
+    private void warnIncorrectLocationOfDescriptors(final Map<String, URL> descriptorsPlacedInWrongLocation, final String expectedLocation) {
+        for (final Map.Entry<String, URL> map : descriptorsPlacedInWrongLocation.entrySet()) {
 
             warn(this.module.toString(), "descriptor.incorrectLocation", map.getValue().toExternalForm(), expectedLocation);
         }

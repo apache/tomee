@@ -54,15 +54,15 @@ public class Resource extends AbstractService {
     @XmlElement(name = "aliases")
     protected List<String> aliases = new ArrayList<String>();
 
-    public Resource(String id) {
+    public Resource(final String id) {
         super(id);
     }
 
-    public Resource(String id, String type) {
+    public Resource(final String id, final String type) {
         super(id, type);
     }
 
-    public Resource(String id, String type, String provider) {
+    public Resource(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 
@@ -85,7 +85,7 @@ public class Resource extends AbstractService {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setJndi(String value) {
+    public void setJndi(final String value) {
         this.jndi = value;
     }
 
@@ -94,12 +94,12 @@ public class Resource extends AbstractService {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Resource)) return false;
         if (!super.equals(o)) return false;
 
-        Resource resource = (Resource) o;
+        final Resource resource = (Resource) o;
 
         if (jndi != null ? !jndi.equals(resource.jndi) : resource.jndi != null) return false;
 

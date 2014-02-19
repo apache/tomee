@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class JaxRpcInvocationContext extends ReflectionInvocationContext {
 
-    public JaxRpcInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext, Object... parameters) {
+    public JaxRpcInvocationContext(final Operation operation, final List<Interceptor> interceptors, final Object target, final Method method, final MessageContext messageContext, final Object... parameters) {
         super(operation, interceptors, target, method, parameters);
         getContextData().put(MessageContext.class.getName(), messageContext);
     }

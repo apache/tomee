@@ -83,7 +83,7 @@ public class QuickContextXmlParser extends DefaultHandler {
         if (virtualClasspath != null) {
             final StringTokenizer tkn = new StringTokenizer(virtualClasspath, ";");
             while (tkn.hasMoreTokens()) {
-                String token = tkn.nextToken().trim();
+                final String token = tkn.nextToken().trim();
                 if (token.isEmpty()) {
                     continue;
                 }

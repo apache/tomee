@@ -62,7 +62,7 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
         final Iterator<PersistenceUnit> it = values.iterator();
         while (it.hasNext()) {
             final PersistenceUnit next = it.next();
-            for (WebModule webModule : module.getWebModules()) {
+            for (final WebModule webModule : module.getWebModules()) {
                 if (isIn(next, webModule)) {
                     it.remove();
                 }
@@ -79,20 +79,20 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
         }
 
         final Collection<String> strUrls = new ArrayList<String>();
-        for (URL url : urls) {
+        for (final URL url : urls) {
             strUrls.add(URLs.toFilePath(url));
         }
 
-        for (PersistenceModule persistenceModule : module.getPersistenceModules()) {
+        for (final PersistenceModule persistenceModule : module.getPersistenceModules()) {
             final Persistence persistence = persistenceModule.getPersistence();
             final String rootUrl;
             try {
                 rootUrl = URLs.toFilePath(new URL(persistenceModule.getRootUrl()));
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 continue;
             }
 
-            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+            for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
                 if (unit == value) {
                     if (strUrls.contains(rootUrl)) {
                         return true;

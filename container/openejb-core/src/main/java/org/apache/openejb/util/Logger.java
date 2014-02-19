@@ -112,7 +112,7 @@ public class Logger {
             for (final Object key : systemProperties.keySet()) {
                 stream.warn(String.format(format, "Property overrides", key));
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // added strong catch block just in case
             // This check is only a convenience
         }
@@ -127,7 +127,7 @@ public class Logger {
         try {
             //Try and use the user specified factory
             return (LogStreamFactory) factoryClass.newInstance();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
 
@@ -138,20 +138,20 @@ public class Logger {
         try {
             final ClassLoader classLoader = Logger.class.getClassLoader();
             return classLoader.loadClass(factoryName);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
 
         try {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             return contextClassLoader.loadClass(factoryName);
-        } catch (Throwable e1) {
+        } catch (final Throwable e1) {
             //Ignore
         }
 
         try {
             return Class.forName(factoryName);
-        } catch (Throwable e2) {
+        } catch (final Throwable e2) {
             //Ignore
         }
 
@@ -181,7 +181,7 @@ public class Logger {
         public ResourceBundle compute(final String baseName) throws InterruptedException {
             try {
                 return ResourceBundle.getBundle(baseName + SUFFIX);
-            } catch (MissingResourceException e) {
+            } catch (final MissingResourceException e) {
                 return null;
             }
         }
@@ -240,7 +240,7 @@ public class Logger {
     public static Logger getInstance(final LogCategory category, final String baseName) {
         try {
             return loggerCache.compute(new Object[]{category, baseName});
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             // Don't return null here. Just create a new Logger and set it up.
             // It will not be stored in the cache, but a later lookup for the
             // same Logger would probably end up in the cache
@@ -318,7 +318,7 @@ public class Logger {
             final File file = new File(conf, "logging.properties");
 
             return IO.readProperties(file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return new Properties();
         }
     }
@@ -340,7 +340,7 @@ public class Logger {
         try {
             final MessageFormat mf = messageFormatCache.compute(message);
             return mf.format(args);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return "Error in formatting message " + message;
         }
 
@@ -617,7 +617,7 @@ public class Logger {
             if (bundle != null) {
                 try {
                     return bundle.getString(key);
-                } catch (MissingResourceException e) {
+                } catch (final MissingResourceException e) {
                     final String parentName = heirarchyCache.compute(baseName);
                     if (parentName == null)
                         return key;
@@ -633,7 +633,7 @@ public class Logger {
                     return getMessage(key, parentName);
 
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             // ignore
         }
         return key;

@@ -23,7 +23,7 @@ package org.apache.openejb.util;
 
 public class Slf4jLogStreamFactory implements LogStreamFactory {
     @Override
-    public LogStream createLogStream(LogCategory logCategory) {
+    public LogStream createLogStream(final LogCategory logCategory) {
         return new Slf4jLogStream(logCategory);
     }
 

@@ -36,19 +36,19 @@ public class JndiReference extends Reference {
     * some other JNDI name space. The context is provided and the lookup name, but the 
     * object is not resolved until it's requested. 
     */
-    public JndiReference(Context linkedContext, String jndiName) {
+    public JndiReference(final Context linkedContext, final String jndiName) {
         this.context = linkedContext;
         this.jndiName = jndiName;
     }
 
     /*
     */
-    public JndiReference(String contextJndiName, String jndiName) {
+    public JndiReference(final String contextJndiName, final String jndiName) {
         this.contextJndiName = contextJndiName;
         this.jndiName = jndiName;
     }
 
-    public JndiReference(Hashtable envProperties, String jndiName) {
+    public JndiReference(final Hashtable envProperties, final String jndiName) {
         if (envProperties == null || envProperties.size() == 0) {
             this.envProperties = null;
         } else {
@@ -58,7 +58,7 @@ public class JndiReference extends Reference {
     }
 
     public Object getObject() throws NamingException {
-        Context externalContext = getContext();
+        final Context externalContext = getContext();
         synchronized (externalContext) {
             /* According to the JNDI SPI specification multiple threads may not access the same JNDI 
             Context *instance* concurrently. Since we don't know the origines of the federated context we must
@@ -71,7 +71,7 @@ public class JndiReference extends Reference {
     protected Context getContext() throws NamingException {
         if (context == null) {
             if (contextJndiName != null) {
-                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                 context = (Context) containerSystem.getJNDIContext().lookup(contextJndiName);
             } else {
                 context = new InitialContext(envProperties);

@@ -46,7 +46,7 @@ public class UpdateChecker {
     // internal
     private String current = null;
 
-    public void check(@Observes ObserverAdded event) {
+    public void check(@Observes final ObserverAdded event) {
         if (event.getObserver() != this) {
             return;
         }
@@ -73,7 +73,7 @@ public class UpdateChecker {
 
                 final String userInfo = proxyUrl.getUserInfo();
                 if (userInfo != null) {
-                    int sep = userInfo.indexOf(":");
+                    final int sep = userInfo.indexOf(":");
                     if (sep >= 0) {
                         System.setProperty(proxyProtocol + ".proxyUser", userInfo.substring(0, sep));
                         System.setProperty(proxyProtocol + ".proxyPassword", userInfo.substring(sep + 1));
@@ -81,7 +81,7 @@ public class UpdateChecker {
                         System.setProperty(proxyProtocol + ".proxyUser", userInfo);
                     }
                 }
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 checkerProxy = null;
             }
         }
@@ -98,7 +98,7 @@ public class UpdateChecker {
             if (!usesLatest()) {
                 LOGGER.warning(message());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.warning("can't check the version: " + e.getMessage()); // don't be too verbose here
         } finally {
             if (proxyProtocol != null) {
@@ -114,7 +114,7 @@ public class UpdateChecker {
         try {
             UpdateChecker.class.getClassLoader().loadClass("org.apache.tomee.catalina.TomcatWebAppBuilder");
             return TOMEE_ARTIFACT;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return "openejb";
         }
     }
@@ -130,7 +130,7 @@ public class UpdateChecker {
     private String extractLatest(final String metaData) {
         if (metaData != null) {
             boolean found = false;
-            for (String s : metaData.replace(">", ">\n").split("\n")) {
+            for (final String s : metaData.replace(">", ">\n").split("\n")) {
                 if (found) {
                     return trim(s).replace("</" + tag + ">", "");
                 }
@@ -154,7 +154,7 @@ public class UpdateChecker {
                 try {
                     prop.load(is);
                     current = prop.getProperty("version");
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     LOGGER.error("can't get tomee version, will use openejb one");
                 }
             }

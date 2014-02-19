@@ -25,14 +25,14 @@ public class Injection {
     private final String name;
     private final String jndiName;
 
-    public Injection(String jndiName, String name, Class target) {
+    public Injection(final String jndiName, final String name, final Class target) {
         this.jndiName = jndiName;
         this.name = name;
         this.target = target;
         this.classname = target.getName();
     }
 
-    public Injection(String jndiName, String name, String classname) {
+    public Injection(final String jndiName, final String name, final String classname) {
         this.jndiName = jndiName;
         this.name = name;
         this.classname = classname;
@@ -51,7 +51,7 @@ public class Injection {
         return target;
     }
 
-    public void setTarget(Class<?> target) {
+    public void setTarget(final Class<?> target) {
         this.target = target;
     }
 
@@ -69,11 +69,11 @@ public class Injection {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Injection)) return false;
 
-        Injection injection = (Injection) o;
+        final Injection injection = (Injection) o;
 
         if (name != null ? !name.equals(injection.name) : injection.name != null) return false;
         if (classname != null ? !classname.equals(injection.classname) : injection.classname != null) return false;

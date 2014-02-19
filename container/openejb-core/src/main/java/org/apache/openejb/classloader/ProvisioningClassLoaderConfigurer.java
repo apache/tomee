@@ -64,7 +64,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
         try {
             final File file = URLs.toFile(url);
             return !excluded.accept(file.getName());
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             return true;
         }
     }

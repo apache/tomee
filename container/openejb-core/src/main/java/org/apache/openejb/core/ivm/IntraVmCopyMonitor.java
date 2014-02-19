@@ -26,7 +26,7 @@ public final class IntraVmCopyMonitor {
            this.copy = false;
         }
 
-        State(boolean copy) {
+        State(final boolean copy) {
            this.copy = copy;
         }
 
@@ -59,7 +59,7 @@ public final class IntraVmCopyMonitor {
         return monitor;
     }
 
-    public static void pre(State state){
+    public static void pre(final State state){
         getMonitor().state = state;
     }
 

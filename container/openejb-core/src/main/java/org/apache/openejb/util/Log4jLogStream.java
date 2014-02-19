@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 public class Log4jLogStream implements LogStream {
     protected Logger logger;
 
-    public Log4jLogStream(LogCategory logCategory) {
+    public Log4jLogStream(final LogCategory logCategory) {
         logger = Logger.getLogger(logCategory.getName());
     }
 
@@ -30,11 +30,11 @@ public class Log4jLogStream implements LogStream {
         return logger.isEnabledFor(Level.FATAL);
     }
 
-    public void fatal(String message) {
+    public void fatal(final String message) {
         logger.fatal(message);
     }
 
-    public void fatal(String message, Throwable t) {
+    public void fatal(final String message, final Throwable t) {
         logger.fatal(message, t);
     }
 
@@ -42,11 +42,11 @@ public class Log4jLogStream implements LogStream {
         return logger.isEnabledFor(Level.ERROR);
     }
 
-    public void error(String message) {
+    public void error(final String message) {
         logger.error(message);
     }
 
-    public void error(String message, Throwable t) {
+    public void error(final String message, final Throwable t) {
         logger.error(message, t);
     }
 
@@ -54,11 +54,11 @@ public class Log4jLogStream implements LogStream {
         return logger.isEnabledFor(Level.WARN);
     }
 
-    public void warn(String message) {
+    public void warn(final String message) {
         logger.warn(message);
     }
 
-    public void warn(String message, Throwable t) {
+    public void warn(final String message, final Throwable t) {
         logger.warn(message, t);
     }
 
@@ -66,11 +66,11 @@ public class Log4jLogStream implements LogStream {
         return logger.isInfoEnabled();
     }
 
-    public void info(String message) {
+    public void info(final String message) {
         logger.info(message);
     }
 
-    public void info(String message, Throwable t) {
+    public void info(final String message, final Throwable t) {
         logger.info(message, t);
     }
 
@@ -78,11 +78,11 @@ public class Log4jLogStream implements LogStream {
         return logger.isDebugEnabled();
     }
 
-    public void debug(String message) {
+    public void debug(final String message) {
         logger.debug(message);
     }
 
-    public void debug(String message, Throwable t) {
+    public void debug(final String message, final Throwable t) {
         logger.debug(message, t);
     }
 }

@@ -29,23 +29,23 @@ import java.util.List;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public StatefulEjbHomeHandler(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
-    public Object createProxy(Object primaryKey, Class mainInterface) {
-        Object proxy = super.createProxy(primaryKey, mainInterface);
+    public Object createProxy(final Object primaryKey, final Class mainInterface) {
+        final Object proxy = super.createProxy(primaryKey, mainInterface);
         EjbObjectProxyHandler handler = null;
 
         try {
             handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // try getting the invocation handler from the localbean
             try {
-                Field field = proxy.getClass().getDeclaredField("invocationHandler");
+                final Field field = proxy.getClass().getDeclaredField("invocationHandler");
                 field.setAccessible(true);
                 handler = (EjbObjectProxyHandler) field.get(proxy);
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 // no-op
             }
         }
@@ -54,15 +54,15 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
         return proxy;
     }
 
-    protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object findX(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new UnsupportedOperationException("Stateful beans may not have find methods");
     }
 
-    protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeByPrimaryKey(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    protected EjbObjectProxyHandler newEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         return new StatefulEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 

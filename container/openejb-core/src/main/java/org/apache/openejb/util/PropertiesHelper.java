@@ -34,7 +34,7 @@ public final class PropertiesHelper {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             p.store(baos, "");
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             // no-op
         }
         return new String(baos.toByteArray());
@@ -42,7 +42,7 @@ public final class PropertiesHelper {
 
     public static Map<String, Object> map(final Properties props) {
         final Map<String, Object> map = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : props.entrySet()) {
             map.put((String) entry.getKey(), entry.getValue());
         }
         return map;

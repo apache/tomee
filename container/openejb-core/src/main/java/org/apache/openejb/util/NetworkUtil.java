@@ -36,13 +36,13 @@ public final class NetworkUtil {
         try {
             s = create(portList);
             port = s.getLocalPort();
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             port = -1;
         } finally {
             if (s != null) {
                 try {
                     s.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -61,13 +61,13 @@ public final class NetworkUtil {
                 if (excepted == null || !excepted.contains(port)) {
                     break;
                 }
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 port = -1;
             } finally {
                 if (s != null) {
                     try {
                         s.close();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -80,7 +80,7 @@ public final class NetworkUtil {
         for (final int port : ports) {
             try {
                 return new ServerSocket(port);
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 // try next port
             }
         }

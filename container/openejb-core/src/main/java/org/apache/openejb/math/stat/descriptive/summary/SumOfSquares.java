@@ -60,7 +60,7 @@ public class SumOfSquares extends AbstractStorelessUnivariateStatistic implement
      *
      * @param original the {@code SumOfSquares} instance to copy
      */
-    public SumOfSquares(SumOfSquares original) {
+    public SumOfSquares(final SumOfSquares original) {
         copy(original, this);
     }
 
@@ -132,7 +132,7 @@ public class SumOfSquares extends AbstractStorelessUnivariateStatistic implement
      */
     @Override
     public SumOfSquares copy() {
-        SumOfSquares result = new SumOfSquares();
+        final SumOfSquares result = new SumOfSquares();
         copy(this, result);
         return result;
     }
@@ -145,7 +145,7 @@ public class SumOfSquares extends AbstractStorelessUnivariateStatistic implement
      * @param dest SumOfSquares to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(SumOfSquares source, SumOfSquares dest) {
+    public static void copy(final SumOfSquares source, final SumOfSquares dest) {
         dest.n = source.n;
         dest.value = source.value;
     }

@@ -30,14 +30,14 @@ import java.util.Hashtable;
  */
 public class openejbURLContextFactory implements ObjectFactory {
 
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable env) throws NamingException {
+    public Object getObjectInstance(final Object obj, final Name name, final Context nameCtx, final Hashtable env) throws NamingException {
         return getContext();
     }
 
     public static Context getContext() throws NamingException {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        Context context = (Context) containerSystem.getJNDIContext().lookup("openejb");
+        final Context context = (Context) containerSystem.getJNDIContext().lookup("openejb");
         return context;
     }
 

@@ -41,17 +41,17 @@ public class BmpEntityContainerBuilder extends Container {
 
     }
 
-    public BmpEntityContainerBuilder id(String id) {
+    public BmpEntityContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public BmpEntityContainerBuilder withPoolSize(int poolSize) {
+    public BmpEntityContainerBuilder withPoolSize(final int poolSize) {
         this.poolSize = poolSize;
         return this;
     }
 
-    public void setPoolSize(int poolSize) {
+    public void setPoolSize(final int poolSize) {
         this.poolSize = poolSize;
     }
 

@@ -39,7 +39,7 @@ import java.rmi.RemoteException;
  * same steps as described in the NotSupported case.
  */
 public class TxNever extends JtaTransactionPolicy {
-    public TxNever(TransactionManager transactionManager) throws SystemException, ApplicationException {
+    public TxNever(final TransactionManager transactionManager) throws SystemException, ApplicationException {
         super(TransactionType.Never, transactionManager);
 
         if (getTransaction() != null) {

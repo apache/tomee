@@ -25,12 +25,12 @@ import java.util.logging.Logger;
 
 public class Log4jLoggerFactory implements WebBeansLoggerFactory {
     @Override
-    public Logger getLogger(Class<?> clazz, Locale desiredLocale) {
+    public Logger getLogger(final Class<?> clazz, final Locale desiredLocale) {
         return new Log4jLogger(clazz.getName(), ResourceBundle.getBundle("openwebbeans/Messages", desiredLocale).toString());
     }
 
     @Override
-    public Logger getLogger(Class<?> clazz) {
+    public Logger getLogger(final Class<?> clazz) {
         return new Log4jLogger(clazz.getName(), "openwebbeans/Messages");
     }
 }

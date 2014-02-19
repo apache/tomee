@@ -59,17 +59,17 @@ public class StatefulContainerBuilder extends Container {
 
     }
 
-    public StatefulContainerBuilder id(String id) {
+    public StatefulContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public StatefulContainerBuilder withAccessTimeout(Duration accessTimeout) {
+    public StatefulContainerBuilder withAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -77,20 +77,20 @@ public class StatefulContainerBuilder extends Container {
         return accessTimeout;
     }
 
-    public StatefulContainerBuilder withAccessTimeout(long time, TimeUnit unit) {
+    public StatefulContainerBuilder withAccessTimeout(final long time, final TimeUnit unit) {
         return withAccessTimeout(new Duration(time, unit));
     }
 
-    public void setAccessTimeout(long time, TimeUnit unit) {
+    public void setAccessTimeout(final long time, final TimeUnit unit) {
         setAccessTimeout(new Duration(time, unit));
     }
 
-    public StatefulContainerBuilder withCache(String cache) {
+    public StatefulContainerBuilder withCache(final String cache) {
         this.cache = cache;
         return this;
     }
 
-    public void setCache(String cache) {
+    public void setCache(final String cache) {
         this.cache = cache;
     }
 
@@ -98,12 +98,12 @@ public class StatefulContainerBuilder extends Container {
         return cache;
     }
 
-    public StatefulContainerBuilder withPassivator(String passivator) {
+    public StatefulContainerBuilder withPassivator(final String passivator) {
         this.passivator = passivator;
         return this;
     }
 
-    public void setPassivator(String passivator) {
+    public void setPassivator(final String passivator) {
         this.passivator = passivator;
     }
 
@@ -111,12 +111,12 @@ public class StatefulContainerBuilder extends Container {
         return passivator;
     }
 
-    public StatefulContainerBuilder withTimeOut(Duration timeOut) {
+    public StatefulContainerBuilder withTimeOut(final Duration timeOut) {
         this.timeOut = timeOut;
         return this;
     }
 
-    public void setTimeOut(Duration timeOut) {
+    public void setTimeOut(final Duration timeOut) {
         this.timeOut = timeOut;
     }
 
@@ -124,20 +124,20 @@ public class StatefulContainerBuilder extends Container {
         return timeOut;
     }
 
-    public StatefulContainerBuilder withTimeOut(long time, TimeUnit unit) {
+    public StatefulContainerBuilder withTimeOut(final long time, final TimeUnit unit) {
         return withTimeOut(new Duration(time, unit));
     }
 
-    public void setTimeOut(long time, TimeUnit unit) {
+    public void setTimeOut(final long time, final TimeUnit unit) {
         setTimeOut(new Duration(time, unit));
     }
 
-    public StatefulContainerBuilder withFrequency(int frequency) {
+    public StatefulContainerBuilder withFrequency(final int frequency) {
         this.frequency = frequency;
         return this;
     }
 
-    public void setFrequency(int frequency) {
+    public void setFrequency(final int frequency) {
         this.frequency = frequency;
     }
 
@@ -145,12 +145,12 @@ public class StatefulContainerBuilder extends Container {
         return frequency;
     }
 
-    public StatefulContainerBuilder withCapacity(int capacity) {
+    public StatefulContainerBuilder withCapacity(final int capacity) {
         this.capacity = capacity;
         return this;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(final int capacity) {
         this.capacity = capacity;
     }
 
@@ -158,12 +158,12 @@ public class StatefulContainerBuilder extends Container {
         return capacity;
     }
 
-    public StatefulContainerBuilder withBulkPassivate(int bulkPassivate) {
+    public StatefulContainerBuilder withBulkPassivate(final int bulkPassivate) {
         this.bulkPassivate = bulkPassivate;
         return this;
     }
 
-    public void setBulkPassivate(int bulkPassivate) {
+    public void setBulkPassivate(final int bulkPassivate) {
         this.bulkPassivate = bulkPassivate;
     }
 

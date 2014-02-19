@@ -34,10 +34,10 @@ public class ContextHandler extends ContextWrapper {
     public Object lookup(final Name name) throws NamingException {
         try {
             return context.lookup(name);
-        } catch (NameNotFoundException nnfe) {
+        } catch (final NameNotFoundException nnfe) {
             try {
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-            } catch (NameNotFoundException nnfe2) {
+            } catch (final NameNotFoundException nnfe2) {
                 // ignore, let it be thrown
             }
             throw nnfe;
@@ -45,13 +45,13 @@ public class ContextHandler extends ContextWrapper {
     }
 
     @Override
-    public Object lookup(String name) throws NamingException {
+    public Object lookup(final String name) throws NamingException {
         try {
             return context.lookup(name);
-        } catch (NameNotFoundException nnfe) {
+        } catch (final NameNotFoundException nnfe) {
             try {
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-            } catch (NameNotFoundException nnfe2) {
+            } catch (final NameNotFoundException nnfe2) {
                 // ignore, let it be thrown
             }
             throw nnfe;

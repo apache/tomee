@@ -141,7 +141,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             }
 
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[proxyInterfaces.size()]), handler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException("Can't create EJBHome stub" + e.getMessage(), e);
         }
     }
@@ -178,7 +178,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[proxyInterfaces.size()]), handler);
             }
 
-        } catch (IllegalAccessException iae) {
+        } catch (final IllegalAccessException iae) {
             throw new OpenEJBRuntimeException("Could not create IVM proxy for " + getInterfaces().get(0), iae);
         }
     }
@@ -245,14 +245,14 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * The ire is thrown by the container system and propagated by
             * the server to the stub.
             */
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (interfaceType.isLocal()) {
                 throw new EJBException(re.getMessage()).initCause(re.detail);
             } else {
                 throw re;
             }
 
-        } catch (InvalidateReferenceException ire) {
+        } catch (final InvalidateReferenceException ire) {
             Throwable cause = ire.getRootCause();
             if (cause instanceof RemoteException && interfaceType.isLocal()) {
                 final RemoteException re = (RemoteException) cause;
@@ -264,7 +264,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (ApplicationException ae) {
+        } catch (final ApplicationException ae) {
             final Throwable exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
@@ -275,7 +275,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     } else {
                         try {
                             throw new AccessException(exc.getMessage()).initCause(exc);
-                        } catch (IllegalStateException vmbug) {
+                        } catch (final IllegalStateException vmbug) {
                             // Sun JDK 1.5 bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4871783
                             // bug affects using initCause on any RemoteException subclasses in Sun 1.5_07 or lower
                             throw new AccessException(exc.getMessage(), (Exception) exc);
@@ -289,19 +289,19 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (SystemException se) {
+        } catch (final SystemException se) {
             if (interfaceType.isLocal()) {
                 throw new EJBException("Container has suffered a SystemException").initCause(se.getRootCause());
             } else {
                 throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
             }
-        } catch (OpenEJBException oe) {
+        } catch (final OpenEJBException oe) {
             if (interfaceType.isLocal()) {
                 throw new EJBException("Unknown Container Exception").initCause(oe.getRootCause());
             } else {
                 throw new RemoteException("Unknown Container Exception", oe.getRootCause());
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             logger.debug("EjbHomeProxyHandler: finished invoking method " + method.getName() + " with exception:" + t, t);
             throw t;
         }
@@ -352,7 +352,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     }
                     try {
                         return homeMethodInvoke(interfce, method, args);
-                    } catch (ApplicationException ae) {
+                    } catch (final ApplicationException ae) {
 
                         logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
 
@@ -460,7 +460,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         EjbObjectProxyHandler stub;
         try {
             stub = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(handle.getEJBObject());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
 
             stub = null;
         }

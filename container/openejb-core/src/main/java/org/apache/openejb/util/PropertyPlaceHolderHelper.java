@@ -69,7 +69,7 @@ public final class PropertyPlaceHolderHelper {
             return updated;
         }
 
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object rawValue = entry.getValue();
             if (rawValue instanceof String) {
                 updated.put(entry.getKey(), value((String) rawValue));

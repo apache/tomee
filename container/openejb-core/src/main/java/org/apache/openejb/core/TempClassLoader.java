@@ -146,7 +146,7 @@ public class TempClassLoader extends URLClassLoader {
             IO.copy(in, this.bout);
             bytes = this.bout.toByteArray();
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ClassNotFoundException(name, e);
         } finally {
             IO.close(in);
@@ -174,10 +174,10 @@ public class TempClassLoader extends URLClassLoader {
         // define the class
         try {
             return this.defineClass(name, bytes, 0, bytes.length);
-        } catch (SecurityException e) {
+        } catch (final SecurityException e) {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
-        } catch (LinkageError le) {
+        } catch (final LinkageError le) {
             // fallback
             return super.loadClass(name, resolve);
         }

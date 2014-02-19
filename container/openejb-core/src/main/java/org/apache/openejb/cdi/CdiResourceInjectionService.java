@@ -50,7 +50,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
         ejbPlugin = CdiPlugin.class.cast(context.getPluginLoader().getEjbPlugin());
     }
 
-    public void setAppContext(AppContext appModule) {
+    public void setAppContext(final AppContext appModule) {
         for (final BeanContext beanContext : appModule.getBeanContexts()) {
             if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
                 compContexts.add(beanContext);
@@ -59,19 +59,19 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     }
 
     @Override
-    public <X, T extends Annotation> X getResourceReference(ResourceReference<X, T> resourceReference) {
+    public <X, T extends Annotation> X getResourceReference(final ResourceReference<X, T> resourceReference) {
         final Class<X> type = resourceReference.getResourceType();
         final String name = resourceReference.getJndiName();
 
         try {
             return type.cast(new InitialContext().lookup(name));
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
 
-            for (BeanContext beanContext : compContexts) {
+            for (final BeanContext beanContext : compContexts) {
                 try {
-                    String relativeName = name.replace("java:", "");
+                    final String relativeName = name.replace("java:", "");
                     return type.cast(beanContext.getJndiContext().lookup(relativeName));
-                } catch (NamingException e1) {
+                } catch (final NamingException e1) {
                     // fine for now
                 }
             }
@@ -81,12 +81,12 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     }
 
     @Override
-    public void injectJavaEEResources(Object managedBeanInstance) {
+    public void injectJavaEEResources(final Object managedBeanInstance) {
         if (managedBeanInstance != null && ejbPlugin.isSessionBean(managedBeanInstance.getClass())) { // already done
             return;
         }
 
-        ObjectRecipe receipe = PassthroughFactory.recipe(managedBeanInstance);
+        final ObjectRecipe receipe = PassthroughFactory.recipe(managedBeanInstance);
         receipe.allow(Option.FIELD_INJECTION);
         receipe.allow(Option.PRIVATE_PROPERTIES);
         receipe.allow(Option.IGNORE_MISSING_PROPERTIES);
@@ -98,20 +98,20 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     }
 
     @SuppressWarnings("unchecked")
-    private void fillInjectionProperties(ObjectRecipe objectRecipe, Object managedBeanInstance) {
+    private void fillInjectionProperties(final ObjectRecipe objectRecipe, final Object managedBeanInstance) {
 
         final boolean usePrefix = true;
         final Class<?> clazz = managedBeanInstance.getClass();
 
-        for (BeanContext beanContext : compContexts) {
+        for (final BeanContext beanContext : compContexts) {
 
-            for (Injection injection : beanContext.getInjections()) {
+            for (final Injection injection : beanContext.getInjections()) {
                 if (injection.getTarget() == null) continue;
                 if (!injection.getTarget().isAssignableFrom(clazz)) continue;
                 try {
-                    Object value = lookup(beanContext, injection);
+                    final Object value = lookup(beanContext, injection);
 
-                    String prefix;
+                    final String prefix;
                     if (usePrefix) {
                         prefix = injection.getTarget().getName() + "/";
                     } else {
@@ -119,7 +119,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                     }
 
                     objectRecipe.setProperty(prefix + injection.getName(), value);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
                 }
 
@@ -127,12 +127,12 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
         }
     }
 
-    private Object lookup(BeanContext beanContext, Injection injection) throws NamingException {
+    private Object lookup(final BeanContext beanContext, final Injection injection) throws NamingException {
         String jndiName = injection.getJndiName();
 
         try {
             return beanContext.getJndiContext().lookup(jndiName);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
 
             if (!jndiName.startsWith("java:")) {
                 jndiName = "java:" + jndiName;
@@ -142,7 +142,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
             try {
 
                 value = InjectionProcessor.unwrap(beanContext.getJndiContext()).lookup(jndiName);
-            } catch (NamingException e1) {
+            } catch (final NamingException e1) {
                 // Fallback and try the Context on the current thread
                 //
                 // We attempt to create a Context instance for each
@@ -156,7 +156,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
                 try {
                     value = new InitialContext().lookup(jndiName);
-                } catch (NamingException e2) {
+                } catch (final NamingException e2) {
                     throw e;
                 }
             }
@@ -172,14 +172,14 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     /**
       * delegation of serialization behavior
       */
-     public <T> void writeExternal(Bean<T> bean, T actualResource, ObjectOutput out) throws IOException {
+     public <T> void writeExternal(final Bean<T> bean, final T actualResource, final ObjectOutput out) throws IOException {
          //do nothing
      }
 
      /**
       * delegation of serialization behavior
       */
-     public <T> T readExternal(Bean<T> bean, ObjectInput out) throws IOException,
+     public <T> T readExternal(final Bean<T> bean, final ObjectInput out) throws IOException,
              ClassNotFoundException {
          return (T) ((ResourceBean)bean).getActualInstance();
      }

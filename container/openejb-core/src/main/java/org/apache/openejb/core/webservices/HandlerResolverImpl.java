@@ -40,23 +40,23 @@ public class HandlerResolverImpl implements HandlerResolver {
     private final Context context;
     private final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>();
 
-    public HandlerResolverImpl(List<HandlerChainData> handlerChains, Collection<Injection> injections, Context context) {
+    public HandlerResolverImpl(final List<HandlerChainData> handlerChains, final Collection<Injection> injections, final Context context) {
         this.handlerChains = handlerChains;
         this.injections = injections;
         this.context = context;
     }
 
     public void destroyHandlers() {
-        List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>(this.handlerInstances);
+        final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>(this.handlerInstances);
         this.handlerInstances.clear();
-        for (InjectionProcessor<Handler> handlerInstance : handlerInstances) {
+        for (final InjectionProcessor<Handler> handlerInstance : handlerInstances) {
             handlerInstance.preDestroy();
         }
     }
 
-    public List<Handler> getHandlerChain(PortInfo portInfo) {
+    public List<Handler> getHandlerChain(final PortInfo portInfo) {
         List<Handler> chain = new ArrayList<Handler>();
-        for (HandlerChainData handlerChain : handlerChains) {
+        for (final HandlerChainData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
             handlers = sortHandlers(handlers);
             chain.addAll(handlers);
@@ -65,59 +65,59 @@ public class HandlerResolverImpl implements HandlerResolver {
         return chain;
     }
 
-    private List<Handler> buildHandlers(PortInfo portInfo, HandlerChainData handlerChain) {
+    private List<Handler> buildHandlers(final PortInfo portInfo, final HandlerChainData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) ||
                 !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
                 !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
             return Collections.emptyList();
         }
 
-        List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
-        for (HandlerData handler : handlerChain.getHandlers()) {
+        final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
+        for (final HandlerData handler : handlerChain.getHandlers()) {
             try {
-                Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
-                InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
+                final Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
+                final InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
                         injections,
                         handler.getPostConstruct(),
                         handler.getPreDestroy(),
                         unwrap(context));
                 processor.createInstance();
                 processor.postConstruct();
-                Handler handlerInstance = processor.getInstance();
+                final Handler handlerInstance = processor.getInstance();
 
                 handlers.add(handlerInstance);
                 handlerInstances.add(processor);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new WebServiceException("Failed to instantiate handler", e);
             }
         }
         return handlers;
     }
 
-    private boolean matchServiceName(PortInfo info, QName namePattern) {
+    private boolean matchServiceName(final PortInfo info, final QName namePattern) {
         return match(info == null ? null : info.getServiceName(), namePattern);
     }
 
-    private boolean matchPortName(PortInfo info, QName namePattern) {
+    private boolean matchPortName(final PortInfo info, final QName namePattern) {
         return match(info == null ? null : info.getPortName(), namePattern);
     }
 
-    private boolean matchBinding(PortInfo info, List bindings) {
+    private boolean matchBinding(final PortInfo info, final List bindings) {
         return match(info == null ? null : info.getBindingID(), bindings);
     }
 
-    private boolean match(String binding, List bindings) {
+    private boolean match(final String binding, final List bindings) {
         if (binding == null) {
             return bindings == null || bindings.isEmpty();
         } else {
             if (bindings == null || bindings.isEmpty()) {
                 return true;
             } else {
-                String actualBindingURI = JaxWsUtils.getBindingURI(binding);
-                Iterator iter = bindings.iterator();
+                final String actualBindingURI = JaxWsUtils.getBindingURI(binding);
+                final Iterator iter = bindings.iterator();
                 while (iter.hasNext()) {
-                    String bindingToken = (String) iter.next();
-                    String bindingURI = JaxWsUtils.getBindingURI(bindingToken);
+                    final String bindingToken = (String) iter.next();
+                    final String bindingURI = JaxWsUtils.getBindingURI(bindingToken);
                     if (actualBindingURI.equals(bindingURI)) {
                         return true;
                     }
@@ -130,7 +130,7 @@ public class HandlerResolverImpl implements HandlerResolver {
     /**
      * Performs basic localName matching
      */
-    private boolean match(QName name, QName namePattern) {
+    private boolean match(final QName name, final QName namePattern) {
         if (name == null) {
             return namePattern == null || namePattern.getLocalPart().equals("*");
         } else {
@@ -162,11 +162,11 @@ public class HandlerResolverImpl implements HandlerResolver {
      * @param handlers
      * @return sorted list of handlers
      */
-    private List<Handler> sortHandlers(List<Handler> handlers) {
-        List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
-        List<Handler> protocolHandlers = new ArrayList<Handler>();
+    private List<Handler> sortHandlers(final List<Handler> handlers) {
+        final List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
+        final List<Handler> protocolHandlers = new ArrayList<Handler>();
 
-        for (Handler handler : handlers) {
+        for (final Handler handler : handlers) {
             if (handler instanceof LogicalHandler) {
                 logicalHandlers.add((LogicalHandler) handler);
             } else {
@@ -174,7 +174,7 @@ public class HandlerResolverImpl implements HandlerResolver {
             }
         }
 
-        List<Handler> sortedHandlers = new ArrayList<Handler>();
+        final List<Handler> sortedHandlers = new ArrayList<Handler>();
         sortedHandlers.addAll(logicalHandlers);
         sortedHandlers.addAll(protocolHandlers);
         return sortedHandlers;

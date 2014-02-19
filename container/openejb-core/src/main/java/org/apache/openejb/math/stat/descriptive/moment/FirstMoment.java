@@ -87,7 +87,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      *
      * @param original the {@code FirstMoment} instance to copy
      */
-     public FirstMoment(FirstMoment original) {
+     public FirstMoment(final FirstMoment original) {
          super();
          copy(original, this);
      }
@@ -101,7 +101,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
             m1 = 0.0;
         }
         n++;
-        double n0 = n;
+        final double n0 = n;
         dev = d - m1;
         nDev = dev / n0;
         m1 += nDev;
@@ -138,7 +138,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      */
     @Override
     public FirstMoment copy() {
-        FirstMoment result = new FirstMoment();
+        final FirstMoment result = new FirstMoment();
         copy(this, result);
         return result;
     }
@@ -151,7 +151,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      * @param dest FirstMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(FirstMoment source, FirstMoment dest) {
+    public static void copy(final FirstMoment source, final FirstMoment dest) {
         dest.n = source.n;
         dest.m1 = source.m1;
         dest.dev = source.dev;

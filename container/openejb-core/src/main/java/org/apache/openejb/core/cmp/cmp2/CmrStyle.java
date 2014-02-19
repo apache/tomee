@@ -35,7 +35,7 @@ public enum CmrStyle {
     private final String setterDescriptor;
     private final String deletedDescriptor;
 
-    CmrStyle(Class accessorClass, Class collectionClass, Class initCollectionClass) {
+    CmrStyle(final Class accessorClass, final Class collectionClass, final Class initCollectionClass) {
         this.accessorType = Type.getType(accessorClass);
         if (collectionClass != null) {
             this.collectionType = Type.getType(collectionClass);
@@ -48,7 +48,7 @@ public enum CmrStyle {
         String getterDescriptor = null;
         String setterDescriptor = null;
         String deletedDescriptor = null;
-        for (Method method : accessorClass.getMethods()) {
+        for (final Method method : accessorClass.getMethods()) {
             if ("get".equals(method.getName())) {
                 getterDescriptor = Type.getMethodDescriptor(method);
             }
@@ -73,8 +73,8 @@ public enum CmrStyle {
         this.deletedDescriptor = deletedDescriptor;
     }
 
-    public String getCmrFieldDescriptor(Type relatedType) {
-        String relatedDescriptor = relatedType.getDescriptor();
+    public String getCmrFieldDescriptor(final Type relatedType) {
+        final String relatedDescriptor = relatedType.getDescriptor();
         if (collectionType != null) {
             return collectionType.getDescriptor() +
                     "<" + relatedDescriptor + ">";

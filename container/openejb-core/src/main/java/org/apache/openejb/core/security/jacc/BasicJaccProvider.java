@@ -41,7 +41,7 @@ public class BasicJaccProvider extends JaccProvider {
         systemPolicy = Policy.getPolicy();
     }
 
-    public PolicyConfiguration getPolicyConfiguration(String contextID, boolean remove) throws PolicyContextException {
+    public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
         BasicPolicyConfiguration configuration = configurations.get(contextID);
 
         if (configuration == null) {
@@ -54,33 +54,33 @@ public class BasicJaccProvider extends JaccProvider {
         return configuration;
     }
 
-    protected BasicPolicyConfiguration createPolicyConfiguration(String contextID) {
+    protected BasicPolicyConfiguration createPolicyConfiguration(final String contextID) {
         return new BasicPolicyConfiguration(contextID);
     }
 
-    public boolean inService(String contextID) throws PolicyContextException {
-        PolicyConfiguration configuration = getPolicyConfiguration(contextID, false);
+    public boolean inService(final String contextID) throws PolicyContextException {
+        final PolicyConfiguration configuration = getPolicyConfiguration(contextID, false);
         return configuration.inService();
     }
 
-    public PermissionCollection getPermissions(CodeSource codesource) {
+    public PermissionCollection getPermissions(final CodeSource codesource) {
         return systemPolicy == null ? null: systemPolicy.getPermissions(codesource);
     }
 
     public void refresh() {
     }
 
-    public boolean implies(ProtectionDomain domain, Permission permission) {
-        String contextID = PolicyContext.getContextID();
+    public boolean implies(final ProtectionDomain domain, final Permission permission) {
+        final String contextID = PolicyContext.getContextID();
 
         if (contextID != null) {
             try {
-                BasicPolicyConfiguration configuration = configurations.get(contextID);
+                final BasicPolicyConfiguration configuration = configurations.get(contextID);
 
                 if (configuration == null || !configuration.inService()) return false;
 
                 return configuration.implies(domain, permission);
-            } catch (PolicyContextException e) {
+            } catch (final PolicyContextException e) {
                 // no-op
             }
         }

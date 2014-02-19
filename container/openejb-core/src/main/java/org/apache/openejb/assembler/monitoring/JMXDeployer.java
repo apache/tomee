@@ -40,7 +40,7 @@ public class JMXDeployer {
         try {
             deployer().deploy(location);
             return "OK";
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return "ERR:" + e.getMessage();
         }
     }
@@ -51,7 +51,7 @@ public class JMXDeployer {
         try {
             deployer().undeploy(moduleId);
             return "OK";
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return "ERR:" + e.getMessage();
         }
     }
@@ -63,11 +63,11 @@ public class JMXDeployer {
             final Collection<AppInfo> apps = deployer().getDeployedApps();
             final String[] appsNames = new String[apps.size()];
             int i = 0;
-            for (AppInfo info : apps) {
+            for (final AppInfo info : apps) {
                 appsNames[i++] = info.path;
             }
             return appsNames;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new String[] { "ERR:" + e.getMessage() };
         }
     }

@@ -22,7 +22,7 @@ import javax.naming.NamingException;
 public class JndiUrlReference extends Reference {
     private String jndiName;
 
-    public JndiUrlReference(String jndiName) {
+    public JndiUrlReference(final String jndiName) {
         this.jndiName = jndiName;
     }
 

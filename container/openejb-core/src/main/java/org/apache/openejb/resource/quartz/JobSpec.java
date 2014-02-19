@@ -207,7 +207,7 @@ public final class JobSpec implements ActivationSpec {
             final SimpleDateFormat dateFormat = new SimpleDateFormat(format);
             try {
                 return dateFormat.parse(value);
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 invalidProperty = new InvalidPropertyException("Invalid time format " + value, e);
             }
 
@@ -256,7 +256,7 @@ public final class JobSpec implements ActivationSpec {
 
         try {
             ((CronTriggerImpl) trigger).validate();
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             throw new InvalidPropertyException(e);
         }
     }

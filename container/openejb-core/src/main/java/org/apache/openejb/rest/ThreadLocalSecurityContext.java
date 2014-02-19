@@ -39,7 +39,7 @@ public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<Sec
         return get().isSecure();
     }
 
-    public boolean isUserInRole(String role) {
+    public boolean isUserInRole(final String role) {
         return get().isUserInRole(role);
     }
 

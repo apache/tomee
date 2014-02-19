@@ -32,26 +32,26 @@ public class MethodSpec implements Comparable, Serializable {
     private final String methodName;
     private final String[] parameterTypes;
 
-    public MethodSpec(String methodIntf, String methodName, String[] parameterTypes) {
+    public MethodSpec(final String methodIntf, final String methodName, final String[] parameterTypes) {
         this.methodIntf = methodIntf;
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;
     }
 
-    public MethodSpec(String text) {
-        Pattern p = Pattern.compile("(\\S+) (\\S+)\\((\\S*)\\)");
-        Matcher m = p.matcher(text);
+    public MethodSpec(final String text) {
+        final Pattern p = Pattern.compile("(\\S+) (\\S+)\\((\\S*)\\)");
+        final Matcher m = p.matcher(text);
         if (!m.matches()) {
             throw new IllegalArgumentException("Text must match (\\S+) (\\S+)\\((\\S*)\\) : " + text);
         }
-        String intfString = m.group(1);
+        final String intfString = m.group(1);
         if (intfString.equals("all")) {
             methodIntf = null;
         } else {
             methodIntf = intfString;
         }
         methodName = m.group(2);
-        String parameters = m.group(3);
+        final String parameters = m.group(3);
         if (parameters.length() > 0) {
             parameterTypes = parameters.split(" *, *");
         } else {
@@ -81,7 +81,7 @@ public class MethodSpec implements Comparable, Serializable {
         return result;
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         }
@@ -90,14 +90,14 @@ public class MethodSpec implements Comparable, Serializable {
             return false;
         }
 
-        MethodSpec methodSpec = (MethodSpec) obj;
+        final MethodSpec methodSpec = (MethodSpec) obj;
         return methodIntf.equals(methodSpec.methodIntf) &&
                 methodName.equals(methodSpec.methodName) &&
                 Arrays.equals(parameterTypes, methodSpec.parameterTypes);
     }
 
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         if (methodIntf != null) {
             buffer.append(methodIntf);
         } else {
@@ -106,7 +106,7 @@ public class MethodSpec implements Comparable, Serializable {
         buffer.append(" ").append(methodName).append('(');
         if (parameterTypes != null) {
             for (int i = 0; i < parameterTypes.length; i++) {
-                String parameterType = parameterTypes[i];
+                final String parameterType = parameterTypes[i];
                 if (i > 0) {
                     buffer.append(',');
                 }
@@ -117,7 +117,7 @@ public class MethodSpec implements Comparable, Serializable {
         return buffer.toString();
     }
 
-    public boolean matches(String methodIntf, String methodName, String[] parameterTypes) {
+    public boolean matches(final String methodIntf, final String methodName, final String[] parameterTypes) {
         assert methodIntf != null;
         assert methodName != null;
         assert parameterTypes != null;
@@ -140,14 +140,14 @@ public class MethodSpec implements Comparable, Serializable {
         return Arrays.equals(parameterTypes, this.parameterTypes);
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
         if (!(o instanceof MethodSpec)) {
             return -1;
         }
         if (this == o) {
             return 0;
         }
-        MethodSpec other = (MethodSpec) o;
+        final MethodSpec other = (MethodSpec) o;
         if (parameterTypes != null) {
             if (other.parameterTypes == null) {
                 //parameter types always come before no param types
@@ -160,7 +160,7 @@ public class MethodSpec implements Comparable, Serializable {
                     return BEFORE_OTHER;
                 }
                 //both have method interfaces
-                int intfOrder = methodIntf.compareTo(other.methodIntf);
+                final int intfOrder = methodIntf.compareTo(other.methodIntf);
                 if (intfOrder != 0) {
                     return intfOrder;
                 }
@@ -192,7 +192,7 @@ public class MethodSpec implements Comparable, Serializable {
                     return BEFORE_OTHER;
                 }
                 //both explicit method intf. sort by intf, then methodName
-                int intfOrder = methodIntf.compareTo(other.methodIntf);
+                final int intfOrder = methodIntf.compareTo(other.methodIntf);
                 if (intfOrder != 0) {
                     return intfOrder;
                 }
@@ -225,8 +225,8 @@ public class MethodSpec implements Comparable, Serializable {
         throw new IllegalStateException("Cannot compare " + this + " and " + other);
     }
 
-    private int compareMethod(MethodSpec other) {
-        int methodOrder = methodName.compareTo(other.methodName);
+    private int compareMethod(final MethodSpec other) {
+        final int methodOrder = methodName.compareTo(other.methodName);
         if (methodOrder != 0) {
             return methodOrder;
         }
@@ -236,7 +236,7 @@ public class MethodSpec implements Comparable, Serializable {
                 //the other list is shorter, they are first
                 return AFTER_OTHER;
             }
-            int paramOrder = parameterTypes[i].compareTo(other.parameterTypes[i]);
+            final int paramOrder = parameterTypes[i].compareTo(other.parameterTypes[i]);
             if (paramOrder != 0) {
                 return paramOrder;
             }

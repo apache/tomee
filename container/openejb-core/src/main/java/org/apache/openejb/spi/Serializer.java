@@ -24,16 +24,16 @@ import java.io.ObjectOutputStream;
 
 public class Serializer {
 
-    public static Object deserialize(byte [] bytes)
+    public static Object deserialize(final byte [] bytes)
             throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bais);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        final ObjectInputStream ois = new ObjectInputStream(bais);
         return ois.readObject();
     }
 
-    public static byte [] serialize(Object object) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
+    public static byte [] serialize(final Object object) throws IOException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(object);
         oos.flush();
         return baos.toByteArray();

@@ -38,7 +38,7 @@ public class JavaMailSessionBuilder extends Resource {
 
     }
 
-    public JavaMailSessionBuilder id(String id) {
+    public JavaMailSessionBuilder id(final String id) {
         setId(id);
         return this;
     }

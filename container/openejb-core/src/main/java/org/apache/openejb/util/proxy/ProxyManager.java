@@ -25,11 +25,11 @@ public class ProxyManager {
     private static final HashMap factories = new HashMap();
     private static volatile String defaultFactoryName;
 
-    public static synchronized ProxyFactory registerFactory(String factoryName, ProxyFactory factory) {
+    public static synchronized ProxyFactory registerFactory(final String factoryName, final ProxyFactory factory) {
         return (ProxyFactory) factories.put(factoryName, factory);
     }
 
-    public static synchronized ProxyFactory unregisterFactory(String factoryName) {
+    public static synchronized ProxyFactory unregisterFactory(final String factoryName) {
         return (ProxyFactory) factories.remove(factoryName);
     }
 
@@ -37,15 +37,15 @@ public class ProxyManager {
         if (defaultFactory == null) throw new IllegalStateException("[Proxy Manager] No default proxy factory specified.");
     }
 
-    public static ProxyFactory getFactory(String factoryName) {
+    public static ProxyFactory getFactory(final String factoryName) {
         return (ProxyFactory) factories.get(factoryName);
     }
 
-    public static synchronized ProxyFactory setDefaultFactory(String factoryName) {
-        ProxyFactory newFactory = getFactory(factoryName);
+    public static synchronized ProxyFactory setDefaultFactory(final String factoryName) {
+        final ProxyFactory newFactory = getFactory(factoryName);
         if (newFactory == null) return defaultFactory;
 
-        ProxyFactory oldFactory = defaultFactory;
+        final ProxyFactory oldFactory = defaultFactory;
         defaultFactory = newFactory;
         defaultFactoryName = factoryName;
 
@@ -60,7 +60,7 @@ public class ProxyManager {
         return defaultFactoryName;
     }
 
-    public static InvocationHandler getInvocationHandler(Object proxy) {
+    public static InvocationHandler getInvocationHandler(final Object proxy) {
         if (LocalBeanProxyFactory.isProxy(proxy.getClass())) {
             return LocalBeanProxyFactory.getInvocationHandler(proxy);
         }
@@ -68,25 +68,25 @@ public class ProxyManager {
         return defaultFactory.getInvocationHandler(proxy);
     }
 
-    public static Class getProxyClass(Class interfaceType) throws IllegalAccessException {
+    public static Class getProxyClass(final Class interfaceType) throws IllegalAccessException {
         return getProxyClass(new Class[]{interfaceType});
     }
 
-    public static Class getProxyClass(Class[] interfaces) throws IllegalAccessException {
+    public static Class getProxyClass(final Class[] interfaces) throws IllegalAccessException {
         checkDefaultFactory();
         return defaultFactory.getProxyClass(interfaces);
     }
 
-    public static Object newProxyInstance(Class interfaceType, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(final Class interfaceType, final InvocationHandler h) throws IllegalAccessException {
         return newProxyInstance(new Class[]{interfaceType}, h);
     }
 
-    public static Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(final Class[] interfaces, final InvocationHandler h) throws IllegalAccessException {
         checkDefaultFactory();
         return defaultFactory.newProxyInstance(interfaces, h);
     }
 
-    public static boolean isProxyClass(Class cl) {
+    public static boolean isProxyClass(final Class cl) {
         checkDefaultFactory();
         return defaultFactory.isProxyClass(cl);
     }

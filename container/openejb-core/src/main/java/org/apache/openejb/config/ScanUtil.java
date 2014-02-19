@@ -39,7 +39,7 @@ public final class ScanUtil {
             final ScanHandler handler = new ScanHandler();
             parser.parse(new BufferedInputStream(scanXml.openStream()), handler);
             return handler;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IOException("can't parse " + scanXml.toExternalForm());
         }
     }
@@ -50,7 +50,7 @@ public final class ScanUtil {
         private Set<String> current = null;
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             if (qName.equals("class")) {
                 current = classes;
             } else if (qName.equals("package")) {
@@ -59,7 +59,7 @@ public final class ScanUtil {
         }
 
         @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(final char[] ch, final int start, final int length) throws SAXException {
             if (current != null) {
                 current.add(new String(ch, start, length));
             }

@@ -29,7 +29,7 @@ public class UserPrincipal implements Principal {
     private final String name;
     private transient int hash;
 
-    public UserPrincipal(String name) {
+    public UserPrincipal(final String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
         this.name = name;
     }
@@ -38,7 +38,7 @@ public class UserPrincipal implements Principal {
         return name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

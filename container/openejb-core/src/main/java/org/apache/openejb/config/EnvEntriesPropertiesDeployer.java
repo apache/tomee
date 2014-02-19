@@ -55,37 +55,37 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         descriptorName = descriptor;
     }
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         // ApplicationClient META-INF/env-entries.properties
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             if (module.getApplicationClient() == null) continue;
-            for (Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
-                EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
+            for (final Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
+                final EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
                 apply(module.getApplicationClient(), envEntry, "AppClient");
             }
         }
 
         // WebModule META-INF/env-entries.properties
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             deploy(webModule);
         }
 
         // Resource Adapters do not have an ENC
 
         // EjbJar META-INF/env-entries.properties
-        for (EjbModule module : appModule.getEjbModules()) {
-            for (Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
-                EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
+        for (final EjbModule module : appModule.getEjbModules()) {
+            for (final Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
+                final EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
 
                 // To override a specific ejb only
                 // the following format is used:
                 // <ejb-name>.name = value
                 if (envEntry.getName().contains(".")) {
                     String name = envEntry.getName();
-                    String ejbName = name.substring(0,name.indexOf('.'));
+                    final String ejbName = name.substring(0,name.indexOf('.'));
                     name = name.substring(name.indexOf('.')+1);
-                    EnterpriseBean bean = module.getEjbJar().getEnterpriseBean(ejbName);
+                    final EnterpriseBean bean = module.getEjbJar().getEnterpriseBean(ejbName);
                     if (bean != null){
                         // Set the new property name without the <ejb-name>. prefix
                         envEntry.setName(name);
@@ -94,7 +94,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
                     }
                 }
 
-                for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
+                for (final EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
                     apply(bean, envEntry, bean.getEjbName());
                 }
             }
@@ -103,15 +103,15 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         return appModule;
     }
 
-    public WebModule deploy(WebModule webModule) {
-        for (Map.Entry<String, String> entry : getEnvEntries(webModule).entrySet()) {
-            EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
+    public WebModule deploy(final WebModule webModule) {
+        for (final Map.Entry<String, String> entry : getEnvEntries(webModule).entrySet()) {
+            final EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
             apply(webModule.getWebApp(), envEntry, "WebApp");
         }
         return webModule;
     }
 
-    private void apply(JndiConsumer bean, EnvEntry newEntry, String componentName) {
+    private void apply(final JndiConsumer bean, final EnvEntry newEntry, final String componentName) {
         EnvEntry entry = bean.getEnvEntryMap().get(newEntry.getName());
         if(entry == null){
             entry = bean.getEnvEntryMap().get("java:comp/env/" + newEntry.getName());
@@ -130,7 +130,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
     }
 
     @SuppressWarnings({"unchecked"})
-    private Map<String, String> getEnvEntries(DeploymentModule module) {
+    private Map<String, String> getEnvEntries(final DeploymentModule module) {
         final Object value = module.getAltDDs().get(descriptorName);
         if (value instanceof Map) {
             return (Map<String, String>) value;
@@ -145,7 +145,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
             final Properties envEntriesProps = IO.readProperties(propsUrl);
             envEntriesProps.putAll(additionalEnvEntries);
             return new HashMap(envEntriesProps);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("envprops.notLoaded", e, module.getModuleId(), propsUrl.toExternalForm());
             return Collections.emptyMap();
         }

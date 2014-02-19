@@ -36,7 +36,7 @@ public class CalendarTimerData extends TimerData {
     private ScheduleExpression scheduleExpression;
     private boolean autoCreated;
 
-    public CalendarTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, ScheduleExpression scheduleExpression, boolean auto) {
+    public CalendarTimerData(final long id, final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final TimerConfig timerConfig, final ScheduleExpression scheduleExpression, final boolean auto) {
         super(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig);
         this.scheduleExpression = scheduleExpression;
         this.autoCreated = auto;
@@ -59,7 +59,7 @@ public class CalendarTimerData extends TimerData {
     public AbstractTrigger<?> initializeTrigger() {
         try {
             return new EJBCronTrigger(scheduleExpression);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             //TODO how to handle the ParseException
             throw new IllegalArgumentException("Fail to parse schedule expression " + scheduleExpression, e);
         }
@@ -76,7 +76,7 @@ public class CalendarTimerData extends TimerData {
         autoCreated = in.readBoolean();
         try {
             scheduleExpression = ScheduleExpression.class.cast(in.readObject());
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IOException(e);
         }
     }

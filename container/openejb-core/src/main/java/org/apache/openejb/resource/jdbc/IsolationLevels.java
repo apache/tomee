@@ -35,9 +35,9 @@ public class IsolationLevels {
         isolation.put("SERIALIZABLE", 8);
     }
 
-    public static int getIsolationLevel(String s) {
+    public static int getIsolationLevel(final String s) {
         if (!isolation.containsKey(s)) throw new IllegalArgumentException("No such transaction isolation level '"+s+"'.  Possible values are "+Join.join(", ", isolation.keySet()));
-        int level = isolation.get(s);
+        final int level = isolation.get(s);
         return level;
     }
 

@@ -30,56 +30,56 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 
 public class WlsConversion implements DynamicDeployer {
-    public AppModule deploy(AppModule appModule) {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+    public AppModule deploy(final AppModule appModule) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             convertModule(ejbModule, appModule.getCmpMappings());
         }
         return appModule;
     }
 
-    private <T> T getDescriptor(EjbModule ejbModule, String descriptor, Class<T> type) {
+    private <T> T getDescriptor(final EjbModule ejbModule, final String descriptor, final Class<T> type) {
         Object altDD = ejbModule.getAltDDs().get(descriptor);
         if (altDD instanceof String) {
             try {
                 altDD = JaxbWls.unmarshal(type, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbWls.unmarshal(type, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD == null) return null;
         if (altDD instanceof JAXBElement) {
-            JAXBElement jaxbElement = (JAXBElement) altDD;
+            final JAXBElement jaxbElement = (JAXBElement) altDD;
             altDD = jaxbElement.getValue();
         }
         return (T) altDD;
     }
 
-    public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
+    public void convertModule(final EjbModule ejbModule, final EntityMappings entityMappings) {
 
         // merge data from weblogic-ejb-jar.xml file
-        WeblogicEjbJar weblogicEjbJar = getDescriptor(ejbModule, "weblogic-ejb-jar.xml", WeblogicEjbJar.class);
+        final WeblogicEjbJar weblogicEjbJar = getDescriptor(ejbModule, "weblogic-ejb-jar.xml", WeblogicEjbJar.class);
         mergeEjbConfig(ejbModule, weblogicEjbJar);
 
     }
 
-    private void mergeEjbConfig(EjbModule ejbModule, WeblogicEjbJar weblogicEjbJar) {
-        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+    private void mergeEjbConfig(final EjbModule ejbModule, final WeblogicEjbJar weblogicEjbJar) {
+        final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
         if (openejbJar == null) return;
         if (weblogicEjbJar == null) return;
         if (weblogicEjbJar.getWeblogicEnterpriseBean().size() == 0) return;
 
-        for (WeblogicEnterpriseBean ejb : weblogicEjbJar.getWeblogicEnterpriseBean()) {
+        for (final WeblogicEnterpriseBean ejb : weblogicEjbJar.getWeblogicEnterpriseBean()) {
 
-            EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
+            final EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
             if (deployment == null) {
                 // warn no matching deployment
                 continue;

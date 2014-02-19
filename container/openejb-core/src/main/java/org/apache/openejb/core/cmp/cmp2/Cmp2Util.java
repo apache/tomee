@@ -29,66 +29,66 @@ import javax.ejb.EntityBean;
 import java.lang.reflect.Field;
 
 public class Cmp2Util {
-    public static Object getPrimaryKey(BeanContext beanContext, EntityBean entity){
+    public static Object getPrimaryKey(final BeanContext beanContext, final EntityBean entity){
         if (entity == null) return null;
 
         // build the primary key
-        KeyGenerator kg = beanContext.getKeyGenerator();
-        Object primaryKey = kg.getPrimaryKey(entity);
+        final KeyGenerator kg = beanContext.getKeyGenerator();
+        final Object primaryKey = kg.getPrimaryKey(entity);
         return primaryKey;
     }
 
-    public static <Bean extends EntityBean> Bean getEntityBean(EJBLocalObject proxy) {
+    public static <Bean extends EntityBean> Bean getEntityBean(final EJBLocalObject proxy) {
         if (proxy == null) return null;
 
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
         if (handler.container == null) {
             return null;
         }
         if (!(handler.container instanceof CmpContainer)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
-        CmpContainer container = (CmpContainer) handler.container;
-        Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
+        final CmpContainer container = (CmpContainer) handler.container;
+        final Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
         return entity;
     }
 
-    public static <Bean extends EntityBean> Bean getEntityBean(EJBObject proxy) {
+    public static <Bean extends EntityBean> Bean getEntityBean(final EJBObject proxy) {
         if (proxy == null) return null;
 
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
         if (handler.container == null) {
             return null;
         }
         if (!(handler.container instanceof CmpContainer)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
-        CmpContainer container = (CmpContainer) handler.container;
-        Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
+        final CmpContainer container = (CmpContainer) handler.container;
+        final Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
         return entity;
     }
 
-    public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(BeanContext beanContext, EntityBean entity){
+    public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(final BeanContext beanContext, final EntityBean entity){
         if (entity == null) return null;
 
         // build the primary key
-        Object primaryKey = getPrimaryKey(beanContext, entity);
+        final Object primaryKey = getPrimaryKey(beanContext, entity);
 
         // get the cmp container
         if (!(beanContext.getContainer() instanceof CmpContainer)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + beanContext.getContainer().getClass().getName());
         }
 
-        Proxy proxy = (Proxy) EjbObjectProxyHandler.createProxy(beanContext, primaryKey, InterfaceType.EJB_LOCAL_HOME, beanContext.getLocalInterface());
+        final Proxy proxy = (Proxy) EjbObjectProxyHandler.createProxy(beanContext, primaryKey, InterfaceType.EJB_LOCAL_HOME, beanContext.getLocalInterface());
         return proxy;
     }
 
-    public static BeanContext getBeanContext(Class type) {
-        BeanContext beanContext;
+    public static BeanContext getBeanContext(final Class type) {
+        final BeanContext beanContext;
         try {
-            Field deploymentInfoField = type.getField("deploymentInfo");
+            final Field deploymentInfoField = type.getField("deploymentInfo");
             beanContext = (BeanContext) deploymentInfoField.get(null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException("EntityBean class " + type.getName() +
                     " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?", e);
         }

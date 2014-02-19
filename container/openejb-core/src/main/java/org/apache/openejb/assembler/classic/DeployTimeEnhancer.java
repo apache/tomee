@@ -71,7 +71,7 @@ public class DeployTimeEnhancer {
             final Class<?> arg2 = cl.loadClass("org.apache.openjpa.lib.util.Options");
             cstr = arg2.getConstructor(Properties.class);
             mtd = enhancerClass.getMethod("run", String[].class, arg2);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.warning("openjpa enhancer can't be found in the container, will be skipped");
             mtd = null;
             cstr = null;
@@ -89,7 +89,7 @@ public class DeployTimeEnhancer {
         // find persistence.xml
         final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
         final List<URL> usedUrls = new ArrayList<URL>(); // for fake classloader
-        for (URL url : event.getUrls()) {
+        for (final URL url : event.getUrls()) {
             final File file = URLs.toFile(url);
             if (file.isDirectory()) {
                 final String pXmls = getWarPersistenceXml(url);
@@ -101,7 +101,7 @@ public class DeployTimeEnhancer {
             } else if (file.getName().endsWith(".jar")) {
                 try {
                     final JarFile jar = new JarFile(file);
-                    ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
+                    final ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
                     if (entry != null) {
                         final String path = file.getAbsolutePath();
                         final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
@@ -112,7 +112,7 @@ public class DeployTimeEnhancer {
 
                         feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // ignored
                 }
             } else {
@@ -127,14 +127,14 @@ public class DeployTimeEnhancer {
 
         Thread.currentThread().setContextClassLoader(fakeClassLoader);
         try {
-            for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
+            for (final Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
                 final Properties opts = new Properties();
                 opts.setProperty(PROPERTIES_FILE_PROP, entry.getKey());
 
                 final Object optsArg;
                 try {
                     optsArg = optionsConstructor.newInstance(opts);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.debug("can't create options for enhancing");
                     return;
                 }
@@ -142,7 +142,7 @@ public class DeployTimeEnhancer {
                 LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
                 try {
                     enhancerMethod.invoke(null, toFilePaths(entry.getValue()), optsArg);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.warning("can't enhanced at deploy-time entities", e);
                 }
             }
@@ -152,9 +152,9 @@ public class DeployTimeEnhancer {
         }
 
         // clean up extracted jars and replace jar to keep consistent classloading
-        for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
+        for (final Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
             final List<String> values = entry.getValue();
-            for (String rawPath : values) {
+            for (final String rawPath : values) {
                 if (rawPath.endsWith(TMP_ENHANCEMENT_SUFFIX + "/") || rawPath.endsWith(TMP_ENHANCEMENT_SUFFIX)) {
                     final File dir = new File(rawPath);
                     final File file = new File(rawPath.substring(0, rawPath.length() - TMP_ENHANCEMENT_SUFFIX.length() - 1) + ".jar");
@@ -194,10 +194,10 @@ public class DeployTimeEnhancer {
             final SAXParser parser = Saxs.factory().newSAXParser();
             final JarFileParser handler = new JarFileParser();
             parser.parse(new File(pXml), handler);
-            for (String path : handler.getPaths()) {
+            for (final String path : handler.getPaths()) {
                 paths.add(relative(paths.iterator().next(), path));
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("can't parse '" + pXml + "'", e);
         }
 
@@ -227,13 +227,13 @@ public class DeployTimeEnhancer {
 
     private String[] toFilePaths(final List<String> urls) {
         final List<String> files = new ArrayList<String>();
-        for (String url : urls) {
+        for (final String url : urls) {
             final File dir = new File(url);
             if (!dir.isDirectory()) {
                 continue;
             }
 
-            for (File f : Files.collect(dir, new ClassFilter())) {
+            for (final File f : Files.collect(dir, new ClassFilter())) {
                 files.add(f.getAbsolutePath());
             }
         }
@@ -248,7 +248,7 @@ public class DeployTimeEnhancer {
 
         @Override
         public boolean accept(final File file) {
-            boolean isClass = file.getName().endsWith(CLASS_EXT);
+            final boolean isClass = file.getName().endsWith(CLASS_EXT);
             if (DEFAULT_EXCLUDE.equals(EXCLUDE_PATTERN.pattern()) && DEFAULT_INCLUDE.equals(INCLUDE_PATTERN.pattern())) {
                 return isClass;
             }

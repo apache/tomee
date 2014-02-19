@@ -43,15 +43,15 @@ public class SystemException extends OpenEJBException {
         super();
     }
 
-    public SystemException(String message) {
+    public SystemException(final String message) {
         super(message);
     }
 
-    public SystemException(Throwable rootCause) {
+    public SystemException(final Throwable rootCause) {
         super(rootCause);
     }
 
-    public SystemException(String message, Throwable rootCause) {
+    public SystemException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 

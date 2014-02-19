@@ -50,7 +50,7 @@ public class DynamicSubclass implements Opcodes {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
 
-    public static boolean isDynamic(Class beanClass) {
+    public static boolean isDynamic(final Class beanClass) {
         return Modifier.isAbstract(beanClass.getModifiers()) && InvocationHandler.class.isAssignableFrom(beanClass);
     }
 
@@ -59,7 +59,7 @@ public class DynamicSubclass implements Opcodes {
 
         try {
             return cl.loadClass(proxyName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
@@ -70,14 +70,14 @@ public class DynamicSubclass implements Opcodes {
 
             try { // Try it again, another thread may have beaten this one...
                 return cl.loadClass(proxyName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
 
             final byte[] bytes = generateBytes(abstractClass);
             return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, bytes);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
         } finally {
             lock.unlock();
@@ -100,7 +100,7 @@ public class DynamicSubclass implements Opcodes {
         // push InvocationHandler field
         cw.visitField(ACC_FINAL + ACC_PRIVATE, "this$handler", "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
 
-        for (Constructor<?> constructor : classToProxy.getConstructors()) {
+        for (final Constructor<?> constructor : classToProxy.getConstructors()) {
             if (!Modifier.isPublic(constructor.getModifiers())) continue;
 
             final MethodVisitor mv = visitConstructor(cw, proxyClassFileName, classFileName, constructor);
@@ -127,14 +127,14 @@ public class DynamicSubclass implements Opcodes {
         copyMethodAnnotations(classToProxy, visitors);
 
         // This should never be reached, but just in case
-        for (MethodVisitor visitor : visitors.values()) {
+        for (final MethodVisitor visitor : visitors.values()) {
             visitor.visitEnd();
         }
 
         return cw.toByteArray();
     }
 
-    private static MethodVisitor visitConstructor(ClassWriter cw, String proxyClassFileName, String classFileName, Constructor<?> constructor) {
+    private static MethodVisitor visitConstructor(final ClassWriter cw, final String proxyClassFileName, final String classFileName, final Constructor<?> constructor) {
         final String descriptor = Type.getConstructorDescriptor(constructor);
 
         final String[] exceptions = new String[constructor.getExceptionTypes().length];
@@ -147,7 +147,7 @@ public class DynamicSubclass implements Opcodes {
         mv.visitVarInsn(ALOAD, 0);
         int index = 1;
 
-        for (Type type : Type.getArgumentTypes(descriptor)) {
+        for (final Type type : Type.getArgumentTypes(descriptor)) {
             mv.visitVarInsn(type.getOpcode(ILOAD), index);
             index += size(type);
         }
@@ -162,7 +162,7 @@ public class DynamicSubclass implements Opcodes {
         return mv;
     }
 
-    private static String getSubclassName(Class<?> classToProxy) {
+    private static String getSubclassName(final Class<?> classToProxy) {
         return classToProxy.getName() + "$$Impl";
     }
 
@@ -205,17 +205,17 @@ public class DynamicSubclass implements Opcodes {
         return false;
     }
 
-    public static int size(Type type) {
+    public static int size(final Type type) {
         if (Type.VOID_TYPE.equals(type)) return 0;
         if (Type.LONG_TYPE.equals(type) || Type.DOUBLE_TYPE.equals(type)) return 2;
         return 1;
     }
 
-    public static byte[] readClassFile(Class clazz) throws IOException {
+    public static byte[] readClassFile(final Class clazz) throws IOException {
         return readClassFile(clazz.getClassLoader(), clazz);
     }
 
-    public static byte[] readClassFile(ClassLoader classLoader, Class clazz) throws IOException {
+    public static byte[] readClassFile(final ClassLoader classLoader, final Class clazz) throws IOException {
         final String internalName = clazz.getName().replace('.', '/') + ".class";
         final URL resource = classLoader.getResource(internalName);
 
@@ -231,7 +231,7 @@ public class DynamicSubclass implements Opcodes {
         return out.toByteArray();
     }
 
-    private static void copyMethodAnnotations(Class<?> classToProxy, Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
+    private static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
         // Move all the annotations onto the newly implemented methods
         // Ensures CDI and JAX-RS and JAX-WS still work
         Class clazz = classToProxy;
@@ -240,19 +240,19 @@ public class DynamicSubclass implements Opcodes {
                 final ClassReader classReader = new ClassReader(readClassFile(clazz));
                 final ClassVisitor copyMethodAnnotations = new CopyMethodAnnotations(visitors);
                 classReader.accept(copyMethodAnnotations, ClassReader.SKIP_CODE);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new ProxyGenerationException(e);
             }
             clazz = clazz.getSuperclass();
         }
     }
 
-    private static void copyClassAnnotations(Class<?> clazz, final ClassVisitor newClass) throws ProxyGenerationException {
+    private static void copyClassAnnotations(final Class<?> clazz, final ClassVisitor newClass) throws ProxyGenerationException {
         try {
             final ClassReader classReader = new ClassReader(readClassFile(clazz));
             final ClassVisitor visitor = new CopyClassAnnotations(newClass);
             classReader.accept(visitor, ClassReader.SKIP_CODE);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ProxyGenerationException(e);
         }
     }
@@ -262,18 +262,18 @@ public class DynamicSubclass implements Opcodes {
 
         private MethodVisitor newMethod;
 
-        public MoveAnnotationsVisitor(MethodVisitor movedMethod, MethodVisitor newMethod) {
+        public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
             super(Opcodes.ASM4, movedMethod);
             this.newMethod = newMethod;
         }
 
         @Override
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
             return newMethod.visitAnnotation(desc, visible);
         }
 
         @Override
-        public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+        public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
             return newMethod.visitParameterAnnotation(parameter, desc, visible);
         }
 
@@ -288,13 +288,13 @@ public class DynamicSubclass implements Opcodes {
     private static class CopyClassAnnotations extends ClassVisitor {
         private final ClassVisitor newClass;
 
-        public CopyClassAnnotations(ClassVisitor newClass) {
+        public CopyClassAnnotations(final ClassVisitor newClass) {
             super(Opcodes.ASM4);
             this.newClass = newClass;
         }
 
         @Override
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
             return newClass.visitAnnotation(desc, visible);
         }
     }
@@ -302,13 +302,13 @@ public class DynamicSubclass implements Opcodes {
     private static class CopyMethodAnnotations extends ClassVisitor {
         private final Map<String, MethodVisitor> visitors;
 
-        public CopyMethodAnnotations(Map<String, MethodVisitor> visitors) {
+        public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
             super(Opcodes.ASM4);
             this.visitors = visitors;
         }
 
         @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
             final MethodVisitor newMethod = visitors.remove(name + desc);
 
             if (newMethod == null) return null;

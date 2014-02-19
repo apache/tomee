@@ -61,13 +61,13 @@ public class PropertiesLoginModule implements LoginModule {
     private URL usersUrl;
     private URL groupsUrl;
 
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
         debug = log.isDebugEnabled() || "true".equalsIgnoreCase((String) options.get("Debug"));
-        String usersFile = (String) options.get(USER_FILE) + "";
-        String groupsFile = (String) options.get(GROUP_FILE) + "";
+        final String usersFile = (String) options.get(USER_FILE) + "";
+        final String groupsFile = (String) options.get(GROUP_FILE) + "";
 
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
@@ -81,25 +81,25 @@ public class PropertiesLoginModule implements LoginModule {
     public boolean login() throws LoginException {
         try {
             users = readProperties(usersUrl);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException("Unable to load user properties file " + usersUrl.getFile());
         }
 
         try {
             groups = readProperties(groupsUrl);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException("Unable to load group properties file " + groupsUrl.getFile());
         }
 
-        Callback[] callbacks = new Callback[2];
+        final Callback[] callbacks = new Callback[2];
 
         callbacks[0] = new NameCallback("Username: ");
         callbacks[1] = new PasswordCallback("Password: ", false);
         try {
             callbackHandler.handle(callbacks);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException(ioe.getMessage());
-        } catch (UnsupportedCallbackException uce) {
+        } catch (final UnsupportedCallbackException uce) {
             throw new LoginException(uce.getMessage() + " not available to obtain information from user");
         }
 
@@ -107,7 +107,7 @@ public class PropertiesLoginModule implements LoginModule {
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
         if (tmpPassword == null) tmpPassword = new char[0];
 
-        String password = users.getProperty(user);
+        final String password = users.getProperty(user);
 
         if (password == null) throw new FailedLoginException("User does not exist");
         if (!password.equals(new String(tmpPassword))) throw new FailedLoginException("Password does not match");
@@ -123,9 +123,9 @@ public class PropertiesLoginModule implements LoginModule {
     public boolean commit() throws LoginException {
         principals.add(new UserPrincipal(user));
 
-        for (Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
-            String name = (String) enumeration.nextElement();
-            String[] userList = ((String) groups.getProperty(name) + "").split(",");
+        for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
+            final String name = (String) enumeration.nextElement();
+            final String[] userList = ((String) groups.getProperty(name) + "").split(",");
             for (int i = 0; i < userList.length; i++) {
                 if (user.equals(userList[i])) {
                     principals.add(new GroupPrincipal(name));

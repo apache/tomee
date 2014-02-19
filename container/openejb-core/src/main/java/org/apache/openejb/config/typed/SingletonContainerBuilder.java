@@ -46,17 +46,17 @@ public class SingletonContainerBuilder extends Container {
 
     }
 
-    public SingletonContainerBuilder id(String id) {
+    public SingletonContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public SingletonContainerBuilder withAccessTimeout(Duration accessTimeout) {
+    public SingletonContainerBuilder withAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -64,11 +64,11 @@ public class SingletonContainerBuilder extends Container {
         return accessTimeout;
     }
 
-    public SingletonContainerBuilder withAccessTimeout(long time, TimeUnit unit) {
+    public SingletonContainerBuilder withAccessTimeout(final long time, final TimeUnit unit) {
         return withAccessTimeout(new Duration(time, unit));
     }
 
-    public void setAccessTimeout(long time, TimeUnit unit) {
+    public void setAccessTimeout(final long time, final TimeUnit unit) {
         setAccessTimeout(new Duration(time, unit));
     }
 

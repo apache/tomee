@@ -29,7 +29,7 @@ public class ModuleContext extends DeploymentContext {
     private final URI moduleURI;
     private final ClassLoader loader;
 
-    public ModuleContext(String id, URI moduleURI, String uniqueId, AppContext appContext, Context moduleJndiContext, ClassLoader classLoader) {
+    public ModuleContext(final String id, final URI moduleURI, final String uniqueId, final AppContext appContext, final Context moduleJndiContext, final ClassLoader classLoader) {
         super(id, appContext.getOptions());
         this.moduleURI = moduleURI;
         this.appContext = appContext;

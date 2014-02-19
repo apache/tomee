@@ -25,7 +25,7 @@ public class NoSuchParentProviderException extends IllegalStateException {
     private final ServiceProvider provider;
     private final ID id;
 
-    public NoSuchParentProviderException(ServiceProvider provider, ID id) {
+    public NoSuchParentProviderException(final ServiceProvider provider, final ID id) {
         super(String.format("ServiceProvider{id='%s', parent='%s:%s'}", provider.getId(), id.getNamespace(), id.getName()));
         this.provider = provider;
         this.id = id;

@@ -31,7 +31,7 @@ public class PlainTextPasswordCipher implements PasswordCipher {
      * 
      * @see PasswordCipher#decrypt(char[])
      */
-    public String decrypt(char[] encryptedPassword) {
+    public String decrypt(final char[] encryptedPassword) {
         if (null == encryptedPassword) {
             throw new IllegalArgumentException("encodedPassword cannot be null.");
         }
@@ -47,7 +47,7 @@ public class PlainTextPasswordCipher implements PasswordCipher {
      * 
      * @see PasswordCipher#encrypt(String)
      */
-    public char[] encrypt(String plainPassword) {
+    public char[] encrypt(final String plainPassword) {
         if (null == plainPassword) {
             throw new IllegalArgumentException("plainPassword cannot be null.");
         }

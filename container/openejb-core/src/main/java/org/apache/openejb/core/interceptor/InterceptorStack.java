@@ -36,7 +36,7 @@ public class InterceptorStack {
     private final Method targetMethod;
     private final Operation operation;
 
-    public InterceptorStack(Object beanInstance, Method targetMethod, Operation operation, List<InterceptorData> interceptorDatas, Map<String, Object> interceptorInstances) {
+    public InterceptorStack(final Object beanInstance, final Method targetMethod, final Operation operation, final List<InterceptorData> interceptorDatas, final Map<String, Object> interceptorInstances) {
         if (interceptorDatas == null) throw new NullPointerException("interceptorDatas is null");
         if (interceptorInstances == null) throw new NullPointerException("interceptorInstances is null");
         this.beanInstance = beanInstance;
@@ -45,17 +45,17 @@ public class InterceptorStack {
 
         interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
 
-        for (InterceptorData interceptorData : interceptorDatas) {
-            Class interceptorClass = interceptorData.getInterceptorClass();
-            Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());
+        for (final InterceptorData interceptorData : interceptorDatas) {
+            final Class interceptorClass = interceptorData.getInterceptorClass();
+            final Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());
             if (interceptorInstance == null) {
                 throw new IllegalArgumentException("No interceptor of type " + interceptorClass.getName());
             }
 
-            Set<Method> methods = interceptorData.getMethods(operation);
-            for (Method method : methods) {
+            final Set<Method> methods = interceptorData.getMethods(operation);
+            for (final Method method : methods) {
                 final Interceptor interceptor;
-                Object handler = DynamicProxyImplFactory.realHandler(interceptorInstance);
+                final Object handler = DynamicProxyImplFactory.realHandler(interceptorInstance);
                 if (handler != null && method.getDeclaringClass().equals(handler.getClass())) { // dynamic impl
                     interceptor = new Interceptor(handler, method);
                 } else {
@@ -67,13 +67,13 @@ public class InterceptorStack {
 
     }
 
-    public InvocationContext createInvocationContext(Object... parameters) {
+    public InvocationContext createInvocationContext(final Object... parameters) {
         return new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, parameters);
     }
 
-    public Object invoke(Object... parameters) throws Exception {
+    public Object invoke(final Object... parameters) throws Exception {
         try {
-            InvocationContext invocationContext = createInvocationContext(parameters);
+            final InvocationContext invocationContext = createInvocationContext(parameters);
             if (ThreadContext.getThreadContext() != null) {
                 ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
             }
@@ -85,9 +85,9 @@ public class InterceptorStack {
         }
     }
 
-    public Object invoke(javax.xml.ws.handler.MessageContext messageContext, Object... parameters) throws Exception {
+    public Object invoke(final javax.xml.ws.handler.MessageContext messageContext, final Object... parameters) throws Exception {
         try {
-            InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
+            final InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
             ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
             return invocationContext.proceed();
         } finally {
@@ -95,9 +95,9 @@ public class InterceptorStack {
         }
     }
 
-    public Object invoke(javax.xml.rpc.handler.MessageContext messageContext, Object... parameters) throws Exception {
+    public Object invoke(final javax.xml.rpc.handler.MessageContext messageContext, final Object... parameters) throws Exception {
         try {
-            InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
+            final InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
             ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
             return invocationContext.proceed();
         } finally {

@@ -67,9 +67,9 @@ public class JaccPermissionsBuilder {
             }
 
             policy.commit();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("PolicyConfigurationFactory class not found", e);
-        } catch (PolicyContextException e) {
+        } catch (final PolicyContextException e) {
             throw new OpenEJBException("JACC PolicyConfiguration failed: ContextId=" + policyContext.getContextID(), e);
         }
     }
@@ -322,7 +322,7 @@ public class JaccPermissionsBuilder {
     private PermissionCollection cullPermissions(final PermissionCollection toBeChecked, final Permission permission) {
         final PermissionCollection result = DelegatePermissionCollection.getPermissionCollection();
 
-        for (Enumeration e = toBeChecked.elements(); e.hasMoreElements(); ) {
+        for (final Enumeration e = toBeChecked.elements(); e.hasMoreElements(); ) {
             final Permission test = (Permission) e.nextElement();
             if (!permission.implies(test)) {
                 result.add(test);

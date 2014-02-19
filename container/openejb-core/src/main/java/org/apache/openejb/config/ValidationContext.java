@@ -31,13 +31,13 @@ public class ValidationContext implements ValidationResults {
     private final String name;
     private final DeploymentModule module;
 
-    public ValidationContext(Class<? extends DeploymentModule> moduleType, String name) {
+    public ValidationContext(final Class<? extends DeploymentModule> moduleType, final String name) {
         this.moduleType = moduleType.getSimpleName();
         this.name = name;
         this.module = null;
     }
 
-    public ValidationContext(DeploymentModule module) {
+    public ValidationContext(final DeploymentModule module) {
         this.moduleType = module.getClass().getSimpleName();
         this.module = module;
         this.name = null;
@@ -47,39 +47,39 @@ public class ValidationContext implements ValidationResults {
         return module;
     }
 
-    public void fail(String component, String key, Object... details) {
-        ValidationFailure failure = new ValidationFailure(key);
+    public void fail(final String component, final String key, final Object... details) {
+        final ValidationFailure failure = new ValidationFailure(key);
         failure.setDetails(details);
         failure.setComponentName(component);
 
         addFailure(failure);
     }
 
-    public void warn(String component, String key, Object... details) {
-        ValidationWarning warning = new ValidationWarning(key);
+    public void warn(final String component, final String key, final Object... details) {
+        final ValidationWarning warning = new ValidationWarning(key);
         warning.setDetails(details);
         warning.setComponentName(component);
 
         addWarning(warning);
     }
 
-    public void error(String component, String key, Object... details) {
-        ValidationError error = new ValidationError(key);
+    public void error(final String component, final String key, final Object... details) {
+        final ValidationError error = new ValidationError(key);
         error.setDetails(details);
         error.setComponentName(component);
 
         addError(error);
     }
 
-    public void addWarning(ValidationWarning warning) {
+    public void addWarning(final ValidationWarning warning) {
         warnings.add(warning);
     }
 
-    public void addFailure(ValidationFailure failure) {
+    public void addFailure(final ValidationFailure failure) {
         failures.add(failure);
     }
 
-    public void addError(ValidationError error) {
+    public void addError(final ValidationError error) {
         errors.add(error);
     }
 

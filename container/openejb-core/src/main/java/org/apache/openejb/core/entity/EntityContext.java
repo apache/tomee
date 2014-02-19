@@ -36,26 +36,26 @@ import java.util.ArrayList;
  */
 public class EntityContext extends BaseContext implements javax.ejb.EntityContext {
 
-    public EntityContext(SecurityService securityService) {
+    public EntityContext(final SecurityService securityService) {
         super(securityService);
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
         check(Call.getEJBLocalObject);
 
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.getLocalInterface() == null) {
             throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a local interface");
         }
 
-        EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>(), di.getLocalInterface());
+        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>(), di.getLocalInterface());
 
         try {
-            Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
+            final Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
             return (EJBLocalObject) ProxyManager.newProxyInstance(interfaces, handler);
-        } catch (IllegalAccessException iae) {
+        } catch (final IllegalAccessException iae) {
             throw new InternalErrorException("Could not create IVM proxy for " + di.getLocalInterface() + " interface", iae);
         }
     }
@@ -63,29 +63,29 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
     public EJBObject getEJBObject() throws IllegalStateException {
         check(Call.getEJBObject);
 
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.getRemoteInterface() == null) {
             throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a remote interface");
         }
 
-        EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di.getContainer().getBeanContext(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>(), di.getRemoteInterface());
+        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di.getContainer().getBeanContext(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>(), di.getRemoteInterface());
         try {
-            Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
+            final Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
             return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
-        } catch (IllegalAccessException iae) {
+        } catch (final IllegalAccessException iae) {
             throw new InternalErrorException("Could not create IVM proxy for " + di.getRemoteInterface() + " interface", iae);
         }
     }
 
     public Object getPrimaryKey() throws IllegalStateException {
         check(Call.getPrimaryKey);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
         return threadContext.getPrimaryKey();
     }
 
-    public void check(Call call) {
+    public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
         switch (call) {
             case getUserTransaction:

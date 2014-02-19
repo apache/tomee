@@ -125,7 +125,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *
      * @param window the window size.
      */
-    public DescriptiveStatistics(int window) {
+    public DescriptiveStatistics(final int window) {
         setWindowSize(window);
     }
 
@@ -135,7 +135,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *
      * @param original DescriptiveStatistics instance to copy
      */
-    public DescriptiveStatistics(DescriptiveStatistics original) {
+    public DescriptiveStatistics(final DescriptiveStatistics original) {
         copy(original, this);
     }
 
@@ -147,7 +147,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *
      * @param v the value to be added
      */
-    public void addValue(double v) {
+    public void addValue(final double v) {
         if (windowSize != INFINITE_WINDOW) {
             if (getN() == windowSize) {
                 eDA.addElementRolling(v);
@@ -173,7 +173,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @param v the value to replace the most recent stored value
      * @return replaced value
      */
-    public double replaceMostRecentValue(double v) {
+    public double replaceMostRecentValue(final double v) {
         return eDA.substituteMostRecentElement(v);
     }
 
@@ -310,7 +310,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * reported statistics will be based on these values
      * @param windowSize sets the size of the window.
      */
-    public void setWindowSize(int windowSize) {
+    public void setWindowSize(final int windowSize) {
         if (windowSize < 1) {
             if (windowSize != INFINITE_WINDOW) {
                 throw MathRuntimeException.createIllegalArgumentException(
@@ -350,7 +350,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * numbers sorted in ascending order
      */
     public double[] getSortedValues() {
-        double[] sort = getValues();
+        final double[] sort = getValues();
         Arrays.sort(sort);
         return sort;
     }
@@ -360,7 +360,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @param index The Index of the element
      * @return return the element at the specified index
      */
-    public double getElement(int index) {
+    public double getElement(final int index) {
         return eDA.getElement(index);
     }
 
@@ -383,7 +383,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *  overridden and the supplied implementation does not support setQuantile
      * values
      */
-    public double getPercentile(double p) {
+    public double getPercentile(final double p) {
         if (percentileImpl instanceof Percentile) {
             ((Percentile) percentileImpl).setQuantile(p);
         } else {
@@ -391,15 +391,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
                 percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                         new Class[] {Double.TYPE}).invoke(percentileImpl,
                                 new Object[] {Double.valueOf(p)});
-            } catch (NoSuchMethodException e1) { // Setter guard should prevent
+            } catch (final NoSuchMethodException e1) { // Setter guard should prevent
                 throw MathRuntimeException.createIllegalArgumentException(
                       UNSUPPORTED_METHOD_MESSAGE,
                       percentileImpl.getClass().getName(), SET_QUANTILE_METHOD_NAME);
-            } catch (IllegalAccessException e2) {
+            } catch (final IllegalAccessException e2) {
                 throw MathRuntimeException.createIllegalArgumentException(
                       ILLEGAL_ACCESS_MESSAGE,
                       SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
-            } catch (InvocationTargetException e3) {
+            } catch (final InvocationTargetException e3) {
                 throw MathRuntimeException.createIllegalArgumentException(e3.getCause());
             }
         }
@@ -415,8 +415,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      */
     @Override
     public String toString() {
-        StringBuilder outBuffer = new StringBuilder();
-        String endl = "\n";
+        final StringBuilder outBuffer = new StringBuilder();
+        final String endl = "\n";
         outBuffer.append("DescriptiveStatistics:").append(endl);
         outBuffer.append("n: ").append(getN()).append(endl);
         outBuffer.append("min: ").append(getMin()).append(endl);
@@ -435,7 +435,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @param stat the statistic to apply
      * @return the computed value of the statistic.
      */
-    public double apply(UnivariateStatistic stat) {
+    public double apply(final UnivariateStatistic stat) {
         return stat.evaluate(eDA.getInternalValues(), eDA.start(), eDA.getNumElements());
     }
 
@@ -458,7 +458,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the mean
      * @since 1.2
      */
-    public synchronized void setMeanImpl(UnivariateStatistic meanImpl) {
+    public synchronized void setMeanImpl(final UnivariateStatistic meanImpl) {
         this.meanImpl = meanImpl;
     }
 
@@ -480,7 +480,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @since 1.2
      */
     public synchronized void setGeometricMeanImpl(
-            UnivariateStatistic geometricMeanImpl) {
+            final UnivariateStatistic geometricMeanImpl) {
         this.geometricMeanImpl = geometricMeanImpl;
     }
 
@@ -501,7 +501,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the kurtosis
      * @since 1.2
      */
-    public synchronized void setKurtosisImpl(UnivariateStatistic kurtosisImpl) {
+    public synchronized void setKurtosisImpl(final UnivariateStatistic kurtosisImpl) {
         this.kurtosisImpl = kurtosisImpl;
     }
 
@@ -522,7 +522,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the maximum
      * @since 1.2
      */
-    public synchronized void setMaxImpl(UnivariateStatistic maxImpl) {
+    public synchronized void setMaxImpl(final UnivariateStatistic maxImpl) {
         this.maxImpl = maxImpl;
     }
 
@@ -543,7 +543,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the minimum
      * @since 1.2
      */
-    public synchronized void setMinImpl(UnivariateStatistic minImpl) {
+    public synchronized void setMinImpl(final UnivariateStatistic minImpl) {
         this.minImpl = minImpl;
     }
 
@@ -569,20 +569,20 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @since 1.2
      */
     public synchronized void setPercentileImpl(
-            UnivariateStatistic percentileImpl) {
+            final UnivariateStatistic percentileImpl) {
         try {
             percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                     new Class[] {Double.TYPE}).invoke(percentileImpl,
                             new Object[] {Double.valueOf(50.0d)});
-        } catch (NoSuchMethodException e1) {
+        } catch (final NoSuchMethodException e1) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "percentile implementation {0} does not support setQuantile",
                   percentileImpl.getClass().getName());
-        } catch (IllegalAccessException e2) {
+        } catch (final IllegalAccessException e2) {
             throw MathRuntimeException.createIllegalArgumentException(
                   ILLEGAL_ACCESS_MESSAGE,
                   SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
-        } catch (InvocationTargetException e3) {
+        } catch (final InvocationTargetException e3) {
             throw MathRuntimeException.createIllegalArgumentException(e3.getCause());
         }
         this.percentileImpl = percentileImpl;
@@ -606,7 +606,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @since 1.2
      */
     public synchronized void setSkewnessImpl(
-            UnivariateStatistic skewnessImpl) {
+            final UnivariateStatistic skewnessImpl) {
         this.skewnessImpl = skewnessImpl;
     }
 
@@ -628,7 +628,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @since 1.2
      */
     public synchronized void setVarianceImpl(
-            UnivariateStatistic varianceImpl) {
+            final UnivariateStatistic varianceImpl) {
         this.varianceImpl = varianceImpl;
     }
 
@@ -649,7 +649,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the sum of squares
      * @since 1.2
      */
-    public synchronized void setSumsqImpl(UnivariateStatistic sumsqImpl) {
+    public synchronized void setSumsqImpl(final UnivariateStatistic sumsqImpl) {
         this.sumsqImpl = sumsqImpl;
     }
 
@@ -670,7 +670,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * for computing the sum
      * @since 1.2
      */
-    public synchronized void setSumImpl(UnivariateStatistic sumImpl) {
+    public synchronized void setSumImpl(final UnivariateStatistic sumImpl) {
         this.sumImpl = sumImpl;
     }
 
@@ -680,7 +680,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @return a copy of this
      */
     public DescriptiveStatistics copy() {
-        DescriptiveStatistics result = new DescriptiveStatistics();
+        final DescriptiveStatistics result = new DescriptiveStatistics();
         copy(this, result);
         return result;
     }
@@ -693,7 +693,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @param dest DescriptiveStatistics to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(DescriptiveStatistics source, DescriptiveStatistics dest) {
+    public static void copy(final DescriptiveStatistics source, final DescriptiveStatistics dest) {
         // Copy data and window size
         dest.eDA = source.eDA.copy();
         dest.windowSize = source.windowSize;

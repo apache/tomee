@@ -40,12 +40,12 @@ public class ClientModule extends Module implements DeploymentModule {
     private ID id;
     private final Set<String> watchedResources = new TreeSet<String>();
 
-    public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass, String moduleId) {
+    public ClientModule(final ApplicationClient applicationClient, final ClassLoader classLoader, final String jarLocation, final String mainClass, final String moduleId) {
         this.applicationClient = applicationClient;
         setClassLoader(classLoader);
         this.mainClass = mainClass;
         
-        File file = jarLocation == null ? null : new File(jarLocation);
+        final File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, applicationClient, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
     }
@@ -54,7 +54,7 @@ public class ClientModule extends Module implements DeploymentModule {
         return ejbModuleGenerated;
     }
 
-    public void setEjbModuleGenerated(boolean ejbModuleGenerated) {
+    public void setEjbModuleGenerated(final boolean ejbModuleGenerated) {
         this.ejbModuleGenerated = ejbModuleGenerated;
     }
 
@@ -62,7 +62,7 @@ public class ClientModule extends Module implements DeploymentModule {
         return finder != null ? finder.get(): null;
     }
 
-    public void setFinderReference(AtomicReference<IAnnotationFinder> finder) {
+    public void setFinderReference(final AtomicReference<IAnnotationFinder> finder) {
         this.finder = finder;
     }
 
@@ -78,7 +78,7 @@ public class ClientModule extends Module implements DeploymentModule {
         return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
-    public void setJarLocation(String jarLocation) {
+    public void setJarLocation(final String jarLocation) {
         this.id = new ID(null, applicationClient, id.getName(), new File(jarLocation), id.getUri(), this);
     }
 
@@ -98,7 +98,7 @@ public class ClientModule extends Module implements DeploymentModule {
         return applicationClient;
     }
 
-    public void setApplicationClient(ApplicationClient applicationClient) {
+    public void setApplicationClient(final ApplicationClient applicationClient) {
         this.applicationClient = applicationClient;
     }
 
@@ -114,7 +114,7 @@ public class ClientModule extends Module implements DeploymentModule {
         return mainClass;
     }
 
-    public void setMainClass(String mainClass) {
+    public void setMainClass(final String mainClass) {
         this.mainClass = mainClass;
     }
 

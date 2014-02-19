@@ -35,13 +35,13 @@ public class ModuleProperties implements DynamicDeployer {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ModuleProperties.class);
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         final Properties overrides = new Properties();
         overrides.putAll(SystemInstance.get().getProperties());
         overrides.putAll(appModule.getProperties());
 
-        for (DeploymentModule module : appModule.getDeploymentModule()) {
+        for (final DeploymentModule module : appModule.getDeploymentModule()) {
 
             readProperties(module);
 
@@ -52,7 +52,7 @@ public class ModuleProperties implements DynamicDeployer {
         return appModule;
     }
 
-    private static void readProperties(DeploymentModule module) throws OpenEJBException {
+    private static void readProperties(final DeploymentModule module) throws OpenEJBException {
         final Object o = module.getAltDDs().get("module.properties");
 
         if (o instanceof URL) {
@@ -60,7 +60,7 @@ public class ModuleProperties implements DynamicDeployer {
             try {
                 final Properties properties = IO.readProperties(url);
                 module.getProperties().putAll(properties);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBException("Cannot read module.properties: " + url, e);
             }
         } else if (o instanceof Properties) {
@@ -70,10 +70,10 @@ public class ModuleProperties implements DynamicDeployer {
         }
     }
 
-    private static void applyOverrides(Properties overrides, DeploymentModule module) {
+    private static void applyOverrides(final Properties overrides, final DeploymentModule module) {
         final String id = module.getModuleId() + ".";
 
-        for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
             final String key = entry.getKey().toString();
 
             if (key.startsWith(id)) {

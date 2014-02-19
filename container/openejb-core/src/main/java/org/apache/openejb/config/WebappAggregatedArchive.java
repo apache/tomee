@@ -46,12 +46,12 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
             try {
                 handler = ScanUtil.read(scanXml);
                 scanXmlExists = true;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // ignored, will not use filtering with scan.xml
             }
         }
 
-        for (URL url : urls) {
+        for (final URL url : urls) {
             final List<String> classes = new ArrayList<String>();
             final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(module.getClassLoader(), Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes));
             map.put(url, classes);
@@ -61,7 +61,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
         archive = new CompositeArchive(archives);
     }
 
-    public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, Collection<URL> xmls) {
+    public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, final Collection<URL> xmls) {
         this(new ConfigurableClasspathArchive.FakeModule(classLoader, altDDs), xmls);
     }
 
@@ -70,12 +70,12 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     }
 
     @Override
-    public InputStream getBytecode(String className) throws IOException, ClassNotFoundException {
+    public InputStream getBytecode(final String className) throws IOException, ClassNotFoundException {
         return archive.getBytecode(className);
     }
 
     @Override
-    public Class<?> loadClass(String className) throws ClassNotFoundException {
+    public Class<?> loadClass(final String className) throws ClassNotFoundException {
         return archive.loadClass(className);
     }
 
@@ -89,22 +89,22 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
         private final ScanUtil.ScanHandler handler;
         private final List<String> classes;
 
-        public ScanXmlSaverFilter(boolean scanXmlExists, ScanUtil.ScanHandler handler, List<String> classes) {
+        public ScanXmlSaverFilter(final boolean scanXmlExists, final ScanUtil.ScanHandler handler, final List<String> classes) {
             this.scanXmlExists = scanXmlExists;
             this.handler = handler;
             this.classes = classes;
         }
 
         @Override
-        public boolean accept(String name) {
+        public boolean accept(final String name) {
             if (scanXmlExists) {
-                for (String packageName : handler.getPackages()) {
+                for (final String packageName : handler.getPackages()) {
                     if (name.startsWith(packageName)) {
                         classes.add(name);
                         return true;
                     }
                 }
-                for (String className : handler.getClasses()) {
+                for (final String className : handler.getClasses()) {
                     if (className.equals(name)) {
                         classes.add(name);
                         return true;

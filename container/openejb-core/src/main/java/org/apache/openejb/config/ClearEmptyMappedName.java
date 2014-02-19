@@ -28,25 +28,25 @@ import java.util.List;
  */
 public class ClearEmptyMappedName implements DynamicDeployer {
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            for (JndiConsumer consumer : ejbModule.getEjbJar().getEnterpriseBeans()) {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            for (final JndiConsumer consumer : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 clearEmptyMappedName(consumer);
             }
         }
-        for (ClientModule clientModule : appModule.getClientModules()) {
+        for (final ClientModule clientModule : appModule.getClientModules()) {
             clearEmptyMappedName(clientModule.getApplicationClient());
         }
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             clearEmptyMappedName(webModule.getWebApp());
         }
         return appModule;
     }
 
-    private void clearEmptyMappedName(JndiConsumer consumer) {
+    private void clearEmptyMappedName(final JndiConsumer consumer) {
         if (consumer == null) return;
         
-        List<JndiReference> refs = new ArrayList<JndiReference>();
+        final List<JndiReference> refs = new ArrayList<JndiReference>();
         refs.addAll(consumer.getEjbLocalRef());
         refs.addAll(consumer.getEjbRef());
         refs.addAll(consumer.getEnvEntry());
@@ -57,7 +57,7 @@ public class ClearEmptyMappedName implements DynamicDeployer {
         refs.addAll(consumer.getResourceRef());
         refs.addAll(consumer.getServiceRef());
 
-        for (JndiReference ref : refs) {
+        for (final JndiReference ref : refs) {
             if (ref.getMappedName() != null && ref.getMappedName().length() == 0) ref.setMappedName(null);
         }
     }

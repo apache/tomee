@@ -152,7 +152,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
             try {
                 webBeansContext.getService(ContainerLifecycle.class).startApplication(startupObject);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBRuntimeException("couldn't start owb context", e);
             }
         } finally {

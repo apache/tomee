@@ -90,7 +90,7 @@ public class FileHandler
     }
 
 
-    public FileHandler(String directory, String prefix, String suffix) {
+    public FileHandler(final String directory, final String prefix, final String suffix) {
         this.directory = directory;
         this.prefix = prefix;
         this.suffix = suffix;
@@ -160,16 +160,16 @@ public class FileHandler
      * @param  record  description of the log event
      */
     @Override
-    public void publish(LogRecord record) {
+    public void publish(final LogRecord record) {
 
         if (!isLoggable(record)) {
             return;
         }
 
         // Construct the timestamp we will use, if requested
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        String tsString = ts.toString().substring(0, 19);
-        String tsDate = tsString.substring(0, 10);
+        final Timestamp ts = new Timestamp(System.currentTimeMillis());
+        final String tsString = ts.toString().substring(0, 19);
+        final String tsDate = tsString.substring(0, 10);
 
         try {
             writerLock.readLock().lock();
@@ -197,7 +197,7 @@ public class FileHandler
             String result = null;
             try {
                 result = getFormatter().format(record);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 reportError(null, e, ErrorManager.FORMAT_FAILURE);
                 return;
             }
@@ -211,7 +211,7 @@ public class FileHandler
                 } else {
                     reportError("FileHandler is closed or not yet initialized, unable to log ["+result+"]", null, ErrorManager.WRITE_FAILURE);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 reportError(null, e, ErrorManager.WRITE_FAILURE);
                 return;
             }
@@ -243,7 +243,7 @@ public class FileHandler
             writer.close();
             writer = null;
             date = "";
-        } catch (Exception e) {
+        } catch (final Exception e) {
             reportError(null, e, ErrorManager.CLOSE_FAILURE);
         } finally {
             writerLock.writeLock().unlock();
@@ -262,7 +262,7 @@ public class FileHandler
             if (writer == null)
                 return;
             writer.flush();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             reportError(null, e, ErrorManager.FLUSH_FAILURE);
         } finally {
             writerLock.readLock().unlock();
@@ -276,13 +276,13 @@ public class FileHandler
      */
     private void configure() {
 
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        String tsString = ts.toString().substring(0, 19);
+        final Timestamp ts = new Timestamp(System.currentTimeMillis());
+        final String tsString = ts.toString().substring(0, 19);
         date = tsString.substring(0, 10);
 
-        String className = this.getClass().getName(); //allow classes to override
+        final String className = this.getClass().getName(); //allow classes to override
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         // Retrieve configuration of logging file name
         rotatable = Boolean.parseBoolean(getProperty(className + ".rotatable", "true"));
@@ -292,18 +292,18 @@ public class FileHandler
             prefix = getProperty(className + ".prefix", "juli.");
         if (suffix == null)
             suffix = getProperty(className + ".suffix", ".log");
-        String sBufferSize = getProperty(className + ".bufferSize", String.valueOf(bufferSize));
+        final String sBufferSize = getProperty(className + ".bufferSize", String.valueOf(bufferSize));
         try {
             bufferSize = Integer.parseInt(sBufferSize);
-        } catch (NumberFormatException ignore) {
+        } catch (final NumberFormatException ignore) {
             //no op
         }
         // Get encoding for the logging file
-        String encoding = getProperty(className + ".encoding", null);
+        final String encoding = getProperty(className + ".encoding", null);
         if (encoding != null && encoding.length() > 0) {
             try {
                 setEncoding(encoding);
-            } catch (UnsupportedEncodingException ex) {
+            } catch (final UnsupportedEncodingException ex) {
                 // Ignore
             }
         }
@@ -312,21 +312,21 @@ public class FileHandler
         setLevel(Level.parse(getProperty(className + ".level", "" + Level.ALL)));
 
         // Get filter configuration
-        String filterName = getProperty(className + ".filter", null);
+        final String filterName = getProperty(className + ".filter", null);
         if (filterName != null) {
             try {
                 setFilter((Filter) cl.loadClass(filterName).newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Ignore
             }
         }
 
         // Set formatter
-        String formatterName = getProperty(className + ".formatter", null);
+        final String formatterName = getProperty(className + ".formatter", null);
         if (formatterName != null) {
             try {
                 setFormatter((Formatter) cl.loadClass(formatterName).newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Ignore and fallback to defaults
                 setFormatter(new SimpleFormatter());
             }
@@ -340,7 +340,7 @@ public class FileHandler
     }
 
 
-    private String getProperty(String name, String defaultValue) {
+    private String getProperty(final String name, final String defaultValue) {
         String value = LogManager.getLogManager().getProperty(name);
         if (value == null) {
             value = defaultValue;
@@ -361,7 +361,7 @@ public class FileHandler
     protected void openWriter() {
 
         // Create the directory if necessary
-        File dir = new File(directory);
+        final File dir = new File(directory);
         if (!dir.mkdirs() && !dir.isDirectory()) {
             reportError("Unable to create [" + dir + "]", null,
                     ErrorManager.OPEN_FAILURE);
@@ -372,23 +372,23 @@ public class FileHandler
         // Open the current log file
         writerLock.writeLock().lock();
         try {
-            File pathname = new File(dir.getAbsoluteFile(), prefix
+            final File pathname = new File(dir.getAbsoluteFile(), prefix
                     + (rotatable ? date : "") + suffix);
-            File parent = pathname.getParentFile();
+            final File parent = pathname.getParentFile();
             if (!parent.mkdirs() && !parent.isDirectory()) {
                 reportError("Unable to create [" + parent + "]", null,
                         ErrorManager.OPEN_FAILURE);
                 writer = null;
                 return;
             }
-            String encoding = getEncoding();
-            FileOutputStream fos = new FileOutputStream(pathname, true);
-            OutputStream os = bufferSize>0?new BufferedOutputStream(fos,bufferSize):fos;
+            final String encoding = getEncoding();
+            final FileOutputStream fos = new FileOutputStream(pathname, true);
+            final OutputStream os = bufferSize>0?new BufferedOutputStream(fos,bufferSize):fos;
             writer = new PrintWriter(
                     encoding != null ? new OutputStreamWriter(os, encoding)
                             : new OutputStreamWriter(os), false);
             writer.write(getFormatter().getHead(this));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             reportError(null, e, ErrorManager.OPEN_FAILURE);
             writer = null;
         } finally {

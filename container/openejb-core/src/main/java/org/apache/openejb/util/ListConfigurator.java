@@ -41,14 +41,14 @@ public final class ListConfigurator {
 
         final List<T> list = new ArrayList<T>();
         final String[] split = features.trim().split(",");
-        for (String feature : split) {
+        for (final String feature : split) {
             if (feature == null || feature.trim().isEmpty()) {
                 continue;
             }
 
             final String prefix = key + "." + feature + ".";
             final ObjectRecipe recipe = new ObjectRecipe(feature);
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
                 final String current = entry.getKey().toString();
                 if (current.startsWith(prefix)) {
                     final String property = current.substring(prefix.length());

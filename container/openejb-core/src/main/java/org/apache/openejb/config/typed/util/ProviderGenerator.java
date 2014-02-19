@@ -43,13 +43,13 @@ import java.util.regex.Pattern;
  */
 public class ProviderGenerator extends Resource {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         final ProviderManager manager = new ProviderManager(new ServiceJarXmlLoader());
 
         final Set<String> seen = new HashSet<String>();
 
         final List<ServiceProvider> providers = manager.load("org.apache.openejb");
-        for (ServiceProvider provider : providers) {
+        for (final ServiceProvider provider : providers) {
             final List<String> types = provider.getTypes();
             final String name = guessBuilder(types);
             final String builder = name + "Builder";
@@ -106,7 +106,7 @@ public class ProviderGenerator extends Resource {
 
             // Fields
 
-            for (Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
+            for (final Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
                 final String key = Strings.lcfirst(entry.getKey().toString());
                 final String value = entry.getValue().toString();
                 final String type = guessType(key, value);
@@ -174,7 +174,7 @@ public class ProviderGenerator extends Resource {
                             "    }\n").apply("builder", builder)
             );
 
-            for (Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
+            for (final Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
                 final String lcFirstKey = Strings.lcfirst(entry.getKey().toString());
                 final String ucFirstKey = Strings.ucfirst(lcFirstKey);
                 final String value = entry.getValue().toString();
@@ -318,7 +318,7 @@ public class ProviderGenerator extends Resource {
         }
     }
 
-    private static String fixConstructor(ServiceProvider provider) {
+    private static String fixConstructor(final ServiceProvider provider) {
         final String s = provider.getConstructor() + "";
         final String[] split = s.split(" *, *");
         for (int i = 0; i < split.length; i++) {
@@ -327,7 +327,7 @@ public class ProviderGenerator extends Resource {
         return Join.join(", ", split);
     }
 
-    private static String asValue(String type, String value) {
+    private static String asValue(final String type, final String value) {
         if ("".equals(value)) return "null";
 
         if ("String".equals(type)) {
@@ -343,7 +343,7 @@ public class ProviderGenerator extends Resource {
         return value;
     }
 
-    private static String guessBuilder(List<String> types) {
+    private static String guessBuilder(final List<String> types) {
         String s = types.get(0);
 
         if ("STATEFUL".equals(s)) return "StatefulContainer";
@@ -361,7 +361,7 @@ public class ProviderGenerator extends Resource {
         return s;
     }
 
-    private static String guessType(String key, String value) {
+    private static String guessType(final String key, final String value) {
         if (value.equals("true") || value.equals("false")) return "boolean";
 
         if (key.toLowerCase().endsWith("timeout")) {
@@ -377,7 +377,7 @@ public class ProviderGenerator extends Resource {
             try {
                 Long.parseLong(value);
                 return "long";
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 // no-op
             }
         }
@@ -385,7 +385,7 @@ public class ProviderGenerator extends Resource {
         try {
             Integer.parseInt(value);
             return "int";
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // no-op
         }
 
@@ -400,7 +400,7 @@ public class ProviderGenerator extends Resource {
         return "String";
     }
 
-    public static Template template(String template) {
+    public static Template template(final String template) {
         return new Template(template);
     }
 
@@ -409,29 +409,29 @@ public class ProviderGenerator extends Resource {
         public static final Pattern PATTERN = Pattern.compile("(\\$\\{)((\\.|\\w)+)(})");
         private final String template;
 
-        public Template(String template) {
+        public Template(final String template) {
             this.template = template;
         }
 
 
-        public String apply(String... args) {
+        public String apply(final String... args) {
             final Map<String, String> map = new HashMap<String, String>();
 
             for (int i = 0; i < args.length; i += 2) {
-                String key = args[i];
-                String value = args[i + 1];
+                final String key = args[i];
+                final String value = args[i + 1];
                 map.put(key, value);
             }
 
             return apply(map);
         }
 
-        public String apply(Map<String, String> map) {
-            Matcher matcher = PATTERN.matcher(template);
-            StringBuffer buf = new StringBuffer();
+        public String apply(final Map<String, String> map) {
+            final Matcher matcher = PATTERN.matcher(template);
+            final StringBuffer buf = new StringBuffer();
 
             while (matcher.find()) {
-                String key = matcher.group(2);
+                final String key = matcher.group(2);
 
                 if (key == null) throw new IllegalStateException("Key is null. Template '" + template + "'");
 

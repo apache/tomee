@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
-    public JtaTypedQuery(EntityManager entityManager, JtaEntityManager jtaEm, Method method, Object... args) {
+    public JtaTypedQuery(final EntityManager entityManager, final JtaEntityManager jtaEm, final Method method, final Object... args) {
         super(entityManager, jtaEm, method, args);
     }
 
@@ -56,7 +56,7 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
     }
 
     @Override
-    public TypedQuery<X> setFirstResult(int i) {
+    public TypedQuery<X> setFirstResult(final int i) {
         super.setFirstResult(i);
         return this;
     }
@@ -68,77 +68,77 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
     }
 
     @Override
-    public TypedQuery<X> setHint(String s, Object o) {    
+    public TypedQuery<X> setHint(final String s, final Object o) {
         super.setHint(s, o);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setLockMode(LockModeType lockMode) {
+    public TypedQuery<X> setLockMode(final LockModeType lockMode) {
         super.setLockMode(lockMode);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setMaxResults(int i) {
+    public TypedQuery<X> setMaxResults(final int i) {
         super.setMaxResults(i);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(int i, Calendar calendar,
-            TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final int i, final Calendar calendar,
+            final TemporalType temporalType) {
         super.setParameter(i, calendar, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(int i, Date date, TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final int i, final Date date, final TemporalType temporalType) {
         super.setParameter(i, date, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(int i, Object o) {
+    public TypedQuery<X> setParameter(final int i, final Object o) {
         super.setParameter(i, o);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(Parameter<Calendar> param, Calendar value,
-            TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final Parameter<Calendar> param, final Calendar value,
+            final TemporalType temporalType) {
         super.setParameter(param, value, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(Parameter<Date> param, Date value,
-            TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final Parameter<Date> param, final Date value,
+            final TemporalType temporalType) {
         super.setParameter(param, value, temporalType);
         return this;
     }
 
     @Override
-    public <T> TypedQuery<X> setParameter(Parameter<T> param, T value) {
+    public <T> TypedQuery<X> setParameter(final Parameter<T> param, final T value) {
         super.setParameter(param, value);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(String s, Calendar calendar,
-            TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final String s, final Calendar calendar,
+            final TemporalType temporalType) {
         super.setParameter(s, calendar, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(String s, Date date, TemporalType temporalType) {
+    public TypedQuery<X> setParameter(final String s, final Date date, final TemporalType temporalType) {
         super.setParameter(s, date, temporalType);
         return this;
     }
 
     @Override
-    public TypedQuery<X> setParameter(String s, Object o) {
+    public TypedQuery<X> setParameter(final String s, final Object o) {
         super.setParameter(s, o);
         return this;
     }

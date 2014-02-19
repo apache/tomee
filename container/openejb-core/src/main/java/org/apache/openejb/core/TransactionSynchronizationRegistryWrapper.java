@@ -29,13 +29,13 @@ public class TransactionSynchronizationRegistryWrapper implements TransactionSyn
     private TransactionSynchronizationRegistry registry;
 
     public TransactionSynchronizationRegistryWrapper() {
-        SystemInstance system = SystemInstance.get();
+        final SystemInstance system = SystemInstance.get();
         this.registry = system.getComponent(TransactionSynchronizationRegistry.class);
         this.system = system;
     }
 
     public TransactionSynchronizationRegistry getRegistry() {
-        SystemInstance system = SystemInstance.get();
+        final SystemInstance system = SystemInstance.get();
         if (system != this.system){
             this.registry = system.getComponent(TransactionSynchronizationRegistry.class);
             this.system = system;
@@ -43,7 +43,7 @@ public class TransactionSynchronizationRegistryWrapper implements TransactionSyn
         return registry;
     }
 
-    public Object getResource(Object o) {
+    public Object getResource(final Object o) {
         return getRegistry().getResource(o);
     }
 
@@ -59,11 +59,11 @@ public class TransactionSynchronizationRegistryWrapper implements TransactionSyn
         return getRegistry().getTransactionStatus();
     }
 
-    public void putResource(Object o, Object o1) {
+    public void putResource(final Object o, final Object o1) {
         getRegistry().putResource(o, o1);
     }
 
-    public void registerInterposedSynchronization(Synchronization synchronization) {
+    public void registerInterposedSynchronization(final Synchronization synchronization) {
         getRegistry().registerInterposedSynchronization(synchronization);
     }
 

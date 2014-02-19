@@ -65,16 +65,16 @@ public class MailSessionFactory {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties.clear();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
                 this.properties.put(entry.getKey(), entry.getValue());
             }
         }
     }
 
-    public void setUseDefault(boolean useDefault) {
+    public void setUseDefault(final boolean useDefault) {
         this.useDefault = useDefault;
     }
 }

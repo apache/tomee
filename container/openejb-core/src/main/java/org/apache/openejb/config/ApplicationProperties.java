@@ -37,7 +37,7 @@ public class ApplicationProperties implements DynamicDeployer {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ApplicationProperties.class);
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         readPropertiesFiles(appModule);
 
@@ -46,13 +46,13 @@ public class ApplicationProperties implements DynamicDeployer {
         return appModule;
     }
 
-    private void readPropertiesFiles(AppModule appModule) throws OpenEJBException {
+    private void readPropertiesFiles(final AppModule appModule) throws OpenEJBException {
         final Collection<DeploymentModule> deploymentModule = appModule.getDeploymentModule();
 
         // We intentionally add the AppModule itself LAST so its properties trump all
         deploymentModule.add(appModule);
 
-        for (DeploymentModule module : deploymentModule) {
+        for (final DeploymentModule module : deploymentModule) {
 
             final Object o = module.getAltDDs().get("application.properties");
 
@@ -61,7 +61,7 @@ public class ApplicationProperties implements DynamicDeployer {
                 try {
                     final Properties properties = IO.readProperties(url);
                     appModule.getProperties().putAll(properties);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new OpenEJBException("Cannot read application.properties: " + url, e);
                 }
             } else if (o instanceof Properties) {
@@ -74,12 +74,12 @@ public class ApplicationProperties implements DynamicDeployer {
 
     }
 
-    private void applyOverrides(AppModule appModule) {
+    private void applyOverrides(final AppModule appModule) {
         final String id = appModule.getModuleId() + ".";
 
         final Properties properties = SystemInstance.get().getProperties();
 
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
 
             if (key.startsWith(id)) {

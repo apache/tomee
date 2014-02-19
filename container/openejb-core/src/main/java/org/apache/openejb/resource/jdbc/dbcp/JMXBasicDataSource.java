@@ -51,7 +51,7 @@ public class JMXBasicDataSource {
                     server.unregisterMBean(objectName);
                 }
                 server.registerMBean(new DynamicMBeanWrapper(this), objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace(); // TODO
             }
         }
@@ -64,7 +64,7 @@ public class JMXBasicDataSource {
 
         try {
             LocalMBeanServer.get().unregisterMBean(objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignored
         }
     }
@@ -219,7 +219,7 @@ public class JMXBasicDataSource {
         final Connection conn;
         try {
             conn = ds.getConnection();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             return e.getMessage();
         }
 
@@ -230,20 +230,20 @@ public class JMXBasicDataSource {
                 return "OK";
             }
             return "KO";
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             return e.getMessage();
         } finally {
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     // no-op
                 }
             }
             if (conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     // no-op
                 }
             }

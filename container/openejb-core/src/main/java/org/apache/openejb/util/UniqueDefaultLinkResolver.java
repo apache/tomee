@@ -24,7 +24,7 @@ import java.net.URI;
  * @version $Rev$ $Date$
  */
 public class UniqueDefaultLinkResolver<E> extends LinkResolver<E> {
-    public E resolveLink(String link, URI moduleUri) {
+    public E resolveLink(final String link, final URI moduleUri) {
         //jpa anyway has a default matching rule
         if (link == null || link.length() == 0) {
             return getUniqueMember();

@@ -60,18 +60,18 @@ public abstract class BaseContext implements EJBContext, Serializable {
     protected final SecurityService securityService;
     protected final UserTransaction userTransaction;
 
-    protected BaseContext(SecurityService securityService) {
+    protected BaseContext(final SecurityService securityService) {
         this(securityService, new EjbUserTransaction());
     }
 
-    protected BaseContext(SecurityService securityService, UserTransaction userTransaction) {
+    protected BaseContext(final SecurityService securityService, final UserTransaction userTransaction) {
         this.securityService = securityService;
         this.userTransaction = new UserTransactionWrapper(userTransaction);
     }
 
     public abstract void check(Call call);
 
-    protected IllegalStateException illegal(Call call, Operation operation) {
+    protected IllegalStateException illegal(final Call call, final Operation operation) {
         return new IllegalStateException(call + " cannot be called in " + operation);
     }
 
@@ -81,15 +81,15 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public EJBHome getEJBHome() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         return di.getEJBHome();
     }
 
     public EJBLocalHome getEJBLocalHome() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         return di.getEJBLocalHome();
     }
@@ -101,17 +101,17 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return callerPrincipal;
     }
 
-    protected Principal getCallerPrincipal(SecurityService securityService) {
+    protected Principal getCallerPrincipal(final SecurityService securityService) {
         return securityService.getCallerPrincipal();
     }
 
     @Override
-    public boolean isCallerInRole(String s) {
+    public boolean isCallerInRole(final String s) {
         check(Call.isCallerInRole);
         return isCallerInRole(securityService, s);
     }
 
-    protected boolean isCallerInRole(SecurityService securityService, String roleName) {
+    protected boolean isCallerInRole(final SecurityService securityService, final String roleName) {
         check(Call.isCallerInRole);
         return securityService.isCallerInRole(roleName);
     }
@@ -122,10 +122,10 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return getUserTransaction(userTransaction);
     }
 
-    public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
+    public UserTransaction getUserTransaction(final UserTransaction userTransaction) throws IllegalStateException {
 
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             return userTransaction;
@@ -136,14 +136,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public void setRollbackOnly() throws IllegalStateException {
         check(Call.setRollbackOnly);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly() method");
         }
 
-        TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
+        final TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
         if (txPolicy == null) {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
@@ -157,14 +157,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public boolean getRollbackOnly() throws IllegalStateException {
         check(Call.getRollbackOnly);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
         }
 
-        TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
+        final TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
         if (txPolicy == null) {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
@@ -201,8 +201,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public boolean isUserTransactionAccessAllowed() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         check(Call.UserTransactionMethod);
         return di.isBeanManagedTransaction();
@@ -217,20 +217,20 @@ public abstract class BaseContext implements EJBContext, Serializable {
         throw new UnsupportedOperationException();
     }
 
-    public final boolean isCallerInRole(Identity identity) {
+    public final boolean isCallerInRole(final Identity identity) {
         throw new UnsupportedOperationException();
     }
 
-    public Object lookup(String name) {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext beanContext = threadContext.getBeanContext();
+    public Object lookup(final String name) {
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
         Context jndiEnc = beanContext.getJndiEnc();
         try {
             jndiEnc = (Context) jndiEnc.lookup("comp/env");
             return jndiEnc.lookup(name);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new IllegalArgumentException(e);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -238,7 +238,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public class UserTransactionWrapper implements UserTransaction {
         private UserTransaction userTransaction;
 
-        public UserTransactionWrapper(UserTransaction userTransaction) {
+        public UserTransactionWrapper(final UserTransaction userTransaction) {
             this.userTransaction = userTransaction;
         }
 
@@ -277,7 +277,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             userTransaction.setRollbackOnly();
         }
 
-        public void setTransactionTimeout(int i) throws SystemException {
+        public void setTransactionTimeout(final int i) throws SystemException {
             if (!isUserTransactionAccessAllowed()) {
                 throw new IllegalStateException();
             }

@@ -41,11 +41,11 @@ public class StackHandler extends DefaultHandler {
         return handlers.remove(0);
     }
 
-    protected void checkAttributes(Attributes attributes, String... allowed) throws SAXException {
+    protected void checkAttributes(final Attributes attributes, final String... allowed) throws SAXException {
         checkAttributes(attributes, Arrays.asList(allowed));
     }
 
-    protected void checkAttributes(Attributes attributes, List<String> allowed) throws SAXException {
+    protected void checkAttributes(final Attributes attributes, final List<String> allowed) throws SAXException {
 
         final List<String> invalid = new ArrayList<String>();
 
@@ -61,7 +61,7 @@ public class StackHandler extends DefaultHandler {
     }
 
 
-    protected void push(DefaultHandler handler) {
+    protected void push(final DefaultHandler handler) {
         if (DEBUG) {
             for (int i = 0; i < handlers.size(); i++) {
                 System.out.print("  ");
@@ -72,7 +72,7 @@ public class StackHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
         if (DEBUG) {
             for (int i = 0; i < handlers.size(); i++) {
                 System.out.print("  ");
@@ -83,7 +83,7 @@ public class StackHandler extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         get().endElement(uri, localName, qName);
         if (!DEBUG) {
             pop();
@@ -96,7 +96,7 @@ public class StackHandler extends DefaultHandler {
     }
 
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(final char[] ch, final int start, final int length) throws SAXException {
         get().characters(ch, start, length);
     }
 
@@ -104,19 +104,19 @@ public class StackHandler extends DefaultHandler {
 
         private StringBuilder characters = new StringBuilder();
 
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             characters = new StringBuilder();
         }
 
-        public void characters(char[] ch, int start, int length) {
+        public void characters(final char[] ch, final int start, final int length) {
             characters.append(new String(ch, start, length));
         }
 
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             setValue(characters.toString());
         }
 
-        public void setValue(String text) {
+        public void setValue(final String text) {
         }
     }
 
@@ -124,12 +124,12 @@ public class StackHandler extends DefaultHandler {
 
         final S service;
 
-        protected ServiceElement(S service) {
+        protected ServiceElement(final S service) {
             this.service = service;
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException{
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException{
             if (attributes.getValue("type") != null) service.setType(attributes.getValue("type"));
             if (attributes.getValue("jar") != null) service.setJar(attributes.getValue("jar"));
             if (attributes.getValue("provider") != null) service.setProvider(attributes.getValue("provider"));
@@ -141,7 +141,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         protected List<String> getAttributes() {
-            List<String> attributes = new ArrayList<String>();
+            final List<String> attributes = new ArrayList<String>();
             attributes.add("type");
             attributes.add("jar");
             attributes.add("provider");
@@ -153,10 +153,10 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void setValue(String text) {
+        public void setValue(final String text) {
             try {
                 service.getProperties().putAll(new PropertiesAdapter().unmarshal(text));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -171,7 +171,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setJndi(attributes.getValue("jndi"));
 
@@ -182,7 +182,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             resources.add(service);
             super.endElement(uri, localName, qName);
         }
@@ -205,13 +205,13 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setClazz(attributes.getValue("class"));
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             services.add(service); // TODO: add it only once
             super.endElement(uri, localName, qName);
         }

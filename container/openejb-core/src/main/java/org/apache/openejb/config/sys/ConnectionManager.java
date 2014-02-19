@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "ConnectionManager")
 public class ConnectionManager extends AbstractService {
 
-    public ConnectionManager(String id) {
+    public ConnectionManager(final String id) {
         super(id);
     }
 
-    public ConnectionManager(String id, String type, String provider) {
+    public ConnectionManager(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

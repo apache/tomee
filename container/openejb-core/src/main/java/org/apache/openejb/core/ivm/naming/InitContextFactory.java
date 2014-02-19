@@ -57,7 +57,7 @@ public class InitContextFactory implements InitialContextFactory {
                     identity = securityService.login(realmName, user, pass);
                 }
                 securityService.associate(identity);
-            } catch (LoginException e) {
+            } catch (final LoginException e) {
                 throw (AuthenticationException) new AuthenticationException("User could not be authenticated: " + user).initCause(e);
             }
         }
@@ -89,9 +89,9 @@ public class InitContextFactory implements InitialContextFactory {
 
             OpenEJB.init(props);
 
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }
     }

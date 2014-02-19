@@ -24,15 +24,15 @@ public class DeploymentNotFoundException extends Exception {
         super();
     }
 
-    public DeploymentNotFoundException(String message) {
+    public DeploymentNotFoundException(final String message) {
         super(message);
     }
 
-    public DeploymentNotFoundException(String message, Throwable cause) {
+    public DeploymentNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public DeploymentNotFoundException(Throwable cause) {
+    public DeploymentNotFoundException(final Throwable cause) {
         super(cause);
     }
 }

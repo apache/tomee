@@ -38,19 +38,19 @@ public class TimerServiceWrapper implements TimerService {
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, TimerServiceWrapper.class);
 
-    public Timer createTimer(Date initialExpiration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createTimer(final Date initialExpiration, final long intervalDuration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createTimer(initialExpiration, intervalDuration, info);
     }
 
-    public Timer createTimer(Date expiration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createTimer(final Date expiration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createTimer(expiration, info);
     }
 
-    public Timer createTimer(long initialDuration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createTimer(final long initialDuration, final long intervalDuration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createTimer(initialDuration, intervalDuration, info);
     }
 
-    public Timer createTimer(long duration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createTimer(final long duration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createTimer(duration, info);
     }
 
@@ -58,27 +58,27 @@ public class TimerServiceWrapper implements TimerService {
         return getTimerService().getTimers();
     }
 
-    public Timer createSingleActionTimer(long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createSingleActionTimer(final long l, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createSingleActionTimer(l, timerConfig);
     }
 
-    public Timer createSingleActionTimer(Date date, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createSingleActionTimer(final Date date, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createSingleActionTimer(date, timerConfig);
     }
 
-    public Timer createIntervalTimer(long l, long l1, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createIntervalTimer(final long l, final long l1, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createIntervalTimer(l, l1, timerConfig);
     }
 
-    public Timer createIntervalTimer(Date date, long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createIntervalTimer(final Date date, final long l, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createIntervalTimer(date, l, timerConfig);
     }
 
-    public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createCalendarTimer(final ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createCalendarTimer(scheduleExpression);
     }
 
-    public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+    public Timer createCalendarTimer(final ScheduleExpression scheduleExpression, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createCalendarTimer(scheduleExpression, timerConfig);
     }
 

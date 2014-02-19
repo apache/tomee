@@ -46,29 +46,29 @@ public class ConnectorCallbackHandler implements CallbackHandler {
     private String[] groupsArray;
     private final String securityRealmName;
 
-    public ConnectorCallbackHandler(String securityRealmName) {
+    public ConnectorCallbackHandler(final String securityRealmName) {
         this.securityRealmName = securityRealmName;
     }
 
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        for (Callback callback : callbacks) {
+    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (final Callback callback : callbacks) {
             // jaspi to server communication
             if (callback instanceof CallerPrincipalCallback) {
                 callerPrincipal = ((CallerPrincipalCallback) callback).getPrincipal();
             } else if (callback instanceof GroupPrincipalCallback) {
                 groupsArray = ((GroupPrincipalCallback) callback).getGroups();
             } else if (callback instanceof PasswordValidationCallback) {
-                PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
+                final PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
                 final String userName = passwordValidationCallback.getUsername();
                 final char[] password = passwordValidationCallback.getPassword();
 
-                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 try {
-                    Object loginObj = securityService.login(securityRealmName, userName, password == null ? "" : new String(password));
+                    final Object loginObj = securityService.login(securityRealmName, userName, password == null ? "" : new String(password));
                     securityService.associate(loginObj);
                     callerPrincipal = securityService.getCallerPrincipal();
                     passwordValidationCallback.setResult(true);
-                } catch (LoginException e) {
+                } catch (final LoginException e) {
                     passwordValidationCallback.setResult(false);
                 }
             }

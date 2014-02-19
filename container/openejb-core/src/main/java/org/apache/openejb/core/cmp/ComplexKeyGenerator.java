@@ -29,31 +29,31 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
     protected final List<PkField> fields;
     private final Class pkClass;
 
-    public ComplexKeyGenerator(Class entityBeanClass, Class pkClass) throws OpenEJBException {
+    public ComplexKeyGenerator(final Class entityBeanClass, final Class pkClass) throws OpenEJBException {
         this.pkClass = pkClass;
-        List<ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
-        for (Field pkObjectField : pkClass.getFields()) {
+        final List<ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
+        for (final Field pkObjectField : pkClass.getFields()) {
             if (isValidPkField(pkObjectField)) {
-                Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());
+                final Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());
                 if (!isValidPkField(entityBeanField)) {
                     throw new OpenEJBException("Invalid primray key field: " + entityBeanField);
                 }
-                PkField pkField = new PkField(entityBeanField, pkObjectField);
+                final PkField pkField = new PkField(entityBeanField, pkObjectField);
                 fields.add(pkField);
             }
         }
         this.fields = Collections.unmodifiableList(fields);
     }
 
-    public Object getPrimaryKey(EntityBean bean) {
+    public Object getPrimaryKey(final EntityBean bean) {
         Object pkObject = null;
         try {
             pkObject = pkClass.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Unable to create complex primary key instance: " + pkClass.getName(), e);
         }
 
-        for (PkField pkField : fields) {
+        for (final PkField pkField : fields) {
             pkField.copyToPkObject(bean, pkObject);
         }
         return pkObject;
@@ -63,7 +63,7 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
         private final Field entityBeanField;
         private final Field pkObjectField;
 
-        public PkField(Field entityBeanField, Field pkObjectField) {
+        public PkField(final Field entityBeanField, final Field pkObjectField) {
             entityBeanField.setAccessible(true);
             pkObjectField.setAccessible(true);
             
@@ -71,13 +71,13 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
             this.pkObjectField = pkObjectField;
         }
 
-        public void copyToPkObject(EntityBean bean, Object pkObject) {
-            Object value = getFieldValue(entityBeanField, bean);
+        public void copyToPkObject(final EntityBean bean, final Object pkObject) {
+            final Object value = getFieldValue(entityBeanField, bean);
             setFieldValue(pkObjectField, pkObject, value);
         }
 
-        public Object getPkFieldValue(Object pkObject) {
-            Object value = getFieldValue(pkObjectField, pkObject);
+        public Object getPkFieldValue(final Object pkObject) {
+            final Object value = getFieldValue(pkObjectField, pkObject);
             return value;
         }
     }

@@ -41,40 +41,40 @@ public final class ValidatorBuilder {
         // no-op
     }
 
-    public static ValidatorFactory buildFactory(ClassLoader classLoader, ValidationInfo info) {
+    public static ValidatorFactory buildFactory(final ClassLoader classLoader, final ValidationInfo info) {
         // now we will not be polluted by log build
         return buildFactory(info, classLoader);
     }
 
-    public static ValidationInfo getInfo(ValidationConfigType config) {
-        ValidationInfo info = new ValidationInfo();
+    public static ValidationInfo getInfo(final ValidationConfigType config) {
+        final ValidationInfo info = new ValidationInfo();
         if (config != null) {
             info.providerClassName = config.getDefaultProvider();
             info.constraintFactoryClass = config.getConstraintValidatorFactory();
             info.traversableResolverClass = config.getTraversableResolver();
             info.messageInterpolatorClass = config.getMessageInterpolator();
-            for (PropertyType p : config.getProperty()) {
+            for (final PropertyType p : config.getProperty()) {
                 info.propertyTypes.put(p.getName(), p.getValue());
             }
-            for (JAXBElement<String> element : config.getConstraintMapping()) {
+            for (final JAXBElement<String> element : config.getConstraintMapping()) {
                 info.constraintMappings.add(element.getValue());
             }
         }
         return info;
     }
 
-    public static ValidatorFactory buildFactory(ValidationInfo config, ClassLoader classLoader) {
+    public static ValidatorFactory buildFactory(final ValidationInfo config, final ClassLoader classLoader) {
         ValidatorFactory factory = null;
-        ClassLoader oldContextLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldContextLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
             if (config == null) {
                 factory = Validation.buildDefaultValidatorFactory();
             } else {
-                Configuration<?> configuration = getConfig(config);
+                final Configuration<?> configuration = getConfig(config);
                 try {
                     factory = configuration.buildValidatorFactory();
-                } catch (ValidationException ve) {
+                } catch (final ValidationException ve) {
                     Thread.currentThread().setContextClassLoader(ValidatorBuilder.class.getClassLoader());
                     factory = Validation.buildDefaultValidatorFactory();
                     Thread.currentThread().setContextClassLoader(classLoader);
@@ -91,9 +91,9 @@ public final class ValidatorBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    private static Configuration<?> getConfig(ValidationInfo info) {
+    private static Configuration<?> getConfig(final ValidationInfo info) {
         Configuration<?> target = null;
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         String providerClassName = info.providerClassName;
         if (providerClassName == null) {
@@ -102,13 +102,13 @@ public final class ValidatorBuilder {
 
         if (providerClassName != null) {
             try {
-                @SuppressWarnings({"unchecked","rawtypes"})
+                @SuppressWarnings({"unchecked","rawtypes"}) final
                 Class clazz = classLoader.loadClass(providerClassName);
                 target = Validation.byProvider(clazz).configure();
                 logger.info("Using " + providerClassName + " as validation provider.");
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 logger.warning("Unable to load provider class " + providerClassName, e);
-            } catch (ValidationException ve) {
+            } catch (final ValidationException ve) {
                 logger.warning("Unable create validator factory with provider " + providerClassName
                         + " (" + ve.getMessage() + ")."
                         + " Default one will be used.");
@@ -123,41 +123,41 @@ public final class ValidatorBuilder {
 
         target.ignoreXmlConfiguration();
 
-        String messageInterpolatorClass = info.messageInterpolatorClass;
+        final String messageInterpolatorClass = info.messageInterpolatorClass;
         if (messageInterpolatorClass != null) {
             try {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<MessageInterpolator> clazz = (Class<MessageInterpolator>) classLoader.loadClass(messageInterpolatorClass);
                 target.messageInterpolator(clazz.newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warning("Unable to set "+messageInterpolatorClass+ " as message interpolator.", e);
             }
             logger.info("Using " + messageInterpolatorClass + " as message interpolator.");
         }
-        String traversableResolverClass = info.traversableResolverClass;
+        final String traversableResolverClass = info.traversableResolverClass;
         if (traversableResolverClass != null) {
             try {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<TraversableResolver> clazz = (Class<TraversableResolver>) classLoader.loadClass(traversableResolverClass);
                 target.traversableResolver(clazz.newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warning("Unable to set "+traversableResolverClass+ " as traversable resolver.", e);
             }
             logger.info("Using " + traversableResolverClass + " as traversable resolver.");
         }
-        String constraintFactoryClass = info.constraintFactoryClass;
+        final String constraintFactoryClass = info.constraintFactoryClass;
         if (constraintFactoryClass != null) {
             try {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<ConstraintValidatorFactory> clazz = (Class<ConstraintValidatorFactory>) classLoader.loadClass(constraintFactoryClass);
                 target.constraintValidatorFactory(clazz.newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warning("Unable to set "+constraintFactoryClass+ " as constraint factory.", e);
             }
             logger.info("Using " + constraintFactoryClass + " as constraint factory.");
         }
-        for (Map.Entry<Object, Object> entry : info.propertyTypes.entrySet()) {
-            PropertyType property = new PropertyType();
+        for (final Map.Entry<Object, Object> entry : info.propertyTypes.entrySet()) {
+            final PropertyType property = new PropertyType();
             property.setName((String) entry.getKey());
             property.setValue((String) entry.getValue());
 
@@ -166,11 +166,11 @@ public final class ValidatorBuilder {
             }
             target.addProperty(property.getName(), property.getValue());
         }
-        for (String mappingFileName : info.constraintMappings) {
+        for (final String mappingFileName : info.constraintMappings) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Opening input stream for " + mappingFileName);
             }
-            InputStream in = classLoader.getResourceAsStream(mappingFileName);
+            final InputStream in = classLoader.getResourceAsStream(mappingFileName);
             if (in == null) {
                 logger.warning("Unable to open input stream for mapping file " + mappingFileName + ". It will be ignored");
             } else {

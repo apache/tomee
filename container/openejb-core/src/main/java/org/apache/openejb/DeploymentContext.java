@@ -32,7 +32,7 @@ public class DeploymentContext {
     private final Properties properties = new SuperProperties().caseInsensitive(true);
     private Options options;
 
-    public DeploymentContext(String id, Options parent) {
+    public DeploymentContext(final String id, final Options parent) {
         this.id = id;
         this.options = new Options(properties, parent);
     }
@@ -42,12 +42,12 @@ public class DeploymentContext {
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T get(Class<T> type) {
+    public <T> T get(final Class<T> type) {
         return (T)data.get(type);
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T set(Class<T> type, T value) {
+    public <T> T set(final Class<T> type, final T value) {
         return (T) data.put(type, value);
     }
 

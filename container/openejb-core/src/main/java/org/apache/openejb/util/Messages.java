@@ -36,16 +36,16 @@ public class Messages {
     private Locale locale;
     private String resourceName;
 
-    public Messages(Class clazz) {
+    public Messages(final Class clazz) {
         this(packageName(clazz));
     }
 
-    private static String packageName(Class clazz) {
-        String name = clazz.getName();
+    private static String packageName(final Class clazz) {
+        final String name = clazz.getName();
         return name.substring(0, name.lastIndexOf("."));
     }
 
-    public Messages(String resourceName) {
+    public Messages(final String resourceName) {
         this.resourceName = resourceName + ".Messages";
         synchronized (Messages.class) {
             locale = _globalLocale;
@@ -65,7 +65,7 @@ public class Messages {
                 } else {
                     messages = ResourceBundle.getBundle(resourceName, locale);
                 }
-            } catch (Exception except) {
+            } catch (final Exception except) {
                 messages = new EmptyResourceBundle();
             }
 
@@ -79,11 +79,11 @@ public class Messages {
         }
     }
 
-    public String format(String message) {
+    public String format(final String message) {
         return message(message);
     }
 
-    public String format(String message, Object... args) {
+    public String format(final String message, final Object... args) {
         init();
         if (locale != _globalLocale) {
             synchronized (Messages.class) {
@@ -92,26 +92,26 @@ public class Messages {
         }
 
         MessageFormat mf;
-        String msg;
+        final String msg;
 
         try {
             mf = (MessageFormat) formats.get(message);
             if (mf == null) {
                 try {
                     msg = messages.getString(message);
-                } catch (MissingResourceException except) {
+                } catch (final MissingResourceException except) {
                     return message + (args != null ? " " + Arrays.toString(args) : "");
                 }
                 mf = new MessageFormat(msg);
                 formats.put(message, mf);
             }
             return mf.format(args);
-        } catch (Exception except) {
+        } catch (final Exception except) {
             return "An internal error occured while processing message " + message;
         }
     }
 
-    public String message(String message) {
+    public String message(final String message) {
         init();
         if (locale != _globalLocale) {
             synchronized (Messages.class) {
@@ -121,12 +121,12 @@ public class Messages {
 
         try {
             return messages.getString(message);
-        } catch (MissingResourceException except) {
+        } catch (final MissingResourceException except) {
             return message;
         }
     }
 
-    public static void setLocale(Locale locale) {
+    public static void setLocale(final Locale locale) {
         synchronized (Messages.class) {
             _globalLocale = locale;
             _rbBundles = new Hashtable();
@@ -144,7 +144,7 @@ public class Messages {
             return this;
         }
 
-        protected Object handleGetObject(String name) {
+        protected Object handleGetObject(final String name) {
             return "[Missing message " + name + "]";
         }
 

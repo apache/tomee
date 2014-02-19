@@ -70,7 +70,7 @@ public class AppValidator {
     public AppValidator() throws OpenEJBException {
     }
 
-    public AppValidator(int level, boolean printXml, boolean printWarnings, boolean printCount) {
+    public AppValidator(final int level, final boolean printXml, final boolean printWarnings, final boolean printCount) {
         this.level = level;
         this.printXml = printXml;
         this.printWarnings = printWarnings;
@@ -81,12 +81,12 @@ public class AppValidator {
         additionalValidators = additionalValidator;
     }
 
-    public void addValidationResults(ValidationResults set) {
+    public void addValidationResults(final ValidationResults set) {
         sets.add(set);
     }
 
     public ValidationResults[] getValidationResultsSets() {
-        ValidationResults[] ejbSets = new ValidationResults[sets.size()];
+        final ValidationResults[] ejbSets = new ValidationResults[sets.size()];
         return sets.toArray(ejbSets);
     }
 
@@ -95,13 +95,13 @@ public class AppValidator {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(appModule.getClassLoader()); // be sure to not mix classloaders
         try {
-            ValidationRule[] rules = getValidationRules();
+            final ValidationRule[] rules = getValidationRules();
             for (int i = 0; i < rules.length; i++) {
                 rules[i].validate(appModule);
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace(System.out);
-            ValidationError err = new ValidationError("cannot.validate");
+            final ValidationError err = new ValidationError("cannot.validate");
             err.setCause(e);
             err.setDetails(e.getMessage());
             appModule.getValidation().addError(err);
@@ -143,7 +143,7 @@ public class AppValidator {
     }
 
     // END SNIPPET : code1
-    public void printResults(ValidationResults set) {
+    public void printResults(final ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!printWarnings || !set.hasWarnings())) {
             return;
         }
@@ -159,7 +159,7 @@ public class AppValidator {
         }
     }
 
-    protected void printValidationExceptions(ValidationException[] exceptions) {
+    protected void printValidationExceptions(final ValidationException[] exceptions) {
         for (int i = 0; i < exceptions.length; i++) {
             System.out.print(" ");
             System.out.print(exceptions[i].getPrefix());
@@ -187,7 +187,7 @@ public class AppValidator {
 
     }
 
-    public void printResultsXML(ValidationResults set) {
+    public void printResultsXML(final ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!printWarnings || !set.hasWarnings())) {
             return;
         }
@@ -206,7 +206,7 @@ public class AppValidator {
         System.out.println("</jar>");
     }
 
-    protected void printValidationExceptionsXML(ValidationException[] exceptions) {
+    protected void printValidationExceptionsXML(final ValidationException[] exceptions) {
         for (int i = 0; i < exceptions.length; i++) {
             System.out.print("    <");
             System.out.print(exceptions[i].getPrefix());
@@ -228,7 +228,7 @@ public class AppValidator {
         }
     }
 
-    public void displayResults(ValidationResults[] sets) {
+    public void displayResults(final ValidationResults[] sets) {
         if (printXml) {
             System.out.println("<results>");
             for (int i = 0; i < sets.length; i++) {
@@ -251,18 +251,18 @@ public class AppValidator {
         }
     }
 
-    public static void main(String[] args) throws SystemExitException {
-        CommandLineParser parser = new PosixParser();
+    public static void main(final String[] args) throws SystemExitException {
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption(AppValidator.option("v", "version", "cmd.validate.opt.version"));
         options.addOption(AppValidator.option("h", "help", "cmd.validate.opt.help"));
 
         CommandLine line = null;
         try {
             line = parser.parse(options, args);
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             AppValidator.help(options);
             throw new SystemExitException(-1);
         }
@@ -280,31 +280,31 @@ public class AppValidator {
             AppValidator.help(options);
         }
 
-        DeploymentLoader deploymentLoader = new DeploymentLoader();
+        final DeploymentLoader deploymentLoader = new DeploymentLoader();
 
         try {
-            AppValidator validator = new AppValidator();
-            for (Object obj : line.getArgList()) {
-                String module = (String) obj;
-                File file = new File(module);
-                AppModule appModule = deploymentLoader.load(file);
+            final AppValidator validator = new AppValidator();
+            for (final Object obj : line.getArgList()) {
+                final String module = (String) obj;
+                final File file = new File(module);
+                final AppModule appModule = deploymentLoader.load(file);
                 validator.validate(appModule);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void help(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
+    private static void help(final Options options) {
+        final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("validate [options] <file> [<file>...]", "\n" + AppValidator.i18n("cmd.validate.description"), options, "\n");
     }
 
-    private static Option option(String shortOpt, String longOpt, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withDescription(AppValidator.i18n(description)).create(shortOpt);
     }
 
-    private static String i18n(String key) {
+    private static String i18n(final String key) {
         return AppValidator._messages.format(key);
     }
 }

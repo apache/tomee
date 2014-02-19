@@ -82,10 +82,10 @@ public class PersistenceBuilder {
 
                     final DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     try {
                         unitInfo.setJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
-                    } catch (NamingException ne) {
+                    } catch (final NamingException ne) {
                         throw new OpenEJBException("Could not lookup <jta-data-source> '" + jtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                     }
                 }
@@ -129,10 +129,10 @@ public class PersistenceBuilder {
 
                     final DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     try {
                         unitInfo.setNonJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
-                    } catch (NamingException ne) {
+                    } catch (final NamingException ne) {
                         throw new OpenEJBException("Could not lookup <non-jta-data-source> '" + nonJtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                     }
                 }

@@ -38,13 +38,13 @@ import java.util.Vector;
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public EntityEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public EntityEjbHomeHandler(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
-    public Object createProxy(Object primaryKey, Class mainInterface) {
-        Object proxy = super.createProxy(primaryKey, mainInterface);
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+    public Object createProxy(final Object primaryKey, final Class mainInterface) {
+        final Object proxy = super.createProxy(primaryKey, mainInterface);
+        final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         /* 
         * Register the handle with the BaseEjbProxyHandler.liveHandleRegistry
@@ -58,41 +58,41 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
     }
 
-    protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        Object retValue;
+    protected Object findX(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final Object retValue;
         try {
             retValue = container.invoke(deploymentID, interfaceType, interfce, method, args, null);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             logger.debug("entityEjbHomeHandler.containerInvocationFailure", e, e.getMessage());
             throw e;
         }
 
         if (retValue instanceof Collection) {
-            Object [] proxyInfos = ((Collection) retValue).toArray();
-            Vector proxies = new Vector();
+            final Object [] proxyInfos = ((Collection) retValue).toArray();
+            final Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
-                ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
+                final ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
                 proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;
         } else if (retValue instanceof ArrayEnumeration) {
-            ArrayEnumeration enumeration = (ArrayEnumeration) retValue;
+            final ArrayEnumeration enumeration = (ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
-                ProxyInfo proxyInfo = (ProxyInfo) enumeration.get(i);
+                final ProxyInfo proxyInfo = (ProxyInfo) enumeration.get(i);
                 enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return enumeration;
         } else if (retValue instanceof Enumeration) {
-            Enumeration enumeration = (Enumeration) retValue;
+            final Enumeration enumeration = (Enumeration) retValue;
 
-            List proxies = new ArrayList();
+            final List proxies = new ArrayList();
             while (enumeration.hasMoreElements()) {
-                ProxyInfo proxyInfo = (ProxyInfo) enumeration.nextElement();
+                final ProxyInfo proxyInfo = (ProxyInfo) enumeration.nextElement();
                 proxies.add(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return new ArrayEnumeration(proxies);
         } else {
-            ProxyInfo proxyInfo = (ProxyInfo) retValue;
+            final ProxyInfo proxyInfo = (ProxyInfo) retValue;
 
 
             return createProxy(proxyInfo.getPrimaryKey(), getMainInterface());
@@ -100,15 +100,15 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
     }
 
-    protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        Object primKey = args[0];
+    protected Object removeByPrimaryKey(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final Object primKey = args[0];
 
         // Check for the common mistake of passing the ejbObject instead of ejbObject.getPrimaryKey()
         if (primKey instanceof EJBLocalObject) {
-            Class ejbObjectProxyClass = primKey.getClass();
+            final Class ejbObjectProxyClass = primKey.getClass();
 
             String ejbObjectName = null;
-            for (Class clazz : ejbObjectProxyClass.getInterfaces()) {
+            for (final Class clazz : ejbObjectProxyClass.getInterfaces()) {
                 if (EJBLocalObject.class.isAssignableFrom(clazz)) {
                     ejbObjectName = clazz.getSimpleName();
                     break;
@@ -118,10 +118,10 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             throw new RemoveException("Invalid argument '" + ejbObjectName + "', expected primary key.  Update to ejbLocalHome.remove(" + lcfirst(ejbObjectName) + ".getPrimaryKey())");
 
         } else if (primKey instanceof EJBObject) {
-            Class ejbObjectProxyClass = primKey.getClass();
+            final Class ejbObjectProxyClass = primKey.getClass();
 
             String ejbObjectName = null;
-            for (Class clazz : ejbObjectProxyClass.getInterfaces()) {
+            for (final Class clazz : ejbObjectProxyClass.getInterfaces()) {
                 if (EJBObject.class.isAssignableFrom(clazz)) {
                     ejbObjectName = clazz.getSimpleName();
                     break;
@@ -141,15 +141,15 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    private static String lcfirst(String s){
+    private static String lcfirst(final String s){
         if (s == null || s.length() < 1) return s;
 
-        StringBuilder sb = new StringBuilder(s);
+        final StringBuilder sb = new StringBuilder(s);
         sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
         return sb.toString();
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    protected EjbObjectProxyHandler newEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         return new EntityEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 

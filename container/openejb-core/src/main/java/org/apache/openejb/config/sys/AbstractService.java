@@ -78,16 +78,16 @@ public abstract class AbstractService implements Service {
     protected String factoryName;
 
 
-    protected AbstractService(String id) {
+    protected AbstractService(final String id) {
         this(id, null, null);
     }
 
-    protected AbstractService(String id, String type) {
+    protected AbstractService(final String id, final String type) {
         this.id = id;
         this.type = type;
     }
 
-    protected AbstractService(String id, String type, String provider) {
+    protected AbstractService(final String id, final String type, final String provider) {
         this.id = id;
         this.provider = provider;
         this.type = type;
@@ -137,7 +137,7 @@ public abstract class AbstractService implements Service {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractService implements Service {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setJar(String value) {
+    public void setJar(final String value) {
         this.jar = value;
     }
 
@@ -177,7 +177,7 @@ public abstract class AbstractService implements Service {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setProvider(String value) {
+    public void setProvider(final String value) {
         this.provider = value;
     }
 
@@ -185,7 +185,7 @@ public abstract class AbstractService implements Service {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -193,7 +193,7 @@ public abstract class AbstractService implements Service {
         return className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         this.className = className;
     }
 
@@ -201,7 +201,7 @@ public abstract class AbstractService implements Service {
         return constructor;
     }
 
-    public void setConstructor(String constructor) {
+    public void setConstructor(final String constructor) {
         this.constructor = constructor;
     }
 
@@ -209,16 +209,16 @@ public abstract class AbstractService implements Service {
         return factoryName;
     }
 
-    public void setFactoryName(String factoryName) {
+    public void setFactoryName(final String factoryName) {
         this.factoryName = factoryName;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof AbstractService)) return false;
 
-        AbstractService that = (AbstractService) o;
+        final AbstractService that = (AbstractService) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (jar != null ? !jar.equals(that.jar) : that.jar != null) return false;

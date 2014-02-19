@@ -65,10 +65,10 @@ public class MainImpl implements Main {
         descriptionI18n = descriptionBase + "." + locale;
 
 
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption(null, "version", false, "");
         options.addOption("h", "help", false, "");
         options.addOption("e", "errors", false, "Produce execution error messages");
@@ -82,7 +82,7 @@ public class MainImpl implements Main {
             line = parser.parse(options, args, true);
 
             // Get and remove the commandName (first arg)
-            List<String> list = line.getArgList();
+            final List<String> list = line.getArgList();
             if (list.size() > 0){
                 commandName = list.get(0);
                 list.remove(0);
@@ -90,7 +90,7 @@ public class MainImpl implements Main {
 
             // The rest of the args will be passed to the command
             args = line.getArgs();
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             exp.printStackTrace();
             System.exit(-1);
         }
@@ -107,7 +107,7 @@ public class MainImpl implements Main {
         Properties props = null;
         try {
             props = finder.findProperties(commandName);
-        } catch (IOException e1) {
+        } catch (final IOException e1) {
             System.out.println("Unavailable command: " + commandName);
 
             help(false);
@@ -124,7 +124,7 @@ public class MainImpl implements Main {
 
         // Shift the command name itself off the args list
 
-        String mainClass = props.getProperty(MAIN_CLASS_PROPERTY_NAME);
+        final String mainClass = props.getProperty(MAIN_CLASS_PROPERTY_NAME);
         if (mainClass == null) {
             throw new NullPointerException("Command " + commandName + " did not specify a " + MAIN_CLASS_PROPERTY_NAME + " property");
         }
@@ -132,21 +132,21 @@ public class MainImpl implements Main {
         Class<?> clazz = null;
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(mainClass);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             throw new IllegalStateException("Main class of command " + commandName + " does not exist: " + mainClass, cnfe);
         }
 
         Method mainMethod = null;
         try {
             mainMethod = clazz.getMethod("main", String[].class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Main class of command " + commandName + " does not have a static main method: " + mainClass, e);
         }
 
         try {
             // WARNING, Definitely do *not* unwrap 'new Object[]{args}' to 'args'
             mainMethod.invoke(clazz, new Object[]{args});
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             if (line.hasOption("errors")) {
                 e.printStackTrace();
             }
@@ -155,7 +155,7 @@ public class MainImpl implements Main {
     }
 
     private String[] processSystemProperties(String[] args) {
-        ArrayList<String> argsList = new ArrayList<String>();
+        final ArrayList<String> argsList = new ArrayList<String>();
 
         // We have to pre-screen for openejb.base as it has a direct affect
         // on where we look for the conf/system.properties file which we
@@ -163,10 +163,10 @@ public class MainImpl implements Main {
         // properties.  Once SystemInstance.init() is called in the next
         // section of code, the openejb.base value is cemented and cannot
         // be changed.
-        for (String arg : args) {
+        for (final String arg : args) {
             if (arg.indexOf("-Dopenejb.base") != -1) {
-                String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-                String val = arg.substring(arg.indexOf("=") + 1);
+                final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
+                final String val = arg.substring(arg.indexOf("=") + 1);
 
                 System.setProperty(prop, val);
             }
@@ -179,18 +179,18 @@ public class MainImpl implements Main {
             SystemInstance.init(new Properties());
             OptionsLog.install();
             systemInstance = SystemInstance.get();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             System.exit(2);
         }
 
         // Now read in and apply the properties specified on the command line
-        for (String arg : args) {
+        for (final String arg : args) {
             final int idx = arg.indexOf("-D");
             final int eq = arg.indexOf("=");
             if (idx >= 0 && eq > idx) {
-                String prop = arg.substring(idx + 2, eq);
-                String val = arg.substring(eq + 1);
+                final String prop = arg.substring(idx + 2, eq);
+                final String val = arg.substring(eq + 1);
 
                 System.setProperty(prop, val);
                 systemInstance.setProperty(prop, val);
@@ -211,31 +211,31 @@ public class MainImpl implements Main {
     private static void help() {
         help(true);
     }
-    private static void help(boolean printHeader) {
+    private static void help(final boolean printHeader) {
 
         // Here we are using commons-cli to create the list of available commands
         // We actually use a different Options object to parse the 'openejb' command
         try {
-            Options options = new Options();
+            final Options options = new Options();
 
-            ResourceFinder commandFinder = new ResourceFinder("META-INF");
-            Map<String, Properties> commands = commandFinder.mapAvailableProperties("org.apache.openejb.cli");
-            for (Map.Entry<String, Properties> command : commands.entrySet()) {
+            final ResourceFinder commandFinder = new ResourceFinder("META-INF");
+            final Map<String, Properties> commands = commandFinder.mapAvailableProperties("org.apache.openejb.cli");
+            for (final Map.Entry<String, Properties> command : commands.entrySet()) {
                 if (command.getKey().contains(".")) continue;
-                Properties p = command.getValue();
-                String description = p.getProperty(descriptionI18n, p.getProperty(descriptionBase));
+                final Properties p = command.getValue();
+                final String description = p.getProperty(descriptionI18n, p.getProperty(descriptionBase));
                 options.addOption(command.getKey(), false, description);
             }
 
-            HelpFormatter formatter = new HelpFormatter();
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
+            final HelpFormatter formatter = new HelpFormatter();
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
 
-            String syntax = "openejb <command> [options] [args]";
+            final String syntax = "openejb <command> [options] [args]";
 
-            String header = "\nAvailable commands:";
+            final String header = "\nAvailable commands:";
 
-            String footer = "\n" +
+            final String footer = "\n" +
                     "Try 'openejb <command> --help' for help on a specific command.\n" +
                     "For example 'openejb deploy --help'.\n" +
                     "\n" +
@@ -257,7 +257,7 @@ public class MainImpl implements Main {
             String text = sw.toString().replaceAll("\n -", "\n  ");
             text = text.replace("\nApache OpenEJB","\n\nApache OpenEJB");
             System.out.print(text);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

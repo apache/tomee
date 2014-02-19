@@ -36,11 +36,11 @@ import static org.apache.openejb.jee.TransactionType.CONTAINER;
  */
 public class CheckUserTransactionRefs extends ValidationBase {
 
-    public void validate(EjbModule ejbModule) {
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+    public void validate(final EjbModule ejbModule) {
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (bean.getTransactionType() == CONTAINER) {
-                Collection<ResourceEnvRef> resRefs = bean.getResourceEnvRef();
-                for (ResourceEnvRef resRef : resRefs) {
+                final Collection<ResourceEnvRef> resRefs = bean.getResourceEnvRef();
+                for (final ResourceEnvRef resRef : resRefs) {
                     if ("javax.transaction.UserTransaction".equals(resRef.getResourceEnvRefType())) {
                         fail(bean, "userTransactionRef.forbiddenForCmtdBeans", resRef.getName());
                     }

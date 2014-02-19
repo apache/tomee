@@ -27,7 +27,7 @@ public class BusinessRemoteReference extends Reference {
 
     private final BeanContext.BusinessRemoteHome businessHome;
 
-    public BusinessRemoteReference(BeanContext.BusinessRemoteHome businessHome) {
+    public BusinessRemoteReference(final BeanContext.BusinessRemoteHome businessHome) {
         this.businessHome = businessHome;
     }
 

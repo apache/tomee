@@ -79,7 +79,7 @@ public class JndiEncInfoBuilder {
     private final Map<String, EjbResolver> ejbJarResolvers = new HashMap<String, EjbResolver>();
     private final AppInfo appInfo;
 
-    public JndiEncInfoBuilder(AppInfo appInfo) {
+    public JndiEncInfoBuilder(final AppInfo appInfo) {
         this.appInfo = appInfo;
 
         // Global-scoped EJB Resolver
@@ -89,13 +89,13 @@ public class JndiEncInfoBuilder {
         this.earResolver = new EjbResolver(globalResolver, EAR, appInfo.ejbJars);
 
         // EJBJAR-scoped EJB Resolver(s)
-        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             final EjbResolver ejbJarResolver = new EjbResolver(earResolver, EJBJAR, ejbJarInfo);
             this.ejbJarResolvers.put(ejbJarInfo.moduleName, ejbJarResolver);
         }
     }
 
-    private EjbResolver getEjbResolver(String moduleId) {
+    private EjbResolver getEjbResolver(final String moduleId) {
         EjbResolver resolver = ejbJarResolvers.get(moduleId);
         if (resolver == null) {
             resolver = this.earResolver;
@@ -103,7 +103,7 @@ public class JndiEncInfoBuilder {
         return resolver;
     }
 
-    public void build(JndiConsumer jndiConsumer, String ejbName, String moduleId, URI moduleUri, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {
+    public void build(final JndiConsumer jndiConsumer, final String ejbName, final String moduleId, final URI moduleUri, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) throws OpenEJBException {
         assert moduleJndiEnc != null;
         assert compJndiEnc != null;
         assert jndiConsumer != null;              
@@ -123,14 +123,14 @@ public class JndiEncInfoBuilder {
         buildServiceRefInfos(jndiConsumer, moduleJndiEnc, compJndiEnc);
     }
 
-    private void buildEjbRefs(JndiConsumer jndiConsumer, URI moduleUri, String moduleId, String ejbName, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {
+    private void buildEjbRefs(final JndiConsumer jndiConsumer, final URI moduleUri, final String moduleId, final String ejbName, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) throws OpenEJBException {
         final Collection<EjbRef> ejbRefs = jndiConsumer.getEjbRef();
         final Collection<EjbLocalRef> ejbLocalRefs = jndiConsumer.getEjbLocalRef();
         final List<EjbReference> references = new ArrayList<EjbReference>(ejbRefs.size() + ejbLocalRefs.size());
         references.addAll(ejbRefs);
         references.addAll(ejbLocalRefs);
 
-        for (EjbReference ref : references) {
+        for (final EjbReference ref : references) {
             final EjbReferenceInfo info = new EjbReferenceInfo();
             info.homeClassName = ref.getHome();
             info.interfaceClassName = ref.getInterface();
@@ -165,7 +165,7 @@ public class JndiEncInfoBuilder {
                 info.externalReference = scope != EAR && scope != EJBJAR;
 
                 if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
-                    EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
+                    final EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
                     if (otherBean != null) {
                         if (otherBean.businessLocal.contains(ref.getInterface()) || otherBean.ejbClass.equals(ref.getInterface())) {
                             ref.setRefType(EjbReference.Type.LOCAL);
@@ -199,7 +199,7 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private EjbLocalReferenceInfo toLocal(EjbReferenceInfo referenceInfo) {
+    private EjbLocalReferenceInfo toLocal(final EjbReferenceInfo referenceInfo) {
         final EjbLocalReferenceInfo local = new EjbLocalReferenceInfo();
         local.ejbDeploymentId = referenceInfo.ejbDeploymentId;
         local.externalReference = referenceInfo.externalReference;
@@ -213,8 +213,8 @@ public class JndiEncInfoBuilder {
         return local;
     }
 
-    private void buildServiceRefInfos(JndiConsumer jndiConsumer, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (ServiceRef ref : jndiConsumer.getServiceRef()) {
+    private void buildServiceRefInfos(final JndiConsumer jndiConsumer, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final ServiceRef ref : jndiConsumer.getServiceRef()) {
             final ServiceReferenceInfo info = new ServiceReferenceInfo();
 
             info.referenceName = ref.getName();
@@ -240,7 +240,7 @@ public class JndiEncInfoBuilder {
             info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
             info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getAllHandlers()));
 
-            for (PortComponentRef portComponentRef : ref.getPortComponentRef()) {
+            for (final PortComponentRef portComponentRef : ref.getPortComponentRef()) {
                 final PortRefInfo portRefInfo = new PortRefInfo();
                 portRefInfo.qname = portComponentRef.getQName();
                 portRefInfo.serviceEndpointInterface = portComponentRef.getServiceEndpointInterface();
@@ -251,9 +251,9 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private void buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
-            PersistenceUnitReferenceInfo info = new PersistenceUnitReferenceInfo();
+    private void buildPersistenceUnitRefInfos(final JndiConsumer jndiConsumer, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
+            final PersistenceUnitReferenceInfo info = new PersistenceUnitReferenceInfo();
             info.referenceName = puRef.getPersistenceUnitRefName();
             info.persistenceUnitName = puRef.getPersistenceUnitName();
             info.unitId = puRef.getMappedName();
@@ -263,8 +263,8 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private void buildPersistenceContextRefInfos(JndiConsumer jndiConsumer, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (PersistenceContextRef contextRef : jndiConsumer.getPersistenceContextRef()) {
+    private void buildPersistenceContextRefInfos(final JndiConsumer jndiConsumer, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final PersistenceContextRef contextRef : jndiConsumer.getPersistenceContextRef()) {
             final PersistenceContextReferenceInfo info = new PersistenceContextReferenceInfo();
             info.referenceName = contextRef.getPersistenceContextRefName();
             info.persistenceUnitName = contextRef.getPersistenceUnitName();
@@ -273,9 +273,9 @@ public class JndiEncInfoBuilder {
             info.extended = contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED;
 
             final List<Property> persistenceProperty = contextRef.getPersistenceProperty();
-            for (Property property : persistenceProperty) {
-                String name = property.getName();
-                String value = property.getValue();
+            for (final Property property : persistenceProperty) {
+                final String name = property.getName();
+                final String value = property.getValue();
                 info.properties.setProperty(name, value);
             }
             info.targets.addAll(buildInjectionInfos(contextRef));
@@ -290,8 +290,8 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private void buildResourceRefInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (ResourceRef res : item.getResourceRef()) {
+    private void buildResourceRefInfos(final JndiConsumer item, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final ResourceRef res : item.getResourceRef()) {
             final ResourceReferenceInfo info;
             if (res instanceof ContextRef) {
                 info = new ContextReferenceInfo();
@@ -320,8 +320,8 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private void buildResourceEnvRefInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (ResourceEnvRef res : item.getResourceEnvRef()) {
+    private void buildResourceEnvRefInfos(final JndiConsumer item, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final ResourceEnvRef res : item.getResourceEnvRef()) {
             final ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
             info.referenceName = res.getResourceEnvRefName();
             info.resourceEnvRefType = res.getResourceEnvRefType();
@@ -337,7 +337,7 @@ public class JndiEncInfoBuilder {
                     compJndiEnc.resourceEnvRefs
             );
         }
-        for (MessageDestinationRef res : item.getMessageDestinationRef()) {
+        for (final MessageDestinationRef res : item.getMessageDestinationRef()) {
             final ResourceEnvReferenceInfo info = new ResourceEnvReferenceInfo();
             info.referenceName = res.getMessageDestinationRefName();
             info.resourceEnvRefType = res.getMessageDestinationType();
@@ -355,8 +355,8 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private void buildEnvEntryInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
-        for (EnvEntry env : item.getEnvEntry()) {
+    private void buildEnvEntryInfos(final JndiConsumer item, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) {
+        for (final EnvEntry env : item.getEnvEntry()) {
             // ignore env entries without a value and lookup name
             //If the the reference name of the environment entry is belong to those shareable JNDI name space, it somewhat is a valid one            
             if (env.getEnvEntryValue() == null && env.getLookupName() == null && !isShareableJNDINamespace(env.getEnvEntryName())) {
@@ -380,11 +380,11 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private boolean isShareableJNDINamespace(String jndiName) {
+    private boolean isShareableJNDINamespace(final String jndiName) {
         return jndiName.startsWith("java:global/") || jndiName.startsWith("java:app/") || jndiName.startsWith("java:module/");
     }
 
-    private ReferenceLocationInfo buildLocationInfo(JndiReference reference) {
+    private ReferenceLocationInfo buildLocationInfo(final JndiReference reference) {
         final String lookupName = reference.getLookupName();
         if (lookupName != null) {
             final ReferenceLocationInfo location = new ReferenceLocationInfo();
@@ -409,9 +409,9 @@ public class JndiEncInfoBuilder {
         return null;
     }
 
-    private Collection<? extends InjectionInfo> buildInjectionInfos(Injectable injectable) {
+    private Collection<? extends InjectionInfo> buildInjectionInfos(final Injectable injectable) {
         final List<InjectionInfo> infos = new ArrayList<InjectionInfo>();
-        for (InjectionTarget target : injectable.getInjectionTarget()) {
+        for (final InjectionTarget target : injectable.getInjectionTarget()) {
             final InjectionInfo info = new InjectionInfo();
             info.className = target.getInjectionTargetClass();
             info.propertyName = target.getInjectionTargetName();
@@ -420,7 +420,7 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    public void buildDependsOnRefs(EnterpriseBean enterpriseBean, EnterpriseBeanInfo beanInfo, String moduleId) throws OpenEJBException {
+    public void buildDependsOnRefs(final EnterpriseBean enterpriseBean, final EnterpriseBeanInfo beanInfo, final String moduleId) throws OpenEJBException {
         if (!(enterpriseBean instanceof SessionBean)) {
             return;
         }
@@ -435,7 +435,7 @@ public class JndiEncInfoBuilder {
         final EjbResolver ejbResolver = getEjbResolver(moduleId);
 
         if (sessionBean.getDependsOn() != null) {
-            for (String ejbName : sessionBean.getDependsOn()) {
+            for (final String ejbName : sessionBean.getDependsOn()) {
                 final String deploymentId = ejbResolver.resolve(new SimpleRef(ejbName), moduleUri);
                 if (deploymentId != null) {
                     beanInfo.dependsOn.add(deploymentId);
@@ -444,7 +444,7 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    private boolean isIntefaceLocalBean(String interfaceClassName) {
+    private boolean isIntefaceLocalBean(final String interfaceClassName) {
         if (interfaceClassName == null) {
             return false;
         }
@@ -452,15 +452,15 @@ public class JndiEncInfoBuilder {
         return isLocalBean(beanInfo) && beanInfo.parents.contains(interfaceClassName);
     }
 
-    private EnterpriseBeanInfo getInterfaceBeanInfo(String interfaceClassName) {
+    private EnterpriseBeanInfo getInterfaceBeanInfo(final String interfaceClassName) {
         if (interfaceClassName == null) {
             throw new IllegalArgumentException("interfaceClassName cannot be null");
         }
 
         final List<EjbJarInfo> ejbJars = appInfo.ejbJars;
-        for (EjbJarInfo ejbJar : ejbJars) {
+        for (final EjbJarInfo ejbJar : ejbJars) {
             final List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
-            for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
+            for (final EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
                 if (interfaceClassName.equals(enterpriseBean.ejbClass)
                         || interfaceClassName.equals(enterpriseBean.local)
                         || interfaceClassName.equals(enterpriseBean.remote)
@@ -472,8 +472,8 @@ public class JndiEncInfoBuilder {
         }
 
         // look if it is an abstract injection (local bean)
-        for (EjbJarInfo ejbJar : ejbJars) {
-            for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
+        for (final EjbJarInfo ejbJar : ejbJars) {
+            for (final EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
                 if (enterpriseBean.parents.contains(interfaceClassName)) {
                     return enterpriseBean;
                 }
@@ -483,14 +483,14 @@ public class JndiEncInfoBuilder {
         return null;
     }
 
-    private boolean isLocalBean(EnterpriseBeanInfo beanInfo) {
+    private boolean isLocalBean(final EnterpriseBeanInfo beanInfo) {
         return beanInfo != null && beanInfo.localbean;
     }
 
     private static class SimpleRef implements EjbResolver.Reference {
         private final String name;
 
-        public SimpleRef(String name) {
+        public SimpleRef(final String name) {
             this.name = name;
         }
 
@@ -527,7 +527,7 @@ public class JndiEncInfoBuilder {
     private static class Ref implements EjbResolver.Reference {
         private final EjbReference ref;
 
-        public Ref(EjbReference ref) {
+        public Ref(final EjbReference ref) {
             this.ref = ref;
         }
 
@@ -563,8 +563,8 @@ public class JndiEncInfoBuilder {
         }
     }
 
-    public <I extends InjectableInfo> void insert(I i, List<I> global, List<I> app, List<I> module, List<I> comp) {
-        String name = i.referenceName;
+    public <I extends InjectableInfo> void insert(final I i, final List<I> global, final List<I> app, final List<I> module, final List<I> comp) {
+        final String name = i.referenceName;
         if (!name.startsWith("java:")) {
             i.referenceName = "comp/env/" + name;
             comp.add(i);

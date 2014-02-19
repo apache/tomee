@@ -75,17 +75,17 @@ public class TransactionManagerBuilder extends TransactionManager {
 
     }
 
-    public TransactionManagerBuilder id(String id) {
+    public TransactionManagerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public TransactionManagerBuilder withDefaultTransactionTimeout(Duration defaultTransactionTimeout) {
+    public TransactionManagerBuilder withDefaultTransactionTimeout(final Duration defaultTransactionTimeout) {
         this.defaultTransactionTimeout = defaultTransactionTimeout;
         return this;
     }
 
-    public void setDefaultTransactionTimeout(Duration defaultTransactionTimeout) {
+    public void setDefaultTransactionTimeout(final Duration defaultTransactionTimeout) {
         this.defaultTransactionTimeout = defaultTransactionTimeout;
     }
 
@@ -93,20 +93,20 @@ public class TransactionManagerBuilder extends TransactionManager {
         return defaultTransactionTimeout;
     }
 
-    public TransactionManagerBuilder withDefaultTransactionTimeout(long time, TimeUnit unit) {
+    public TransactionManagerBuilder withDefaultTransactionTimeout(final long time, final TimeUnit unit) {
         return withDefaultTransactionTimeout(new Duration(time, unit));
     }
 
-    public void setDefaultTransactionTimeout(long time, TimeUnit unit) {
+    public void setDefaultTransactionTimeout(final long time, final TimeUnit unit) {
         setDefaultTransactionTimeout(new Duration(time, unit));
     }
 
-    public TransactionManagerBuilder withTxRecovery(boolean txRecovery) {
+    public TransactionManagerBuilder withTxRecovery(final boolean txRecovery) {
         this.txRecovery = txRecovery;
         return this;
     }
 
-    public void setTxRecovery(boolean txRecovery) {
+    public void setTxRecovery(final boolean txRecovery) {
         this.txRecovery = txRecovery;
     }
 
@@ -114,12 +114,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return txRecovery;
     }
 
-    public TransactionManagerBuilder withBufferSizeKb(int bufferSizeKb) {
+    public TransactionManagerBuilder withBufferSizeKb(final int bufferSizeKb) {
         this.bufferSizeKb = bufferSizeKb;
         return this;
     }
 
-    public void setBufferSizeKb(int bufferSizeKb) {
+    public void setBufferSizeKb(final int bufferSizeKb) {
         this.bufferSizeKb = bufferSizeKb;
     }
 
@@ -127,12 +127,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return bufferSizeKb;
     }
 
-    public TransactionManagerBuilder withChecksumEnabled(boolean checksumEnabled) {
+    public TransactionManagerBuilder withChecksumEnabled(final boolean checksumEnabled) {
         this.checksumEnabled = checksumEnabled;
         return this;
     }
 
-    public void setChecksumEnabled(boolean checksumEnabled) {
+    public void setChecksumEnabled(final boolean checksumEnabled) {
         this.checksumEnabled = checksumEnabled;
     }
 
@@ -140,12 +140,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return checksumEnabled;
     }
 
-    public TransactionManagerBuilder withAdler32Checksum(boolean adler32Checksum) {
+    public TransactionManagerBuilder withAdler32Checksum(final boolean adler32Checksum) {
         this.adler32Checksum = adler32Checksum;
         return this;
     }
 
-    public void setAdler32Checksum(boolean adler32Checksum) {
+    public void setAdler32Checksum(final boolean adler32Checksum) {
         this.adler32Checksum = adler32Checksum;
     }
 
@@ -153,12 +153,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return adler32Checksum;
     }
 
-    public TransactionManagerBuilder withFlushSleepTime(Duration flushSleepTime) {
+    public TransactionManagerBuilder withFlushSleepTime(final Duration flushSleepTime) {
         this.flushSleepTime = flushSleepTime;
         return this;
     }
 
-    public void setFlushSleepTime(Duration flushSleepTime) {
+    public void setFlushSleepTime(final Duration flushSleepTime) {
         this.flushSleepTime = flushSleepTime;
     }
 
@@ -166,20 +166,20 @@ public class TransactionManagerBuilder extends TransactionManager {
         return flushSleepTime;
     }
 
-    public TransactionManagerBuilder withFlushSleepTime(long time, TimeUnit unit) {
+    public TransactionManagerBuilder withFlushSleepTime(final long time, final TimeUnit unit) {
         return withFlushSleepTime(new Duration(time, unit));
     }
 
-    public void setFlushSleepTime(long time, TimeUnit unit) {
+    public void setFlushSleepTime(final long time, final TimeUnit unit) {
         setFlushSleepTime(new Duration(time, unit));
     }
 
-    public TransactionManagerBuilder withLogFileDir(String logFileDir) {
+    public TransactionManagerBuilder withLogFileDir(final String logFileDir) {
         this.logFileDir = logFileDir;
         return this;
     }
 
-    public void setLogFileDir(String logFileDir) {
+    public void setLogFileDir(final String logFileDir) {
         this.logFileDir = logFileDir;
     }
 
@@ -187,12 +187,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return logFileDir;
     }
 
-    public TransactionManagerBuilder withLogFileExt(String logFileExt) {
+    public TransactionManagerBuilder withLogFileExt(final String logFileExt) {
         this.logFileExt = logFileExt;
         return this;
     }
 
-    public void setLogFileExt(String logFileExt) {
+    public void setLogFileExt(final String logFileExt) {
         this.logFileExt = logFileExt;
     }
 
@@ -200,12 +200,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return logFileExt;
     }
 
-    public TransactionManagerBuilder withLogFileName(String logFileName) {
+    public TransactionManagerBuilder withLogFileName(final String logFileName) {
         this.logFileName = logFileName;
         return this;
     }
 
-    public void setLogFileName(String logFileName) {
+    public void setLogFileName(final String logFileName) {
         this.logFileName = logFileName;
     }
 
@@ -213,12 +213,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return logFileName;
     }
 
-    public TransactionManagerBuilder withMaxBlocksPerFile(int maxBlocksPerFile) {
+    public TransactionManagerBuilder withMaxBlocksPerFile(final int maxBlocksPerFile) {
         this.maxBlocksPerFile = maxBlocksPerFile;
         return this;
     }
 
-    public void setMaxBlocksPerFile(int maxBlocksPerFile) {
+    public void setMaxBlocksPerFile(final int maxBlocksPerFile) {
         this.maxBlocksPerFile = maxBlocksPerFile;
     }
 
@@ -226,12 +226,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return maxBlocksPerFile;
     }
 
-    public TransactionManagerBuilder withMaxBuffers(int maxBuffers) {
+    public TransactionManagerBuilder withMaxBuffers(final int maxBuffers) {
         this.maxBuffers = maxBuffers;
         return this;
     }
 
-    public void setMaxBuffers(int maxBuffers) {
+    public void setMaxBuffers(final int maxBuffers) {
         this.maxBuffers = maxBuffers;
     }
 
@@ -239,12 +239,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return maxBuffers;
     }
 
-    public TransactionManagerBuilder withMaxLogFiles(int maxLogFiles) {
+    public TransactionManagerBuilder withMaxLogFiles(final int maxLogFiles) {
         this.maxLogFiles = maxLogFiles;
         return this;
     }
 
-    public void setMaxLogFiles(int maxLogFiles) {
+    public void setMaxLogFiles(final int maxLogFiles) {
         this.maxLogFiles = maxLogFiles;
     }
 
@@ -252,12 +252,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return maxLogFiles;
     }
 
-    public TransactionManagerBuilder withMinBuffers(int minBuffers) {
+    public TransactionManagerBuilder withMinBuffers(final int minBuffers) {
         this.minBuffers = minBuffers;
         return this;
     }
 
-    public void setMinBuffers(int minBuffers) {
+    public void setMinBuffers(final int minBuffers) {
         this.minBuffers = minBuffers;
     }
 
@@ -265,12 +265,12 @@ public class TransactionManagerBuilder extends TransactionManager {
         return minBuffers;
     }
 
-    public TransactionManagerBuilder withThreadsWaitingForceThreshold(int threadsWaitingForceThreshold) {
+    public TransactionManagerBuilder withThreadsWaitingForceThreshold(final int threadsWaitingForceThreshold) {
         this.threadsWaitingForceThreshold = threadsWaitingForceThreshold;
         return this;
     }
 
-    public void setThreadsWaitingForceThreshold(int threadsWaitingForceThreshold) {
+    public void setThreadsWaitingForceThreshold(final int threadsWaitingForceThreshold) {
         this.threadsWaitingForceThreshold = threadsWaitingForceThreshold;
     }
 

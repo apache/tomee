@@ -25,13 +25,13 @@ import javax.xml.transform.Source;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public abstract class EndpointReference {
-    public static EndpointReference readFrom(Source eprInfoset) {
+    public static EndpointReference readFrom(final Source eprInfoset) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
     public abstract void writeTo(Result result);
 
-    public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+    public <T> T getPort(final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 }

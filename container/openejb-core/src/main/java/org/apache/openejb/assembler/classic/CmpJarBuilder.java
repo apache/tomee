@@ -93,7 +93,7 @@ public class CmpJarBuilder {
                 // System.out.println(appInfo.cmpMappingsXml);
                 addJarEntry(jarOutputStream, "META-INF/openejb-cmp-generated-orm.xml", appInfo.cmpMappingsXml.getBytes());
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
 
             if (null != jarFile && !jarFile.delete()) {
                 jarFile.deleteOnExit();
@@ -151,7 +151,7 @@ public class CmpJarBuilder {
         Class<?> beanClass = null;
         try {
             beanClass = tempClassLoader.loadClass(entityBeanInfo.ejbClass);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw (IOException) new IOException("Could not find entity bean class " + beanClass).initCause(e);
         }
 
@@ -160,7 +160,7 @@ public class CmpJarBuilder {
         if (entityBeanInfo.primKeyClass != null) {
             try {
                 primKeyClass = tempClassLoader.loadClass(entityBeanInfo.primKeyClass);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw (IOException) new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass).initCause(e);
             }
         }
@@ -216,7 +216,7 @@ public class CmpJarBuilder {
         // add all missing directory entries
         fileName = fileName.replace('\\', '/');
         String path = "";
-        for (StringTokenizer tokenizer = new StringTokenizer(fileName, "/"); tokenizer.hasMoreTokens(); ) {
+        for (final StringTokenizer tokenizer = new StringTokenizer(fileName, "/"); tokenizer.hasMoreTokens(); ) {
             final String part = tokenizer.nextToken();
             if (tokenizer.hasMoreTokens()) {
                 path += part + "/";
@@ -253,14 +253,14 @@ public class CmpJarBuilder {
         // if url caching is enabled, generate the file directly in the cache dir, so it doesn't have to be recoppied
         try {
             instance.jarFile = File.createTempFile("OpenEJBGenerated.", ".jar", dir).getAbsoluteFile();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
 
             Logger.getInstance(LogCategory.OPENEJB_STARTUP, CmpJarBuilder.class).warning("Failed to create temp jar file in: " + dir, e);
 
             //Try
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ie) {
+            } catch (final InterruptedException ie) {
                 //Ignore
             }
 
@@ -280,7 +280,7 @@ public class CmpJarBuilder {
         if (jarOutputStream != null) {
             try {
                 jarOutputStream.close();
-            } catch (Throwable ignored) {
+            } catch (final Throwable ignored) {
                 // no-op
             }
         }

@@ -72,7 +72,7 @@ public class Cmp2Generator implements Opcodes {
      *                  keys.
      * @param cmpFields The list of fields that are managed using cmp.
      */
-    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmpFields) {
+    public Cmp2Generator(final String cmpImplClass, final Class beanClass, final String pkField, final Class<?> primKeyClass, final String[] cmpFields) {
 
         this.beanClass = beanClass;
         beanClassName = Type.getInternalName(beanClass);
@@ -89,29 +89,29 @@ public class Cmp2Generator implements Opcodes {
         // for the name and retrieve the type.  This a) verifies that we have at least 
         // a getter defined and b) that we know the field return type.  The created CmpField 
         // list will feed into the generation process. 
-        for (String cmpFieldName : cmpFields) {
-            Method getter = getterMethod(cmpFieldName);
+        for (final String cmpFieldName : cmpFields) {
+            final Method getter = getterMethod(cmpFieldName);
             if (getter == null) {
                 throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
             }
             // if this is an abstract method, then it's one we have to generate 
             if (Modifier.isAbstract(getter.getModifiers())) {
 
-                Type type = Type.getType(getter.getReturnType());
-                CmpField cmpField = new CmpField(cmpFieldName, type, getter); 
+                final Type type = Type.getType(getter.getReturnType());
+                final CmpField cmpField = new CmpField(cmpFieldName, type, getter);
                 this.cmpFields.put(cmpFieldName, cmpField);
             }
             else {
                 // the getter is non-abstract.  We only allow this if the class that 
                 // defines the getter also has a private field with a matching type.  
                 try {
-                    Field field = getter.getDeclaringClass().getDeclaredField(cmpFieldName); 
+                    final Field field = getter.getDeclaringClass().getDeclaredField(cmpFieldName);
                     // if this is a private field, then just continue.  We don't need to generate 
                     // any code for this 
                     if (Modifier.isPrivate(field.getModifiers())) {
                         continue; 
                     }
-                } catch (NoSuchFieldException e) {
+                } catch (final NoSuchFieldException e) {
                     // no-op
                 }
                 throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
@@ -130,7 +130,7 @@ public class Cmp2Generator implements Opcodes {
         }
 
         // build up the list of ejbSelectxxxx methods.  These will be generated automatically. 
-        for (Method method : beanClass.getMethods()) {
+        for (final Method method : beanClass.getMethods()) {
             if (Modifier.isAbstract(method.getModifiers()) && method.getName().startsWith("ejbSelect")) {
                 addSelectMethod(method);
             }
@@ -152,7 +152,7 @@ public class Cmp2Generator implements Opcodes {
      * @param cmrField The new CMR field definition pulled from the
      *                 EJB metadata.
      */
-    public void addCmrField(CmrField cmrField) {
+    public void addCmrField(final CmrField cmrField) {
         if (cmpFields.get(cmrField.getName()) != null) {
             cmpFields.remove(cmrField.getName());
         }
@@ -166,7 +166,7 @@ public class Cmp2Generator implements Opcodes {
      * @param selectMethod
      *               The method that needs to be processed.
      */
-    public void addSelectMethod(Method selectMethod) {
+    public void addSelectMethod(final Method selectMethod) {
         selectMethods.add(selectMethod);
     }
 
@@ -187,29 +187,29 @@ public class Cmp2Generator implements Opcodes {
 
         // public static Object deploymentInfo;
         {
-            FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, "deploymentInfo", "Ljava/lang/Object;", null, null);
+            final FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, "deploymentInfo", "Ljava/lang/Object;", null, null);
             fv.visitEnd();
         }
 
         // private transient boolean deleted;
         {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, DELETED, "Z", null, null);
+            final FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, DELETED, "Z", null, null);
             fv.visitEnd();
         }
 
         if (Object.class.equals(primKeyClass)) {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE, UNKNOWN_PK_NAME, UNKNOWN_PK_TYPE.getDescriptor(), null, null);
+            final FieldVisitor fv = cw.visitField(ACC_PRIVATE, UNKNOWN_PK_NAME, UNKNOWN_PK_TYPE.getDescriptor(), null, null);
             fv.visitEnd();
         }
 
         // Generate the set of cmp fields as private attributes. 
         // private ${cmpField.type} ${cmpField.name};
-        for (CmpField cmpField : cmpFields.values()) {
+        for (final CmpField cmpField : cmpFields.values()) {
             createField(cmpField);
         }
 
         // and create the corresponding CMR fields as well. 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             createCmrFields(cmrField);
         }
 
@@ -217,7 +217,7 @@ public class Cmp2Generator implements Opcodes {
 
         // now for each of the CMP fields, generate the getter and setter methods 
         // from the abstract methods the bean author should have provided. 
-        for (CmpField cmpField : cmpFields.values()) {
+        for (final CmpField cmpField : cmpFields.values()) {
             // public ${cmpField.type} get${cmpField.name}() {
             //     return this.${cmpField.name};
             // }
@@ -230,7 +230,7 @@ public class Cmp2Generator implements Opcodes {
         }
 
         // and repeat this for the cmr fields. 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             createCmrGetter(cmrField);
             createCmrSetter(cmrField);
         }
@@ -245,7 +245,7 @@ public class Cmp2Generator implements Opcodes {
         createOpenEJB_removeCmr();
 
         // generate the select methods 
-        for (Method selectMethod : selectMethods) {
+        for (final Method selectMethod : selectMethods) {
             createSelectMethod(selectMethod);
         }
 
@@ -271,22 +271,22 @@ public class Cmp2Generator implements Opcodes {
         return cw.toByteArray();
     }
 
-    private boolean hasMethod(Class beanClass, String name, Class... args) {
+    private boolean hasMethod(final Class beanClass, final String name, final Class... args) {
         try {
-            Method method = beanClass.getMethod(name, args);
+            final Method method = beanClass.getMethod(name, args);
             return !Modifier.isAbstract(method.getModifiers());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return false;
         }
     }
 
     private void createConstructor() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V");
 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             initCmrFields(mv, cmrField);
         }
 
@@ -296,7 +296,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createOpenEJB_isDeleted() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_isDeleted", "()Z", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_isDeleted", "()Z", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
@@ -306,13 +306,13 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createOpenEJB_deleted() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_deleted", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_deleted", "()V", null, null);
         mv.visitCode();
 
         /* if (deleted) return; */
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
-        Label notDeleted = new Label();
+        final Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(RETURN);
         mv.visitLabel(notDeleted);
@@ -322,7 +322,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(ICONST_1);
         mv.visitFieldInsn(PUTFIELD, implClassName, DELETED, "Z");
 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             // ${cmrField.accessor}.delete(${cmrField.name});
             createOpenEJB_deleted(mv, cmrField);
         }
@@ -334,19 +334,19 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createOpenEJB_addCmr() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_addCmr", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_addCmr", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;", null, null);
         mv.visitCode();
 
         // if (deleted) return null;
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
-        Label notDeleted = new Label();
+        final Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(ACONST_NULL);
         mv.visitInsn(ARETURN);
         mv.visitLabel(notDeleted);
 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             // if ("${cmrField.name}".equals(name)) {
             //     ${cmrField.name}.add((${cmrField.type})value);
             //     return null;
@@ -387,18 +387,18 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createOpenEJB_removeCmr() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_removeCmr", "(Ljava/lang/String;Ljava/lang/Object;)V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_removeCmr", "(Ljava/lang/String;Ljava/lang/Object;)V", null, null);
         mv.visitCode();
 
         // if (deleted) return;
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
-        Label notDeleted = new Label();
+        final Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(RETURN);
         mv.visitLabel(notDeleted);
 
-        for (CmrField cmrField : cmrFields) {
+        for (final CmrField cmrField : cmrFields) {
             // if ("${cmrField.name}".equals(name)) {
             //     ${cmrField.name}.remove(value);
             //     return;
@@ -443,8 +443,8 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmpField The Cmp field defined in the metadata.
      */
-    private void createField(CmpField cmpField) {
-        FieldVisitor fv = cw.visitField(ACC_PRIVATE,
+    private void createField(final CmpField cmpField) {
+        final FieldVisitor fv = cw.visitField(ACC_PRIVATE,
                 cmpField.getName(),
                 cmpField.getDescriptor(),
                 null,
@@ -463,9 +463,9 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmpField The CMP field backing this getter method.
      */
-    private void createGetter(CmpField cmpField) {
-        String methodName = cmpField.getGetterMethod().getName();
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmpField.getDescriptor(), null, null);
+    private void createGetter(final CmpField cmpField) {
+        final String methodName = cmpField.getGetterMethod().getName();
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmpField.getDescriptor(), null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, cmpField.getName(), cmpField.getDescriptor());
@@ -483,7 +483,7 @@ public class Cmp2Generator implements Opcodes {
      * @return The string name of the getter method for the 
      *         property.
      */
-    private static String getterName(String propertyName) {
+    private static String getterName(final String propertyName) {
         return "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
@@ -498,12 +498,12 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @return The name to be used for generating this method. 
      */
-    private Method getterMethod(String propertyName) {
+    private Method getterMethod(final String propertyName) {
         String getterName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
         try {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
             return beanClass.getMethod(getterName, new Class[0]); 
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         
@@ -513,7 +513,7 @@ public class Cmp2Generator implements Opcodes {
         try {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
             return beanClass.getMethod(getterName, new Class[0]); 
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         return null; 
@@ -530,9 +530,9 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmpField The CMP field backing this setter method.
      */
-    private void createSetter(CmpField cmpField) {
-        String methodName = setterName(cmpField.getName());
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmpField.getDescriptor() + ")V", null, null);
+    private void createSetter(final CmpField cmpField) {
+        final String methodName = setterName(cmpField.getName());
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmpField.getDescriptor() + ")V", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(cmpField.getType().getOpcode(ILOAD), 1);
@@ -542,7 +542,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitEnd();
     }
 
-    private String setterName(String propertyName) {
+    private String setterName(final String propertyName) {
         return "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
@@ -565,7 +565,7 @@ public class Cmp2Generator implements Opcodes {
      * into the primary key instance. 
      */
     private void createSimplePrimaryKeyGetter() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_getPrimaryKey", "()Ljava/lang/Object;", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_getPrimaryKey", "()Ljava/lang/Object;", null, null);
         mv.visitCode();
         
         // the primary key is identifed as a field.  We just return that value directly. 
@@ -590,7 +590,7 @@ public class Cmp2Generator implements Opcodes {
             // We have a primary key class defined.  For every field that matches one of the 
             // defined CMP fields, we generate code to copy that value into the corresponding 
             // field of the primary key class. 
-            String pkImplName = primKeyClass.getName().replace('.', '/');
+            final String pkImplName = primKeyClass.getName().replace('.', '/');
 
             // new Pk();
             mv.visitTypeInsn(NEW, pkImplName);
@@ -600,8 +600,8 @@ public class Cmp2Generator implements Opcodes {
             mv.visitVarInsn(ALOAD, 1);
 
             // copy each field from the ejb to the pk class
-            for (Field field : primKeyClass.getFields()) {
-                CmpField cmpField = cmpFields.get(field.getName());
+            for (final Field field : primKeyClass.getFields()) {
+                final CmpField cmpField = cmpFields.get(field.getName());
 
                 // only process the cmp fields
                 if (cmpField == null) {
@@ -642,7 +642,7 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmrField The CMR field descriptor.
      */
-    private void createCmrFields(CmrField cmrField) {
+    private void createCmrFields(final CmrField cmrField) {
         FieldVisitor fv = cw.visitField(ACC_PRIVATE,
                 cmrField.getName(),
                 cmrField.getDescriptor(),
@@ -669,9 +669,9 @@ public class Cmp2Generator implements Opcodes {
      * @param mv       The method context we're initializing in.
      * @param cmrField The CMR field to process.
      */
-    private void initCmrFields(MethodVisitor mv, CmrField cmrField) {
+    private void initCmrFields(final MethodVisitor mv, final CmrField cmrField) {
         // this.${cmrField.name} = new ${cmrField.initialValueType}();
-        Type initialValueType = cmrField.getInitialValueType();
+        final Type initialValueType = cmrField.getInitialValueType();
         if (initialValueType != null) {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitTypeInsn(NEW, initialValueType.getInternalName());
@@ -726,15 +726,15 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmrField The field we're generating.
      */
-    private void createCmrGetter(CmrField cmrField) {
+    private void createCmrGetter(final CmrField cmrField) {
         // a synthentic method essentially means this is a relationship with 
         // no back reference.  We don't generate a getter method for this 
         if (cmrField.isSynthetic()) {
             return;
         }
 
-        String methodName = getterName(cmrField.getName());
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmrField.getProxyDescriptor(), null, null);
+        final String methodName = getterName(cmrField.getName());
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmrField.getProxyDescriptor(), null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName() + "Cmr", cmrField.getAccessorDescriptor());
@@ -763,15 +763,15 @@ public class Cmp2Generator implements Opcodes {
      * 
      * @param cmrField The field we're generating the setter for.
      */
-    private void createCmrSetter(CmrField cmrField) {
+    private void createCmrSetter(final CmrField cmrField) {
         // a synthentic method essentially means this is a relationship with 
         // no back reference.  We don't generate a getter method for this 
         if (cmrField.isSynthetic()) {
             return;
         }
 
-        String methodName = setterName(cmrField.getName());
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmrField.getProxyDescriptor() + ")V", null, null);
+        final String methodName = setterName(cmrField.getName());
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + cmrField.getProxyDescriptor() + ")V", null, null);
         mv.visitCode();
         // if this is a Many relationship, the CMR field contains a Set value.  The accessor 
         // will process the elements in the Set, removing any existing ones, and then populating 
@@ -812,7 +812,7 @@ public class Cmp2Generator implements Opcodes {
      * @param mv       The method context we're operating within.
      * @param cmrField The CMD field containing the deleted value.
      */
-    private void createOpenEJB_deleted(MethodVisitor mv, CmrField cmrField) {
+    private void createOpenEJB_deleted(final MethodVisitor mv, final CmrField cmrField) {
         // this.${cmrField.name}Cmr.deleted(this.${cmrField.name}); 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName() + "Cmr", cmrField.getAccessorDescriptor());
@@ -831,13 +831,13 @@ public class Cmp2Generator implements Opcodes {
      * @param mv       The method we're generating within.
      * @param cmrField The CMR field definition.
      */
-    private void createOpenEJB_addCmr(MethodVisitor mv, CmrField cmrField) {
+    private void createOpenEJB_addCmr(final MethodVisitor mv, final CmrField cmrField) {
         // if (${cmrField.name}.equals(arg1))
         mv.visitLdcInsn(cmrField.getName());
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z");
         // if not equal jump to end
-        Label end = new Label();
+        final Label end = new Label();
         mv.visitJumpInsn(IFEQ, end);
 
         // collection style relationship.  Generate the code to add this object to the 
@@ -847,7 +847,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
             mv.visitVarInsn(ASTORE, 3);
             mv.visitVarInsn(ALOAD, 3);
-            Label fieldNotNull = new Label();
+            final Label fieldNotNull = new Label();
             mv.visitJumpInsn(IFNONNULL, fieldNotNull);
             // lazy creation of the collection type if not already created. 
             mv.visitTypeInsn(NEW, cmrField.getInitialValueType().getInternalName());
@@ -918,13 +918,13 @@ public class Cmp2Generator implements Opcodes {
      * @param mv
      * @param cmrField
      */
-    private void createOpenEJB_removeCmr(MethodVisitor mv, CmrField cmrField) {
+    private void createOpenEJB_removeCmr(final MethodVisitor mv, final CmrField cmrField) {
         // if (${cmrField.name}.equals(arg1))
         mv.visitLdcInsn(cmrField.getName());
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z");
         // if not equal jump to end
-        Label end = new Label();
+        final Label end = new Label();
         mv.visitJumpInsn(IFEQ, end);
         
         // collection valued CMR field.  Remove the object from the collection. 
@@ -964,12 +964,12 @@ public class Cmp2Generator implements Opcodes {
      * @param selectMethod
      *               The abstract definition for the method we're generating.
      */
-    private void createSelectMethod(Method selectMethod) {
-        Class<?> returnType = selectMethod.getReturnType(); 
+    private void createSelectMethod(final Method selectMethod) {
+        final Class<?> returnType = selectMethod.getReturnType();
         
-        Method executeMethod = EjbSelect.getSelectMethod(returnType); 
+        final Method executeMethod = EjbSelect.getSelectMethod(returnType);
         
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, selectMethod.getName(), Type.getMethodDescriptor(selectMethod), null, getExceptionTypes(selectMethod));
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, selectMethod.getName(), Type.getMethodDescriptor(selectMethod), null, getExceptionTypes(selectMethod));
         mv.visitCode();
 
         // push deploymentInfo
@@ -990,7 +990,7 @@ public class Cmp2Generator implements Opcodes {
 
         // object[i] = arg${i}
         int i = 0;
-        for (Class<?> parameterType : selectMethod.getParameterTypes()) {
+        for (final Class<?> parameterType : selectMethod.getParameterTypes()) {
             // push arguement i on stack
             mv.visitInsn(DUP);
             bipush(mv, i);
@@ -1040,13 +1040,13 @@ public class Cmp2Generator implements Opcodes {
         mv.visitEnd();
     }
 
-    private String getSelectMethodSignature(Method selectMethod) {
-        StringBuilder signature = new StringBuilder();
+    private String getSelectMethodSignature(final Method selectMethod) {
+        final StringBuilder signature = new StringBuilder();
         signature.append(selectMethod.getName());
         if (selectMethod.getParameterTypes().length > 0) {
             signature.append('(');
             boolean first = true;
-            for (Class<?> parameterType : selectMethod.getParameterTypes()) {
+            for (final Class<?> parameterType : selectMethod.getParameterTypes()) {
                 if (!first) signature.append(',');
                 signature.append(parameterType.getCanonicalName());
                 first = false;
@@ -1056,15 +1056,15 @@ public class Cmp2Generator implements Opcodes {
         return signature.toString();
     }
 
-    private static String[] getExceptionTypes(Method method) {
-        List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
-        for (Class<?> exceptionType : method.getExceptionTypes()) {
+    private static String[] getExceptionTypes(final Method method) {
+        final List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
+        for (final Class<?> exceptionType : method.getExceptionTypes()) {
             types.add(Type.getInternalName(exceptionType));
         }
         return types.toArray(new String[types.size()]);
     }
 
-    private static void bipush(MethodVisitor mv, int i) {
+    private static void bipush(final MethodVisitor mv, final int i) {
         switch(i) {
             case -1:
                 mv.visitInsn(ICONST_M1);
@@ -1106,10 +1106,10 @@ public class Cmp2Generator implements Opcodes {
          * @param mv     The method currently being emitted.
          * @param from   The class we're converting from.
          */
-        public static void toObjectFrom(MethodVisitor mv, Class from) {
+        public static void toObjectFrom(final MethodVisitor mv, final Class from) {
             // we only handler boxing for the primitive types. 
             if (from.isPrimitive()) {
-                Convert conversion = getConversion(from);
+                final Convert conversion = getConversion(from);
                 // the only conversion that will be trouble here is void.  
                 if (conversion == null) 
                 {
@@ -1133,13 +1133,13 @@ public class Cmp2Generator implements Opcodes {
          * @param mv     The method currently being constructed.
          * @param to     The target class for the conversion.
          */
-        public static void fromObjectTo(MethodVisitor mv, Class to) {
+        public static void fromObjectTo(final MethodVisitor mv, final Class to) {
             if (to.equals(Object.class)) { //NOPMD
                 // direct assignment will work
             } else if (!to.isPrimitive()) {
                 mv.visitTypeInsn(CHECKCAST, Type.getInternalName(to));
             } else {
-                Convert conversion = getConversion(to);
+                final Convert conversion = getConversion(to);
                 {
                     if (conversion == null)
                         throw new NullPointerException("unsupported conversion for EJB select return type " + to.getName());
@@ -1150,7 +1150,7 @@ public class Cmp2Generator implements Opcodes {
 
         private static Map<Class, Convert> conversionsByPrimitive = new HashMap<Class, Convert>();
 
-        public static Convert getConversion(Class primitive) {
+        public static Convert getConversion(final Class primitive) {
             if (!primitive.isPrimitive()) {
                 throw new IllegalArgumentException(primitive.getName() + " is not a primitive class");
             }
@@ -1170,24 +1170,24 @@ public class Cmp2Generator implements Opcodes {
         private final Method toPrimitive;
         private final Method toObject;
 
-        private Convert(Class primitiveClass, Class objectClass, String toPrimitiveMethodName) {
+        private Convert(final Class primitiveClass, final Class objectClass, final String toPrimitiveMethodName) {
             objectType = Type.getType(objectClass);
 
             try {
                 toObject = objectClass.getMethod("valueOf", primitiveClass);
                 toPrimitive = objectClass.getMethod(toPrimitiveMethodName);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 throw new OpenEJBRuntimeException(e);
             }
 
             conversionsByPrimitive.put(primitiveClass, this);
         }
 
-        public void primitiveToObject(MethodVisitor mv) {
+        public void primitiveToObject(final MethodVisitor mv) {
             mv.visitMethodInsn(INVOKESTATIC, objectType.getInternalName(), toObject.getName(), Type.getMethodDescriptor(toObject));
         }
 
-        public void objectToPrimitive(MethodVisitor mv) {
+        public void objectToPrimitive(final MethodVisitor mv) {
             mv.visitTypeInsn(CHECKCAST, objectType.getInternalName());
             mv.visitMethodInsn(INVOKEVIRTUAL, objectType.getInternalName(), toPrimitive.getName(), Type.getMethodDescriptor(toPrimitive));
         }
@@ -1195,7 +1195,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createEjbActivate() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbActivate", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbActivate", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);
@@ -1203,7 +1203,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createEjbLoad() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbLoad", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbLoad", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);
@@ -1211,7 +1211,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createEjbPassivate() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbPassivate", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbPassivate", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);
@@ -1219,7 +1219,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createEjbRemove() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbRemove", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbRemove", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);
@@ -1227,7 +1227,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createEjbStore() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbStore", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbStore", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);
@@ -1235,7 +1235,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createSetEntityContext() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "setEntityContext", "(Ljavax/ejb/EntityContext;)V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "setEntityContext", "(Ljavax/ejb/EntityContext;)V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 2);
@@ -1243,7 +1243,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createUnsetEntityContext() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "unsetEntityContext", "()V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "unsetEntityContext", "()V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 1);

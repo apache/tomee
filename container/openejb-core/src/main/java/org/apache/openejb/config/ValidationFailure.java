@@ -18,7 +18,7 @@ package org.apache.openejb.config;
 
 public class ValidationFailure extends ValidationException {
 
-    public ValidationFailure(String message) {
+    public ValidationFailure(final String message) {
         super(message);
     }
 

@@ -71,20 +71,20 @@ public class OpenEJBException extends Exception {
         super();
     }
 
-    public OpenEJBException(String message) {
+    public OpenEJBException(final String message) {
         super(message);
     }
 
-    public OpenEJBException(Throwable rootCause) {
+    public OpenEJBException(final Throwable rootCause) {
         super(rootCause);
     }
 
-    public OpenEJBException(String message, Throwable rootCause) {
+    public OpenEJBException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 
     public String getMessage() {
-        Throwable rootCause = getCause();
+        final Throwable rootCause = getCause();
         if (rootCause != null) {
             return super.getMessage() + ": " + rootCause.getMessage();
         } else {

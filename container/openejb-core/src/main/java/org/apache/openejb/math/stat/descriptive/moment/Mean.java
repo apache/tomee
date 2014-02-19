@@ -95,7 +95,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
      *
      * @param original the {@code Mean} instance to copy
      */
-    public Mean(Mean original) {
+    public Mean(final Mean original) {
         copy(original, this);
     }
 
@@ -153,11 +153,11 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     @Override
     public double evaluate(final double[] values,final int begin, final int length) {
         if (test(values, begin, length)) {
-            Sum sum = new Sum();
-            double sampleSize = length;
+            final Sum sum = new Sum();
+            final double sampleSize = length;
 
             // Compute initial estimate using definitional formula
-            double xbar = sum.evaluate(values, begin, length) / sampleSize;
+            final double xbar = sum.evaluate(values, begin, length) / sampleSize;
 
             // Compute correction factor in second pass
             double correction = 0;
@@ -201,11 +201,11 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     public double evaluate(final double[] values, final double[] weights,
                            final int begin, final int length) {
         if (test(values, weights, begin, length)) {
-            Sum sum = new Sum();
+            final Sum sum = new Sum();
 
             // Compute initial estimate using definitional formula
-            double sumw = sum.evaluate(weights,begin,length);
-            double xbarw = sum.evaluate(values, weights, begin, length) / sumw;
+            final double sumw = sum.evaluate(weights,begin,length);
+            final double xbarw = sum.evaluate(values, weights, begin, length) / sumw;
 
             // Compute correction factor in second pass
             double correction = 0;
@@ -250,7 +250,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
      */
     @Override
     public Mean copy() {
-        Mean result = new Mean();
+        final Mean result = new Mean();
         copy(this, result);
         return result;
     }
@@ -264,7 +264,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
      * @param dest Mean to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Mean source, Mean dest) {
+    public static void copy(final Mean source, final Mean dest) {
         dest.incMoment = source.incMoment;
         dest.moment = source.moment.copy();
     }

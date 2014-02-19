@@ -91,10 +91,10 @@ public class CheckClasses extends ValidationBase {
         beanOnlyAnnotations.add(TransactionManagement.class);
     }
 
-    public void validate(EjbModule ejbModule) {
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+    public void validate(final EjbModule ejbModule) {
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             try {
-                Class<?> beanClass = check_hasEjbClass(bean);
+                final Class<?> beanClass = check_hasEjbClass(bean);
 
                 // All the subsequent checks require the bean class
                 if (beanClass == null) continue;
@@ -105,7 +105,7 @@ public class CheckClasses extends ValidationBase {
                     continue;
                 }
 
-                RemoteBean b = (RemoteBean) bean;
+                final RemoteBean b = (RemoteBean) bean;
 
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "ejb-class");
@@ -128,28 +128,28 @@ public class CheckClasses extends ValidationBase {
                 }
 
                 if (b instanceof SessionBean) {
-                    SessionBean sessionBean = (SessionBean) b;
+                    final SessionBean sessionBean = (SessionBean) b;
 
-                    for (String interfce : sessionBean.getBusinessLocal()) {
+                    for (final String interfce : sessionBean.getBusinessLocal()) {
                         checkInterface(b, beanClass, "business-local", interfce);
                     }
 
-                    for (String interfce : sessionBean.getBusinessRemote()) {
+                    for (final String interfce : sessionBean.getBusinessRemote()) {
                         checkInterface(b, beanClass, "business-remote", interfce);
                     }
                 }
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 throw new OpenEJBRuntimeException(bean.getEjbName(), e);
             }
         }
 
-        for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
+        for (final Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
             check_hasInterceptorClass(interceptor);
         }
     }
 
-    private void checkInterface(RemoteBean b, Class<?> beanClass, String tag, String className) {
-        Class<?> interfce = lookForClass(className, tag, b.getEjbName());
+    private void checkInterface(final RemoteBean b, final Class<?> beanClass, String tag, final String className) {
+        final Class<?> interfce = lookForClass(className, tag, b.getEjbName());
 
         if (interfce == null) return;
 
@@ -159,29 +159,29 @@ public class CheckClasses extends ValidationBase {
 
         isValidInterface(b, interfce, beanClass, tag);
 
-        ClassFinder finder = new ClassFinder(interfce);
+        final ClassFinder finder = new ClassFinder(interfce);
 
-        for (Class<? extends Annotation> annotation : beanOnlyAnnotations) {
+        for (final Class<? extends Annotation> annotation : beanOnlyAnnotations) {
 
             if (interfce.isAnnotationPresent(annotation)){
                 warn(b, "interface.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), b.getEjbClass());
             }
 
-            for (Method method : finder.findAnnotatedMethods(annotation)) {
+            for (final Method method : finder.findAnnotatedMethods(annotation)) {
                 warn(b, "interfaceMethod.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), method.getName(), b.getEjbClass());
             }
         }
 
     }
 
-    private void check_hasInterface(RemoteBean b) {
+    private void check_hasInterface(final RemoteBean b) {
         if (b.getRemote() != null) return;
         if (b.getLocal() != null) return;
 
         Class<?> beanClass = null;
         try {
             beanClass = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // no-op
         }
 
@@ -200,47 +200,47 @@ public class CheckClasses extends ValidationBase {
         //fail(b, "noInterfaceDeclared.session");
     }
 
-    private void check_hasDependentClasses(RemoteBean b, String className, String type) {
+    private void check_hasDependentClasses(final RemoteBean b, final String className, final String type) {
         try {
-            ClassLoader cl = module.getClassLoader();
-            Class<?> clazz = cl.loadClass(className);
-            for (Object item : clazz.getFields()) { item.toString(); }
-            for (Object item : clazz.getMethods()) { item.toString(); }
-            for (Object item : clazz.getConstructors()) { item.toString(); }
-            for (Object item : clazz.getAnnotations()) { item.toString(); }
+            final ClassLoader cl = module.getClassLoader();
+            final Class<?> clazz = cl.loadClass(className);
+            for (final Object item : clazz.getFields()) { item.toString(); }
+            for (final Object item : clazz.getMethods()) { item.toString(); }
+            for (final Object item : clazz.getConstructors()) { item.toString(); }
+            for (final Object item : clazz.getAnnotations()) { item.toString(); }
             // checking for any declared enum constants
-            for(Class klass: clazz.getClasses()){
+            for(final Class klass: clazz.getClasses()){
                 if(klass.isEnum()){
                     klass.toString();
                 }
             }
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             /*
             # 0 - Referring Class name
             # 1 - Dependent Class name
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-            String missingClass = e.getMessage();
+            final String missingClass = e.getMessage();
             fail(b, "missing.dependent.class", className, missingClass, type, b.getEjbName());
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             /*
             # 0 - Referring Class name
             # 1 - Dependent Class name
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-            String missingClass = e.getMessage();
+            final String missingClass = e.getMessage();
             fail(b, "missing.dependent.class", className, missingClass, type, b.getEjbName());
         }
     }
 
-    public Class<?> check_hasEjbClass(EnterpriseBean b) {
+    public Class<?> check_hasEjbClass(final EnterpriseBean b) {
 
-        String ejbName = b.getEjbName();
+        final String ejbName = b.getEjbName();
 
-        Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
-        boolean isDynamicProxyImpl = DynamicProxyImplFactory.isKnownDynamicallyImplemented(beanClass);
+        final Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
+        final boolean isDynamicProxyImpl = DynamicProxyImplFactory.isKnownDynamicallyImplemented(beanClass);
 
         if (beanClass == null) return null;
         
@@ -257,19 +257,19 @@ public class CheckClasses extends ValidationBase {
         return beanClass;
     }
 
-    public static boolean isAbstractAllowed(Class clazz) {
+    public static boolean isAbstractAllowed(final Class clazz) {
         if (DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz)) return true;
         if (DynamicSubclass.isDynamic(clazz)) return true;
         return false;
     }
 
-    private void check_hasInterceptorClass(Interceptor i) {
+    private void check_hasInterceptorClass(final Interceptor i) {
 
         lookForClass(i.getInterceptorClass(), "interceptor-class", "Interceptor");
 
     }
 
-    private void check_isEjbClass(RemoteBean b) {
+    private void check_isEjbClass(final RemoteBean b) {
         if (b instanceof SessionBean) { //NOPMD
             // DMB: Beans in ejb 3 are not required to implement javax.ejb.SessionBean
             // but it would still be nice to think of some sort of check to do here.
@@ -280,10 +280,10 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    private Class<?> lookForClass(String clazz, String type, String ejbName) {
+    private Class<?> lookForClass(final String clazz, final String type, final String ejbName) {
         try {
             return loadClass(clazz);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             /*
             # 0 - Class name
             # 1 - Element (home, ejb-class, remote)
@@ -292,7 +292,7 @@ public class CheckClasses extends ValidationBase {
 
             fail(ejbName, "missing.class", clazz, type, ejbName);
 
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             /*
              # 0 - Class name
              # 1 - Element (home, ejb-class, remote)
@@ -307,7 +307,7 @@ public class CheckClasses extends ValidationBase {
         return null;
     }
 
-    private boolean isValidInterface(RemoteBean b, Class clazz, Class beanClass, String tag) {
+    private boolean isValidInterface(final RemoteBean b, final Class clazz, final Class beanClass, final String tag) {
 
         if (clazz.equals(beanClass)) {
 
@@ -367,11 +367,11 @@ public class CheckClasses extends ValidationBase {
         return false;
     }
 
-    private void compareTypes(RemoteBean b, String clazz1, Class<?> class2) {
+    private void compareTypes(final RemoteBean b, final String clazz1, final Class<?> class2) {
         Class<?> class1 = null;
         try {
             class1 = loadClass(clazz1);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
@@ -380,11 +380,11 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    protected Class<?> loadClass(String clazz) throws OpenEJBException {
-        ClassLoader cl = module.getClassLoader();
+    protected Class<?> loadClass(final String clazz) throws OpenEJBException {
+        final ClassLoader cl = module.getClassLoader();
         try {
             return Class.forName(clazz, false, cl);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
     }

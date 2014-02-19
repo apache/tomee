@@ -44,11 +44,11 @@ public class Event {
 
     @Managed
     public String getLatest() {
-        long last = this.last.get();
+        final long last = this.last.get();
 
         if (last <= 0) return "-";
         
-        DateFormat format = SimpleDateFormat.getDateTimeInstance();
+        final DateFormat format = SimpleDateFormat.getDateTimeInstance();
         return format.format(new Date(last));
     }
 

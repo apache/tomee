@@ -24,7 +24,7 @@ public class ID {
     private final String namespace;
     private final String name;
 
-    public ID(String namespace, String name) {
+    public ID(final String namespace, final String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
         this.namespace = namespace != null ? namespace.toLowerCase() : null;
         this.name = name.toLowerCase();
@@ -42,15 +42,15 @@ public class ID {
         if (namespace == null) throw new IllegalArgumentException("namespace cannot be null");
         if (name == null) throw new IllegalArgumentException("name cannot be null");
     }
-    public static ID parse(String raw) {
+    public static ID parse(final String raw) {
         return parse(raw, (String) null);
     }
 
-    public static ID parse(String raw, final ID id) {
+    public static ID parse(final String raw, final ID id) {
         return parse(raw, id.getNamespace());
     }
 
-    public static ID parse(String raw, final String namespace) {
+    public static ID parse(final String raw, final String namespace) {
         if (raw == null) throw new NullPointerException("provider id cannot be null");
 
         final String[] parts = raw.split("[#:]");
@@ -68,11 +68,11 @@ public class ID {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ID id = (ID) o;
+        final ID id = (ID) o;
 
         if (!name.equals(id.name)) return false;
         if (namespace != null ? !namespace.equals(id.namespace) : id.namespace != null) return false;

@@ -20,7 +20,7 @@ public class ValidationError extends ValidationException {
 
     private Throwable cause;
 
-    public ValidationError(String message) {
+    public ValidationError(final String message) {
         super(message);
     }
 
@@ -36,7 +36,7 @@ public class ValidationError extends ValidationException {
         return cause;
     }
 
-    public void setCause(Throwable cause) {
+    public void setCause(final Throwable cause) {
         this.cause = cause;
     }
 

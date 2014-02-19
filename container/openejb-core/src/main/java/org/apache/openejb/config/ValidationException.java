@@ -25,7 +25,7 @@ public class ValidationException extends Exception {
     protected String prefix;
     protected String componentName;
 
-    public ValidationException(String message) {
+    public ValidationException(final String message) {
         this.message = message;
     }
 
@@ -52,7 +52,7 @@ public class ValidationException extends Exception {
         return getMessage(2);
     }
 
-    public String getMessage(int level) {
+    public String getMessage(final int level) {
         return messages.format(level + "." + message, details);
     }
 
@@ -60,7 +60,7 @@ public class ValidationException extends Exception {
         return componentName;
     }
 
-    public void setComponentName(String componentName) {
+    public void setComponentName(final String componentName) {
         this.componentName = componentName;
     }
 

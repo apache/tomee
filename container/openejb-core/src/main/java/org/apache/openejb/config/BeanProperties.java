@@ -40,13 +40,13 @@ public class BeanProperties implements DynamicDeployer {
     private final Properties globalProperties = new Properties();
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         final Properties base = new Properties();
         base.putAll(SystemInstance.get().getProperties());
         base.putAll(appModule.getProperties());
 
-        for (EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : appModule.getEjbModules()) {
             final Properties overrides = new SuperProperties().caseInsensitive(true);
             overrides.putAll(base);
             overrides.putAll(module.getProperties());
@@ -58,14 +58,14 @@ public class BeanProperties implements DynamicDeployer {
             final OpenejbJar openejbJar = module.getOpenejbJar();
 
             final Map<String, EjbDeployment> deploymentMap = openejbJar.getDeploymentsByEjbName();
-            for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
                 final SuperProperties properties = new SuperProperties().caseInsensitive(true);
 
                 properties.putAll(globalProperties);
 
                 final String additionalKey = bean.getEjbName();
                 if (additionalProperties.containsKey(additionalKey)) {
-                    for (Map.Entry<Object, Object> entry : additionalProperties.get(additionalKey).entrySet()) {
+                    for (final Map.Entry<Object, Object> entry : additionalProperties.get(additionalKey).entrySet()) {
                         properties.put(entry.getKey().toString(), entry.getValue().toString());
                     }
                 }
@@ -78,7 +78,7 @@ public class BeanProperties implements DynamicDeployer {
 
                 final String id = bean.getEjbName() + ".";
 
-                for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+                for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
                     final String key = entry.getKey().toString();
 
                     if (key.startsWith(id)) {
@@ -128,7 +128,7 @@ public class BeanProperties implements DynamicDeployer {
         if (prefix == null || prefix.isEmpty()) {
             addGlobalProperties(properties);
         } else {
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
                 globalProperties.put(prefix + "." + entry.getKey(), entry.getValue());
             }
         }

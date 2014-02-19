@@ -27,12 +27,12 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class ListAdapter extends XmlAdapter<String, List<String>> {
-    public List<String> unmarshal(String s) {
-        String[] strings = s.split(", *");
+    public List<String> unmarshal(final String s) {
+        final String[] strings = s.split(", *");
         return new ArrayList<String>(Arrays.asList(strings));
     }
 
-    public String marshal(List<String> list) {
+    public String marshal(final List<String> list) {
         return Join.join(", ", list);
     }
 }

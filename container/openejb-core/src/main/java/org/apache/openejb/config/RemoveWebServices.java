@@ -39,17 +39,17 @@ import java.util.Map;
  */
 class RemoveWebServices implements DynamicDeployer {
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            EjbJar ejbJar = ejbModule.getEjbJar();
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final EjbJar ejbJar = ejbModule.getEjbJar();
+            final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+            final Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
-            for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
-                String ejbName = bean.getEjbName();
-                EjbDeployment ejbDeployment = deployments.get(ejbName);
+                final String ejbName = bean.getEjbName();
+                final EjbDeployment ejbDeployment = deployments.get(ejbName);
 
                 // Clear any <service-ref> references from ejbs
                 bean.getServiceRef().clear();
@@ -58,7 +58,7 @@ class RemoveWebServices implements DynamicDeployer {
                     continue;
                 }
 
-                SessionBean sessionBean = (SessionBean) bean;
+                final SessionBean sessionBean = (SessionBean) bean;
 
                 if (sessionBean.getServiceEndpoint() == null) continue;
 
@@ -77,10 +77,10 @@ class RemoveWebServices implements DynamicDeployer {
 
                 // As well, let's get rid of any transaction or security attributes
                 // associated with the bean we just deleted.
-                AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
+                final AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
                 if (assemblyDescriptor != null) {
-                    for (MethodPermission permission : copy(assemblyDescriptor.getMethodPermission())) {
-                        for (Method method : copy(permission.getMethod())) {
+                    for (final MethodPermission permission : copy(assemblyDescriptor.getMethodPermission())) {
+                        for (final Method method : copy(permission.getMethod())) {
                             if (method.getEjbName().equals(ejbName)) {
                                 permission.getMethod().remove(method);
                             }
@@ -90,8 +90,8 @@ class RemoveWebServices implements DynamicDeployer {
                         }
                     }
 
-                    for (ContainerTransaction transaction : copy(assemblyDescriptor.getContainerTransaction())) {
-                        for (Method method : copy(transaction.getMethod())) {
+                    for (final ContainerTransaction transaction : copy(assemblyDescriptor.getContainerTransaction())) {
+                        for (final Method method : copy(transaction.getMethod())) {
                             if (method.getEjbName().equals(ejbName)) {
                                 transaction.getMethod().remove(method);
                             }
@@ -101,7 +101,7 @@ class RemoveWebServices implements DynamicDeployer {
                         }
                     }
 
-                    for (InterceptorBinding binding : copy(assemblyDescriptor.getInterceptorBinding())) {
+                    for (final InterceptorBinding binding : copy(assemblyDescriptor.getInterceptorBinding())) {
                         if (binding.getEjbName().equals(ejbName)) {
                             assemblyDescriptor.getInterceptorBinding().remove(binding);
                         }
@@ -110,7 +110,7 @@ class RemoveWebServices implements DynamicDeployer {
             }
 
             // Clear any <service-ref> references from interceptors
-            for (Interceptor interceptor : ejbJar.getInterceptors()) {
+            for (final Interceptor interceptor : ejbJar.getInterceptors()) {
                 interceptor.getServiceRef().clear();
             }
 
@@ -118,7 +118,7 @@ class RemoveWebServices implements DynamicDeployer {
         return appModule;
     }
 
-    public <T> List<T> copy(Collection<T> list) {
+    public <T> List<T> copy(final Collection<T> list) {
         return new ArrayList<T>(list);
     }
 }

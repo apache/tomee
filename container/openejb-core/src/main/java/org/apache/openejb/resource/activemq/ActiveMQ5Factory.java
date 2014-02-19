@@ -118,7 +118,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                                                                        + " is not a DataSource, but is " + obj.getClass().getName());
                                 }
                                 dataSource = (DataSource) obj;
-                            } catch (NamingException e) {
+                            } catch (final NamingException e) {
                                 throw new IllegalArgumentException("Unknown datasource " + resouceId);
                             }
                         } else {
@@ -183,7 +183,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         bs.getPersistenceAdapter().checkpoint(true);
                         started.set(true);
 
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         throwable = t;
                     }
                 }
@@ -211,7 +211,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
                     .getChildLogger("service")
                     .info("Using ActiveMQ startup timeout of " + timeout + "ms");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
 
@@ -220,7 +220,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             try {
                 start.join(timeout);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //Ignore
             }
 
@@ -279,7 +279,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         return persistenceAdapter;
     }
 
-    private void tomeeConfig(BrokerService broker) {
+    private void tomeeConfig(final BrokerService broker) {
         //New since 5.4.x
         disableScheduler(broker);
 
@@ -292,7 +292,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             final Class<?> clazz = Class.forName("org.apache.activemq.broker.BrokerService");
             final Method method = clazz.getMethod("setSchedulerSupport", new Class[]{Boolean.class});
             method.invoke(broker, Boolean.FALSE);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }

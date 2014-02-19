@@ -53,7 +53,7 @@ class EnterpriseBeanBuilder {
     private final ModuleContext moduleContext;
     private final List<Injection> moduleInjections;
 
-    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, ModuleContext moduleContext, List<Injection> moduleInjections) {
+    public EnterpriseBeanBuilder(final EnterpriseBeanInfo bean, final ModuleContext moduleContext, final List<Injection> moduleInjections) {
         this.moduleContext = moduleContext;
         this.bean = bean;
         this.moduleInjections = moduleInjections;
@@ -69,7 +69,7 @@ class EnterpriseBeanBuilder {
         } else if (bean.type == EnterpriseBeanInfo.MESSAGE) {
             ejbType = BeanType.MESSAGE_DRIVEN;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {
-            String persistenceType = ((EntityBeanInfo) bean).persistenceType;
+            final String persistenceType = ((EntityBeanInfo) bean).persistenceType;
             ejbType = persistenceType.equalsIgnoreCase("Container") ? BeanType.CMP_ENTITY : BeanType.BMP_ENTITY;
         } else {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
@@ -102,13 +102,13 @@ class EnterpriseBeanBuilder {
             local = loadClass(bean.local, "classNotFound.local");
         }
 
-        List<Class> businessLocals = new ArrayList<Class>();
-        for (String businessLocal : bean.businessLocal) {
+        final List<Class> businessLocals = new ArrayList<Class>();
+        for (final String businessLocal : bean.businessLocal) {
             businessLocals.add(loadClass(businessLocal, "classNotFound.businessLocal"));
         }
 
-        List<Class> businessRemotes = new ArrayList<Class>();
-        for (String businessRemote : bean.businessRemote) {
+        final List<Class> businessRemotes = new ArrayList<Class>();
+        for (final String businessRemote : bean.businessRemote) {
             businessRemotes.add(loadClass(businessRemote, "classNotFound.businessRemote"));
         }
 
@@ -121,44 +121,44 @@ class EnterpriseBeanBuilder {
 
         Class primaryKey = null;
         if (ejbType.isEntity() && ((EntityBeanInfo) bean).primKeyClass != null) {
-            String className = ((EntityBeanInfo) bean).primKeyClass;
+            final String className = ((EntityBeanInfo) bean).primKeyClass;
             primaryKey = loadClass(className, "classNotFound.primaryKey");
         }
 
         final String transactionType = bean.transactionType;
 
         // determine the injections
-        InjectionBuilder injectionBuilder = new InjectionBuilder(moduleContext.getClassLoader());
-        List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
-        Set<Class<?>> relevantClasses = new HashSet<Class<?>>();
+        final InjectionBuilder injectionBuilder = new InjectionBuilder(moduleContext.getClassLoader());
+        final List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
+        final Set<Class<?>> relevantClasses = new HashSet<Class<?>>();
         Class c = ejbClass;
         do {
             relevantClasses.add(c);
             c = c.getSuperclass();
         } while (c != null && c != Object.class);
 
-        for (Injection injection: moduleInjections) {
+        for (final Injection injection: moduleInjections) {
             if (relevantClasses.contains(injection.getTarget())) {
                 injections.add(injection);
             }
         }
 
         // build the enc
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader());
-        Context compJndiContext = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
+        final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader());
+        final Context compJndiContext = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
         bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
         bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
         bind(compJndiContext, "global", moduleContext.getAppContext().getGlobalJndiContext());
 
-        BeanContext deployment;
+        final BeanContext deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
             deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, proxy, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
             if (bean instanceof ManagedBeanInfo) {
                 deployment.setHidden(((ManagedBeanInfo) bean).hidden);
             }
         } else {
-            MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
-            Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
+            final MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
+            final Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
             deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
@@ -180,16 +180,16 @@ class EnterpriseBeanBuilder {
         }
 
         if (bean instanceof StatefulBeanInfo) {
-            StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
+            final StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
 
-            for (InitMethodInfo init : statefulBeanInfo.initMethods) {
-                Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);
-                List<Method> methods = new ArrayList<Method>();
+            for (final InitMethodInfo init : statefulBeanInfo.initMethods) {
+                final Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);
+                final List<Method> methods = new ArrayList<Method>();
 
                 if (home != null) methods.addAll(Arrays.asList(home.getMethods()));
                 if (localhome != null) methods.addAll(Arrays.asList(localhome.getMethods()));
 
-                for (Method homeMethod : methods) {
+                for (final Method homeMethod : methods) {
                     if (init.createMethod != null && !init.createMethod.methodName.equals(homeMethod.getName())) continue;
 
                     if (!homeMethod.getName().startsWith("create")) continue;
@@ -200,37 +200,37 @@ class EnterpriseBeanBuilder {
                 }
             }
 
-            for (RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
+            for (final RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
                 
                 if (removeMethod.beanMethod.methodParams == null) {
 
-                    MethodInfo methodInfo = new MethodInfo();
+                    final MethodInfo methodInfo = new MethodInfo();
                     methodInfo.methodName = removeMethod.beanMethod.methodName;
                     methodInfo.methodParams = removeMethod.beanMethod.methodParams;
                     methodInfo.className = removeMethod.beanMethod.className;
-                    List<Method> methods = MethodInfoUtil.matchingMethods(methodInfo, ejbClass);
+                    final List<Method> methods = MethodInfoUtil.matchingMethods(methodInfo, ejbClass);
 
-                    for (Method method : methods) {
+                    for (final Method method : methods) {
                         deployment.getRemoveMethods().add(method);
                         deployment.setRetainIfExeption(method, removeMethod.retainIfException);
                     }
 
                 } else {
-                    Method method = MethodInfoUtil.toMethod(ejbClass, removeMethod.beanMethod);
+                    final Method method = MethodInfoUtil.toMethod(ejbClass, removeMethod.beanMethod);
                     deployment.getRemoveMethods().add(method);
                     deployment.setRetainIfExeption(method, removeMethod.retainIfException);
                 }
                 
             }
 
-            Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
-            for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
+            final Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
+            for (final PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
                     try {
-                        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                        Object o = containerSystem.getJNDIContext().lookup(PersistenceBuilder.getOpenEJBJndiName(info.unitId));
+                        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                        final Object o = containerSystem.getJNDIContext().lookup(PersistenceBuilder.getOpenEJBJndiName(info.unitId));
                         extendedEntityManagerFactories.put((EntityManagerFactory) o, info.properties);
-                    } catch (NamingException e) {
+                    } catch (final NamingException e) {
                         throw new OpenEJBException("PersistenceUnit '" + info.unitId + "' not found for EXTENDED ref '" + info.referenceName + "'");
                     }
 
@@ -255,27 +255,27 @@ class EnterpriseBeanBuilder {
         }
 
         if (ejbType.isEntity()) {
-            EntityBeanInfo entity = (EntityBeanInfo) bean;
+            final EntityBeanInfo entity = (EntityBeanInfo) bean;
 
             deployment.setCmp2(entity.cmpVersion == 2);
             deployment.setIsReentrant(entity.reentrant.equalsIgnoreCase("true"));
 
             if (ejbType == BeanType.CMP_ENTITY) {
                 Class cmpImplClass = null;
-                String cmpImplClassName = CmpUtil.getCmpImplClassName(entity.abstractSchemaName, entity.ejbClass);
+                final String cmpImplClassName = CmpUtil.getCmpImplClassName(entity.abstractSchemaName, entity.ejbClass);
                 cmpImplClass = loadClass(cmpImplClassName, "classNotFound.cmpImplClass");
                 deployment.setCmpImplClass(cmpImplClass);
                 deployment.setAbstractSchemaName(entity.abstractSchemaName);
 
-                for (QueryInfo query : entity.queries) {
+                for (final QueryInfo query : entity.queries) {
 
                     if (query.remoteResultType) {
-                        StringBuilder methodSignature = new StringBuilder();
+                        final StringBuilder methodSignature = new StringBuilder();
                         methodSignature.append(query.method.methodName);
                         if (query.method.methodParams != null && !query.method.methodParams.isEmpty()) {
                             methodSignature.append('(');
                             boolean first = true;
-                            for (String methodParam : query.method.methodParams) {
+                            for (final String methodParam : query.method.methodParams) {
                                 if (!first) methodSignature.append(",");
                                 methodSignature.append(methodParam);
                                 first = false;
@@ -298,11 +298,11 @@ class EnterpriseBeanBuilder {
         //Configure asynchronous tag after the method map is created, so while we check whether the method is asynchronous,
         //we could directly check the matching bean method.
         if (ejbType == BeanType.STATELESS || ejbType == BeanType.SINGLETON || ejbType == BeanType.STATEFUL) {
-            for (NamedMethodInfo methodInfo : bean.asynchronous) {
-                Method method = MethodInfoUtil.toMethod(ejbClass, methodInfo);
+            for (final NamedMethodInfo methodInfo : bean.asynchronous) {
+                final Method method = MethodInfoUtil.toMethod(ejbClass, methodInfo);
                 deployment.getMethodContext(deployment.getMatchingBeanMethod(method)).setAsynchronous(true);
             }
-            for (String className : bean.asynchronousClasses) {
+            for (final String className : bean.asynchronousClasses) {
                 deployment.getAsynchronousClasses().add(loadClass(className, "classNotFound.ejbClass"));
             }
             deployment.createAsynchronousMethodSet();
@@ -311,29 +311,29 @@ class EnterpriseBeanBuilder {
         return deployment;
     }
 
-    private void bind(Context compJndiContext, String s, Context moduleJndiContext) throws OpenEJBException {
-        Context c;
+    private void bind(final Context compJndiContext, final String s, final Context moduleJndiContext) throws OpenEJBException {
+        final Context c;
         try {
             c = (Context) moduleJndiContext.lookup(s);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             //ok, nothing there....
             return;
         }
         try {
             compJndiContext.bind(s, c);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException("Could not bind context at " + s, e);
         }
     }
 
-    public static boolean paramsMatch(Method methodA, Method methodB) {
+    public static boolean paramsMatch(final Method methodA, final Method methodB) {
         if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
             return false;
         }
 
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
-            Class<?> a = methodA.getParameterTypes()[i];
-            Class<?> b = methodB.getParameterTypes()[i];
+            final Class<?> a = methodA.getParameterTypes()[i];
+            final Class<?> b = methodB.getParameterTypes()[i];
             if (!a.equals(b)) return false;
         }
         return true;
@@ -343,7 +343,7 @@ class EnterpriseBeanBuilder {
         return warnings;
     }
 
-    private Method getTimeout(Class ejbClass, NamedMethodInfo info) {
+    private Method getTimeout(final Class ejbClass, final NamedMethodInfo info) {
         Method timeout = null;
         try {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
@@ -351,7 +351,7 @@ class EnterpriseBeanBuilder {
             } else if (info != null){
                 try {
                     timeout = MethodInfoUtil.toMethod(ejbClass, info);
-                } catch (IllegalStateException e) {
+                } catch (final IllegalStateException e) {
                     //Spec 18.2.5.3 [102] For the compatibility of timeout method signature, if method-params is  not set, it is also required to search the method signaure below :
                     //void <METHOD> (Timer timer)
 
@@ -360,7 +360,7 @@ class EnterpriseBeanBuilder {
                     // get a validation failure.  Then we can explicitly add the (Timer) param
                     // if the fallback method does exist.
                     if (info.methodParams == null) {
-                        NamedMethodInfo candidateInfo = new NamedMethodInfo();
+                        final NamedMethodInfo candidateInfo = new NamedMethodInfo();
                         candidateInfo.className = info.className;
                         candidateInfo.id = info.id;
                         candidateInfo.methodName = info.methodName;
@@ -369,7 +369,7 @@ class EnterpriseBeanBuilder {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             warnings.add(e);
         }
 
@@ -377,30 +377,30 @@ class EnterpriseBeanBuilder {
     }
 
 
-    private Class loadClass(String className, String messageCode) throws OpenEJBException {
-        Class clazz = load(className, messageCode);
+    private Class loadClass(final String className, final String messageCode) throws OpenEJBException {
+        final Class clazz = load(className, messageCode);
         try {
 //            clazz.getDeclaredMethods();
 //            clazz.getDeclaredFields();
 //            clazz.getDeclaredConstructors();
 //            clazz.getInterfaces();
             return clazz;
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             if (clazz.getClassLoader() != moduleContext.getClassLoader()) {
-                String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), moduleContext.getClassLoader(), e.getMessage());
+                final String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), moduleContext.getClassLoader(), e.getMessage());
                 throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
             } else {
-                String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
+                final String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
                 throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
             }
         }
     }
 
-    private Class load(String className, String messageCode) throws OpenEJBException {
+    private Class load(final String className, final String messageCode) throws OpenEJBException {
         try {
             return Class.forName(className, true, moduleContext.getClassLoader());
-        } catch (ClassNotFoundException e) {
-            String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
+        } catch (final ClassNotFoundException e) {
+            final String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
             throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message));
         }
     }

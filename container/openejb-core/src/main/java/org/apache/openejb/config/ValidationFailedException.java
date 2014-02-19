@@ -28,11 +28,11 @@ public class ValidationFailedException extends OpenEJBException implements Valid
     private final String name;
     private final String moduleType;
 
-    public ValidationFailedException(String message, ValidationResults set) {
+    public ValidationFailedException(final String message, final ValidationResults set) {
         this(message, set, null);
     }
 
-    public ValidationFailedException(String message, ValidationResults set, ValidationFailedException e) {
+    public ValidationFailedException(final String message, final ValidationResults set, final ValidationFailedException e) {
         super(message, e);
         name = set.getName();
         errors = set.getErrors();

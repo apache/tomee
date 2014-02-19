@@ -53,7 +53,7 @@ public class SecurityContextHandler implements WorkContextHandler<SecurityContex
         if (loginObj != null) {
             try {
                 securityService.logout(loginObj);
-            } catch (LoginException e) {
+            } catch (final LoginException e) {
                 //Ignore
             }
         }

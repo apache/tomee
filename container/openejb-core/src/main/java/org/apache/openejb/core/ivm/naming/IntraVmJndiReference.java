@@ -27,7 +27,7 @@ public class IntraVmJndiReference extends Reference {
 
     private String jndiName;
 
-    public IntraVmJndiReference(String jndiName) {
+    public IntraVmJndiReference(final String jndiName) {
         this.jndiName = jndiName;
     }
 
@@ -36,12 +36,12 @@ public class IntraVmJndiReference extends Reference {
     }
 
     public Object getObject() throws NamingException {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         try {
             return containerSystem.getJNDIContext().lookup(jndiName);
-        } catch (NameNotFoundException e) { // EE.5.18: try using java:module/<shortName> prefix
+        } catch (final NameNotFoundException e) { // EE.5.18: try using java:module/<shortName> prefix
             return containerSystem.getJNDIContext().lookup("java:module/" + Strings.lastPart(getClassName(), '.'));
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw (NamingException)new NamingException("could not look up " + jndiName).initCause(e);
         }
     }

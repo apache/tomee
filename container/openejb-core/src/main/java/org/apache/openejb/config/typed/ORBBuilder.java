@@ -38,7 +38,7 @@ public class ORBBuilder extends Resource {
 
     }
 
-    public ORBBuilder id(String id) {
+    public ORBBuilder id(final String id) {
         setId(id);
         return this;
     }

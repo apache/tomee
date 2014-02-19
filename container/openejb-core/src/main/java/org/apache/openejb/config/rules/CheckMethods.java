@@ -34,11 +34,11 @@ import java.util.List;
 
 public class CheckMethods extends ValidationBase {
 
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
 
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (!(bean instanceof RemoteBean)) continue;
-            RemoteBean b = (RemoteBean) bean;
+            final RemoteBean b = (RemoteBean) bean;
 
             if (b.getHome() != null) {
                 check_remoteInterfaceMethods(b);
@@ -55,13 +55,13 @@ public class CheckMethods extends ValidationBase {
         }
     }
 
-    private void check_localHomeInterfaceMethods(RemoteBean b) {
+    private void check_localHomeInterfaceMethods(final RemoteBean b) {
         Class home = null;
         Class bean = null;
         try {
             home = loadClass(b.getLocalHome());
             bean = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
@@ -75,13 +75,13 @@ public class CheckMethods extends ValidationBase {
         }
     }
 
-    private void check_localInterfaceMethods(RemoteBean b) {
+    private void check_localInterfaceMethods(final RemoteBean b) {
         Class intrface = null;
         Class beanClass = null;
         try {
             intrface = loadClass(b.getLocal());
             beanClass = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
@@ -89,19 +89,19 @@ public class CheckMethods extends ValidationBase {
             return;
         }
 
-        Method[] interfaceMethods = intrface.getMethods();
+        final Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
             if (interfaceMethods[i].getDeclaringClass() == EJBLocalObject.class) continue;
-            String name = interfaceMethods[i].getName();
+            final String name = interfaceMethods[i].getName();
             try {
-                Class[] params = interfaceMethods[i].getParameterTypes();
+                final Class[] params = interfaceMethods[i].getParameterTypes();
                 beanClass.getMethod(name, params);
-            } catch (NoSuchMethodException nsme) {
-                List<Method> differentArgs = new ArrayList<Method>();
-                List<Method> differentCase = new ArrayList<Method>();
+            } catch (final NoSuchMethodException nsme) {
+                final List<Method> differentArgs = new ArrayList<Method>();
+                final List<Method> differentCase = new ArrayList<Method>();
 
-                for (Method method : beanClass.getMethods()) {
+                for (final Method method : beanClass.getMethods()) {
                     if (method.getName().equals(name)){
                         differentArgs.add(method);
                     } else if (method.getName().equalsIgnoreCase(name)){
@@ -123,14 +123,14 @@ public class CheckMethods extends ValidationBase {
 
     }
 
-    private void check_remoteInterfaceMethods(RemoteBean b) {
+    private void check_remoteInterfaceMethods(final RemoteBean b) {
 
         Class intrface = null;
         Class beanClass = null;
         try {
             intrface = loadClass(b.getRemote());
             beanClass = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
@@ -138,19 +138,19 @@ public class CheckMethods extends ValidationBase {
             return;
         }
 
-        Method[] interfaceMethods = intrface.getMethods();
+        final Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
             if (interfaceMethods[i].getDeclaringClass() == EJBObject.class) continue;
-            String name = interfaceMethods[i].getName();
+            final String name = interfaceMethods[i].getName();
             try {
-                Class[] params = interfaceMethods[i].getParameterTypes();
+                final Class[] params = interfaceMethods[i].getParameterTypes();
                 beanClass.getMethod(name, params);
-            } catch (NoSuchMethodException nsme) {
-                List<Method> differentArgs = new ArrayList<Method>();
-                List<Method> differentCase = new ArrayList<Method>();
+            } catch (final NoSuchMethodException nsme) {
+                final List<Method> differentArgs = new ArrayList<Method>();
+                final List<Method> differentCase = new ArrayList<Method>();
 
-                for (Method method : beanClass.getMethods()) {
+                for (final Method method : beanClass.getMethods()) {
                     if (method.getName().equals(name)){
                         differentArgs.add(method);
                     } else if (method.getName().equalsIgnoreCase(name)){
@@ -172,13 +172,13 @@ public class CheckMethods extends ValidationBase {
     }
 
 
-    private void check_homeInterfaceMethods(RemoteBean b) {
+    private void check_homeInterfaceMethods(final RemoteBean b) {
         Class home = null;
         Class bean = null;
         try {
             home = loadClass(b.getHome());
             bean = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
@@ -193,14 +193,14 @@ public class CheckMethods extends ValidationBase {
         }
     }
 
-    public boolean check_hasCreateMethod(RemoteBean b, Class bean, Class home) {
+    public boolean check_hasCreateMethod(final RemoteBean b, final Class bean, final Class home) {
 
         if (b instanceof SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)) {
             // This is a pojo-style bean
             return false;
         }
 
-        Method[] homeMethods = home.getMethods();
+        final Method[] homeMethods = home.getMethods();
 
         boolean hasCreateMethod = false;
 
@@ -217,17 +217,17 @@ public class CheckMethods extends ValidationBase {
         return hasCreateMethod;
     }
 
-    public boolean check_createMethodsAreImplemented(RemoteBean b, Class bean, Class home) {
+    public boolean check_createMethodsAreImplemented(final RemoteBean b, final Class bean, final Class home) {
         boolean result = true;
 
-        Method[] homeMethods = home.getMethods();
+        final Method[] homeMethods = home.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
             if (!homeMethods[i].getName().startsWith("create")) continue;
 
-            Method create = homeMethods[i];
+            final Method create = homeMethods[i];
 
-            StringBuilder ejbCreateName = new StringBuilder(create.getName());
+            final StringBuilder ejbCreateName = new StringBuilder(create.getName());
             ejbCreateName.replace(0, 1, "ejbC");
 
             try {
@@ -235,19 +235,19 @@ public class CheckMethods extends ValidationBase {
                     bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
                 }
                 // TODO: else { /* Check for Init method in pojo session bean class */ }
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 result = false;
 
-                String paramString = getParameters(create);
+                final String paramString = getParameters(create);
 
                 if (b instanceof EntityBean) {
-                    EntityBean entity = (EntityBean) b;
+                    final EntityBean entity = (EntityBean) b;
 
                     fail(b, "entity.no.ejb.create", b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
 
                 } else {
                     if (b instanceof SessionBean) {
-                        SessionBean sb = (SessionBean) b;
+                        final SessionBean sb = (SessionBean) b;
                         // Under EJB 3.1, it is not required that a stateless session bean have an ejbCreate method, even when it has a home interface
                         if (!sb.getSessionType().equals(SessionType.STATELESS))
                             fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);
@@ -259,25 +259,25 @@ public class CheckMethods extends ValidationBase {
         return result;
     }
 
-    public boolean check_postCreateMethodsAreImplemented(RemoteBean b, Class bean, Class home) {
+    public boolean check_postCreateMethodsAreImplemented(final RemoteBean b, final Class bean, final Class home) {
         boolean result = true;
 
         if (b instanceof SessionBean) return true;
 
-        Method[] homeMethods = home.getMethods();
-        Method[] beanMethods = bean.getMethods();
+        final Method[] homeMethods = home.getMethods();
+        final Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
             if (!homeMethods[i].getName().startsWith("create")) continue;
-            Method create = homeMethods[i];
-            StringBuilder ejbPostCreateName = new StringBuilder(create.getName());
+            final Method create = homeMethods[i];
+            final StringBuilder ejbPostCreateName = new StringBuilder(create.getName());
             ejbPostCreateName.replace(0, 1, "ejbPostC");
             try {
                 bean.getMethod(ejbPostCreateName.toString(), create.getParameterTypes());
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 result = false;
 
-                String paramString = getParameters(create);
+                final String paramString = getParameters(create);
 
                 fail(b, "no.ejb.post.create", b.getEjbClass(), ejbPostCreateName.toString(), paramString);
 
@@ -287,7 +287,7 @@ public class CheckMethods extends ValidationBase {
         return result;
     }
 
-    public void check_unusedCreateMethods(RemoteBean b) {
+    public void check_unusedCreateMethods(final RemoteBean b) {
 
         Class home = null;
         Class localHome = null;
@@ -302,15 +302,15 @@ public class CheckMethods extends ValidationBase {
             }
 
             bean = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
-        for (Method ejbCreate : bean.getMethods()) {
+        for (final Method ejbCreate : bean.getMethods()) {
 
             if (!ejbCreate.getName().startsWith("ejbCreate")) continue;
 
-            StringBuilder create = new StringBuilder(ejbCreate.getName());
+            final StringBuilder create = new StringBuilder(ejbCreate.getName());
             create.replace(0, "ejbC".length(), "c");
 
 
@@ -322,7 +322,7 @@ public class CheckMethods extends ValidationBase {
                     localHome.getMethod(create.toString(), ejbCreate.getParameterTypes());
                     inLocalHome = true;
                 }
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 // no-op
             }
 
@@ -331,39 +331,39 @@ public class CheckMethods extends ValidationBase {
                     home.getMethod(create.toString(), ejbCreate.getParameterTypes());
                     inHome = true;
                 }
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 // no-op
             }
 
             if (!inLocalHome && !inHome){
-                String paramString = getParameters(ejbCreate);
+                final String paramString = getParameters(ejbCreate);
 
                 warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(),  paramString, create.toString());
             }
         }
     }
 
-    public void check_unusedPostCreateMethods(RemoteBean b) {
+    public void check_unusedPostCreateMethods(final RemoteBean b) {
 
         Class bean = null;
         try {
             bean = loadClass(b.getEjbClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return;
         }
 
-        for (Method postCreate : bean.getMethods()) {
+        for (final Method postCreate : bean.getMethods()) {
 
             if (!postCreate.getName().startsWith("ejbPostCreate")) continue;
 
-            StringBuilder ejbCreate = new StringBuilder(postCreate.getName());
+            final StringBuilder ejbCreate = new StringBuilder(postCreate.getName());
             ejbCreate.replace(0, "ejbPostCreate".length(), "ejbCreate");
 
             try {
                 bean.getMethod(ejbCreate.toString(), postCreate.getParameterTypes());
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
 
-                String paramString = getParameters(postCreate);
+                final String paramString = getParameters(postCreate);
 
                 warn(b, "unused.ejbPostCreate", b.getEjbClass(), postCreate.getName(), paramString, ejbCreate.toString());
 

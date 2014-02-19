@@ -24,15 +24,15 @@ public class TimerStoreException extends OpenEJBException {
         super();
     }
 
-    public TimerStoreException(String message) {
+    public TimerStoreException(final String message) {
         super(message);
     }
 
-    public TimerStoreException(String message, Throwable cause) {
+    public TimerStoreException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public TimerStoreException(Throwable cause) {
+    public TimerStoreException(final Throwable cause) {
         super(cause);
     }
 }

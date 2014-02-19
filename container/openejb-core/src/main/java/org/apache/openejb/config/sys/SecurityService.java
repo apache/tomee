@@ -44,11 +44,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "SecurityService")
 public class SecurityService extends AbstractService {
 
-    public SecurityService(String id) {
+    public SecurityService(final String id) {
         super(id);
     }
 
-    public SecurityService(String id, String type, String provider) {
+    public SecurityService(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

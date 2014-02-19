@@ -28,12 +28,12 @@ public final class Tee implements Runnable {
     private final InputStream in;
     private final OutputStream[] out;
 
-    public Tee(InputStream in, OutputStream... out) {
+    public Tee(final InputStream in, final OutputStream... out) {
         this.in = in;
         this.out = out;
     }
 
-    public static InputStream read(Process process) {
+    public static InputStream read(final Process process) {
 //        pipe(process.getErrorStream(), System.err);
         return process.getInputStream();
 
@@ -48,11 +48,11 @@ public final class Tee implements Runnable {
 //        }
     }
 
-    public static void pipe(InputStream in, OutputStream out) {
+    public static void pipe(final InputStream in, final OutputStream out) {
         run(new Tee(in, out));
     }
 
-    private static void run(Tee target) {
+    private static void run(final Tee target) {
         final Thread thread = new Thread(target);
         thread.setDaemon(true);
         thread.start();
@@ -70,13 +70,13 @@ public final class Tee implements Runnable {
                     try {
                         if (out[o] == null) continue;
                         out[o].write(buf, 0, i);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         new Exception(out[o].toString(), e).printStackTrace();
                         out[o] = null;
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }

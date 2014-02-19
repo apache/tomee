@@ -18,7 +18,7 @@ package org.apache.openejb.config;
 
 public class ValidationWarning extends ValidationException {
 
-    public ValidationWarning(String message) {
+    public ValidationWarning(final String message) {
         super(message);
     }
 

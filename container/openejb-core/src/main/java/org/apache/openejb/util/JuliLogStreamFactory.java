@@ -39,7 +39,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     private static String consoleHandlerClazz;
     private static boolean useOpenEJBHandler = false;
 
-    public LogStream createLogStream(LogCategory logCategory) {
+    public LogStream createLogStream(final LogCategory logCategory) {
         return new JuliLogStream(logCategory);
     }
 
@@ -69,7 +69,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     final Field logManager = LogManager.class.getDeclaredField("manager");
                     final boolean acc = logManager.isAccessible();
                     logManager.setAccessible(true);
-                    OpenEJBLogManager value = new OpenEJBLogManager();
+                    final OpenEJBLogManager value = new OpenEJBLogManager();
                     try {
                         logManager.set(null, value);
                     } finally {
@@ -91,7 +91,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
                 System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
 
@@ -174,15 +174,15 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             return parentValue;
         }
 
-        private static String reverseProperty(String name) {
+        private static String reverseProperty(final String name) {
             if (name.contains(".") && !name.endsWith(".")) {
-                int idx = name.lastIndexOf('.');
+                final int idx = name.lastIndexOf('.');
                 return name.substring(idx) + "." + name.substring(0, idx);
             }
             return name;
         }
 
-        private static boolean isOverridableLogger(String name) {
+        private static boolean isOverridableLogger(final String name) {
             return useOpenEJBHandler
                     || name.toLowerCase().contains("openejb")
                     || name.toLowerCase().contains("transaction")
@@ -204,11 +204,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
     }
 
-    private static boolean is(String classname) {
+    private static boolean is(final String classname) {
         try {
             JuliLogStreamFactory.class.getClassLoader().loadClass(classname);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }

@@ -25,7 +25,7 @@ public class Interceptor {
     private final Object instance;
     private final Method method;
 
-    public Interceptor(Object instance, Method method) {
+    public Interceptor(final Object instance, final Method method) {
         if (instance == null) throw new NullPointerException("instance is null");
         if (method == null) throw new NullPointerException("method is null");
         this.instance = instance;

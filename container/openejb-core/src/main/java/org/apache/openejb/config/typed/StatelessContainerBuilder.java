@@ -74,17 +74,17 @@ public class StatelessContainerBuilder extends Container {
 
     }
 
-    public StatelessContainerBuilder id(String id) {
+    public StatelessContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public StatelessContainerBuilder withAccessTimeout(Duration accessTimeout) {
+    public StatelessContainerBuilder withAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -92,20 +92,20 @@ public class StatelessContainerBuilder extends Container {
         return accessTimeout;
     }
 
-    public StatelessContainerBuilder withAccessTimeout(long time, TimeUnit unit) {
+    public StatelessContainerBuilder withAccessTimeout(final long time, final TimeUnit unit) {
         return withAccessTimeout(new Duration(time, unit));
     }
 
-    public void setAccessTimeout(long time, TimeUnit unit) {
+    public void setAccessTimeout(final long time, final TimeUnit unit) {
         setAccessTimeout(new Duration(time, unit));
     }
 
-    public StatelessContainerBuilder withMaxSize(int maxSize) {
+    public StatelessContainerBuilder withMaxSize(final int maxSize) {
         this.maxSize = maxSize;
         return this;
     }
 
-    public void setMaxSize(int maxSize) {
+    public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
     }
 
@@ -113,12 +113,12 @@ public class StatelessContainerBuilder extends Container {
         return maxSize;
     }
 
-    public StatelessContainerBuilder withMinSize(int minSize) {
+    public StatelessContainerBuilder withMinSize(final int minSize) {
         this.minSize = minSize;
         return this;
     }
 
-    public void setMinSize(int minSize) {
+    public void setMinSize(final int minSize) {
         this.minSize = minSize;
     }
 
@@ -126,12 +126,12 @@ public class StatelessContainerBuilder extends Container {
         return minSize;
     }
 
-    public StatelessContainerBuilder withStrictPooling(boolean strictPooling) {
+    public StatelessContainerBuilder withStrictPooling(final boolean strictPooling) {
         this.strictPooling = strictPooling;
         return this;
     }
 
-    public void setStrictPooling(boolean strictPooling) {
+    public void setStrictPooling(final boolean strictPooling) {
         this.strictPooling = strictPooling;
     }
 
@@ -139,12 +139,12 @@ public class StatelessContainerBuilder extends Container {
         return strictPooling;
     }
 
-    public StatelessContainerBuilder withMaxAge(Duration maxAge) {
+    public StatelessContainerBuilder withMaxAge(final Duration maxAge) {
         this.maxAge = maxAge;
         return this;
     }
 
-    public void setMaxAge(Duration maxAge) {
+    public void setMaxAge(final Duration maxAge) {
         this.maxAge = maxAge;
     }
 
@@ -152,20 +152,20 @@ public class StatelessContainerBuilder extends Container {
         return maxAge;
     }
 
-    public StatelessContainerBuilder withMaxAge(long time, TimeUnit unit) {
+    public StatelessContainerBuilder withMaxAge(final long time, final TimeUnit unit) {
         return withMaxAge(new Duration(time, unit));
     }
 
-    public void setMaxAge(long time, TimeUnit unit) {
+    public void setMaxAge(final long time, final TimeUnit unit) {
         setMaxAge(new Duration(time, unit));
     }
 
-    public StatelessContainerBuilder withReplaceAged(boolean replaceAged) {
+    public StatelessContainerBuilder withReplaceAged(final boolean replaceAged) {
         this.replaceAged = replaceAged;
         return this;
     }
 
-    public void setReplaceAged(boolean replaceAged) {
+    public void setReplaceAged(final boolean replaceAged) {
         this.replaceAged = replaceAged;
     }
 
@@ -173,12 +173,12 @@ public class StatelessContainerBuilder extends Container {
         return replaceAged;
     }
 
-    public StatelessContainerBuilder withReplaceFlushed(boolean replaceFlushed) {
+    public StatelessContainerBuilder withReplaceFlushed(final boolean replaceFlushed) {
         this.replaceFlushed = replaceFlushed;
         return this;
     }
 
-    public void setReplaceFlushed(boolean replaceFlushed) {
+    public void setReplaceFlushed(final boolean replaceFlushed) {
         this.replaceFlushed = replaceFlushed;
     }
 
@@ -186,12 +186,12 @@ public class StatelessContainerBuilder extends Container {
         return replaceFlushed;
     }
 
-    public StatelessContainerBuilder withMaxAgeOffset(int maxAgeOffset) {
+    public StatelessContainerBuilder withMaxAgeOffset(final int maxAgeOffset) {
         this.maxAgeOffset = maxAgeOffset;
         return this;
     }
 
-    public void setMaxAgeOffset(int maxAgeOffset) {
+    public void setMaxAgeOffset(final int maxAgeOffset) {
         this.maxAgeOffset = maxAgeOffset;
     }
 
@@ -199,12 +199,12 @@ public class StatelessContainerBuilder extends Container {
         return maxAgeOffset;
     }
 
-    public StatelessContainerBuilder withIdleTimeout(Duration idleTimeout) {
+    public StatelessContainerBuilder withIdleTimeout(final Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
         return this;
     }
 
-    public void setIdleTimeout(Duration idleTimeout) {
+    public void setIdleTimeout(final Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 
@@ -212,20 +212,20 @@ public class StatelessContainerBuilder extends Container {
         return idleTimeout;
     }
 
-    public StatelessContainerBuilder withIdleTimeout(long time, TimeUnit unit) {
+    public StatelessContainerBuilder withIdleTimeout(final long time, final TimeUnit unit) {
         return withIdleTimeout(new Duration(time, unit));
     }
 
-    public void setIdleTimeout(long time, TimeUnit unit) {
+    public void setIdleTimeout(final long time, final TimeUnit unit) {
         setIdleTimeout(new Duration(time, unit));
     }
 
-    public StatelessContainerBuilder withGarbageCollection(boolean garbageCollection) {
+    public StatelessContainerBuilder withGarbageCollection(final boolean garbageCollection) {
         this.garbageCollection = garbageCollection;
         return this;
     }
 
-    public void setGarbageCollection(boolean garbageCollection) {
+    public void setGarbageCollection(final boolean garbageCollection) {
         this.garbageCollection = garbageCollection;
     }
 
@@ -233,12 +233,12 @@ public class StatelessContainerBuilder extends Container {
         return garbageCollection;
     }
 
-    public StatelessContainerBuilder withSweepInterval(Duration sweepInterval) {
+    public StatelessContainerBuilder withSweepInterval(final Duration sweepInterval) {
         this.sweepInterval = sweepInterval;
         return this;
     }
 
-    public void setSweepInterval(Duration sweepInterval) {
+    public void setSweepInterval(final Duration sweepInterval) {
         this.sweepInterval = sweepInterval;
     }
 
@@ -246,20 +246,20 @@ public class StatelessContainerBuilder extends Container {
         return sweepInterval;
     }
 
-    public StatelessContainerBuilder withSweepInterval(long time, TimeUnit unit) {
+    public StatelessContainerBuilder withSweepInterval(final long time, final TimeUnit unit) {
         return withSweepInterval(new Duration(time, unit));
     }
 
-    public void setSweepInterval(long time, TimeUnit unit) {
+    public void setSweepInterval(final long time, final TimeUnit unit) {
         setSweepInterval(new Duration(time, unit));
     }
 
-    public StatelessContainerBuilder withCallbackThreads(int callbackThreads) {
+    public StatelessContainerBuilder withCallbackThreads(final int callbackThreads) {
         this.callbackThreads = callbackThreads;
         return this;
     }
 
-    public void setCallbackThreads(int callbackThreads) {
+    public void setCallbackThreads(final int callbackThreads) {
         this.callbackThreads = callbackThreads;
     }
 
@@ -267,12 +267,12 @@ public class StatelessContainerBuilder extends Container {
         return callbackThreads;
     }
 
-    public StatelessContainerBuilder withCloseTimeout(Duration closeTimeout) {
+    public StatelessContainerBuilder withCloseTimeout(final Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
         return this;
     }
 
-    public void setCloseTimeout(Duration closeTimeout) {
+    public void setCloseTimeout(final Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
     }
 
@@ -280,11 +280,11 @@ public class StatelessContainerBuilder extends Container {
         return closeTimeout;
     }
 
-    public StatelessContainerBuilder withCloseTimeout(long time, TimeUnit unit) {
+    public StatelessContainerBuilder withCloseTimeout(final long time, final TimeUnit unit) {
         return withCloseTimeout(new Duration(time, unit));
     }
 
-    public void setCloseTimeout(long time, TimeUnit unit) {
+    public void setCloseTimeout(final long time, final TimeUnit unit) {
         setCloseTimeout(new Duration(time, unit));
     }
 

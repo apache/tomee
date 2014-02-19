@@ -30,7 +30,7 @@ import javax.ejb.MessageDrivenContext;
  */
 public class MdbContext extends BaseContext implements MessageDrivenContext {
 
-    public MdbContext(SecurityService securityService) {
+    public MdbContext(final SecurityService securityService) {
         super(securityService);
     }
 
@@ -45,7 +45,7 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
     }
 
     @Override
-    public void check(Call call) {
+    public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
 
         switch (call) {

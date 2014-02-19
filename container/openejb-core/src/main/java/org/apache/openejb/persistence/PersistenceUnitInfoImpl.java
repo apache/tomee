@@ -135,7 +135,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         this.persistenceClassLoaderHandler = null;
     }
 
-    public PersistenceUnitInfoImpl(PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
+    public PersistenceUnitInfoImpl(final PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
@@ -143,7 +143,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -151,7 +151,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return persistenceUnitName;
     }
 
-    public void setPersistenceUnitName(String persistenceUnitName) {
+    public void setPersistenceUnitName(final String persistenceUnitName) {
         this.persistenceUnitName = persistenceUnitName;
     }
 
@@ -159,7 +159,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return persistenceProviderClassName;
     }
 
-    public void setPersistenceProviderClassName(String persistenceProviderClassName) {
+    public void setPersistenceProviderClassName(final String persistenceProviderClassName) {
         this.persistenceProviderClassName = persistenceProviderClassName;
     }
 
@@ -167,7 +167,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return transactionType;
     }
 
-    public void setTransactionType(PersistenceUnitTransactionType transactionType) {
+    public void setTransactionType(final PersistenceUnitTransactionType transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -175,7 +175,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return jtaDataSource;
     }
 
-    public void setJtaDataSource(DataSource jtaDataSource) {
+    public void setJtaDataSource(final DataSource jtaDataSource) {
         this.jtaDataSource = jtaDataSource;
     }
 
@@ -183,7 +183,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return nonJtaDataSource;
     }
 
-    public void setNonJtaDataSource(DataSource nonJtaDataSource) {
+    public void setNonJtaDataSource(final DataSource nonJtaDataSource) {
         this.nonJtaDataSource = nonJtaDataSource;
     }
 
@@ -191,7 +191,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return mappingFileNames;
     }
 
-    public void setMappingFileNames(List<String> mappingFileNames) {
+    public void setMappingFileNames(final List<String> mappingFileNames) {
         if (mappingFileNames == null) {
             throw new NullPointerException("mappingFileNames is null");
         }
@@ -199,7 +199,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         this.mappingFileNames.addAll(mappingFileNames);
     }
 
-    public void addMappingFileName(String mappingFileName) {
+    public void addMappingFileName(final String mappingFileName) {
         if (mappingFileName == null) {
             throw new NullPointerException("mappingFileName is null");
         }
@@ -214,29 +214,29 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return persistenceUnitRootUrl;
     }
 
-    public void setRootUrlAndJarUrls(String persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
+    public void setRootUrlAndJarUrls(final String persistenceUnitRootUrl, final List<String> jarFiles) throws MalformedURLException {
         File root;
         try{
             final URI rootUri = URLs.uri(persistenceUnitRootUrl);
             root = new File(rootUri);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             root = new File(persistenceUnitRootUrl);
         }
 
         this.persistenceUnitRootUrl = toUrl(root);
         try {
 
-            for (String path : jarFiles) {
+            for (final String path : jarFiles) {
                 File file = new File(root, path);
                 file = file.getCanonicalFile();
                 jarFileUrls.add(toUrl(file));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private URL toUrl(File root) throws MalformedURLException {
+    private URL toUrl(final File root) throws MalformedURLException {
         return root.toURI().toURL();
     }
 
@@ -244,7 +244,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return managedClassNames;
     }
 
-    public void setManagedClassNames(List<String> managedClassNames) {
+    public void setManagedClassNames(final List<String> managedClassNames) {
         if (managedClassNames == null) {
             throw new NullPointerException("managedClassNames is null");
         }
@@ -252,7 +252,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         this.managedClassNames.addAll(managedClassNames);
     }
 
-    public void addManagedClassName(String className) {
+    public void addManagedClassName(final String className) {
         managedClassNames.add(className);
     }
 
@@ -260,7 +260,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return excludeUnlistedClasses;
     }
 
-    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
+    public void setExcludeUnlistedClasses(final boolean excludeUnlistedClasses) {
         this.excludeUnlistedClasses = excludeUnlistedClasses;
     }
 
@@ -268,7 +268,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
 
@@ -276,13 +276,13 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
-    public void addTransformer(ClassTransformer classTransformer) {
+    public void addTransformer(final ClassTransformer classTransformer) {
         if (persistenceClassLoaderHandler != null) {
-            PersistenceClassFileTransformer classFileTransformer = new PersistenceClassFileTransformer(classTransformer);
+            final PersistenceClassFileTransformer classFileTransformer = new PersistenceClassFileTransformer(classTransformer);
             persistenceClassLoaderHandler.addTransformer(id, classLoader, classFileTransformer);
         }
     }
@@ -307,17 +307,17 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     public static class PersistenceClassFileTransformer implements ClassFileTransformer {
         private final ClassTransformer classTransformer;
 
-        public PersistenceClassFileTransformer(ClassTransformer classTransformer) {
+        public PersistenceClassFileTransformer(final ClassTransformer classTransformer) {
             this.classTransformer = classTransformer;
         }
 
-        public byte[] transform(ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(final ClassLoader classLoader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
             // Example code to easily debug transformation of a specific class
             // if ("org/apache/openejb/test/entity/cmp/BasicCmpBean".equals(className) ||
             //        "org/apache/openejb/test/entity/cmp/BasicCmp2Bean_BasicCmp2Bean".equals(className)) {
             //    System.err.println("Loading " + className);
             // }
-            String replace = className.replace('/', '.');
+            final String replace = className.replace('/', '.');
             if (isServerClass(replace)) {
                 return classfileBuffer;
             }
@@ -332,12 +332,12 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             return false;
         }
 
-        for (String prefix : URLClassLoaderFirst.FORCED_SKIP) {
+        for (final String prefix : URLClassLoaderFirst.FORCED_SKIP) {
             if (name.startsWith(prefix)) {
                 return true;
             }
         }
-        for (String prefix : URLClassLoaderFirst.FORCED_LOAD) {
+        for (final String prefix : URLClassLoaderFirst.FORCED_LOAD) {
             if (name.startsWith(prefix)) {
                 return false;
             }
@@ -431,7 +431,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * @param persistenceXMLSchemaVersion the persistenceXMLSchemaVersion to set
      */
-    public void setPersistenceXMLSchemaVersion(String persistenceXMLSchemaVersion) {
+    public void setPersistenceXMLSchemaVersion(final String persistenceXMLSchemaVersion) {
         this.persistenceXMLSchemaVersion = persistenceXMLSchemaVersion;
     }
 
@@ -445,7 +445,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * @param sharedCacheMode the sharedCacheMode to set
      */
-    public void setSharedCacheMode(SharedCacheMode sharedCacheMode) {
+    public void setSharedCacheMode(final SharedCacheMode sharedCacheMode) {
         this.sharedCacheMode = sharedCacheMode;
     }
 
@@ -459,7 +459,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * @param validationMode the validationMode to set
      */
-    public void setValidationMode(ValidationMode validationMode) {
+    public void setValidationMode(final ValidationMode validationMode) {
         this.validationMode = validationMode;
     }
 
@@ -467,7 +467,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return jtaDataSourceName;
     }
 
-    public void setJtaDataSourceName(String jtaDataSourceName) {
+    public void setJtaDataSourceName(final String jtaDataSourceName) {
         this.jtaDataSourceName = jtaDataSourceName;
     }
 
@@ -475,7 +475,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return nonJtaDataSourceName;
     }
 
-    public void setNonJtaDataSourceName(String nonJtaDataSourceName) {
+    public void setNonJtaDataSourceName(final String nonJtaDataSourceName) {
         this.nonJtaDataSourceName = nonJtaDataSourceName;
     }
 }

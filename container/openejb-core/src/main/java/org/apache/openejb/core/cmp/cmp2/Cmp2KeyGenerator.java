@@ -21,9 +21,9 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import javax.ejb.EntityBean;
 
 public class Cmp2KeyGenerator implements KeyGenerator {
-    public Object getPrimaryKey(EntityBean entity) {
-        Cmp2Entity cmp2Entity = (Cmp2Entity) entity;
-        Object primaryKey = cmp2Entity.OpenEJB_getPrimaryKey();
+    public Object getPrimaryKey(final EntityBean entity) {
+        final Cmp2Entity cmp2Entity = (Cmp2Entity) entity;
+        final Object primaryKey = cmp2Entity.OpenEJB_getPrimaryKey();
         return primaryKey;
     }
 }

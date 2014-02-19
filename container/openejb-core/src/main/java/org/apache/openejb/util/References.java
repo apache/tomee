@@ -38,7 +38,7 @@ public class References {
         Set<String> getReferences(T t);
     }
 
-    public static <T> List<T> sort(List<T> objects, Visitor<T> visitor) {
+    public static <T> List<T> sort(final List<T> objects, final Visitor<T> visitor) {
 
         if (objects.size() <= 1) {
             return objects;
@@ -47,24 +47,24 @@ public class References {
         final Map<String, Node> nodes = new LinkedHashMap<String, Node>();
 
         // Create nodes
-        for (T obj : objects) {
-            String name = visitor.getName(obj);
-            Node node = new Node(name, obj);
+        for (final T obj : objects) {
+            final String name = visitor.getName(obj);
+            final Node node = new Node(name, obj);
             nodes.put(name, node);
         }
 
         // Link nodes
-        for (Node node : nodes.values()) {
-            for (String name : visitor.getReferences((T) node.object)) {
-                Node ref = nodes.get(name);
+        for (final Node node : nodes.values()) {
+            for (final String name : visitor.getReferences((T) node.object)) {
+                final Node ref = nodes.get(name);
                 if (ref == null) throw new IllegalArgumentException("No such object in list: "+name);
                 node.references.add(ref);
                 node.initialReferences.add(ref);
             }
         }
         boolean circuitFounded = false;
-        for (Node node : nodes.values()) {
-            Set<Node> visitedNodes = new HashSet<Node>();
+        for (final Node node : nodes.values()) {
+            final Set<Node> visitedNodes = new HashSet<Node>();
             if (!normalizeNodeReferences(node, node, visitedNodes)) {
                 circuitFounded = true;
                 break;
@@ -74,17 +74,17 @@ public class References {
 
         //detect circus
         if (circuitFounded) {
-            Set<Circuit> circuits = new LinkedHashSet<Circuit>();
+            final Set<Circuit> circuits = new LinkedHashSet<Circuit>();
 
-            for (Node node : nodes.values()) {
+            for (final Node node : nodes.values()) {
                 findCircuits(circuits, node, new Stack<Node>());
             }
 
-            ArrayList<Circuit> list = new ArrayList<Circuit>(circuits);
+            final ArrayList<Circuit> list = new ArrayList<Circuit>(circuits);
             Collections.sort(list);
 
-            List<List> all = new ArrayList<List>();
-            for (Circuit circuit : list) {
+            final List<List> all = new ArrayList<List>();
+            for (final Circuit circuit : list) {
                 all.add(unwrap(circuit.nodes));
             }
 
@@ -92,24 +92,24 @@ public class References {
         }
 
         //Build Double Link Node List
-        Node rootNode = new Node(null, null);
+        final Node rootNode = new Node(null, null);
         rootNode.previous = rootNode;
         rootNode.next = nodes.values().iterator().next();
 
-        for (Node node : nodes.values()) {
+        for (final Node node : nodes.values()) {
             node.previous = rootNode.previous;
             rootNode.previous.next = node;
             node.next = rootNode;
             rootNode.previous = node;
         }
 
-        for (Node node : nodes.values()) {
-            for (Node reference : node.references) {
+        for (final Node node : nodes.values()) {
+            for (final Node reference : node.references) {
                 swap(node, reference, rootNode);
             }
         }
 
-        List  sortedList= new ArrayList(nodes.size());
+        final List  sortedList= new ArrayList(nodes.size());
         Node currentNode = rootNode.next;
         while(currentNode != rootNode) {
             sortedList.add(currentNode.object);
@@ -118,11 +118,11 @@ public class References {
         return sortedList;
     }
 
-    private static boolean normalizeNodeReferences(Node rootNode, Node node, Set<Node> referenceNodes) {
+    private static boolean normalizeNodeReferences(final Node rootNode, final Node node, final Set<Node> referenceNodes) {
         if (node.references.contains(rootNode)) {
             return false;
         }
-        for (Node reference : node.references) {
+        for (final Node reference : node.references) {
             if (!referenceNodes.add(reference)) {
                 //this reference node has been visited in the past
                 continue;
@@ -134,7 +134,7 @@ public class References {
         return true;
     }
 
-    private static void swap(Node shouldAfterNode, Node shouldBeforeNode, Node rootNode) {
+    private static void swap(final Node shouldAfterNode, final Node shouldBeforeNode, final Node rootNode) {
         Node currentNode = shouldBeforeNode;
         while(currentNode.next != rootNode) {
             if(currentNode.next == shouldAfterNode) {
@@ -152,24 +152,24 @@ public class References {
         shouldAfterNode.next.previous = shouldAfterNode;
     }
 
-    private static <T> List<T> unwrap(List<Node> nodes) {
-        ArrayList<T> referees = new ArrayList<T>(nodes.size());
-        for (Node node : nodes) {
+    private static <T> List<T> unwrap(final List<Node> nodes) {
+        final ArrayList<T> referees = new ArrayList<T>(nodes.size());
+        for (final Node node : nodes) {
             referees.add((T) node.object);
         }
         return referees;
     }
 
-    private static void findCircuits(Set<Circuit> circuits, Node node, Stack<Node> stack) {
+    private static void findCircuits(final Set<Circuit> circuits, final Node node, final Stack<Node> stack) {
         if (stack.contains(node)) {
-            int fromIndex = stack.indexOf(node);
-            int toIndex = stack.size();
-            ArrayList<Node> circularity = new ArrayList<Node>(stack.subList(fromIndex, toIndex));
+            final int fromIndex = stack.indexOf(node);
+            final int toIndex = stack.size();
+            final ArrayList<Node> circularity = new ArrayList<Node>(stack.subList(fromIndex, toIndex));
 
             // add ending node to list so a full circuit is shown
             circularity.add(node);
 
-            Circuit circuit = new Circuit(circularity);
+            final Circuit circuit = new Circuit(circularity);
 
             circuits.add(circuit);
 
@@ -178,7 +178,7 @@ public class References {
 
         stack.push(node);
 
-        for (Node reference : node.initialReferences) {
+        for (final Node reference : node.initialReferences) {
             findCircuits(circuits, reference, stack);
         }
 
@@ -193,12 +193,12 @@ public class References {
         private Node next;
         private Node previous;
 
-        public Node(String name, Object object) {
+        public Node(final String name, final Object object) {
             this.name = name;
             this.object = object;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
@@ -211,7 +211,7 @@ public class References {
             return name.hashCode();
         }
 
-        public int compareTo(Node o) {
+        public int compareTo(final Node o) {
             return this.name.compareTo(o.name);
         }
 
@@ -225,7 +225,7 @@ public class References {
         private final List<Node> nodes;
         private final List<Node> atomic;
 
-        public Circuit(List<Node> nodes) {
+        public Circuit(final List<Node> nodes) {
             this.nodes = nodes;
             atomic = new ArrayList<Node>(nodes);
             atomic.remove(atomic.size()-1);
@@ -236,7 +236,7 @@ public class References {
             return nodes;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
@@ -251,15 +251,15 @@ public class References {
             return atomic.hashCode();
         }
 
-        public int compareTo(Circuit o) {
+        public int compareTo(final Circuit o) {
             int i = atomic.size() - o.atomic.size();
             if (i != 0) return i;
 
-            Iterator<Node> iterA = atomic.listIterator();
-            Iterator<Node> iterB = o.atomic.listIterator();
+            final Iterator<Node> iterA = atomic.listIterator();
+            final Iterator<Node> iterB = o.atomic.listIterator();
             while (iterA.hasNext() && iterB.hasNext()) {
-                Node a = iterA.next();
-                Node b = iterB.next();
+                final Node a = iterA.next();
+                final Node b = iterB.next();
                 i = a.compareTo(b);
                 if (i != 0) return i;
             }

@@ -29,7 +29,7 @@ public final class JPAPropertyConverter {
         private String key;
         private String value;
 
-        public Pair(String key, String value) {
+        public Pair(final String key, final String value) {
             this.key = key;
             this.value = value;
         }
@@ -49,7 +49,7 @@ public final class JPAPropertyConverter {
     }
 
     // TODO: manage more properties
-    public static Pair toOpenJPAValue(String key, String value, Properties properties) {
+    public static Pair toOpenJPAValue(final String key, final String value, final Properties properties) {
         if (!SystemInstance.get().getOptions().get("openejb.convert-jpa-properties", false)) {
             return null;
         }

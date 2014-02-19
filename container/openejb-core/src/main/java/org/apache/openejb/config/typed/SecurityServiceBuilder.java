@@ -39,17 +39,17 @@ public class SecurityServiceBuilder extends SecurityService {
 
     }
 
-    public SecurityServiceBuilder id(String id) {
+    public SecurityServiceBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public SecurityServiceBuilder withDefaultUser(String defaultUser) {
+    public SecurityServiceBuilder withDefaultUser(final String defaultUser) {
         this.defaultUser = defaultUser;
         return this;
     }
 
-    public void setDefaultUser(String defaultUser) {
+    public void setDefaultUser(final String defaultUser) {
         this.defaultUser = defaultUser;
     }
 

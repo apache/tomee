@@ -76,7 +76,7 @@ public class StatelessInstanceManager {
         Method foundRemoveMethod;
         try {
             foundRemoveMethod = SessionBean.class.getDeclaredMethod("ejbRemove");
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             foundRemoveMethod = null;
         }
         removeSessionBeanMethod = foundRemoveMethod;
@@ -116,7 +116,7 @@ public class StatelessInstanceManager {
                     if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
                         logger.warning("Executor failed to run asynchronous process: " + r);
                     }
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     //Ignore
                 }
             }
@@ -147,7 +147,7 @@ public class StatelessInstanceManager {
             final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
                 return createInstance(ctx, ctx.getBeanContext());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 logger.error("Unable to fill pool: for deployment '" + beanContext.getDeploymentID() + "'", e);
             } finally {
                 ThreadContext.exit(oldCallContext);
@@ -183,12 +183,12 @@ public class StatelessInstanceManager {
                 instance = entry.get();
                 instance.setPoolEntry(entry);
             }
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             final String msg = "No instances available in Stateless Session Bean pool.  Waited " + data.accessTimeout.toString();
             final ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException(msg);
             timeoutException.fillInStackTrace();
             throw new ApplicationException(timeoutException);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             throw new OpenEJBException("Unexpected Interruption of current thread: ", e);
         }
@@ -303,7 +303,7 @@ public class StatelessInstanceManager {
             if (instance.creationalContext != null) {
                 instance.creationalContext.release();
             }
-        } catch (Throwable re) {
+        } catch (final Throwable re) {
             logger.error("The bean instance " + instance + " threw a system exception:" + re, re);
         }
 
@@ -346,7 +346,7 @@ public class StatelessInstanceManager {
             context.bind("comp/EJBContext", data.sessionContext);
             context.bind("comp/WebServiceContext", new EjbWsContext(data.sessionContext));
             context.bind("comp/TimerService", new TimerServiceWrapper());
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
         }
 
@@ -384,7 +384,7 @@ public class StatelessInstanceManager {
                 }
                 server.registerMBean(new ManagedMBean(stats), objectName);
                 data.add(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to register MBean ", e);
             }
         }
@@ -397,7 +397,7 @@ public class StatelessInstanceManager {
             }
             server.registerMBean(new ManagedMBean(data.pool), objectName);
             data.add(objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Unable to register MBean ", e);
         }
 
@@ -410,7 +410,7 @@ public class StatelessInstanceManager {
             es.shutdown();
             try {
                 es.awaitTermination(5, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 logger.error("can't fill the stateless pool", e);
             }
         }
@@ -437,7 +437,7 @@ public class StatelessInstanceManager {
         for (final ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to unregister MBean " + objectName);
             }
         }
@@ -446,7 +446,7 @@ public class StatelessInstanceManager {
             if (!data.closePool()) {
                 logger.error("Timed-out waiting for stateless pool to close: for deployment '" + beanContext.getDeploymentID() + "'");
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
 

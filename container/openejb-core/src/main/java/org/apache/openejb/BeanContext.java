@@ -343,7 +343,7 @@ public class BeanContext extends DeploymentContext {
                     try {
                         final Class<?> clazz = classLoader.loadClass(interceptor);
                         interceptorObject = clazz.newInstance();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         logger.warning("interceptor " + interceptor + " not found, are you sure the container can load it?");
                         continue;
                     }
@@ -401,7 +401,7 @@ public class BeanContext extends DeploymentContext {
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
                 this.ejbTimeout = beanClass.getMethod("ejbTimeout", Timer.class);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }
         }
@@ -554,7 +554,7 @@ public class BeanContext extends DeploymentContext {
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
                 this.ejbTimeout = beanClass.getMethod("ejbTimeout", Timer.class);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }
         }
@@ -593,9 +593,9 @@ public class BeanContext extends DeploymentContext {
                     logger.debug("Declared Lock for " + c.getName() + " is " + this.getSingleton().lockType);
                 }
 
-            } catch (NullPointerException e) {
+            } catch (final NullPointerException e) {
                 //Ignore
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warning("Failed to determine from: " + lock);
             }
         }
@@ -1101,7 +1101,7 @@ public class BeanContext extends DeploymentContext {
         if (componentType == BeanType.MESSAGE_DRIVEN && MessageDrivenBean.class.isAssignableFrom(beanClass)) {
             try {
                 getLegacyView().createMethod = beanClass.getMethod("ejbCreate");
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 // if there isn't an ejbCreate method that is fine
             }
         }
@@ -1144,7 +1144,7 @@ public class BeanContext extends DeploymentContext {
                 clientMethod = EJBLocalObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
             }
-        } catch (NoSuchMethodException nsme) {
+        } catch (final NoSuchMethodException nsme) {
             throw new SystemException(nsme);
         }
 
@@ -1198,7 +1198,7 @@ public class BeanContext extends DeploymentContext {
                 if (beanMethod != null) {
                     mapMethods(method, beanMethod);
                 }
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 //                throw new OpenEJBRuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
             }
         }
@@ -1222,7 +1222,7 @@ public class BeanContext extends DeploymentContext {
             try {
                 final Method beanMethod = beanClass.getMethod(method.getName(), method.getParameterTypes());
                 mapMethods(method, beanMethod);
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 throw new OpenEJBRuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
             }
         }
@@ -1458,7 +1458,7 @@ public class BeanContext extends DeploymentContext {
                 }
             }
 
-            Object rootInstance;
+            final Object rootInstance;
             if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
                 rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
             } else { // not a cdi bean
@@ -1539,7 +1539,7 @@ public class BeanContext extends DeploymentContext {
                     }
 
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
-                } catch (ConstructionException e) {
+                } catch (final ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
                 }
             }
@@ -1574,7 +1574,7 @@ public class BeanContext extends DeploymentContext {
                     cdiEjbBean.getInjectionTarget().postConstruct(beanInstance);
                 }
                 postConstruct.invoke();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //RollBack Transaction
                 EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
             } finally {
@@ -1745,7 +1745,7 @@ public class BeanContext extends DeploymentContext {
         if (ConversationScoped.class == bean.getScope()) {
             try {
                 return !bean.getWebBeansContext().getConversationManager().getConversationBeanReference().isTransient();
-            } catch (RuntimeException re) { // conversation not found for instance so act as @RequestScoped
+            } catch (final RuntimeException re) { // conversation not found for instance so act as @RequestScoped
                 return false;
             }
         }

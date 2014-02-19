@@ -146,7 +146,7 @@ public class Openejb {
      * @param value allowed object is
      *              {@link SecurityService }
      */
-    public void setSecurityService(SecurityService value) {
+    public void setSecurityService(final SecurityService value) {
         this.securityService = value;
     }
 
@@ -166,7 +166,7 @@ public class Openejb {
      * @param value allowed object is
      *              {@link TransactionManager }
      */
-    public void setTransactionManager(TransactionManager value) {
+    public void setTransactionManager(final TransactionManager value) {
         this.transactionManager = value;
     }
 
@@ -186,7 +186,7 @@ public class Openejb {
      * @param value allowed object is
      *              {@link ConnectionManager }
      */
-    public void setConnectionManager(ConnectionManager value) {
+    public void setConnectionManager(final ConnectionManager value) {
         this.connectionManager = value;
     }
 
@@ -206,7 +206,7 @@ public class Openejb {
      * @param value allowed object is
      *              {@link ProxyFactory }
      */
-    public void setProxyFactory(ProxyFactory value) {
+    public void setProxyFactory(final ProxyFactory value) {
         this.proxyFactory = value;
     }
 
@@ -262,10 +262,10 @@ public class Openejb {
             resource = new ArrayList<Resource>();
         }
 
-        List<Connector> connectors = getConnector();
+        final List<Connector> connectors = getConnector();
         if (connectors.size() > 0){
-            for (Connector connector : connectors) {
-                Resource resource = new Resource();
+            for (final Connector connector : connectors) {
+                final Resource resource = new Resource();
                 resource.setJar(connector.getJar());
                 resource.setId(connector.getId());
                 resource.setType(connector.getType());
@@ -312,7 +312,7 @@ public class Openejb {
         return this.services;
     }
 
-    public void add(Object service) {
+    public void add(final Object service) {
         if (service instanceof Container) {
             getContainer().add((Container) service);
         } else if (service instanceof Connector) {

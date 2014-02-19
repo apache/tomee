@@ -67,7 +67,7 @@ public class ManagedDataSource implements DataSource {
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
+    public void setLoginTimeout(final int seconds) throws SQLException {
         delegate.setLoginTimeout(seconds);
     }
 

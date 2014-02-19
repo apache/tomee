@@ -26,7 +26,7 @@ public class GroupPrincipal implements Principal {
     private final String name;
     private transient int hash;
 
-    public GroupPrincipal(String name) {
+    public GroupPrincipal(final String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
         this.name = name;
     }
@@ -35,7 +35,7 @@ public class GroupPrincipal implements Principal {
         return name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

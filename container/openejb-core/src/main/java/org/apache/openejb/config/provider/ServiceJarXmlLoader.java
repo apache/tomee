@@ -36,7 +36,7 @@ public class ServiceJarXmlLoader implements ProviderLoader {
     private final List<String> namespaces = new LinkedList<String>();
 
     @Override
-    public ServiceProvider load(ID id) {
+    public ServiceProvider load(final ID id) {
         id.validate();
 
         { // Already loaded and waiting?
@@ -54,21 +54,21 @@ public class ServiceJarXmlLoader implements ProviderLoader {
         return load(id);
     }
 
-    private void parse(String namespace) {
+    private void parse(final String namespace) {
         try {// Load and try again
 
             final ServicesJar servicesJar = JaxbOpenejb.readServicesJar(namespace);
-            for (ServiceProvider provider : servicesJar.getServiceProvider()) {
+            for (final ServiceProvider provider : servicesJar.getServiceProvider()) {
                 final ID found = new ID(namespace, provider.getId());
                 loaded.put(found, provider);
             }
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public List<ServiceProvider> load(String namespace) {
+    public List<ServiceProvider> load(final String namespace) {
 
         if (!namespaces.contains(namespace)) {
             namespaces.add(namespace);
@@ -77,7 +77,7 @@ public class ServiceJarXmlLoader implements ProviderLoader {
         }
 
         final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
-        for (Map.Entry<ID, ServiceProvider> entry : loaded.entrySet()) {
+        for (final Map.Entry<ID, ServiceProvider> entry : loaded.entrySet()) {
             if (entry.getKey().getNamespace().equals(namespace)) {
                 list.add(entry.getValue());
             }

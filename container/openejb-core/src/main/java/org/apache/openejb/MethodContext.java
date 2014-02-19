@@ -42,12 +42,12 @@ public class MethodContext {
     private Duration accessTimeout;
     private boolean asynchronous;
 
-    public MethodContext(BeanContext beanContext, Method beanMethod) {
+    public MethodContext(final BeanContext beanContext, final Method beanMethod) {
         this.beanContext = beanContext;
         this.beanMethod = beanMethod;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -67,13 +67,13 @@ public class MethodContext {
         cdiInterceptors.add(data);
     }
 
-    public void setInterceptors(List<InterceptorData> interceptors) {
+    public void setInterceptors(final List<InterceptorData> interceptors) {
         this.interceptors.clear();
         this.interceptors.addAll(interceptors);
     }
 
     public List<InterceptorData> getInterceptors() {
-        List<InterceptorData> datas = beanContext.getInterceptorData();
+        final List<InterceptorData> datas = beanContext.getInterceptorData();
         datas.addAll(interceptors);
         datas.addAll(beanContext.getCdiInterceptors());
         datas.addAll(cdiInterceptors);
@@ -84,7 +84,7 @@ public class MethodContext {
         return lockType != null? lockType: beanContext.getLockType();
     }
 
-    public void setLockType(LockType lockType) {
+    public void setLockType(final LockType lockType) {
         this.lockType = lockType;
     }
 
@@ -92,7 +92,7 @@ public class MethodContext {
         return transactionType != null? transactionType: beanContext.getTransactionType();
     }
 
-    public void setTransactionType(TransactionType transactionType) {
+    public void setTransactionType(final TransactionType transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -104,7 +104,7 @@ public class MethodContext {
         return asynchronous;
     }
 
-    public void setAsynchronous(boolean asynchronous) {
+    public void setAsynchronous(final boolean asynchronous) {
         this.asynchronous = asynchronous;
     }
 
@@ -118,7 +118,7 @@ public class MethodContext {
         private final Method method;
         private TransactionType transactionType;
 
-        public InterfaceMethodContext(MethodContext beanMethod, Method method) {
+        public InterfaceMethodContext(final MethodContext beanMethod, final Method method) {
             this.beanMethod = beanMethod;
             this.method = method;
         }
@@ -127,7 +127,7 @@ public class MethodContext {
             return method;
         }
 
-        public void setTransactionType(TransactionType transactionType) {
+        public void setTransactionType(final TransactionType transactionType) {
             this.transactionType = transactionType;
         }
 

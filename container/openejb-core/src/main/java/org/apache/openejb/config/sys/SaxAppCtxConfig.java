@@ -130,9 +130,9 @@ public class SaxAppCtxConfig {
                 if (file.exists()) {
                     try {
                         parse(module, new InputSource(new FileInputStream(file)), envEntriesDeployer, beanPropertiesDeployer);
-                    } catch (ParserConfigurationException e) {
+                    } catch (final ParserConfigurationException e) {
                         throw new SAXException(e);
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         throw new SAXException(e);
                     }
                 } else { // try in the classpath
@@ -142,9 +142,9 @@ public class SaxAppCtxConfig {
                         if (is != null) {
                             try {
                                 parse(module, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer);
-                            } catch (ParserConfigurationException e) {
+                            } catch (final ParserConfigurationException e) {
                                 throw new SAXException(e);
-                            } catch (IOException e) {
+                            } catch (final IOException e) {
                                 throw new SAXException(e);
                             }
                         } else {
@@ -179,10 +179,10 @@ public class SaxAppCtxConfig {
                 }
 
                 try {
-                    for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
+                    for (final Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
                         properties.put(prefix + entry.getKey(), entry.getValue());
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -210,12 +210,12 @@ public class SaxAppCtxConfig {
                 }
 
                 try {
-                    for (Properties p : properties) {
-                        for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
+                    for (final Properties p : properties) {
+                        for (final Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
                             p.put(prefix + entry.getKey(), entry.getValue());
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -258,9 +258,9 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                for (PojoConfig generic : genericConfigs) {
-                    for (PojoConfiguration config : module.getPojoConfigurations().values()) {
-                        for (String key : generic.getProperties().stringPropertyNames()) {
+                for (final PojoConfig generic : genericConfigs) {
+                    for (final PojoConfiguration config : module.getPojoConfigurations().values()) {
+                        for (final String key : generic.getProperties().stringPropertyNames()) {
                             if (!config.getProperties().containsKey(key)) {
                                 config.getProperties().put(key, generic.getProperties().get(key));
                             }
@@ -293,7 +293,7 @@ public class SaxAppCtxConfig {
 
             protected Collection<Properties> propertiesForModule(final String id) {
                 final Collection<Properties> props = new ArrayList<Properties>();
-                for (DeploymentModule m : module.getDeploymentModule()) {
+                for (final DeploymentModule m : module.getDeploymentModule()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());
                     }
@@ -310,7 +310,7 @@ public class SaxAppCtxConfig {
             @Override
             protected Collection<Properties> propertiesForModule(final String id) {
                 final Collection<Properties> props = new ArrayList<Properties>();
-                for (WebModule m : module.getWebModules()) {
+                for (final WebModule m : module.getWebModules()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());
                     }
@@ -339,7 +339,7 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                for (PojoConfig generic : genericConfigs) { // BeanContextConfig
+                for (final PojoConfig generic : genericConfigs) { // BeanContextConfig
                     if (generic.hasProperties()) {
                         beanPropertiesDeployer.addGlobalProperties(id, generic.getProperties());
                     }
@@ -381,7 +381,7 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                for (EjbModule ejbModule : module.getEjbModules()) {
+                for (final EjbModule ejbModule : module.getEjbModules()) {
                     if (!acceptModule(moduleId, ejbModule)) {
                         continue;
                     }

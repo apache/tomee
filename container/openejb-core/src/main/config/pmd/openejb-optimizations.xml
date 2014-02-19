@@ -30,7 +30,7 @@ limitations under the License.
     <exclude name="PrematureDeclaration"/> <!-- this rule is buggy -->
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
-    <exclude name="LocalVariableCouldBeFinal"/>
+
     <exclude name="RedundantFieldInitializer"/>
     <exclude name="SimplifyStartsWith"/>
     <exclude name="UseStringBufferForStringAppends"/>

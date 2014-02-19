@@ -28,7 +28,7 @@ public final class CurrentCreationalContext<T> {
         return creationalContext.get();
     }
 
-    public void set(CreationalContext<T> value) {
+    public void set(final CreationalContext<T> value) {
         creationalContext.set(value);
     }
 

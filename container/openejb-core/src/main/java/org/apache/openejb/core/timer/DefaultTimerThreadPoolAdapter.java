@@ -90,7 +90,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     public static final class TimerExecutor {
         private final Executor executor;
 
-        private TimerExecutor(Executor executor) {
+        private TimerExecutor(final Executor executor) {
             if (executor == null) throw new IllegalArgumentException("executor cannot be null");
             this.executor = executor;
         }
@@ -104,7 +104,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
                 while (threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount() < 1 && !threadPoolExecutor.isShutdown()) {
                     try {
                         this.threadAvailableLock.wait(500L);
-                    } catch (InterruptedException ignore) {
+                    } catch (final InterruptedException ignore) {
                         // no-op
                     }
                 }
@@ -151,7 +151,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         try {
             this.executor.execute(runnable);
             return true;
-        } catch (RejectedExecutionException e) {
+        } catch (final RejectedExecutionException e) {
             logger.error("Failed to execute timer task", e);
             return false;
         }
@@ -163,10 +163,10 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
             final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
             tpe.shutdown();
             if (arg0) {
-                int timeout = SystemInstance.get().getOptions().get(OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS, 5);
+                final int timeout = SystemInstance.get().getOptions().get(OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS, 5);
                 try {
                     tpe.awaitTermination(timeout, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     logger.error(e.getMessage(), e);
                 }
             }

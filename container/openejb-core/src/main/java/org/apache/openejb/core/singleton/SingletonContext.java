@@ -26,12 +26,12 @@ import org.apache.openejb.spi.SecurityService;
  */
 public class SingletonContext extends BaseSessionContext {
 
-    public SingletonContext(SecurityService securityService) {
+    public SingletonContext(final SecurityService securityService) {
         super(securityService);
     }
 
     @Override
-    public void check(Call call) {
+    public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
 
         switch (call) {

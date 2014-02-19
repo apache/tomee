@@ -124,7 +124,7 @@ public class StatefulContainer implements RpcContainer {
 
         try {
             methods.put(BeanContext.Removable.class.getDeclaredMethod("$$remove"), MethodType.REMOVE);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Internal code change: BeanContext.Removable.$$remove() method was deleted", e);
         }
 
@@ -136,7 +136,7 @@ public class StatefulContainer implements RpcContainer {
                 try {
                     final Method method = businessLocal.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
-                } catch (NoSuchMethodException ignore) {
+                } catch (final NoSuchMethodException ignore) {
                     // no-op
                 }
             }
@@ -145,7 +145,7 @@ public class StatefulContainer implements RpcContainer {
                 try {
                     final Method method = businessRemote.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
-                } catch (NoSuchMethodException ignore) {
+                } catch (final NoSuchMethodException ignore) {
                     // no-op
                 }
             }
@@ -156,7 +156,7 @@ public class StatefulContainer implements RpcContainer {
             try {
                 final Method method = legacyRemote.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
-            } catch (NoSuchMethodException ignore) {
+            } catch (final NoSuchMethodException ignore) {
                 // no-op
             }
         }
@@ -166,7 +166,7 @@ public class StatefulContainer implements RpcContainer {
             try {
                 final Method method = legacyLocal.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
-            } catch (NoSuchMethodException ignore) {
+            } catch (final NoSuchMethodException ignore) {
                 // no-op
             }
         }
@@ -272,7 +272,7 @@ public class StatefulContainer implements RpcContainer {
         for (final ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to unregister MBean " + objectName);
             }
         }
@@ -323,7 +323,7 @@ public class StatefulContainer implements RpcContainer {
                 }
                 server.registerMBean(new ManagedMBean(stats), objectName);
                 data.jmxNames.add(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to register MBean ", e);
             }
         }
@@ -331,7 +331,7 @@ public class StatefulContainer implements RpcContainer {
         try {
             final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", sessionContext);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
 
@@ -385,7 +385,7 @@ public class StatefulContainer implements RpcContainer {
             if (entityManagers != null) {
                 try {
                     entityManagerRegistry.addEntityManagers((String) beanContext.getDeploymentID(), primaryKey, entityManagers);
-                } catch (EntityManagerAlreadyRegisteredException e) {
+                } catch (final EntityManagerAlreadyRegisteredException e) {
                     throw new EJBException(e);
                 }
             }
@@ -406,7 +406,7 @@ public class StatefulContainer implements RpcContainer {
                     // Wrap-up everthing into a object
                     instance = new Instance(beanContext, primaryKey, context.getBean(), context.getCreationalContext(), context.getInterceptors(), entityManagers);
 
-                } catch (Throwable throwable) {
+                } catch (final Throwable throwable) {
                     final ThreadContext callContext = ThreadContext.getThreadContext();
                     EjbTransactionUtil.handleSystemException(callContext.getTransactionPolicy(), throwable, callContext);
                     throw new IllegalStateException(throwable); // should never be reached
@@ -442,7 +442,7 @@ public class StatefulContainer implements RpcContainer {
                         interceptorStack.invoke(args);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 handleException(createContext, txPolicy, e);
             } finally {
                 // un register EntityManager
@@ -558,16 +558,16 @@ public class StatefulContainer implements RpcContainer {
                         returnValue = interceptorStack.invoke(args);
                     }
                 }
-            } catch (InvalidateReferenceException e) {
+            } catch (final InvalidateReferenceException e) {
                 throw new ApplicationException(e.getRootCause());
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 if (interfaceType.isBusiness()) {
                     retain = beanContext.retainIfExeption(runMethod);
                     handleException(callContext, txPolicy, e);
                 } else {
                     try {
                         handleException(callContext, txPolicy, e);
-                    } catch (ApplicationException ae) {
+                    } catch (final ApplicationException ae) {
                         // Don't throw application exceptions for non-business interface removes
                     }
                 }
@@ -580,7 +580,7 @@ public class StatefulContainer implements RpcContainer {
                             final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
                             interceptorStack.invoke();
                         }
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         final String logMessage = "An unexpected exception occured while invoking the preDestroy method on the Stateful SessionBean instance: "
                                                   + (null != instance ? instance.bean.getClass().getName() : beanContext.getBeanClass().getName());
                         logger.error(logMessage, t);
@@ -668,7 +668,7 @@ public class StatefulContainer implements RpcContainer {
 
                 // Invoke
                 returnValue = interceptorStack.invoke(args);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 handleException(callContext, txPolicy, e);
             } finally {
                 // un register EntityManager
@@ -701,9 +701,9 @@ public class StatefulContainer implements RpcContainer {
             if (instance == null) { // no need to check for extended persistence contexts it shouldn't happen
                 try {
                     instance = cache.checkOut(primaryKey, checkOutIfNecessary);
-                } catch (OpenEJBException e) {
+                } catch (final OpenEJBException e) {
                     throw e;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new SystemException("Unexpected load exception", e);
                 }
 
@@ -732,7 +732,7 @@ public class StatefulContainer implements RpcContainer {
             // try to get a lock within the specified period. 
             try {
                 lockAcquired = currLock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new ApplicationException("Unable to get lock.", e);
             }
         }
@@ -851,7 +851,7 @@ public class StatefulContainer implements RpcContainer {
                 try {
                     final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                     suspendedTransaction = beanTxEnv.suspendUserTransaction();
-                } catch (SystemException e) {
+                } catch (final SystemException e) {
                     EjbTransactionUtil.handleSystemException(txPolicy, e, callContext);
                 } finally {
                     instance.setBeanTransaction(suspendedTransaction);
@@ -915,7 +915,7 @@ public class StatefulContainer implements RpcContainer {
         // register them
         try {
             entityManagerRegistry.addEntityManagers((String) beanContext.getDeploymentID(), instance.primaryKey, entityManagers);
-        } catch (EntityManagerAlreadyRegisteredException e) {
+        } catch (final EntityManagerAlreadyRegisteredException e) {
             throw new EJBException(e);
         }
     }
@@ -1027,7 +1027,7 @@ public class StatefulContainer implements RpcContainer {
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
                 interceptorStack.invoke();
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 final String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object";
 
                 // [1] Log the exception or error
@@ -1069,9 +1069,9 @@ public class StatefulContainer implements RpcContainer {
                     interceptorStack.invoke();
 
                     instance.setInUse(false);
-                } catch (InvalidateReferenceException e) {
+                } catch (final InvalidateReferenceException e) {
                     // exception has alredy been handled
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     final String message = "An unexpected system exception occured while invoking the beforeCompletion method on the SessionSynchronization object";
 
                     // [1] Log the exception or error
@@ -1112,9 +1112,9 @@ public class StatefulContainer implements RpcContainer {
                     }
                     instance.setTransaction(null);
                     releaseInstance(instance);
-                } catch (InvalidateReferenceException inv) {
+                } catch (final InvalidateReferenceException inv) {
                     // exception has alredy been handled
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     final String message = "An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object";
 
                     // [1] Log the exception or error
@@ -1154,7 +1154,7 @@ public class StatefulContainer implements RpcContainer {
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.ACTIVATE, callbackInterceptors, instance.interceptors);
 
                 interceptorStack.invoke();
-            } catch (Throwable callbackException) {
+            } catch (final Throwable callbackException) {
                 discardInstance(threadContext.getPrimaryKey(), instance);
                 EjbTransactionUtil.handleSystemException(threadContext.getTransactionPolicy(), callbackException, threadContext);
             } finally {
@@ -1176,7 +1176,7 @@ public class StatefulContainer implements RpcContainer {
 
                 interceptorStack.invoke();
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.error("An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance", e);
             } finally {
                 ThreadContext.exit(oldContext);
@@ -1197,7 +1197,7 @@ public class StatefulContainer implements RpcContainer {
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
                 interceptorStack.invoke();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out Stateful SessionBean instance", e);
             } finally {
                 logger.info("Removing the timed-out stateful session bean instance " + instance.primaryKey);

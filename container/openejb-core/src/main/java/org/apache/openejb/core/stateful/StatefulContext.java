@@ -30,12 +30,12 @@ import javax.xml.rpc.handler.MessageContext;
  */
 public class StatefulContext extends BaseSessionContext {
 
-    public StatefulContext(SecurityService securityService, UserTransaction userTransaction) {
+    public StatefulContext(final SecurityService securityService, final UserTransaction userTransaction) {
         super(securityService, userTransaction);
     }
 
     @Override
-    public void check(Call call) {
+    public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
         switch (call) {
             case getCallerPrincipal:

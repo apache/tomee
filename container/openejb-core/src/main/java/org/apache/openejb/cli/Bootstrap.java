@@ -68,7 +68,7 @@ public class Bootstrap {
                     System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("Error setting " + OPENEJB_HOME_PROPERTY_NAME + " property: " + e.getClass() + ": " + e.getMessage());
         }
     }
@@ -86,7 +86,7 @@ public class Bootstrap {
             final SystemClassPath systemCP = new SystemClassPath();
             systemCP.addJarsToPath(lib);
             systemCP.addJarToPath(lib.toURI().toURL()); // add dir too like Tomcat/TomEE
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
             e.printStackTrace();
         }
@@ -103,7 +103,7 @@ public class Bootstrap {
         final Main main = (Main) clazz.newInstance();
         try {
             main.main(args);
-        } catch (SystemExitException e) {
+        } catch (final SystemExitException e) {
             System.exit(e.getExitCode());
         }
     }

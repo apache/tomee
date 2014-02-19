@@ -26,10 +26,10 @@ public class OpenEJBErrorHandler {
     private static Logger _logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static Messages _messages = new Messages("org.apache.openejb.util.resources");
 
-    public static void handleUnknownError(Throwable error, String systemLocation) {
+    public static void handleUnknownError(final Throwable error, final String systemLocation) {
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter pw = new PrintWriter(baos);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final PrintWriter pw = new PrintWriter(baos);
         error.printStackTrace(pw);
         pw.flush();
         pw.close();
@@ -42,62 +42,62 @@ public class OpenEJBErrorHandler {
          */
     }
 
-    public static void propertiesObjectIsNull(String systemLocation) throws OpenEJBException {
+    public static void propertiesObjectIsNull(final String systemLocation) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0002", systemLocation));
     }
 
-    public static void propertyFileNotFound(String propertyfileName, String systemLocation) throws OpenEJBException {
+    public static void propertyFileNotFound(final String propertyfileName, final String systemLocation) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0003", propertyfileName, systemLocation));
     }
 
-    public static void propertyNotFound(String propertyName, String propertyfileName) throws OpenEJBException {
+    public static void propertyNotFound(final String propertyName, final String propertyfileName) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0004", propertyName, propertyfileName));
     }
 
-    public static void propertyValueIsIllegal(String propertyName, String value) throws OpenEJBException {
+    public static void propertyValueIsIllegal(final String propertyName, final String value) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0005", propertyName, value));
     }
 
-    public static void propertyValueIsIllegal(String propertyName, String value, String message) throws OpenEJBException {
+    public static void propertyValueIsIllegal(final String propertyName, final String value, final String message) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0006", propertyName, value, message));
     }
 
-    public static void classNotFound(String systemLocation, String className) throws OpenEJBException {
+    public static void classNotFound(final String systemLocation, final String className) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0007", systemLocation, className));
     }
 
-    public static void classNotAccessible(String systemLocation, String className) throws OpenEJBException {
+    public static void classNotAccessible(final String systemLocation, final String className) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0008", systemLocation, className));
     }
 
-    public static void classNotIntantiateable(String systemLocation, String className) throws OpenEJBException {
+    public static void classNotIntantiateable(final String systemLocation, final String className) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0009", systemLocation, className));
     }
 
-    public static void classNotIntantiateableForUnknownReason(String systemLocation, String className, String exceptionClassName, String message) throws OpenEJBException {
+    public static void classNotIntantiateableForUnknownReason(final String systemLocation, final String className, final String exceptionClassName, final String message) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0011", systemLocation, className, exceptionClassName, message));
     }
 
-    public static void classNotIntantiateableFromCodebaseForUnknownReason(String systemLocation, String className, String codebase, String exceptionClassName, String message)
+    public static void classNotIntantiateableFromCodebaseForUnknownReason(final String systemLocation, final String className, final String codebase, final String exceptionClassName, final String message)
             throws OpenEJBException {
         throw new OpenEJBException(_messages.format("ge0012", systemLocation, className, codebase, exceptionClassName, message));
     }
 
-    public static void classCodebaseNotFound(String systemLocation, String className, String codebase, Exception e) throws OpenEJBException {
+    public static void classCodebaseNotFound(final String systemLocation, final String className, final String codebase, final Exception e) throws OpenEJBException {
 
         throw new OpenEJBException(_messages.format("ge0010", systemLocation, className, codebase, e.getMessage(), e));
     }
 
-    public static void configurationParsingError(String messageType, String message, String line, String column) {
+    public static void configurationParsingError(final String messageType, final String message, final String line, final String column) {
 
         _logger.error("as0001", messageType, message, line, column);
         /*

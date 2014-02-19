@@ -69,11 +69,11 @@ public class QueryProxy implements InvocationHandler {
         NAMED, NATIVE, OTHER
     }
 
-    public void setEntityManager(EntityManager entityManager) {
+    public void setEntityManager(final EntityManager entityManager) {
         em = entityManager;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if (method.getDeclaringClass().equals(Object.class)) {
             return method.invoke(this, args);
         }
@@ -124,7 +124,7 @@ public class QueryProxy implements InvocationHandler {
      * @param type the query type
      * @return the expected result
      */
-    private Object query(Method method, Object[] args, QueryType type) {
+    private Object query(final Method method, final Object[] args, final QueryType type) {
         if (args.length < 1) {
             throw new IllegalArgumentException("query() needs at least the query name");
         }
@@ -153,24 +153,24 @@ public class QueryProxy implements InvocationHandler {
                 }
 
                 if (Map.class.isAssignableFrom(args[i].getClass())) {
-                    for (Map.Entry<String, ?> entry : ((Map<String, ?>) args[i]).entrySet()) {
+                    for (final Map.Entry<String, ?> entry : ((Map<String, ?>) args[i]).entrySet()) {
                         query = query.setParameter(entry.getKey(), entry.getValue());
                     }
                     matched++;
                 } else if (args[i].getClass().isArray()) {
-                    Object[] array = (Object[]) args[i];
+                    final Object[] array = (Object[]) args[i];
                     for (int j = 0; j < array.length; j++) {
                         query = query.setParameter(j, array[j]);
                     }
                     matched++;
                 } else if (isInt(args[i].getClass())) {
-                    int next = i + 1;
+                    final int next = i + 1;
                     if (args.length == next || !isInt(args[next].getClass())) {
                         throw new IllegalArgumentException("if you provide a firstResult (first int parameter)" +
                                 "you should provide a maxResult too");
                     }
-                    int first = (Integer) args[i];
-                    int max = (Integer) args[next];
+                    final int first = (Integer) args[i];
+                    final int max = (Integer) args[next];
 
                     query = query.setFirstResult(first);
                     query = query.setMaxResults(max);
@@ -194,9 +194,9 @@ public class QueryProxy implements InvocationHandler {
         return getQueryResult(method, query);
     }
 
-    private Class<?> getReturnedType(Method method) {
+    private Class<?> getReturnedType(final Method method) {
         final String methodName = method.getName();
-        Class<?> type;
+        final Class<?> type;
         if (returnsTypes.containsKey(methodName)) {
             type = returnsTypes.get(methodName);
         } else {
@@ -206,21 +206,21 @@ public class QueryProxy implements InvocationHandler {
         return type;
     }
 
-    private Object getQueryResult(Method method, Query query) {
+    private Object getQueryResult(final Method method, final Query query) {
         if (Collection.class.isAssignableFrom(method.getReturnType())) {
             return query.getResultList();
         }
         return query.getSingleResult();
     }
 
-    private Object find(Method method, Object[] args) {
+    private Object find(final Method method, final Object[] args) {
         final String methodName = method.getName();
         final Class<?> type = getReturnedType(method);
         final Query query = createFinderQuery(em, methodName, type, args);
         return getQueryResult(method, query);
     }
 
-    private void remove(Object[] args, Class<?> returnType) {
+    private void remove(final Object[] args, final Class<?> returnType) {
         if (args != null && args.length == 1 && returnType.equals(Void.TYPE)) {
             Object entity = args[0];
             if (!em.contains(entity)) { // reattach the entity if possible
@@ -232,7 +232,7 @@ public class QueryProxy implements InvocationHandler {
                 }
 
                 SingularAttribute<?, ?> id = null; // = et.getId(entityClass); doesn't work with openJPA
-                for (SingularAttribute<?, ?> sa : et.getSingularAttributes()) {
+                for (final SingularAttribute<?, ?> sa : et.getSingularAttributes()) {
                     if (sa.isId()) {
                         id = sa;
                         break;
@@ -243,14 +243,14 @@ public class QueryProxy implements InvocationHandler {
                 }
                 final String idName = id.getName();
 
-                Object idValue;
+                final Object idValue;
                 try {
                     idValue = BeanUtils.getProperty(entity, idName);
-                } catch (InvocationTargetException e) {
+                } catch (final InvocationTargetException e) {
                     throw new IllegalArgumentException("can't invoke to get entity id");
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     throw new IllegalArgumentException("can't find the method to get entity id");
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                     throw new IllegalArgumentException("can't access field/method to get entity id");
                 }
 
@@ -265,7 +265,7 @@ public class QueryProxy implements InvocationHandler {
         }
     }
 
-    private Object merge(Object[] args, Class<?> returnType) {
+    private Object merge(final Object[] args, final Class<?> returnType) {
         if (args != null && args.length == 1 && returnType.equals(args[0].getClass())) {
             return em.merge(args[0]);
         } else {
@@ -274,7 +274,7 @@ public class QueryProxy implements InvocationHandler {
         }
     }
 
-    private void persist(Object[] args, Class<?> returnType) {
+    private void persist(final Object[] args, final Class<?> returnType) {
         if (args != null && args.length == 1 && returnType.equals(Void.TYPE)) {
             em.persist(args[0]);
         } else {
@@ -282,9 +282,9 @@ public class QueryProxy implements InvocationHandler {
         }
     }
 
-    private Class<?> getGenericType(Type type) {
+    private Class<?> getGenericType(final Type type) {
         if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
+            final ParameterizedType pt = (ParameterizedType) type;
             if (pt.getActualTypeArguments().length == 1) {
                 return (Class<?>) pt.getActualTypeArguments()[0];
             }
@@ -292,24 +292,24 @@ public class QueryProxy implements InvocationHandler {
         return Class.class.cast(type);
     }
 
-    private <T> Query createFinderQuery(EntityManager entityManager, String methodName, Class<T> entityType, Object[] args) {
+    private <T> Query createFinderQuery(final EntityManager entityManager, final String methodName, final Class<T> entityType, final Object[] args) {
         final List<String> conditions = parseMethodName(methodName);
 
         final EntityType<T> et = entityManager.getMetamodel().entity(entityType);
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Object> query = cb.createQuery();
-        Root<T> from = query.from(entityType);
+        final Root<T> from = query.from(entityType);
         query = query.select(from);
 
         int i = 0;
         Predicate where = null;
-        for (String condition : conditions) {
-            SingularAttribute<? super T, ?> attribute = et.getSingularAttribute(condition);
-            Path<?> path = from.get(attribute);
-            Class<?> javaType = attribute.getType().getJavaType();
+        for (final String condition : conditions) {
+            final SingularAttribute<? super T, ?> attribute = et.getSingularAttribute(condition);
+            final Path<?> path = from.get(attribute);
+            final Class<?> javaType = attribute.getType().getJavaType();
 
-            Predicate currentClause;
+            final Predicate currentClause;
             if (javaType.equals(String.class)) {
                 currentClause = cb.like((Expression<String>) path, (String) args[i++]);
             } else if (Number.class.isAssignableFrom(javaType) || javaType.isPrimitive()) {
@@ -331,11 +331,11 @@ public class QueryProxy implements InvocationHandler {
         }
 
         // pagination
-        TypedQuery<?> emQuery = entityManager.createQuery(query);
+        final TypedQuery<?> emQuery = entityManager.createQuery(query);
         if (args != null && args.length == conditions.size() + 2
                 && isInt(args[args.length - 2].getClass()) && isInt(args[args.length - 1].getClass())) {
-            int first = (Integer) args[args.length - 2];
-            int max = (Integer) args[args.length - 1];
+            final int first = (Integer) args[args.length - 2];
+            final int max = (Integer) args[args.length - 1];
 
             emQuery.setFirstResult(first);
             emQuery.setMaxResults(max);
@@ -344,12 +344,12 @@ public class QueryProxy implements InvocationHandler {
         return emQuery;
     }
 
-    private boolean isInt(Class<?> aClass) {
+    private boolean isInt(final Class<?> aClass) {
         return Integer.TYPE.equals(aClass) || Integer.class.equals(aClass);
     }
 
     private List<String> parseMethodName(final String methodName) {
-        List<String> parsed;
+        final List<String> parsed;
         if (conditions.containsKey(methodName)) {
             parsed = conditions.get(methodName);
         } else {
@@ -358,8 +358,8 @@ public class QueryProxy implements InvocationHandler {
             String toParse = methodName.substring(FIND_PREFIX.length());
             if (toParse.startsWith(BY)) {
                 toParse = toParse.substring(2);
-                String[] columns = toParse.split(AND);
-                for (String column : columns) {
+                final String[] columns = toParse.split(AND);
+                for (final String column : columns) {
                     parsed.add(StringUtils.uncapitalize(column));
                 }
             }

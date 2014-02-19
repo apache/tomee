@@ -30,25 +30,25 @@ public class TimerHandleImpl implements TimerHandle, Serializable {
     private final long id;
     private final String deploymentId;
 
-    public TimerHandleImpl(long id, String deploymentId) {
+    public TimerHandleImpl(final long id, final String deploymentId) {
         this.id = id;
         this.deploymentId = deploymentId;
     }
 
     public Timer getTimer() {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         if (containerSystem == null) {
             throw new NoSuchObjectLocalException("OpenEJb container system is not running");
         }
-        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+        final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
         if (beanContext == null) {
             throw new NoSuchObjectLocalException("Deployment info not found " + deploymentId);
         }
-        EjbTimerService timerService = beanContext.getEjbTimerService();
+        final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new NoSuchObjectLocalException("Deployment no longer supports ejbTimout " + deploymentId + ". Has this ejb been redeployed?");
         }
-        Timer timer = timerService.getTimer(id);
+        final Timer timer = timerService.getTimer(id);
         if (timer == null) {
             throw new NoSuchObjectLocalException("Timer not found for ejb " + deploymentId);
         }

@@ -115,7 +115,7 @@ public class RemoteServer {
         if (server != null) {
             try {
                 server.waitFor();
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // no-op
             }
         }
@@ -308,7 +308,7 @@ public class RemoteServer {
                     server.waitFor();
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
             if (checkPortAvailable) {
@@ -342,11 +342,11 @@ public class RemoteServer {
                         }
                         server.exitValue();
                         end = true;
-                    } catch (IllegalThreadStateException e) {
+                    } catch (final IllegalThreadStateException e) {
                         i++;
                         try {
                             Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
-                        } catch (InterruptedException e1) {
+                        } catch (final InterruptedException e1) {
                             e1.printStackTrace();
                         }
                         if (i == 5) {
@@ -371,7 +371,7 @@ public class RemoteServer {
             f.setAccessible(true);
             final int pid = (Integer) f.get(server);
             Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
-        } catch (Exception e1) {
+        } catch (final Exception e1) {
             e1.printStackTrace();
         }
     }
@@ -438,7 +438,7 @@ public class RemoteServer {
         if (!serverHasAlreadyBeenStarted) {
             try {
                 shutdown();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (verbose) {
                     e.printStackTrace(System.err);
                 }
@@ -487,7 +487,7 @@ public class RemoteServer {
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // Ignore
                 }
             }
@@ -510,7 +510,7 @@ public class RemoteServer {
             if (verbose) {
                 System.out.println("[] CONNECTED IN " + (this.tries - tries));
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (tries < 2) {
                 if (verbose) {
                     System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
@@ -519,7 +519,7 @@ public class RemoteServer {
             } else {
                 try {
                     Thread.sleep(2000);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     e.printStackTrace();
                 }
                 return connect(--tries);
@@ -528,7 +528,7 @@ public class RemoteServer {
             if (s != null) {
                 try {
                     s.close();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                     // no-op
                 }
             }
@@ -560,7 +560,7 @@ public class RemoteServer {
                             server.destroy();
                             server.waitFor();
                         }
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }

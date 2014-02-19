@@ -460,7 +460,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         String name = null;
         try {
             name = getProxyInfo().getInterface().getName();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
         return "proxy=" + name + ";deployment=" + this.deploymentID + ";pk=" + this.primaryKey;
@@ -482,7 +482,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
         try {
             obj = ProxyManager.getInvocationHandler(obj);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return false;
         }
         if (this == obj) {
@@ -550,7 +550,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             final ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(object);
             out.close();
-        } catch (NotSerializableException e) {
+        } catch (final NotSerializableException e) {
             throw (IOException) new NotSerializableException(e.getMessage() +
                                                              " : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the " +
                                                              OPENEJB_LOCALCOPY +

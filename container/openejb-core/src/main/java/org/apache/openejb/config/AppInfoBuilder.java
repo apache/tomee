@@ -210,7 +210,7 @@ class AppInfoBuilder {
                 appInfo.ejbJars.add(ejbJarInfo);
 
 
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 ConfigUtils.logger.warning("conf.0004", ejbModule.getJarLocation(), e.getMessage());
                 throw e;
             }
@@ -258,7 +258,7 @@ class AppInfoBuilder {
                     return new LinkedHashSet<String>(bean.dependsOn);
                 }
             });
-        } catch (CircularReferencesException e) {
+        } catch (final CircularReferencesException e) {
             // List<List> circuits = e.getCircuits();
             // TODO Seems we lost circular reference detection, or we do it elsewhere and don't need it here
         }
@@ -282,7 +282,7 @@ class AppInfoBuilder {
             final File file = toFile(url);
             try {
                 appInfo.libs.add(file.getCanonicalPath());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBException("Invalid application lib path " + file.getAbsolutePath());
             }
         }
@@ -290,7 +290,7 @@ class AppInfoBuilder {
         if (appModule.getCmpMappings() != null) {
             try {
                 appInfo.cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
-            } catch (JAXBException e) {
+            } catch (final JAXBException e) {
                 throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
             }
         }
@@ -408,7 +408,7 @@ class AppInfoBuilder {
                 servletInfo.servletName = servlet.getServletName();
                 servletInfo.servletClass = servlet.getServletClass();
                 servletInfo.mappings = webModule.getWebApp().getServletMappings(servletInfo.servletName);
-                for (ParamValue pv : servlet.getInitParam()) {
+                for (final ParamValue pv : servlet.getInitParam()) {
                     final ParamValueInfo pvi = new ParamValueInfo();
                     pvi.name = pv.getParamName();
                     pvi.value = pv.getParamValue();
@@ -464,7 +464,7 @@ class AppInfoBuilder {
                 final File file = toFile(url);
                 try {
                     connectorInfo.libs.add(file.getCanonicalPath());
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new IllegalArgumentException("Invalid application lib path " + file.getAbsolutePath());
                 }
             }

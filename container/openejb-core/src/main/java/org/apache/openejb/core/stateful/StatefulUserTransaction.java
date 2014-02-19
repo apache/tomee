@@ -32,7 +32,7 @@ public class StatefulUserTransaction implements UserTransaction {
     private final UserTransaction userTransaction;
     private final JtaEntityManagerRegistry jtaEntityManagerRegistry;
 
-    public StatefulUserTransaction(UserTransaction userTransaction, JtaEntityManagerRegistry jtaEntityManagerRegistry) {
+    public StatefulUserTransaction(final UserTransaction userTransaction, final JtaEntityManagerRegistry jtaEntityManagerRegistry) {
         this.userTransaction = userTransaction;
         this.jtaEntityManagerRegistry = jtaEntityManagerRegistry;
     }
@@ -41,21 +41,21 @@ public class StatefulUserTransaction implements UserTransaction {
         userTransaction.begin();
 
         // get the callContext
-        ThreadContext callContext = ThreadContext.getThreadContext();
+        final ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext == null) {
             // someone is using the user transaction out side of the component
             return;
         }
 
         // get the deployment info
-        BeanContext beanContext = callContext.getBeanContext();
+        final BeanContext beanContext = callContext.getBeanContext();
         if (beanContext.getComponentType() != BeanType.STATEFUL) {
             // some other non-stateful ejb is using our user transaction
             return;
         }
 
         // get the primary key
-        Object primaryKey = callContext.getPrimaryKey();
+        final Object primaryKey = callContext.getPrimaryKey();
         if (primaryKey == null) {
             // is is not a bean method
             return;
@@ -79,7 +79,7 @@ public class StatefulUserTransaction implements UserTransaction {
         userTransaction.setRollbackOnly();
     }
 
-    public void setTransactionTimeout(int i) throws SystemException {
+    public void setTransactionTimeout(final int i) throws SystemException {
         userTransaction.setTransactionTimeout(i);
     }
 }

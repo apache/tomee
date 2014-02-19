@@ -124,7 +124,7 @@ public class CmpContainer implements RpcContainer {
         try {
             final Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
             factory = (CmpEngineFactory) cmpEngineFactoryClass.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Unable to create cmp engine factory " + cmpEngineFactory, e);
         }
         factory.setTransactionManager(transactionManager);
@@ -175,7 +175,7 @@ public class CmpContainer implements RpcContainer {
             try {
                 final Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
                 field.set(null, beanContext);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore
             }
 
@@ -208,7 +208,7 @@ public class CmpContainer implements RpcContainer {
             try {
                 final Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
                 field.set(null, null);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore
             }
 
@@ -296,7 +296,7 @@ public class CmpContainer implements RpcContainer {
         final BeanContext beanContext = callContext.getBeanContext();
         try {
             return (EntityBean) beanContext.getCmpImplClass().newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Unable to create new entity bean instance " + beanContext.getCmpImplClass(), e);
         }
     }
@@ -327,7 +327,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.setEntityContext(new EntityContext(securityService));
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -345,7 +345,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.unsetEntityContext();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -363,7 +363,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbLoad();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -395,7 +395,7 @@ public class CmpContainer implements RpcContainer {
                 });
             }
             registeredEntities.add(entityBean);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
     }
@@ -411,7 +411,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbStore();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -432,14 +432,14 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbRemove();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             // clear relationships
             // todo replace with interface call when CmpEntityBean interface is added
             try {
                 entityBean.getClass().getMethod("OpenEJB_deleted").invoke(entityBean);
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
             cancelTimers(callContext);
@@ -450,9 +450,9 @@ public class CmpContainer implements RpcContainer {
     private boolean isDeleted(final EntityBean entityBean) {
         try {
             return (Boolean) entityBean.getClass().getMethod("OpenEJB_isDeleted").invoke(entityBean);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return false;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
@@ -468,7 +468,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbActivate();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -486,7 +486,7 @@ public class CmpContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbPassivate();
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new EJBException(e);
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -516,7 +516,7 @@ public class CmpContainer implements RpcContainer {
 
             // when there is not transaction, merge the data from the bean back into the cmp engine
             cmpEngine.storeBeanIfNoTx(callContext, bean);
-        } catch (NoSuchObjectException e) {
+        } catch (final NoSuchObjectException e) {
             handleApplicationException(txPolicy, e, false);
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
@@ -562,7 +562,7 @@ public class CmpContainer implements RpcContainer {
 
                 try {
                     returnValue = runMethod.invoke(bean, args);
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     System.out.println("********************************************************");
                     System.out.println("callMethod = " + callMethod);
                     System.out.println("runMethod = " + runMethod);
@@ -682,9 +682,9 @@ public class CmpContainer implements RpcContainer {
 
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(beanContext, primaryKey);
-        } catch (FinderException fe) {
+        } catch (final FinderException fe) {
             handleApplicationException(txPolicy, fe, false);
-        } catch (Throwable e) {// handle reflection exception
+        } catch (final Throwable e) {// handle reflection exception
             handleSystemException(txPolicy, e, callContext);
         } finally {
             afterInvoke(txPolicy, callContext);
@@ -744,9 +744,9 @@ public class CmpContainer implements RpcContainer {
                     return new ProxyInfo(beanContext, primaryKey);
                 }
             }
-        } catch (FinderException fe) {
+        } catch (final FinderException fe) {
             handleApplicationException(txPolicy, fe, false);
-        } catch (Throwable e) {// handle reflection exception
+        } catch (final Throwable e) {// handle reflection exception
             handleSystemException(txPolicy, e, callContext);
         } finally {
             afterInvoke(txPolicy, callContext);
@@ -816,7 +816,7 @@ public class CmpContainer implements RpcContainer {
 
             // return the single item.... multiple return values was handled in for loop above
             return proxies.iterator().next();
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw new EJBException(e);
         }
     }
@@ -840,9 +840,9 @@ public class CmpContainer implements RpcContainer {
             }
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
-        } catch (NoSuchObjectException e) {
+        } catch (final NoSuchObjectException e) {
             handleApplicationException(txPolicy, e, false);
-        } catch (Throwable e) {// handle reflection exception
+        } catch (final Throwable e) {// handle reflection exception
             handleSystemException(txPolicy, e, callContext);
         } finally {
             afterInvoke(txPolicy, callContext);

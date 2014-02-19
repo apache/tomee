@@ -33,22 +33,22 @@ public class Service extends AbstractService {
     public Service() {
     }
 
-    public Service(String id, String clazz) {
+    public Service(final String id, final String clazz) {
         super(id);
         this.clazz = clazz;
     }
 
-    public Service(String id, String type, String clazz) {
+    public Service(final String id, final String type, final String clazz) {
         super(id, type);
         this.clazz = clazz;
     }
 
-    public Service(String id, String type, String provider, String clazz) {
+    public Service(final String id, final String type, final String provider, final String clazz) {
         super(id, type, provider);
         this.clazz = clazz;
     }
 
-    public Service(String clazz) {
+    public Service(final String clazz) {
         this.clazz = clazz;
     }
 
@@ -56,7 +56,7 @@ public class Service extends AbstractService {
         return clazz;
     }
 
-    public void setClazz(String clazz) {
+    public void setClazz(final String clazz) {
         this.clazz = clazz;
     }
 }

@@ -24,14 +24,14 @@ public class URLReference extends Reference {
 
     private String url;
 
-    public URLReference(String url) {
+    public URLReference(final String url) {
         this.url = url;
     }
 
     public Object getObject() throws NamingException {
         try {
             return new URL(url);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new NamingException("Invalid URL: " + url);
         }
     }

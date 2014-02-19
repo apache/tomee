@@ -30,7 +30,7 @@ public final class PojoUtil {
     }
 
     public static Properties findConfiguration(final Collection<IdPropertiesInfo> infos, final String id) {
-        for (IdPropertiesInfo info : infos) {
+        for (final IdPropertiesInfo info : infos) {
             if (id.equals(info.id)) {
                 return info.properties;
             }
@@ -40,14 +40,14 @@ public final class PojoUtil {
 
     public static Collection<IdPropertiesInfo> findPojoConfig(final Collection<IdPropertiesInfo> pojoConfigurations, final AppInfo appInfo, final WebAppInfo webApp) {
         if (pojoConfigurations == null) {
-            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
                 if (ejbJarInfo.moduleId.equals(webApp.moduleId)) {
                     return ejbJarInfo.pojoConfigurations;
                 }
             }
 
             // useless normally but we had some code where modulName was the webapp moduleId
-            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
                 if (ejbJarInfo.moduleName.equals(webApp.moduleId)) {
                     return ejbJarInfo.pojoConfigurations;
                 }

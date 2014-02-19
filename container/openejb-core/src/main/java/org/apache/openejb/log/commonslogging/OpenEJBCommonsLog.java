@@ -65,62 +65,62 @@ public class OpenEJBCommonsLog implements Log, Serializable {
     }
 
     @Override
-    public void trace(Object message) {
+    public void trace(final Object message) {
         logger.debug(message + "");
     }
 
     @Override
-    public void trace(Object message, Throwable t) {
+    public void trace(final Object message, final Throwable t) {
         logger.debug(message + "", t);
     }
 
     @Override
-    public void debug(Object message) {
+    public void debug(final Object message) {
         logger.debug(message + "");
     }
 
     @Override
-    public void debug(Object message, Throwable t) {
+    public void debug(final Object message, final Throwable t) {
         logger.debug(message + "", t);
     }
 
     @Override
-    public void info(Object message) {
+    public void info(final Object message) {
         logger.info(message + "");
     }
 
     @Override
-    public void info(Object message, Throwable t) {
+    public void info(final Object message, final Throwable t) {
         logger.info(message + "", t);
     }
 
     @Override
-    public void warn(Object message) {
+    public void warn(final Object message) {
         logger.warning(message + "");
     }
 
     @Override
-    public void warn(Object message, Throwable t) {
+    public void warn(final Object message, final Throwable t) {
         logger.warning(message + "", t);
     }
 
     @Override
-    public void error(Object message) {
+    public void error(final Object message) {
         logger.error(message + "");
     }
 
     @Override
-    public void error(Object message, Throwable t) {
+    public void error(final Object message, final Throwable t) {
         logger.error(message + "", t);
     }
 
     @Override
-    public void fatal(Object message) {
+    public void fatal(final Object message) {
         logger.fatal(message + "");
     }
 
     @Override
-    public void fatal(Object message, Throwable t) {
+    public void fatal(final Object message, final Throwable t) {
         logger.fatal(message + "", t);
     }
 

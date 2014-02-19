@@ -38,11 +38,11 @@ public class IntraVmMetaData implements EJBMetaData, Serializable {
 
     protected BeanType type;
 
-    public IntraVmMetaData(Class homeInterface, Class remoteInterface, BeanType typeOfBean) {
+    public IntraVmMetaData(final Class homeInterface, final Class remoteInterface, final BeanType typeOfBean) {
         this(homeInterface, remoteInterface, null, typeOfBean);
     }
 
-    public IntraVmMetaData(Class homeInterface, Class remoteInterface, Class primaryKeyClass, BeanType typeOfBean) {
+    public IntraVmMetaData(final Class homeInterface, final Class remoteInterface, final Class primaryKeyClass, final BeanType typeOfBean) {
         this.type = typeOfBean;
         if (homeInterface == null || remoteInterface == null) {
             throw new IllegalArgumentException();
@@ -91,7 +91,7 @@ public class IntraVmMetaData implements EJBMetaData, Serializable {
         return type == BeanType.STATEFUL;
     }
 
-    public void setEJBHome(EJBHome home) {
+    public void setEJBHome(final EJBHome home) {
         homeStub = home;
     }
 
@@ -124,8 +124,8 @@ public class IntraVmMetaData implements EJBMetaData, Serializable {
             * we allow the application server to handle it.
             */
         } else {
-            BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
-            ApplicationServer applicationServer = ServerFederation.getApplicationServer();
+            final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(homeStub);
+            final ApplicationServer applicationServer = ServerFederation.getApplicationServer();
             return applicationServer.getEJBMetaData(handler.getProxyInfo());
         }
     }

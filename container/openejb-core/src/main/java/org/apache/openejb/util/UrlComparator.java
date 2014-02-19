@@ -30,29 +30,29 @@ public class UrlComparator implements Comparator<URL> {
     private File dir;
     private List<String> rootPath;
 
-    public UrlComparator(File directory) {
+    public UrlComparator(final File directory) {
         dir = directory;
         rootPath = path(dir);
     }
 
-    public UrlComparator(URL base) {
+    public UrlComparator(final URL base) {
         this(URLs.toFile(base));
     }
 
-    public int compare(URL a, URL b) {
+    public int compare(final URL a, final URL b) {
         return score(b) - score(a);
     }
 
-    private int score(URL url){
-        File file = URLs.toFile(url);
-        List<String> filePath = path(file);
+    private int score(final URL url){
+        final File file = URLs.toFile(url);
+        final List<String> filePath = path(file);
         int matches = 0;
 
-        ListIterator<String> a = rootPath.listIterator();
-        ListIterator<String> b = filePath.listIterator();
+        final ListIterator<String> a = rootPath.listIterator();
+        final ListIterator<String> b = filePath.listIterator();
         while(a.hasNext() && b.hasNext()) {
-            String nameA = a.next();
-            String nameB = b.next();
+            final String nameA = a.next();
+            final String nameB = b.next();
 
             if (nameA.equals(nameB)) {
                 matches++;
@@ -64,13 +64,13 @@ public class UrlComparator implements Comparator<URL> {
         return matches;
     }
 
-    private List<String> path(File file){
-        ArrayList<String> path = new ArrayList<String>();
+    private List<String> path(final File file){
+        final ArrayList<String> path = new ArrayList<String>();
         path(file, path);
         return path;
     }
 
-    private void path(File file, List<String> path){
+    private void path(final File file, final List<String> path){
         if (file == null) return;
 
         path(file.getParentFile(), path);

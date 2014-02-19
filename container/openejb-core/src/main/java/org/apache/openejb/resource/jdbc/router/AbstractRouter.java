@@ -31,11 +31,11 @@ public abstract class AbstractRouter implements Router {
         ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
     }
 
-    protected Object getJndiResource(String name) throws NamingException {
+    protected Object getJndiResource(final String name) throws NamingException {
         return ctx.lookup(name);
     }
 
-    protected Object getOpenEJBResource(String name) throws NamingException {
+    protected Object getOpenEJBResource(final String name) throws NamingException {
         return getJndiResource(OPENEJB_RESOURCE + name);
     }
 }
