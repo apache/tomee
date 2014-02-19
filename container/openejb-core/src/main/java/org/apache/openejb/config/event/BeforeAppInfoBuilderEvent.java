@@ -28,6 +28,9 @@ public class BeforeAppInfoBuilderEvent {
         this.appModule = appModule;
     }
 
+    public AppModule getAppModule() {
+        return appModule;
+    }
 
     @Override
     public String toString() {
