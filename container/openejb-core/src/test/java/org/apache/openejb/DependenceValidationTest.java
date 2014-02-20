@@ -46,7 +46,7 @@ public class DependenceValidationTest extends TestCase {
         super.run(testResult);
     }
 
-    public void testAssembler() throws Exception {
+    public void testPackageDependencies() throws Exception {
         final DependencyVisitor dependencyVisitor = new DependencyVisitor();
 
         final URL resource = DependenceValidationTest.class.getResource("/org/apache/openejb/OpenEJB.class");
@@ -66,7 +66,7 @@ public class DependenceValidationTest extends TestCase {
         assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.testng", "org.apache.openejb.testing");
 
         // Nothing may depend on the Config code except it's subpackages
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.typed.util", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.testng", "org.apache.openejb.testing", dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.event", "org.apache.openejb.config.typed.util", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.testng", "org.apache.openejb.testing", dynamicAssembler);
 
         // The assembler may not be dependent on the config factory Implementation
         assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");
