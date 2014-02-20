@@ -30,6 +30,7 @@ import javax.ejb.TransactionAttributeType
 @Stateless(name = 'TomEEWebAccessLogService')
 @RolesAllowed('tomee-admin')
 class LogServiceImpl {
+    private static final LINE_LIMIT = 2000
 
     ListFilesResultDto listFiles() {
         def logFolder = new File(System.getProperty('catalina.base'), 'logs')
@@ -46,7 +47,14 @@ class LogServiceImpl {
         def file = new File(logFolder, fileName)
         def text
         try {
-            text = file.text
+            def lines = new LinkedList()
+            file.eachLine {
+                if (lines.size() > LINE_LIMIT) {
+                    lines.removeFirst()
+                }
+                lines << it
+            }
+            text = lines.join(System.getProperty('line.separator'))
         } catch (FileNotFoundException ignore) {
             text = "'$fileName' not found."
         }
