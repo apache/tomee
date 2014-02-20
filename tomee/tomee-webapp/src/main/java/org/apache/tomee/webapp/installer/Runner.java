@@ -18,8 +18,8 @@
 
 package org.apache.tomee.webapp.installer;
 
-import org.apache.tomee.installer.Installer;
-import org.apache.tomee.installer.Paths;
+import org.apache.tomee.installer.InstallerInterface;
+import org.apache.tomee.installer.PathsInterface;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,13 +31,16 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Runner {
-    private final File openejbWarDir;
+    private final InstallerInterface installer;
     private String catalinaHome = System.getProperty("catalina.home");
     private String catalinaBase = System.getProperty("catalina.base");
     private String serverXmlFile = System.getProperty("catalina.base") + "/conf/server.xml";
 
-    public Runner(File openejbWarDir) {
-        this.openejbWarDir = openejbWarDir;
+    private static List<Map<String, String>> installerResults = null;
+    private static org.apache.tomee.installer.Status installerStatus = null;
+
+    public Runner(InstallerInterface installer) {
+        this.installer = installer;
     }
 
     public void setCatalinaHome(String catalinaHome) {
@@ -52,33 +55,38 @@ public class Runner {
         this.serverXmlFile = serverXmlFile;
     }
 
-    private void setAlerts(String key, List<String> messages, List<Map<String, String>> result) {
+    private void setAlerts(String key, List<String> messages) {
         if (messages == null) {
             return;
         }
         for (String message : messages) {
-            result.add(Common.build(key, message));
+            installerResults.add(Common.build(key, message));
         }
     }
 
-    public List<Map<String, String>> execute() {
-        final Paths paths = new Paths(openejbWarDir);
-        final Installer installer = new Installer(paths);
-        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-        if (org.apache.tomee.installer.Status.NONE.equals(installer.getStatus())) {
-            paths.reset();
-            installer.reset();
-            paths.setCatalinaHomeDir(this.catalinaHome);
-            paths.setCatalinaBaseDir(this.catalinaBase);
-            paths.setServerXmlFile(this.serverXmlFile);
-            if (paths.verify()) {
-                installer.installAll();
-            }
+    public synchronized List<Map<String, String>> execute(boolean install) {
+        if (org.apache.tomee.installer.Status.INSTALLED.equals(installerStatus) ||
+                org.apache.tomee.installer.Status.REBOOT_REQUIRED.equals(installerStatus)) {
+            return installerResults;
         }
-        result.add(Common.build("status", String.valueOf(installer.getStatus())));
-        setAlerts("errors", installer.getAlerts().getErrors(), result);
-        setAlerts("warnings", installer.getAlerts().getWarnings(), result);
-        setAlerts("infos", installer.getAlerts().getInfos(), result);
+        final PathsInterface paths = installer.getPaths();
+        paths.reset();
+        installer.reset();
+        paths.setCatalinaHomeDir(this.catalinaHome);
+        paths.setCatalinaBaseDir(this.catalinaBase);
+        paths.setServerXmlFile(this.serverXmlFile);
+        if (paths.verify() && install) {
+            installer.installAll();
+        }
+        installerResults = new ArrayList<Map<String, String>>();
+        installerResults.add(Common.build("catalinaHomeDir", String.valueOf(catalinaHome)));
+        installerResults.add(Common.build("catalinaBaseDir", String.valueOf(catalinaBase)));
+        installerResults.add(Common.build("serverXmlFile", String.valueOf(serverXmlFile)));
+        installerStatus = installer.getStatus();
+        installerResults.add(Common.build("status", String.valueOf(installerStatus)));
+        setAlerts("errors", installer.getAlerts().getErrors());
+        setAlerts("warnings", installer.getAlerts().getWarnings());
+        setAlerts("infos", installer.getAlerts().getInfos());
         {
             boolean hasHome = false;
             boolean doesHomeExist = false;
@@ -95,10 +103,10 @@ public class Runner {
                     hasLibDirectory = libDir.exists();
                 }
             }
-            result.add(Common.build("hasHome", String.valueOf(hasHome)));
-            result.add(Common.build("doesHomeExist", String.valueOf(doesHomeExist)));
-            result.add(Common.build("isHomeDirectory", String.valueOf(isHomeDirectory)));
-            result.add(Common.build("hasLibDirectory", String.valueOf(hasLibDirectory)));
+            installerResults.add(Common.build("hasHome", String.valueOf(hasHome)));
+            installerResults.add(Common.build("doesHomeExist", String.valueOf(doesHomeExist)));
+            installerResults.add(Common.build("isHomeDirectory", String.valueOf(isHomeDirectory)));
+            installerResults.add(Common.build("hasLibDirectory", String.valueOf(hasLibDirectory)));
         }
         {
             boolean wereTheOpenEJBClassesInstalled = false;
@@ -137,11 +145,11 @@ public class Runner {
             } catch (Exception e) {
                 // noop
             }
-            result.add(Common.build("wereTheOpenEJBClassesInstalled", String.valueOf(wereTheOpenEJBClassesInstalled)));
-            result.add(Common.build("wereTheEjbClassesInstalled", String.valueOf(wereTheEjbClassesInstalled)));
-            result.add(Common.build("wasOpenEJBStarted", String.valueOf(wasOpenEJBStarted)));
-            result.add(Common.build("canILookupAnything", String.valueOf(canILookupAnything)));
+            installerResults.add(Common.build("wereTheOpenEJBClassesInstalled", String.valueOf(wereTheOpenEJBClassesInstalled)));
+            installerResults.add(Common.build("wereTheEjbClassesInstalled", String.valueOf(wereTheEjbClassesInstalled)));
+            installerResults.add(Common.build("wasOpenEJBStarted", String.valueOf(wasOpenEJBStarted)));
+            installerResults.add(Common.build("canILookupAnything", String.valueOf(canILookupAnything)));
         }
-        return result;
+        return installerResults;
     }
 }

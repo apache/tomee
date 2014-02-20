@@ -60,7 +60,7 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Static Content</web-resource-name>
-      <url-pattern>/app/lib/*</url-pattern>
+      <url-pattern>/webjars/*</url-pattern>
     </web-resource-collection>
   </security-constraint>
   <security-constraint>

@@ -35,8 +35,7 @@ $(function () {
             method: 'POST',
             dataType: 'json',
             success: function (data) {
-                populateGrid(data);
-                notification.modal({});
+                window.location.reload();
             }
         });
     });
@@ -51,7 +50,7 @@ $(function () {
         }
     }
 
-    function populateGrid(data) {
+    function setData(data) {
         var table = $($('.ux-status-table').get(0));
         table.empty();
         var systemStatus = {};
@@ -59,21 +58,26 @@ $(function () {
             systemStatus[item.key] = item.value;
             table.append('<tr><td>' + item.key + '</td><td>' + item.value + '</td></tr>')
         });
-        if (data && data.length > 0) {
-            if (systemStatus.status === 'NONE') {
-                installBtn.removeClass('disabled');
-            }
-            catalinaHome.val(systemStatus.catalinaHomeDir);
-            catalinaBase.val(systemStatus.catalinaBaseDir);
-            serverXmlFile.val(systemStatus.serverXmlFile);
+        if (systemStatus.status === 'INSTALLED') {
+            $('.ux-server-ready-panel').removeClass('ux-hidden');
+            var providerLink = $($('.ux-provider-url').get(0));
+            providerLink.attr('href', window.location.href + 'ejb');
+            providerLink.html(window.location.href + 'ejb');
+        } else if (systemStatus.status === 'REBOOT_REQUIRED') {
+            $('.ux-installer-reboot-panel').removeClass('ux-hidden');
+        } else {
+            $('.ux-installer-panel').removeClass('ux-hidden');
         }
+        catalinaHome.val(systemStatus.catalinaHomeDir);
+        catalinaBase.val(systemStatus.catalinaBaseDir);
+        serverXmlFile.val(systemStatus.serverXmlFile);
     }
 
     $.ajaxSetup({ cache: false });
     $.ajax({
-        url: 'installer',
+        url: 'installer?ts=' + (new Date()).getTime(),
         method: 'GET',
         dataType: 'json',
-        success: populateGrid
+        success: setData
     });
 });

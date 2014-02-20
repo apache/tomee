@@ -27,12 +27,13 @@
     <groupId>org.apache.openejb</groupId>
     <version>1.6.1-SNAPSHOT</version>
   </parent>
-
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Webapp</name>
-
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <build>
     <plugins>
       <plugin> <!-- the jar is only for resources and other classes are for the gui -->
@@ -81,6 +82,12 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>3.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>bootstrap</artifactId>

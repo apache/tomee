@@ -17,6 +17,9 @@
 
 package org.apache.tomee.webapp.installer;
 
+import org.apache.tomee.installer.Installer;
+import org.apache.tomee.installer.Paths;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +33,9 @@ import java.util.Map;
 public class InstallerServlet extends HttpServlet {
 
     private String escape(String str) {
+        if (str == null) {
+            return "";
+        }
         return str.replaceAll("\"", "\\\\\"").replaceAll("\\\\", "\\\\\\\\");
     }
 
@@ -50,16 +56,16 @@ public class InstallerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final ServletContext ctx = req.getServletContext();
         final String rootPath = ctx.getRealPath("/");
-        final Status statusManager = new Status(new File(rootPath));
+        final Runner installer = new Runner(new Installer(new Paths(new File(rootPath))));
         resp.setContentType("application/json");
-        resp.getOutputStream().print(getJsonList(statusManager.get()));
+        resp.getOutputStream().print(getJsonList(installer.execute(false)));
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final ServletContext ctx = req.getServletContext();
         final String rootPath = ctx.getRealPath("/");
-        final Runner installer = new Runner(new File(rootPath));
+        final Runner installer = new Runner(new Installer(new Paths(new File(rootPath))));
         if (req.getParameter("catalinaBaseDir") != null && "".equals(req.getParameter("catalinaBaseDir").trim())) {
             installer.setCatalinaBaseDir(req.getParameter("catalinaBaseDir").trim());
         }
@@ -70,6 +76,6 @@ public class InstallerServlet extends HttpServlet {
             installer.setServerXmlFile(req.getParameter("serverXmlFile").trim());
         }
         resp.setContentType("application/json");
-        resp.getOutputStream().print(getJsonList(installer.execute()));
+        resp.getOutputStream().print(getJsonList(installer.execute(true)));
     }
 }

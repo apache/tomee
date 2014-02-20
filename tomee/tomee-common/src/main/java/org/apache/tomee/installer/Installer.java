@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-public class Installer {
+public class Installer implements InstallerInterface {
     private final Alerts alerts = new Alerts();
 
     private final Paths paths;
@@ -73,18 +73,27 @@ public class Installer {
         this.force = force;
     }
 
+    @Override
+    public PathsInterface getPaths() {
+        return paths;
+    }
+
+    @Override
     public Alerts getAlerts() {
         return alerts;
     }
 
+    @Override
     public void reset() {
         alerts.reset();
     }
 
+    @Override
     public Status getStatus() {
         return status;
     }
 
+    @Override
     public void installAll() {
         installListener();
         installJavaagent();
@@ -187,6 +196,9 @@ public class Installer {
 
     private void addTomEELinkToTomcatHome() {
         final File home = paths.getHome();
+        if(!home.exists()) {
+            return;
+        }
         final String indeJsp = Installers.readAll(home, alerts);
         if (indeJsp == null) {
             return;
