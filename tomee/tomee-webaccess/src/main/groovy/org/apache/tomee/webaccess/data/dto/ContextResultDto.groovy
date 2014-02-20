@@ -16,16 +16,27 @@
  *  limitations under the License.
  */
 
-package org.apache.tomee.webaccess.rest
+package org.apache.tomee.webaccess.data.dto
 
-import javax.ws.rs.ApplicationPath
-import javax.ws.rs.core.Application
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-@ApplicationPath('/rest')
-class ApplicationConfig extends Application {
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+class ContextResultDto {
 
-    Set<Class<?>> getClasses() {
-        [KeepAlive, Log, Scripting, Session, Context, Authentication]
-    }
+    @XmlElement
+    String baseName
+
+    @XmlElement
+    boolean deletable
+
+    @XmlElement
+    String docBase
+
+    @XmlElement
+    String originalDocBase
 
 }

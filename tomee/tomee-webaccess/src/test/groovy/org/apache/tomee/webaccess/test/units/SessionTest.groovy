@@ -16,14 +16,16 @@
  *  limitations under the License.
  */
 
-package org.apache.tomee.webaccess.test
+package org.apache.tomee.webaccess.test.units
 
+import groovy.json.JsonSlurper
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.tomee.webaccess.rest.ApplicationConfig
 import org.apache.tomee.webaccess.rest.Authentication
+import org.apache.tomee.webaccess.rest.Context
 import org.apache.tomee.webaccess.rest.Session
-import org.apache.tomee.webaccess.service.SessionServiceImpl
+import org.apache.tomee.webaccess.service.ContextsServiceImpl
 import org.apache.tomee.webaccess.test.helpers.Utilities
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.junit.Arquillian
@@ -48,22 +50,22 @@ class SessionTest {
                 ApplicationConfig,
                 Authentication,
                 Session,
-                SessionServiceImpl,
-                SessionTest
+                Context,
+                ContextsServiceImpl
         ).addAsWebResource(new File('src/test/resources/test/context.xml'), 'META-INF/context.xml')
     }
 
     @Test
-    void test() throws Exception {
+    void testSessions() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            def numberOfSessions = (content =~ /context/).count
-            Assert.assertEquals("Expecting 1 session. Resulting content: $content", 1, numberOfSessions)
+            def json = new JsonSlurper().parseText(content)
+            Assert.assertEquals("Expecting 1 session. Resulting content: $content", 1, json.sessionResultDto?.size())
         })
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            def numberOfSessions = (content =~ /context/).count
-            Assert.assertEquals("Expecting 2 sessions. Resulting content: $content", 2, numberOfSessions)
+            def json = new JsonSlurper().parseText(content)
+            Assert.assertEquals("Expecting 2 session. Resulting content: $content", 2, json.sessionResultDto?.size())
         })
     }
 

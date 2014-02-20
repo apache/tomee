@@ -24,7 +24,7 @@
 
         var View = Backbone.View.extend({
             tagName: 'div',
-            className: 'ux-sessions panel panel-default',
+            className: 'ux-dashboard panel panel-default',
             events: {
                 'click .ux-refresh-btn': function (evt) {
                     evt.preventDefault();

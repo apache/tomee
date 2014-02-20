@@ -18,14 +18,31 @@
 
 package org.apache.tomee.webaccess.rest
 
-import javax.ws.rs.ApplicationPath
-import javax.ws.rs.core.Application
+import org.apache.tomee.webaccess.data.dto.ContextResultDto
+import org.apache.tomee.webaccess.service.ContextsServiceImpl
 
-@ApplicationPath('/rest')
-class ApplicationConfig extends Application {
+import javax.ejb.EJB
+import javax.ws.rs.DELETE
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
 
-    Set<Class<?>> getClasses() {
-        [KeepAlive, Log, Scripting, Session, Context, Authentication]
+@Path('/context')
+class Context {
+
+    @EJB
+    private ContextsServiceImpl service
+
+    @DELETE
+    @Path('/{baseName}')
+    void expireSession(@PathParam('baseName') String baseName) {
+        service.killContext(baseName)
     }
 
+    @GET
+    @Produces('application/json')
+    List<ContextResultDto> list() {
+        service.listContexts()
+    }
 }

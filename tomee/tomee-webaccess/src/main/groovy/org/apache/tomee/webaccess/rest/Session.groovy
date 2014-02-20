@@ -19,7 +19,7 @@
 package org.apache.tomee.webaccess.rest
 
 import org.apache.tomee.webaccess.data.dto.SessionResultDto
-import org.apache.tomee.webaccess.service.SessionServiceImpl
+import org.apache.tomee.webaccess.service.ContextsServiceImpl
 
 import javax.ejb.EJB
 import javax.ws.rs.*
@@ -28,7 +28,7 @@ import javax.ws.rs.*
 class Session {
 
     @EJB
-    private SessionServiceImpl service
+    private ContextsServiceImpl service
 
     @DELETE
     @Path('/expire/{context}/{sessionId}')

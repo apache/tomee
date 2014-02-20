@@ -33,6 +33,7 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         'javascript': 'JavaScript',
         'log.files': 'Log Files',
         'log.file': 'Choose file',
+        'dashboard': 'Dashboard',
         'sessions': 'Sessions',
         'session.id': 'Session Id',
         'session.context': 'Context',

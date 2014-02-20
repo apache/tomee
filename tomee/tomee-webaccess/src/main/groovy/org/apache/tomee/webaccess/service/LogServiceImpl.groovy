@@ -27,7 +27,7 @@ import javax.ejb.TransactionAttribute
 import javax.ejb.TransactionAttributeType
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Stateless
+@Stateless(name = 'TomEEWebAccessLogService')
 @RolesAllowed('tomee-admin')
 class LogServiceImpl {
 
