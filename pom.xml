@@ -180,6 +180,7 @@
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.2.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.0.1</version.shrinkwrap.resolver.bom>
+    <version.shrinkwrap.resolvers>2.0.2</version.shrinkwrap.resolvers>
   </properties>
 
   <build>

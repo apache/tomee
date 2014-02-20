@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.apache.tomee.installer;
 
 import org.apache.openejb.jpa.integration.MakeTxLookup;
@@ -30,7 +31,7 @@ import java.util.List;
  * 
  *
  */
-public class Paths {
+public class Paths implements PathsInterface {
 
 	/**
 	 * The openejb webapp directory under <<tomcat-install>>/webapps
@@ -65,6 +66,7 @@ public class Paths {
      * Returns the directory represented by the catalina.home system property
      * @return The directory represented by the catalina.home system property
      */
+    @Override
     public File getCatalinaHomeDir() {
         if (catalinaHomeDir == null) {
             String catalinaHome = System.getProperty("catalina.home");
@@ -78,6 +80,7 @@ public class Paths {
      * Sets the catalina home directory
      * @param catalinaHomeDir the absolute path of the catalina home directory
      */
+    @Override
     public void setCatalinaHomeDir(String catalinaHomeDir) {
         this.catalinaHomeDir = createFile(catalinaHomeDir);
     }
@@ -85,6 +88,7 @@ public class Paths {
      * Sets the catalina home directory
      * @param catalinaHomeDir the file representing the absolute path of the catalina home directory
      */
+    @Override
     public void setCatalinaHomeDir(File catalinaHomeDir) {
         this.catalinaHomeDir = catalinaHomeDir;
     }
@@ -92,6 +96,7 @@ public class Paths {
      * Returns the directory represented by the catalina.base system property
      * @return The directory represented by the catalina.base system property
      */
+    @Override
     public File getCatalinaBaseDir() {
         if (catalinaBaseDir == null) {
             String catalinaBase = System.getProperty("catalina.base");
@@ -105,6 +110,7 @@ public class Paths {
      * Sets the catalina base directory
      * @param catalinaBaseDir the absolute path of the catalina base directory
      */
+    @Override
     public void setCatalinaBaseDir(String catalinaBaseDir) {
         setCatalinaBaseDir(createFile(catalinaBaseDir));
     }
@@ -112,6 +118,7 @@ public class Paths {
      * Sets the catalina base directory
      * @param catalinaBaseDir the file representing the absolute path of the catalina base directory
      */
+    @Override
     public void setCatalinaBaseDir(File catalinaBaseDir) {
         this.catalinaBaseDir = catalinaBaseDir;
     }
@@ -119,6 +126,7 @@ public class Paths {
      * Returns the file representing <<tomcat-install>>/conf/server.xml
      * @return the file representing <<tomcat-install>>/conf/server.xml
      */
+    @Override
     public File getServerXmlFile() {
         if (serverXmlFile == null) {
             File confdir = getCatalinaConfDir();
@@ -130,6 +138,7 @@ public class Paths {
         return serverXmlFile;
     }
 
+    @Override
     public File getHome() {
         return new File(getCatalinaBaseDir(), "webapps/ROOT/index.jsp");
     }
@@ -138,6 +147,7 @@ public class Paths {
      * Sets the server.xml file
      * @param serverXmlFile the absolute path of the server.xml file
      */
+    @Override
     public void setServerXmlFile(String serverXmlFile) {
         this.serverXmlFile = createFile(serverXmlFile);
     }
@@ -145,6 +155,7 @@ public class Paths {
      * Sets the server.xml file
      * @param serverXmlFile the file representing the absolute path of the server.xml file
      */    
+    @Override
     public void setServerXmlFile(File serverXmlFile) {
         this.serverXmlFile = serverXmlFile;
     }
@@ -152,6 +163,7 @@ public class Paths {
      * Returns the directory representing {@link #catalinaHomeDir}/lib for Tomcat 6. For Tomcat 5.x it returns {@link #catalinaHomeDir}/server/lib
      * @return the directory representing {@link #catalinaHomeDir}/lib
      */
+    @Override
     public File getCatalinaLibDir() {
         File catalinaHomeDir = getCatalinaHomeDir();
 
@@ -167,6 +179,7 @@ public class Paths {
      * Returns the directory representing {@link #catalinaBaseDir}/conf
      * @return the directory representing {@link #catalinaBaseDir}/conf
      */
+    @Override
     public File getCatalinaConfDir() {
         File catalinaBaseDir = getCatalinaBaseDir();
 
@@ -178,6 +191,7 @@ public class Paths {
      * Returns the directory representing {@link #catalinaHomeDir}/bin
      * @return the directory representing {@link #catalinaHomeDir}/bin
      */
+    @Override
     public File getCatalinaBinDir() {
         File catalinaHomeDir = getCatalinaHomeDir();
 
@@ -189,6 +203,7 @@ public class Paths {
      * Returns the {@link #getCatalinaBinDir()}/catalina.sh file
      * @return the {@link #getCatalinaBinDir()}/catalina.sh file
      */
+    @Override
     public File getCatalinaShFile() {
         File binDir = getCatalinaBinDir();
 
@@ -200,6 +215,7 @@ public class Paths {
      * Returns the {@link #getCatalinaBinDir()}/catalina.bat file
      * @return the {@link #getCatalinaBinDir()}/catalina.bat file
      */
+    @Override
     public File getCatalinaBatFile() {
         File binDir = getCatalinaBinDir();
 
@@ -212,6 +228,7 @@ public class Paths {
      * Returns null if {@link #openejbWarDir} is null
      * @return the {@link #openejbWarDir}/lib directory
      */
+    @Override
     public File getOpenEJBLibDir() {
         if (openejbWarDir == null) return null;
 
@@ -221,14 +238,17 @@ public class Paths {
      * Returns the tomee-loader.jar file
      * @return the tomee-loader.jar file
      */
+    @Override
     public File getOpenEJBTomcatLoaderJar() {
         return findOpenEJBJar("tomee-loader");
     }
 
+    @Override
     public File getJavaEEAPIJar() {
         return findOpenEJBJar("javaee-api");
     }
 
+    @Override
     public File getJAXBImpl() {
         return findOpenEJBJar("jaxb-impl");
     }
@@ -237,6 +257,7 @@ public class Paths {
      * Returns the openejb-javaagent.jar file
      * @return the openejb-javaagent.jar file
      */
+    @Override
     public File getOpenEJBJavaagentJar() {
         return findOpenEJBJar("openejb-javaagent");
     }
@@ -244,22 +265,27 @@ public class Paths {
      * Returns the openejb-core.jar file
      * @return the openejb-core.jar file
      */
+    @Override
     public File getOpenEJBCoreJar() {
         return findOpenEJBJar("openejb-core");
     }
 
+    @Override
     public File geOpenEJBTomcatCommonJar() {
         return findOpenEJBJar("tomee-common");
     }
 
+    @Override
     public File findOpenEJBJar(String namePrefix) {
         return findJar(getOpenEJBLibDir(), namePrefix);
     }
 
+    @Override
     public File findOpenEJBWebJar(String namePrefix) {
         return findJar(getOpenEJBWebLibDir(), namePrefix);
     }
 
+    @Override
     public File findTomEELibJar(final String prefix) {
         File jar = findJar(getCatalinaLibDir(), prefix);
         if (jar == null) { // maybe tomcat/openejb integration
@@ -314,6 +340,7 @@ public class Paths {
      * 
      * @return true if verification succeeds
      */
+    @Override
     public boolean verify() {
         if (openejbWarDir == null) {
             addError("OpenEJB war is not unpacked");
@@ -364,6 +391,7 @@ public class Paths {
     /**
      * Clears out all verification errors from the underlying list
      */
+    @Override
     public void reset() {
         errors.clear();
     }
@@ -371,6 +399,7 @@ public class Paths {
      * Checks to see if there are any verification errors
      * @return true if there are verification errors
      */
+    @Override
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
@@ -378,6 +407,7 @@ public class Paths {
      * Returns a list of verification errors
      * @return a list of verification errors
      */
+    @Override
     public List<String> getErrors() {
         return errors;
     }
@@ -458,6 +488,7 @@ public class Paths {
         return null;
     }
 
+    @Override
     public File getOpenEJBWebLibDir() {
         if (openEJBWebLibDir == null) {
             openEJBWebLibDir = new File(openejbWarDir, "WEB-INF/lib");
@@ -465,6 +496,7 @@ public class Paths {
         return openEJBWebLibDir;
     }
 
+    @Override
     public File getTomcatUsersXml() {
         if (tomcatUsersXml == null) {
             final File confdir = getCatalinaConfDir();
@@ -476,6 +508,7 @@ public class Paths {
         return tomcatUsersXml;
     }
 
+    @Override
     public File getSetClasspathSh() {
         final File binDir = getCatalinaBinDir();
         if (binDir == null) {
@@ -484,6 +517,7 @@ public class Paths {
         return new File(binDir, "setclasspath.sh");
     }
 
+    @Override
     public File getSetClasspathBat() {
         final File binDir = getCatalinaBinDir();
         if (binDir == null) {
