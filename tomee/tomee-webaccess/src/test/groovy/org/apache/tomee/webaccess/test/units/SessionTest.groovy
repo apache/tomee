@@ -18,7 +18,6 @@
 
 package org.apache.tomee.webaccess.test.units
 
-import groovy.json.JsonSlurper
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.tomee.webaccess.rest.ApplicationConfig
@@ -59,13 +58,13 @@ class SessionTest {
     void testSessions() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            def json = new JsonSlurper().parseText(content)
-            Assert.assertEquals("Expecting 1 session. Resulting content: $content", 1, json.sessionResultDto?.size())
+            def numberOfSessions = (content =~ /context/).count
+            Assert.assertEquals("Expecting 1 session. Resulting content: $content", 1, numberOfSessions)
         })
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            def json = new JsonSlurper().parseText(content)
-            Assert.assertEquals("Expecting 2 session. Resulting content: $content", 2, json.sessionResultDto?.size())
+            def numberOfSessions = (content =~ /context/).count
+            Assert.assertEquals("Expecting 2 sessions. Resulting content: $content", 2, numberOfSessions)
         })
     }
 
