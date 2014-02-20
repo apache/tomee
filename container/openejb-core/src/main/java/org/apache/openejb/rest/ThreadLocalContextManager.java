@@ -18,6 +18,7 @@
 package org.apache.openejb.rest;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import java.util.Map;
 public class ThreadLocalContextManager {
     public static final ThreadLocalRequest REQUEST = new ThreadLocalRequest();
     public static final ThreadLocalServletConfig SERVLET_CONFIG = new ThreadLocalServletConfig();
+    public static final ThreadLocalServletContext SERVLET_CONTEXT = new ThreadLocalServletContext();
     public static final ThreadLocalServletRequest SERVLET_REQUEST = new ThreadLocalServletRequest();
     public static final ThreadLocalHttpServletRequest HTTP_SERVLET_REQUEST = new ThreadLocalHttpServletRequest();
     public static final ThreadLocalHttpServletResponse HTTP_SERVLET_RESPONSE = new ThreadLocalHttpServletResponse();
@@ -48,6 +50,7 @@ public class ThreadLocalContextManager {
         REQUEST.remove();
         SERVLET_REQUEST.remove();
         SERVLET_CONFIG.remove();
+        SERVLET_CONTEXT.remove();
         HTTP_SERVLET_REQUEST.remove();
         HTTP_SERVLET_RESPONSE.remove();
         URI_INFO.remove();
@@ -85,6 +88,8 @@ public class ThreadLocalContextManager {
             return ThreadLocalContextManager.HTTP_SERVLET_RESPONSE;
         } else if (ServletConfig.class.equals(type)) {
             return ThreadLocalContextManager.SERVLET_CONFIG;
+        } else if (ServletContext.class.equals(type)) {
+            return ThreadLocalContextManager.SERVLET_CONTEXT;
         }
         return null;
     }
