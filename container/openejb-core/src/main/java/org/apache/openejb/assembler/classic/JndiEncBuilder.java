@@ -62,6 +62,7 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -321,6 +322,8 @@ public class JndiEncBuilder {
                     reference = new ObjectReference(ThreadLocalContextManager.PROVIDERS);
                 } else if (ServletConfig.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONFIG);
+                } else if (ServletContext.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONTEXT);
                 } else if (HttpServletResponse.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_RESPONSE);
                 } else {

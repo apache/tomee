@@ -69,6 +69,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.jms.Queue;
 import javax.jms.Topic;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -143,6 +144,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         ignoredReferenceTypes.add(ServletRequest.class.getName());
         ignoredReferenceTypes.add(HttpServletRequest.class.getName());
         ignoredReferenceTypes.add(ServletConfig.class.getName());
+        ignoredReferenceTypes.add(ServletContext.class.getName());
         ignoredReferenceTypes.add(HttpServletResponse.class.getName());
     }
 
