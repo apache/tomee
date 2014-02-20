@@ -31,7 +31,7 @@ import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Stateless
+@Stateless(name = 'TomEEWebAccessScriptingService')
 @RolesAllowed('tomee-admin')
 class ScriptingServiceImpl {
 

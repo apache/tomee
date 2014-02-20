@@ -18,6 +18,7 @@
 
 package org.apache.tomee.webaccess.service
 
+import org.apache.tomee.webaccess.data.dto.ContextResultDto
 import org.apache.tomee.webaccess.data.dto.SessionResultDto
 
 import javax.annotation.security.RolesAllowed
@@ -29,9 +30,9 @@ import javax.management.ObjectName
 import java.lang.management.ManagementFactory
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Stateless
+@Stateless(name = 'TomEEWebAccessContextsService')
 @RolesAllowed('tomee-admin')
-class SessionServiceImpl {
+class ContextsServiceImpl {
 
     void expireSession(String context, String sessionId) {
         def server = ManagementFactory.platformMBeanServer
@@ -91,6 +92,47 @@ class SessionServiceImpl {
             }
         }
         result
+    }
+
+    List<ContextResultDto> listContexts() {
+        def server = ManagementFactory.platformMBeanServer
+        server.queryNames(null, null)*.toString().findAll({
+            it.startsWith('Catalina:j2eeType=WebModule') || it.startsWith('Tomcat:j2eeType=WebModule')
+        }).collect({
+            def name = new ObjectName(it)
+            def docBase = server.getAttribute(name, 'docBase') ?: ''
+            def originalDocBase = server.getAttribute(name, 'originalDocBase') ?: ''
+            new ContextResultDto(
+                    baseName: server.getAttribute(name, 'baseName'),
+                    deletable: docBase != '',
+                    docBase: docBase == '' ? null : docBase,
+                    originalDocBase: originalDocBase == '' ? null : originalDocBase
+            )
+        })
+    }
+
+    void killContext(String baseName) {
+        def server = ManagementFactory.platformMBeanServer
+        def name = server.queryNames(null, null).find({
+            def str = it.toString()
+            str.startsWith("Catalina:j2eeType=WebModule,name=//localhost/${baseName}") ||
+                    str.startsWith("Tomcat:j2eeType=WebModule,name=//localhost/${baseName}")
+        }) as ObjectName
+        if (name) {
+            def originalDocBase = server.getAttribute(name, 'originalDocBase') ?: ''
+            if (originalDocBase) {
+                def docBase = new File(originalDocBase as String)
+                if (docBase.isDirectory()) {
+                    // stop the application first
+                    server.invoke(name, 'stop', null, null)
+                    // then remove the directory
+                    docBase.deleteDir()
+                } else {
+                    // just delete the war file and let tomcat do its thing
+                    docBase.delete()
+                }
+            }
+        }
     }
 
 }
