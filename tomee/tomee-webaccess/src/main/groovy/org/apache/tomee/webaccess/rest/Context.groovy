@@ -22,11 +22,7 @@ import org.apache.tomee.webaccess.data.dto.ContextResultDto
 import org.apache.tomee.webaccess.service.ContextsServiceImpl
 
 import javax.ejb.EJB
-import javax.ws.rs.DELETE
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
+import javax.ws.rs.*
 
 @Path('/context')
 class Context {
