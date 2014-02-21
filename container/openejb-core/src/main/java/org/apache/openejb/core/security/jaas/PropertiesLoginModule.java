@@ -125,7 +125,7 @@ public class PropertiesLoginModule implements LoginModule {
 
         for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
             final String name = (String) enumeration.nextElement();
-            final String[] userList = (String.valueOf(groups.getProperty(name))).split(",");
+            final String[] userList = String.valueOf(groups.getProperty(name)).split(",");
             for (int i = 0; i < userList.length; i++) {
                 if (user.equals(userList[i])) {
                     principals.add(new GroupPrincipal(name));
