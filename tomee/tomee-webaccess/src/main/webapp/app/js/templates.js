@@ -29,7 +29,8 @@
         'scripting-user',
         'logfiles',
         'logfile-link',
-        'sessions'
+        'sessions',
+        'contexts'
     ];
 
     function loop(values, callback) {

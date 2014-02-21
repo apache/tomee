@@ -24,7 +24,7 @@
 
         var View = Backbone.View.extend({
             tagName: 'div',
-            className: 'ux-dashboard panel panel-default',
+            className: 'ux-dashboard',
             events: {
                 'click .ux-refresh-btn': function (evt) {
                     evt.preventDefault();
@@ -32,23 +32,37 @@
                     me.trigger('refresh-sessions', {});
                 },
                 'click .ux-expire-btn': function (evt) {
-                    // TRICK to avoid full page reload.
-                    evt.preventDefault();
+                    evt.preventDefault(); // TRICK to avoid full page reload.
                     var myLink = $(evt.target);
                     this.trigger('expire-session', {
                         sessionId: myLink.attr('data-session-id'),
                         context: myLink.attr('data-context-id')
                     });
+                },
+                'click .ux-kill-context-btn': function (evt) {
+                    evt.preventDefault(); // TRICK to avoid full page reload.
+                    var myLink = $(evt.target);
+                    this.trigger('kill-context', {
+                        basename: myLink.attr('data-context-basename')
+                    });
                 }
             },
-            render: function (data) {
+            renderSubPanel: function (data, name) {
+                if (!data || !data[name]) {
+                    return; // no-op
+                }
                 var me = this;
-                me.$el.empty();
+                me.$el.find('.ux-' + name + '-panel').remove();
                 var tplValues = {};
                 if (data) {
                     tplValues = data;
                 }
-                me.$el.append(templates.getValue('sessions', tplValues));
+                me.$el.append(templates.getValue(name, tplValues));
+            },
+            render: function (data) {
+                var me = this;
+                me.renderSubPanel(data, 'sessions');
+                me.renderSubPanel(data, 'contexts');
                 return me;
             }
         });

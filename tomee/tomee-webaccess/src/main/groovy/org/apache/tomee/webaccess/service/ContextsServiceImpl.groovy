@@ -98,6 +98,9 @@ class ContextsServiceImpl {
         def server = ManagementFactory.platformMBeanServer
         server.queryNames(null, null)*.toString().findAll({
             it.startsWith('Catalina:j2eeType=WebModule') || it.startsWith('Tomcat:j2eeType=WebModule')
+        }).findAll({
+            def name = new ObjectName(it)
+            server.getAttribute(name, 'stateName') != 'STOPPED'
         }).collect({
             def name = new ObjectName(it)
             def docBase = server.getAttribute(name, 'docBase') ?: ''
@@ -121,10 +124,10 @@ class ContextsServiceImpl {
         if (name) {
             def originalDocBase = server.getAttribute(name, 'originalDocBase') ?: ''
             if (originalDocBase) {
+                // stop the application first
+                server.invoke(name, 'stop', null, null)
                 def docBase = new File(originalDocBase as String)
                 if (docBase.isDirectory()) {
-                    // stop the application first
-                    server.invoke(name, 'stop', null, null)
                     // then remove the directory
                     docBase.deleteDir()
                 } else {
