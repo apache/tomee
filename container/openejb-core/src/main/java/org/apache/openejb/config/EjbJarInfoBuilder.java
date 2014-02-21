@@ -132,7 +132,7 @@ public class EjbJarInfoBuilder {
                 }
             }
 
-            final String message = messages.format("conf.0008", jar.getJarLocation(), "" + beansInEjbJar, "" + beansDeployed);
+            final String message = messages.format("conf.0008", jar.getJarLocation(), String.valueOf(beansInEjbJar), String.valueOf(beansDeployed));
             logger.warning(message);
             throw new OpenEJBException(message);
         }
@@ -808,7 +808,7 @@ public class EjbJarInfoBuilder {
         bean.primKeyClass = e.getPrimKeyClass();
         bean.primKeyField = e.getPrimkeyField();
         bean.persistenceType = e.getPersistenceType().toString();
-        bean.reentrant = e.getReentrant() + "";
+        bean.reentrant = String.valueOf(e.getReentrant());
         bean.properties.putAll(d.getProperties());
 
         final CmpVersion cmpVersion = e.getCmpVersion();

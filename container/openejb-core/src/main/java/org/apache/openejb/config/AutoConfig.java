@@ -1076,7 +1076,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return (Integer) number;
         } catch (final Exception e) {
             try {
-                return Integer.parseInt(number + "");
+                return Integer.parseInt(String.valueOf(number));
             } catch (final NumberFormatException e1) {
                 return -1;
             }

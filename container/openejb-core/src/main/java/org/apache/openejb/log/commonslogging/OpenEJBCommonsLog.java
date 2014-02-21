@@ -66,62 +66,62 @@ public class OpenEJBCommonsLog implements Log, Serializable {
 
     @Override
     public void trace(final Object message) {
-        logger.debug(message + "");
+        logger.debug(String.valueOf(message));
     }
 
     @Override
     public void trace(final Object message, final Throwable t) {
-        logger.debug(message + "", t);
+        logger.debug(String.valueOf(message), t);
     }
 
     @Override
     public void debug(final Object message) {
-        logger.debug(message + "");
+        logger.debug(String.valueOf(message));
     }
 
     @Override
     public void debug(final Object message, final Throwable t) {
-        logger.debug(message + "", t);
+        logger.debug(String.valueOf(message), t);
     }
 
     @Override
     public void info(final Object message) {
-        logger.info(message + "");
+        logger.info(String.valueOf(message));
     }
 
     @Override
     public void info(final Object message, final Throwable t) {
-        logger.info(message + "", t);
+        logger.info(String.valueOf(message), t);
     }
 
     @Override
     public void warn(final Object message) {
-        logger.warning(message + "");
+        logger.warning(String.valueOf(message));
     }
 
     @Override
     public void warn(final Object message, final Throwable t) {
-        logger.warning(message + "", t);
+        logger.warning(String.valueOf(message), t);
     }
 
     @Override
     public void error(final Object message) {
-        logger.error(message + "");
+        logger.error(String.valueOf(message));
     }
 
     @Override
     public void error(final Object message, final Throwable t) {
-        logger.error(message + "", t);
+        logger.error(String.valueOf(message), t);
     }
 
     @Override
     public void fatal(final Object message) {
-        logger.fatal(message + "");
+        logger.fatal(String.valueOf(message));
     }
 
     @Override
     public void fatal(final Object message, final Throwable t) {
-        logger.fatal(message + "", t);
+        logger.fatal(String.valueOf(message), t);
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {

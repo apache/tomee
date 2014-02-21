@@ -169,7 +169,7 @@ public class DataSourceFactory {
         }
 
         final long milliseconds = TimeUnit.MILLISECONDS.convert(duration.getTime(), duration.getUnit());
-        properties.put(oldKey, milliseconds + "");
+        properties.put(oldKey, String.valueOf(milliseconds));
     }
 
     public static DataSourceCreator creator(final Object creatorName, final boolean willBeProxied) {

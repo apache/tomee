@@ -88,8 +88,8 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
 
                 for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
 
-                    final Object property = entry.getKey() + "";
-                    final Object value = entry.getValue() + "";
+                    final Object property = String.valueOf(entry.getKey());
+                    final Object value = String.valueOf(entry.getValue());
 
                     ActivationConfigProperty activationConfigProperty = this.findActivationProperty(activationConfigList, property.toString());
 

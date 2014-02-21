@@ -140,7 +140,7 @@ public class ProviderGenerator extends Resource {
             )
                     .apply(
                             "builder", builder,
-                            "className", provider.getClassName() + "",
+                            "className", provider.getClassName(),
                             "type", types.get(0),
                             "name", name
                     )
@@ -319,7 +319,7 @@ public class ProviderGenerator extends Resource {
     }
 
     private static String fixConstructor(final ServiceProvider provider) {
-        final String s = provider.getConstructor() + "";
+        final String s = provider.getConstructor();
         final String[] split = s.split(" *, *");
         for (int i = 0; i < split.length; i++) {
             split[i] = Strings.lcfirst(split[i]);

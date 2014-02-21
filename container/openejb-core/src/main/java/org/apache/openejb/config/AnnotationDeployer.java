@@ -2826,7 +2826,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final ValidationContext validation = ejbModule.getValidation();
             final String ejbName = sessionBean.getEjbName();
 
-            final boolean strict = getProperty(STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
+            final boolean strict = getProperty(STRICT_INTERFACE_DECLARATION, "false").equalsIgnoreCase("true");
 
             /*
              * Collect all interfaces explicitly declared via xml.
@@ -4921,9 +4921,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (methodAttributes == null) return null;
 
             for (final MethodAttribute methodAttribute : methodAttributes) {
-                final String className = clazz != null ? clazz.getName() : null + "";
+                final String className = clazz != null ? clazz.getName() : String.valueOf((Object) null);
 
-                if (className.equals(methodAttribute.getClassName() + "")) {
+                if (className.equals(methodAttribute.getClassName())) {
                     return methodAttribute;
                 }
             }
