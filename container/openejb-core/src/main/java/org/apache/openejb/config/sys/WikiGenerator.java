@@ -135,7 +135,7 @@ public class WikiGenerator {
 
                     comment = scrubText(comment);
 
-                    defaults.put(name, value);
+                    defaults.put(name, String.valueOf(value));
 
                     if (comment.length() == 0) comment = "No description.";
 

@@ -4921,7 +4921,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (methodAttributes == null) return null;
 
             for (final MethodAttribute methodAttribute : methodAttributes) {
-                final String className = clazz != null ? clazz.getName() : String.valueOf((Object) null);
+                final String className = clazz != null ? clazz.getName() : "null";
 
                 if (className.equals(methodAttribute.getClassName())) {
                     return methodAttribute;

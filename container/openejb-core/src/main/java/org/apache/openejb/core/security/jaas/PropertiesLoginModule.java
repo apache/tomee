@@ -66,8 +66,8 @@ public class PropertiesLoginModule implements LoginModule {
         this.callbackHandler = callbackHandler;
 
         debug = log.isDebugEnabled() || "true".equalsIgnoreCase((String) options.get("Debug"));
-        final String usersFile = (String) options.get(USER_FILE);
-        final String groupsFile = (String) options.get(GROUP_FILE);
+        final String usersFile = String.valueOf(options.get(USER_FILE));
+        final String groupsFile = String.valueOf(options.get(GROUP_FILE));
 
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
@@ -125,7 +125,7 @@ public class PropertiesLoginModule implements LoginModule {
 
         for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
             final String name = (String) enumeration.nextElement();
-            final String[] userList = ((String) groups.getProperty(name)).split(",");
+            final String[] userList = (String.valueOf(groups.getProperty(name))).split(",");
             for (int i = 0; i < userList.length; i++) {
                 if (user.equals(userList[i])) {
                     principals.add(new GroupPrincipal(name));
