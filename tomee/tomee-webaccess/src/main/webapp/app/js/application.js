@@ -61,6 +61,17 @@
                             });
                         }
                     });
+                    $.ajax({
+                        url: window.ux.ROOT_URL + 'rest/context',
+                        method: 'GET',
+                        dataType: 'json',
+                        data: {},
+                        success: function (data) {
+                            sessionsView.render({
+                                contexts: data.contextResultDto
+                            });
+                        }
+                    });
                 },
 
                 showScripting: function (scriptType) {
@@ -88,6 +99,19 @@
             sessionsView.on('expire-session', function (data) {
                 $.ajax({
                     url: window.ux.ROOT_URL + 'rest/session/expire/' + data.context + '/' + data.sessionId,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    data: {},
+                    success: function (data) {
+                        router.showSessions();
+                    }
+                });
+            });
+
+
+            sessionsView.on('kill-context', function (data) {
+                $.ajax({
+                    url: window.ux.ROOT_URL + 'rest/context/' + data.basename + '/',
                     method: 'DELETE',
                     dataType: 'json',
                     data: {},

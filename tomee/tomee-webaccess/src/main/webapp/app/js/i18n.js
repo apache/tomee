@@ -42,7 +42,8 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         'session.expiration.date': 'Expire',
         'scripting.user.realm': 'Realm Name',
         'scripting.user.name': 'User name',
-        'scripting.user.password': 'User password'
+        'scripting.user.password': 'User password',
+        'contexts': 'Contexts'
     };
 
     underscore.each(underscore.keys(messages), function (key) {
