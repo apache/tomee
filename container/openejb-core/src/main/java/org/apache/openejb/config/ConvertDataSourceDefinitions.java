@@ -137,7 +137,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         if (key == null) return;
         if (value == null) return;
 
-        properties.put(key, PropertyPlaceHolderHelper.value(value + ""));
+        properties.put(key, PropertyPlaceHolderHelper.value(String.valueOf(value)));
     }
 
     private List<JndiConsumer> collectConsumers(final AppModule appModule) {

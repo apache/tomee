@@ -109,7 +109,7 @@ public class WikiGenerator {
         out.println();
         out.println("Declarable in properties via");
         out.println();
-        out.println("    Foo = new://" + provider.getService() + "?type=" + type + "");
+        out.println("    Foo = new://" + provider.getService() + "?type=" + type);
         out.println();
         final SuperProperties properties = (SuperProperties) provider.getProperties();
 
@@ -135,7 +135,7 @@ public class WikiGenerator {
 
                     comment = scrubText(comment);
 
-                    defaults.put(name, value + "");
+                    defaults.put(name, value);
 
                     if (comment.length() == 0) comment = "No description.";
 

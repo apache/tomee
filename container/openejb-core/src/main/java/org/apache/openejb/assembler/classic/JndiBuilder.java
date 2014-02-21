@@ -346,7 +346,7 @@ public class JndiBuilder {
         }
 
         public String getName(final Class interfce, final String key, final Interface type) {
-            String id = beanContext.getDeploymentID() + "";
+            String id = String.valueOf(beanContext.getDeploymentID());
             if (id.charAt(0) == '/') {
                 id = id.substring(1);
             }

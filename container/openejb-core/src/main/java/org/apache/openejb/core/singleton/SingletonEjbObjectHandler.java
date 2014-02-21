@@ -34,7 +34,7 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     }
 
     public static Object createRegistryId(final Object primKey, final Object deployId, final Container contnr) {
-        return "" + deployId + contnr.getContainerID();
+        return String.valueOf(deployId) + contnr.getContainerID();
     }
 
     public Object getRegistryId() {

@@ -87,17 +87,17 @@ public class Index<K,V> extends AbstractMap<K,V> {
     }
 
     public K getKey(final int index) {
-        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException("" + index);
+        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException(String.valueOf(index));
         return entries[index].getKey();
     }
 
     public V get(final int index) {
-        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException("" + index);
+        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException(String.valueOf(index));
         return entries[index].getValue();
     }
 
     public V set(final int index, final V value) {
-        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException("" + index);
+        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException(String.valueOf(index));
         final IndexEntry<K,V> entry = entries[index];
         final V oldValue = entry.getValue();
         entry.setValue(value);
@@ -148,7 +148,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
     }
 
     public ListIterator<V> listIterator(final int index) {
-        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException("" + index);
+        if (index < 0 || index >= entries.length) throw new IndexOutOfBoundsException(String.valueOf(index));
         return new IndexListIterator<V>(index);
     }
 

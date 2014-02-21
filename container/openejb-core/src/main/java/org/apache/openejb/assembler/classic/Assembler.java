@@ -1604,7 +1604,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // stop
             for (final BeanContext deployment : deployments) {
-                final String deploymentID = deployment.getDeploymentID() + "";
+                final String deploymentID = String.valueOf(deployment.getDeploymentID());
                 try {
                     final Container container = deployment.getContainer();
                     container.stop(deployment);
@@ -1615,7 +1615,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // undeploy
             for (final BeanContext bean : deployments) {
-                final String deploymentID = bean.getDeploymentID() + "";
+                final String deploymentID = String.valueOf(bean.getDeploymentID());
                 try {
                     final Container container = bean.getContainer();
                     container.undeploy(bean);
@@ -1654,7 +1654,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // Clear out naming for all components first
             for (final BeanContext deployment : deployments) {
-                final String deploymentID = deployment.getDeploymentID() + "";
+                final String deploymentID = String.valueOf(deployment.getDeploymentID());
                 try {
                     containerSystem.removeBeanContext(deployment);
                 } catch (final Throwable t) {

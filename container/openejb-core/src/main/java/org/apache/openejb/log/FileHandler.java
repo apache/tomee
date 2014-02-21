@@ -309,7 +309,7 @@ public class FileHandler
         }
 
         // Get logging level for the handler
-        setLevel(Level.parse(getProperty(className + ".level", "" + Level.ALL)));
+        setLevel(Level.parse(getProperty(className + ".level", String.valueOf(Level.ALL))));
 
         // Get filter configuration
         final String filterName = getProperty(className + ".filter", null);

@@ -115,7 +115,7 @@ public class JaccPermissionsBuilder {
                 final MethodInfo bm = new MethodInfo();
 
                 bm.ejbName = beanContext.getEjbName();
-                bm.ejbDeploymentId = beanContext.getDeploymentID() + "";
+                bm.ejbDeploymentId = String.valueOf(beanContext.getDeploymentID());
                 bm.methodIntf = am.methodIntf;
 
                 bm.className = method.getDeclaringClass().getName();

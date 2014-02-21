@@ -32,7 +32,6 @@ limitations under the License.
     <exclude name="RedundantFieldInitializer"/>
     <exclude name="SimplifyStartsWith"/>
     <exclude name="UseStringBufferForStringAppends"/>
-    <exclude name="AddEmptyString"/>
     <exclude name="UseArrayListInsteadOfVector"/>
   </rule>
 

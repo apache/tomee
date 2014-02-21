@@ -60,7 +60,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         if (startupTimeout.getUnit() == null) {
             startupTimeout.setUnit(TimeUnit.MILLISECONDS);
         }
-        this.startupTimeout = "" + TimeUnit.MILLISECONDS.convert(startupTimeout.getTime(), startupTimeout.getUnit());
+        this.startupTimeout = String.valueOf(TimeUnit.MILLISECONDS.convert(startupTimeout.getTime(), startupTimeout.getUnit()));
     }
 
     @Override

@@ -118,7 +118,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             throw new OpenEJBRuntimeException(e);
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
-            LOGGER.info("assembler.buildingPersistenceUnit", unitInfoImpl.getPersistenceUnitName(), unitInfoImpl.getPersistenceProviderClassName(), time + "");
+            LOGGER.info("assembler.buildingPersistenceUnit", unitInfoImpl.getPersistenceUnitName(), unitInfoImpl.getPersistenceProviderClassName(), String.valueOf(time));
             if (LOGGER.isDebugEnabled()) {
                 for (final Map.Entry<Object, Object> entry : unitInfoImpl.getProperties().entrySet()) {
                     LOGGER.debug(entry.getKey() + "=" + entry.getValue());
