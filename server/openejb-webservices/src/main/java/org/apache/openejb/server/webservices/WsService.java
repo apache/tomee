@@ -423,9 +423,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    public void beforeApplicationDestroyed(
-            @Observes
-            final AssemblerBeforeApplicationDestroyed event) {
+    public void beforeApplicationDestroyed(@Observes final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
