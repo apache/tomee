@@ -43,7 +43,9 @@ public class CheckAssemblyBindings extends ValidationBase {
 
         final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
 
-        if (assembly == null) return;
+        if (assembly == null) {
+            return;
+        }
 
         for (final InterceptorBinding binding : assembly.getInterceptorBinding()) {
             final List<String> interceptorClasses = binding.getInterceptorClass();

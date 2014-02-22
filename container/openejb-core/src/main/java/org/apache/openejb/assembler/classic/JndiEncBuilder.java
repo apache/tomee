@@ -237,9 +237,9 @@ public class JndiEncBuilder {
             try {
                 final Class type = Classes.deprimitivize(getType(entry.type, entry));
                 final Object obj;
-                if (type == String.class)
+                if (type == String.class) {
                     obj = new String(entry.value);
-                else if (type == Double.class) {
+                } else if (type == Double.class) {
                     obj = new Double(entry.value);
                 } else if (type == Integer.class) {
                     obj = new Integer(entry.value);
@@ -350,7 +350,9 @@ public class JndiEncBuilder {
                 reference = new LinkRef(jndiName);
 
                 // Let the container bind this into JNDI
-                if (jndiName.equals(referenceInfo.referenceName)) continue;
+                if (jndiName.equals(referenceInfo.referenceName)) {
+                    continue;
+                }
             } else if (Validator.class.equals(type)) {
                 final String jndiName = "comp/Validator";
                 reference = new LinkRef(jndiName);

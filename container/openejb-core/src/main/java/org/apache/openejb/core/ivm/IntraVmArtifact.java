@@ -80,7 +80,9 @@ public class IntraVmArtifact implements Externalizable {
     protected Object readResolve() throws ObjectStreamException {
         final Handles handles = getHandles(staticArtifact);
         final Object artifact = handles.get(instanceHandle);
-        if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
+        if (artifact == null) {
+            throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
+        }
         return artifact;
     }
 

@@ -136,7 +136,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public Target[] getTargets() {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         return new Target[]{DEFAULT_TARGET};
     }
@@ -144,7 +146,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public TargetModuleID[] getAvailableModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         if (!containsDefaultTarget(targetList)) {
             return null;
@@ -256,7 +260,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public TargetModuleID[] getNonRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         if (!containsDefaultTarget(targetList)) {
             return null;
@@ -267,7 +273,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public TargetModuleID[] getRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         if (!containsDefaultTarget(targetList)) {
             return null;
@@ -279,7 +287,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public ProgressObject distribute(final Target[] targetList, final File moduleFile, final File planFile) {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         if (!isDeployerLocal()) {
             // todo when we input stream is a valid remote type we can implement this
@@ -301,7 +311,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public ProgressObject distribute(final Target[] targetList, final InputStream moduleStream, final InputStream planStream) {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         // consume module stream
         if (isDeployerLocal()) {
@@ -327,7 +339,9 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private ProgressObject deploy(final Target[] targetList, final Properties properties) {
-        if (targetList == null) return new ProgressObjectImpl(CommandType.DISTRIBUTE, new NullPointerException("targetList is null"));
+        if (targetList == null) {
+            return new ProgressObjectImpl(CommandType.DISTRIBUTE, new NullPointerException("targetList is null"));
+        }
 
         if (!containsDefaultTarget(targetList)) {
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.<TargetModuleID>emptySet());
@@ -373,14 +387,18 @@ public class VmDeploymentManager implements DeploymentManager {
 
     private boolean containsDefaultTarget(final Target[] targetList) {
         for (final Target target : targetList) {
-            if (DEFAULT_TARGET.equals(target)) return true;
+            if (DEFAULT_TARGET.equals(target)) {
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public ProgressObject start(final TargetModuleID[] moduleIdList) {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         final Set<TargetModuleID> deployedModules = toTargetModuleIds(getDeployer().getDeployedApps(), null);
         final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(Arrays.asList(moduleIdList));
@@ -391,14 +409,18 @@ public class VmDeploymentManager implements DeploymentManager {
 
     @Override
     public ProgressObject stop(final TargetModuleID[] moduleIdList) {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         return new ProgressObjectImpl(CommandType.START, Collections.<TargetModuleID>emptySet());
     }
 
     @Override
     public ProgressObject undeploy(final TargetModuleID[] moduleIdList) {
-        if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
+        if (!connected) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         UndeployException undeployException = null;
         final Set<TargetModuleID> results = new TreeSet<TargetModuleID>();
@@ -505,7 +527,9 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public TargetImpl(final String name, final String description) {
-            if (name == null) throw new NullPointerException("name is null");
+            if (name == null) {
+                throw new NullPointerException("name is null");
+            }
             this.name = name;
             this.description = description;
         }
@@ -525,8 +549,12 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TargetImpl)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TargetImpl)) {
+                return false;
+            }
 
             final TargetImpl target = (TargetImpl) o;
             return name.equals(target.name);
@@ -557,11 +585,17 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public TargetModuleIDImpl(final Target target, final String moduleId, String webUrl) {
-            if (target == null) throw new NullPointerException("target is null");
-            if (moduleId == null) throw new NullPointerException("moduleId is null");
+            if (target == null) {
+                throw new NullPointerException("target is null");
+            }
+            if (moduleId == null) {
+                throw new NullPointerException("moduleId is null");
+            }
             this.target = target;
             this.moduleId = moduleId;
-            if (webUrl != null && !webUrl.startsWith("http:")) webUrl = "http://localhost:8080/" + webUrl;
+            if (webUrl != null && !webUrl.startsWith("http:")) {
+                webUrl = "http://localhost:8080/" + webUrl;
+            }
             this.webUrl = webUrl;
         }
 
@@ -600,8 +634,12 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TargetModuleIDImpl)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TargetModuleIDImpl)) {
+                return false;
+            }
 
             final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
@@ -621,7 +659,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
             // compare target name
             final int val = target.getName().compareTo(targetModuleID.target.getName());
-            if (val != 0) return val;
+            if (val != 0) {
+                return val;
+            }
 
             // compare moduleId
             return moduleId.compareTo(targetModuleID.moduleId);
@@ -647,7 +687,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
         @Override
         public synchronized TargetModuleID[] getResultTargetModuleIDs() {
-            if (targetModuleIds == null) return new TargetModuleID[0];
+            if (targetModuleIds == null) {
+                return new TargetModuleID[0];
+            }
             return targetModuleIds.toArray(new TargetModuleID[targetModuleIds.size()]);
         }
 

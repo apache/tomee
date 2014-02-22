@@ -248,12 +248,16 @@ public final class OpenEjbContainer extends EJBContainer {
             {
                 final BeanContext context = containerSystem.getBeanContext(clazz.getName());
 
-                if (context != null) return context;
+                if (context != null) {
+                    return context;
+                }
             }
 
             for (final BeanContext context : containerSystem.deployments()) {
 
-                if (clazz == context.getBeanClass()) return context;
+                if (clazz == context.getBeanClass()) {
+                    return context;
+                }
 
             }
 
@@ -310,7 +314,9 @@ public final class OpenEjbContainer extends EJBContainer {
                 map = new HashMap<Object, Object>();
             }
 
-            if (isOtherProvider(map)) return null;
+            if (isOtherProvider(map)) {
+                return null;
+            }
 
             if (instance != null || OpenEJB.isInitialized()) {
                 logger().info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
@@ -366,7 +372,9 @@ public final class OpenEjbContainer extends EJBContainer {
 
                 for (final String caller : callers) {
 
-                    if (!isValid(caller)) continue;
+                    if (!isValid(caller)) {
+                        continue;
+                    }
 
                     String name = caller;
                     if (name.contains("$")) {
@@ -538,7 +546,9 @@ public final class OpenEjbContainer extends EJBContainer {
 
                 final AppModule appModule = load(map);
 
-                if (appModule != null) return appModule;
+                if (appModule != null) {
+                    return appModule;
+                }
 
                 throw invalidModulesValue(modules);
 
@@ -673,7 +683,9 @@ public final class OpenEjbContainer extends EJBContainer {
         @Override
         protected Name getName(Name name) throws NamingException {
             String first = name.get(0);
-            if (!first.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+            if (!first.startsWith("java:")) {
+                throw new NameNotFoundException("Name must be in java: namespace");
+            }
             first = first.substring("java:".length());
             name = name.getSuffix(1);
             return name.add(0, first);
@@ -681,21 +693,31 @@ public final class OpenEjbContainer extends EJBContainer {
 
         @Override
         protected String getName(final String name) throws NamingException {
-            if ("inject".equals(name)) return name;
-            if (!name.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+            if ("inject".equals(name)) {
+                return name;
+            }
+            if (!name.startsWith("java:")) {
+                throw new NameNotFoundException("Name must be in java: namespace");
+            }
             return name.substring("java:".length());
         }
 
         @Override
         public void bind(final Name name, final Object obj) throws NamingException {
-            if (name.size() == 1 && "inject".equals(name.get(0))) inject(obj);
-            else super.bind(name, obj);
+            if (name.size() == 1 && "inject".equals(name.get(0))) {
+                inject(obj);
+            } else {
+                super.bind(name, obj);
+            }
         }
 
         @Override
         public void bind(final String name, final Object obj) throws NamingException {
-            if (name != null && "inject".equals(name)) inject(obj);
-            else super.bind(name, obj);
+            if (name != null && "inject".equals(name)) {
+                inject(obj);
+            } else {
+                super.bind(name, obj);
+            }
         }
 
         @Override

@@ -60,16 +60,26 @@ class RemoveWebServices implements DynamicDeployer {
 
                 final SessionBean sessionBean = (SessionBean) bean;
 
-                if (sessionBean.getServiceEndpoint() == null) continue;
+                if (sessionBean.getServiceEndpoint() == null) {
+                    continue;
+                }
 
                 sessionBean.setServiceEndpoint(null);
 
                 // Now check if the bean has no other interfaces
                 // if not, then we should just delete it
-                if (sessionBean.getHome() != null) continue;
-                if (sessionBean.getLocalHome() != null) continue;
-                if (sessionBean.getBusinessLocal().size() > 0) continue;
-                if (sessionBean.getBusinessRemote().size() > 0) continue;
+                if (sessionBean.getHome() != null) {
+                    continue;
+                }
+                if (sessionBean.getLocalHome() != null) {
+                    continue;
+                }
+                if (sessionBean.getBusinessLocal().size() > 0) {
+                    continue;
+                }
+                if (sessionBean.getBusinessRemote().size() > 0) {
+                    continue;
+                }
 
                 // Ok, delete away...
                 ejbJar.removeEnterpriseBean(ejbName);

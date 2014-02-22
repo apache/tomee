@@ -36,14 +36,30 @@ public class EjbObjectInputStream extends ObjectInputStream {
             return Class.forName(classDesc.getName(), false, getClassloader());
         } catch (final ClassNotFoundException e) {
             final String n = classDesc.getName();
-            if (n.equals("boolean")) return boolean.class;
-            if (n.equals("byte")) return byte.class;
-            if (n.equals("char")) return char.class;
-            if (n.equals("short")) return short.class;
-            if (n.equals("int")) return int.class;
-            if (n.equals("long")) return long.class;
-            if (n.equals("float")) return float.class;
-            if (n.equals("double")) return double.class;
+            if (n.equals("boolean")) {
+                return boolean.class;
+            }
+            if (n.equals("byte")) {
+                return byte.class;
+            }
+            if (n.equals("char")) {
+                return char.class;
+            }
+            if (n.equals("short")) {
+                return short.class;
+            }
+            if (n.equals("int")) {
+                return int.class;
+            }
+            if (n.equals("long")) {
+                return long.class;
+            }
+            if (n.equals("float")) {
+                return float.class;
+            }
+            if (n.equals("double")) {
+                return double.class;
+            }
 
             return getClass().getClassLoader().loadClass(classDesc.getName()); // if CCL is not correct
         }
@@ -51,8 +67,9 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
     protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
         final Class[] cinterfaces = new Class[interfaces.length];
-        for (int i = 0; i < interfaces.length; i++)
+        for (int i = 0; i < interfaces.length; i++) {
             cinterfaces[i] = getClassloader().loadClass(interfaces[i]);
+        }
 
         try {
             return Proxy.getProxyClass(getClassloader(), cinterfaces);

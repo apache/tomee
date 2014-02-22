@@ -84,7 +84,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
     private void proxyConnection(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo) throws ResourceException {
         // if this connection already has a proxy no need to create another
-        if (connectionInfo.getConnectionProxy() != null) return;
+        if (connectionInfo.getConnectionProxy() != null) {
+            return;
+        }
 
         // DissociatableManagedConnection do not need to be proxied
         if (connectionInfo.getManagedConnectionInfo().getManagedConnection() instanceof DissociatableManagedConnection) {

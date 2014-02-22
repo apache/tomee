@@ -215,16 +215,30 @@ public abstract class AbstractService implements Service {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractService)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractService)) {
+            return false;
+        }
 
         final AbstractService that = (AbstractService) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (jar != null ? !jar.equals(that.jar) : that.jar != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        if (provider != null ? !provider.equals(that.provider) : that.provider != null) return false;
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (jar != null ? !jar.equals(that.jar) : that.jar != null) {
+            return false;
+        }
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        if (provider != null ? !provider.equals(that.provider) : that.provider != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+            return false;
+        }
 
         return true;
     }

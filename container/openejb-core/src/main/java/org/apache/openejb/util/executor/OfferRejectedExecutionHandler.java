@@ -36,8 +36,12 @@ public class OfferRejectedExecutionHandler implements RejectedExecutionHandler {
     }
 
     public OfferRejectedExecutionHandler(final long timeout, final TimeUnit timeUnit) {
-        if (timeout <= 0) throw new IllegalArgumentException("timeout must be greater than zero");
-        if (timeUnit == null) throw new IllegalArgumentException("TimeUnit must not be null");
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("timeout must be greater than zero");
+        }
+        if (timeUnit == null) {
+            throw new IllegalArgumentException("TimeUnit must not be null");
+        }
 
         this.timeout = timeout;
         this.seconds = timeUnit;

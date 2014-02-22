@@ -344,7 +344,9 @@ public class ProviderWrapper extends Provider {
 
     private static Provider findProvider() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+        if (classLoader == null) {
+            classLoader = ClassLoader.getSystemClassLoader();
+        }
 
         // 0. System.getProperty("openejb.javax.xml.ws.spi.Provider")
         // This is so those using old axis rules still work as expected

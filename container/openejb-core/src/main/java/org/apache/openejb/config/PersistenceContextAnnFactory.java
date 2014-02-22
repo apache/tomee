@@ -54,8 +54,12 @@ public class PersistenceContextAnnFactory {
     private final Set<String> processed = new HashSet<String>();
 
     public void addAnnotations(final Class c) throws OpenEJBException {
-        if (!useAsm) return;
-        if (processed.contains(c.getName())) return;
+        if (!useAsm) {
+            return;
+        }
+        if (processed.contains(c.getName())) {
+            return;
+        }
 
         try {
             final URL u = c.getResource("/" + c.getName().replace('.', '/') + ".class");
@@ -94,7 +98,9 @@ public class PersistenceContextAnnFactory {
 
 
         public DirectPersistenceContext(final PersistenceContext persistenceContext) {
-            if (persistenceContext == null) throw new NullPointerException("persistenceContext is null");
+            if (persistenceContext == null) {
+                throw new NullPointerException("persistenceContext is null");
+            }
             this.persistenceContext = persistenceContext;
         }
 
@@ -107,7 +113,9 @@ public class PersistenceContextAnnFactory {
         }
 
         public String type() {
-            if (persistenceContext.type() == null) return null;
+            if (persistenceContext.type() == null) {
+                return null;
+            }
             return persistenceContext.type().toString();
         }
 

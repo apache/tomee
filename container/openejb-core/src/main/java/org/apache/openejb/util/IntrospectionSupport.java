@@ -38,13 +38,16 @@ public class IntrospectionSupport {
             String optionPrefix) {
 
         boolean rc = false;
-        if (target == null)
+        if (target == null) {
             throw new IllegalArgumentException("target was null.");
-        if (props == null)
+        }
+        if (props == null) {
             throw new IllegalArgumentException("props was null.");
+        }
 
-        if (optionPrefix == null)
+        if (optionPrefix == null) {
             optionPrefix = "";
+        }
 
         final Class clazz = target.getClass();
         final Method[] methods = clazz.getMethods();
@@ -59,12 +62,14 @@ public class IntrospectionSupport {
                 try {
 
                     final Object value = method.invoke(target, new Object[] {});
-                    if (value == null)
+                    if (value == null) {
                         continue;
+                    }
 
                     final String strValue = convertToString(value, type);
-                    if (strValue == null)
+                    if (strValue == null) {
                         continue;
+                    }
 
                     name = name.substring(3, 4).toLowerCase()
                             + name.substring(4);
@@ -84,10 +89,12 @@ public class IntrospectionSupport {
     public static boolean setProperties(final Object target, final Map props,
             final String optionPrefix) {
         boolean rc = false;
-        if (target == null)
+        if (target == null) {
             throw new IllegalArgumentException("target was null.");
-        if (props == null)
+        }
+        if (props == null) {
             throw new IllegalArgumentException("props was null.");
+        }
 
         for (final Iterator iter = props.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
@@ -104,8 +111,9 @@ public class IntrospectionSupport {
     }
 
     public static Map extractProperties(final Map props, final String optionPrefix) {
-        if (props == null)
+        if (props == null) {
             throw new IllegalArgumentException("props was null.");
+        }
 
         final HashMap<String, Object> rc = new HashMap<String, Object>(props.size());
 
@@ -125,10 +133,12 @@ public class IntrospectionSupport {
     public static boolean setProperties(final Object target, final Map props) {
         boolean rc = false;
 
-        if (target == null)
+        if (target == null) {
             throw new IllegalArgumentException("target was null.");
-        if (props == null)
+        }
+        if (props == null) {
             throw new IllegalArgumentException("props was null.");
+        }
 
         for (final Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
             final Map.Entry entry = (Entry) iter.next();
@@ -145,8 +155,9 @@ public class IntrospectionSupport {
         try {
             final Class clazz = target.getClass();
             final Method setter = findSetterMethod(clazz, name);
-            if (setter == null)
+            if (setter == null) {
                 return false;
+            }
 
             // If the type is null or it matches the needed type, just use the
             // value directly
@@ -206,12 +217,15 @@ public class IntrospectionSupport {
     }
 
     private static boolean isSettableType(final Class clazz) {
-        if (PropertyEditorManager.findEditor(clazz) != null)
+        if (PropertyEditorManager.findEditor(clazz) != null) {
             return true;
-        if (clazz == URI.class)
+        }
+        if (clazz == URI.class) {
             return true;
-        if (clazz == Boolean.class)
+        }
+        if (clazz == Boolean.class) {
             return true;
+        }
         return false;
     }
 
@@ -257,8 +271,9 @@ public class IntrospectionSupport {
     private static void addFields(final Object target, final Class startClass,
             final Class stopClass, final LinkedHashMap<String, Object> map) {
 
-        if (startClass != stopClass)
+        if (startClass != stopClass) {
             addFields(target, startClass.getSuperclass(), stopClass, map);
+        }
 
         final Field[] fields = startClass.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {

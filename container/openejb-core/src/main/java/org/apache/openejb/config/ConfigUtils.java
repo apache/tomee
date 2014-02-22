@@ -179,7 +179,9 @@ public class ConfigUtils {
                      * If the jar entry is already there, no need 
                      * to add it to the config or go any futher.
                      */
-                    if (jar.equals(target)) return false;
+                    if (jar.equals(target)) {
+                        return false;
+                    }
                 } catch (final IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 
@@ -197,7 +199,9 @@ public class ConfigUtils {
                      * to add it explicitly to the config or go
                      * any futher.
                      */
-                    if (jarDir != null && jarDir.equals(target)) return false;
+                    if (jarDir != null && jarDir.equals(target)) {
+                        return false;
+                    }
                 } catch (final IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 

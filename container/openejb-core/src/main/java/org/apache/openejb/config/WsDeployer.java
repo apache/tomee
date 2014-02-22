@@ -140,7 +140,9 @@ public class WsDeployer implements DynamicDeployer {
             final String className = servlet.getServletClass();
 
             // Skip JSPs
-            if (className == null) continue;
+            if (className == null) {
+                continue;
+            }
 
             try {
                 final Class<?> clazz = webModule.getClassLoader().loadClass(className);
@@ -251,15 +253,25 @@ public class WsDeployer implements DynamicDeployer {
         WebserviceDescription webserviceDescription = null;
         for (final EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
-            if (!(enterpriseBean instanceof SessionBean)) continue;
+            if (!(enterpriseBean instanceof SessionBean)) {
+                continue;
+            }
             final SessionBean sessionBean = (SessionBean) enterpriseBean;
-            if (sessionBean.getSessionType() == SessionType.STATEFUL) continue;
-            if (sessionBean.getSessionType() == SessionType.MANAGED) continue;
-            if (sessionBean.getServiceEndpoint() == null) continue;
+            if (sessionBean.getSessionType() == SessionType.STATEFUL) {
+                continue;
+            }
+            if (sessionBean.getSessionType() == SessionType.MANAGED) {
+                continue;
+            }
+            if (sessionBean.getServiceEndpoint() == null) {
+                continue;
+            }
 
 
             final EjbDeployment deployment = deploymentsByEjbName.get(sessionBean.getEjbName());
-            if (deployment == null) continue;
+            if (deployment == null) {
+                continue;
+            }
 
             final Class<?> ejbClass;
             try {
@@ -269,7 +281,9 @@ public class WsDeployer implements DynamicDeployer {
             }
 
             // for now, skip all non jaxws beans
-            if (!JaxWsUtils.isWebService(ejbClass)) continue;
+            if (!JaxWsUtils.isWebService(ejbClass)) {
+                continue;
+            }
 
             // create webservices dd if not defined
             if (webservices == null) {
@@ -366,7 +380,9 @@ public class WsDeployer implements DynamicDeployer {
     }
 
     private Definition getWsdl(final DeploymentModule module, final String wsdlFile) {
-        if (wsdlFile == null) return null;
+        if (wsdlFile == null) {
+            return null;
+        }
 
         final Object object = module.getAltDDs().get(wsdlFile);
         if (object instanceof Definition) {
@@ -425,14 +441,20 @@ public class WsDeployer implements DynamicDeployer {
     }
 
     private String getLocationFromWsdl(final Definition definition, final PortComponent portComponent) {
-        if (definition == null) return null;
+        if (definition == null) {
+            return null;
+        }
 
         try {
             final Service service = definition.getService(portComponent.getWsdlService());
-            if (service == null) return null;
+            if (service == null) {
+                return null;
+            }
 
             final Port port = service.getPort(portComponent.getWsdlPort().getLocalPart());
-            if (port == null) return null;
+            if (port == null) {
+                return null;
+            }
 
             for (final Object element : port.getExtensibilityElements()) {
                 if (element instanceof SOAPAddress) {

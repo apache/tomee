@@ -25,7 +25,9 @@ public class ID {
     private final String name;
 
     public ID(final String namespace, final String name) {
-        if (name == null) throw new IllegalArgumentException("name cannot be null");
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
         this.namespace = namespace != null ? namespace.toLowerCase() : null;
         this.name = name.toLowerCase();
     }
@@ -39,8 +41,12 @@ public class ID {
     }
 
     public void validate() {
-        if (namespace == null) throw new IllegalArgumentException("namespace cannot be null");
-        if (name == null) throw new IllegalArgumentException("name cannot be null");
+        if (namespace == null) {
+            throw new IllegalArgumentException("namespace cannot be null");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
     }
     public static ID parse(final String raw) {
         return parse(raw, (String) null);
@@ -51,7 +57,9 @@ public class ID {
     }
 
     public static ID parse(final String raw, final String namespace) {
-        if (raw == null) throw new NullPointerException("provider id cannot be null");
+        if (raw == null) {
+            throw new NullPointerException("provider id cannot be null");
+        }
 
         final String[] parts = raw.split("[#:]");
 
@@ -69,13 +77,21 @@ public class ID {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final ID id = (ID) o;
 
-        if (!name.equals(id.name)) return false;
-        if (namespace != null ? !namespace.equals(id.namespace) : id.namespace != null) return false;
+        if (!name.equals(id.name)) {
+            return false;
+        }
+        if (namespace != null ? !namespace.equals(id.namespace) : id.namespace != null) {
+            return false;
+        }
 
         return true;
     }

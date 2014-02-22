@@ -62,9 +62,11 @@ public class RAFPassivater implements PassivationStrategy {
                 final byte [] bytes = Serializer.serialize(obj);
                 final long filepointer = ras.getFilePointer();
 
-                if (lastPointer == null) lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
-                else
+                if (lastPointer == null) {
+                    lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
+                } else {
                     lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
+                }
 
                 masterTable.put(id, lastPointer);
                 ras.write(bytes);
@@ -79,8 +81,9 @@ public class RAFPassivater implements PassivationStrategy {
             throws SystemException {
 
         final Pointer pointer = (Pointer) masterTable.get(primaryKey);
-        if (pointer == null)
+        if (pointer == null) {
             return null;
+        }
 
         try {
             final RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + pointer.fileid + ".ser", "r");

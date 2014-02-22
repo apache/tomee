@@ -214,7 +214,9 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     protected void setRollbackOnly(final Transaction tx, final Throwable reason) {
         try {
-            if (tx == null || tx.getStatus() != Status.STATUS_ACTIVE) return;
+            if (tx == null || tx.getStatus() != Status.STATUS_ACTIVE) {
+                return;
+            }
 
             if (reason == null) {
 

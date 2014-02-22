@@ -36,7 +36,9 @@ public class IsolationLevels {
     }
 
     public static int getIsolationLevel(final String s) {
-        if (!isolation.containsKey(s)) throw new IllegalArgumentException("No such transaction isolation level '"+s+"'.  Possible values are "+Join.join(", ", isolation.keySet()));
+        if (!isolation.containsKey(s)) {
+            throw new IllegalArgumentException("No such transaction isolation level '" + s + "'.  Possible values are " + Join.join(", ", isolation.keySet()));
+        }
         final int level = isolation.get(s);
         return level;
     }

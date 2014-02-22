@@ -54,7 +54,9 @@ public class WlsConversion implements DynamicDeployer {
                 // todo warn about not being able to parse sun descriptor
             }
         }
-        if (altDD == null) return null;
+        if (altDD == null) {
+            return null;
+        }
         if (altDD instanceof JAXBElement) {
             final JAXBElement jaxbElement = (JAXBElement) altDD;
             altDD = jaxbElement.getValue();
@@ -73,9 +75,15 @@ public class WlsConversion implements DynamicDeployer {
     private void mergeEjbConfig(final EjbModule ejbModule, final WeblogicEjbJar weblogicEjbJar) {
         final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
-        if (openejbJar == null) return;
-        if (weblogicEjbJar == null) return;
-        if (weblogicEjbJar.getWeblogicEnterpriseBean().size() == 0) return;
+        if (openejbJar == null) {
+            return;
+        }
+        if (weblogicEjbJar == null) {
+            return;
+        }
+        if (weblogicEjbJar.getWeblogicEnterpriseBean().size() == 0) {
+            return;
+        }
 
         for (final WeblogicEnterpriseBean ejb : weblogicEjbJar.getWeblogicEnterpriseBean()) {
 

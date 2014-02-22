@@ -60,11 +60,15 @@ public class CheckDependsOn extends ValidationBase {
         for (final Bean bean : app.values()) {
             final EnterpriseBean enterpriseBean = bean.bean;
 
-            if (!(enterpriseBean instanceof SessionBean)) continue;
+            if (!(enterpriseBean instanceof SessionBean)) {
+                continue;
+            }
 
             final SessionBean sessionBean = (SessionBean) enterpriseBean;
 
-            if (sessionBean.getSessionType() != SessionType.SINGLETON) continue;
+            if (sessionBean.getSessionType() != SessionType.SINGLETON) {
+                continue;
+            }
 
             for (final String ejbName : sessionBean.getDependsOn()) {
                 final Bean referee = bean.resolveLink(ejbName);
@@ -113,7 +117,9 @@ public class CheckDependsOn extends ValidationBase {
 
         public T resolveLink(final String link, final URI moduleUri) {
             final T value = module.resolveLink(link, moduleUri);
-            if (value != null) return value;
+            if (value != null) {
+                return value;
+            }
 
             return app.resolveLink(link, moduleUri);
         }

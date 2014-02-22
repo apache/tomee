@@ -410,8 +410,9 @@ public class SQLLoginModule implements LoginModule {
 
         public static Option findByName(final String name) {
             for (final Option opt : values()) {
-                if (opt.name.equals(name))
+                if (opt.name.equals(name)) {
                     return opt;
+                }
             }
             return null;
         }

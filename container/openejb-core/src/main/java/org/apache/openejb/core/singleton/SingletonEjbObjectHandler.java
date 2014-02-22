@@ -38,8 +38,9 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     }
 
     public Object getRegistryId() {
-        if (registryId == null)
+        if (registryId == null) {
             registryId = createRegistryId(primaryKey, deploymentID, container);
+        }
         return registryId;
     }
 

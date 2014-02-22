@@ -51,8 +51,10 @@ public final class JarCreator {
     private static void jarFile(final JarOutputStream out, final File f, final String prefix) throws IOException {
         if (f.isDirectory()) {
             final File[] files = f.listFiles();
-            if (null != files) for (final File child : files) {
-                jarFile(out, child, prefix);
+            if (null != files) {
+                for (final File child : files) {
+                    jarFile(out, child, prefix);
+                }
             }
         } else {
             final byte[] buffer = new byte[BUFFER_SIZE];

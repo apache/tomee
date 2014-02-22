@@ -171,7 +171,9 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
     private boolean hasCmpPersistenceUnit(final Persistence persistence) {
         for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
-            if (unit.getName().startsWith("cmp")) return true;
+            if (unit.getName().startsWith("cmp")) {
+                return true;
+            }
         }
         return false;
     }
@@ -199,7 +201,9 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         try {
             final GeronimoEjbJarType geronimoEjbJarType = (GeronimoEjbJarType) ejbModule.getAltDDs().get("geronimo-openejb.xml");
 
-            if (geronimoEjbJarType == null) return;
+            if (geronimoEjbJarType == null) {
+                return;
+            }
 
             final File tempFile = tempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
 

@@ -64,7 +64,9 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
         if (mtdName.startsWith("set") && args.length >= 2 && (args[0].getClass().equals(Integer.TYPE) || args[0].getClass().equals(Integer.class))) {
             final Parameter param = new Parameter(mtdName.substring(3), parameterIndex, (Integer) args[0], args[1]);
 
-            if (debug) logParam(param);
+            if (debug) {
+                logParam(param);
+            }
 
             parameters.add(param);
         } else if (execute) {
@@ -117,7 +119,9 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
             parameterIndex++;
         }
 
-        if (result.getThrowable() != null) throw result.getThrowable();
+        if (result.getThrowable() != null) {
+            throw result.getThrowable();
+        }
         return result.getResult();
     }
 

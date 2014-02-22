@@ -55,7 +55,9 @@ public class ServiceManagerProxy {
         final Method get = getMethod("get");
         final Method getManager = getMethod("getManager");
 
-        if (checkAlreadyStarted && invoke(get, null) != null) throw new AlreadyStartedException("Server services already started");
+        if (checkAlreadyStarted && invoke(get, null) != null) {
+            throw new AlreadyStartedException("Server services already started");
+        }
 
         serviceManager = invoke(getManager, null);
 

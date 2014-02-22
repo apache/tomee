@@ -67,11 +67,21 @@ public class WikiGenerator {
 
             private int grade(final ServiceProvider i) {
                 final String name = i.getClassName();
-                if (name.contains("stateless")) return 10;
-                if (name.contains("stateful")) return 9;
-                if (name.contains("singleton")) return 8;
-                if (name.contains("mdb")) return 7;
-                if (name.contains("managed")) return 6;
+                if (name.contains("stateless")) {
+                    return 10;
+                }
+                if (name.contains("stateful")) {
+                    return 9;
+                }
+                if (name.contains("singleton")) {
+                    return 8;
+                }
+                if (name.contains("mdb")) {
+                    return 7;
+                }
+                if (name.contains("managed")) {
+                    return 6;
+                }
                 return 0;
             }
         });
@@ -87,7 +97,9 @@ public class WikiGenerator {
         for (final ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Resource".equals(provider.getService())) {
 
-                if (seen.containsAll(provider.getTypes())) continue;
+                if (seen.containsAll(provider.getTypes())) {
+                    continue;
+                }
 
                 generateService(provider, "Resource");
 
@@ -124,7 +136,9 @@ public class WikiGenerator {
 
                     final Map<String, String> attributes = properties.getAttributes(name);
 
-                    if (attributes.containsKey("hidden")) continue;
+                    if (attributes.containsKey("hidden")) {
+                        continue;
+                    }
 
                     out.println("### " + key);
                     out.println();
@@ -137,7 +151,9 @@ public class WikiGenerator {
 
                     defaults.put(name, String.valueOf(value));
 
-                    if (comment.length() == 0) comment = "No description.";
+                    if (comment.length() == 0) {
+                        comment = "No description.";
+                    }
 
                     out.println(comment);
                     out.println();
@@ -161,7 +177,9 @@ public class WikiGenerator {
     }
 
     private String scrubText(String text) {
-        if (text == null) text = "";
+        if (text == null) {
+            text = "";
+        }
         return text;
 //        text = text.replaceAll("\r?\n", "\\\\\\\\ ");
 //        text = text.replaceAll("\\*", "\\\\*");

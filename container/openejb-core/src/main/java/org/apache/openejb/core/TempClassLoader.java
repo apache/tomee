@@ -81,7 +81,9 @@ public class TempClassLoader extends URLClassLoader {
 
     @Override
     protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-        if (name == null) throw new NullPointerException("name cannot be null");
+        if (name == null) {
+            throw new NullPointerException("name cannot be null");
+        }
 
         // see if we've already loaded it
         Class c = this.findLoadedClass(name);

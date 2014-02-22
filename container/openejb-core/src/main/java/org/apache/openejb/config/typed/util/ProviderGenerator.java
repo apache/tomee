@@ -54,7 +54,9 @@ public class ProviderGenerator extends Resource {
             final String name = guessBuilder(types);
             final String builder = name + "Builder";
 
-            if (seen.contains(builder)) continue;
+            if (seen.contains(builder)) {
+                continue;
+            }
             seen.add(builder);
 
             final String service = provider.getService();
@@ -266,7 +268,9 @@ public class ProviderGenerator extends Resource {
                         unit = TimeUnit.HOURS;
                     }
 
-                    if (unit == null) continue;
+                    if (unit == null) {
+                        continue;
+                    }
 
                     final Pattern pattern = Pattern.compile("(millis(econds)?|seconds|minutes|hours)", Pattern.CASE_INSENSITIVE);
                     final String lcFirstKey2 = pattern.matcher(lcFirstKey).replaceAll("");
@@ -328,7 +332,9 @@ public class ProviderGenerator extends Resource {
     }
 
     private static String asValue(final String type, final String value) {
-        if ("".equals(value)) return "null";
+        if ("".equals(value)) {
+            return "null";
+        }
 
         if ("String".equals(type)) {
             return "\"" + value + "\"";
@@ -346,23 +352,43 @@ public class ProviderGenerator extends Resource {
     private static String guessBuilder(final List<String> types) {
         String s = types.get(0);
 
-        if ("STATEFUL".equals(s)) return "StatefulContainer";
-        if ("SINGLETON".equals(s)) return "SingletonContainer";
-        if ("MANAGED".equals(s)) return "ManagedContainer";
-        if ("STATELESS".equals(s)) return "StatelessContainer";
-        if ("MESSAGE".equals(s)) return "MessageDrivenContainer";
-        if ("BMP_ENTITY".equals(s)) return "BmpEntityContainer";
-        if ("CMP_ENTITY".equals(s)) return "CmpEntityContainer";
+        if ("STATEFUL".equals(s)) {
+            return "StatefulContainer";
+        }
+        if ("SINGLETON".equals(s)) {
+            return "SingletonContainer";
+        }
+        if ("MANAGED".equals(s)) {
+            return "ManagedContainer";
+        }
+        if ("STATELESS".equals(s)) {
+            return "StatelessContainer";
+        }
+        if ("MESSAGE".equals(s)) {
+            return "MessageDrivenContainer";
+        }
+        if ("BMP_ENTITY".equals(s)) {
+            return "BmpEntityContainer";
+        }
+        if ("CMP_ENTITY".equals(s)) {
+            return "CmpEntityContainer";
+        }
 
-        if ("javax.jms.ConnectionFactory".equals(s)) return "JmsConnectionFactory";
-        if ("javax.mail.Session".equals(s)) return "JavaMailSession";
+        if ("javax.jms.ConnectionFactory".equals(s)) {
+            return "JmsConnectionFactory";
+        }
+        if ("javax.mail.Session".equals(s)) {
+            return "JavaMailSession";
+        }
 
         s = s.replaceAll(".*\\.", "");
         return s;
     }
 
     private static String guessType(final String key, final String value) {
-        if (value.equals("true") || value.equals("false")) return "boolean";
+        if (value.equals("true") || value.equals("false")) {
+            return "boolean";
+        }
 
         if (key.toLowerCase().endsWith("timeout")) {
             return Duration.class.getName();
@@ -433,7 +459,9 @@ public class ProviderGenerator extends Resource {
             while (matcher.find()) {
                 final String key = matcher.group(2);
 
-                if (key == null) throw new IllegalStateException("Key is null. Template '" + template + "'");
+                if (key == null) {
+                    throw new IllegalStateException("Key is null. Template '" + template + "'");
+                }
 
                 String value = map.get(key);
 
@@ -445,7 +473,9 @@ public class ProviderGenerator extends Resource {
                     value = Strings.camelCase(map.get(key.substring(0, key.length() - 3)));
                 }
 
-                if (value == null) throw new IllegalStateException("Value is null for key '" + key + "'. Template '" + template + "'. Keys: " + Join.join(", ", map.keySet()));
+                if (value == null) {
+                    throw new IllegalStateException("Value is null for key '" + key + "'. Template '" + template + "'. Keys: " + Join.join(", ", map.keySet()));
+                }
                 matcher.appendReplacement(buf, value);
             }
 

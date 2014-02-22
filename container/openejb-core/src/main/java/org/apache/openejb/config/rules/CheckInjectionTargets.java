@@ -60,7 +60,9 @@ public class CheckInjectionTargets extends ValidationBase {
                         correctName.delete(0, 3);
                         correctName.setCharAt(0, Character.toLowerCase(correctName.charAt(0)));
                         final String shortNameCorrect = correctName.toString();
-                        if (classPrefix) correctName.insert(0, target.getInjectionTargetClass() + "/");
+                        if (classPrefix) {
+                            correctName.insert(0, target.getInjectionTargetClass() + "/");
+                        }
 
                         warn(bean, "injectionTarget.nameContainsSet", target.getInjectionTargetName(), shortNameInvalid, shortNameCorrect, correctName, reference.getName(), reference.getClass().getSimpleName());
                         target.setInjectionTargetName(correctName.toString());

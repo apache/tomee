@@ -99,7 +99,9 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        if (!hasCmpEntities(appModule)) return appModule;
+        if (!hasCmpEntities(appModule)) {
+            return appModule;
+        }
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
@@ -209,7 +211,9 @@ public class CmpJpaConversion implements DynamicDeployer {
     }
 
     private String getPersistenceModuleId(final AppModule appModule) {
-        if (appModule.getModuleId() != null) return appModule.getModuleId();
+        if (appModule.getModuleId() != null) {
+            return appModule.getModuleId();
+        }
         for (final EjbModule ejbModule: appModule.getEjbModules()) {
             return ejbModule.getModuleId();
         }
@@ -228,7 +232,9 @@ public class CmpJpaConversion implements DynamicDeployer {
     private boolean hasCmpEntities(final AppModule appModule) {
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                if (isCmpEntity(bean)) return true;
+                if (isCmpEntity(bean)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -566,7 +572,9 @@ public class CmpJpaConversion implements DynamicDeployer {
                 name.append('(');
                 boolean first = true;
                 for (final String methodParam : queryMethod.getMethodParams().getMethodParam()) {
-                    if (!first) name.append(",");
+                    if (!first) {
+                        name.append(",");
+                    }
                     name.append(methodParam);
                     first = false;
                 }
@@ -593,7 +601,9 @@ public class CmpJpaConversion implements DynamicDeployer {
                     name.append('(');
                     boolean first = true;
                     for (final String methodParam : queryMethod.getMethodParams().getMethodParam()) {
-                        if (!first) name.append(",");
+                        if (!first) {
+                            name.append(",");
+                        }
                         name.append(methodParam);
                         first = false;
                     }
@@ -695,14 +705,26 @@ public class CmpJpaConversion implements DynamicDeployer {
         // the get<Name> or is<Name> pattern. 
             
         for (final Method method : beanClass.getMethods()) {
-            if (!Modifier.isAbstract(method.getModifiers())) continue;
-            if (method.getParameterTypes().length != 0) continue;
-            if (method.getReturnType().equals(Void.TYPE)) continue;
+            if (!Modifier.isAbstract(method.getModifiers())) {
+                continue;
+            }
+            if (method.getParameterTypes().length != 0) {
+                continue;
+            }
+            if (method.getReturnType().equals(Void.TYPE)) {
+                continue;
+            }
 
             // Skip relationships: anything of type EJBLocalObject or Collection
-            if (EJBLocalObject.class.isAssignableFrom(method.getReturnType())) continue;
-            if (Collection.class.isAssignableFrom(method.getReturnType())) continue;
-            if (Map.class.isAssignableFrom(method.getReturnType())) continue;
+            if (EJBLocalObject.class.isAssignableFrom(method.getReturnType())) {
+                continue;
+            }
+            if (Collection.class.isAssignableFrom(method.getReturnType())) {
+                continue;
+            }
+            if (Map.class.isAssignableFrom(method.getReturnType())) {
+                continue;
+            }
 
             String name = method.getName();
 
@@ -718,7 +740,9 @@ public class CmpJpaConversion implements DynamicDeployer {
                     // not an acceptable "is" method. 
                     continue; 
                 }
-            } else continue;
+            } else {
+                continue;
+            }
 
             // the property needs the first character lowercased.  Generally, 
             // we'll have this field already in our list, but it might have been 
@@ -1052,7 +1076,9 @@ public class CmpJpaConversion implements DynamicDeployer {
      */
     private boolean addPersistenceContextRef(final EntityBean bean) {
         // if a ref is already defined, skip this bean
-        if (bean.getPersistenceContextRefMap().containsKey("java:" + JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) return false;
+        if (bean.getPersistenceContextRefMap().containsKey("java:" + JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) {
+            return false;
+        }
 
         final PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
         persistenceContextRef.setName("java:" + JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME);

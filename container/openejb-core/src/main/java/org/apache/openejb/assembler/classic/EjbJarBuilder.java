@@ -75,7 +75,9 @@ public class EjbJarBuilder {
                 // TODO: replace with get() on application context or parent
                 final Container container = (Container) props.get(ejbInfo.containerId);
 
-                if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + bean.getDeploymentID());
+                if (container == null) {
+                    throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + bean.getDeploymentID());
+                }
                 // Don't deploy to the container, yet. That will be done by deploy() once Assembler as finished configuring the DeploymentInfo
                 bean.setContainer(container);
             } catch (final Throwable e) {

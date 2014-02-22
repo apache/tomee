@@ -114,7 +114,9 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         final boolean changed = getRelatedBeans(true, true).add(newEntity);
         if (changed && relatedProperty != null) {
             // set the back reference in the new related bean
-            if (source == null) throw new IllegalStateException("source is null");
+            if (source == null) {
+                throw new IllegalStateException("source is null");
+            }
             final Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
@@ -189,21 +191,27 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     }
 
     private Proxy getEjbProxy(final Bean entity) throws EJBException {
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
 
         final Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
     private Bean getEntityBean(final EJBLocalObject proxy) {
-        if (proxy == null) return null;
+        if (proxy == null) {
+            return null;
+        }
 
         final Bean bean = Cmp2Util.<Bean>getEntityBean(proxy);
         return bean;
     }
 
     private static <Bean extends EntityBean> Set<Bean> getEntityBeans(final Collection<?> proxies, final Class type) {
-        if (proxies == null) return null;
+        if (proxies == null) {
+            return null;
+        }
 
         final Set<Bean> entities = new HashSet<Bean>();
         for (final Object value : proxies) {

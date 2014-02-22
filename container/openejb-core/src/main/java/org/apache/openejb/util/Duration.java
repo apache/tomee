@@ -126,18 +126,30 @@ public class Duration {
         }
 
         private static TimeUnit lowest(final Duration a, final Duration b) {
-            if (a.unit == null) return b.unit;
-            if (b.unit == null) return a.unit;
-            if (a.time == 0) return b.unit;
-            if (b.time == 0) return a.unit;
+            if (a.unit == null) {
+                return b.unit;
+            }
+            if (b.unit == null) {
+                return a.unit;
+            }
+            if (a.time == 0) {
+                return b.unit;
+            }
+            if (b.time == 0) {
+                return a.unit;
+            }
             return TimeUnit.values()[Math.min(a.unit.ordinal(), b.unit.ordinal())];
         }
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final Duration that = (Duration) o;
 
@@ -175,44 +187,106 @@ public class Duration {
     }
 
     private static TimeUnit parseUnit(final String u) {
-        if (u.length() == 0) return null;
+        if (u.length() == 0) {
+            return null;
+        }
 
-        if (u.equalsIgnoreCase("NANOSECONDS")) return TimeUnit.NANOSECONDS;
-        if (u.equalsIgnoreCase("NANOSECOND")) return TimeUnit.NANOSECONDS;
-        if (u.equalsIgnoreCase("NANOS")) return TimeUnit.NANOSECONDS;
-        if (u.equalsIgnoreCase("NANO")) return TimeUnit.NANOSECONDS;
-        if (u.equalsIgnoreCase("NS")) return TimeUnit.NANOSECONDS;
+        if (u.equalsIgnoreCase("NANOSECONDS")) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if (u.equalsIgnoreCase("NANOSECOND")) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if (u.equalsIgnoreCase("NANOS")) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if (u.equalsIgnoreCase("NANO")) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if (u.equalsIgnoreCase("NS")) {
+            return TimeUnit.NANOSECONDS;
+        }
 
-        if (u.equalsIgnoreCase("MICROSECONDS")) return TimeUnit.MICROSECONDS;
-        if (u.equalsIgnoreCase("MICROSECOND")) return TimeUnit.MICROSECONDS;
-        if (u.equalsIgnoreCase("MICROS")) return TimeUnit.MICROSECONDS;
-        if (u.equalsIgnoreCase("MICRO")) return TimeUnit.MICROSECONDS;
+        if (u.equalsIgnoreCase("MICROSECONDS")) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if (u.equalsIgnoreCase("MICROSECOND")) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if (u.equalsIgnoreCase("MICROS")) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if (u.equalsIgnoreCase("MICRO")) {
+            return TimeUnit.MICROSECONDS;
+        }
 
-        if (u.equalsIgnoreCase("MILLISECONDS")) return TimeUnit.MILLISECONDS;
-        if (u.equalsIgnoreCase("MILLISECOND")) return TimeUnit.MILLISECONDS;
-        if (u.equalsIgnoreCase("MILLIS")) return TimeUnit.MILLISECONDS;
-        if (u.equalsIgnoreCase("MILLI")) return TimeUnit.MILLISECONDS;
-        if (u.equalsIgnoreCase("MS")) return TimeUnit.MILLISECONDS;
+        if (u.equalsIgnoreCase("MILLISECONDS")) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if (u.equalsIgnoreCase("MILLISECOND")) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if (u.equalsIgnoreCase("MILLIS")) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if (u.equalsIgnoreCase("MILLI")) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if (u.equalsIgnoreCase("MS")) {
+            return TimeUnit.MILLISECONDS;
+        }
 
-        if (u.equalsIgnoreCase("SECONDS")) return TimeUnit.SECONDS;
-        if (u.equalsIgnoreCase("SECOND")) return TimeUnit.SECONDS;
-        if (u.equalsIgnoreCase("SEC")) return TimeUnit.SECONDS;
-        if (u.equalsIgnoreCase("S")) return TimeUnit.SECONDS;
+        if (u.equalsIgnoreCase("SECONDS")) {
+            return TimeUnit.SECONDS;
+        }
+        if (u.equalsIgnoreCase("SECOND")) {
+            return TimeUnit.SECONDS;
+        }
+        if (u.equalsIgnoreCase("SEC")) {
+            return TimeUnit.SECONDS;
+        }
+        if (u.equalsIgnoreCase("S")) {
+            return TimeUnit.SECONDS;
+        }
 
-        if (u.equalsIgnoreCase("MINUTES")) return TimeUnit.MINUTES;
-        if (u.equalsIgnoreCase("MINUTE")) return TimeUnit.MINUTES;
-        if (u.equalsIgnoreCase("MIN")) return TimeUnit.MINUTES;
-        if (u.equalsIgnoreCase("M")) return TimeUnit.MINUTES;
+        if (u.equalsIgnoreCase("MINUTES")) {
+            return TimeUnit.MINUTES;
+        }
+        if (u.equalsIgnoreCase("MINUTE")) {
+            return TimeUnit.MINUTES;
+        }
+        if (u.equalsIgnoreCase("MIN")) {
+            return TimeUnit.MINUTES;
+        }
+        if (u.equalsIgnoreCase("M")) {
+            return TimeUnit.MINUTES;
+        }
 
-        if (u.equalsIgnoreCase("HOURS")) return TimeUnit.HOURS;
-        if (u.equalsIgnoreCase("HOUR")) return TimeUnit.HOURS;
-        if (u.equalsIgnoreCase("HRS")) return TimeUnit.HOURS;
-        if (u.equalsIgnoreCase("HR")) return TimeUnit.HOURS;
-        if (u.equalsIgnoreCase("H")) return TimeUnit.HOURS;
+        if (u.equalsIgnoreCase("HOURS")) {
+            return TimeUnit.HOURS;
+        }
+        if (u.equalsIgnoreCase("HOUR")) {
+            return TimeUnit.HOURS;
+        }
+        if (u.equalsIgnoreCase("HRS")) {
+            return TimeUnit.HOURS;
+        }
+        if (u.equalsIgnoreCase("HR")) {
+            return TimeUnit.HOURS;
+        }
+        if (u.equalsIgnoreCase("H")) {
+            return TimeUnit.HOURS;
+        }
 
-        if (u.equalsIgnoreCase("DAYS")) return TimeUnit.DAYS;
-        if (u.equalsIgnoreCase("DAY")) return TimeUnit.DAYS;
-        if (u.equalsIgnoreCase("D")) return TimeUnit.DAYS;
+        if (u.equalsIgnoreCase("DAYS")) {
+            return TimeUnit.DAYS;
+        }
+        if (u.equalsIgnoreCase("DAY")) {
+            return TimeUnit.DAYS;
+        }
+        if (u.equalsIgnoreCase("D")) {
+            return TimeUnit.DAYS;
+        }
 
         throw new IllegalArgumentException("Unknown time unit '" + u + "'.  Supported units " + Join.join(", ", lowercase(TimeUnit.values())));
     }

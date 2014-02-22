@@ -49,21 +49,27 @@ public class LinkBuiltInTypes implements DynamicDeployer {
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             link(consumer);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             link(consumer);
         }
 
         for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
-            if (ejbJar == null) continue;
+            if (ejbJar == null) {
+                continue;
+            }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 link(consumer);
@@ -96,7 +102,9 @@ public class LinkBuiltInTypes implements DynamicDeployer {
         for (final JndiReference ref : refs) {
             final String link = links.get(ref.getType());
 
-            if (link == null) continue;
+            if (link == null) {
+                continue;
+            }
 
             if (ref.getName().equals(link)) {
                 // make sure the user hasn't linked it to itself or anything else

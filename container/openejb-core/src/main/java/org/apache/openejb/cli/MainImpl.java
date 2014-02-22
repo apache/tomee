@@ -221,7 +221,9 @@ public class MainImpl implements Main {
             final ResourceFinder commandFinder = new ResourceFinder("META-INF");
             final Map<String, Properties> commands = commandFinder.mapAvailableProperties("org.apache.openejb.cli");
             for (final Map.Entry<String, Properties> command : commands.entrySet()) {
-                if (command.getKey().contains(".")) continue;
+                if (command.getKey().contains(".")) {
+                    continue;
+                }
                 final Properties p = command.getValue();
                 final String description = p.getProperty(descriptionI18n, p.getProperty(descriptionBase));
                 options.addOption(command.getKey(), false, description);

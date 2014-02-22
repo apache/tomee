@@ -296,17 +296,22 @@ public class BeanContext extends DeploymentContext {
 
     public InterfaceType getInterfaceType(final Class clazz) {
         final InterfaceType type = interfaces.get(clazz);
-        if (type != null)
+        if (type != null) {
             return type;
+        }
 
-        if (EJBLocalHome.class.isAssignableFrom(clazz))
+        if (EJBLocalHome.class.isAssignableFrom(clazz)) {
             return InterfaceType.EJB_LOCAL_HOME;
-        if (EJBLocalObject.class.isAssignableFrom(clazz))
+        }
+        if (EJBLocalObject.class.isAssignableFrom(clazz)) {
             return InterfaceType.EJB_LOCAL;
-        if (EJBHome.class.isAssignableFrom(clazz))
+        }
+        if (EJBHome.class.isAssignableFrom(clazz)) {
             return InterfaceType.EJB_HOME;
-        if (EJBObject.class.isAssignableFrom(clazz))
+        }
+        if (EJBObject.class.isAssignableFrom(clazz)) {
             return InterfaceType.EJB_OBJECT;
+        }
 
         for (final Entry<Class, InterfaceType> entry : interfaces.entrySet()) { // for @Remote case where the loaded interface can be different from the stored one
             if (entry.getKey().getName().equals(clazz.getName())) {
@@ -366,14 +371,18 @@ public class BeanContext extends DeploymentContext {
 
         this.proxyClass = proxy;
 
-        if (homeInterface != null)
+        if (homeInterface != null) {
             this.getLegacyView().homeInterface = homeInterface;
-        if (localInterface != null)
+        }
+        if (localInterface != null) {
             this.getLegacyView().localInterface = localInterface;
-        if (localHomeInterface != null)
+        }
+        if (localHomeInterface != null) {
             this.getLegacyView().localHomeInterface = localHomeInterface;
-        if (remoteInterface != null)
+        }
+        if (remoteInterface != null) {
             this.getLegacyView().remoteInterface = remoteInterface;
+        }
 
         if (businessLocals != null) {
             this.businessLocals.addAll(businessLocals);
@@ -479,8 +488,9 @@ public class BeanContext extends DeploymentContext {
      * @param type     InterfaceType
      */
     private void addInterface(final Class interfce, final InterfaceType type) {
-        if (interfce == null)
+        if (interfce == null) {
             return;
+        }
         interfaces.put(interfce, type);
 
         for (final Class clazz : interfce.getInterfaces()) {
@@ -673,8 +683,9 @@ public class BeanContext extends DeploymentContext {
             methodContext = getViewMethodContext(method, interfaceType.getSpecName());
         }
 
-        if (methodContext == null)
+        if (methodContext == null) {
             methodContext = methodContextMap.get(method);
+        }
 
         if (methodContext == null) {
             final Method beanMethod = getMatchingBeanMethod(method);
@@ -1175,8 +1186,9 @@ public class BeanContext extends DeploymentContext {
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
                         ejbCreateName.insert(3, "Post");
                         Class clazz = beanClass;
-                        if (getCmp().cmpImplClass != null)
+                        if (getCmp().cmpImplClass != null) {
                             clazz = getCmp().cmpImplClass;
+                        }
                         final Method postCreateMethod = clazz.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                         getCmp().postCreateMethodMap.put(getLegacyView().createMethod, postCreateMethod);
                     }
@@ -1718,8 +1730,9 @@ public class BeanContext extends DeploymentContext {
 
         public MethodContext initMethodContext(final Method method) {
             MethodContext methodContext = methodContextMap.get(method);
-            if (methodContext != null)
+            if (methodContext != null) {
                 return methodContext;
+            }
 
             methodContext = new MethodContext(BeanContext.this, method);
             methodContextMap.put(method, methodContext);

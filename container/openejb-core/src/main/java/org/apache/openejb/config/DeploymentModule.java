@@ -84,14 +84,22 @@ public interface DeploymentModule {
         }
 
         private URI uri(final URI uri, final File location, final String name) {
-            if (uri != null) return uri;
-            if (location != null) return location.toURI();
+            if (uri != null) {
+                return uri;
+            }
+            if (location != null) {
+                return location.toURI();
+            }
             return URLs.uri(name);
         }
 
         private File location(final File location, final URI uri) {
-            if (location != null) return location;
-            if (uri != null && uri.isAbsolute()) return new File(uri);
+            if (location != null) {
+                return location;
+            }
+            if (uri != null && uri.isAbsolute()) {
+                return new File(uri);
+            }
             return null;
         }
 
@@ -104,15 +112,33 @@ public interface DeploymentModule {
                 }
             }
 
-            if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim(); // used to override defaults so do it first
-            if (name != null && !name.startsWith("@")) return name;
-            if (vendor != null && vendor.getModuleName() != null) return vendor.getModuleName().trim();
-            if (vendor != null && vendor.getId() != null) return vendor.getId().trim();
-            if (spec != null && spec.getId() != null) return spec.getId().trim();
-            if (uri != null) return stripExtension(uri.getPath());
-            if (location != null && SystemInstance.get().getOptions().get(OPENEJB_MODULENAME_USE_HASH, false)) return moduleName(location) + module.hashCode();
-            if (location != null) return moduleName(location);
-            if (name != null) return name;
+            if (spec != null && spec.getModuleName() != null) {
+                return spec.getModuleName().trim(); // used to override defaults so do it first
+            }
+            if (name != null && !name.startsWith("@")) {
+                return name;
+            }
+            if (vendor != null && vendor.getModuleName() != null) {
+                return vendor.getModuleName().trim();
+            }
+            if (vendor != null && vendor.getId() != null) {
+                return vendor.getId().trim();
+            }
+            if (spec != null && spec.getId() != null) {
+                return spec.getId().trim();
+            }
+            if (uri != null) {
+                return stripExtension(uri.getPath());
+            }
+            if (location != null && SystemInstance.get().getOptions().get(OPENEJB_MODULENAME_USE_HASH, false)) {
+                return moduleName(location) + module.hashCode();
+            }
+            if (location != null) {
+                return moduleName(location);
+            }
+            if (name != null) {
+                return name;
+            }
             return "@" + module.getClass().getSimpleName() + module.hashCode();
         }
 
@@ -146,7 +172,9 @@ public interface DeploymentModule {
         }
 
         public String getName() {
-            if (name.startsWith("@")) return name.substring(1);
+            if (name.startsWith("@")) {
+                return name.substring(1);
+            }
             return name;
         }
 

@@ -37,7 +37,9 @@ public final class BasicDataSourceUtil {
         final String vendor = getJdbcName(jdbcUrl);
 
         // no vendor so no plugin
-        if (vendor == null) return null;
+        if (vendor == null) {
+            return null;
+        }
 
         // find the plugin class
         String pluginClassName = null;
@@ -67,7 +69,9 @@ public final class BasicDataSourceUtil {
 
     public static String getJdbcName(String jdbcUrl) {
         // nothing gets you nothing
-        if (jdbcUrl == null) return null;
+        if (jdbcUrl == null) {
+            return null;
+        }
         
         // strip off "jdbc:"
         if (!jdbcUrl.startsWith("jdbc:")) {

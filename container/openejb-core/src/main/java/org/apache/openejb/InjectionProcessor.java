@@ -97,7 +97,9 @@ public class InjectionProcessor<T> {
     }
 
     private void construct() throws OpenEJBException {
-        if (instance != null) throw new IllegalStateException("Instance already constructed");
+        if (instance != null) {
+            throw new IllegalStateException("Instance already constructed");
+        }
 
         Class<? extends T> clazz = beanClass;
 
@@ -139,8 +141,12 @@ public class InjectionProcessor<T> {
     }
 
     public void postConstruct() throws OpenEJBException {
-        if (instance == null) throw new IllegalStateException("Instance has not been constructed");
-        if (postConstructMethods == null) return;
+        if (instance == null) {
+            throw new IllegalStateException("Instance has not been constructed");
+        }
+        if (postConstructMethods == null) {
+            return;
+        }
         for (final Method postConstruct : postConstructMethods) {
             try {
                 postConstruct.invoke(instance);
@@ -154,8 +160,12 @@ public class InjectionProcessor<T> {
     }
 
     public void preDestroy() {
-        if (instance == null) return;
-        if (preDestroyMethods == null) return;
+        if (instance == null) {
+            return;
+        }
+        if (preDestroyMethods == null) {
+            return;
+        }
         for (final Method preDestroy : preDestroyMethods) {
             try {
                 preDestroy.invoke(instance);
@@ -169,11 +179,15 @@ public class InjectionProcessor<T> {
     }
 
     private void fillInjectionProperties(final ObjectRecipe objectRecipe) {
-        if (injections == null) return;
+        if (injections == null) {
+            return;
+        }
         
         boolean usePrefix = true;
         try {
-            if (beanClass != null) beanClass.getConstructor();
+            if (beanClass != null) {
+                beanClass.getConstructor();
+            }
         } catch (final NoSuchMethodException e) {
             // Using constructor injection
             // xbean can't handle the prefix yet
@@ -182,12 +196,18 @@ public class InjectionProcessor<T> {
 
         Class clazz = beanClass;
 
-        if (suppliedInstance != null) clazz = suppliedInstance.getClass();
+        if (suppliedInstance != null) {
+            clazz = suppliedInstance.getClass();
+        }
 
         if (context != null) {
             for (final Injection injection : injections) {
-                if (injection.getTarget() == null) continue;
-                if (!injection.getTarget().isAssignableFrom(clazz)) continue;
+                if (injection.getTarget() == null) {
+                    continue;
+                }
+                if (!injection.getTarget().isAssignableFrom(clazz)) {
+                    continue;
+                }
 
                 final String jndiName = injection.getJndiName();
                 Object value;

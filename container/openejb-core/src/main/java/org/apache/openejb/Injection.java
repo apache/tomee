@@ -70,13 +70,21 @@ public class Injection {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Injection)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Injection)) {
+            return false;
+        }
 
         final Injection injection = (Injection) o;
 
-        if (name != null ? !name.equals(injection.name) : injection.name != null) return false;
-        if (classname != null ? !classname.equals(injection.classname) : injection.classname != null) return false;
+        if (name != null ? !name.equals(injection.name) : injection.name != null) {
+            return false;
+        }
+        if (classname != null ? !classname.equals(injection.classname) : injection.classname != null) {
+            return false;
+        }
 
         return true;
     }

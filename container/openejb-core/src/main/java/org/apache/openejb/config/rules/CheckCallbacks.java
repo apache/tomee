@@ -308,14 +308,17 @@ public class CheckCallbacks extends ValidationBase {
             final Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
             if (implementsSessionBean(delcaringClass)) {
                 if ("PreDestroy".equals(type)) {
-                    if (!callback.getMethodName().equals("ejbRemove"))
+                    if (!callback.getMethodName().equals("ejbRemove")) {
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                    }
                 } else if ("PostActivate".equals(type)) {
-                    if (!callback.getMethodName().equals("ejbActivate"))
+                    if (!callback.getMethodName().equals("ejbActivate")) {
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                    }
                 } else if ("PrePassivate".equals(type)) {
-                    if (!callback.getMethodName().equals("ejbPassivate"))
+                    if (!callback.getMethodName().equals("ejbPassivate")) {
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                    }
                 } else if ("PostConstruct".equals(type)) {
 
                     if (!callback.getMethodName().equals("ejbCreate")) {
@@ -357,8 +360,9 @@ public class CheckCallbacks extends ValidationBase {
     private boolean implementsSessionBean(final Class<?> ejbClass) {
         final Class<?>[] interfaces = ejbClass.getInterfaces();
         for (final Class<?> interfce : interfaces) {
-            if(interfce.equals(javax.ejb.SessionBean.class))
+            if(interfce.equals(javax.ejb.SessionBean.class)) {
                 return true;
+            }
         }
         return false;
     }
@@ -417,7 +421,9 @@ public class CheckCallbacks extends ValidationBase {
             try {
                 return clazz.getDeclaredMethod(methodName, parameterTypes);
             } catch (final NoSuchMethodException e) {
-                if (original == null) original = e;
+                if (original == null) {
+                    original = e;
+                }
             }
             clazz = clazz.getSuperclass();
         }

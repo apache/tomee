@@ -42,9 +42,9 @@ public class NameNode implements Serializable {
         atomicHash = name.getComponentHashCode();
         this.parent = parent;
         this.parentTree = parentTree;
-        if (name.next())
+        if (name.next()) {
             subTree = new NameNode(this, name, obj, this);
-        else if (obj instanceof Context) {
+        } else if (obj instanceof Context) {
             myObject = new Federation();
             ((Federation)myObject).add((Context) obj);
         } else {
@@ -57,11 +57,12 @@ public class NameNode implements Serializable {
     }
 
     public Object getBinding() {
-        if (myObject != null && !(myObject instanceof Federation))
+        if (myObject != null && !(myObject instanceof Federation)) {
             return myObject;// if NameNode has an object it must be a binding
-        else {
-            if (myContext == null)
+        } else {
+            if (myContext == null) {
                 myContext = new IvmContext(this);
+            }
             return myContext;
         }
     }
@@ -119,7 +120,9 @@ public class NameNode implements Serializable {
                 return new IvmContext(node);
             }
         }
-        if (n != null) throw n;
+        if (n != null) {
+            throw n;
+        }
         throw new NameNotFoundException("Cannot resolve " + name);
     }
 
@@ -130,10 +133,11 @@ public class NameNode implements Serializable {
                 if (myObject != null && !(myObject instanceof Federation)) {
                     throw new NameAlreadyBoundException();
                 }
-                if (subTree == null)
+                if (subTree == null) {
                     subTree = new NameNode(this, name, obj, this);
-                else
+                } else {
                     subTree.bind(name, obj);
+                }
             } else {
                 if (obj instanceof Context) {
                     if (myObject != null) {
@@ -156,16 +160,18 @@ public class NameNode implements Serializable {
                 }
             }
         } else if (compareResult == ParsedName.IS_LESS) {
-            if (lessTree == null)
+            if (lessTree == null) {
                 lessTree = new NameNode(this.parent, name, obj, this);
-            else
+            } else {
                 lessTree.bind(name, obj);
+            }
         } else {
             //ParsedName.IS_GREATER ...
-            if (grtrTree == null)
+            if (grtrTree == null) {
                 grtrTree = new NameNode(this.parent, name, obj, this);
-            else
+            } else {
                 grtrTree.bind(name, obj);
+            }
         }
     }
 
@@ -188,12 +194,13 @@ public class NameNode implements Serializable {
 
 
     public int compareTo(final int otherHash) {
-        if (atomicHash == otherHash)
+        if (atomicHash == otherHash) {
             return 0;
-        else if (atomicHash > otherHash)
+        } else if (atomicHash > otherHash) {
             return 1;
-        else
+        } else {
             return -1;
+        }
     }
 
     private void bind(final NameNode node) {
@@ -254,8 +261,9 @@ public class NameNode implements Serializable {
             }
         } else {//ParsedName.IS_GREATER ...
 
-            if (grtrTree != null)
+            if (grtrTree != null) {
                 grtrTree.unbind(name);
+            }
         }
     }
 
@@ -297,7 +305,9 @@ public class NameNode implements Serializable {
             grtrTree.prune(until);
         }
 
-        if (this == until) return;
+        if (this == until) {
+            return;
+        }
 
         if (!hasChildren() && myObject == null){
             parentTree.unbind(this);
@@ -309,9 +319,15 @@ public class NameNode implements Serializable {
     }
 
     private boolean hasChildren(final NameNode node) {
-        if (subTree != null && subTree.hasChildren(node)) return true;
-        if (grtrTree != null && grtrTree.hasChildren(node)) return true;
-        if (lessTree != null && lessTree.hasChildren(node)) return true;
+        if (subTree != null && subTree.hasChildren(node)) {
+            return true;
+        }
+        if (grtrTree != null && grtrTree.hasChildren(node)) {
+            return true;
+        }
+        if (lessTree != null && lessTree.hasChildren(node)) {
+            return true;
+        }
 
         return parent == node;
     }

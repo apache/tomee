@@ -97,9 +97,13 @@ public class CheckClasses extends ValidationBase {
                 final Class<?> beanClass = check_hasEjbClass(bean);
 
                 // All the subsequent checks require the bean class
-                if (beanClass == null) continue;
+                if (beanClass == null) {
+                    continue;
+                }
                 
-                if (!(bean instanceof RemoteBean)) continue;
+                if (!(bean instanceof RemoteBean)) {
+                    continue;
+                }
 
                 if (bean instanceof SessionBean && ((SessionBean) bean).getProxy() != null) {
                     continue;
@@ -151,7 +155,9 @@ public class CheckClasses extends ValidationBase {
     private void checkInterface(final RemoteBean b, final Class<?> beanClass, String tag, final String className) {
         final Class<?> interfce = lookForClass(className, tag, b.getEjbName());
 
-        if (interfce == null) return;
+        if (interfce == null) {
+            return;
+        }
 
         check_hasDependentClasses(b, className, tag);
 
@@ -175,8 +181,12 @@ public class CheckClasses extends ValidationBase {
     }
 
     private void check_hasInterface(final RemoteBean b) {
-        if (b.getRemote() != null) return;
-        if (b.getLocal() != null) return;
+        if (b.getRemote() != null) {
+            return;
+        }
+        if (b.getLocal() != null) {
+            return;
+        }
 
         Class<?> beanClass = null;
         try {
@@ -190,12 +200,20 @@ public class CheckClasses extends ValidationBase {
             return;
         }
 
-        if (b.getBusinessLocal().size() > 0) return;
-        if (b.getBusinessRemote().size() > 0) return;
+        if (b.getBusinessLocal().size() > 0) {
+            return;
+        }
+        if (b.getBusinessRemote().size() > 0) {
+            return;
+        }
 
-        if (((SessionBean) b).getServiceEndpoint() != null) return;
+        if (((SessionBean) b).getServiceEndpoint() != null) {
+            return;
+        }
 
-        if (beanClass.isAnnotationPresent(WebService.class)) return;
+        if (beanClass.isAnnotationPresent(WebService.class)) {
+            return;
+        }
 
         //fail(b, "noInterfaceDeclared.session");
     }
@@ -242,13 +260,17 @@ public class CheckClasses extends ValidationBase {
         final Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
         final boolean isDynamicProxyImpl = DynamicProxyImplFactory.isKnownDynamicallyImplemented(beanClass);
 
-        if (beanClass == null) return null;
+        if (beanClass == null) {
+            return null;
+        }
         
         if (beanClass.isInterface() && !isDynamicProxyImpl){
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
         }
 
-        if (isCmp(b)) return beanClass;
+        if (isCmp(b)) {
+            return beanClass;
+        }
 
         if (isAbstract(beanClass.getModifiers()) && !isAbstractAllowed(beanClass)){
             fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
@@ -258,8 +280,12 @@ public class CheckClasses extends ValidationBase {
     }
 
     public static boolean isAbstractAllowed(final Class clazz) {
-        if (DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz)) return true;
-        if (DynamicSubclass.isDynamic(clazz)) return true;
+        if (DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz)) {
+            return true;
+        }
+        if (DynamicSubclass.isDynamic(clazz)) {
+            return true;
+        }
         return false;
     }
 
@@ -319,25 +345,33 @@ public class CheckClasses extends ValidationBase {
 
         } else if (EJBHome.class.isAssignableFrom(clazz)) {
 
-            if (tag.equals("home")) return true;
+            if (tag.equals("home")) {
+                return true;
+            }
 
             fail(b, "xml." + tag + ".ejbHome", clazz.getName());
 
         } else if (EJBLocalHome.class.isAssignableFrom(clazz)) {
 
-            if (tag.equals("localHome")) return true;
+            if (tag.equals("localHome")) {
+                return true;
+            }
 
             fail(b, "xml." + tag + ".ejbLocalHome", clazz.getName());
 
         } else if (EJBObject.class.isAssignableFrom(clazz)) {
 
-            if (tag.equals("remote")) return true;
+            if (tag.equals("remote")) {
+                return true;
+            }
 
             fail(b, "xml." + tag + ".ejbObject", clazz.getName());
 
         } else if (EJBLocalObject.class.isAssignableFrom(clazz)) {
 
-            if (tag.equals("local")) return true;
+            if (tag.equals("local")) {
+                return true;
+            }
 
             fail(b, "xml." + tag + ".ejbLocalObject", clazz.getName());
 

@@ -28,7 +28,9 @@ public class SystemComponentReference extends Reference {
     private final Class<? extends Object> type;
 
     public SystemComponentReference(final Class<? extends Object> type) {
-        if (type == null) throw new NullPointerException("type is null");
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
         this.type = type;
     }
 

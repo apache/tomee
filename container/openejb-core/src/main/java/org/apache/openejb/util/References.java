@@ -57,7 +57,9 @@ public class References {
         for (final Node node : nodes.values()) {
             for (final String name : visitor.getReferences((T) node.object)) {
                 final Node ref = nodes.get(name);
-                if (ref == null) throw new IllegalArgumentException("No such object in list: "+name);
+                if (ref == null) {
+                    throw new IllegalArgumentException("No such object in list: " + name);
+                }
                 node.references.add(ref);
                 node.initialReferences.add(ref);
             }
@@ -199,8 +201,12 @@ public class References {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Node node = (Node) o;
 
@@ -237,12 +243,18 @@ public class References {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Circuit circuit = (Circuit) o;
 
-            if (!atomic.equals(circuit.atomic)) return false;
+            if (!atomic.equals(circuit.atomic)) {
+                return false;
+            }
 
             return true;
         }
@@ -253,7 +265,9 @@ public class References {
 
         public int compareTo(final Circuit o) {
             int i = atomic.size() - o.atomic.size();
-            if (i != 0) return i;
+            if (i != 0) {
+                return i;
+            }
 
             final Iterator<Node> iterA = atomic.listIterator();
             final Iterator<Node> iterB = o.atomic.listIterator();
@@ -261,7 +275,9 @@ public class References {
                 final Node a = iterA.next();
                 final Node b = iterB.next();
                 i = a.compareTo(b);
-                if (i != 0) return i;
+                if (i != 0) {
+                    return i;
+                }
             }
 
             return 0;

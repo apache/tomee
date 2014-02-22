@@ -65,7 +65,9 @@ public class ServiceUtils {
 
     public static ProviderManager getManager() {
         final ProviderManager manager = SystemInstance.get().getComponent(ProviderManager.class);
-        if (manager!= null) return manager;
+        if (manager!= null) {
+            return manager;
+        }
 
         SystemInstance.get().setComponent(ProviderManager.class, new ProviderManager(new ServiceJarXmlLoader()));
         return getManager();
@@ -113,7 +115,9 @@ public class ServiceUtils {
 
         {
             final ServiceProvider provider = getManager().get(id.getNamespace(), id.getName());
-            if (provider != null) return provider;
+            if (provider != null) {
+                return provider;
+            }
         }
 
         throw new NoSuchProviderException(messages.format("conf.4901", id.getName(), id.getNamespace()));
@@ -132,7 +136,9 @@ public class ServiceUtils {
 
     public static List<ServiceProvider> getServiceProvidersByServiceType(final String type) throws OpenEJBException {
         final ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
-        if (type == null) return providers;
+        if (type == null) {
+            return providers;
+        }
 
         final List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
@@ -146,8 +152,12 @@ public class ServiceUtils {
     }
 
     public static ServiceProvider getServiceProviderByType(final String type, Properties required) throws OpenEJBException {
-        if (type == null) return null;
-        if (required == null) required = new Properties();
+        if (type == null) {
+            return null;
+        }
+        if (required == null) {
+            required = new Properties();
+        }
 
         final List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
@@ -171,15 +181,25 @@ public class ServiceUtils {
             Object expected = entry.getValue();
 
             if (expected.equals(NONE)){
-                if (value != null) return false;
+                if (value != null) {
+                    return false;
+                }
             } else if (expected.equals(ANY)){
-                if (value == null) return false;
+                if (value == null) {
+                    return false;
+                }
             } else {
-                if (value instanceof String) value = ((String) value).toLowerCase();
+                if (value instanceof String) {
+                    value = ((String) value).toLowerCase();
+                }
 
-                if (expected instanceof String) expected = ((String) expected).toLowerCase();
+                if (expected instanceof String) {
+                    expected = ((String) expected).toLowerCase();
+                }
                 
-                if (!expected.equals(value)) return false;
+                if (!expected.equals(value)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -187,7 +207,9 @@ public class ServiceUtils {
 
 
     public static ServiceProvider getServiceProviderByType(final String providerType, final String serviceType) throws OpenEJBException {
-        if (serviceType == null) return null;
+        if (serviceType == null) {
+            return null;
+        }
 
         final List<ServiceProvider> services = getServiceProvidersByServiceType(providerType);
 

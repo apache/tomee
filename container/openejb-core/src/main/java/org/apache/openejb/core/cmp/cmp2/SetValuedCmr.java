@@ -39,8 +39,12 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     private final TransactionSynchronizationRegistry transactionRegistry;
 
     public SetValuedCmr(final EntityBean source, final String sourceProperty, final Class<Bean> relatedType, final String relatedProperty) {
-        if (source == null) throw new NullPointerException("source is null");
-        if (relatedType == null) throw new NullPointerException("relatedType is null");
+        if (source == null) {
+            throw new NullPointerException("source is null");
+        }
+        if (relatedType == null) {
+            throw new NullPointerException("relatedType is null");
+        }
 
         this.source = source;
         this.sourceProperty = sourceProperty;

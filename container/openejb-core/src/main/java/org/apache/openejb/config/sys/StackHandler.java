@@ -130,13 +130,27 @@ public class StackHandler extends DefaultHandler {
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException{
-            if (attributes.getValue("type") != null) service.setType(attributes.getValue("type"));
-            if (attributes.getValue("jar") != null) service.setJar(attributes.getValue("jar"));
-            if (attributes.getValue("provider") != null) service.setProvider(attributes.getValue("provider"));
-            if (attributes.getValue("id") != null) service.setId(attributes.getValue("id"));
-            if (attributes.getValue("class-name") != null) service.setClassName(attributes.getValue("class-name"));
-            if (attributes.getValue("constructor") != null) service.setConstructor(attributes.getValue("constructor"));
-            if (attributes.getValue("factory-name") != null) service.setFactoryName(attributes.getValue("factory-name"));
+            if (attributes.getValue("type") != null) {
+                service.setType(attributes.getValue("type"));
+            }
+            if (attributes.getValue("jar") != null) {
+                service.setJar(attributes.getValue("jar"));
+            }
+            if (attributes.getValue("provider") != null) {
+                service.setProvider(attributes.getValue("provider"));
+            }
+            if (attributes.getValue("id") != null) {
+                service.setId(attributes.getValue("id"));
+            }
+            if (attributes.getValue("class-name") != null) {
+                service.setClassName(attributes.getValue("class-name"));
+            }
+            if (attributes.getValue("constructor") != null) {
+                service.setConstructor(attributes.getValue("constructor"));
+            }
+            if (attributes.getValue("factory-name") != null) {
+                service.setFactoryName(attributes.getValue("factory-name"));
+            }
             checkAttributes(attributes, getAttributes());
         }
 

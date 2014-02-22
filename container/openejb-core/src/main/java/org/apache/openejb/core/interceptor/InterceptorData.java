@@ -125,12 +125,18 @@ public class InterceptorData {
     }
 
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final InterceptorData that = (InterceptorData) o;
 
-        if (clazz != null ? !clazz.equals(that.clazz) : that.clazz != null) return false;
+        if (clazz != null ? !clazz.equals(that.clazz) : that.clazz != null) {
+            return false;
+        }
 
         return true;
     }

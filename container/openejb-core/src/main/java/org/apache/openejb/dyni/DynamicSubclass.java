@@ -101,7 +101,9 @@ public class DynamicSubclass implements Opcodes {
         cw.visitField(ACC_FINAL + ACC_PRIVATE, "this$handler", "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
 
         for (final Constructor<?> constructor : classToProxy.getConstructors()) {
-            if (!Modifier.isPublic(constructor.getModifiers())) continue;
+            if (!Modifier.isPublic(constructor.getModifiers())) {
+                continue;
+            }
 
             final MethodVisitor mv = visitConstructor(cw, proxyClassFileName, classFileName, constructor);
             visitors.put("<init>" + Type.getConstructorDescriptor(constructor), mv);
@@ -206,8 +208,12 @@ public class DynamicSubclass implements Opcodes {
     }
 
     public static int size(final Type type) {
-        if (Type.VOID_TYPE.equals(type)) return 0;
-        if (Type.LONG_TYPE.equals(type) || Type.DOUBLE_TYPE.equals(type)) return 2;
+        if (Type.VOID_TYPE.equals(type)) {
+            return 0;
+        }
+        if (Type.LONG_TYPE.equals(type) || Type.DOUBLE_TYPE.equals(type)) {
+            return 2;
+        }
         return 1;
     }
 
@@ -311,7 +317,9 @@ public class DynamicSubclass implements Opcodes {
         public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
             final MethodVisitor newMethod = visitors.remove(name + desc);
 
-            if (newMethod == null) return null;
+            if (newMethod == null) {
+                return null;
+            }
 
             final MethodVisitor oldMethod = super.visitMethod(access, name, desc, signature, exceptions);
 

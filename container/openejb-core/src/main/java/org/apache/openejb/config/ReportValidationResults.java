@@ -48,7 +48,9 @@ public class ReportValidationResults implements DynamicDeployer {
         final boolean hasFailures = appModule.hasFailures();
         final boolean hasWarnings = appModule.hasWarnings();
 
-        if (!hasErrors && !hasFailures && !hasWarnings) return appModule;
+        if (!hasErrors && !hasFailures && !hasWarnings) {
+            return appModule;
+        }
 
         final ValidationFailedException validationFailedException = null;
 
@@ -71,7 +73,9 @@ public class ReportValidationResults implements DynamicDeployer {
             }
         }
 
-        if (!hasErrors && !hasFailures) return appModule;
+        if (!hasErrors && !hasFailures) {
+            return appModule;
+        }
 
         if (level != Level.VERBOSE){
             List<Level> levels = Arrays.asList(Level.values());

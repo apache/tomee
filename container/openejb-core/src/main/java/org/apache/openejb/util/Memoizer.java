@@ -36,7 +36,9 @@ public class Memoizer<K, V> implements Computable<K, V> {
      *             if c is null
      */
     public Memoizer(final Computable<K, V> c) {
-        if(c == null) throw new NullPointerException("Computable cache value source algorithm may not be null");
+        if(c == null) {
+            throw new NullPointerException("Computable cache value source algorithm may not be null");
+        }
         this.c = c;
     }
 

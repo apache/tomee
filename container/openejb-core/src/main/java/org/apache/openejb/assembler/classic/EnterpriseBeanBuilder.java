@@ -186,13 +186,21 @@ class EnterpriseBeanBuilder {
                 final Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);
                 final List<Method> methods = new ArrayList<Method>();
 
-                if (home != null) methods.addAll(Arrays.asList(home.getMethods()));
-                if (localhome != null) methods.addAll(Arrays.asList(localhome.getMethods()));
+                if (home != null) {
+                    methods.addAll(Arrays.asList(home.getMethods()));
+                }
+                if (localhome != null) {
+                    methods.addAll(Arrays.asList(localhome.getMethods()));
+                }
 
                 for (final Method homeMethod : methods) {
-                    if (init.createMethod != null && !init.createMethod.methodName.equals(homeMethod.getName())) continue;
+                    if (init.createMethod != null && !init.createMethod.methodName.equals(homeMethod.getName())) {
+                        continue;
+                    }
 
-                    if (!homeMethod.getName().startsWith("create")) continue;
+                    if (!homeMethod.getName().startsWith("create")) {
+                        continue;
+                    }
 
                     if (paramsMatch(beanMethod, homeMethod)){
                         deployment.mapMethods(homeMethod, beanMethod);
@@ -276,7 +284,9 @@ class EnterpriseBeanBuilder {
                             methodSignature.append('(');
                             boolean first = true;
                             for (final String methodParam : query.method.methodParams) {
-                                if (!first) methodSignature.append(",");
+                                if (!first) {
+                                    methodSignature.append(",");
+                                }
                                 methodSignature.append(methodParam);
                                 first = false;
                             }
@@ -334,7 +344,9 @@ class EnterpriseBeanBuilder {
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
             final Class<?> a = methodA.getParameterTypes()[i];
             final Class<?> b = methodB.getParameterTypes()[i];
-            if (!a.equals(b)) return false;
+            if (!a.equals(b)) {
+                return false;
+            }
         }
         return true;
     }

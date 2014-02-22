@@ -55,21 +55,27 @@ public class CleanEnvEntries implements DynamicDeployer {
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             removeUnsetEnvEntries(appEnvEntryMap, consumer);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             removeUnsetEnvEntries(appEnvEntryMap, consumer);
         }
 
         for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
-            if (ejbJar == null) continue;
+            if (ejbJar == null) {
+                continue;
+            }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 removeUnsetEnvEntries(appEnvEntryMap, consumer);
@@ -108,21 +114,27 @@ public class CleanEnvEntries implements DynamicDeployer {
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             fillInMissingType(consumer, module);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             fillInMissingType(consumer, module);
         }
 
         for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
-            if (ejbJar == null) continue;
+            if (ejbJar == null) {
+                continue;
+            }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 fillInMissingType(consumer, module);
@@ -142,19 +154,29 @@ public class CleanEnvEntries implements DynamicDeployer {
     }
 
     private void fillInMissingType(final ClassLoader loader, final EnvEntry entry) {
-        if (entry.getType() != null) return;
+        if (entry.getType() != null) {
+            return;
+        }
 
         // If it has the lookup supplied we don't care if there is no type
-        if (entry.getLookupName() != null) return;
+        if (entry.getLookupName() != null) {
+            return;
+        }
 
         // We can't imply type without at least one injection point
-        if (entry.getInjectionTarget().size() == 0) return;
+        if (entry.getInjectionTarget().size() == 0) {
+            return;
+        }
 
         final Set<Class> types = new HashSet<Class>();
 
         for (final InjectionTarget target : entry.getInjectionTarget()) {
-            if (target.getInjectionTargetClass() == null) continue;
-            if (target.getInjectionTargetName() == null) continue;
+            if (target.getInjectionTargetClass() == null) {
+                continue;
+            }
+            if (target.getInjectionTargetName() == null) {
+                continue;
+            }
 
             types.add(getType(loader, target));
         }

@@ -98,7 +98,9 @@ public class JuliLogStream implements LogStream {
         final Logger log = LoggerCreator.Get.exec(logger, debug, info);
         if (log.isLoggable(level)) {
             final LogRecord logRecord = new OpenEJBLogRecord(level, message);
-            if (t != null) logRecord.setThrown(t);
+            if (t != null) {
+                logRecord.setThrown(t);
+            }
             log.log(logRecord);
         }
     }

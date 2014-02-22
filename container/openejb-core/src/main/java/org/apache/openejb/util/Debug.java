@@ -96,7 +96,9 @@ public class Debug {
     }
 
     public static List<Field> getFields(final Class clazz){
-        if (clazz == null) return Collections.EMPTY_LIST;
+        if (clazz == null) {
+            return Collections.EMPTY_LIST;
+        }
 
         final List<Field> fields = new ArrayList<Field>();
 
@@ -168,8 +170,12 @@ public class Debug {
             final Iterator<StackTraceElement> iterator = stackTraceElements.iterator();
             while (iterator.hasNext()) {
                 final StackTraceElement element = iterator.next();
-                if (!element.getClassName().startsWith("org.apache")) iterator.remove();
-                if (element.getClassName().endsWith("Debug") && element.getMethodName().equals("mark")) iterator.remove();
+                if (!element.getClassName().startsWith("org.apache")) {
+                    iterator.remove();
+                }
+                if (element.getClassName().endsWith("Debug") && element.getMethodName().equals("mark")) {
+                    iterator.remove();
+                }
             }
 
             trace.link(stackTraceElements);
@@ -188,7 +194,9 @@ public class Debug {
         }
 
         private void print(final Set<Node> seen, final PrintStream out, final Node node, final String s) {
-            if (!seen.add(node)) return;
+            if (!seen.add(node)) {
+                return;
+            }
 
             out.print("<li>\n");
 
@@ -211,7 +219,9 @@ public class Debug {
         }
 
         private void printTxt(final Set<Node> seen, final PrintStream out, final Node node, String s) {
-            if (!seen.add(node)) return;
+            if (!seen.add(node)) {
+                return;
+            }
 
             out.print(s);
             final StackTraceElement e = node.getElement();
@@ -272,7 +282,9 @@ public class Debug {
         public void link(final List<StackTraceElement> elements) {
             events.add(new Event(elements));
             final Iterator<StackTraceElement> iterator = elements.iterator();
-            if (!iterator.hasNext()) return;
+            if (!iterator.hasNext()) {
+                return;
+            }
 
             Node parent = get(iterator.next());
 

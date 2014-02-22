@@ -34,7 +34,9 @@ public class ProxyManager {
     }
 
     public static void checkDefaultFactory() {
-        if (defaultFactory == null) throw new IllegalStateException("[Proxy Manager] No default proxy factory specified.");
+        if (defaultFactory == null) {
+            throw new IllegalStateException("[Proxy Manager] No default proxy factory specified.");
+        }
     }
 
     public static ProxyFactory getFactory(final String factoryName) {
@@ -43,7 +45,9 @@ public class ProxyManager {
 
     public static synchronized ProxyFactory setDefaultFactory(final String factoryName) {
         final ProxyFactory newFactory = getFactory(factoryName);
-        if (newFactory == null) return defaultFactory;
+        if (newFactory == null) {
+            return defaultFactory;
+        }
 
         final ProxyFactory oldFactory = defaultFactory;
         defaultFactory = newFactory;

@@ -65,10 +65,11 @@ public class IntraVmMetaData implements EJBMetaData, Serializable {
     }
 
     public Class getPrimaryKeyClass() {
-        if (type.isEntity())
+        if (type.isEntity()) {
             return keyClass;
-        else
+        } else {
             throw new UnsupportedOperationException("Session objects are private resources and do not have primary keys");
+        }
     }
 
     public boolean isSession() {

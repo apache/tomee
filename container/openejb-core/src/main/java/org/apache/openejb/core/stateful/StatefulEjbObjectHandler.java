@@ -81,8 +81,12 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         private final Object primaryKey;
 
         public RegistryId(final Container container, final Object deploymentId, final Object primaryKey) {
-            if (container == null) throw new NullPointerException("container is null");
-            if (deploymentId == null) throw new NullPointerException("deploymentId is null");
+            if (container == null) {
+                throw new NullPointerException("container is null");
+            }
+            if (deploymentId == null) {
+                throw new NullPointerException("deploymentId is null");
+            }
 
             this.containerId = container.getContainerID();
             this.deploymentId = deploymentId;
@@ -90,8 +94,12 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final RegistryId that = (RegistryId) o;
 

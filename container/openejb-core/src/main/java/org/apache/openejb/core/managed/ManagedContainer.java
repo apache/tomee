@@ -329,12 +329,14 @@ public class ManagedContainer implements RpcContainer {
     public Object invoke(final Object deployID, InterfaceType type, final Class callInterface, final Method callMethod, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (beanContext == null)
+        if (beanContext == null) {
             throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
+        }
 
         // Use the backup way to determine call type if null was supplied.
-        if (type == null)
+        if (type == null) {
             type = beanContext.getInterfaceType(callInterface);
+        }
 
         final Data data = (Data) beanContext.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
@@ -440,8 +442,9 @@ public class ManagedContainer implements RpcContainer {
     }
 
     protected Object removeEJBObject(final BeanContext beanContext, final Object primKey, final Class callInterface, final Method callMethod, Object[] args, final InterfaceType interfaceType) throws OpenEJBException {
-        if (primKey == null)
+        if (primKey == null) {
             throw new NullPointerException("primKey is null");
+        }
 
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
@@ -690,8 +693,9 @@ public class ManagedContainer implements RpcContainer {
 
     private void releaseInstance(final Instance instance) {
         // Don't pool if the bean has been undeployed
-        if (instance.beanContext.isDestroyed())
+        if (instance.beanContext.isDestroyed()) {
             return;
+        }
 
         // verify the instance is not associated with a bean-managed transaction
         if (instance.getBeanTransaction() != null) {
@@ -798,20 +802,23 @@ public class ManagedContainer implements RpcContainer {
     }
 
     private void registerEntityManagers(final Instance instance, final ThreadContext callContext) throws OpenEJBException {
-        if (entityManagerRegistry == null)
+        if (entityManagerRegistry == null) {
             return;
+        }
 
         final BeanContext beanContext = callContext.getBeanContext();
 
         // get the factories
         final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        if (factories == null)
+        if (factories == null) {
             return;
+        }
 
         // get the managers for the factories
         final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = instance.getEntityManagers(factories);
-        if (entityManagers == null)
+        if (entityManagers == null) {
             return;
+        }
 
         // register them
         try {
@@ -822,10 +829,12 @@ public class ManagedContainer implements RpcContainer {
     }
 
     private void unregisterEntityManagers(final Instance instance, final ThreadContext callContext) {
-        if (entityManagerRegistry == null)
+        if (entityManagerRegistry == null) {
             return;
-        if (instance == null)
+        }
+        if (instance == null) {
             return;
+        }
 
         final BeanContext beanContext = callContext.getBeanContext();
 
@@ -938,12 +947,14 @@ public class ManagedContainer implements RpcContainer {
                 final Instance instance = synchronization.instance;
 
                 // don't call beforeCompletion when transaction is marked rollback only
-                if (txPolicy.isRollbackOnly())
+                if (txPolicy.isRollbackOnly()) {
                     return;
+                }
 
                 // only call beforeCompletion on beans with session synchronization
-                if (!synchronization.isCallSessionSynchronization())
+                if (!synchronization.isCallSessionSynchronization()) {
                     continue;
+                }
 
                 // Invoke beforeCompletion
                 final ThreadContext callContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.BEFORE_COMPLETION);
@@ -1015,8 +1026,9 @@ public class ManagedContainer implements RpcContainer {
                     discardInstance(callContext);
 
                     // [4] throw throw first exception to the client
-                    if (firstException == null)
+                    if (firstException == null) {
                         firstException = e;
+                    }
                 } finally {
                     ThreadContext.exit(oldCallContext);
                 }

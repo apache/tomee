@@ -47,7 +47,9 @@ public class MethodConcurrencyBuilder {
 
     public static void applyConcurrencyAttributes(final BeanContext beanContext, final List<MethodConcurrencyInfo> methodConcurrencyInfos) throws OpenEJBException {
 
-        if (beanContext.isBeanManagedConcurrency()) return;
+        if (beanContext.isBeanManagedConcurrency()) {
+            return;
+        }
 
         final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodConcurrencyBuilder.class);
         

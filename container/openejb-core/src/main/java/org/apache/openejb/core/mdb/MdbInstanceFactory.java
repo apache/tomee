@@ -144,7 +144,9 @@ public class MdbInstanceFactory {
      * @param ignoredInstanceCount
      */
     public void freeInstance(final Instance instance, final boolean ignoredInstanceCount) {
-        if (instance == null) throw new NullPointerException("bean is null");
+        if (instance == null) {
+            throw new NullPointerException("bean is null");
+        }
 
         // decrement the instance count
         if (!ignoredInstanceCount) {
@@ -189,7 +191,9 @@ public class MdbInstanceFactory {
      * @return the new replacement bean instance
      */
     public Object recreateInstance(final Object bean) throws UnavailableException {
-        if (bean == null) throw new NullPointerException("bean is null");
+        if (bean == null) {
+            throw new NullPointerException("bean is null");
+        }
         final Object newBean = constructBean();
         return newBean;
     }

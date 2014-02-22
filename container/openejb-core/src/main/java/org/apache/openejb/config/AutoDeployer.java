@@ -61,8 +61,9 @@ public class AutoDeployer {
         final Options options = SystemInstance.get().getOptions();
         final Duration interval = options.get("openejb.autodeploy.interval", new Duration(2, TimeUnit.SECONDS));
 
-        if (interval.getUnit() == null)
+        if (interval.getUnit() == null) {
             interval.setUnit(TimeUnit.SECONDS);
+        }
 
         this.factory = factory;
         this.deployments.addAll(deployments);

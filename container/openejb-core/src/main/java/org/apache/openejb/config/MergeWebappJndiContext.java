@@ -50,11 +50,15 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         for (final WebModule webModule : appModule.getWebModules()) {
-            if (webModule.getFinder() == null) continue;
+            if (webModule.getFinder() == null) {
+                continue;
+            }
 
             for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 // If they are the same module, they'll have the same finder
-                if (ejbModule.getFinder() != webModule.getFinder()) continue;
+                if (ejbModule.getFinder() != webModule.getFinder()) {
+                    continue;
+                }
 
                 merge(ejbModule, webModule);
             }
@@ -126,7 +130,9 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     private <R extends JndiReference> void copy(final Map<String, R> from, final Map<String, R> to) {
         for (final R a : from.values()) {
 
-            if (isPrivateReference(a)) continue;
+            if (isPrivateReference(a)) {
+                continue;
+            }
 
             final R b = to.get(a.getKey());
 
@@ -165,12 +171,16 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     }
 
     private <R extends JndiReference> boolean isPrivateReference(final R a) {
-        if (!isResourceRef(a)) return false;
+        if (!isResourceRef(a)) {
+            return false;
+        }
 
         final Class[] types = {EJBContext.class, EntityContext.class, SessionContext.class, MessageDrivenContext.class, UserTransaction.class};
 
         for (final Class type : types) {
-            if (type.getName().equals(a.getType())) return true;
+            if (type.getName().equals(a.getType())) {
+                return true;
+            }
         }
 
         return false;
@@ -183,12 +193,16 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     private <R extends JndiReference> void mergeUserTransaction(final Map<String, R> from, final Map<String, R> to, final JndiConsumer consumer) {
         if (consumer instanceof EnterpriseBean) {
             final EnterpriseBean enterpriseBean = (EnterpriseBean) consumer;
-            if (enterpriseBean.getTransactionType() != TransactionType.BEAN) return;
+            if (enterpriseBean.getTransactionType() != TransactionType.BEAN) {
+                return;
+            }
         }
 
         for (final R a : from.values()) {
 
-            if (!UserTransaction.class.getName().equals(a.getType())) continue;
+            if (!UserTransaction.class.getName().equals(a.getType())) {
+                continue;
+            }
 
             final R b = to.get(a.getKey());
 

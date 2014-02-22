@@ -46,7 +46,9 @@ public class Event {
     public String getLatest() {
         final long last = this.last.get();
 
-        if (last <= 0) return "-";
+        if (last <= 0) {
+            return "-";
+        }
         
         final DateFormat format = SimpleDateFormat.getDateTimeInstance();
         return format.format(new Date(last));

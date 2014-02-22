@@ -209,7 +209,9 @@ public class InterceptorBindingBuilder {
         for (final InterceptorBindingInfo info : bindings) {
             final Level level = level(info);
 
-            if (!implies(method, ejbName, level, info)) continue;
+            if (!implies(method, ejbName, level, info)) {
+                continue;
+            }
 
             final Type type = type(level, info);
 
@@ -235,21 +237,31 @@ public class InterceptorBindingBuilder {
                 excludes.add(level);
             }
 
-            if (!excludes.contains(level)) methodBindings.add(info);
+            if (!excludes.contains(level)) {
+                methodBindings.add(info);
+            }
 
             if (info.excludeClassInterceptors) {
                 excludes.add(Level.CLASS);
                 excludes.add(Level.ANNOTATION_CLASS);
             }
-            if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
+            if (info.excludeDefaultInterceptors) {
+                excludes.add(Level.PACKAGE);
+            }
         }
         return methodBindings;
     }
 
     private boolean implies(final Method method, final String ejbName, final Level level, final InterceptorBindingInfo info) {
-        if (level == Level.PACKAGE) return true;
-        if (!ejbName.equals(info.ejbName)) return false;
-        if (level == Level.CLASS || level == Level.ANNOTATION_CLASS) return true;
+        if (level == Level.PACKAGE) {
+            return true;
+        }
+        if (!ejbName.equals(info.ejbName)) {
+            return false;
+        }
+        if (level == Level.CLASS || level == Level.ANNOTATION_CLASS) {
+            return true;
+        }
 
         final NamedMethodInfo methodInfo = info.method;
         return MethodInfoUtil.matches(method, methodInfo);
@@ -286,7 +298,9 @@ public class InterceptorBindingBuilder {
 
                     // find declared class
                     Class<?> c = clazz;
-                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
+                    while (c != null && !c.getName().equals(callbackInfo.className)) {
+                        c = c.getSuperclass();
+                    }
 
                     // get callback method
                     if (c != null) {
@@ -353,7 +367,9 @@ public class InterceptorBindingBuilder {
 
                     // find declared class
                     Class<?> c = clazz;
-                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
+                    while (c != null && !c.getName().equals(callbackInfo.className)) {
+                        c = c.getSuperclass();
+                    }
 
                     // get callback method
                     if (c != null) {
@@ -399,7 +415,9 @@ public class InterceptorBindingBuilder {
                 final Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
                 return SetAccessible.on(method);
             } catch (final NoSuchMethodException e) {
-                if (original == null) original = e;
+                if (original == null) {
+                    original = e;
+                }
             }
             clazz = clazz.getSuperclass();
         }
@@ -415,7 +433,9 @@ public class InterceptorBindingBuilder {
             final Level levelA = level(a);
             final Level levelB = level(b);
 
-            if (levelA != levelB) return levelA.ordinal() - levelB.ordinal();
+            if (levelA != levelB) {
+                return levelA.ordinal() - levelB.ordinal();
+            }
 
             // Now resort to secondary sorting.
 
@@ -459,8 +479,12 @@ public class InterceptorBindingBuilder {
         public int compare(final Method m1, final Method m2) {
             final Class<?> c1 = m1.getDeclaringClass();
             final Class<?> c2 = m2.getDeclaringClass();
-            if (c1.equals(c2)) return 0;
-            if (c1.isAssignableFrom(c2)) return -1;
+            if (c1.equals(c2)) {
+                return 0;
+            }
+            if (c1.isAssignableFrom(c2)) {
+                return -1;
+            }
             return 1;
         }
     }

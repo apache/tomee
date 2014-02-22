@@ -30,7 +30,9 @@ import java.lang.reflect.Field;
 
 public class Cmp2Util {
     public static Object getPrimaryKey(final BeanContext beanContext, final EntityBean entity){
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
 
         // build the primary key
         final KeyGenerator kg = beanContext.getKeyGenerator();
@@ -39,7 +41,9 @@ public class Cmp2Util {
     }
 
     public static <Bean extends EntityBean> Bean getEntityBean(final EJBLocalObject proxy) {
-        if (proxy == null) return null;
+        if (proxy == null) {
+            return null;
+        }
 
         final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
         if (handler.container == null) {
@@ -54,7 +58,9 @@ public class Cmp2Util {
     }
 
     public static <Bean extends EntityBean> Bean getEntityBean(final EJBObject proxy) {
-        if (proxy == null) return null;
+        if (proxy == null) {
+            return null;
+        }
 
         final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
         if (handler.container == null) {
@@ -69,7 +75,9 @@ public class Cmp2Util {
     }
 
     public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(final BeanContext beanContext, final EntityBean entity){
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
 
         // build the primary key
         final Object primaryKey = getPrimaryKey(beanContext, entity);

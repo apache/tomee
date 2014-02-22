@@ -59,7 +59,9 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
         // ApplicationClient META-INF/env-entries.properties
         for (final ClientModule module : appModule.getClientModules()) {
-            if (module.getApplicationClient() == null) continue;
+            if (module.getApplicationClient() == null) {
+                continue;
+            }
             for (final Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
                 final EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
                 apply(module.getApplicationClient(), envEntry, "AppClient");
@@ -140,7 +142,9 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         if (propsUrl == null) {
             propsUrl = (URL) module.getAltDDs().get(descriptorName);
         }
-        if (propsUrl == null) return Collections.emptyMap();
+        if (propsUrl == null) {
+            return Collections.emptyMap();
+        }
         try {
             final Properties envEntriesProps = IO.readProperties(propsUrl);
             envEntriesProps.putAll(additionalEnvEntries);

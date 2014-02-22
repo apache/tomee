@@ -236,8 +236,9 @@ public class FileHandler
 
         writerLock.writeLock().lock();
         try {
-            if (writer == null)
+            if (writer == null) {
                 return;
+            }
             writer.write(getFormatter().getTail(this));
             writer.flush();
             writer.close();
@@ -259,8 +260,9 @@ public class FileHandler
 
         writerLock.readLock().lock();
         try {
-            if (writer == null)
+            if (writer == null) {
                 return;
+            }
             writer.flush();
         } catch (final Exception e) {
             reportError(null, e, ErrorManager.FLUSH_FAILURE);
@@ -286,12 +288,15 @@ public class FileHandler
 
         // Retrieve configuration of logging file name
         rotatable = Boolean.parseBoolean(getProperty(className + ".rotatable", "true"));
-        if (directory == null)
+        if (directory == null) {
             directory = getProperty(className + ".directory", "logs");
-        if (prefix == null)
+        }
+        if (prefix == null) {
             prefix = getProperty(className + ".prefix", "juli.");
-        if (suffix == null)
+        }
+        if (suffix == null) {
             suffix = getProperty(className + ".suffix", ".log");
+        }
         final String sBufferSize = getProperty(className + ".bufferSize", String.valueOf(bufferSize));
         try {
             bufferSize = Integer.parseInt(sBufferSize);

@@ -37,21 +37,27 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             add(consumer, module, appModule);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             add(consumer, module, appModule);
         }
 
         for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
-            if (ejbJar == null) continue;
+            if (ejbJar == null) {
+                continue;
+            }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 add(consumer, module, appModule);

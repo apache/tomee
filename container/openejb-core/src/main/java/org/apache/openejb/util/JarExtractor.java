@@ -183,8 +183,9 @@ public class JarExtractor {
      * @param dir File object representing the directory to be deleted
      */
     public static boolean deleteDir(final File dir) {
-        if (dir == null)
+        if (dir == null) {
             return true;
+        }
 
         if (dir.isDirectory()) {
             final File[] files = dir.listFiles();
@@ -218,8 +219,9 @@ public class JarExtractor {
             final byte[] buffer = new byte[2048];
             while (true) {
                 final int n = input.read(buffer);
-                if (n <= 0)
+                if (n <= 0) {
                     break;
+                }
                 output.write(buffer, 0, n);
             }
         } finally {

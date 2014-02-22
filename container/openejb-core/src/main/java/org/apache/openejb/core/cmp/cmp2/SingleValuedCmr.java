@@ -32,8 +32,12 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     private final BeanContext relatedInfo;
 
     public SingleValuedCmr(final EntityBean source, final String sourceProperty, final Class<Bean> relatedType, final String relatedProperty) {
-        if (source == null) throw new NullPointerException("source is null");
-        if (relatedType == null) throw new NullPointerException("relatedType is null");
+        if (source == null) {
+            throw new NullPointerException("source is null");
+        }
+        if (relatedType == null) {
+            throw new NullPointerException("relatedType is null");
+        }
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedProperty = relatedProperty;
@@ -47,7 +51,9 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
                     "this entity does not have a cmr field for the relationship");
         }
 
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
 
         final Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;

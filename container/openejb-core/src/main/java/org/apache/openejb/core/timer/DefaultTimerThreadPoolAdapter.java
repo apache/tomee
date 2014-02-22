@@ -91,7 +91,9 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         private final Executor executor;
 
         private TimerExecutor(final Executor executor) {
-            if (executor == null) throw new IllegalArgumentException("executor cannot be null");
+            if (executor == null) {
+                throw new IllegalArgumentException("executor cannot be null");
+            }
             this.executor = executor;
         }
     }

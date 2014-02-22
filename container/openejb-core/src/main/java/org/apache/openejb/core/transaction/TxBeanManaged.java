@@ -65,7 +65,9 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
     }
 
     public void resumeUserTransaction(final SuspendedTransaction suspendedTransaction) throws SystemException {
-        if (suspendedTransaction == null) throw new NullPointerException("suspendedTransaction is null");
+        if (suspendedTransaction == null) {
+            throw new NullPointerException("suspendedTransaction is null");
+        }
         
         final Transaction beanTransaction = ((JtaSuspendedTransaction) suspendedTransaction).transaction;
         if (beanTransaction == null) {
@@ -112,7 +114,9 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         private Transaction transaction;
 
         public JtaSuspendedTransaction(final Transaction transaction) {
-            if (transaction == null) throw new NullPointerException("transaction is null");
+            if (transaction == null) {
+                throw new NullPointerException("transaction is null");
+            }
             this.transaction = transaction;
         }
 

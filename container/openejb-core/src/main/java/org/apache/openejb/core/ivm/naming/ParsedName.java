@@ -39,8 +39,9 @@ public class ParsedName implements Serializable {
         } else if (path.length() > 0) {
             final StringTokenizer st = new StringTokenizer(path, "/");
             components = new String[st.countTokens()];
-            for (int i = 0; st.hasMoreTokens() && i < components.length; i++)
+            for (int i = 0; st.hasMoreTokens() && i < components.length; i++) {
                 components[i] = st.nextToken();
+            }
             hashcode = components[0].hashCode();
         } else {
 
@@ -72,18 +73,21 @@ public class ParsedName implements Serializable {
     }
 
     public void reset(final int pos) {
-        if (pos < 0 || pos >= components.length) throw new IllegalArgumentException("pos out of range 0 to " + components.length);
+        if (pos < 0 || pos >= components.length) {
+            throw new IllegalArgumentException("pos out of range 0 to " + components.length);
+        }
         this.pos = pos;
         hashcode = components[pos].hashCode();
     }
 
     public int compareTo(final int otherHash) {
-        if (hashcode == otherHash)
+        if (hashcode == otherHash) {
             return 0;
-        else if (hashcode > otherHash)
+        } else if (hashcode > otherHash) {
             return 1;
-        else
+        } else {
             return -1;
+        }
     }
 
     public int getComponentHashCode() {
@@ -98,13 +102,17 @@ public class ParsedName implements Serializable {
     public static void main(final String [] args) {
 
         final ParsedName name = new ParsedName("comp/env/jdbc/mydatabase");
-        while (name.next()) System.out.println(name.getComponent());
+        while (name.next()) {
+            System.out.println(name.getComponent());
+        }
     }
 
     public ParsedName remaining() {
         final ParsedName name = new ParsedName("");
         final int next = pos +1;
-        if (next > components.length) return name;
+        if (next > components.length) {
+            return name;
+        }
         
         final String[] dest = new String[components.length - next];
         System.arraycopy(components, next, dest, 0, dest.length);
@@ -139,16 +147,26 @@ with a slash.  It may be the empty string. */
     /* Normalize the given pathname, whose length is len, starting at the given
        offset; everything before this offset is already normal. */
     private String normalize(final String pathname, final int len, final int off) {
-        if (len == 0) return pathname;
+        if (len == 0) {
+            return pathname;
+        }
         int n = len;
-        while (n > 0 && pathname.charAt(n - 1) == '/') n--;
-        if (n == 0) return "/";
+        while (n > 0 && pathname.charAt(n - 1) == '/') {
+            n--;
+        }
+        if (n == 0) {
+            return "/";
+        }
         final StringBuilder sb = new StringBuilder(pathname.length());
-        if (off > 0) sb.append(pathname.substring(0, off));
+        if (off > 0) {
+            sb.append(pathname.substring(0, off));
+        }
         char prevChar = 0;
         for (int i = off; i < n; i++) {
             final char c = pathname.charAt(i);
-            if (prevChar == '/' && c == '/') continue;
+            if (prevChar == '/' && c == '/') {
+                continue;
+            }
             sb.append(c);
             prevChar = c;
         }
@@ -163,11 +181,14 @@ with a slash.  It may be the empty string. */
         char prevChar = 0;
         for (int i = 0; i < n; i++) {
             final char c = pathname.charAt(i);
-            if (prevChar == '/' && c == '/')
+            if (prevChar == '/' && c == '/') {
                 return normalize(pathname, n, i - 1);
+            }
             prevChar = c;
         }
-        if (prevChar == '/') return normalize(pathname, n, n - 1);
+        if (prevChar == '/') {
+            return normalize(pathname, n, n - 1);
+        }
         return pathname;
     }
 

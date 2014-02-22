@@ -45,7 +45,9 @@ public class TimerImpl implements Timer, Serializable {
     public long getTimeRemaining() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
         final Date nextTimeout = timerData.getNextTimeout();
-        if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
+        if (nextTimeout == null) {
+            throw new NoMoreTimeoutsException("The timer has no future timeouts");
+        }
         return timerData.getTimeRemaining();
     }
 
@@ -53,7 +55,9 @@ public class TimerImpl implements Timer, Serializable {
         checkState();
         
         final Date nextTimeout = timerData.getNextTimeout();
-        if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
+        if (nextTimeout == null) {
+            throw new NoMoreTimeoutsException("The timer has no future timeouts");
+        }
         return timerData.getNextTimeout();
     }
 

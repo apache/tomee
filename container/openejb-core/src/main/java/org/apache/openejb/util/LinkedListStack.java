@@ -27,16 +27,17 @@ public class LinkedListStack implements Stack {
     private int size;
 
     public LinkedListStack(final int initialSize) {
-        for (int i = 0; i < initialSize; i++)
+        for (int i = 0; i < initialSize; i++) {
             vacantEntries = new LinkedEntry(null, vacantEntries);
+        }
     }
 
     public synchronized Object push(final Object object) {
         /* Take an entry from the vacant list and move it to the occupied list. */
 
-        if (vacantEntries == null)
+        if (vacantEntries == null) {
             occupiedEntries = new LinkedEntry(object, occupiedEntries);
-        else {
+        } else {
 
             final LinkedEntry entry = vacantEntries;
 
@@ -52,7 +53,9 @@ public class LinkedListStack implements Stack {
         /* Take an entry from the occupied list and move it to the vacant list. */
 
         final LinkedEntry entry = occupiedEntries;
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
 
         occupiedEntries = occupiedEntries.next;
 
