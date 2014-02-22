@@ -158,7 +158,9 @@ public class ManagedMBean implements DynamicMBean {
         if (managed != null) {
             try {
                 String s = "";
-                if (managed.append()) s = member.getName();
+                if (managed.append()) {
+                    s = member.getName();
+                }
                 scan(member.get(), s);
             } catch (final IllegalAccessException e) {
                 e.printStackTrace();
@@ -174,7 +176,9 @@ public class ManagedMBean implements DynamicMBean {
         try {
             final Member member = attributesMap.get(s);
 
-            if (member == null) throw new AttributeNotFoundException(s);
+            if (member == null) {
+                throw new AttributeNotFoundException(s);
+            }
 
             return member.get();
         } catch (final Exception e) {
@@ -264,8 +268,12 @@ public class ManagedMBean implements DynamicMBean {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();
             while (iterator.hasNext()) {
                 final MBeanAttributeInfo info = iterator.next();
-                if (includes.matcher(info.getName()).matches()) continue;
-                if (excludes.matcher(info.getName()).matches()) iterator.remove();
+                if (includes.matcher(info.getName()).matches()) {
+                    continue;
+                }
+                if (excludes.matcher(info.getName()).matches()) {
+                    iterator.remove();
+                }
             }
         }
 
@@ -273,8 +281,12 @@ public class ManagedMBean implements DynamicMBean {
     }
 
     public void setAttributesFilter(String exclude, String include) {
-        if (include == null) include = "";
-        if (exclude == null) exclude = "";
+        if (include == null) {
+            include = "";
+        }
+        if (exclude == null) {
+            exclude = "";
+        }
         includes = Pattern.compile(include);
         excludes = Pattern.compile(exclude);
 
@@ -345,11 +357,17 @@ public class ManagedMBean implements DynamicMBean {
             final StringBuilder name = new StringBuilder(method);
             
             // remove 'get'
-            if (method.matches("get([A-Z].*|)")) name.delete(0, 3);
-            if (method.matches("is([A-Z].*|)")) name.delete(0, 2);
+            if (method.matches("get([A-Z].*|)")) {
+                name.delete(0, 3);
+            }
+            if (method.matches("is([A-Z].*|)")) {
+                name.delete(0, 2);
+            }
 
             if (!"".equals(prefix)) {
-                if (!"".equals(name.toString())) name.insert(0, ".");
+                if (!"".equals(name.toString())) {
+                    name.insert(0, ".");
+                }
                 name.insert(0, prefix);
             }
 
@@ -403,7 +421,9 @@ public class ManagedMBean implements DynamicMBean {
             name.setCharAt(0, Character.toUpperCase(name.charAt(0)));
 
             if (!"".equals(prefix)) {
-                if (!"".equals(name.toString())) name.insert(0, ".");
+                if (!"".equals(name.toString())) {
+                    name.insert(0, ".");
+                }
                 name.insert(0, prefix);
             }
 

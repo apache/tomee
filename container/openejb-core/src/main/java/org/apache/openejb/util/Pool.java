@@ -98,8 +98,12 @@ public class Pool<T> {
     }
 
     public Pool(final int max, final int min, final boolean strict, final long maxAge, final long idleTimeout, long sweepInterval, final Executor executor, final Supplier<T> supplier, final boolean replaceAged, final double maxAgeOffset, final boolean garbageCollection, final boolean replaceFlushed) {
-        if (min > max) greater("max", max, "min", min);
-        if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
+        if (min > max) {
+            greater("max", max, "min", min);
+        }
+        if (maxAge != 0 && idleTimeout > maxAge) {
+            greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
+        }
         this.executor = executor != null ? executor : createExecutor();
         this.supplier = supplier != null ? supplier : new NoSupplier();
         this.available = strict ? new Semaphore(max) : new Overdraft(max);
@@ -109,7 +113,9 @@ public class Pool<T> {
         this.maxAgeOffset = maxAgeOffset;
         this.replaceAged = replaceAged;
         this.replaceFlushed = replaceFlushed;
-        if (sweepInterval == 0) sweepInterval = 5 * 60 * 1000; // five minutes
+        if (sweepInterval == 0) {
+            sweepInterval = 5 * 60 * 1000; // five minutes
+        }
         this.sweepInterval = sweepInterval;
         this.sweeper = new Sweeper(idleTimeout, max);
         this.stats = new Stats(min, max, idleTimeout);
@@ -190,7 +196,9 @@ public class Pool<T> {
         if (timeout == -1) {
             available.tryAcquire();
         } else if (!available.tryAcquire(timeout, unit)) {
-            if (record) stats.accessTimeouts.record();
+            if (record) {
+                stats.accessTimeouts.record();
+            }
             throw new TimeoutException("Waited " + timeout + " " + unit);
         }
 
@@ -211,7 +219,9 @@ public class Pool<T> {
 
                 final boolean notBusy = entry.active.compareAndSet(null, instance);
 
-                if (notBusy) return entry;
+                if (notBusy) {
+                    return entry;
+                }
             } else {
                 // the SoftReference was garbage collected
                 instances.release();
@@ -245,7 +255,9 @@ public class Pool<T> {
             if (available.tryAcquire(100, MILLISECONDS)) {
 
                 try {
-                    if (push(obj, offset)) return true;
+                    if (push(obj, offset)) {
+                        return true;
+                    }
                     available.release();
                 } catch (final RuntimeException e) {
                     available.release();
@@ -289,9 +301,13 @@ public class Pool<T> {
             return push(new Entry(obj, offset));
         }
 
-        if (obj != null) new Discard(obj, Event.FULL).run();
+        if (obj != null) {
+            new Discard(obj, Event.FULL).run();
+        }
 
-        if (available instanceof Overdraft) available.release();
+        if (available instanceof Overdraft) {
+            available.release();
+        }
 
         return false;
     }
@@ -308,9 +324,13 @@ public class Pool<T> {
         final Entry.Instance obj = entry == null ? null : entry.active.getAndSet(null);
 
         try {
-            if (entry == null) return added;
+            if (entry == null) {
+                return added;
+            }
 
-            if (!sweeper) entry.markLastUsed();
+            if (!sweeper) {
+                entry.markLastUsed();
+            }
 
             final long age = now() - entry.created;
 
@@ -318,8 +338,12 @@ public class Pool<T> {
             final boolean flushed = entry.version != this.poolVersion.get();
 
             if (aged || flushed) {
-                if (aged) event = Event.AGED;
-                if (flushed) event = Event.FLUSHED;
+                if (aged) {
+                    event = Event.AGED;
+                }
+                if (flushed) {
+                    event = Event.FLUSHED;
+                }
                 if (entry.hasHardReference() || aged && replaceAged || flushed && replaceFlushed) {
                     // Don't release the lock, this
                     // entry will be directly replaced
@@ -329,7 +353,9 @@ public class Pool<T> {
                 }
             } else {
                 // make this a "min" instance if we can
-                if (!entry.hasHardReference() && minimum.tryAcquire()) entry.hard.set(obj);
+                if (!entry.hasHardReference() && minimum.tryAcquire()) {
+                    entry.hard.set(obj);
+                }
 
                 synchronized (pool) {
                     pool.addFirst(entry);
@@ -396,8 +422,12 @@ public class Pool<T> {
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
         // drain all keys so no new instances will be accepted into the pool
-        while (instances.tryAcquire()) ; //NOPMD
-        while (minimum.tryAcquire()) ; //NOPMD
+        while (instances.tryAcquire()) {
+            ; //NOPMD
+        }
+        while (minimum.tryAcquire()) {
+            ; //NOPMD
+        }
 
         // Stop the sweeper thread
         stop();
@@ -407,7 +437,11 @@ public class Pool<T> {
         sweeper.run();
 
         // Drain all leases
-        if (!(available instanceof Overdraft)) while (available.tryAcquire()) ; //NOPMD
+        if (!(available instanceof Overdraft)) {
+            while (available.tryAcquire()) {
+                ; //NOPMD
+            }
+        }
 
         // Wait for any pending discards
         return out.await(timeout, unit);
@@ -464,7 +498,9 @@ public class Pool<T> {
          * @param offset creation time offset, used for maxAge
          */
         private Entry(final T obj, final long offset) {
-            if (obj == null) throw new NullPointerException("entry is null");
+            if (obj == null) {
+                throw new NullPointerException("entry is null");
+            }
             final Instance instance = new Instance(obj);
             this.soft = garbageCollection ?
                     new SoftReference<Instance>(instance) :
@@ -577,7 +613,9 @@ public class Pool<T> {
             // No timeouts to enforce?
             // Pool version not changed?
             // Just return
-            if (!timeouts && isCurrent) return;
+            if (!timeouts && isCurrent) {
+                return;
+            }
 
             final long now = now();
 
@@ -726,7 +764,9 @@ public class Pool<T> {
         }
 
         public boolean tryDiscard() {
-            if (discarded.getAndSet(true)) return false;
+            if (discarded.getAndSet(true)) {
+                return false;
+            }
 
             discard(entry);
 
@@ -734,9 +774,15 @@ public class Pool<T> {
         }
 
         public boolean replaceMinEntry(final Entry replacement) {
-            if (!entry.hasHardReference()) return false;
-            if (replacement.hasHardReference()) return false;
-            if (discarded.getAndSet(true)) return false;
+            if (!entry.hasHardReference()) {
+                return false;
+            }
+            if (replacement.hasHardReference()) {
+                return false;
+            }
+            if (discarded.getAndSet(true)) {
+                return false;
+            }
 
             discardAndReplace(entry, replacement);
 
@@ -771,7 +817,9 @@ public class Pool<T> {
                     discard(expired);
                 } else {
                     final Entry entry = new Entry(t, offset);
-                    if (expired.hasHardReference()) entry.harden();
+                    if (expired.hasHardReference()) {
+                        entry.harden();
+                    }
                     push(entry);
                 }
             } catch (final Throwable e) {
@@ -790,7 +838,9 @@ public class Pool<T> {
 
         private Discard(final T expired, final Event event) {
             out.countUp();
-            if (expired == null) throw new NullPointerException("expired object cannot be null");
+            if (expired == null) {
+                throw new NullPointerException("expired object cannot be null");
+            }
             this.expired = expired;
             this.event = event;
         }

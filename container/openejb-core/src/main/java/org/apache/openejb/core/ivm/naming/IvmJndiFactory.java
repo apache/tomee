@@ -55,7 +55,9 @@ public class IvmJndiFactory implements JndiFactory {
         for (final Map.Entry<String, Object> entry:  bindings.entrySet()) {
             final String name = entry.getKey();
             final Object value = entry.getValue();
-            if (value == null) continue;
+            if (value == null) {
+                continue;
+            }
 
             try {
                 context.bind(name, value);

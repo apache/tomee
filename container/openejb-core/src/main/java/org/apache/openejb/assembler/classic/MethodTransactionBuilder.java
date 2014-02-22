@@ -46,7 +46,9 @@ public class MethodTransactionBuilder {
 
     public static void applyTransactionAttributes(final BeanContext beanContext, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
 
-        if (beanContext.isBeanManagedTransaction()) return;
+        if (beanContext.isBeanManagedTransaction()) {
+            return;
+        }
 
         methodTransactionInfos = normalize(methodTransactionInfos);
 
@@ -62,7 +64,9 @@ public class MethodTransactionBuilder {
 
             final MethodTransactionInfo transactionInfo = (MethodTransactionInfo) entry.getValue();
 
-            if (debug) log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(transactionInfo));
+            if (debug) {
+                log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(transactionInfo));
+            }
 
             beanContext.setMethodTransactionAttribute(method, TransactionType.get(transactionInfo.transAttribute), view);
         }

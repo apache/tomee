@@ -58,7 +58,9 @@ public class WebContext {
     private final Map<Class<?>, ConstructorInjectionBean<Object>> constructorInjectionBeanCache = new ConcurrentHashMap<Class<?>, ConstructorInjectionBean<Object>>();
 
     public Context getInitialContext() {
-        if (initialContext != null) return initialContext;
+        if (initialContext != null) {
+            return initialContext;
+        }
         try {
             initialContext = (Context) new InitialContext().lookup("java:");
         } catch (final NamingException e) {

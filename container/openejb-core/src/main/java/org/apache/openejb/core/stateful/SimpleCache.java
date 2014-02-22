@@ -431,7 +431,9 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             final List<Entry> entries = new ArrayList<Entry>();
 
             int bulkPassivate = getBulkPassivate();
-            if (bulkPassivate < 1) bulkPassivate = 1;
+            if (bulkPassivate < 1) {
+                bulkPassivate = 1;
+            }
             for (int i = 0; i < bulkPassivate; i++) {
                 final Entry entry = lru.poll();
                 if (entry == null) {

@@ -220,12 +220,16 @@ public class PseudoTransactionService implements TransactionService, Transaction
         }
 
         public Object getResource(final Object key) {
-            if (key == null) throw new NullPointerException("key is null");
+            if (key == null) {
+                throw new NullPointerException("key is null");
+            }
             return resources.get(key);
         }
 
         public void putResource(final Object key, final Object value) {
-            if (key == null) throw new NullPointerException("key is null");
+            if (key == null) {
+                throw new NullPointerException("key is null");
+            }
             if (value != null) {
                 resources.put(key, value);
             } else {

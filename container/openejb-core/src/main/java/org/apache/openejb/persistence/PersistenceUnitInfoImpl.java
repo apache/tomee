@@ -343,10 +343,18 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             }
         }
 
-        if (name.startsWith("java.")) return true;
-        if (name.startsWith("javax.")) return true;
-        if (name.startsWith("sun.")) return true;
-        if (name.startsWith("com.sun.")) return true;
+        if (name.startsWith("java.")) {
+            return true;
+        }
+        if (name.startsWith("javax.")) {
+            return true;
+        }
+        if (name.startsWith("sun.")) {
+            return true;
+        }
+        if (name.startsWith("com.sun.")) {
+            return true;
+        }
 
         if (name.startsWith("org.")) {
             final String org = name.substring("org.".length());
@@ -354,44 +362,110 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             if (org.startsWith("apache.")) {
                 final String apache = org.substring("apache.".length());
 
-                if (apache.startsWith("bval.")) return true;
-                if (apache.startsWith("openjpa.")) return true;
-                if (apache.startsWith("derby.")) return true;
-                if (apache.startsWith("xbean.")) return true;
-                if (apache.startsWith("geronimo.")) return true;
-                if (apache.startsWith("coyote")) return true;
-                if (apache.startsWith("webbeans.")) return true;
-                if (apache.startsWith("log4j")) return true;
-                if (apache.startsWith("catalina")) return true;
-                if (apache.startsWith("jasper.")) return true;
-                if (apache.startsWith("tomcat.")) return true;
-                if (apache.startsWith("el.")) return true;
-                if (apache.startsWith("jsp")) return true;
-                if (apache.startsWith("naming")) return true;
-                if (apache.startsWith("taglibs.")) return true;
-                if (apache.startsWith("openejb.")) return true;
-                if (apache.startsWith("openjpa.")) return true;
-                if (apache.startsWith("myfaces.")) return true;
-                if (apache.startsWith("juli.")) return true;
-                if (apache.startsWith("webbeans.")) return true;
-                if (apache.startsWith("cxf.")) return true;
-                if (apache.startsWith("activemq.")) return true;
+                if (apache.startsWith("bval.")) {
+                    return true;
+                }
+                if (apache.startsWith("openjpa.")) {
+                    return true;
+                }
+                if (apache.startsWith("derby.")) {
+                    return true;
+                }
+                if (apache.startsWith("xbean.")) {
+                    return true;
+                }
+                if (apache.startsWith("geronimo.")) {
+                    return true;
+                }
+                if (apache.startsWith("coyote")) {
+                    return true;
+                }
+                if (apache.startsWith("webbeans.")) {
+                    return true;
+                }
+                if (apache.startsWith("log4j")) {
+                    return true;
+                }
+                if (apache.startsWith("catalina")) {
+                    return true;
+                }
+                if (apache.startsWith("jasper.")) {
+                    return true;
+                }
+                if (apache.startsWith("tomcat.")) {
+                    return true;
+                }
+                if (apache.startsWith("el.")) {
+                    return true;
+                }
+                if (apache.startsWith("jsp")) {
+                    return true;
+                }
+                if (apache.startsWith("naming")) {
+                    return true;
+                }
+                if (apache.startsWith("taglibs.")) {
+                    return true;
+                }
+                if (apache.startsWith("openejb.")) {
+                    return true;
+                }
+                if (apache.startsWith("openjpa.")) {
+                    return true;
+                }
+                if (apache.startsWith("myfaces.")) {
+                    return true;
+                }
+                if (apache.startsWith("juli.")) {
+                    return true;
+                }
+                if (apache.startsWith("webbeans.")) {
+                    return true;
+                }
+                if (apache.startsWith("cxf.")) {
+                    return true;
+                }
+                if (apache.startsWith("activemq.")) {
+                    return true;
+                }
 
                 if (apache.startsWith("commons.")) {
                     final String commons = apache.substring("commons.".length());
 
                     // don't stop on commons package since we don't bring all commons
-                    if (commons.startsWith("beanutils")) return true;
-                    if (commons.startsWith("cli")) return true;
-                    if (commons.startsWith("codec")) return true;
-                    if (commons.startsWith("collections")) return true;
-                    if (commons.startsWith("dbcp")) return true;
-                    if (commons.startsWith("digester")) return true;
-                    if (commons.startsWith("jocl")) return true;
-                    if (commons.startsWith("lang")) return true;
-                    if (commons.startsWith("logging")) return false;
-                    if (commons.startsWith("pool")) return true;
-                    if (commons.startsWith("net")) return true;
+                    if (commons.startsWith("beanutils")) {
+                        return true;
+                    }
+                    if (commons.startsWith("cli")) {
+                        return true;
+                    }
+                    if (commons.startsWith("codec")) {
+                        return true;
+                    }
+                    if (commons.startsWith("collections")) {
+                        return true;
+                    }
+                    if (commons.startsWith("dbcp")) {
+                        return true;
+                    }
+                    if (commons.startsWith("digester")) {
+                        return true;
+                    }
+                    if (commons.startsWith("jocl")) {
+                        return true;
+                    }
+                    if (commons.startsWith("lang")) {
+                        return true;
+                    }
+                    if (commons.startsWith("logging")) {
+                        return false;
+                    }
+                    if (commons.startsWith("pool")) {
+                        return true;
+                    }
+                    if (commons.startsWith("net")) {
+                        return true;
+                    }
 
                     return false;
                 }
@@ -400,22 +474,44 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             }
 
             // other org packages
-            if (org.startsWith("codehaus.swizzle")) return true;
-            if (org.startsWith("w3c.dom")) return true;
-            if (org.startsWith("quartz")) return true;
-            if (org.startsWith("eclipse.jdt.")) return true;
-            if (org.startsWith("slf4j")) return true;
-            if (org.startsWith("openejb")) return true; // old packages
-            if (org.startsWith("hsqldb")) return true; // old packages
-            if (org.startsWith("hibernate")) return true; // old packages
+            if (org.startsWith("codehaus.swizzle")) {
+                return true;
+            }
+            if (org.startsWith("w3c.dom")) {
+                return true;
+            }
+            if (org.startsWith("quartz")) {
+                return true;
+            }
+            if (org.startsWith("eclipse.jdt.")) {
+                return true;
+            }
+            if (org.startsWith("slf4j")) {
+                return true;
+            }
+            if (org.startsWith("openejb")) {
+                return true; // old packages
+            }
+            if (org.startsWith("hsqldb")) {
+                return true; // old packages
+            }
+            if (org.startsWith("hibernate")) {
+                return true; // old packages
+            }
 
             return false;
         }
 
         // other packages
-        if (name.startsWith("com.sun.")) return true;
-        if (name.startsWith("javassist")) return true;
-        if (name.startsWith("serp.")) return true;
+        if (name.startsWith("com.sun.")) {
+            return true;
+        }
+        if (name.startsWith("javassist")) {
+            return true;
+        }
+        if (name.startsWith("serp.")) {
+            return true;
+        }
 
         return false;
     }

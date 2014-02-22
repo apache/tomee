@@ -181,7 +181,9 @@ public class StatsInterceptor {
         } finally {
             long time = System.nanoTime() - start;
             time = millis(time); // do it in 2 steps since otherwise the measure is false (more false)
-            if (stats != null) stats.record(time);
+            if (stats != null) {
+                stats.record(time);
+            }
             invocationTime.addAndGet(time);
         }
     }
@@ -228,7 +230,9 @@ public class StatsInterceptor {
                 sb.append(clazz.getSimpleName());
                 sb.append(s);
             }
-            if (params.length > 0) sb.delete(sb.length() - s.length(), sb.length());
+            if (params.length > 0) {
+                sb.delete(sb.length() - s.length(), sb.length());
+            }
             sb.append(")");
 
             this.method = sb.toString();

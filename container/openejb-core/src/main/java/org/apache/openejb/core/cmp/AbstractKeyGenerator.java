@@ -37,8 +37,12 @@ public abstract class AbstractKeyGenerator implements KeyGenerator {
     }
 
     public static Object getFieldValue(final Field field, final Object object) throws EJBException {
-        if (field == null)  throw new NullPointerException("field is null");
-        if (object == null)  throw new NullPointerException("object is null");
+        if (field == null) {
+            throw new NullPointerException("field is null");
+        }
+        if (object == null) {
+            throw new NullPointerException("object is null");
+        }
         try {
             return field.get(object);
         } catch (final Exception e) {
@@ -47,8 +51,12 @@ public abstract class AbstractKeyGenerator implements KeyGenerator {
     }
 
     public static void setFieldValue(final Field field, final Object object, final Object value) throws EJBException {
-        if (field == null)  throw new NullPointerException("field is null");
-        if (object == null)  throw new NullPointerException("object is null");
+        if (field == null) {
+            throw new NullPointerException("field is null");
+        }
+        if (object == null) {
+            throw new NullPointerException("object is null");
+        }
         try {
             field.set(object, value);
         } catch (final Exception e) {

@@ -52,8 +52,9 @@ public class JndiEncArtifact implements Serializable {
         final Context cntx = deployment.getJndiEnc();
         try {
             final Object obj = cntx.lookup(path);
-            if (obj == null)
+            if (obj == null) {
                 throw new InvalidObjectException("JNDI ENC context reference could not be properly resolved when bean instance was activated");
+            }
             return obj;
         } catch (final NamingException e) {
             throw (InvalidObjectException)new InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);

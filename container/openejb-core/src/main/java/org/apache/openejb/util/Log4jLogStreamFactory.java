@@ -48,7 +48,9 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
     public Log4jLogStreamFactory() {
         try {
             final boolean externalLogging = SystemInstance.get().getOptions().get("openejb.logger.external", false);
-            if (!externalLogging) configureInternal();
+            if (!externalLogging) {
+                configureInternal();
+            }
         } catch (final Exception e) {
             // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
             e.printStackTrace();

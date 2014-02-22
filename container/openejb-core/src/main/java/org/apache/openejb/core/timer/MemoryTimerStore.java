@@ -217,7 +217,9 @@ public class MemoryTimerStore implements TimerStore {
         }
 
         private void checkThread() {
-            if (!lock.tryLock()) throw new IllegalStateException("Illegal access by Thread[" + Thread.currentThread().getName() + "]", concurentException);
+            if (!lock.tryLock()) {
+                throw new IllegalStateException("Illegal access by Thread[" + Thread.currentThread().getName() + "]", concurentException);
+            }
         }
 
         @Override
@@ -225,7 +227,9 @@ public class MemoryTimerStore implements TimerStore {
             checkThread();
             final TreeMap<Long, TimerData> allTasks = new TreeMap<Long, TimerData>();
             allTasks.putAll(taskStore);
-            for (final Long key : remove) allTasks.remove(key);
+            for (final Long key : remove) {
+                allTasks.remove(key);
+            }
             allTasks.putAll(add);
             return Collections.unmodifiableMap(allTasks);
         }
@@ -263,7 +267,9 @@ public class MemoryTimerStore implements TimerStore {
             checkThread();
 
             // if the tx was not committed, there is nothign to update
-            if (status != Status.STATUS_COMMITTED) return;
+            if (status != Status.STATUS_COMMITTED) {
+                return;
+            }
 
             // add the new work
             taskStore.putAll(add);

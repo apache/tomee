@@ -235,11 +235,13 @@ public class EjbJarInfoBuilder {
 
     private void initJndiNames(final Map<String, EjbDeployment> ejbds, final EnterpriseBeanInfo info) {
         final EjbDeployment deployment = ejbds.get(info.ejbName);
-        if (deployment != null) for (final Jndi jndi : deployment.getJndi()) {
-            final JndiNameInfo jndiNameInfo = new JndiNameInfo();
-            jndiNameInfo.intrface = jndi.getInterface();
-            jndiNameInfo.name = jndi.getName();
-            info.jndiNamess.add(jndiNameInfo);
+        if (deployment != null) {
+            for (final Jndi jndi : deployment.getJndi()) {
+                final JndiNameInfo jndiNameInfo = new JndiNameInfo();
+                jndiNameInfo.intrface = jndi.getInterface();
+                jndiNameInfo.name = jndi.getName();
+                info.jndiNamess.add(jndiNameInfo);
+            }
         }
     }
 
@@ -318,9 +320,15 @@ public class EjbJarInfoBuilder {
     }
 
     private void initInterceptors(final EjbModule jar, final EjbJarInfo ejbJar) throws OpenEJBException {
-        if (jar.getEjbJar().getInterceptors().length == 0) return;
-        if (jar.getEjbJar().getAssemblyDescriptor() == null) return;
-        if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) return;
+        if (jar.getEjbJar().getInterceptors().length == 0) {
+            return;
+        }
+        if (jar.getEjbJar().getAssemblyDescriptor() == null) {
+            return;
+        }
+        if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) {
+            return;
+        }
 
         for (final Interceptor s : jar.getEjbJar().getInterceptors()) {
             final InterceptorInfo info = new InterceptorInfo();
@@ -522,7 +530,9 @@ public class EjbJarInfoBuilder {
     }
 
     private List<MethodInfo> getMethodInfos(final List<Method> ms, final Map ejbds) {
-        if (ms == null) return Collections.emptyList();
+        if (ms == null) {
+            return Collections.emptyList();
+        }
 
         final List<MethodInfo> mi = new ArrayList<MethodInfo>(ms.size());
         for (final Method method : ms) {
@@ -689,7 +699,9 @@ public class EjbJarInfoBuilder {
     }
 
     private TimeoutInfo toInfo(final Timeout timeout) {
-        if (timeout == null) return null;
+        if (timeout == null) {
+            return null;
+        }
         
         final TimeoutInfo accessTimeout = new TimeoutInfo();
         accessTimeout.time = timeout.getTimeout();
@@ -757,7 +769,9 @@ public class EjbJarInfoBuilder {
     }
 
     private NamedMethodInfo toInfo(final NamedMethod method) {
-        if (method == null) return null;
+        if (method == null) {
+            return null;
+        }
 
         final NamedMethodInfo info = new NamedMethodInfo();
 

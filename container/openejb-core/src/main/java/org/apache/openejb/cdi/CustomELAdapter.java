@@ -42,7 +42,9 @@ public class CustomELAdapter implements ELAdaptor {
 
     @Override
     public ExpressionFactory getOwbWrappedExpressionFactory(final ExpressionFactory expressionFactory) {
-        if (!appContext.isCdiEnabled()) return expressionFactory;
+        if (!appContext.isCdiEnabled()) {
+            return expressionFactory;
+        }
         return new WrappedExpressionFactory(expressionFactory);
     }
 }

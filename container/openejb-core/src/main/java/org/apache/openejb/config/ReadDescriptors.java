@@ -318,7 +318,9 @@ public class ReadDescriptors implements DynamicDeployer {
                                     realIssue[0] = v2ParsingException;
                                     throw new SAXException("Throw exception to stop parsing");
                                 }
-                                if (uri == null) return;
+                                if (uri == null) {
+                                    return;
+                                }
                                 if (uri.contains("openejb-jar-2.") || uri.contains("geronimo.apache.org/xml/ns")) {
                                     realIssue[0] = v2ParsingException;
                                     throw new SAXException("Throw exception to stop parsing");
@@ -397,7 +399,9 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readAppClient(final ClientModule clientModule, final AppModule appModule) throws OpenEJBException {
-        if (clientModule.getApplicationClient() != null) return;
+        if (clientModule.getApplicationClient() != null) {
+            return;
+        }
 
         final Object data = clientModule.getAltDDs().get("application-client.xml");
         if (data instanceof ApplicationClient) {
@@ -415,7 +419,9 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public void readEjbJar(final EjbModule ejbModule, final AppModule appModule) throws OpenEJBException {
-        if (ejbModule.getEjbJar() != null) return;
+        if (ejbModule.getEjbJar() != null) {
+            return;
+        }
 
         final Source data = getSource(ejbModule.getAltDDs().get("ejb-jar.xml"));
         if (data != null) {
@@ -449,7 +455,9 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readBeans(final EjbModule ejbModule) throws OpenEJBException {
-        if (ejbModule.getBeans() != null) return;
+        if (ejbModule.getBeans() != null) {
+            return;
+        }
 
         final Object raw = ejbModule.getAltDDs().get("beans.xml");
         final Source data = getSource(raw);
@@ -488,7 +496,9 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readConnector(final ConnectorModule connectorModule, final AppModule appModule) throws OpenEJBException {
-        if (connectorModule.getConnector() != null) return;
+        if (connectorModule.getConnector() != null) {
+            return;
+        }
 
         final Object data = connectorModule.getAltDDs().get("ra.xml");
         if (data instanceof Connector) {
@@ -598,7 +608,9 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Beans readBeans(final InputStream inputStream) throws OpenEJBException {
         try {
             final String content = IO.slurp(inputStream);
-            if (isEmptyBeansXml(new ByteArrayInputStream(content.getBytes()))) return new Beans();
+            if (isEmptyBeansXml(new ByteArrayInputStream(content.getBytes()))) {
+                return new Beans();
+            }
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
         } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
@@ -629,7 +641,9 @@ public class ReadDescriptors implements DynamicDeployer {
         try {
             parser.parse(inputSource, new DefaultHandler() {
                 public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
-                    if (!localName.equals(rootElement)) throw new SAXException(localName);
+                    if (!localName.equals(rootElement)) {
+                        throw new SAXException(localName);
+                    }
                 }
 
                 public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {

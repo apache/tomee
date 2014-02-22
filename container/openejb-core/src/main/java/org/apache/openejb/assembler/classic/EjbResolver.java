@@ -133,7 +133,9 @@ public class EjbResolver {
     }
 
     private String resolveLink(final String link, final URI moduleUri) {
-        if (link == null || link.length() == 0) return null;
+        if (link == null || link.length() == 0) {
+            return null;
+        }
 
         String id = resolver.resolveLink(link, moduleUri);
         if (id == null && parent != null) {
@@ -180,7 +182,9 @@ public class EjbResolver {
     }
 
     private String first(final List<Interfaces> list) {
-        if (list.size() == 0) return null;
+        if (list.size() == 0) {
+            return null;
+        }
         return list.get(0).getId();
     }
 
@@ -208,9 +212,13 @@ public class EjbResolver {
     }
 
     public Scope getScope(final String deploymentId) {
-        if (deployments.containsKey(deploymentId)) return scope;
+        if (deployments.containsKey(deploymentId)) {
+            return scope;
+        }
 
-        if (parent != null) return parent.getScope(deploymentId);
+        if (parent != null) {
+            return parent.getScope(deploymentId);
+        }
 
         return null;
     }
@@ -245,7 +253,9 @@ public class EjbResolver {
         private final String objectInterface;
 
         public Interfaces(final String objectInterface, final Type type, final String id) {
-            if (objectInterface == null) throw new NullPointerException("objectInterface is null");
+            if (objectInterface == null) {
+                throw new NullPointerException("objectInterface is null");
+            }
             this.homeInterface = "<none>";
             this.objectInterface = objectInterface;
             this.type = type;
@@ -253,8 +263,12 @@ public class EjbResolver {
         }
 
         public Interfaces(String homeInterface, final String objectInterface, final Type type, final String id) {
-            if (homeInterface == null) homeInterface = "<none>";
-            if (objectInterface == null) throw new NullPointerException("objectInterface is null");
+            if (homeInterface == null) {
+                homeInterface = "<none>";
+            }
+            if (objectInterface == null) {
+                throw new NullPointerException("objectInterface is null");
+            }
             this.homeInterface = homeInterface;
             this.objectInterface = objectInterface;
             this.type = type;
@@ -262,8 +276,12 @@ public class EjbResolver {
         }
 
         public Interfaces(String homeInterface, final String objectInterface) {
-            if (homeInterface == null) homeInterface = "<none>";
-            if (objectInterface == null) throw new NullPointerException("objectInterface is null");
+            if (homeInterface == null) {
+                homeInterface = "<none>";
+            }
+            if (objectInterface == null) {
+                throw new NullPointerException("objectInterface is null");
+            }
             this.homeInterface = homeInterface;
             this.objectInterface = objectInterface;
             this.type = null;
@@ -279,8 +297,12 @@ public class EjbResolver {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Interfaces that = (Interfaces) o;
 
@@ -295,7 +317,9 @@ public class EjbResolver {
         }
 
         public int compareTo(final Object o) {
-            if (this == o) return 0;
+            if (this == o) {
+                return 0;
+            }
 
             final Interfaces that = (Interfaces) o;
             return toString().compareTo(that.toString());

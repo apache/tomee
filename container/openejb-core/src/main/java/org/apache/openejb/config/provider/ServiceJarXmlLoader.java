@@ -41,12 +41,16 @@ public class ServiceJarXmlLoader implements ProviderLoader {
 
         { // Already loaded and waiting?
             final ServiceProvider provider = loaded.remove(id);
-            if (provider != null) return provider;
+            if (provider != null) {
+                return provider;
+            }
         }
 
         final String namespace = id.getNamespace();
 
-        if (namespaces.contains(namespace)) return null;
+        if (namespaces.contains(namespace)) {
+            return null;
+        }
         namespaces.add(namespace);
 
         parse(namespace);

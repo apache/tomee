@@ -301,7 +301,9 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     public void release() {
-        if (state == State.RELEASED) return;
+        if (state == State.RELEASED) {
+            return;
+        }
         state = State.RELEASED;
 
         // notify the container
@@ -314,7 +316,9 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     private boolean isValidException(final Method method, final Throwable throwable) {
-        if (throwable instanceof RuntimeException || throwable instanceof Error) return true;
+        if (throwable instanceof RuntimeException || throwable instanceof Error) {
+            return true;
+        }
 
         final Class<?>[] exceptionTypes = method.getExceptionTypes();
         for (final Class<?> exceptionType : exceptionTypes) {

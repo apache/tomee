@@ -184,7 +184,9 @@ public class EntityInstanceManager {
     protected EntityBean getPooledInstance(final ThreadContext callContext) throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final Stack methodReadyPool = poolMap.get(beanContext.getDeploymentID());
-        if (methodReadyPool == null) throw new SystemException("Invalid deployment id " + beanContext.getDeploymentID() + " for this container");
+        if (methodReadyPool == null) {
+            throw new SystemException("Invalid deployment id " + beanContext.getDeploymentID() + " for this container");
+        }
 
         EntityBean bean = (EntityBean) methodReadyPool.pop();
         if (bean == null) {
@@ -434,16 +436,24 @@ public class EntityInstanceManager {
         private final Object primaryKey;
 
         public Key(final Object deploymentId, final Object primaryKey) {
-            if (deploymentId == null) throw new NullPointerException("deploymentId is null");
-            if (primaryKey == null) throw new NullPointerException("primaryKey is null");
+            if (deploymentId == null) {
+                throw new NullPointerException("deploymentId is null");
+            }
+            if (primaryKey == null) {
+                throw new NullPointerException("primaryKey is null");
+            }
 
             this.deploymentId = deploymentId;
             this.primaryKey = primaryKey;
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Key key = (Key) o;
 
@@ -480,11 +490,21 @@ public class EntityInstanceManager {
         private final TransactionPolicy txPolicy;
 
         public SynchronizationWrapper(final BeanContext beanContext, final Object primaryKey, final EntityBean bean, final boolean available, final Key readyPoolKey, final TransactionPolicy txPolicy) {
-            if (bean == null) throw new IllegalArgumentException("bean is null");
-            if (readyPoolKey == null) throw new IllegalArgumentException("key is null");
-            if (beanContext == null) throw new IllegalArgumentException("deploymentInfo is null");
-            if (primaryKey == null) throw new IllegalArgumentException("primaryKey is null");
-            if (txPolicy == null) throw new IllegalArgumentException("txEnv is null");
+            if (bean == null) {
+                throw new IllegalArgumentException("bean is null");
+            }
+            if (readyPoolKey == null) {
+                throw new IllegalArgumentException("key is null");
+            }
+            if (beanContext == null) {
+                throw new IllegalArgumentException("deploymentInfo is null");
+            }
+            if (primaryKey == null) {
+                throw new IllegalArgumentException("primaryKey is null");
+            }
+            if (txPolicy == null) {
+                throw new IllegalArgumentException("txEnv is null");
+            }
 
             this.beanContext = beanContext;
             this.bean = bean;

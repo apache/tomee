@@ -461,7 +461,9 @@ public class SunConversion implements DynamicDeployer {
     }
 
     private String normalize(String refName) {
-        if (!refName.startsWith("java:")) refName = "java:comp/env/" + refName;
+        if (!refName.startsWith("java:")) {
+            refName = "java:comp/env/" + refName;
+        }
         return refName;
     }
 
@@ -580,7 +582,9 @@ public class SunConversion implements DynamicDeployer {
             final Map<String, WebserviceDescription> descriptions = webModule.getWebservices().getWebserviceDescriptionMap();
             for (final org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunWebApp.getWebserviceDescription()) {
                 final WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
-                if (description == null) continue;
+                if (description == null) {
+                    continue;
+                }
 
                 final String serviceId = extractSerivceId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
                 if (serviceId != null) {
@@ -596,7 +600,9 @@ public class SunConversion implements DynamicDeployer {
     }
 
     public static String extractSerivceId(String location, String wsdlFile) {
-        if (location == null) return null;
+        if (location == null) {
+            return null;
+        }
 
         if (location.startsWith("file:")) {
             // location format = file:{repository}/{location}.wsdl
@@ -615,14 +621,18 @@ public class SunConversion implements DynamicDeployer {
             location = location.replaceFirst("\\?.*$", "");
         }
 
-        if (location.length() == 0) location = null;
+        if (location.length() == 0) {
+            location = null;
+        }
         return location;
     }
 
     public void convertModule(final EjbModule ejbModule, final EntityMappings entityMappings) {
         final Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
-        if (entityMappings != null ) for (final Entity entity : entityMappings.getEntity()) {
-            entities.put(entity.getDescription(), new SunConversion.EntityData(entity));
+        if (entityMappings != null ) {
+            for (final Entity entity : entityMappings.getEntity()) {
+                entities.put(entity.getDescription(), new EntityData(entity));
+            }
         }
 
         // merge data from sun-ejb-jar.xml file
@@ -643,9 +653,15 @@ public class SunConversion implements DynamicDeployer {
         final EjbJar ejbJar = ejbModule.getEjbJar();
         final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
-        if (openejbJar == null) return;
-        if (sunEjbJar == null) return;
-        if (sunEjbJar.getEnterpriseBeans() == null) return;
+        if (openejbJar == null) {
+            return;
+        }
+        if (sunEjbJar == null) {
+            return;
+        }
+        if (sunEjbJar.getEnterpriseBeans() == null) {
+            return;
+        }
 
         final Map<String,Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String,Map<String, WebserviceEndpoint>>();
         for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
@@ -803,9 +819,15 @@ public class SunConversion implements DynamicDeployer {
     }
 
     private void mergeEntityMappings(final Map<String, EntityData> entities, final String moduleId, final EjbJar ejbJar, final OpenejbJar openejbJar, final SunEjbJar sunEjbJar) {
-        if (openejbJar == null) return;
-        if (sunEjbJar == null) return;
-        if (sunEjbJar.getEnterpriseBeans() == null) return;
+        if (openejbJar == null) {
+            return;
+        }
+        if (sunEjbJar == null) {
+            return;
+        }
+        if (sunEjbJar.getEnterpriseBeans() == null) {
+            return;
+        }
 
         for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
             final Cmp cmp = ejb.getCmp();
@@ -847,7 +869,9 @@ public class SunConversion implements DynamicDeployer {
                         name.append('(');
                         boolean first = true;
                         for (final List<String> methodParam : params) {
-                            if (!first) name.append(",");
+                            if (!first) {
+                                name.append(",");
+                            }
                             name.append(methodParam.get(0));
                             first = false;
                         }
@@ -999,7 +1023,9 @@ public class SunConversion implements DynamicDeployer {
                     }
                 } else {
                     // skip the non owning side
-                    if (field.getMappedBy() != null) continue;
+                    if (field.getMappedBy() != null) {
+                        continue;
+                    }
 
                     final JoinTable joinTable = new JoinTable();
                     field.setJoinTable(joinTable);
@@ -1059,7 +1085,9 @@ public class SunConversion implements DynamicDeployer {
     }
 
     private List<List<String>> parseQueryParamters(final String queryParams) {
-        if (queryParams == null) return Collections.emptyList();
+        if (queryParams == null) {
+            return Collections.emptyList();
+        }
 
         final List bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
         final List<List<String>> params = new ArrayList<List<String>>(bits.size() / 2);
@@ -1089,7 +1117,9 @@ public class SunConversion implements DynamicDeployer {
     }
 
     private String convertToEjbQlFilter(final Collection<String> cmpFields, final List<List<String>> queryParams, final String queryFilter) {
-        if (queryFilter == null) return null;
+        if (queryFilter == null) {
+            return null;
+        }
 
         final Map<String, String> variableMap = new TreeMap<String, String>();
         for (final String cmpField : cmpFields) {
@@ -1221,7 +1251,9 @@ public class SunConversion implements DynamicDeployer {
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
         public EntityData(final Entity entity) {
-            if (entity == null) throw new NullPointerException("entity is null");
+            if (entity == null) {
+                throw new NullPointerException("entity is null");
+            }
             this.entity = entity;
 
             final Attributes attributes = entity.getAttributes();
@@ -1265,7 +1297,9 @@ public class SunConversion implements DynamicDeployer {
         }
 
         public boolean hasPkColumnMapping(final String column) {
-            if (ids.size() > 1) return false;
+            if (ids.size() > 1) {
+                return false;
+            }
             for (final Id id : ids.values()) {
                 if (column.equals(id.getColumn().getName())) {
                     return true;

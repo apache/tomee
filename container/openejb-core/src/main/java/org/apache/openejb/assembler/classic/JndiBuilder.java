@@ -217,7 +217,9 @@ public class JndiBuilder {
             }
 
             final Iterator<BeanContext> it = deployments.values().iterator();
-            if (!it.hasNext()) return;
+            if (!it.hasNext()) {
+                return;
+            }
 
             // TODO we should just pass in the ModuleContext
             final ModuleContext moduleContext = it.next().getModuleContext();
@@ -236,8 +238,12 @@ public class JndiBuilder {
 
         private void putAll(final Map<String, String> map, final Properties properties) {
             for (final Map.Entry<Object, Object> e : properties.entrySet()) {
-                if (!(e.getValue() instanceof String)) continue;
-                if (!(e.getKey() instanceof String)) continue;
+                if (!(e.getValue() instanceof String)) {
+                    continue;
+                }
+                if (!(e.getKey() instanceof String)) {
+                    continue;
+                }
 
                 map.put((String) e.getKey(), (String) e.getValue());
             }
@@ -262,7 +268,9 @@ public class JndiBuilder {
 
             for (final JndiNameInfo nameInfo : beanInfo.jndiNamess) {
                 String intrface = nameInfo.intrface;
-                if (intrface == null) intrface = "";
+                if (intrface == null) {
+                    intrface = "";
+                }
                 templates.put(intrface, addTemplate(templates.get(intrface), getType(nameInfo.name), new StringTemplate(nameInfo.name)));
             }
             beanInfo.jndiNames.clear();
@@ -295,8 +303,12 @@ public class JndiBuilder {
 
         public String getName(final Class interfce, final String key, final Interface type) {
             Map<String, StringTemplate> template = templates.get(interfce.getName());
-            if (template == null) template = templates.get(type.getAnnotationName());
-            if (template == null) template = templates.get("");
+            if (template == null) {
+                template = templates.get(type.getAnnotationName());
+            }
+            if (template == null) {
+                template = templates.get("");
+            }
 
             final Map<String, String> contextData = new HashMap<String, String>(beanContext);
             contextData.put("interfaceType", type.getAnnotationName());
@@ -455,7 +467,9 @@ public class JndiBuilder {
                     bean.getModuleContext().getAppContext().getBindings().put(name, ref);
                 }
 
-                if (simpleNameRef == null) simpleNameRef = ref;
+                if (simpleNameRef == null) {
+                    simpleNameRef = ref;
+                }
             }
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Unable to bind business local interface for deployment " + id, e);
@@ -482,7 +496,9 @@ public class JndiBuilder {
                     bean.getModuleContext().getAppContext().getBindings().put(name, ref);
                 }
 
-                if (simpleNameRef == null) simpleNameRef = ref;
+                if (simpleNameRef == null) {
+                    simpleNameRef = ref;
+                }
             }
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Unable to bind business remote deployment in jndi.", e);
@@ -506,7 +522,9 @@ public class JndiBuilder {
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
                 bindJava(bean, localHomeInterface, ref, bindings, beanInfo);
 
-                if (simpleNameRef == null) simpleNameRef = ref;
+                if (simpleNameRef == null) {
+                    simpleNameRef = ref;
+                }
             }
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Unable to bind local home interface for deployment " + id, e);
@@ -531,7 +549,9 @@ public class JndiBuilder {
                 bind(name, ref, bindings, beanInfo, homeInterface);
                 bindJava(bean, homeInterface, ref, bindings, beanInfo);
 
-                if (simpleNameRef == null) simpleNameRef = ref;
+                if (simpleNameRef == null) {
+                    simpleNameRef = ref;
+                }
             }
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Unable to bind remote home interface for deployment " + id, e);
@@ -624,7 +644,9 @@ public class JndiBuilder {
                 }
                 // Construct a new exception as the IvmContext doesn't include
                 // the name in the exception that it throws
-                if (failOnCollision) throw new NameAlreadyBoundException(externalName);
+                if (failOnCollision) {
+                    throw new NameAlreadyBoundException(externalName);
+                }
             }
         } else {
             try {
@@ -706,7 +728,9 @@ public class JndiBuilder {
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         for (final BeanContext beanContext : containerSystem.deployments()) {
             final Bindings bindings = beanContext.get(Bindings.class);
-            if (bindings != null && bindings.getBindings().contains(name)) return beanContext;
+            if (bindings != null && bindings.getBindings().contains(name)) {
+                return beanContext;
+            }
         }
         return null;
     }
@@ -733,7 +757,9 @@ public class JndiBuilder {
             final boolean aIsRmote = Remote.class.isAssignableFrom(a);
             final boolean bIsRmote = Remote.class.isAssignableFrom(b);
 
-            if (aIsRmote == bIsRmote) return 0;
+            if (aIsRmote == bIsRmote) {
+                return 0;
+            }
             return aIsRmote ? 1 : -1;
         }
     }

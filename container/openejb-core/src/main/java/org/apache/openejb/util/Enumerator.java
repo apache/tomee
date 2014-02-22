@@ -36,7 +36,9 @@ public class Enumerator implements Serializable, Enumeration {
     }
 
     public Object nextElement() {
-        if (!hasMoreElements()) throw new NoSuchElementException();
+        if (!hasMoreElements()) {
+            throw new NoSuchElementException();
+        }
         return list.get(index++);
     }
 }

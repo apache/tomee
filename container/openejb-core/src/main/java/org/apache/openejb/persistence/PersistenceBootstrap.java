@@ -245,7 +245,9 @@ public class PersistenceBootstrap {
     }
 
     private static void debug(final String x) {
-        if (debug) System.out.println("[PersistenceBootstrap] " + x);
+        if (debug) {
+            System.out.println("[PersistenceBootstrap] " + x);
+        }
     }
 
     private static void debug(final String x, final Throwable t) {
@@ -295,7 +297,9 @@ public class PersistenceBootstrap {
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
                 characters = new StringBuilder(100);
 
-                if (localName.equals("persistence-unit")) startPersistenceUnit(uri, localName, qName, attributes);
+                if (localName.equals("persistence-unit")) {
+                    startPersistenceUnit(uri, localName, qName, attributes);
+                }
             }
 
             public void startPersistenceUnit(final String uri, final String localName, final String qName, final Attributes attributes) {
@@ -309,9 +313,13 @@ public class PersistenceBootstrap {
             }
 
             public void endElement(final String uri, final String localName, final String qName) {
-                if (localName.equals("persistence-unit")) endPersistenceUnit(uri, localName, qName);
-                else if (localName.equals("provider")) endProvider(uri, localName, qName);
-                else if (localName.equals("class")) endClass(uri, localName, qName);
+                if (localName.equals("persistence-unit")) {
+                    endPersistenceUnit(uri, localName, qName);
+                } else if (localName.equals("provider")) {
+                    endProvider(uri, localName, qName);
+                } else if (localName.equals("class")) {
+                    endClass(uri, localName, qName);
+                }
             }
 
             public void endPersistenceUnit(final String uri, final String localName, final String qName) {
@@ -354,7 +362,9 @@ public class PersistenceBootstrap {
                 /*
                  * REMIND: we don't handle nested JAR URLs
                  */
-                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                if (separator == -1) {
+                    throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                }
 
                 return toFile(new URL(spec.substring(0, separator++)));
             } catch (final MalformedURLException e) {

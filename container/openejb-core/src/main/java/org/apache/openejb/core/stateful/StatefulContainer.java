@@ -342,12 +342,14 @@ public class StatefulContainer implements RpcContainer {
     public Object invoke(final Object deployID, InterfaceType type, final Class callInterface, final Method callMethod, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (beanContext == null)
+        if (beanContext == null) {
             throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
+        }
 
         // Use the backup way to determine call type if null was supplied.
-        if (type == null)
+        if (type == null) {
             type = beanContext.getInterfaceType(callInterface);
+        }
 
         final Data data = (Data) beanContext.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
@@ -462,8 +464,9 @@ public class StatefulContainer implements RpcContainer {
     }
 
     protected Object removeEJBObject(final BeanContext beanContext, final Object primKey, final Class callInterface, final Method callMethod, Object[] args, final InterfaceType interfaceType) throws OpenEJBException {
-        if (primKey == null)
+        if (primKey == null) {
             throw new NullPointerException("primKey is null");
+        }
 
         final CdiEjbBean cdiEjbBean = beanContext.get(CdiEjbBean.class);
         if (cdiEjbBean != null) {
@@ -479,8 +482,9 @@ public class StatefulContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            if (!internalRemove)
+            if (!internalRemove) {
                 checkAuthorization(callMethod, interfaceType);
+            }
 
             // If a bean managed transaction is active, the bean can not be removed
             if (interfaceType.isComponent()) {
@@ -897,20 +901,23 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private void registerEntityManagers(final Instance instance, final ThreadContext callContext) throws OpenEJBException {
-        if (entityManagerRegistry == null)
+        if (entityManagerRegistry == null) {
             return;
+        }
 
         final BeanContext beanContext = callContext.getBeanContext();
 
         // get the factories
         final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        if (factories == null)
+        if (factories == null) {
             return;
+        }
 
         // get the managers for the factories
         final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = instance.getEntityManagers(factories);
-        if (entityManagers == null)
+        if (entityManagers == null) {
             return;
+        }
 
         // register them
         try {
@@ -921,10 +928,12 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> unregisterEntityManagers(final Instance instance, final ThreadContext callContext) {
-        if (entityManagerRegistry == null)
+        if (entityManagerRegistry == null) {
             return null;
-        if (instance == null)
+        }
+        if (instance == null) {
             return null;
+        }
 
         final BeanContext beanContext = callContext.getBeanContext();
 
@@ -933,8 +942,9 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private void closeEntityManagers(final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> unregisteredEntityManagers) {
-        if (unregisteredEntityManagers == null)
+        if (unregisteredEntityManagers == null) {
             return;
+        }
 
         // iterate throughout all EM to close EntityManager
         for (final JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker : unregisteredEntityManagers.values()) {
@@ -1049,12 +1059,14 @@ public class StatefulContainer implements RpcContainer {
                 final Instance instance = synchronization.instance;
 
                 // don't call beforeCompletion when transaction is marked rollback only
-                if (txPolicy.isRollbackOnly())
+                if (txPolicy.isRollbackOnly()) {
                     return;
+                }
 
                 // only call beforeCompletion on beans with session synchronization
-                if (!synchronization.isCallSessionSynchronization())
+                if (!synchronization.isCallSessionSynchronization()) {
                     continue;
+                }
 
                 // Invoke beforeCompletion
                 final ThreadContext callContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.BEFORE_COMPLETION);
@@ -1126,8 +1138,9 @@ public class StatefulContainer implements RpcContainer {
                     discardInstance(callContext.getPrimaryKey(), instance);
 
                     // [4] throw throw first exception to the client
-                    if (firstException == null)
+                    if (firstException == null) {
                         firstException = e;
+                    }
                 } finally {
                     ThreadContext.exit(oldCallContext);
                 }

@@ -37,7 +37,9 @@ public class CheckMethods extends ValidationBase {
     public void validate(final EjbModule ejbModule) {
 
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            if (!(bean instanceof RemoteBean)) continue;
+            if (!(bean instanceof RemoteBean)) {
+                continue;
+            }
             final RemoteBean b = (RemoteBean) bean;
 
             if (b.getHome() != null) {
@@ -92,7 +94,9 @@ public class CheckMethods extends ValidationBase {
         final Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
-            if (interfaceMethods[i].getDeclaringClass() == EJBLocalObject.class) continue;
+            if (interfaceMethods[i].getDeclaringClass() == EJBLocalObject.class) {
+                continue;
+            }
             final String name = interfaceMethods[i].getName();
             try {
                 final Class[] params = interfaceMethods[i].getParameterTypes();
@@ -141,7 +145,9 @@ public class CheckMethods extends ValidationBase {
         final Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
-            if (interfaceMethods[i].getDeclaringClass() == EJBObject.class) continue;
+            if (interfaceMethods[i].getDeclaringClass() == EJBObject.class) {
+                continue;
+            }
             final String name = interfaceMethods[i].getName();
             try {
                 final Class[] params = interfaceMethods[i].getParameterTypes();
@@ -223,7 +229,9 @@ public class CheckMethods extends ValidationBase {
         final Method[] homeMethods = home.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
-            if (!homeMethods[i].getName().startsWith("create")) continue;
+            if (!homeMethods[i].getName().startsWith("create")) {
+                continue;
+            }
 
             final Method create = homeMethods[i];
 
@@ -249,8 +257,9 @@ public class CheckMethods extends ValidationBase {
                     if (b instanceof SessionBean) {
                         final SessionBean sb = (SessionBean) b;
                         // Under EJB 3.1, it is not required that a stateless session bean have an ejbCreate method, even when it has a home interface
-                        if (!sb.getSessionType().equals(SessionType.STATELESS))
+                        if (!sb.getSessionType().equals(SessionType.STATELESS)) {
                             fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);
+                        }
                     }
                 }
             }
@@ -262,13 +271,17 @@ public class CheckMethods extends ValidationBase {
     public boolean check_postCreateMethodsAreImplemented(final RemoteBean b, final Class bean, final Class home) {
         boolean result = true;
 
-        if (b instanceof SessionBean) return true;
+        if (b instanceof SessionBean) {
+            return true;
+        }
 
         final Method[] homeMethods = home.getMethods();
         final Method[] beanMethods = bean.getMethods();
 
         for (int i = 0; i < homeMethods.length; i++) {
-            if (!homeMethods[i].getName().startsWith("create")) continue;
+            if (!homeMethods[i].getName().startsWith("create")) {
+                continue;
+            }
             final Method create = homeMethods[i];
             final StringBuilder ejbPostCreateName = new StringBuilder(create.getName());
             ejbPostCreateName.replace(0, 1, "ejbPostC");
@@ -308,7 +321,9 @@ public class CheckMethods extends ValidationBase {
 
         for (final Method ejbCreate : bean.getMethods()) {
 
-            if (!ejbCreate.getName().startsWith("ejbCreate")) continue;
+            if (!ejbCreate.getName().startsWith("ejbCreate")) {
+                continue;
+            }
 
             final StringBuilder create = new StringBuilder(ejbCreate.getName());
             create.replace(0, "ejbC".length(), "c");
@@ -354,7 +369,9 @@ public class CheckMethods extends ValidationBase {
 
         for (final Method postCreate : bean.getMethods()) {
 
-            if (!postCreate.getName().startsWith("ejbPostCreate")) continue;
+            if (!postCreate.getName().startsWith("ejbPostCreate")) {
+                continue;
+            }
 
             final StringBuilder ejbCreate = new StringBuilder(postCreate.getName());
             ejbCreate.replace(0, "ejbPostCreate".length(), "ejbCreate");

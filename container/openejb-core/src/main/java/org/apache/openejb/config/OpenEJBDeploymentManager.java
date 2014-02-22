@@ -107,7 +107,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
 
         // target.default - default target
         String defaultTargetName = properties.getProperty("target.default");
-        if (defaultTargetName == null) defaultTargetName = OpenEJBDeploymentManager.DEFAULT_TARGET_NAME;
+        if (defaultTargetName == null) {
+            defaultTargetName = OpenEJBDeploymentManager.DEFAULT_TARGET_NAME;
+        }
         if (!targets.containsKey(defaultTargetName)) {
             targets.put(defaultTargetName, new TargetImpl(defaultTargetName, null));
         }
@@ -130,14 +132,18 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public Target[] getTargets() {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         return targets.values().toArray(new Target[targets.size()]);
     }
 
 
     public TargetModuleID[] getAvailableModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final String type = null;
@@ -153,7 +159,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public TargetModuleID[] getNonRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final String type = null;
@@ -169,7 +177,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public TargetModuleID[] getRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final String type = null;
@@ -185,7 +195,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public ProgressObject distribute(final Target[] targetList, final File moduleArchive, final File deploymentPlan) {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         // todo merge files
         try {
@@ -198,7 +210,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public ProgressObject distribute(final Target[] targetList, final InputStream moduleArchive, final InputStream deploymentPlan) {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         // todo merge files
         try {
@@ -211,7 +225,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public ProgressObject start(final TargetModuleID[] moduleIdList) {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final Set<String> targetModuleStrings = deployment.start(toModuleSet(moduleIdList));
@@ -223,7 +239,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public ProgressObject stop(final TargetModuleID[] moduleIdList) {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final Set<String> targetModuleStrings = deployment.stop(toModuleSet(moduleIdList));
@@ -235,7 +253,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     public ProgressObject undeploy(final TargetModuleID[] moduleIdList) {
-        if (deployment == null) throw new IllegalStateException("Deployment manager is disconnected");
+        if (deployment == null) {
+            throw new IllegalStateException("Deployment manager is disconnected");
+        }
 
         try {
             final Set<String> targetModuleStrings = deployment.undeploy(toModuleSet(moduleIdList));
@@ -341,7 +361,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     private Set<String> toTargetSet(final Target[] targets) {
-        if (targets == null) return Collections.emptySet();
+        if (targets == null) {
+            return Collections.emptySet();
+        }
 
         final TreeSet<String> targetSet = new TreeSet<String>();
         for (final Target target : targets) {
@@ -351,7 +373,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     private Set<String> toModuleSet(final TargetModuleID[] moduleIDList) {
-        if (moduleIDList == null) return Collections.emptySet();
+        if (moduleIDList == null) {
+            return Collections.emptySet();
+        }
 
         final TreeSet<String> moduleSet = new TreeSet<String>();
         for (final TargetModuleID module : moduleIDList) {
@@ -385,7 +409,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         }
 
         public TargetImpl(final String name, final String description) {
-            if (name == null) throw new NullPointerException("name is null");
+            if (name == null) {
+                throw new NullPointerException("name is null");
+            }
             this.name = name;
             this.description = description;
         }
@@ -403,8 +429,12 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TargetImpl)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TargetImpl)) {
+                return false;
+            }
 
             final TargetImpl target = (TargetImpl) o;
             return name.equals(target.name);
@@ -434,8 +464,12 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         }
 
         public TargetModuleIDImpl(final Target target, final String moduleId, final String webUrl) {
-            if (target == null) throw new NullPointerException("target is null");
-            if (moduleId == null) throw new NullPointerException("moduleId is null");
+            if (target == null) {
+                throw new NullPointerException("target is null");
+            }
+            if (moduleId == null) {
+                throw new NullPointerException("moduleId is null");
+            }
             this.target = target;
             this.moduleId = moduleId;
             this.webUrl = webUrl;
@@ -471,8 +505,12 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         }
 
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TargetModuleIDImpl)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TargetModuleIDImpl)) {
+                return false;
+            }
 
             final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
@@ -491,7 +529,9 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
 
             // compare target name
             final int val = target.getName().compareTo(targetModuleID.target.getName());
-            if (val != 0) return val;
+            if (val != 0) {
+                return val;
+            }
 
             // compare moduleId
             return moduleId.compareTo(targetModuleID.moduleId);

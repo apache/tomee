@@ -45,7 +45,9 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<String, DataSource>();
 
         for (final JndiConsumer consumer : jndiConsumers) {
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
 
             dataSources.addAll(consumer.getDataSource());
         }
@@ -134,8 +136,12 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
     }
 
     private static void put(final Properties properties, final String key, final Object value) {
-        if (key == null) return;
-        if (value == null) return;
+        if (key == null) {
+            return;
+        }
+        if (value == null) {
+            return;
+        }
 
         properties.put(key, PropertyPlaceHolderHelper.value(String.valueOf(value)));
     }
@@ -146,13 +152,17 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
             jndiConsumers.add(consumer);
         }
 
         for (final WebModule webModule : appModule.getWebModules()) {
             final JndiConsumer consumer = webModule.getWebApp();
-            if (consumer == null) continue;
+            if (consumer == null) {
+                continue;
+            }
             jndiConsumers.add(consumer);
         }
 

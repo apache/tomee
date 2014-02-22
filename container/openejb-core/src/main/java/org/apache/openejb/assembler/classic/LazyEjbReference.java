@@ -102,7 +102,9 @@ public class LazyEjbReference extends Reference {
             case LOCAL: return false;
             case UNKNOWN:{
                 for (final Class clazz : beanContext.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
-                    if (clazz.getName().equals(info.getInterface())) return true;
+                    if (clazz.getName().equals(info.getInterface())) {
+                        return true;
+                    }
                 }
             }
             default: return false;

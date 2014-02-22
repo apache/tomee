@@ -107,7 +107,9 @@ public class SingletonInstanceManager {
             // If there is a Future object in the AtomicReference, then
             // it's either been created or is being created now.
             Future<Instance> singletonFuture = singleton.get();
-            if (singletonFuture != null) return singletonFuture.get();
+            if (singletonFuture != null) {
+                return singletonFuture.get();
+            }
 
             // The singleton has not been created nor is being created
             // We will construct this FutureTask and compete with the
@@ -214,7 +216,9 @@ public class SingletonInstanceManager {
         final Future<Instance> instanceFuture = data.singleton.get();
 
         // Possible the instance was never created
-        if (instanceFuture == null) return;
+        if (instanceFuture == null) {
+            return;
+        }
 
         final Instance instance;
         try {
@@ -335,7 +339,9 @@ public class SingletonInstanceManager {
 
     public void undeploy(final BeanContext beanContext) {
         final Data data = (Data) beanContext.getContainerData();
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         final MBeanServer server = LocalMBeanServer.get();
         for (final ObjectName objectName : data.jmxNames) {

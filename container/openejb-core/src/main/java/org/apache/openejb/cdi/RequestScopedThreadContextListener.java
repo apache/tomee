@@ -53,11 +53,15 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
 
     @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
-        if (exitedContext == null) return;
+        if (exitedContext == null) {
+            return;
+        }
 
         final DestroyContext destroyContext = exitedContext.get(DestroyContext.class);
 
-        if (destroyContext == null || destroyContext.threadContext != exitedContext) return;
+        if (destroyContext == null || destroyContext.threadContext != exitedContext) {
+            return;
+        }
 
         destroyContext.contextsService.endContext(RequestScoped.class, null);
     }

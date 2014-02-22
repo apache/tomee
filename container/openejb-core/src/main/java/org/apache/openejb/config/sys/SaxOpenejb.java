@@ -66,18 +66,31 @@ class SaxOpenejb extends StackHandler {
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            if (localName.equals("Container")) push(new ContainerElement());
-            else if (localName.equals("JndiProvider")) push(new JndiProviderElement());
-            else if (localName.equals("SecurityService")) push(new SecurityServiceElement());
-            else if (localName.equals("TransactionManager")) push(new TransactionManagerElement());
-            else if (localName.equals("ConnectionManager")) push(new ConnectionManagerElement());
-            else if (localName.equals("ProxyFactory")) push(new ProxyFactoryElement());
-            else if (localName.equals("Resource")) push(new ResourceElement(openejb.getResource()));
-            else if (localName.equals("Connector")) push(new ResourceElement(openejb.getResource()));
-            else if (localName.equals("Deployments")) push(new DeploymentsElement());
-            else if (localName.equals("Import")) push(new ImportElement());
-            else if (localName.equals("Service")) push(new DeclaredServiceElement(openejb.getServices()));
-            else throw new IllegalStateException("Unsupported Element: " + localName);
+            if (localName.equals("Container")) {
+                push(new ContainerElement());
+            } else if (localName.equals("JndiProvider")) {
+                push(new JndiProviderElement());
+            } else if (localName.equals("SecurityService")) {
+                push(new SecurityServiceElement());
+            } else if (localName.equals("TransactionManager")) {
+                push(new TransactionManagerElement());
+            } else if (localName.equals("ConnectionManager")) {
+                push(new ConnectionManagerElement());
+            } else if (localName.equals("ProxyFactory")) {
+                push(new ProxyFactoryElement());
+            } else if (localName.equals("Resource")) {
+                push(new ResourceElement(openejb.getResource()));
+            } else if (localName.equals("Connector")) {
+                push(new ResourceElement(openejb.getResource()));
+            } else if (localName.equals("Deployments")) {
+                push(new DeploymentsElement());
+            } else if (localName.equals("Import")) {
+                push(new ImportElement());
+            } else if (localName.equals("Service")) {
+                push(new DeclaredServiceElement(openejb.getServices()));
+            } else {
+                throw new IllegalStateException("Unsupported Element: " + localName);
+            }
             get().startElement(uri, localName, qName, attributes);
         }
     }
@@ -87,9 +100,13 @@ class SaxOpenejb extends StackHandler {
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            if (localName.equals("openejb")) push(new Root());
-            else if (localName.equals("tomee")) push(new Root());
-            else throw new SAXException("Unsupported Element: " + localName);
+            if (localName.equals("openejb")) {
+                push(new Root());
+            } else if (localName.equals("tomee")) {
+                push(new Root());
+            } else {
+                throw new SAXException("Unsupported Element: " + localName);
+            }
             checkAttributes(attributes);
         }
     }
@@ -123,7 +140,9 @@ class SaxOpenejb extends StackHandler {
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             final String ctype = attributes.getValue("ctype");
-            if (ctype != null) service.setType(ctype);
+            if (ctype != null) {
+                service.setType(ctype);
+            }
         }
 
         @Override

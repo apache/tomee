@@ -90,14 +90,18 @@ public class Logger {
     }
 
     private static void checkForIgnoredLog4jConfig() {
-        if (logStreamFactory.getClass().getName().equals("org.apache.openejb.util.Log4jLogStreamFactory")) return;
+        if (logStreamFactory.getClass().getName().equals("org.apache.openejb.util.Log4jLogStreamFactory")) {
+            return;
+        }
 
         try {
             final Properties configFile = log4j(loadLoggingProperties());
 
             final Properties systemProperties = log4j(SystemInstance.get().getProperties());
 
-            if (configFile.size() == 0 && systemProperties.size() == 0) return;
+            if (configFile.size() == 0 && systemProperties.size() == 0) {
+                return;
+            }
 
             final LogStream stream = logStreamFactory.createLogStream(LogCategory.OPENEJB);
 
@@ -122,7 +126,9 @@ public class Logger {
 
         final Class<?> factoryClass = load(factoryName);
 
-        if (factoryClass == null) return null;
+        if (factoryClass == null) {
+            return null;
+        }
 
         try {
             //Try and use the user specified factory
@@ -167,8 +173,9 @@ public class Logger {
         public String compute(final String key) throws InterruptedException {
             final int index = key.lastIndexOf(".");
             final String parent = key.substring(0, index);
-            if (parent.contains(OPENEJB))
+            if (parent.contains(OPENEJB)) {
                 return parent;
+            }
             return null;
         }
     };
@@ -282,8 +289,12 @@ public class Logger {
 
                 final Properties systemProperties = log4j(SystemInstance.get().getProperties());
 
-                if (configFile.size() > 0) locations.add("conf/logging.properties");
-                if (systemProperties.size() > 0) locations.add("Properties overrides");
+                if (configFile.size() > 0) {
+                    locations.add("conf/logging.properties");
+                }
+                if (systemProperties.size() > 0) {
+                    locations.add("Properties overrides");
+                }
             }
 
             if (locations.size() > 0) {
@@ -335,7 +346,9 @@ public class Logger {
      * @return the formatted message
      */
     private String formatMessage(final String message, final Object... args) {
-        if (args.length == 0) return message;
+        if (args.length == 0) {
+            return message;
+        }
 
         try {
             final MessageFormat mf = messageFormatCache.compute(message);
@@ -619,18 +632,20 @@ public class Logger {
                     return bundle.getString(key);
                 } catch (final MissingResourceException e) {
                     final String parentName = heirarchyCache.compute(baseName);
-                    if (parentName == null)
+                    if (parentName == null) {
                         return key;
-                    else
+                    } else {
                         return getMessage(key, parentName);
+                    }
                 }
 
             } else {
                 final String parentName = heirarchyCache.compute(baseName);
-                if (parentName == null)
+                if (parentName == null) {
                     return key;
-                else
+                } else {
                     return getMessage(key, parentName);
+                }
 
             }
         } catch (final InterruptedException e) {

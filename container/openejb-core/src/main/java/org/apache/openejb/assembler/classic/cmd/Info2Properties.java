@@ -221,8 +221,12 @@ public class Info2Properties {
 
     private static void copyOpenEjbProperties(final Properties source, final Properties dest) {
         for (final Map.Entry<Object, Object> entry : source.entrySet()) {
-            if (!(entry.getKey() instanceof String)) continue;
-            if (!(entry.getValue() instanceof String)) continue;
+            if (!(entry.getKey() instanceof String)) {
+                continue;
+            }
+            if (!(entry.getValue() instanceof String)) {
+                continue;
+            }
 
             final String key = (String) entry.getKey();
             if (key.startsWith("openejb.")) {
@@ -275,8 +279,12 @@ public class Info2Properties {
             p.put(info.id, uri);
 
             for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) {
-                if (!(entry.getKey() instanceof String)) continue;
-                if (!(entry.getValue() instanceof String)) continue;
+                if (!(entry.getKey() instanceof String)) {
+                    continue;
+                }
+                if (!(entry.getValue() instanceof String)) {
+                    continue;
+                }
 
                 // If property name is 'password' replace value with 'xxxx' to protect it
                 if ("password".equalsIgnoreCase((String) entry.getKey())) {
@@ -304,8 +312,11 @@ public class Info2Properties {
         }
 
         public void write(final int b) throws IOException {
-            if (pastFirstLine) super.write(b);
-            else pastFirstLine = b == '\n';
+            if (pastFirstLine) {
+                super.write(b);
+            } else {
+                pastFirstLine = b == '\n';
+            }
         }
 
     }
@@ -319,7 +330,9 @@ public class Info2Properties {
         public void write(final int b) throws IOException {
             super.write(b);
 
-            if (b == '\n') super.write('#');
+            if (b == '\n') {
+                super.write('#');
+            }
         }
 
     }

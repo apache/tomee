@@ -61,7 +61,9 @@ public abstract class JaxbOpenejb {
 
     @SuppressWarnings({"unchecked"})
     public static <T> T create(final Class<T> type) {
-        if (type == null) throw new NullPointerException("type is null");
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
 
         if (type == ConnectionManager.class) {
             return (T) createConnectionManager();
@@ -94,7 +96,9 @@ public abstract class JaxbOpenejb {
     }
 
     public static <T> T create(final String type) {
-        if (type == null) throw new NullPointerException("type is null");
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
 
         if (type.equals("ConnectionManager")) {
             return (T) createConnectionManager();
@@ -418,7 +422,9 @@ public abstract class JaxbOpenejb {
         }
 
         public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
-            if (!localName.equals("ServiceProvider")) return;
+            if (!localName.equals("ServiceProvider")) {
+                return;
+            }
 
             provider = new ServiceProvider();
             provider.setId(att.getValue("","id"));
@@ -437,12 +443,16 @@ public abstract class JaxbOpenejb {
         }
 
         public void characters(final char[] ch, final int start, final int length) throws SAXException {
-            if (content == null) content = new StringBuilder();
+            if (content == null) {
+                content = new StringBuilder();
+            }
             content.append(ch, start, length);
         }
 
         public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-            if (provider == null || content == null) return;
+            if (provider == null || content == null) {
+                return;
+            }
 
             try {
                 provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));

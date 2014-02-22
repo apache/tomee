@@ -35,7 +35,9 @@ public class ConfUtils {
     public static URL getConfResource(final String name) {
         URL resource = getResource(name);
 
-        if (!EnvProps.extractConfigurationFiles()) return resource;
+        if (!EnvProps.extractConfigurationFiles()) {
+            return resource;
+        }
 
         try {
 
@@ -66,10 +68,16 @@ public class ConfUtils {
     }
 
     private static URL select(final Enumeration<URL> enumeration) {
-        if (enumeration == null) return null;
+        if (enumeration == null) {
+            return null;
+        }
         final ArrayList<URL> urls = Collections.list(enumeration);
-        if (urls.size() == 0) return null;
-        if (urls.size() == 1) return urls.get(0);
+        if (urls.size() == 0) {
+            return null;
+        }
+        if (urls.size() == 1) {
+            return urls.get(0);
+        }
 
         // Sort so that the URL closest to openejb.base is first
         Collections.sort(urls, new UrlComparator(SystemInstance.get().getBase().getDirectory()));

@@ -183,8 +183,9 @@ public class RemoteServer {
 
                 if (profile) {
                     String yourkitHome = options.get("yourkit.home", "/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
-                    if (!yourkitHome.endsWith("/"))
+                    if (!yourkitHome.endsWith("/")) {
                         yourkitHome += "/";
+                    }
                     final String yourkitOpts = options.get("yourkit.opts", "disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
                     argsList.add("-agentpath:" + yourkitHome + "libyjpagent.jnilib=" + yourkitOpts);
                 }
@@ -313,16 +314,19 @@ public class RemoteServer {
             }
             if (checkPortAvailable) {
                 if (debug) {
-                    if (!connect(Integer.MAX_VALUE))
+                    if (!connect(Integer.MAX_VALUE)) {
                         throw new OpenEJBRuntimeException("Could not connect to server");
+                    }
                 } else {
-                    if (!connect(tries))
+                    if (!connect(tries)) {
                         throw new OpenEJBRuntimeException("Could not connect to server");
+                    }
                 }
             }
         } else {
-            if (verbose)
+            if (verbose) {
                 System.out.println("[] FOUND STARTED SERVER");
+            }
         }
     }
 
@@ -381,12 +385,15 @@ public class RemoteServer {
             final File[] files = dir.listFiles();
             if (files != null) {
                 for (final File file : files) {
-                    if (!file.isFile())
+                    if (!file.isFile()) {
                         continue;
-                    if (!file.getName().endsWith(".jar"))
+                    }
+                    if (!file.getName().endsWith(".jar")) {
                         continue;
-                    if (file.getName().startsWith(name))
+                    }
+                    if (file.getName().startsWith(name)) {
                         return file;
+                    }
                 }
             }
         }
@@ -499,8 +506,9 @@ public class RemoteServer {
     }
 
     private boolean connect(int tries) {
-        if (verbose)
+        if (verbose) {
             System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
+        }
 
         Socket s = null;
         try {
@@ -542,8 +550,9 @@ public class RemoteServer {
     }
 
     public void killOnExit() {
-        if (!serverHasAlreadyBeenStarted && kill.contains(this.server))
+        if (!serverHasAlreadyBeenStarted && kill.contains(this.server)) {
             return;
+        }
         kill.add(this.server);
     }
 

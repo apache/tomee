@@ -254,13 +254,27 @@ public class Cmp2Generator implements Opcodes {
         // spec, the bean author should be responsble for these, but since these 
         // are frequently just nop stubs, we'll take responsibility for creating 
         // empty ones in the generated superclass. 
-        if (!hasMethod(beanClass, "ejbActivate")) createEjbActivate();
-        if (!hasMethod(beanClass, "ejbPassivate")) createEjbPassivate();
-        if (!hasMethod(beanClass, "ejbLoad")) createEjbLoad();
-        if (!hasMethod(beanClass, "ejbStore")) createEjbStore();
-        if (!hasMethod(beanClass, "ejbRemove")) createEjbRemove();
-        if (!hasMethod(beanClass, "setEntityContext", EntityContext.class)) createSetEntityContext();
-        if (!hasMethod(beanClass, "unsetEntityContext")) createUnsetEntityContext();
+        if (!hasMethod(beanClass, "ejbActivate")) {
+            createEjbActivate();
+        }
+        if (!hasMethod(beanClass, "ejbPassivate")) {
+            createEjbPassivate();
+        }
+        if (!hasMethod(beanClass, "ejbLoad")) {
+            createEjbLoad();
+        }
+        if (!hasMethod(beanClass, "ejbStore")) {
+            createEjbStore();
+        }
+        if (!hasMethod(beanClass, "ejbRemove")) {
+            createEjbRemove();
+        }
+        if (!hasMethod(beanClass, "setEntityContext", EntityContext.class)) {
+            createSetEntityContext();
+        }
+        if (!hasMethod(beanClass, "unsetEntityContext")) {
+            createUnsetEntityContext();
+        }
 
         // add on any post-create methods that might be required. 
         postCreateGenerator.generate();
@@ -1047,7 +1061,9 @@ public class Cmp2Generator implements Opcodes {
             signature.append('(');
             boolean first = true;
             for (final Class<?> parameterType : selectMethod.getParameterTypes()) {
-                if (!first) signature.append(',');
+                if (!first) {
+                    signature.append(',');
+                }
                 signature.append(parameterType.getCanonicalName());
                 first = false;
             }
@@ -1141,8 +1157,9 @@ public class Cmp2Generator implements Opcodes {
             } else {
                 final Convert conversion = getConversion(to);
                 {
-                    if (conversion == null)
+                    if (conversion == null) {
                         throw new NullPointerException("unsupported conversion for EJB select return type " + to.getName());
+                    }
                 }
                 conversion.objectToPrimitive(mv);
             }

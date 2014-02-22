@@ -77,8 +77,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
     
     public JtaEntityManager(final String unitName, final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended) {
-        if (registry == null) throw new NullPointerException("registry is null");
-        if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
+        if (registry == null) {
+            throw new NullPointerException("registry is null");
+        }
+        if (entityManagerFactory == null) {
+            throw new NullPointerException("entityManagerFactory is null");
+        }
         this.unitName = unitName;
         this.registry = registry;
         this.entityManagerFactory = entityManagerFactory;
@@ -607,7 +611,9 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
 
         public void stop() {
-            if (!em.logger.isDebugEnabled()) return;
+            if (!em.logger.isDebugEnabled()) {
+                return;
+            }
 
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
 

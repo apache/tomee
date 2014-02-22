@@ -221,8 +221,9 @@ public final class JobSpec implements ActivationSpec {
     @SuppressWarnings("unchecked")
     @Override
     public void validate() throws InvalidPropertyException {
-        if (invalidProperty != null)
+        if (invalidProperty != null) {
             throw invalidProperty;
+        }
 
         final int i = hashCode();
         detail = JobBuilder.newJob(QuartzResourceAdapter.JobEndpoint.class)

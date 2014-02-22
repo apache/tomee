@@ -65,7 +65,9 @@ public class CountingLatch {
 
                  final int next = count + releases;
 
-                 if (next < 0) return false;
+                 if (next < 0) {
+                     return false;
+                 }
 
                  if (compareAndSetState(count, next)) {
                      return next == 0;

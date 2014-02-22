@@ -80,7 +80,9 @@ public class ProxyInterfaceResolver {
         }
 
         // No remote interfaces, we're good to go
-        if (remotes.size() == 0) return valid;
+        if (remotes.size() == 0) {
+            return valid;
+        }
 
         // -----------------------------------------------------------
         // If we got here, we have potentially clashing interfaces
@@ -183,12 +185,18 @@ public class ProxyInterfaceResolver {
         // This equals returns true only if the method signatures
         // are the same *and* one is remote and one is not
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Signature signature = (Signature) o;
 
-            if (!sig.equals(signature.sig)) return false;
+            if (!sig.equals(signature.sig)) {
+                return false;
+            }
 
             final boolean aIsRemote = Remote.class.isAssignableFrom(clazz);
             final boolean bIsRemote = Remote.class.isAssignableFrom(signature.clazz);

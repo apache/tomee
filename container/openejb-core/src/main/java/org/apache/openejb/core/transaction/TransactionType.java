@@ -41,7 +41,9 @@ public enum TransactionType {
 
     public static TransactionType get(final String name) {
         for (final TransactionType type : values()) {
-            if (type.name().equalsIgnoreCase(name)) return type;
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
         }
 
         throw new IllegalArgumentException("Uknown TransactionType " + name);

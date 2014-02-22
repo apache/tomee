@@ -70,10 +70,14 @@ public class TldScanner {
     private static Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
-        if (classLoader == null) return Collections.emptySet();
+        if (classLoader == null) {
+            return Collections.emptySet();
+        }
 
         final Set<URL> urls = cache.get(classLoader);
-        if (urls != null) return urls;
+        if (urls != null) {
+            return urls;
+        }
 
         final Set<URL> result = scanClassLoaderForTagLibs(classLoader);
         cache.put(classLoader, result);
@@ -85,8 +89,12 @@ public class TldScanner {
 
         final Set<URL> tldUrls = new HashSet<URL>();
 
-        if (classLoader == null) return tldUrls;
-        if (classLoader == Object.class.getClassLoader()) return tldUrls;
+        if (classLoader == null) {
+            return tldUrls;
+        }
+        if (classLoader == Object.class.getClassLoader()) {
+            return tldUrls;
+        }
 
         final List<URL> urls = urls(classLoader);
 
@@ -156,7 +164,9 @@ public class TldScanner {
         final Set<URL> urls = new HashSet<URL>();
 
         final File webInfDir = new File(war, "WEB-INF");
-        if (!webInfDir.isDirectory()) return urls;
+        if (!webInfDir.isDirectory()) {
+            return urls;
+        }
 
 
         // skip the lib and classes dir in WEB-INF
@@ -171,7 +181,9 @@ public class TldScanner {
             }
         }
 
-        if (files.isEmpty()) return urls;
+        if (files.isEmpty()) {
+            return urls;
+        }
 
         // recursively scan the directories
         while (!files.isEmpty()) {
@@ -216,7 +228,9 @@ public class TldScanner {
     static Set<URL> scanJarForTagLibs(final File file) {
         final Set<URL> urls = new HashSet<URL>();
 
-        if (!file.isFile()) return urls;
+        if (!file.isFile()) {
+            return urls;
+        }
 
         JarFile jarFile = null;
         try {

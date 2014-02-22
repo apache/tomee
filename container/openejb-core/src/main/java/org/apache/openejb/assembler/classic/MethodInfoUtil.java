@@ -89,15 +89,21 @@ public class MethodInfoUtil {
     public static List<Method> matchingMethods(final Method signature, final Class clazz) {
         final List<Method> list = new ArrayList<Method>();
         METHOD: for (final Method method : clazz.getMethods()) {
-            if (!method.getName().equals(signature.getName())) continue;
+            if (!method.getName().equals(signature.getName())) {
+                continue;
+            }
 
             final Class<?>[] methodTypes = method.getParameterTypes();
             final Class<?>[] signatureTypes = signature.getParameterTypes();
 
-            if (methodTypes.length != signatureTypes.length) continue;
+            if (methodTypes.length != signatureTypes.length) {
+                continue;
+            }
 
             for (int i = 0; i < methodTypes.length; i++) {
-                if (!methodTypes[i].equals(signatureTypes[i])) continue METHOD;
+                if (!methodTypes[i].equals(signatureTypes[i])) {
+                    continue METHOD;
+                }
             }
             list.add(method);
         }
@@ -254,8 +260,9 @@ public class MethodInfoUtil {
             return Short.TYPE;
         } else if (className.equals("byte")) {
             return Byte.TYPE;
-        } else
+        } else {
             return Class.forName(className, false, cl);
+        }
 
     }
 
@@ -383,13 +390,21 @@ public class MethodInfoUtil {
 
         @Override
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final ViewMethod that = (ViewMethod) o;
 
-            if (!method.equals(that.method)) return false;
-            if (view != null ? !view.equals(that.view) : that.view != null) return false;
+            if (!method.equals(that.method)) {
+                return false;
+            }
+            if (view != null ? !view.equals(that.view) : that.view != null) {
+                return false;
+            }
 
             return true;
         }
@@ -456,7 +471,9 @@ public class MethodInfoUtil {
         final Iterator<Method> iterator = methods.iterator();
         while (iterator.hasNext()) {
             final Method method = iterator.next();
-            if (containerMethod(method)) iterator.remove();
+            if (containerMethod(method)) {
+                iterator.remove();
+            }
         }
 
         return methods;
@@ -484,7 +501,9 @@ public class MethodInfoUtil {
     }
 
     public static boolean match(final Method methodA, final Method methodB) {
-        if (!methodA.getName().equals(methodB.getName())) return false;
+        if (!methodA.getName().equals(methodB.getName())) {
+            return false;
+        }
 
         if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
             return false;
@@ -493,7 +512,9 @@ public class MethodInfoUtil {
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
             final Class<?> a = methodA.getParameterTypes()[i];
             final Class<?> b = methodB.getParameterTypes()[i];
-            if (!a.equals(b)) return false;
+            if (!a.equals(b)) {
+                return false;
+            }
         }
         return true;
     }
@@ -553,15 +574,26 @@ public class MethodInfoUtil {
     }
 
     public static View view(final MethodInfo methodInfo) {
-        if (methodInfo.className != null && !methodInfo.className.equals("*")) return View.CLASS;
-        if (methodInfo.methodIntf != null && !methodInfo.methodIntf.equals("*")) return View.INTERFACE;
-        else return View.ANY;
+        if (methodInfo.className != null && !methodInfo.className.equals("*")) {
+            return View.CLASS;
+        }
+        if (methodInfo.methodIntf != null && !methodInfo.methodIntf.equals("*")) {
+            return View.INTERFACE;
+        } else {
+            return View.ANY;
+        }
     }
 
     public static Level level(final MethodInfo methodInfo) {
-        if (methodInfo.ejbName != null && methodInfo.ejbName.equals("*")) return Level.PACKAGE;
-        if (methodInfo.methodName.equals("*")) return Level.BEAN;
-        if (methodInfo.methodParams == null) return Level.OVERLOADED_METHOD;
+        if (methodInfo.ejbName != null && methodInfo.ejbName.equals("*")) {
+            return Level.PACKAGE;
+        }
+        if (methodInfo.methodName.equals("*")) {
+            return Level.BEAN;
+        }
+        if (methodInfo.methodParams == null) {
+            return Level.OVERLOADED_METHOD;
+        }
         return Level.EXACT_METHOD;
     }
 
@@ -578,7 +610,9 @@ public class MethodInfoUtil {
             final Level levelB = level(bm);
 
             // Primary sort
-            if (levelA != levelB) return levelA.ordinal() - levelB.ordinal();
+            if (levelA != levelB) {
+                return levelA.ordinal() - levelB.ordinal();
+            }
 
             // Secondary sort
             return view(am).ordinal() - view(bm).ordinal();

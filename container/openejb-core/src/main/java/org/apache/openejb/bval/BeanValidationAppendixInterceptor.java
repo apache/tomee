@@ -66,7 +66,9 @@ public class BeanValidationAppendixInterceptor {
 
     @AroundInvoke
     public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
-        if (!BeanValidationAppendixInterceptor.ON) return ejbContext.proceed();
+        if (!BeanValidationAppendixInterceptor.ON) {
+            return ejbContext.proceed();
+        }
 
         Object validatorObject = null;
         Validator validator = null;

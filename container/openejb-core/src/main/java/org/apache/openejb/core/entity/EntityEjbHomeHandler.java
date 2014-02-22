@@ -142,7 +142,9 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
     }
 
     private static String lcfirst(final String s){
-        if (s == null || s.length() < 1) return s;
+        if (s == null || s.length() < 1) {
+            return s;
+        }
 
         final StringBuilder sb = new StringBuilder(s);
         sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));

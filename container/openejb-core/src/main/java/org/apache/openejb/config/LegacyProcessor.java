@@ -41,7 +41,9 @@ public class LegacyProcessor implements DynamicDeployer {
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final ClassLoader classLoader = ejbModule.getClassLoader();
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                if (bean.getEjbClass() == null) continue;
+                if (bean.getEjbClass() == null) {
+                    continue;
+                }
 
                 try {
                     final Class<?> clazz = classLoader.loadClass(bean.getEjbClass());

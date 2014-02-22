@@ -109,7 +109,9 @@ public abstract class ValidationBase implements ValidationRule {
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
             final Class<?> a = methodA.getParameterTypes()[i];
             final Class<?> b = methodB.getParameterTypes()[i];
-            if (!a.equals(b)) return false;
+            if (!a.equals(b)) {
+                return false;
+            }
         }
         return true;
     }

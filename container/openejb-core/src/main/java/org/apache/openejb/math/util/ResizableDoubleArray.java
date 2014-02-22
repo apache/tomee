@@ -458,7 +458,9 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
         } else {
             // "Subtract" this number of discarded from numElements
             numElements -= i;
-            if (front) startIndex += i;
+            if (front) {
+                startIndex += i;
+            }
         }
         if (shouldContract()) {
             contract();

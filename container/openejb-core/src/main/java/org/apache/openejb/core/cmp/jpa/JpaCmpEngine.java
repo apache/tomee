@@ -213,7 +213,9 @@ public class JpaCmpEngine implements CmpEngine {
             queryName.append('(');
             boolean first = true;
             for (final Class<?> parameterType : queryMethod.getParameterTypes()) {
-                if (!first) queryName.append(',');
+                if (!first) {
+                    queryName.append(',');
+                }
                 queryName.append(parameterType.getCanonicalName());
                 first = false;
             }

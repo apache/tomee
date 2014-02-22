@@ -25,7 +25,9 @@ public class JtaTransactionPolicyFactory implements TransactionPolicyFactory {
     private final TransactionManager transactionManager;
 
     public JtaTransactionPolicyFactory(final TransactionManager transactionManager) {
-        if (transactionManager == null) throw new NullPointerException("transactionManager is null");
+        if (transactionManager == null) {
+            throw new NullPointerException("transactionManager is null");
+        }
         this.transactionManager = transactionManager;
     }
 

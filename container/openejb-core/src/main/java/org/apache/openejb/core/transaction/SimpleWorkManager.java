@@ -44,43 +44,59 @@ public class SimpleWorkManager implements WorkManager {
     private Executor executor;
 
     public SimpleWorkManager(final Executor executor) {
-        if (executor == null) throw new NullPointerException("executor is null");
+        if (executor == null) {
+            throw new NullPointerException("executor is null");
+        }
         this.executor = executor;
     }
 
     public void doWork(final Work work) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         doWork(work, INDEFINITE, null, null);
     }
 
     public void doWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         executeWork(WorkType.DO, work, startTimeout, executionContext, workListener);
     }
 
     public long startWork(final Work work) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         return startWork(work, INDEFINITE, null, null);
     }
 
     public long startWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         return executeWork(WorkType.START, work, startTimeout, executionContext, workListener);
     }
 
     public void scheduleWork(final Work work) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         scheduleWork(work, INDEFINITE, null, null);
     }
 
     public void scheduleWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
-        if (work == null) throw new NullPointerException("work is null");
+        if (work == null) {
+            throw new NullPointerException("work is null");
+        }
         executeWork(WorkType.SCHEDULE, work, startTimeout, executionContext, workListener);
     }
 
     private long executeWork(final WorkType workType, final Work work, final long startTimeout, final ExecutionContext executionContext, WorkListener workListener) throws WorkException {
         // assure we have a work listener
-        if (workListener == null) workListener = new LoggingWorkListener(workType);
+        if (workListener == null) {
+            workListener = new LoggingWorkListener(workType);
+        }
 
         // reject work with an XID
         if (executionContext != null && executionContext.getXid() != null) {

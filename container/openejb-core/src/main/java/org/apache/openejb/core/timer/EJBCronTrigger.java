@@ -1052,8 +1052,9 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
                 while (isValidResult(calendar, nextValue)) {
 
-                    if (nextValue >= currValue)
+                    if (nextValue >= currValue) {
                         return nextValue;
+                    }
 
                     nextValue = nextValue + interval;
 
@@ -1078,8 +1079,9 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
                 while (isValidResult(calendar, previousValue)) {
 
-                    if (previousValue < currValue)
+                    if (previousValue < currValue) {
                         return previousValue;
+                    }
 
                     previousValue = previousValue - interval;
 

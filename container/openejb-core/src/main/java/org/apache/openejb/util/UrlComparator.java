@@ -71,7 +71,9 @@ public class UrlComparator implements Comparator<URL> {
     }
 
     private void path(final File file, final List<String> path){
-        if (file == null) return;
+        if (file == null) {
+            return;
+        }
 
         path(file.getParentFile(), path);
 

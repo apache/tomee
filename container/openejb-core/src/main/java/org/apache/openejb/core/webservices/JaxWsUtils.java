@@ -225,21 +225,27 @@ public final class JaxWsUtils {
         final WebService webService = clazz.getAnnotation(WebService.class);
         if (webService != null) {
             String wsdlLocation = webService.wsdlLocation().trim();
-            if (wsdlLocation.length() == 0) wsdlLocation = null;
+            if (wsdlLocation.length() == 0) {
+                wsdlLocation = null;
+            }
             return wsdlLocation;
         }
 
         final WebServiceClient webServiceClient = clazz.getAnnotation(WebServiceClient.class);
         if (webServiceClient != null) {
             String wsdlLocation = webServiceClient.wsdlLocation().trim();
-            if (wsdlLocation.length() == 0) wsdlLocation = null;
+            if (wsdlLocation.length() == 0) {
+                wsdlLocation = null;
+            }
             return wsdlLocation;
         }
 
         final WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
             String wsdlLocation = webServiceProvider.wsdlLocation().trim();
-            if (wsdlLocation.length() == 0) wsdlLocation = null;
+            if (wsdlLocation.length() == 0) {
+                wsdlLocation = null;
+            }
             return wsdlLocation;
         }
 

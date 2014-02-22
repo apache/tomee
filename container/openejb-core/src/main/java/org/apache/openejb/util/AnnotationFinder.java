@@ -218,8 +218,9 @@ public class AnnotationFinder {
                 } else if (file.getName().endsWith(".class")) {
                     String name = file.getName();
                     name = name.replaceFirst(".class$", "");
-                    if (name.contains("."))
+                    if (name.contains(".")) {
                         continue;
+                    }
                     classNames.add(packageName + name);
                 }
             }

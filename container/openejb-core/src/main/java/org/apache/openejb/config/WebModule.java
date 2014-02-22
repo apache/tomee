@@ -150,8 +150,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public void setWebApp(final WebApp webApp) {
         this.webApp = webApp;
-        if (webApp != null)
+        if (webApp != null) {
             webApp.setContextRoot(contextRoot);
+        }
     }
 
     @Override

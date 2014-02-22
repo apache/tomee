@@ -31,7 +31,9 @@ public class HandlerData {
     private final List<Method> preDestroy = new ArrayList<Method>();
 
     public HandlerData(final Class<?> handlerClass) {
-        if (handlerClass == null) throw new NullPointerException("handlerClass is null");
+        if (handlerClass == null) {
+            throw new NullPointerException("handlerClass is null");
+        }
         this.handlerClass = handlerClass;
     }
 

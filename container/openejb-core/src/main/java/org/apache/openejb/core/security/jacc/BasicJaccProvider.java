@@ -77,7 +77,9 @@ public class BasicJaccProvider extends JaccProvider {
             try {
                 final BasicPolicyConfiguration configuration = configurations.get(contextID);
 
-                if (configuration == null || !configuration.inService()) return false;
+                if (configuration == null || !configuration.inService()) {
+                    return false;
+                }
 
                 return configuration.implies(domain, permission);
             } catch (final PolicyContextException e) {

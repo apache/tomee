@@ -72,8 +72,12 @@ public class CheckPersistenceRefs extends ValidationBase {
                 case MANAGED: return "Managed";
                 default: throw new IllegalArgumentException("Uknown SessionBean type "+bean.getClass());
             }
-        } else if (bean instanceof MessageDrivenBean) return "MessageDriven";
-        else if (bean instanceof EntityBean) return "EJB 2.1 Entity";
-        else throw new IllegalArgumentException("Uknown bean type "+bean.getClass());
+        } else if (bean instanceof MessageDrivenBean) {
+            return "MessageDriven";
+        } else if (bean instanceof EntityBean) {
+            return "EJB 2.1 Entity";
+        } else {
+            throw new IllegalArgumentException("Uknown bean type " + bean.getClass());
+        }
     }
 }

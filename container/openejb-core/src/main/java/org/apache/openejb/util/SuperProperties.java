@@ -181,8 +181,12 @@ public class SuperProperties extends Properties {
      * @param keyValueSeparator the text that separates keys and values
      */
     public void setKeyValueSeparator(final String keyValueSeparator) {
-        if (keyValueSeparator == null) throw new NullPointerException("keyValueSeparator is null");
-        if (keyValueSeparator.length() == 0) throw new NullPointerException("keyValueSeparator is empty");
+        if (keyValueSeparator == null) {
+            throw new NullPointerException("keyValueSeparator is null");
+        }
+        if (keyValueSeparator.length() == 0) {
+            throw new NullPointerException("keyValueSeparator is empty");
+        }
         this.keyValueSeparator = keyValueSeparator;
     }
 
@@ -200,8 +204,12 @@ public class SuperProperties extends Properties {
      * @param lineSeparator the text that separates lines
      */
     public void setLineSeparator(final String lineSeparator) {
-        if (lineSeparator == null) throw new NullPointerException("lineSeparator is null");
-        if (lineSeparator.length() == 0) throw new NullPointerException("lineSeparator is empty");
+        if (lineSeparator == null) {
+            throw new NullPointerException("lineSeparator is null");
+        }
+        if (lineSeparator.length() == 0) {
+            throw new NullPointerException("lineSeparator is empty");
+        }
         this.lineSeparator = lineSeparator;
     }
 
@@ -320,8 +328,12 @@ public class SuperProperties extends Properties {
      * @param comment the comment; not null
      */
     public void setComment(String name, final String comment) {
-        if (name == null) throw new NullPointerException("name is null");
-        if (comment == null) throw new NullPointerException("comment is null");
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        }
+        if (comment == null) {
+            throw new NullPointerException("comment is null");
+        }
 
         name = normalize(name);
         comments.put(name, comment);
@@ -335,7 +347,9 @@ public class SuperProperties extends Properties {
      * @return the attributes for an existing property (not null); null for non-existant properties
      */
     public Map<String,String> getAttributes(String name) {
-        if (name == null) throw new NullPointerException("name is null");
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        }
 
         name = normalize(name);
         Map<String, String> attributes = this.attributes.get(name);
@@ -416,7 +430,9 @@ public class SuperProperties extends Properties {
 
         while (true) {
             int nextByte = decodeNextCharacter(in);
-            if (nextByte == EOF) break;
+            if (nextByte == EOF) {
+                break;
+            }
             char nextChar = (char) (nextByte & 0xff);
 
             switch (nextByte) {
@@ -490,7 +506,9 @@ public class SuperProperties extends Properties {
                         boolean inIndent = true;
                         while (true) {
                             nextByte = in.read();
-                            if (nextByte < 0) break;
+                            if (nextByte < 0) {
+                                break;
+                            }
                             nextChar = (char) nextByte; // & 0xff
 
                             if (inIndent && nextChar == ' ') {
@@ -617,7 +635,9 @@ public class SuperProperties extends Properties {
         while (true) {
             // read character
             int nextByte = in.read();
-            if (nextByte < 0) return EOF;
+            if (nextByte < 0) {
+                return EOF;
+            }
             char nextChar = (char) (nextByte & 0xff);
 
             // if line continuation character was '\r', we need to ignore an optional '\n'
@@ -948,7 +968,9 @@ public class SuperProperties extends Properties {
                             boolean inIndent = true;
                             while (true) {
                                 nextByte = cin.read();
-                                if (nextByte < 0) break;
+                                if (nextByte < 0) {
+                                    break;
+                                }
                                 nextChar = (char) nextByte; // & 0xff
                                 if (inIndent && nextChar == ' ') {
                                     commentLineIndent++;
@@ -1289,7 +1311,9 @@ public class SuperProperties extends Properties {
         for (final Object o : keySet()) {
             if (o instanceof String) {
                 final String key = (String) o;
-                if (key.equalsIgnoreCase(property)) return key;
+                if (key.equalsIgnoreCase(property)) {
+                    return key;
+                }
             }
         }
 
@@ -1297,7 +1321,9 @@ public class SuperProperties extends Properties {
             for (final Object o : defaults.keySet()) {
                 if (o instanceof String) {
                     final String key = (String) o;
-                    if (key.equalsIgnoreCase(property)) return key;
+                    if (key.equalsIgnoreCase(property)) {
+                        return key;
+                    }
                 }
             }
         }

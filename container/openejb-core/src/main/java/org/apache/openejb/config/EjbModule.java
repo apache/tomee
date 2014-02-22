@@ -68,7 +68,9 @@ public class EjbModule extends Module implements WsModule {
 
         File file = null;
 
-        if (jarURI != null) file = new File(jarURI);
+        if (jarURI != null) {
+            file = new File(jarURI);
+        }
 
         this.id = new ID(openejbJar, ejbJar, moduleId, file, null, this);
         if (id.isOverriden() && ejbJar != null) {
@@ -143,7 +145,9 @@ public class EjbModule extends Module implements WsModule {
     }
     
     public void setModuleId(final String moduleId) {
-        if (openejbJar == null) openejbJar = new OpenejbJar();
+        if (openejbJar == null) {
+            openejbJar = new OpenejbJar();
+        }
         openejbJar.setModuleName(moduleId);
         
         this.id = new ID(openejbJar, ejbJar, moduleId, id.getLocation(), id.getUri(), this);

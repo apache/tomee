@@ -42,7 +42,9 @@ public class LoggingSqlStatement implements InvocationHandler {
             LOGGER.info(result.format((String) args[0]));
         }
 
-        if (result.getThrowable() != null) throw result.getThrowable();
+        if (result.getThrowable() != null) {
+            throw result.getThrowable();
+        }
         return result.getResult();
     }
 }

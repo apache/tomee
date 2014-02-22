@@ -33,11 +33,21 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
     private Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
 
     public synchronized void addPort(final String serviceId, final QName serviceQName, final String portId, final QName portQName, final String portInterface, final String address) throws OpenEJBException {
-        if (serviceId == null) throw new NullPointerException("serviceId is null");
-        if (serviceQName == null) throw new NullPointerException("serviceQName is null");
-        if (portId == null) throw new NullPointerException("portId is null");
-        if (portQName == null) throw new NullPointerException("portQName is null");
-        if (address == null) throw new NullPointerException("address is null");
+        if (serviceId == null) {
+            throw new NullPointerException("serviceId is null");
+        }
+        if (serviceQName == null) {
+            throw new NullPointerException("serviceQName is null");
+        }
+        if (portId == null) {
+            throw new NullPointerException("portId is null");
+        }
+        if (portQName == null) {
+            throw new NullPointerException("portQName is null");
+        }
+        if (address == null) {
+            throw new NullPointerException("address is null");
+        }
 
         // create portAddress
         PortAddress portAddress = portsById.get(portId);
@@ -76,9 +86,15 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
     }
 
     public synchronized void removePort(final String serviceId, final QName serviceQName, final String portId, final String portInterface) {
-        if (serviceId == null) throw new NullPointerException("serviceId is null");
-        if (serviceQName == null) throw new NullPointerException("serviceQName is null");
-        if (portId == null) throw new NullPointerException("portId is null");
+        if (serviceId == null) {
+            throw new NullPointerException("serviceId is null");
+        }
+        if (serviceQName == null) {
+            throw new NullPointerException("serviceQName is null");
+        }
+        if (portId == null) {
+            throw new NullPointerException("portId is null");
+        }
 
         // remove from portById
         final PortAddress portAddress = portsById.remove(portId);
@@ -120,7 +136,9 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
     }
 
     public synchronized Set<PortAddress> getPorts(final String id, final QName serviceQName, final String referenceClassName) {
-        if (serviceQName == null) throw new NullPointerException("serviceQName is null");
+        if (serviceQName == null) {
+            throw new NullPointerException("serviceQName is null");
+        }
 
         // check if there is a port with the id
         if (id != null) {
@@ -143,13 +161,17 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         final Map<String, PortAddress> ports = new TreeMap<String, PortAddress>();
         if (id != null) {
             final Map<String, PortAddress> idPorts = portsByServiceId.get(id);
-            if (idPorts != null) ports.putAll(idPorts);
+            if (idPorts != null) {
+                ports.putAll(idPorts);
+            }
         }
 
         // find matching ports  by serviceQName
         if (ports.isEmpty()) {
             final Map<String, PortAddress> qnamePorts = portsByServiceQName.get(serviceQName);
-            if (qnamePorts != null) ports.putAll(qnamePorts);
+            if (qnamePorts != null) {
+                ports.putAll(qnamePorts);
+            }
         }
 
         final Set<PortAddress> portAddresses = new HashSet<PortAddress>(ports.values());

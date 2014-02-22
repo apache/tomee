@@ -61,7 +61,9 @@ public class ProviderManager {
     }
 
     public void register(final String namespace, final ServiceProvider provider) {
-        if (provider == null) throw new IllegalArgumentException("provider cannot be null");
+        if (provider == null) {
+            throw new IllegalArgumentException("provider cannot be null");
+        }
 
         final ID id = new ID(namespace, provider.getId());
 
@@ -69,7 +71,9 @@ public class ProviderManager {
     }
 
     public List<ServiceProvider> load(String namespace) {
-        if (namespace == null) throw new IllegalArgumentException("namespace cannot be null");
+        if (namespace == null) {
+            throw new IllegalArgumentException("namespace cannot be null");
+        }
 
         namespace = namespace.toLowerCase();
 
@@ -95,7 +99,9 @@ public class ProviderManager {
     }
 
     private void register(final ID id, final ServiceProvider provider, final Set<ID> seen) {
-        if (providers.containsKey(id)) return;
+        if (providers.containsKey(id)) {
+            return;
+        }
 
         if (provider.getParent() != null) {
 
@@ -118,12 +124,24 @@ public class ProviderManager {
 
     private void inherit(final ServiceProvider child, final ServiceProvider parent) {
 
-        if (n(child.getClassName())) child.setClassName(parent.getClassName());
-        if (n(child.getConstructor())) child.setConstructor(parent.getConstructor());
-        if (n(child.getFactoryName())) child.setFactoryName(parent.getFactoryName());
-        if (n(child.getDescription())) child.setDescription(parent.getDescription());
-        if (n(child.getDisplayName())) child.setDisplayName(parent.getDisplayName());
-        if (n(child.getService())) child.setService(parent.getService());
+        if (n(child.getClassName())) {
+            child.setClassName(parent.getClassName());
+        }
+        if (n(child.getConstructor())) {
+            child.setConstructor(parent.getConstructor());
+        }
+        if (n(child.getFactoryName())) {
+            child.setFactoryName(parent.getFactoryName());
+        }
+        if (n(child.getDescription())) {
+            child.setDescription(parent.getDescription());
+        }
+        if (n(child.getDisplayName())) {
+            child.setDisplayName(parent.getDisplayName());
+        }
+        if (n(child.getService())) {
+            child.setService(parent.getService());
+        }
 
         { // types
             final Set<String> types = new HashSet<String>();
@@ -149,12 +167,16 @@ public class ProviderManager {
     }
 
     private ServiceProvider getProvider(final ID id, final Set<ID> seen) {
-        if (seen.contains(id)) throw new ProviderCircularReferenceException(seen);
+        if (seen.contains(id)) {
+            throw new ProviderCircularReferenceException(seen);
+        }
         seen.add(id);
 
         { // Already loaded?
             final ServiceProvider provider = providers.get(id);
-            if (provider != null) return provider;
+            if (provider != null) {
+                return provider;
+            }
         }
 
 

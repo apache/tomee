@@ -63,11 +63,15 @@ public class StatelessContainerFactory {
      * @param accessTimeout Duration
      */
     public void setAccessTimeout(final Duration accessTimeout) {
-        if (this.accessTimeout == null) setTimeOut(accessTimeout);
+        if (this.accessTimeout == null) {
+            setTimeOut(accessTimeout);
+        }
     }
 
     public void setMaxSize(final int max) {
-        if (this.max == null) setPoolSize(max);
+        if (this.max == null) {
+            setPoolSize(max);
+        }
     }
 
     /**

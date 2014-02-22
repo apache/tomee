@@ -36,7 +36,9 @@ public class OWBContextThreadListener implements ThreadContextListener {
     @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         final BeanContext beanContext = newContext.getBeanContext();
-        if (beanContext == null) return;
+        if (beanContext == null) {
+            return;
+        }
         final ModuleContext moduleContext = beanContext.getModuleContext();
         //TODO its not clear what the scope for one of these context should be: ejb, module, or app
         //For now, go with the attachment of the BeanManager to AppContext
@@ -53,7 +55,9 @@ public class OWBContextThreadListener implements ThreadContextListener {
     @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         final OWBContextHolder oldOWBContext = exitedContext.get(OWBContextHolder.class);
-        if (oldOWBContext == null) throw new NullPointerException("OWBContext not set in this thread");
+        if (oldOWBContext == null) {
+            throw new NullPointerException("OWBContext not set in this thread");
+        }
         singletonService.contextExited(oldOWBContext.getContext());
     }
 

@@ -55,12 +55,18 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     public boolean implies(final ProtectionDomain domain, final Permission permission) {
 
-        if (excluded != null && excluded.implies(permission)) return false;
+        if (excluded != null && excluded.implies(permission)) {
+            return false;
+        }
 
-        if (unchecked != null && unchecked.implies(permission)) return true;
+        if (unchecked != null && unchecked.implies(permission)) {
+            return true;
+        }
 
         final Principal[] principals = domain.getPrincipals();
-        if (principals.length == 0) return false;
+        if (principals.length == 0) {
+            return false;
+        }
 
         final RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
         final Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
@@ -68,14 +74,18 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         for (final String role : roles) {
             final PermissionCollection permissions = rolePermissionsMap.get(role);
 
-            if (permissions != null && permissions.implies(permission)) return true;
+            if (permissions != null && permissions.implies(permission)) {
+                return true;
+            }
         }
 
         return false;
     }
 
     public void addToRole(final String roleName, final PermissionCollection permissions) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
@@ -84,7 +94,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void addToRole(final String roleName, final Permission permission) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         PermissionCollection permissions = rolePermissionsMap.get(roleName);
         if (permissions == null) {
@@ -95,7 +107,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void addToUncheckedPolicy(final PermissionCollection permissions) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
@@ -116,7 +130,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void addToExcludedPolicy(final PermissionCollection permissions) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
@@ -137,25 +153,33 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void removeRole(final String roleName) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         rolePermissionsMap.remove(roleName);
     }
 
     public void removeUncheckedPolicy() throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         unchecked = null;
     }
 
     public void removeExcludedPolicy() throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
         excluded = null;
     }
 
     public void linkConfiguration(final PolicyConfiguration link) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
     }
 
     public void delete() throws PolicyContextException {
@@ -163,7 +187,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void commit() throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
         state = IN_SERVICE;
     }
 

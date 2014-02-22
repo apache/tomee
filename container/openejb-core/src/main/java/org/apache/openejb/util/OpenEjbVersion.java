@@ -54,7 +54,9 @@ public final class OpenEjbVersion {
     }
 
     public static OpenEjbVersion get() {
-        if (openEjbVersion == null) openEjbVersion = new OpenEjbVersion();
+        if (openEjbVersion == null) {
+            openEjbVersion = new OpenEjbVersion();
+        }
         return openEjbVersion;
     }
 

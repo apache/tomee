@@ -62,7 +62,9 @@ public abstract class JaccProvider {
      *                                the thrown PolicyContextException
      */
     public static void install() throws ClassNotFoundException, PolicyContextException {
-        if (jaccProvider != null) return;
+        if (jaccProvider != null) {
+            return;
+        }
 
         final String[] factoryClassName = {null};
         try {
@@ -70,8 +72,9 @@ public abstract class JaccProvider {
                 public Object run() throws Exception {
                     factoryClassName[0] = System.getProperty(FACTORY_NAME);
 
-                    if (factoryClassName[0] == null)
+                    if (factoryClassName[0] == null) {
                         throw new ClassNotFoundException("Property " + FACTORY_NAME + " not set");
+                    }
                     final Thread currentThread = Thread.currentThread();
                     final ClassLoader tccl = currentThread.getContextClassLoader();
                     return Class.forName(factoryClassName[0], true, tccl).newInstance();

@@ -130,8 +130,12 @@ class AppInfoBuilder {
         appInfo.jaxRsProviders.addAll(appModule.getJaxRsProviders());
         appInfo.properties.putAll(appModule.getProperties());
 
-        if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
-        if (appInfo.path == null) appInfo.path = appInfo.appId;
+        if (appInfo.appId == null) {
+            throw new IllegalArgumentException("AppInfo.appId cannot be null");
+        }
+        if (appInfo.path == null) {
+            appInfo.path = appInfo.appId;
+        }
 
         this.buildPojoConfiguration(appModule, appInfo);
 
@@ -993,7 +997,9 @@ class AppInfoBuilder {
     }
     
     private void configureWebserviceScurity(final List<PortInfo> infoList, final Object altDD) {
-        if (altDD == null || !(altDD instanceof OpenejbJar)) return;
+        if (altDD == null || !(altDD instanceof OpenejbJar)) {
+            return;
+        }
         
         final OpenejbJar openejbJar = (OpenejbJar) altDD;
         final Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();
@@ -1001,7 +1007,9 @@ class AppInfoBuilder {
         for (final PortInfo portInfo : infoList) {
             final EjbDeployment deployment = deploymentsByEjbName.get(portInfo.serviceLink);
             
-            if (deployment == null) continue;
+            if (deployment == null) {
+                continue;
+            }
             portInfo.realmName = deployment.getProperties().getProperty("webservice.security.realm");
             portInfo.securityRealmName = deployment.getProperties().getProperty("webservice.security.securityRealm");
             if (deployment.getProperties().getProperty("webservice.security.transportGarantee") != null) {

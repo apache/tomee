@@ -80,7 +80,9 @@ public class JtaEntityManagerRegistry {
      */
     @Geronimo
     public EntityManager getEntityManager(final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended, final String unitName) throws IllegalStateException {
-        if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
+        if (entityManagerFactory == null) {
+            throw new NullPointerException("entityManagerFactory is null");
+        }
         final EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
         final boolean transactionActive = isTransactionActive();
 
@@ -305,7 +307,9 @@ public class JtaEntityManagerRegistry {
         private EntityManager entityManager;
 
         public EntityManagerTracker(final EntityManager entityManager) {
-            if (entityManager == null) throw new NullPointerException("entityManager is null.");
+            if (entityManager == null) {
+                throw new NullPointerException("entityManager is null.");
+            }
 
             this.counter = 0;
             this.entityManager = entityManager;

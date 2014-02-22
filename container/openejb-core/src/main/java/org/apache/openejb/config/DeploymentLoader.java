@@ -439,7 +439,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 application.setLibraryDirectory("lib/");
             } else {
                 final String dir = application.getLibraryDirectory();
-                if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
+                if (!dir.endsWith("/")) {
+                    application.setLibraryDirectory(dir + "/");
+                }
             }
 
             try {
@@ -482,7 +484,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             for (final Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext(); ) {
                 // remove all non jars from the rarLibs
                 final Map.Entry<String, URL> fileEntry = iterator.next();
-                if (!fileEntry.getKey().endsWith(".jar")) continue;
+                if (!fileEntry.getKey().endsWith(".jar")) {
+                    continue;
+                }
                 iterator.remove();
             }
 
@@ -648,7 +652,9 @@ public class DeploymentLoader implements DeploymentFilterable {
     private void createApplicationFromFiles(final String appId, final ClassLoader tmpClassLoader, final Map<String, URL> ejbModules, final Map<String, URL> clientModules, final Map<String, URL> resouceModules, final Map<String, URL> webModules, final HashMap<String, URL> files) throws OpenEJBException {
         for (final Map.Entry<String, URL> entry : files.entrySet()) {
             // if (entry.getKey().startsWith("lib/")) continue;// will not be scanned since we don't get folder anymore
-            if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
+            if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) {
+                continue;
+            }
 
             try {
                 detectAndAddModuleToApplication(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, entry);
@@ -851,8 +857,12 @@ public class DeploymentLoader implements DeploymentFilterable {
      */
     private static void fillEjbJar(final WebModule webModule, final EjbModule ejbModule) {
         final Object o = webModule.getAltDDs().get("ejb-jar.xml");
-        if (o != null) return;
-        if (ejbModule.getEjbJar() != null) return;
+        if (o != null) {
+            return;
+        }
+        if (ejbModule.getEjbJar() != null) {
+            return;
+        }
 
         final EjbJar ejbJar = new EjbJar();
         final WebApp webApp = webModule.getWebApp();
@@ -863,13 +873,21 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     private static boolean isMetadataComplete(final WebModule webModule, final EjbModule ejbModule) {
-        if (webModule.getWebApp() == null) return false;
-        if (!webModule.getWebApp().isMetadataComplete()) return false;
+        if (webModule.getWebApp() == null) {
+            return false;
+        }
+        if (!webModule.getWebApp().isMetadataComplete()) {
+            return false;
+        }
 
         // At this point we know the web.xml is metadata-complete
         // We need to determine if there are cdi or ejb xml files
-        if (webModule.getAltDDs().get("beans.xml") == null) return true;
-        if (ejbModule.getEjbJar() == null) return true;
+        if (webModule.getAltDDs().get("beans.xml") == null) {
+            return true;
+        }
+        if (ejbModule.getEjbJar() == null) {
+            return true;
+        }
         return ejbModule.getEjbJar().isMetadataComplete();
 
     }
@@ -1006,7 +1024,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         Beans complete = null;
         for (final URL url : xmls) {
-            if (url == null) continue;
+            if (url == null) {
+                continue;
+            }
             complete = mergeBeansXml(complete, url);
         }
         if (complete != null) {
@@ -1056,11 +1076,15 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         Beans complete = null;
         for (final URL url : xmls) {
-            if (url == null) continue;
+            if (url == null) {
+                continue;
+            }
             complete = mergeBeansXml(complete, url);
         }
 
-        if (complete == null) return;
+        if (complete == null) {
+            return;
+        }
         complete.removeDuplicates();
 
         IAnnotationFinder finder;
@@ -1272,8 +1296,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
                 // convert each file to a URL and add it to facesConfigLocations
                 for (final String location : trimmedConfigFiles) {
-                    if (!location.startsWith("/"))
+                    if (!location.startsWith("/")) {
                         logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
+                    }
                     try {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
                         final URL url = file.toURI().toURL();
@@ -1457,7 +1482,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final URL descriptor = descriptors.get("persistence.xml");
 
                 // don't add it if already present
-                if (persistenceUrls.contains(descriptor)) continue;
+                if (persistenceUrls.contains(descriptor)) {
+                    continue;
+                }
 
                 // log if it is an altdd
                 final String urlString = descriptor.toExternalForm();
@@ -1528,7 +1555,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             for (final String descriptor : KNOWN_DESCRIPTORS) {
 
                 final URL url = finder.getResource(ddDir + descriptor);
-                if (url != null) map.put(descriptor, url);
+                if (url != null) {
+                    map.put(descriptor, url);
+                }
             }
 
         }
@@ -1543,7 +1572,9 @@ public class DeploymentLoader implements DeploymentFilterable {
      * @return the same map instance updated with alt dds
      */
     public static Map<String, URL> altDDSources(final Map<String, URL> map, final boolean log) {
-        if (ALTDD == null || ALTDD.length() <= 0) return map;
+        if (ALTDD == null || ALTDD.length() <= 0) {
+            return map;
+        }
 
         final List<String> list = new ArrayList<String>(Arrays.asList(ALTDD.split(",")));
         Collections.reverse(list);
@@ -1552,7 +1583,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         for (String prefix : list) {
             prefix = prefix.trim();
-            if (!prefix.matches(".*[.-]$")) prefix += ".";
+            if (!prefix.matches(".*[.-]$")) {
+                prefix += ".";
+            }
 
             for (final Map.Entry<String, URL> entry : new HashMap<String, URL>(map).entrySet()) {
                 String key = entry.getKey();
@@ -1570,9 +1603,13 @@ public class DeploymentLoader implements DeploymentFilterable {
             final URL value = alt.getValue();
 
             // don't add and log if the same key/value is already in the map
-            if (value.equals(map.get(key))) continue;
+            if (value.equals(map.get(key))) {
+                continue;
+            }
 
-            if (log) logger.info("AltDD " + key + " -> " + value.toExternalForm());
+            if (log) {
+                logger.info("AltDD " + key + " -> " + value.toExternalForm());
+            }
             map.put(key, value);
         }
 
@@ -1707,7 +1744,9 @@ public class DeploymentLoader implements DeploymentFilterable {
     public Class<? extends DeploymentModule> discoverModuleType(final URL baseUrl, final ClassLoader classLoader, final boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         final Set<RequireDescriptors> search = new HashSet<RequireDescriptors>();
 
-        if (!searchForDescriptorlessApplications) search.addAll(Arrays.asList(RequireDescriptors.values()));
+        if (!searchForDescriptorlessApplications) {
+            search.addAll(Arrays.asList(RequireDescriptors.values()));
+        }
 
         return discoverModuleType(baseUrl, classLoader, search);
     }
@@ -1776,7 +1815,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         final Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
-        if (cls != null) return cls;
+        if (cls != null) {
+            return cls;
+        }
 
         if (descriptors.containsKey("persistence.xml") || descriptors.containsKey("persistence-fragment.xml")) {
             return PersistenceModule.class;
@@ -1787,8 +1828,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (DeploymentsResolver.isValidDirectory(file)) {
 
             final File[] files = file.listFiles();
-            if (containsEarAssets(files)) return AppModule.class;
-            if (containsWebAssets(files)) return WebModule.class;
+            if (containsEarAssets(files)) {
+                return AppModule.class;
+            }
+            if (containsWebAssets(files)) {
+                return WebModule.class;
+            }
         }
 
         final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
@@ -1808,8 +1853,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (files != null) {
             for (final File file : files) {
                 final String fn = file.getName().toLowerCase();
-                if (fn.endsWith(".jsp")) return true;
-                if (fn.endsWith(".html")) return true;
+                if (fn.endsWith(".jsp")) {
+                    return true;
+                }
+                if (fn.endsWith(".html")) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1819,9 +1868,15 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (files != null) {
             for (final File file : files) {
                 final String fn = file.getName().toLowerCase();
-                if (fn.endsWith(".jar")) return true;
-                if (fn.endsWith(".war")) return true;
-                if (fn.endsWith(".rar")) return true;
+                if (fn.endsWith(".jar")) {
+                    return true;
+                }
+                if (fn.endsWith(".war")) {
+                    return true;
+                }
+                if (fn.endsWith(".rar")) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1848,14 +1903,26 @@ public class DeploymentLoader implements DeploymentFilterable {
                 @Override
                 public boolean accept(final String annotationName) {
                     if (scanPotentialClientModules && annotationName.startsWith(packageName)) {
-                        if (LocalClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
-                        if (RemoteClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
+                        if (LocalClient.class.getName().equals(annotationName)) {
+                            otherTypes.add(ClientModule.class);
+                        }
+                        if (RemoteClient.class.getName().equals(annotationName)) {
+                            otherTypes.add(ClientModule.class);
+                        }
                     } else if (scanPotentialEjbModules) {
                         if (annotationName.startsWith("javax.ejb.")) {
-                            if ("javax.ejb.Stateful".equals(annotationName)) return true;
-                            if ("javax.ejb.Stateless".equals(annotationName)) return true;
-                            if ("javax.ejb.Singleton".equals(annotationName)) return true;
-                            if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
+                            if ("javax.ejb.Stateful".equals(annotationName)) {
+                                return true;
+                            }
+                            if ("javax.ejb.Stateless".equals(annotationName)) {
+                                return true;
+                            }
+                            if ("javax.ejb.Singleton".equals(annotationName)) {
+                                return true;
+                            }
+                            if ("javax.ejb.MessageDriven".equals(annotationName)) {
+                                return true;
+                            }
                         } else if (scanManagedBeans && "javax.annotation.ManagedBean".equals(annotationName)) {
                             return true;
                         }

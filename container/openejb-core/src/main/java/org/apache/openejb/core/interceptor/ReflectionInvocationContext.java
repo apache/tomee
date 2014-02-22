@@ -41,9 +41,15 @@ public class ReflectionInvocationContext implements InvocationContext {
     private final Operation operation;
 
     public ReflectionInvocationContext(final Operation operation, final List<Interceptor> interceptors, final Object target, final Method method, final Object... parameters) {
-        if (operation == null) throw new NullPointerException("operation is null");
-        if (interceptors == null) throw new NullPointerException("interceptors is null");
-        if (target == null) throw new NullPointerException("target is null");
+        if (operation == null) {
+            throw new NullPointerException("operation is null");
+        }
+        if (interceptors == null) {
+            throw new NullPointerException("interceptors is null");
+        }
+        if (target == null) {
+            throw new NullPointerException("target is null");
+        }
 
         this.operation = operation;
         this.interceptors = interceptors.iterator();
@@ -98,7 +104,9 @@ public class ReflectionInvocationContext implements InvocationContext {
         if (operation.isCallback() && !operation.equals(Operation.TIMEOUT)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
-        if (parameters == null) throw new IllegalArgumentException("parameters is null");
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters is null");
+        }
         if (parameters.length != this.parameters.length) {
             throw new IllegalArgumentException("Expected " + this.parameters.length + " parameters, but only got " + parameters.length + " parameters");
         }

@@ -70,7 +70,9 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
 
-        if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
+        if (di.getLocalHomeInterface() == null) {
+            throw new IllegalStateException("Bean does not have an EJBLocalObject interface: " + di.getDeploymentID());
+        }
 
         return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, di.getLocalInterface());
     }
@@ -79,7 +81,9 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         check(Call.getEJBObject);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
-        if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
+        if (di.getHomeInterface() == null) {
+            throw new IllegalStateException("Bean does not have an EJBObject interface: " + di.getDeploymentID());
+        }
 
         return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, di.getRemoteInterface());
     }
@@ -88,13 +92,17 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         check(Call.getMessageContext);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final MessageContext messageContext = threadContext.get(MessageContext.class);
-        if (messageContext == null) throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
+        if (messageContext == null) {
+            throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
+        }
         return messageContext;
     }
 
     public Object getBusinessObject(final Class interfce) {
         check(Call.getBusinessObject);
-        if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
+        if (interfce == null) {
+            throw new IllegalStateException("Interface argument cannot me null.");
+        }
 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -161,7 +169,9 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final Class invokedInterface = threadContext.getInvokedInterface();
         final InterfaceType type = threadContext.getBeanContext().getInterfaceType(invokedInterface);
-        if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
+        if (!type.isBusiness()) {
+            throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: " + invokedInterface.getName());
+        }
 
         if (invokedInterface == null){
             throw new IllegalStateException("Business interface not set into ThreadContext.");

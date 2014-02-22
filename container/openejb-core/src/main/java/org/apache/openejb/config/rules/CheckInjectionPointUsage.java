@@ -30,7 +30,9 @@ public class CheckInjectionPointUsage extends ValidationBase {
 
     @Override
     public void validate(final EjbModule ejbModule) {
-        if (ejbModule.getBeans() == null) return;
+        if (ejbModule.getBeans() == null) {
+            return;
+        }
 
         try {
             for (final Field field : ejbModule.getFinder().findAnnotatedFields(Inject.class)) {

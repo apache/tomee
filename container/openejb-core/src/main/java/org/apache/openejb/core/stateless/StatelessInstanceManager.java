@@ -419,19 +419,25 @@ public class StatelessInstanceManager {
     }
 
     private void setDefault(final Duration duration, final TimeUnit unit) {
-        if (duration.getUnit() == null) duration.setUnit(unit);
+        if (duration.getUnit() == null) {
+            duration.setUnit(unit);
+        }
     }
 
     private Duration getDuration(final Options options, final String property, final Duration defaultValue, final TimeUnit defaultUnit) {
         final String s = options.get(property, defaultValue.toString());
         final Duration duration = new Duration(s);
-        if (duration.getUnit() == null) duration.setUnit(defaultUnit);
+        if (duration.getUnit() == null) {
+            duration.setUnit(defaultUnit);
+        }
         return duration;
     }
 
     public void undeploy(final BeanContext beanContext) {
         final Data data = (Data) beanContext.getContainerData();
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         final MBeanServer server = LocalMBeanServer.get();
         for (final ObjectName objectName : data.jmxNames) {

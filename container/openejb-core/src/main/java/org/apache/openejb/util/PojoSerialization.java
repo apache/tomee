@@ -230,7 +230,9 @@ public class PojoSerialization implements Serializable {
 
     protected void read(final ObjectInput in) throws IOException, ClassNotFoundException {
         byte b = in.readByte();
-        if (b != CLASS) throw new IOException("Expected 'CLASS' byte " + CLASS + ", got: " + b);
+        if (b != CLASS) {
+            throw new IOException("Expected 'CLASS' byte " + CLASS + ", got: " + b);
+        }
 
         Class clazz = (Class) in.readObject();
 
@@ -280,8 +282,12 @@ public class PojoSerialization implements Serializable {
 
             final Field[] fields = clazz.getDeclaredFields();
             for (final Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())) continue;
-                if (Modifier.isTransient(field.getModifiers())) continue;
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                if (Modifier.isTransient(field.getModifiers())) {
+                    continue;
+                }
                 field.setAccessible(true);
                 out.writeByte(FIELD);
                 out.writeUTF(field.getName());

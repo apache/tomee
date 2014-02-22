@@ -59,7 +59,9 @@ public class Classes {
 
         Class clazz = primitives.get(string);
 
-        if (clazz == null) clazz = Class.forName(string, true, classLoader);
+        if (clazz == null) {
+            clazz = Class.forName(string, true, classLoader);
+        }
 
         if (arrayDimentions == 0){
             return clazz;

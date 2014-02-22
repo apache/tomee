@@ -44,7 +44,9 @@ public final class URLs {
                 /*
                  * REMIND: we don't handle nested JAR URLs
                  */
-                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                if (separator == -1) {
+                    throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                }
 
                 return new URL(spec.substring(0, separator++));
             } catch (final MalformedURLException e) {

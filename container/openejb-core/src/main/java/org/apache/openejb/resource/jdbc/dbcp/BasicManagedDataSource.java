@@ -190,7 +190,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         final ReentrantLock l = lock;
         l.lock();
         try {
-            if (s == null || s.equals("")) return;
+            if (s == null || s.equals("")) {
+                return;
+            }
             final int level = IsolationLevels.getIsolationLevel(s);
             super.setDefaultTransactionIsolation(level);
         } finally {

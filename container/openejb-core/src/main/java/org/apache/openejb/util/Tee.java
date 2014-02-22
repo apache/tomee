@@ -68,7 +68,9 @@ public final class Tee implements Runnable {
                 System.out.print("#");
                 for (int o = 0; o < out.length; o++) {
                     try {
-                        if (out[o] == null) continue;
+                        if (out[o] == null) {
+                            continue;
+                        }
                         out[o].write(buf, 0, i);
                     } catch (final Exception e) {
                         new Exception(out[o].toString(), e).printStackTrace();

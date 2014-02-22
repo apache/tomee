@@ -105,12 +105,18 @@ public class PropertiesLoginModule implements LoginModule {
 
         user = ((NameCallback) callbacks[0]).getName();
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
-        if (tmpPassword == null) tmpPassword = new char[0];
+        if (tmpPassword == null) {
+            tmpPassword = new char[0];
+        }
 
         final String password = users.getProperty(user);
 
-        if (password == null) throw new FailedLoginException("User does not exist");
-        if (!password.equals(new String(tmpPassword))) throw new FailedLoginException("Password does not match");
+        if (password == null) {
+            throw new FailedLoginException("User does not exist");
+        }
+        if (!password.equals(new String(tmpPassword))) {
+            throw new FailedLoginException("Password does not match");
+        }
 
         users.clear();
 
