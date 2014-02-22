@@ -20,7 +20,15 @@ package org.apache.openejb.server.rest;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.IdPropertiesInfo;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
@@ -524,9 +532,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return additionalProviders;
     }
 
-    public void afterApplicationCreated(
-            @Observes
-            final AssemblerAfterApplicationCreated event) {
+    public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
         if (!enabled)
             return;
 
@@ -865,9 +871,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return cl;
     }
 
-    public void beforeApplicationDestroyed(
-            @Observes
-            final AssemblerBeforeApplicationDestroyed event) {
+    public void beforeApplicationDestroyed(@Observes final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo app = event.getApp();
         if (deployedApplications.contains(app)) {
             for (final WebAppInfo webApp : app.webApps) {

@@ -2681,15 +2681,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             delegate = deploymentListener;
         }
 
-        public void afterApplicationCreated(
-                @Observes
-                final AssemblerAfterApplicationCreated event) {
+        public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
             delegate.afterApplicationCreated(event.getApp());
         }
 
-        public void beforeApplicationDestroyed(
-                @Observes
-                final AssemblerBeforeApplicationDestroyed event) {
+        public void beforeApplicationDestroyed(@Observes final AssemblerBeforeApplicationDestroyed event) {
             delegate.beforeApplicationDestroyed(event.getApp());
         }
 
