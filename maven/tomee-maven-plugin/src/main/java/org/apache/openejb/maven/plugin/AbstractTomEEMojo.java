@@ -22,6 +22,8 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -204,6 +206,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     @Parameter
     protected List<String> libs;
+
+    @Parameter
+    protected List<String> javaagents;
 
     @Parameter
     protected List<String> webapps;
@@ -469,28 +474,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
         } else {
-            final String[] infos = lib.split(":");
-            final String classifier;
-            final String type;
-            if (infos.length < 3) {
-                throw new TomEEException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
-            }
-            if (infos.length >= 4) {
-                type = infos[3];
-            } else {
-                type = defaultType;
-            }
-            if (infos.length == 5) {
-                classifier = infos[4];
-            } else {
-                classifier = null;
-            }
-
             try {
-                final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
-                resolver.resolve(artifact, remoteRepos, local);
-                final File file = artifact.getFile();
-
+                final File file = mvnToFile(lib, defaultType);
                 if (!unzip) {
                     final File dest;
                     if (extractedName == null) {
@@ -517,6 +502,29 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 close(os);
             }
         }
+    }
+
+    private File mvnToFile(final String lib, final String defaultType) throws ArtifactResolutionException, ArtifactNotFoundException {
+        final String[] infos = lib.split(":");
+        final String classifier;
+        final String type;
+        if (infos.length < 3) {
+            throw new TomEEException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
+        }
+        if (infos.length >= 4) {
+            type = infos[3];
+        } else {
+            type = defaultType;
+        }
+        if (infos.length == 5) {
+            classifier = infos[4];
+        } else {
+            classifier = null;
+        }
+
+        final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
+        resolver.resolve(artifact, remoteRepos, local);
+        return artifact.getFile();
     }
 
     private void copyWar() {
@@ -739,6 +747,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         if (args != null) {
             strings.addAll(Arrays.asList(args.split(" ")));
+        }
+        if (javaagents != null) {
+            for (final String javaagent : javaagents) {
+                if (!new File(javaagent).isFile()) {
+                    try {
+                        strings.add("-javaagent:" + mvnToFile(javaagent, "jar"));
+                    } catch (final Exception e) {
+                        getLog().warn("Can't find " + javaagent);
+                        strings.add("-javaagent:" + javaagent);
+                    }
+                } else {
+                    strings.add("-javaagent:" + javaagent);
+                }
+            }
         }
 
         if (forceReloadable) {
