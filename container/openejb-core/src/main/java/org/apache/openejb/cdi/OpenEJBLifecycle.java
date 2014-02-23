@@ -29,6 +29,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.portable.AbstractProducer;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -194,7 +195,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                     continue;
                 }
 
-                cdiEjbBean.defineBeanInterceptorStack();
+                if (AbstractProducer.class.isInstance(cdiEjbBean)) {
+                    AbstractProducer.class.cast(cdiEjbBean).defineInterceptorStack(cdiEjbBean, cdiEjbBean.getAnnotatedType(), cdiEjbBean.getWebBeansContext());
+                }
                 bc.mergeOWBAndOpenEJBInfo();
                 bc.set(InterceptorResolutionService.BeanInterceptorInfo.class, InjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).getInterceptorInfo());
             }
