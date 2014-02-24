@@ -749,10 +749,21 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.addAll(Arrays.asList(args.split(" ")));
         }
         if (javaagents != null) {
-            for (final String javaagent : javaagents) {
+            for (final String rawJavaagent : javaagents) {
+                final String javaagent;
+                final String args;
+                final int argsIdx = rawJavaagent.indexOf('?');
+                if (argsIdx > 0) {
+                    javaagent = rawJavaagent.substring(0, argsIdx);
+                    args = rawJavaagent.substring(argsIdx);
+                } else {
+                    javaagent = rawJavaagent;
+                    args = "";
+                }
+
                 if (!new File(javaagent).isFile()) {
                     try {
-                        strings.add("-javaagent:" + mvnToFile(javaagent, "jar"));
+                        strings.add("-javaagent:" + mvnToFile(javaagent, "jar") + args);
                     } catch (final Exception e) {
                         getLog().warn("Can't find " + javaagent);
                         strings.add("-javaagent:" + javaagent);
