@@ -50,7 +50,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
     private static final Map<ClassLoader, Collection<URL>> CACHED_RESOURCES = new HashMap<ClassLoader, Collection<URL>>();
 
     @Override
-    public Collection<URL> getMetaInfConfigurationResources(final ExternalContext context) throws IOException {
+    public Collection<URL> getMetaInfConfigurationResources(final ExternalContext notUsedNullIsPassedFromInitializer) throws IOException {
         final ClassLoader loader = getClassLoader();
 
         Collection<URL> urlSet = CACHED_RESOURCES.get(loader);

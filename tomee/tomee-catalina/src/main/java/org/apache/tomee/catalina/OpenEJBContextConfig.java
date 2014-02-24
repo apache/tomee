@@ -78,6 +78,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -417,6 +418,22 @@ public class OpenEJBContextConfig extends ContextConfig {
         webInfClassesAnnotationsProcessed = false;
         try {
             super.processServletContainerInitializers(ctx);
+            final Iterator<Map.Entry<ServletContainerInitializer,Set<Class<?>>>> iterator = initializerClassMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                final Map.Entry<ServletContainerInitializer, Set<Class<?>>> entry = iterator.next();
+                final ServletContainerInitializer sci = entry.getKey();
+                final String classname = sci.getClass().getName();
+                if (classname.equals("org.apache.myfaces.ee6.MyFacesContainerInitializer")
+                        || classname.equals("org.springframework.web.SpringServletContainerInitializer")) {
+                    for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> scanning : typeInitializerMap.entrySet()) {
+                        final Set<ServletContainerInitializer> scis = scanning.getValue();
+                        if (scis != null && scis.contains(sci)) {
+                            scis.remove(sci);
+                        }
+                    }
+                    iterator.remove();
+                }
+            }
 
             final ClassLoader loader = context.getLoader().getClassLoader();
 
@@ -435,6 +452,10 @@ public class OpenEJBContextConfig extends ContextConfig {
             // scanned SCIs
             if (typeInitializerMap.size() > 0 && finder != null) {
                 for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue().isEmpty()) {
+                        continue;
+                    }
+
                     final Class<?> annotation = entry.getKey();
                     for (final ServletContainerInitializer sci : entry.getValue()) {
                         if (annotation.isAnnotation()) {

@@ -81,7 +81,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                         Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
                 Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
 
-        if ((classes != null && !classes.isEmpty()) || isFacesConfigPresent(ctx) || isFacesServletPresent(ctx)) {
+        if ((classes != null && !classes.isEmpty()) || isFacesServletPresent(ctx) || isFacesConfigPresent(ctx)) {
             // we found a faces-config.xml or some classes so let's delegate to myfaces
 
             // since we don't want to call isFacesConfigPresent again (it scan all jars!!!!)
@@ -161,11 +161,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 }
             }
 
-            final ExternalContext externalContext = new StartupServletExternalContextImpl(servletContext, true);
-            final FacesConfigResourceProviderFactory factory = FacesConfigResourceProviderFactory.
-                    getFacesConfigResourceProviderFactory(externalContext);
-            final FacesConfigResourceProvider provider = factory.createFacesConfigResourceProvider(externalContext);
-            final Collection<URL> metaInfFacesConfigUrls =  provider.getMetaInfConfigurationResources(externalContext);
+            final Collection<URL> metaInfFacesConfigUrls =  new TomEEFacesConfigResourceProvider().getMetaInfConfigurationResources(null);
             if (metaInfFacesConfigUrls == null) {
                 return false;
             }
@@ -180,7 +176,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             }
 
             return !metaInfFacesConfigUrls.isEmpty();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
