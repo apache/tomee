@@ -19,6 +19,7 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.loader.SystemInstance;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -37,19 +38,17 @@ import java.util.concurrent.Future;
 public class CheckInvalidAsynchronousAnnotationsTest {
 
     private static final String VALIDATION_OUTPUT_LEVEL = "openejb.validation.output.level";
-    private static String defaultValidationOutputLevel;
 
     @BeforeClass
     public static void setupTestCase() {
-        defaultValidationOutputLevel = System.getProperty(VALIDATION_OUTPUT_LEVEL);
-        System.setProperty(VALIDATION_OUTPUT_LEVEL, "VERBOSE");
+        SystemInstance.reset();
+        SystemInstance system = SystemInstance.get();
+        system.setProperty(VALIDATION_OUTPUT_LEVEL, "VERBOSE");
     }
 
     @AfterClass
     public static void cleanupTestCase() {
-        if (defaultValidationOutputLevel != null) {
-            System.setProperty(VALIDATION_OUTPUT_LEVEL, defaultValidationOutputLevel);
-        }
+        SystemInstance.reset();
     }
 
     @Keys( { @Key("asynchronous.badReturnType")})
