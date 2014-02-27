@@ -63,6 +63,12 @@
     </xsd:element>
 
 
+  <xsd:element name="pojo-deployment">
+    <xsd:complexType>
+      <xsd:attribute name="class-name" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
     <!--
     The openejb-jar.xml is placed in the bean's jar to link the bean
     into the container system.  The bean must be given a unique id
@@ -72,7 +78,8 @@
     <xsd:element name="openejb-jar">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="ejb-deployment" minOccurs="1" maxOccurs="unbounded"/>
+              <xsd:element ref="pojo-deployment" minOccurs="0" maxOccurs="unbounded"/>
+              <xsd:element ref="ejb-deployment" minOccurs="1" maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
