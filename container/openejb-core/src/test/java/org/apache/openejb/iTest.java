@@ -57,7 +57,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
         // Derby creates derby.log file in derby.system.home
         // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
-        System.setProperty("derby.system.home", "target");
+        System.setProperty("derby.system.home", System.getProperty("derby.system.home", "target"));
 
         // Copied from org.apache.openejb.SomeoneBrokeSurefireAndThisIsADirtyHackForItTest that's now gone
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());

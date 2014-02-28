@@ -99,7 +99,7 @@ public class SystemInstance {
 
         this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
         this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
-        System.setProperty("derby.system.home", base.getDirectory().getCanonicalPath());
+        System.setProperty("derby.system.home", System.getProperty("derby.system.home", base.getDirectory().getCanonicalPath()));
 
 
     }
