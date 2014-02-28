@@ -752,7 +752,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             for (final String rawJavaagent : javaagents) {
                 final String javaagent;
                 final String args;
-                final int argsIdx = rawJavaagent.indexOf('?');
+                int argsIdx = rawJavaagent.indexOf('=');
+                if (argsIdx < 0) {
+                    argsIdx = rawJavaagent.indexOf('?');
+                }
                 if (argsIdx > 0) {
                     javaagent = rawJavaagent.substring(0, argsIdx);
                     args = rawJavaagent.substring(argsIdx);
