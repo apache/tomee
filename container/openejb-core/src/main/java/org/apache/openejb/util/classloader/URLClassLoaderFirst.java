@@ -445,6 +445,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     return false;
                 }
 
+                if (apache.startsWith("activemq.broker.")) {
+                    return SKIP_JMS;
+                }
+
                 return false;
             }
 
