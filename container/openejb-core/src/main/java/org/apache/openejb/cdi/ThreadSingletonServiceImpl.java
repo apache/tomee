@@ -120,7 +120,12 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(TransactionService.class, new OpenEJBTransactionService());
         services.put(ELAdaptor.class, new CustomELAdapter(appContext));
         services.put(ScannerService.class, new CdiScanner());
-        services.put(LoaderService.class, new OptimizedLoaderService());
+        final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
+        if (loaderService == null) {
+            services.put(LoaderService.class, new OptimizedLoaderService());
+        } else {
+            services.put(LoaderService.class, loaderService);
+        }
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 

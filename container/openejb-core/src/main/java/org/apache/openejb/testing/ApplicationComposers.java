@@ -26,6 +26,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -65,6 +66,7 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -78,6 +80,7 @@ import org.xml.sax.InputSource;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.Extension;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
@@ -321,6 +324,11 @@ public final class ApplicationComposers {
         }
 
         SystemInstance.init(configuration);
+
+        final CdiExtensions cdiExtensions = testClass.getAnnotation(CdiExtensions.class);
+        if (cdiExtensions != null) {
+            SystemInstance.get().setComponent(LoaderService.class, new ExtensionAwareOptimizedLoaderService(cdiExtensions.value()));
+        }
 
         // save the test under test to be able to retrieve it from extensions
         // /!\ has to be done before all other init
@@ -858,6 +866,27 @@ public final class ApplicationComposers {
             Class.forName("sun.security.pkcs11.wrapper.PKCS11Exception", true, loader);
         } catch (final Throwable e) {
             // no-op: not an issue
+        }
+    }
+
+    protected static class ExtensionAwareOptimizedLoaderService extends OptimizedLoaderService {
+        private final Class<? extends Extension>[] extensions;
+
+        protected ExtensionAwareOptimizedLoaderService(final Class<? extends Extension>[] extensions) {
+            this.extensions = extensions;
+        }
+
+        @Override
+        protected List<? extends Extension> loadExtensions(final ClassLoader classLoader) {
+            final List<Extension> list = new ArrayList<Extension>();
+            for (final Class<? extends Extension> e : extensions) {
+                try {
+                    list.add(e.newInstance());
+                } catch (final Exception e1) {
+                    throw new OpenEJBRuntimeException(e1);
+                }
+            }
+            return list;
         }
     }
 }
