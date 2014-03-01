@@ -256,7 +256,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     return true;
                 }
                 if (apache.startsWith("xbean.")) {
-                    return true;
+                    return !apache.substring("xbean.".length()).startsWith("spring");
                 }
                 if (apache.startsWith("geronimo.")) {
                     return true;
