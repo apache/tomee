@@ -447,6 +447,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * If the proxy is serialized outside the core container system,
             * we allow the application server to handle it.
             */
+        } else if (!interfaceType.isRemote()) {
+            return proxy;
+
         } else {
             final ApplicationServer applicationServer = ServerFederation.getApplicationServer();
             return applicationServer.getEJBHome(this.getProxyInfo());
