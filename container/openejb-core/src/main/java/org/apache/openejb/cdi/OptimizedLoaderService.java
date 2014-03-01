@@ -62,16 +62,21 @@ public class OptimizedLoaderService implements LoaderService {
         }
 
         // As far as we know, this only is reached for CDI Extension discovery
-        final List<T> list = loaderService.load(serviceType, classLoader);
         if (Extension.class.equals(serviceType)) {
-            final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
-            if (additional != null) {
-                for (final String name : additional) {
-                    try {
-                        list.add((T) classLoader.loadClass(name).newInstance());
-                    } catch (final Exception ignored) {
-                        // no-op
-                    }
+            return (List<T>) loadExtensions(classLoader);
+        }
+        return loaderService.load(serviceType, classLoader);
+    }
+
+    protected List<? extends Extension> loadExtensions(final ClassLoader classLoader) {
+        final List<Extension> list = loaderService.load(Extension.class, classLoader);
+        final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+        if (additional != null) {
+            for (final String name : additional) {
+                try {
+                    list.add(Extension.class.cast(classLoader.loadClass(name).newInstance()));
+                } catch (final Exception ignored) {
+                    // no-op
                 }
             }
         }
