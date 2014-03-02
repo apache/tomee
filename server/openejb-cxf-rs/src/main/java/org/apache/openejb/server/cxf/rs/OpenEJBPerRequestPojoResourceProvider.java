@@ -244,7 +244,12 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         @Override
         public void release() {
             if (toClean != null) {
-                toClean.release();
+                synchronized (this) {
+                    if (toClean != null) {
+                        toClean.release();
+                        toClean = null;
+                    }
+                }
             }
         }
     }
