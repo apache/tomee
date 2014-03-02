@@ -718,12 +718,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             if (contextInfo != null) {
                 final StandardContext standardContext = contextInfo.standardContext;
 
-                undeploy(standardContext, contextInfo);
-                final File extracted = Contexts.warPath(standardContext);
-                if (isExtracted(extracted)) {
-                    deleteDir(extracted);
+                if (!appInfo.webAppAlone || !appInfo.properties.containsKey("tomee.destroying")) {
+                    undeploy(standardContext, contextInfo);
+                    final File extracted = Contexts.warPath(standardContext);
+                    if (isExtracted(extracted)) {
+                        deleteDir(extracted);
+                    }
+                    removeContextInfo(standardContext);
                 }
-                removeContextInfo(standardContext);
             }
         }
     }
