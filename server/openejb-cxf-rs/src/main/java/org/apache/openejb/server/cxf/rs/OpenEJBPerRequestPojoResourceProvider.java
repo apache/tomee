@@ -29,7 +29,6 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
-import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
@@ -61,9 +60,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected final Method preDestroyMethod;
     protected final ClassLoader classLoader;
 
-    private BeanCreator creator;
     private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
-    private Object instance = null;
+    private final BeanManagerImpl bm;
+    private final Bean<?> bean;
+    private final BeanCreator normalScopeCreator;
 
     public OpenEJBPerRequestPojoResourceProvider(final ClassLoader loader, final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
@@ -78,8 +78,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
         preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
 
-        final Bean<?> bean;
-        final BeanManagerImpl bm = webbeansContext.getBeanManagerImpl();
+        bm = webbeansContext.getBeanManagerImpl();
         if (bm.isInUse()) {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(clazz);
@@ -113,23 +112,32 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                     Contexts.findContextFields(decorator.getBeanClass(), contextTypes);
                 }
             }
+            if (bean != null && bm.isNormalScope(bean.getScope())) {
+                // singleton is faster
+                normalScopeCreator = new ProvidedInstanceBeanCreator(bm.getReference(bean, bean.getBeanClass(), bm.createCreationalContext(bean)));
+            } else {
+                normalScopeCreator = null;
+            }
         } else {
             bean = null;
+            normalScopeCreator = null;
         }
 
         Contexts.findContextFields(clazz, contextTypes); // for the class itself
-        if (bean != null) {
-            creator = new CdiBeanCreator(bm, bean);
-        } else { // do it manually
-            creator = null;
-        }
     }
 
     @Override
     public Object getInstance(final Message m) {
         Contexts.bind(m.getExchange(), contextTypes);
 
-        if (creator == null) {
+        BeanCreator creator;
+        if (bean != null) {
+            if (normalScopeCreator != null) {
+                creator = normalScopeCreator;
+            } else {
+                creator = new PseudoScopedCdiBeanCreator();
+            }
+        } else {
             creator = new DefaultBeanCreator(m);
         }
         m.put(BeanCreator.class, creator);
@@ -138,11 +146,11 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
-            instance = creator.create();
-            return instance;
+            return creator.create();
         } catch (final NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m);
-            return instance = creator.create();
+            m.put(BeanCreator.class, creator);
+            return creator.create();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
@@ -214,27 +222,17 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         void release();
     }
 
-    private class CdiBeanCreator implements BeanCreator {
-        private final BeanManager bm;
-        private final Bean<?> bean;
-        private CreationalContext<?> toClean;
+    private class ProvidedInstanceBeanCreator implements BeanCreator {
+        private final Object instance;
 
-        public CdiBeanCreator(final BeanManager bm, final Bean<?> bean) {
-            this.bm = bm;
-            this.bean = bean;
+        private ProvidedInstanceBeanCreator(final Object instance) {
+            this.instance = instance;
         }
 
         @Override
         public Object create() {
             try {
-                toClean = bm.createCreationalContext(bean);
-                try {
-                    return bm.getReference(bean, bean.getBeanClass(), toClean);
-                } finally {
-                    if (!WebBeansUtil.isDependent(bean)) {
-                        toClean = null; // will be released by the container
-                    }
-                }
+                return instance;
             } catch (final InjectionException ie) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
@@ -243,14 +241,28 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
         @Override
         public void release() {
-            if (toClean != null) {
-                synchronized (this) {
-                    if (toClean != null) {
-                        toClean.release();
-                        toClean = null;
-                    }
-                }
+            // no-op
+        }
+    }
+
+    private class PseudoScopedCdiBeanCreator implements BeanCreator {
+        private CreationalContext<?> toClean = null;
+
+        @Override
+        public Object create() {
+            try {
+                toClean = bm.createCreationalContext(bean);
+                return bm.getReference(bean, bean.getBeanClass(), toClean);
+            } catch (final InjectionException ie) {
+                final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
+        }
+
+        @Override
+        public void release() {
+            toClean.release();
+            toClean = null;
         }
     }
 
