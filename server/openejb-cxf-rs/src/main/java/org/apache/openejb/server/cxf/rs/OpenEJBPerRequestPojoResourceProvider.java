@@ -41,7 +41,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -59,6 +63,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
     private BeanCreator creator;
     private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
+    private Object instance = null;
 
     public OpenEJBPerRequestPojoResourceProvider(final ClassLoader loader, final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
@@ -127,24 +132,27 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         if (creator == null) {
             creator = new DefaultBeanCreator(m);
         }
+        m.put(BeanCreator.class, creator);
 
         // important to switch of classloader to get the right InitialContext
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
-            return creator.create();
+            instance = creator.create();
+            return instance;
         } catch (final NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m);
-            return creator.create();
+            return instance = creator.create();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
     }
 
-    @Override
+    @Override // this method is not linked to o to consider it stateless
     public void releaseInstance(final Message m, final Object o) {
-        if (creator != null) {
-            creator.release();
+        final BeanCreator c = m.get(BeanCreator.class);
+        if (c != null) {
+            c.release();
         }
     }
 
