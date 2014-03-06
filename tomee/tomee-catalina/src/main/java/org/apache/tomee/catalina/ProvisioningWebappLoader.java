@@ -66,7 +66,7 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         // standard tomcat part
         final StringBuilder builder = new StringBuilder();
         final String classpath = String.class.cast(Reflections.get(this, "virtualClasspath"));
-        if (!classpath.isEmpty()) {
+        if (classpath != null && !classpath.isEmpty()) {
             for (final String s : String.class.cast(classpath).split(";")) {
                 builder.append(ProvisioningUtil.realLocation(s)).append(";");
             }
