@@ -135,7 +135,7 @@ public final class OpenEJBEnricher {
             try {
                 values[i] = getParamInstance(beanManager, i, am);
             } catch (final Exception e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                LOGGER.info(e.getMessage());
             }
         }
         return values;
@@ -147,7 +147,14 @@ public final class OpenEJBEnricher {
         final AnnotatedParameter<?> ap = am.getParameters().get(position);
 
         final Type baseType = ap.getBaseType();
-        final Bean<?> bean = manager.resolve(manager.getBeans(baseType, annotationManager.getInterceptorBindingMetaAnnotations(ap.getAnnotations())));
+        final Set<Bean<?>> beans = manager.getBeans(baseType, annotationManager.getInterceptorBindingMetaAnnotations(ap.getAnnotations()));
+        if (beans == null) {
+            return null;
+        }
+        final Bean<?> bean = manager.resolve(beans);
+        if (bean == null) {
+            return null;
+        }
 
         // note: without a scope it can leak but that's what the user asked!
         final CreationalContextImpl<?> creational = manager.createCreationalContext(null); // null since we don't want the test class be the owner
