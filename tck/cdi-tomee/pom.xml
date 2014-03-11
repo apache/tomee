@@ -58,7 +58,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>1.6.0</version>
+      <version>1.6.0.1-SNAPSHOT</version>
       <classifier>webprofile</classifier>
     </dependency>
     <dependency>

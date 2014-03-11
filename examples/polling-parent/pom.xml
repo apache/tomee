@@ -117,19 +117,19 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0.1-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>tomee-webservices</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0.1-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>ziplock</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0.1-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>

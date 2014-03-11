@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>1.6.0</version>
+  <version>1.6.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 

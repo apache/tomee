@@ -1492,6 +1492,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Context globalContext = containerSystem.getJNDIContext();
             final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+            final ClassLoader classLoader = appContext.getClassLoader();
 
             if (null == appContext) {
                 logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
@@ -1500,7 +1501,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final WebBeansContext webBeansContext = appContext.getWebBeansContext();
                 if (webBeansContext != null) {
                     final ClassLoader old = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
+                    Thread.currentThread().setContextClassLoader(classLoader);
                     try {
                         webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
                     } finally {
@@ -1627,7 +1628,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (final WebContext webContext : appContext.getWebContexts()) {
                     containerSystem.removeWebContext(webContext);
                 }
-                TldScanner.forceCompleteClean(appContext.getClassLoader());
+                TldScanner.forceCompleteClean(classLoader);
             }
 
             // Clear out naming for all components first
@@ -1775,6 +1776,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             containerSystem.removeAppContext(appInfo.appId);
 
+            if (!appInfo.properties.containsKey("tomee.destroying")) { // destroy tomee classloader after resources cleanup
+                try {
+                    final Method m = classLoader.getClass().getMethod("internalStop");
+                    m.invoke(classLoader);
+                } catch (final NoSuchMethodException nsme) {
+                    // no-op
+                } catch (final Exception e) {
+                    logger.error("error stopping classloader of webapp " + appInfo.appId, e);
+                }
+                ClassLoaderUtil.cleanOpenJPACache(classLoader);
+            }
             ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
 
             if (undeployException.getCauses().size() > 0) {

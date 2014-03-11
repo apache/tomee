@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <openejb.version>4.6.0</openejb.version>
-    <tomee.version>1.6.0</tomee.version>
+    <tomee.version>1.6.0.1-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -71,7 +71,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0.1-SNAPSHOT</version>
         <configuration>
           <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>

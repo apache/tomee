@@ -21,6 +21,8 @@ import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -28,9 +30,16 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
@@ -41,19 +50,44 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private boolean restarting = false;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer = null;
+    private final int hashCode;
+
+    // ugly but break the whole container in embedded mode at least, tomcat change had a lot of side effect
+    private void setj2seClassLoader(final ClassLoader loader) {
+        try {
+            final Field field = WebappClassLoader.class.getDeclaredField("j2seClassLoader");
+
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+
+            if (Modifier.isFinal(field.getModifiers())) {
+                final Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            }
+
+            field.set(this, loader);
+        } catch (final Exception e) {
+            LOGGER.warning("Can't set field j2seClassLoader");
+        }
+    }
 
     public LazyStopWebappClassLoader() {
-        construct();
+        setj2seClassLoader(getSystemClassLoader());
+        hashCode = construct();
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
         super(parent);
-        construct();
+        setj2seClassLoader(getSystemClassLoader());
+        hashCode = construct();
     }
 
-    private void construct() {
+    private int construct() {
         setDelegate(isDelegate());
         configurer = INIT_CONFIGURER.get();
+        return super.hashCode();
     }
 
     @Override
@@ -73,14 +107,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
-                final ClassLoader old = system;
-                system = NoClassClassLoader.INSTANCE;
+                final ClassLoader old = j2seClassLoader;
+                setj2seClassLoader(NoClassClassLoader.INSTANCE);
                 final boolean delegate = getDelegate();
                 setDelegate(false);
                 try {
                     return super.loadClass(name);
                 } finally {
-                    system = old;
+                    setj2seClassLoader(old);
                     setDelegate(delegate);
                 }
             }
@@ -201,13 +235,42 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
+    public InputStream getResourceAsStream(final String name) {
+        if (!isStarted()) {
+            return null;
+        }
+        return super.getResourceAsStream(name);
+    }
+
+    @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
+        if (!isStarted()) {
+            return null;
+        }
+
+        if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
+            final Collection<URL> list = new ArrayList<URL>(Collections.list(super.getResources(name)));
+            final Iterator<URL> it = list.iterator();
+            while (it.hasNext()) {
+                final URL next = it.next();
+                final File file = Files.toFile(next);
+                if (!file.isFile() && NewLoaderLogic.skip(next)) {
+                    it.remove();
+                }
+            }
+            return Collections.enumeration(list);
+        }
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
 
     @Override
     public boolean equals(final Object other) {
         return other != null && ClassLoader.class.isInstance(other) && hashCode() == other.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 
     @Override
