@@ -238,7 +238,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
             } else {
                 final NormalScopeProxyFactory normalScopeProxyFactory = webBeansContext.getNormalScopeProxyFactory();
-                final Class<?> proxyClass = normalScopeProxyFactory.createProxyClass(beanContext.getClassLoader(), interfce);
+                final Class<?> proxyClass = normalScopeProxyFactory.createProxyClass(beanContext.getClassLoader(), beanContext.getBeanClass());
                 instance = normalScopeProxyFactory.createProxyInstance(proxyClass, provider);
             }
 
