@@ -34,9 +34,14 @@ import javax.el.FunctionMapper;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -102,7 +107,8 @@ public class StatefulConversationScopedTOMEE1138Test {
 
     @Test
     public void injectionByNameLookup() {
-        final MyConversation conv = MyConversation.class.cast(bm.getReference(bm.resolve(bm.getBeans("myConversation")), Object.class, null));
+        final Bean<?> myConversation = bm.resolve(bm.getBeans("myConversation"));
+        final MyConversation conv = MyConversation.class.cast(bm.getReference(myConversation, Object.class, null));
         doTest(conv);
     }
 
@@ -140,6 +146,13 @@ public class StatefulConversationScopedTOMEE1138Test {
                 };
             }
         }, conversationByName, "name"));
+    }
+
+    @Test
+    public void properties() throws IntrospectionException {
+        final BeanInfo info = Introspector.getBeanInfo(conversationByName.getClass());
+        final PropertyDescriptor[] pds = info.getPropertyDescriptors();
+        assertEquals(2, pds.length); // class and name
     }
 
     @Named
