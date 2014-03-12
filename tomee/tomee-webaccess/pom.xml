@@ -27,7 +27,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>1.6.0.1-SNAPSHOT</tomee.version>
-    <openejb.version>4.6.0</openejb.version>
+    <openejb.version>4.6.0.1-SNAPSHOT</openejb.version>
     <javaee.api>6.0-5</javaee.api>
     <junit.version>4.10</junit.version>
   </properties>
