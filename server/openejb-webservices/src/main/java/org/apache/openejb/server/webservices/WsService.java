@@ -72,6 +72,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+@SuppressWarnings("UnusedDeclaration")
 public abstract class WsService implements ServerService, SelfManaging {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
@@ -245,7 +246,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             if (ejbJar.path != null) {
                 try {
                     moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     logger.error("Invalid ejb jar location " + ejbJar.path, e);
                 }
             }
@@ -316,7 +317,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                                 addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
                             }
                         }
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
                     } finally {
                         Thread.currentThread().setContextClassLoader(old);
@@ -359,7 +360,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         URL moduleBaseUrl = null;
         try {
             moduleBaseUrl = new File(webApp.path).toURI().toURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             logger.error("Invalid ejb jar location " + webApp.path, e);
         }
 
@@ -415,7 +416,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                     addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
@@ -497,7 +498,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     if (this.wsRegistry != null) {
                         try {
                             this.wsRegistry.clearWsContainer(webApp.contextRoot, virtualHost, servlet);
-                        } catch (IllegalArgumentException ignored) {
+                        } catch (final IllegalArgumentException ignored) {
                             // no-op
                         }
                     }
