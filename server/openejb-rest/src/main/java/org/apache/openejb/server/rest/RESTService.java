@@ -73,6 +73,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+@SuppressWarnings("UnusedDeclaration")
 public abstract class RESTService implements ServerService, SelfManaging {
 
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
@@ -90,12 +91,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private Assembler assembler;
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
-    private List<DeployedService> services = new ArrayList<DeployedService>();
+    private final List<DeployedService> services = new ArrayList<DeployedService>();
     private String virtualHost = "localhost";
     private String auth = "NONE";
     private String realm = "PropertiesLogin";
     private boolean enabled = true;
-    private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
+    private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
         final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
@@ -128,7 +129,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             for (final String name : webApp.jaxRsProviders) {
                 try {
                     additionalProviders.add(classLoader.loadClass(name));
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     LOGGER.warning("can't load '" + name + "'", e);
                 }
             }
@@ -154,11 +155,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         if (owbCtx.getBeanManagerImpl().isInUse()) {
                             try {
                                 webContext.inject(application);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 // not important since not required by the spec
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
@@ -223,7 +224,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                                     } else {
                                         additionalProviders.add(loaded);
                                     }
-                                } catch (Exception e) {
+                                } catch (final Exception e) {
                                     throw new OpenEJBRestRuntimeException("can't load class " + clazz, e);
                                 }
                             }
@@ -262,7 +263,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                             } else {
                                 additionalProviders.add(loaded);
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new OpenEJBRestRuntimeException("can't load class " + clazz, e);
                         }
                     }
@@ -293,7 +294,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    private void addEjbToApplication(Application application, Map<String, EJBRestServiceInfo> restEjbs) {
+    private void addEjbToApplication(final Application application, final Map<String, EJBRestServiceInfo> restEjbs) {
         for (final Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
             application.getClasses().add(ejb.getValue().context.getBeanClass());
         }
@@ -333,11 +334,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 if (owbCtx.getBeanManagerImpl().isInUse()) {
                     try {
                         webContext.inject(appInstance);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // not important since not required by the spec
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBRestRuntimeException("can't create class " + app, e);
             }
 
@@ -418,7 +419,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         deployPojo(webApp.contextRoot, appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
                                 additionalProviders,
                                 new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
-                    } catch (ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
                 }
@@ -526,7 +527,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         for (final String name : appInfo.jaxRsProviders) {
             try {
                 additionalProviders.add(classLoader.loadClass(name));
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 LOGGER.warning("can't load '" + name + "'", e);
             }
         }
@@ -802,7 +803,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         try {
             builtUrl = UriBuilder.fromUri(new URI(root)).path(usedClass).build().toURL().toString();
             return replaceParams(builtUrl); // pathparam at class level
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             if (builtUrl != null) {
                 return builtUrl;
             }
@@ -1007,7 +1008,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         public boolean isInWebApp(final WebAppInfo webApp) {
-            return (webApp.contextRoot != null && webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot));
+            return (webApp.contextRoot != null && webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot != null ? webApp.contextRoot : ""));
         }
     }
 

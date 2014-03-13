@@ -60,7 +60,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
             httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName);
         }
 
-        StringBuilder deployedPath = new StringBuilder("");
+        final StringBuilder deployedPath = new StringBuilder("");
         if (context != null) {
             if (!context.startsWith("/")) {
                 deployedPath.append("/");
@@ -84,7 +84,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
     }
 
     @Override
-    public void removeWsContainer(String path) {
+    public void removeWsContainer(final String path) {
         registry.removeHttpListener(path);
     }
 }

@@ -62,7 +62,7 @@ public class AxisWsContainer implements HttpListener {
     private final ClassLoader classLoader;
     private final Map wsdlMap;
 
-    public AxisWsContainer(URL wsdlURL, SOAPService service, Map wsdlMap, ClassLoader classLoader) {
+    public AxisWsContainer(final URL wsdlURL, final SOAPService service, final Map wsdlMap, final ClassLoader classLoader) {
         this.wsdlLocation = wsdlURL;
         this.service = service;
         this.wsdlMap = wsdlMap;
@@ -73,8 +73,8 @@ public class AxisWsContainer implements HttpListener {
         }
     }
 
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        SaajUniverse universe = new SaajUniverse();
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
+        final SaajUniverse universe = new SaajUniverse();
         universe.set(SaajUniverse.AXIS1);
         try {
             doService(request, response);
@@ -82,19 +82,19 @@ public class AxisWsContainer implements HttpListener {
             universe.unset();
         }
     }
-    
-    protected void doService(HttpRequest req, HttpResponse res) throws Exception {
-        org.apache.axis.MessageContext messageContext = new org.apache.axis.MessageContext(null);
+
+    protected void doService(final HttpRequest req, final HttpResponse res) throws Exception {
+        final org.apache.axis.MessageContext messageContext = new org.apache.axis.MessageContext(null);
         req.setAttribute(WsConstants.MESSAGE_CONTEXT, messageContext);
 
         messageContext.setClassLoader(classLoader);
 
-        Message responseMessage = null;
+        Message responseMessage;
 
         String contentType = req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-        String contentLocation = req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
-        InputStream inputStream = req.getInputStream();
-        Message requestMessage = new Message(inputStream, false, contentType, contentLocation);
+        final String contentLocation = req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
+        final InputStream inputStream = req.getInputStream();
+        final Message requestMessage = new Message(inputStream, false, contentType, contentLocation);
 
         messageContext.setRequestMessage(requestMessage);
         messageContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO, req.getURI().getPath());
@@ -104,10 +104,10 @@ public class AxisWsContainer implements HttpListener {
         messageContext.setProperty(RESPONSE, res);
         messageContext.setProperty(AxisEngine.PROP_DISABLE_PRETTY_XML, Boolean.TRUE);
 
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             try {
-                String characterEncoding = (String) requestMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                final String characterEncoding = (String) requestMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
                 if (characterEncoding != null) {
                     messageContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, characterEncoding);
                 } else {
@@ -115,34 +115,34 @@ public class AxisWsContainer implements HttpListener {
                 }
 
 
-                String soapAction = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+                final String soapAction = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
                 if (soapAction != null) {
                     messageContext.setUseSOAPAction(true);
                     messageContext.setSOAPActionURI(soapAction);
                 }
 
-                SOAPEnvelope env = requestMessage.getSOAPEnvelope();
+                final SOAPEnvelope env = requestMessage.getSOAPEnvelope();
                 if (env != null && env.getSOAPConstants() != null) {
                     messageContext.setSOAPConstants(env.getSOAPConstants());
                 }
-                SOAPService service = messageContext.getService();
+                final SOAPService service = messageContext.getService();
 
                 Thread.currentThread().setContextClassLoader(classLoader);
                 service.invoke(messageContext);
 
                 responseMessage = messageContext.getResponseMessage();
-            } catch (AxisFault fault) {
-                
-               	if(req.getMethod().equals(HttpRequest.Method.GET.name()) && req.getParameters().isEmpty()){
-               		String serviceName = req.getURI().getRawPath();
-                    serviceName = serviceName.substring(serviceName.lastIndexOf("/")+1);
-               		printServiceInfo(res,serviceName);
-               		return;
-               	}else{
-               		responseMessage = handleFault(fault, res, messageContext);
-               	}
+            } catch (final AxisFault fault) {
 
-            } catch (Exception e) {
+                if (req.getMethod().equals(HttpRequest.Method.GET.name()) && req.getParameters().isEmpty()) {
+                    String serviceName = req.getURI().getRawPath();
+                    serviceName = serviceName.substring(serviceName.lastIndexOf("/") + 1);
+                    printServiceInfo(res, serviceName);
+                    return;
+                } else {
+                    responseMessage = handleFault(fault, res, messageContext);
+                }
+
+            } catch (final Exception e) {
                 responseMessage = handleException(messageContext, res, e);
             }
             //TODO investigate and fix operation == null!
@@ -159,13 +159,13 @@ public class AxisWsContainer implements HttpListener {
                 return;
             }
             try {
-                SOAPConstants soapConstants = messageContext.getSOAPConstants();
-                String contentType1 = responseMessage.getContentType(soapConstants);
+                final SOAPConstants soapConstants = messageContext.getSOAPConstants();
+                final String contentType1 = responseMessage.getContentType(soapConstants);
                 res.setContentType(contentType1);
                 // Transfer MIME headers to HTTP headers for response message.
-                MimeHeaders responseMimeHeaders = responseMessage.getMimeHeaders();
-                for (Iterator i = responseMimeHeaders.getAllHeaders(); i.hasNext();) {
-                    MimeHeader responseMimeHeader = (MimeHeader) i.next();
+                final MimeHeaders responseMimeHeaders = responseMessage.getMimeHeaders();
+                for (final Iterator i = responseMimeHeaders.getAllHeaders(); i.hasNext(); ) {
+                    final MimeHeader responseMimeHeader = (MimeHeader) i.next();
                     res.setHeader(responseMimeHeader.getName(),
                             responseMimeHeader.getValue());
                 }
@@ -185,7 +185,7 @@ public class AxisWsContainer implements HttpListener {
                 contentType = responseMessage.getContentType(messageContext.
                         getSOAPConstants());
                 responseMessage.writeTo(res.getOutputStream());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warning(Messages.getMessage("exception00"), e);
             }
         } finally {
@@ -193,7 +193,7 @@ public class AxisWsContainer implements HttpListener {
         }
     }
 
-    private Message handleException(MessageContext context, HttpResponse res, Exception e) {
+    private Message handleException(final MessageContext context, final HttpResponse res, final Exception e) {
         Message responseMessage;
         //other exceptions are internal trouble
         responseMessage = context.getResponseMessage();
@@ -201,9 +201,9 @@ public class AxisWsContainer implements HttpListener {
         Message responseMsg = responseMessage;
         logger.warning(Messages.getMessage("exception00"), e);
         if (responseMsg == null) {
-            AxisFault fault = AxisFault.makeFault(e);
+            final AxisFault fault = AxisFault.makeFault(e);
             //log the fault
-            Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
+            final Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
             if (runtimeException != null) {
                 logger.debug(Messages.getMessage("axisFault00"), fault);
                 //strip runtime details
@@ -212,14 +212,14 @@ public class AxisWsContainer implements HttpListener {
             responseMsg = new Message(fault);
         }
         responseMessage = responseMsg;
-        SOAPPart soapPart = (SOAPPart) responseMessage.getSOAPPart();
+        final SOAPPart soapPart = (SOAPPart) responseMessage.getSOAPPart();
         soapPart.getMessage().setMessageContext(context);
         return responseMessage;
     }
 
-    private Message handleFault(AxisFault fault, HttpResponse res, MessageContext context) {
+    private Message handleFault(final AxisFault fault, final HttpResponse res, final MessageContext context) {
         Message responseMessage;
-        Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
+        final Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
 
         logger.warning(Messages.getMessage("axisFault00"), fault);
         if (runtimeException != null) {
@@ -227,7 +227,7 @@ public class AxisWsContainer implements HttpListener {
             fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
         }
 
-        int status = fault.getFaultCode().getLocalPart().startsWith("Server.Unauth")
+        final int status = fault.getFaultCode().getLocalPart().startsWith("Server.Unauth")
                 ? HttpServletResponse.SC_UNAUTHORIZED
                 : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         if (status == HttpServletResponse.SC_UNAUTHORIZED) {
@@ -239,37 +239,37 @@ public class AxisWsContainer implements HttpListener {
         responseMessage = context.getResponseMessage();
         if (responseMessage == null) {
             responseMessage = new Message(fault);
-            SOAPPart soapPart = (SOAPPart) responseMessage.getSOAPPart();
+            final SOAPPart soapPart = (SOAPPart) responseMessage.getSOAPPart();
             soapPart.getMessage().setMessageContext(context);
         }
         return responseMessage;
     }
 
-    public void getWsdl(HttpRequest request, HttpResponse response) throws Exception {
-        URI realLocation = request.getURI();
+    public void getWsdl(final HttpRequest request, final HttpResponse response) throws Exception {
+        final URI realLocation = request.getURI();
 //        log.info("Request at " + realLocation);
-        String query = realLocation.getQuery();
+        final String query = realLocation.getQuery();
         if (query == null || !query.toLowerCase().startsWith("wsdl")) {
             throw new IllegalStateException("request must contain a  wsdl or WSDL parameter: " + request.getParameters());
         }
-        String locationKey;
+        final String locationKey;
         if (query.length() > 4) {
             locationKey = query.substring(5);
         } else {
             locationKey = wsdlLocation.toString();
         }
-        Object wsdl = wsdlMap.get(locationKey);
+        final Object wsdl = wsdlMap.get(locationKey);
         if (wsdl == null) {
             throw new IllegalStateException("No wsdl or schema known at location: " + locationKey);
         }
-        URI updated = new URI(realLocation.getScheme(),
+        final URI updated = new URI(realLocation.getScheme(),
                 realLocation.getUserInfo(),
                 realLocation.getHost(),
                 realLocation.getPort(),
                 null, //try null for no path
                 null,
                 null);
-        String replaced = ((String) wsdl).replaceAll(WsConstants.LOCATION_REPLACEMENT_TOKEN, updated.toString());
+        final String replaced = ((String) wsdl).replaceAll(WsConstants.LOCATION_REPLACEMENT_TOKEN, updated.toString());
         response.getOutputStream().write(replaced.getBytes());
         response.getOutputStream().flush();
     }
@@ -279,20 +279,21 @@ public class AxisWsContainer implements HttpListener {
 
     /**
      * print a snippet of service info.
-     * @param response response
+     *
+     * @param response    response
      * @param serviceName Name of the service
      */
 
-    private void printServiceInfo(HttpResponse response,String serviceName) throws IOException{
+    private void printServiceInfo(final HttpResponse response, final String serviceName) throws IOException {
         response.setContentType("text/html; charset=utf-8");
-        StringBuffer output = new StringBuffer("<h1>")
+        final StringBuffer output = new StringBuffer("<h1>")
                 .append(serviceName).append("</h1>\n");
 
         output.append("<p>").append(Messages.getMessage("axisService00"))
                 .append("</p>\n");
         output.append(
                 "<i>").append(
-                Messages.getMessage("perhaps00") ).append(
+                Messages.getMessage("perhaps00")).append(
                 "</i>\n");
         response.getOutputStream().write(output.toString().getBytes());
     }
