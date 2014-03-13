@@ -44,7 +44,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
                 auth = auth.substring(6);
                 final String decoded = new String(Base64.decodeBase64(auth.getBytes()));
                 final String[] parts = decoded.split(":");
-                if (parts != null && parts.length == 2) {
+                if (parts.length == 2) {
                     final String username = parts[0];
                     final String password = parts[1];
 
@@ -54,7 +54,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
                         if (token != null) {
                             securityService.associate(token);
                         }
-                    } catch (LoginException e) {
+                    } catch (final LoginException e) {
                         // login failed, return 401
                     }
                 }
@@ -76,4 +76,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
         return SystemInstance.get().getComponent(SecurityService.class);
     }
 
+    public HttpListener getHttpListener() {
+        return httpListener;
+    }
 }
