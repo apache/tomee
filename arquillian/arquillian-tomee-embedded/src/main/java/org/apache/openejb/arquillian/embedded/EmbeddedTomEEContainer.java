@@ -16,6 +16,15 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.servlet.http.HttpSession;
+
 import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TestClassDiscoverer;
@@ -29,20 +38,17 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
@@ -129,7 +135,11 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final String name = archive.getName();
             final File file = this.dumpFile(archive);
             ARCHIVES.put(archive, file);
-            this.archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+			if (deployment.get().testable()) {
+            	this.archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+			} else {
+				archive.as(ZipExporter.class).exportTo(file, true);
+			}
 
             this.container.deploy(name, file);
             final AppInfo info = this.container.getInfo(name);

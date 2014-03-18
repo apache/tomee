@@ -28,6 +28,7 @@ import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
@@ -66,6 +67,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     @Inject
     private Instance<TestClass> testClass;
+
+	@Inject
+	protected Instance<DeploymentDescription> deployment;
 
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
@@ -333,7 +337,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         Files.deleteOnExit(file.getParentFile());
 
-        archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+		if (deployment.get().testable()) {
+			archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+		} else {
+			archive.as(ZipExporter.class).exportTo(file, true);
+		}
 
         return file;
     }
