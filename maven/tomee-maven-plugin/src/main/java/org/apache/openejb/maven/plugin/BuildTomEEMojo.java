@@ -43,13 +43,13 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
     protected boolean attach;
 
     @Parameter(property = "tomee-plugin.zip-file", defaultValue = "${project.build.directory}/${project.build.finalName}.zip")
-    private File zipFile;
+    protected File zipFile;
 
     @Component
-    private MavenProjectHelper projectHelper;
+    protected MavenProjectHelper projectHelper;
 
     @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
+    protected MavenProject project;
 
     @Parameter(property = "tomee-plugin.classifier")
     protected String classifier = null;
