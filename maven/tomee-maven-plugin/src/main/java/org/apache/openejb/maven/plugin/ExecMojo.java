@@ -25,7 +25,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.JarLocation;
+import org.apache.openejb.loader.LoaderRuntimeException;
+import org.apache.openejb.loader.Zips;
 import org.apache.openejb.maven.plugin.runner.ExecRunner;
+import org.apache.openejb.util.Pipe;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -38,6 +44,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
 
+import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.Files.mkdirs;
 
 @Mojo(name = "exec", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
@@ -89,6 +96,7 @@ public class ExecMojo extends BuildTomEEMojo {
         config.put("workingDir", runtimeWorkingDir);
         config.put("command", script);
         config.put("catalinaOpts", toString(generateJVMArgs()));
+        config.put("timestamp", Long.toString(System.currentTimeMillis()));
 
         // create an executable jar with main runner and zipFile
         final FileOutputStream fileOutputStream = new FileOutputStream(execFile);
@@ -129,11 +137,19 @@ public class ExecMojo extends BuildTomEEMojo {
             os.closeArchiveEntry();
         }
 
-        { // Main
-            final String name = ExecRunner.class.getName().replace('.', '/') + ".class";
-            os.putArchiveEntry(new JarArchiveEntry(name));
-            IOUtils.copy(getClass().getResourceAsStream('/' + name), os);
-            os.closeArchiveEntry();
+        { // Main + utility
+            for (final Class<?> clazz : asList(
+                    ExecRunner.class,
+                    Files.class, Files.PatternFileFilter.class, Files.DeleteThread.class,
+                    Files.FileRuntimeException.class, Files.FileDoesNotExistException.class, Files.NoopOutputStream.class,
+                    LoaderRuntimeException.class,
+                    Pipe.class, IO.class, Zips.class, JarLocation.class
+            )) {
+                final String name = clazz.getName().replace('.', '/') + ".class";
+                os.putArchiveEntry(new JarArchiveEntry(name));
+                IOUtils.copy(getClass().getResourceAsStream('/' + name), os);
+                os.closeArchiveEntry();
+            }
         }
 
         IOUtil.close(os);

@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.maven.plugin.runner;
 
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Zips;
+import org.apache.openejb.util.Pipe;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static java.util.Arrays.asList;
 
@@ -48,7 +48,11 @@ public class ExecRunner {
         final String workingDir = config.getProperty("workingDir");
         final InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
         File distribOutput = new File(workingDir);
-        extract(distribIs, distribOutput);
+        final File timestampFile = new File(distribOutput, "timestamp.txt");
+        if (!timestampFile.exists() || Long.parseLong(IO.slurp(timestampFile)) < Long.parseLong(config.getProperty("timestamp"))) {
+            Zips.unzip(distribIs, distribOutput, false);
+            IO.writeString(timestampFile, config.getProperty("timestamp"));
+        }
 
         final File[] extracted = distribOutput.listFiles();
         if (extracted != null && extracted.length == 1) {
@@ -86,63 +90,22 @@ public class ExecRunner {
             builder.environment().put("CATALINA_OPTS", catalinaOpts);
         }
 
-        builder.redirectError(ProcessBuilder.Redirect.INHERIT);
-        builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        boolean redirectOut = false;
+        try { // java >= 7
+            ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
+        } catch (final Throwable th){ // java 6
+            redirectOut = true;
+        }
 
         final Process process = builder.start();
+        if (redirectOut) {
+            Pipe.pipe(process);
+        }
+
         process.waitFor();
         System.out.flush();
         System.err.flush();
         System.out.println("Exit status: " + process.exitValue());
-    }
-
-    // duplicated to avoid deps, if this class has any dep then it can't be run
-    private static void extract(final InputStream distrib, final File output) throws IOException {
-        mkdirs(output);
-
-        final ZipInputStream in = new ZipInputStream(distrib);
-
-        ZipEntry entry;
-        while ((entry = in.getNextEntry()) != null) {
-            final String path = entry.getName();
-            final File file = new File(output, path);
-
-            if (entry.isDirectory()) {
-                mkdirs(file);
-                continue;
-            }
-
-            mkdirs(file.getParentFile());
-            copy(in, file);
-
-            final long lastModified = entry.getTime();
-            if (lastModified > 0) {
-                file.setLastModified(lastModified);
-            }
-
-        }
-
-        in.close();
-    }
-
-    private static void copy(final ZipInputStream in, final File file) throws IOException {
-        final FileOutputStream to = new FileOutputStream(file);
-        try {
-            final byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) != -1) {
-                to.write(buffer, 0, length);
-            }
-            to.flush();
-        } finally {
-            to.close();
-        }
-    }
-
-    private static void mkdirs(File output) {
-        if (!output.exists() && !output.mkdirs()) {
-            throw new IllegalArgumentException("Can't create " + output.getAbsolutePath());
-        }
     }
 
     private ExecRunner() {

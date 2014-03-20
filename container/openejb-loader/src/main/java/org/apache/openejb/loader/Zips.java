@@ -18,6 +18,7 @@ package org.apache.openejb.loader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -37,9 +38,18 @@ public class Zips {
         Files.file(zipFile);
         Files.readable(zipFile);
 
+        final InputStream read = IO.read(zipFile);
+        try {
+            unzip(read, destination, noparent);
+        } finally {
+            IO.close(read);
+        }
+    }
+
+    public static void unzip(InputStream read, File destination, boolean noparent) throws IOException {
         try {
             // Open the ZIP file
-            final ZipInputStream in = IO.unzip(zipFile);
+            final ZipInputStream in = new ZipInputStream(read);
 
             ZipEntry entry;
 
@@ -65,8 +75,8 @@ public class Zips {
 
             in.close();
 
-        } catch (IOException e) {
-            throw new IOException("Unable to unzip " + zipFile.getAbsolutePath(), e);
+        } catch (final IOException e) {
+            throw new IOException("Unable to unzip " + read, e);
         }
     }
 }
