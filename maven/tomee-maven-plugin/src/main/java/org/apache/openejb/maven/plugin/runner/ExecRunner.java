@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.maven.plugin.runner;
 
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.Pipe;
@@ -49,7 +50,13 @@ public class ExecRunner {
         final InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
         File distribOutput = new File(workingDir);
         final File timestampFile = new File(distribOutput, "timestamp.txt");
-        if (!timestampFile.exists() || Long.parseLong(IO.slurp(timestampFile)) < Long.parseLong(config.getProperty("timestamp"))) {
+        if (!timestampFile.exists()
+                || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
+            if (timestampFile.exists()) {
+                System.out.println("Deleting " + distribOutput.getAbsolutePath());
+                Files.delete(distribOutput);
+            }
+            System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
             Zips.unzip(distribIs, distribOutput, false);
             IO.writeString(timestampFile, config.getProperty("timestamp"));
         }
