@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -31,28 +29,7 @@ import java.util.zip.ZipInputStream;
 
 import static java.util.Arrays.asList;
 
-public class ExecRunner implements Runnable {
-    private final InputStream in;
-    private final OutputStream out;
-
-    private ExecRunner(final InputStream in, final OutputStream out) {
-        this.in = in;
-        this.out = out;
-    }
-
-    @Override
-    public void run() {
-        try {
-            int i;
-            final byte[] buf = new byte[1];
-            while ((i = in.read(buf)) != -1) {
-                out.write(buf, 0, i);
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+public class ExecRunner {
     private static final String SH_BAT_AUTO = "[.sh|.bat]";
 
     public static void main(final String[] args) throws Exception {
@@ -102,20 +79,21 @@ public class ExecRunner implements Runnable {
             params.addAll(asList(args));
         }
 
-        final Process process = Runtime.getRuntime().exec(params.toArray(new String[params.size()]), null, distribOutput);
-        pipe("exec-runner-out", process.getInputStream(), System.out);
-        pipe("exec-runner-err", process.getErrorStream(), System.err);
+        final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
+
+        final String catalinaOpts = config.getProperty("catalinaOpts");
+        if (catalinaOpts != null) { // inherit from existing env
+            builder.environment().put("CATALINA_OPTS", catalinaOpts);
+        }
+
+        builder.redirectError(ProcessBuilder.Redirect.INHERIT);
+        builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+
+        final Process process = builder.start();
         process.waitFor();
         System.out.flush();
         System.err.flush();
         System.out.println("Exit status: " + process.exitValue());
-    }
-
-    private static void pipe(final String name, final InputStream errorStream, final PrintStream err) {
-        final Thread thread = new Thread(new ExecRunner(errorStream, err));
-        thread.setName(name);
-        thread.setDaemon(true);
-        thread.start();
     }
 
     // duplicated to avoid deps, if this class has any dep then it can't be run
@@ -165,5 +143,9 @@ public class ExecRunner implements Runnable {
         if (!output.exists() && !output.mkdirs()) {
             throw new IllegalArgumentException("Can't create " + output.getAbsolutePath());
         }
+    }
+
+    private ExecRunner() {
+        // no-op
     }
 }
