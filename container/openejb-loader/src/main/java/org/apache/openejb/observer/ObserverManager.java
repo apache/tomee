@@ -25,11 +25,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
 
 public class ObserverManager {
     private final List<Observer> observers = new ArrayList<Observer>();
@@ -45,36 +51,47 @@ public class ObserverManager {
         }
 
         final boolean added = observers.add(obs);
-
-        // Observers can observe they have been added and are active
-        fireEvent(new ObserverAdded(observer));
-
+        if (added) {
+            // Observers can observe they have been added and are active
+            fireEvent(new ObserverAdded(observer));
+        }
         return added;
     }
 
     public boolean removeObserver(Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
-        // Observers can observe they are to be removed
-        fireEvent(new ObserverRemoved(observer));
-
-        return observers.remove(new Observer(observer));
+        final boolean removed = observers.remove(new Observer(observer));
+        if (removed) {
+            // Observers can observe they are to be removed
+            fireEvent(new ObserverRemoved(observer));
+        }
+        return removed;
     }
 
     public void fireEvent(Object event) {
         if (event == null) throw new IllegalArgumentException("event cannot be null");
 
-        for (Observer observer : observers) {
+        final List<Invocation> invocations = new LinkedList<Invocation>();
+        for (final Observer observer : observers) {
+            final Invocation i = observer.toInvocation(event);
+            if (i != null) {
+                invocations.add(i);
+            }
+        }
+
+        sort(invocations);
+        for (final Invocation invocation : invocations) {
             try {
-                observer.invoke(event);
-            } catch (Throwable t) {
+                invocation.proceed();
+            } catch (final Throwable t) {
                 if (!(event instanceof ObserverFailed)) {
-                    fireEvent(new ObserverFailed(observer, event, t));
+                    fireEvent(new ObserverFailed(invocation.observer, event, t));
                 }
                 if (t instanceof InvocationTargetException && t.getCause() != null) {
-                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t.getCause());
+                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + invocation.observer, t.getCause());
                 } else {
-                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t);
+                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + invocation.observer, t);
                 }
             }
         }
@@ -84,16 +101,21 @@ public class ObserverManager {
      * @version $Rev$ $Date$
      */
     public static class Observer {
-        private final Map<Class, Method> methods = new HashMap<Class, Method>();
+        private final Map<Class, MetaMethod> methods = new HashMap<Class, MetaMethod>();
         private final Object observer;
-        private final Method defaultMethod;
+        private final Class<?> observerClass;
+        private final MetaMethod defaultMethod;
 
         public Observer(Object observer) {
             if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
             this.observer = observer;
-            for (Method method : observer.getClass().getMethods()) {
-                if (!isObserver(method)) continue;
+            this.observerClass = observer.getClass();
+            for (final Method method : observer.getClass().getMethods()) {
+                final Observes annotation = isObserver(method);
+                if (annotation == null) {
+                    continue;
+                }
 
                 if (method.getParameterTypes().length > 1) {
                     throw new IllegalArgumentException("@Observes method must have only 1 parameter: " + method.toString());
@@ -129,7 +151,7 @@ public class ObserverManager {
                     throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not a primitive): " + method.toString());
                 }
 
-                methods.put(type, method);
+                methods.put(type, new MetaMethod(method, new CopyOnWriteArraySet<Class<?>>(asList(annotation.after()))));
             }
 
             defaultMethod = methods.get(Object.class);
@@ -139,26 +161,29 @@ public class ObserverManager {
             }
         }
 
-        public void invoke(Object event) throws InvocationTargetException, IllegalAccessException {
+        public Invocation toInvocation(final Object event) {
             if (event == null) throw new IllegalArgumentException("event cannot be null");
 
             final Class eventType = event.getClass();
-            final Method method = methods.get(eventType);
+            final MetaMethod method = methods.get(eventType);
 
             if (method != null) {
-                method.invoke(observer, event);
+                return new Invocation(this, method, event);
             } else if (defaultMethod != null) {
-                defaultMethod.invoke(observer, event);
+                return new Invocation(this, defaultMethod, event);
             }
+            return null;
         }
 
-        private boolean isObserver(Method method) {
-            for (Annotation[] annotations : method.getParameterAnnotations()) {
-                for (Annotation annotation : annotations) {
-                    if (annotation.annotationType().equals(Observes.class)) return true;
+        private Observes isObserver(Method method) {
+            for (final Annotation[] annotations : method.getParameterAnnotations()) {
+                for (final Annotation annotation : annotations) {
+                    if (annotation.annotationType().equals(Observes.class)) {
+                        return Observes.class.cast(annotation);
+                    }
                 }
             }
-            return false;
+            return null;
         }
 
         @Override
@@ -180,6 +205,60 @@ public class ObserverManager {
         public String toString() {
             return "Observer{" +
                     "class=" + observer.getClass().getName() +
+                    '}';
+        }
+    }
+
+    private static class MetaMethod {
+        private final Method method;
+        private final Collection<Class<?>> after;
+
+        private MetaMethod(final Method method, final Collection<Class<?>> after) {
+            this.method = method;
+            this.after = after;
+        }
+
+        @Override
+        public String toString() {
+            return "MetaMethod{" +
+                    "method=" + method +
+                    ", after=" + after +
+                    '}';
+        }
+    }
+
+    private static class Invocation implements Comparable<Invocation> {
+        private final Observer observer;
+        private final MetaMethod metaMethod;
+        private final Object event;
+
+        private Invocation(final Observer observer, final MetaMethod method, final Object event) {
+            this.observer = observer;
+            this.metaMethod = method;
+            this.event = event;
+        }
+
+        private void proceed() throws InvocationTargetException, IllegalAccessException {
+            metaMethod.method.invoke(observer.observer, event);
+        }
+
+        @Override // only called for a single event so only consider observer.after
+        public int compareTo(final Invocation o) {
+            if (o == null) {
+                return 0;
+            }
+            if (metaMethod.after.contains(o.observer.observerClass)) {
+                return 1;
+            }
+            return -1;
+        }
+
+        @Override
+        public String toString() {
+            return "Invocation{" +
+                    "observer=" + observer +
+                    ", metaMethod=" + metaMethod +
+                    ", event=" + event +
                     '}';
         }
     }
