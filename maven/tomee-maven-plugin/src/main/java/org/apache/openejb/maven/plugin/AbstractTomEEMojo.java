@@ -704,6 +704,74 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             classpaths = new ArrayList<String>();
         }
 
+        final List<String> strings = generateJVMArgs();
+
+        // init env for RemoteServer
+        System.setProperty("openejb.home", catalinaBase.getAbsolutePath());
+        if (debug) {
+            System.setProperty("openejb.server.debug", "true");
+            System.setProperty("server.debug.port", Integer.toString(debugPort));
+        }
+        System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
+        System.setProperty("server.shutdown.command", tomeeShutdownCommand);
+
+        server = new RemoteServer(getConnectAttempts(), false);
+        server.setAdditionalClasspath(getAdditionalClasspath());
+
+        addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
+
+        if ("TomEE".equals(container)) {
+            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
+                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
+                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
+        } else {
+            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
+        }
+
+        final InputStream originalIn = System.in; // piped when starting resmote server so saving it
+
+        serverCmd(server, strings);
+
+        if (getWaitTomEE()) {
+            final CountDownLatch stopCondition = new CountDownLatch(1);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    stopServer(stopCondition);
+                }
+            });
+
+            if (useConsole) {
+                final Scanner reader = new Scanner(originalIn);
+
+                System.out.flush();
+                getLog().info("Waiting for command: " + availableCommands());
+
+                String line;
+                while ((line = reader.nextLine()) != null) {
+                    if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
+                        break;
+                    }
+
+                    if (!handleLine(line.trim())) {
+                        System.out.flush();
+                        getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
+                    }
+                }
+
+                reader.close();
+                stopServer(stopCondition); // better than using shutdown hook since it doesn't rely on the hook which are not sent by eclipse for instance
+            }
+
+            try {
+                stopCondition.await();
+            } catch (InterruptedException e) {
+                // no-op
+            }
+        }
+    }
+
+    protected List<String> generateJVMArgs() {
         final String deployOpenEjbAppKey = "openejb.system.apps";
         final String servletCompliance = "org.apache.catalina.STRICT_SERVLET_COMPLIANCE";
 
@@ -781,73 +849,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.add("-Dtomee.force-reloadable=true");
         }
 
-        // init env for RemoteServer
-        System.setProperty("openejb.home", catalinaBase.getAbsolutePath());
-        if (debug) {
-            System.setProperty("openejb.server.debug", "true");
-            System.setProperty("server.debug.port", Integer.toString(debugPort));
-        }
-        System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
-        System.setProperty("server.shutdown.command", tomeeShutdownCommand);
-
-        server = new RemoteServer(getConnectAttempts(), false);
-        server.setAdditionalClasspath(getAdditionalClasspath());
-
-        addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
-
         if (!getWaitTomEE()) {
             strings.add("-Dtomee.noshutdownhook=true");
         }
 
-        if ("TomEE".equals(container)) {
-            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
-                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
-                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
-        } else {
-            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
-        }
-
-        final InputStream originalIn = System.in; // piped when starting resmote server so saving it
-
-        serverCmd(server, strings);
-
-        if (getWaitTomEE()) {
-            final CountDownLatch stopCondition = new CountDownLatch(1);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    stopServer(stopCondition);
-                }
-            });
-
-            if (useConsole) {
-                final Scanner reader = new Scanner(originalIn);
-
-                System.out.flush();
-                getLog().info("Waiting for command: " + availableCommands());
-
-                String line;
-                while ((line = reader.nextLine()) != null) {
-                    if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
-                        break;
-                    }
-
-                    if (!handleLine(line.trim())) {
-                        System.out.flush();
-                        getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
-                    }
-                }
-
-                reader.close();
-                stopServer(stopCondition); // better than using shutdown hook since it doesn't rely on the hook which are not sent by eclipse for instance
-            }
-
-            try {
-                stopCondition.await();
-            } catch (InterruptedException e) {
-                // no-op
-            }
-        }
+        return strings;
     }
 
     protected Collection<String> availableCommands() {

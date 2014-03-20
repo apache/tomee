@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Properties;
 
 import static org.apache.openejb.loader.Files.mkdirs;
@@ -87,6 +88,7 @@ public class ExecMojo extends BuildTomEEMojo {
         config.put("distribution", distributionName);
         config.put("workingDir", runtimeWorkingDir);
         config.put("command", script);
+        config.put("catalinaOpts", toString(generateJVMArgs()));
 
         // create an executable jar with main runner and zipFile
         final FileOutputStream fileOutputStream = new FileOutputStream(execFile);
@@ -136,5 +138,13 @@ public class ExecMojo extends BuildTomEEMojo {
 
         IOUtil.close(os);
         IOUtil.close(fileOutputStream);
+    }
+
+    private static String toString(final List<String> strings) {
+        final StringBuilder builder = new StringBuilder();
+        for (final String s : strings) {
+            builder.append(s).append(" ");
+        }
+        return builder.toString();
     }
 }
