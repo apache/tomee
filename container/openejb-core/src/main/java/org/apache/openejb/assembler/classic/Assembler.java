@@ -39,7 +39,6 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.event.ApplicationDeployed;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
@@ -884,13 +883,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             deployedApplications.put(appInfo.path, appInfo);
-            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, allDeployments));
-
-            logger.info("createApplication.success", appInfo.path);
-
             resumePersistentSchedulers(appContext);
 
-            SystemInstance.get().fireEvent(new ApplicationDeployed(appInfo));
+            logger.info("createApplication.success", appInfo.path);
+            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, allDeployments));
 
             return appContext;
         } catch (final ValidationException ve) {
