@@ -81,12 +81,7 @@ public class Files {
     }
 
     public static List<File> collect(final File dir, final Pattern pattern) {
-        return collect(dir, new FileFilter() {
-            @Override
-            public boolean accept(final File file) {
-                return pattern.matcher(file.getName()).matches();
-            }
-        });
+        return collect(dir, new PatternFileFilter(pattern));
     }
 
 
@@ -207,12 +202,7 @@ public class Files {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(Files.class.getClassLoader());
         try {
-            final Thread deleteShutdownHook = new Thread() {
-                @Override
-                public void run() {
-                    delete();
-                }
-            };
+            final Thread deleteShutdownHook = new DeleteThread();
             try {
                 Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
             } catch (Throwable e) {
@@ -435,7 +425,7 @@ public class Files {
         return sb.toString();
     }
 
-    private static class NoopOutputStream extends OutputStream {
+    public static class NoopOutputStream extends OutputStream {
         @Override
         public void write(final int b) throws IOException {
             // no-op
@@ -459,6 +449,26 @@ public class Files {
 
         public FileDoesNotExistException(final Exception e) {
             super(e);
+        }
+    }
+
+    public static class PatternFileFilter implements FileFilter {
+        private final Pattern pattern;
+
+        public PatternFileFilter(final Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean accept(final File file) {
+            return pattern.matcher(file.getName()).matches();
+        }
+    }
+
+    public static class DeleteThread extends Thread {
+        @Override
+        public void run() {
+            delete();
         }
     }
 }

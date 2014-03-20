@@ -16,7 +16,25 @@
  */
 package org.apache.openejb.loader;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -32,9 +50,20 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * @version $Revision$ $Date$
+ *
+ * NOTE: CHECK ExecMojo before adding dependency or inner class to it please
  */
 public class IO {
-    private static final int MAX_TIMEOUT = SystemInstance.get().getOptions().get("openejb.io.util.timeout", 5000);
+    private static final int MAX_TIMEOUT;
+    static {
+        int timeout = 5000;
+        try {
+            timeout = SystemInstance.get().getOptions().get("openejb.io.util.timeout", timeout);
+        } catch (final Throwable th) {
+            // no-op: see ExecMojo
+        }
+        MAX_TIMEOUT = timeout;
+    }
 
     public static String readFileAsString(final URI uri) throws IOException {
         final StringBuilder builder = new StringBuilder("");
