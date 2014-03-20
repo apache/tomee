@@ -175,6 +175,10 @@ public class ObserverManager {
             return null;
         }
 
+        public Class<?> getObserverClass() {
+            return observerClass;
+        }
+
         private Observes isObserver(Method method) {
             for (final Annotation[] annotations : method.getParameterAnnotations()) {
                 for (final Annotation annotation : annotations) {
