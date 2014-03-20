@@ -26,10 +26,12 @@ import java.util.Collection;
 public class NewEjbAvailableAfterApplicationCreated {
     private final AppInfo app;
     private final Collection<BeanContext> beanContexts;
+    private final String s;
 
     public NewEjbAvailableAfterApplicationCreated(final AppInfo appInfo, final Collection<BeanContext> beanContexts) {
         this.app = appInfo;
         this.beanContexts = beanContexts;
+        this.s = "NewEjbAvailableAfterApplicationCreated{appId=" + app.appId + ", beanContexts=" + beanContexts + "}";
     }
 
     public AppInfo getApp() {
@@ -42,9 +44,6 @@ public class NewEjbAvailableAfterApplicationCreated {
 
     @Override
     public String toString() {
-        return "NewEjbAvailableAfterApplicationCreated{" +
-                "app=" + app +
-                ", beanContexts=" + beanContexts +
-            '}';
+        return s;
     }
 }
