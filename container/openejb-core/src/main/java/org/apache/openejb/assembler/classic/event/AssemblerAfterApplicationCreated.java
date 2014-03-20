@@ -26,10 +26,12 @@ import java.util.Collection;
 public class AssemblerAfterApplicationCreated {
     private final AppInfo app;
     private final Collection<BeanContext> deployedEjbs;
+    private final String s;
 
     public AssemblerAfterApplicationCreated(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
         app = appInfo;
         deployedEjbs = ejbs;
+        this.s = "AssemblerAfterApplicationCreated{app=" + app.appId +"}";
     }
 
     public AppInfo getApp() {
@@ -42,8 +44,6 @@ public class AssemblerAfterApplicationCreated {
 
     @Override
     public String toString() {
-        return "AssemblerAfterApplicationCreated{" +
-                "app=" + app.appId +
-            '}';
+        return s;
     }
 }

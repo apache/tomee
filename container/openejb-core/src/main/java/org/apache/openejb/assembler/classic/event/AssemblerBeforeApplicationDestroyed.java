@@ -22,9 +22,11 @@ import org.apache.openejb.observer.Event;
 @Event
 public class AssemblerBeforeApplicationDestroyed {
     private final AppInfo app;
+    private final String s;
 
     public AssemblerBeforeApplicationDestroyed(final AppInfo appInfo) {
         app = appInfo;
+        s = "AssemblerBeforeApplicationDestroyed{app=" + app.appId + "}";
     }
 
     public AppInfo getApp() {
@@ -33,8 +35,6 @@ public class AssemblerBeforeApplicationDestroyed {
 
     @Override
     public String toString() {
-        return "AssemblerBeforeApplicationDestroyed{" +
-                "app=" + app.appId +
-            '}';
+        return s;
     }
 }
