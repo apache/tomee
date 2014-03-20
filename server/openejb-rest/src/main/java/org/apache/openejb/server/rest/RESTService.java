@@ -619,6 +619,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 }
             }
         }
+
+        SystemInstance.get().fireEvent(new AfterServicesDeployed(appInfo));
     }
 
     private void quickCheckIfOldDeploymentShouldBeUsedFromEjbConfig(final AppInfo appInfo) {
