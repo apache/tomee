@@ -188,7 +188,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     || name.toLowerCase().contains("transaction")
                     || name.toLowerCase().contains("cxf")
                     || name.toLowerCase().contains("timer")
-                    || name.startsWith("org.apache.")
+                    || (name.startsWith("org.apache.") && !name.startsWith("org.apache.geronimo.connector.work.WorkerContext."))
                     || name.startsWith("openjpa.")
                     || name.startsWith("net.sf.ehcache.")
                     || name.startsWith("org.quartz.")
