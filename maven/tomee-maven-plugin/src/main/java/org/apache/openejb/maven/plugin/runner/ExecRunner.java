@@ -16,15 +16,19 @@
  */
 package org.apache.openejb.maven.plugin.runner;
 
+import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.Pipe;
+import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -33,7 +37,14 @@ import static java.util.Arrays.asList;
 public class ExecRunner {
     private static final String SH_BAT_AUTO = "[.sh|.bat]";
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] rawArgs) throws Exception {
+        final String[] args;
+        if (rawArgs == null || rawArgs.length == 0) {
+            args = new String[] { "run" };
+        } else {
+            args = rawArgs;
+        }
+
         final Properties config = new Properties();
 
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -65,6 +76,14 @@ public class ExecRunner {
         if (extracted != null && extracted.length == 1) {
             distribOutput = extracted[0];
         }
+        final File[] scripts = new File(distribOutput, "conf").listFiles();
+        if (scripts != null) { // dont use filefilter to avoid dependency issue
+            for (final File f : scripts) {
+                if (f.getName().endsWith(".sh") && !f.canExecute()) {
+                    f.setExecutable(true, true);
+                }
+            }
+        }
 
         String cmd = config.getProperty("command");
         if (cmd.endsWith(SH_BAT_AUTO)) {
@@ -85,34 +104,58 @@ public class ExecRunner {
         }
 
         final Collection<String> params = new ArrayList<String>();
-        params.add(cmd);
-        if (args != null) {
+        if ("java".equals(cmd)) {
+            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
+
+            System.setProperty("openejb.home", distribOutput.getAbsolutePath());
+            System.setProperty("server.shutdown.port", parser.stop());
+            System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
+
+            final RemoteServer server = new RemoteServer();
+            if (config.containsKey("additionalClasspath")) {
+                server.setAdditionalClasspath(config.getProperty("additionalClasspath"));
+            }
+
+            final List<String> jvmArgs = new LinkedList<String>();
+            for (final String k : config.stringPropertyNames()) {
+                if (k.startsWith("jvmArg.")) {
+                    jvmArgs.add(config.getProperty(k));
+                }
+            }
+
+            if ("run".equals(args[0])) {
+                args[0] = "start";
+            }
+            server.start(jvmArgs, args[0], true);
+            server.getServer().waitFor();
+        } else {
+            params.add(cmd);
             params.addAll(asList(args));
+
+            final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
+
+            final String catalinaOpts = config.getProperty("catalinaOpts");
+            if (catalinaOpts != null) { // inherit from existing env
+                builder.environment().put("CATALINA_OPTS", catalinaOpts);
+            }
+
+            boolean redirectOut = false;
+            try { // java >= 7
+                ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
+            } catch (final Throwable th){ // java 6
+                redirectOut = true;
+            }
+
+            final Process process = builder.start();
+            if (redirectOut) {
+                Pipe.pipe(process);
+            }
+
+            process.waitFor();
         }
 
-        final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
-
-        final String catalinaOpts = config.getProperty("catalinaOpts");
-        if (catalinaOpts != null) { // inherit from existing env
-            builder.environment().put("CATALINA_OPTS", catalinaOpts);
-        }
-
-        boolean redirectOut = false;
-        try { // java >= 7
-            ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
-        } catch (final Throwable th){ // java 6
-            redirectOut = true;
-        }
-
-        final Process process = builder.start();
-        if (redirectOut) {
-            Pipe.pipe(process);
-        }
-
-        process.waitFor();
         System.out.flush();
         System.err.flush();
-        System.out.println("Exit status: " + process.exitValue());
     }
 
     private ExecRunner() {

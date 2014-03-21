@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Pipe;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,13 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.Pipe;
-
 /**
+ * NOTE: don't add inner classes or anonymous one or dependency without updating ExecMojo
+ *
  * @version $Rev$ $Date$
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -330,41 +332,6 @@ public class RemoteServer {
         }
     }
 
-    // debugging method (mainly for buildbot), don't let it activated when all is fine
-    private void kill3UNIXDebug() { //NOPMD
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                setName("[DEBUG] Dump Observer");
-
-                boolean end = false;
-                int i = 0;
-                while (!end) {
-                    try {
-                        if (server == null) {
-                            throw new IllegalThreadStateException();
-                        }
-                        server.exitValue();
-                        end = true;
-                    } catch (final IllegalThreadStateException e) {
-                        i++;
-                        try {
-                            Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
-                        } catch (final InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                        if (i == 5) {
-                            kill3UNIX();
-                            i = 0;
-                        }
-                    }
-                }
-            }
-        };
-        t.setDaemon(true);
-        t.start();
-    }
-
     public void kill3UNIX() { // debug purpose only
         if (System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
             return;
@@ -560,20 +527,22 @@ public class RemoteServer {
     static final List<Process> kill = new ArrayList<Process>();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                for (final Process server : kill) {
-                    try {
-                        if (server != null) {
-                            server.destroy();
-                            server.waitFor();
-                        }
-                    } catch (final Throwable e) {
-                        //Ignore
+        Runtime.getRuntime().addShutdownHook(new CleanUpThread());
+    }
+
+    public static class CleanUpThread extends Thread {
+        @Override
+        public void run() {
+            for (final Process server : kill) {
+                try {
+                    if (server != null) {
+                        server.destroy();
+                        server.waitFor();
                     }
+                } catch (final Throwable e) {
+                    //Ignore
                 }
             }
-        });
+        }
     }
 }
