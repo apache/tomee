@@ -76,6 +76,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
@@ -85,6 +86,7 @@ import org.apache.openejb.Extensions;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
@@ -1157,12 +1159,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             if (service.getClasspath() != null && service.getClasspath().length() > 0) {
-                final FileUtils base = SystemInstance.get().getBase();
                 final String[] strings = service.getClasspath().split(File.pathSeparator);
                 final URI[] classpath = new URI[strings.length];
                 for (int i = 0; i < strings.length; i++) {
                     final String string = strings[i];
-                    final File file = base.getFile(string, false);
+                    final String pathname = PropertyPlaceHolderHelper.simpleValue(ProvisioningUtil.realLocation(string));
+                    final File file = new File(pathname);
                     classpath[i] = file.toURI();
                 }
 
