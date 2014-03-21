@@ -333,7 +333,7 @@ public class Options {
         return sb.toString();
     }
 
-    private final static class NullOptions extends Options {
+    public final static class NullOptions extends Options {
 
         private Log logger;
 

@@ -25,13 +25,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.LoaderRuntimeException;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.maven.plugin.runner.ExecRunner;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
+import org.apache.tomee.util.QuickServerXmlParser;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -95,8 +100,19 @@ public class ExecMojo extends BuildTomEEMojo {
         config.put("distribution", distributionName);
         config.put("workingDir", runtimeWorkingDir);
         config.put("command", script);
-        config.put("catalinaOpts", toString(generateJVMArgs()));
+        final List<String> jvmArgs = generateJVMArgs();
+        config.put("catalinaOpts", toString(jvmArgs));
         config.put("timestamp", Long.toString(System.currentTimeMillis()));
+        // java only
+        final String cp = getAdditionalClasspath();
+        if (cp != null) {
+            config.put("additionalClasspath", cp);
+        }
+        config.put("shutdownCommand", tomeeShutdownCommand);
+        int i = 0;
+        for (final String jvmArg : jvmArgs) {
+            config.put("jvmArg." + i++, jvmArg);
+        }
 
         // create an executable jar with main runner and zipFile
         final FileOutputStream fileOutputStream = new FileOutputStream(execFile);
@@ -143,8 +159,12 @@ public class ExecMojo extends BuildTomEEMojo {
                     Files.class, Files.PatternFileFilter.class, Files.DeleteThread.class,
                     Files.FileRuntimeException.class, Files.FileDoesNotExistException.class, Files.NoopOutputStream.class,
                     LoaderRuntimeException.class,
-                    Pipe.class, IO.class, Zips.class, JarLocation.class
-            )) {
+                    Pipe.class, IO.class, Zips.class, JarLocation.class,
+                    RemoteServer.class, RemoteServer.CleanUpThread.class,
+                    OpenEJBRuntimeException.class, Join.class, QuickServerXmlParser.class,
+                    Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
+                    Options.Log.class
+                    )) {
                 final String name = clazz.getName().replace('.', '/') + ".class";
                 os.putArchiveEntry(new JarArchiveEntry(name));
                 IOUtils.copy(getClass().getResourceAsStream('/' + name), os);
