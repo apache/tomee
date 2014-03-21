@@ -58,6 +58,8 @@ public abstract class AbstractService implements Service {
     protected String provider;
     @XmlAttribute
     protected String type;
+    @XmlAttribute
+    protected String classpath;
 
     /**
      * Mutually exclusive with 'provider'
@@ -211,6 +213,14 @@ public abstract class AbstractService implements Service {
 
     public void setFactoryName(final String factoryName) {
         this.factoryName = factoryName;
+    }
+
+    public String getClasspath() {
+        return classpath;
+    }
+
+    public void setClasspath(final String classpath) {
+        this.classpath = classpath;
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.util.Join;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -221,6 +222,40 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals("false", generated.properties.get("JtaManaged"));
     }
     
+    /**
+     * Existing data source "orange-unit", jta-managed
+     *
+     * Persistence xml like so:
+     *
+     * <persistence-unit name="orange-unit" />
+     *
+     * The orange-unit app should automatically use orange-unit data source and create a new non-JtaManaged datasource
+     *
+     * @throws Exception
+     */
+    public void testFromUnitNameJtaWithClasspath() throws Exception {
+        Resource resource = new Resource("orange-unit", "DataSource");
+        resource.setClasspath("foo/bar.jar");
+        ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
+        assertSame(supplied, resources.get(0));
+
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        assertNotNull(unitInfo);
+
+        // Check results
+        ResourceInfo generated = resources.get(1);
+        assertEquals(supplied.id + "NonJta", generated.id);
+        assertEquals(supplied.service, generated.service);
+        assertEquals(supplied.className, generated.className);
+        assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
+        assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
+        assertEquals("false", generated.properties.get("JtaManaged"));
+
+        final String expected = Join.join("\n", supplied.classpath);
+        final String actual = Join.join("\n", generated.classpath);
+        assertEquals(expected, actual);
+    }
+
     /**
      * Existing data source "orange-unit", non-jta-managed
      * 
@@ -1415,6 +1450,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     private ResourceInfo addDataSource(String id, Class driver, String url, Boolean managed) throws OpenEJBException {
         Resource resource = new Resource(id, "DataSource");
+        return addDataSource(driver, url, managed, resource);
+    }
+
+    private ResourceInfo addDataSource(Class driver, String url, Boolean managed, Resource resource) throws OpenEJBException {
         resource.getProperties().put("JdbcDriver", driver.getName());
         resource.getProperties().put("JdbcUrl", url);
         resource.getProperties().put("JtaManaged", managed + " ");  // space should be trimmed later, this verifies that.

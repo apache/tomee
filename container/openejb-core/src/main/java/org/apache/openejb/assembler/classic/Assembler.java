@@ -181,6 +181,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2137,7 +2138,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         replaceResourceAdapterProperty(serviceRecipe);
 
-        Object service = serviceRecipe.create();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            if (serviceInfo.classpath != null && serviceInfo.classpath.length > 0) {
+                final URL[] urls = new URL[serviceInfo.classpath.length];
+                for (int i = 0; i < serviceInfo.classpath.length; i++) {
+                    urls[i] = serviceInfo.classpath[i].toURL();
+                }
+                loader = new URLClassLoader(urls, loader);
+                System.out.println("Creating DriverClassLoader " + loader);
+            }
+        } catch (MalformedURLException e) {
+            throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);
+        }
+
+        Object service = serviceRecipe.create(loader);
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
@@ -2210,7 +2226,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // standard properties
             connectionManagerRecipe.setProperty("transactionManager", transactionManager);
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = loader;
             if (classLoader == null) {
                 classLoader = getClass().getClassLoader();
             }
@@ -2262,7 +2278,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             logUnusedProperties(unset, serviceInfo);
         } else if (service instanceof DataSource) {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = loader;
             if (classLoader == null) {
                 classLoader = getClass().getClassLoader();
             }

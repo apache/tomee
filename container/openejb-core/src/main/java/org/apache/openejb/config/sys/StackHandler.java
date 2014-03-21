@@ -151,6 +151,10 @@ public class StackHandler extends DefaultHandler {
             if (attributes.getValue("factory-name") != null) {
                 service.setFactoryName(attributes.getValue("factory-name"));
             }
+            if (attributes.getValue("classpath") != null) {
+                service.setClasspath(attributes.getValue("classpath"));
+            }
+
             checkAttributes(attributes, getAttributes());
         }
 
@@ -163,6 +167,7 @@ public class StackHandler extends DefaultHandler {
             attributes.add("class-name");
             attributes.add("constructor");
             attributes.add("factory-name");
+            attributes.add("classpath");
             return attributes;
         }
 

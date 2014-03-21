@@ -20,7 +20,9 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
+import org.apache.openejb.resource.jdbc.driver.AlternativeDriver;
 import org.apache.openejb.resource.jdbc.logging.LoggingSqlDataSource;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.Duration;
@@ -35,6 +37,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.sql.Driver;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -82,6 +86,19 @@ public class DataSourceFactory {
         boolean managed = configuredManaged;
         if (properties.containsKey("transactional")) {
             managed = Boolean.parseBoolean((String) properties.remove("transactional")) || managed;
+        }
+
+        normalizeJdbcUrl(properties);
+
+        final String jdbcUrl = properties.getProperty("JdbcUrl");
+
+        if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null) {
+            try {
+                final AlternativeDriver driver = new AlternativeDriver((Driver)impl.newInstance(), jdbcUrl);
+                driver.register();
+            } catch (SQLException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
@@ -149,6 +166,28 @@ public class DataSourceFactory {
             if (useContainerLoader) {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
+        }
+    }
+
+    private static void normalizeJdbcUrl(final Properties properties) {
+        final String key = "JdbcUrl";
+        final String jdbcUrl = properties.getProperty(key);
+
+        if (jdbcUrl == null) {
+            return;
+        }
+
+        try {
+            // get the plugin
+            final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(jdbcUrl);
+
+            // configure this
+            if (helper != null) {
+                final String newUrl = helper.updatedUrl(jdbcUrl);
+                properties.setProperty(key, newUrl);
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
         }
     }
 
