@@ -121,6 +121,7 @@ import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
@@ -181,7 +182,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2146,8 +2146,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (int i = 0; i < serviceInfo.classpath.length; i++) {
                     urls[i] = serviceInfo.classpath[i].toURL();
                 }
-                loader = new URLClassLoader(urls, loader);
-                System.out.println("Creating DriverClassLoader " + loader);
+                loader = new URLClassLoaderFirst(urls, loader);
             }
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);

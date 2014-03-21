@@ -27,10 +27,13 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.xbean.asm4.ClassWriter;
 import org.apache.xbean.asm4.MethodVisitor;
 import org.apache.xbean.asm4.Opcodes;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.naming.InitialContext;
@@ -43,7 +46,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -60,6 +62,12 @@ import static org.apache.xbean.asm4.Opcodes.RETURN;
  * @version $Rev$ $Date$
  */
 public class ServiceClasspathTest extends Assert {
+    @After
+    @Before
+    public void reset() {
+        SystemInstance.reset();
+        PropertyPlaceHolderHelper.reset();
+    }
 
 
     @Test
@@ -148,7 +156,9 @@ public class ServiceClasspathTest extends Assert {
 
         final PrintStream out = new PrintStream(IO.write(xml));
         out.println("<openejb>\n" +
-                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\" class-name=\"org.superbiz.foo.Orange\" classpath=\"${openejb.home}/" + jar.getName() + "\">\n" +
+                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\"" +
+                "           class-name=\"org.superbiz.foo.Orange\"" +
+                "           classpath=\"${openejb.home}/" + jar.getName() + "\">\n" +
                 "    red = FF\n" +
                 "    green = 99\n" +
                 "    blue = 00\n" +
@@ -162,6 +172,7 @@ public class ServiceClasspathTest extends Assert {
         final Properties properties = new Properties();
         properties.setProperty("openejb.home", jar.getParentFile().getAbsolutePath());
         SystemInstance.init(properties);
+        PropertyPlaceHolderHelper.reset();
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 

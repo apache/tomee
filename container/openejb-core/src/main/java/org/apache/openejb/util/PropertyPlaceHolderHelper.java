@@ -28,17 +28,22 @@ public final class PropertyPlaceHolderHelper {
     private static final String SUFFIX = "}";
     private static final Properties CACHE = new Properties();
 
-    public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
+    private static final PropertiesLookup RESOLVER = new PropertiesLookup();
+    public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(RESOLVER);
 
     private PropertyPlaceHolderHelper() {
         // no-op
+    }
+
+    public static void reset() {
+        CACHE.clear();
+        RESOLVER.reload();
     }
 
     public static String simpleValue(final String raw) {
         if (raw == null || !raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
             return raw;
         }
-
 
         String value = SUBSTITUTOR.replace(raw);
         if (!value.equals(raw) && value.startsWith("java:")) {
@@ -86,11 +91,11 @@ public final class PropertyPlaceHolderHelper {
     }
 
     private static class PropertiesLookup extends StrLookup<Object> {
-        private static final Properties PROPERTIES = SystemInstance.get().getProperties();
+        private static Properties PROPERTIES = SystemInstance.get().getProperties();
         private static final Map<String, String> ENV = System.getenv();
 
         @Override
-        public String lookup(final String key) {
+        public synchronized String lookup(final String key) {
             String value = PROPERTIES.getProperty(key);
             if (value != null) {
                 return value;
@@ -102,6 +107,10 @@ public final class PropertyPlaceHolderHelper {
             }
 
             return key;
+        }
+
+        public synchronized void reload() {
+            PROPERTIES = SystemInstance.get().getProperties();
         }
     }
 }
