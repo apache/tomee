@@ -23,6 +23,7 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,6 +45,7 @@ import java.util.concurrent.Future;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static java.util.Arrays.asList;
 import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
 import static org.apache.openejb.util.URLs.toFile;
 
@@ -179,6 +181,16 @@ public class TldScanner {
                 }
                 files.add(file);
             }
+        }
+        final File webInfMetaInf = new File(webInfDir, "classes/META-INF");
+        if (webInfMetaInf.exists()) {
+            // filter directly to let it be faster in next loop
+            files.addAll(asList(webInfMetaInf.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(final File dir, final String name) {
+                    return name.endsWith(".tld");
+                }
+            })));
         }
 
         if (files.isEmpty()) {
