@@ -60,4 +60,9 @@ public interface Service {
     String getConstructor();
 
     String getFactoryName();
+
+    void setClasspath(String classpath);
+
+    String getClasspath();
+
 }

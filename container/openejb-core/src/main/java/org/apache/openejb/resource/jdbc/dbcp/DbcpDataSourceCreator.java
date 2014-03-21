@@ -57,4 +57,27 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
         ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
     }
+
+    @Override
+    protected <T> T build(final Class<T> clazz, final Properties properties) {
+        final T object = super.build(clazz, properties);
+        setDriverLoader(object);
+        return object;
+    }
+
+    @Override
+    protected <T> T build(final Class<T> clazz, final Object instance, final Properties properties) {
+        final T object = super.build(clazz, instance, properties);
+        setDriverLoader(object);
+        return object;
+    }
+
+    private <T> void setDriverLoader(final T object) {
+        if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
+            final org.apache.commons.dbcp.BasicDataSource basicDataSource = (org.apache.commons.dbcp.BasicDataSource) object;
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            System.out.println("Setting DriverClassLoader to " + contextClassLoader);
+            basicDataSource.setDriverClassLoader(contextClassLoader);
+        }
+    }
 }

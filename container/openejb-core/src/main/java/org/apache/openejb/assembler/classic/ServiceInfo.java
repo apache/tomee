@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -29,10 +30,11 @@ public class ServiceInfo extends InfoObject {
     public String displayName;
     public String className;
     public String codebase;
+    public URI[] classpath;
     public Properties properties;
     public final List<String> constructorArgs = new ArrayList<String>();
 
     /** Optional **/
     public String factoryMethod;
-    
+
 }

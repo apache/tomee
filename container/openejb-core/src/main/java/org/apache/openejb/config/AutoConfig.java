@@ -1797,6 +1797,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         b.types.addAll(a.types);
         b.properties = new SuperProperties();
         b.properties.putAll(a.properties);
+        if (a.classpath != null) {
+            b.classpath = new URI[a.classpath.length];
+            System.arraycopy(a.classpath, 0, b.classpath, 0, a.classpath.length);
+        }
         //b.aliases.addAll(a.aliases);
 
         return b;

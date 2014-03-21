@@ -432,6 +432,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
+    public OpenEjbConfiguration getOpenEjbConfiguration(final File configuartionFile) throws OpenEJBException {
+        if (configuartionFile != null) {
+            return getOpenEjbConfiguration(JaxbOpenejb.readConfig(configuartionFile.getAbsolutePath()));
+        } else {
+            return getOpenEjbConfiguration((Openejb) null);
+        }
+    }
+
     public OpenEjbConfiguration getOpenEjbConfiguration(final Openejb providedConf) throws OpenEJBException {
         if (sys != null) {
             return sys;
@@ -573,7 +581,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      */
     @Override
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
-        return getOpenEjbConfiguration(null);
+        return getOpenEjbConfiguration((Openejb) null);
     }
 
     private List<File> getDeclaredApps() {
@@ -1146,6 +1154,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             if (info instanceof ResourceInfo && service instanceof Resource) {
                 ((ResourceInfo) info).jndiName = ((Resource) service).getJndi();
                 ((ResourceInfo) info).aliases.addAll(((Resource) service).getAliases());
+            }
+
+            if (service.getClasspath() != null && service.getClasspath().length() > 0) {
+                final FileUtils base = SystemInstance.get().getBase();
+                final String[] strings = service.getClasspath().split(File.pathSeparator);
+                final URI[] classpath = new URI[strings.length];
+                for (int i = 0; i < strings.length; i++) {
+                    final String string = strings[i];
+                    final File file = base.getFile(string, false);
+                    classpath[i] = file.toURI();
+                }
+
+                info.classpath = classpath;
             }
 
             specialProcessing(info);
