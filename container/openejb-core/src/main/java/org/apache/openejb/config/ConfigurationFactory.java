@@ -763,7 +763,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     final String[] paths = cp.split(File.pathSeparator);
                     final List<URL> urls = new ArrayList<URL>();
                     for (final String path : paths) {
-                        urls.add(new File(path).toURI().normalize().toURL());
+                        urls.add(new File(PropertyPlaceHolderHelper.value(ProvisioningUtil.realLocation(path))).toURI().normalize().toURL());
                     }
                     deployments.setClasspath(new URLClassLoaderFirst(urls.toArray(new URL[urls.size()]), ParentClassLoaderFinder.Helper.get()));
                 }
