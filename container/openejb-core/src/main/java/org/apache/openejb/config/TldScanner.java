@@ -29,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -203,7 +202,7 @@ public class TldScanner {
             if (file.isDirectory()) {
                 final File[] a = file.listFiles();
                 if (a != null) {
-                    files.addAll(Arrays.asList(a));
+                    files.addAll(asList(a));
                 }
             } else if (file.getName().endsWith(".tld")) {
                 try {

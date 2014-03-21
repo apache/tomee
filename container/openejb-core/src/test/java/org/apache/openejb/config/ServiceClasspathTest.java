@@ -148,7 +148,7 @@ public class ServiceClasspathTest extends Assert {
 
         final PrintStream out = new PrintStream(IO.write(xml));
         out.println("<openejb>\n" +
-                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\" class-name=\"org.superbiz.foo.Orange\" classpath=\"" + jar.getName() + "\">\n" +
+                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\" class-name=\"org.superbiz.foo.Orange\" classpath=\"${openejb.home}/" + jar.getName() + "\">\n" +
                 "    red = FF\n" +
                 "    green = 99\n" +
                 "    blue = 00\n" +
