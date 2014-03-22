@@ -17,6 +17,7 @@
 
 package org.apache.openejb.server.rest;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
@@ -912,7 +913,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new StartApplicationContext(appInfo, null));
+                final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+                afterApplicationCreated(new StartApplicationContext(appInfo, appContext));
             }
         }
     }
