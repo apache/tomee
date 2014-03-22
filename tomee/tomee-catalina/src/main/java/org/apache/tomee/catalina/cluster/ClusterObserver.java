@@ -19,8 +19,8 @@ package org.apache.tomee.catalina.cluster;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.ClusterMessage;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
-import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.assembler.classic.event.StartApplicationContext;
+import org.apache.openejb.assembler.classic.event.StopApplicationContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 
@@ -36,21 +36,21 @@ public class ClusterObserver {
         this.clusters = clusters;
     }
 
-    public void deploy(@Observes final AssemblerAfterApplicationCreated app) {
+    public void deploy(@Observes final StartApplicationContext app) {
         if (!ClUSTER_DEPLOYMENT) {
             return;
         }
 
-        final AppInfo appInfo = app.getApp();
+        final AppInfo appInfo = app.getApplicationInfo();
         send(new DeployMessage(appInfo.path), appInfo);
     }
 
-    public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed app) {
+    public void undeploy(@Observes final StopApplicationContext app) {
         if (!ClUSTER_DEPLOYMENT) {
             return;
         }
 
-        final AppInfo appInfo = app.getApp();
+        final AppInfo appInfo = app.getApplicationInfo();
         send(new UndeployMessage(appInfo.path), appInfo);
     }
 

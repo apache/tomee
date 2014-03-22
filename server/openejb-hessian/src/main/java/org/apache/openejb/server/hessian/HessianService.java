@@ -22,9 +22,9 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
-import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.assembler.classic.event.StartApplicationContext;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.StopApplicationContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.SelfManaging;
@@ -114,7 +114,7 @@ public class HessianService implements ServerService, SelfManaging {
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId).getBeanContexts()));
+                afterApplicationCreated(new StartApplicationContext(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId)));
             }
         }
     }
@@ -160,24 +160,24 @@ public class HessianService implements ServerService, SelfManaging {
         deploy(event.getApp(), event.getBeanContexts());
     }
 
-    public void afterApplicationCreated(final @Observes AssemblerAfterApplicationCreated event) {
-        final AppInfo appInfo = event.getApp();
-        deploy(appInfo, event.getDeployedEjbs());
+    public void afterApplicationCreated(final @Observes StartApplicationContext event) {
+        final AppInfo appInfo = event.getApplicationInfo();
+        deploy(appInfo, event.getApplicationContext().getBeanContexts());
     }
 
-    public void beforeApplicationDestroyed(@Observes final AssemblerBeforeApplicationDestroyed event) {
+    public void beforeApplicationDestroyed(@Observes final StopApplicationContext event) {
         if (disabled) {
             return;
         }
 
-        for (final BeanContext beanContext : SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(event.getApp().appId).getBeanContexts()) {
+        for (final BeanContext beanContext : event.getApplicationContext().getBeanContexts()) {
             final Class<?> remoteItf = beanContext.getBusinessRemoteInterface();
             if (remoteItf == null) {
                 continue;
             }
 
             final String name = String.class.cast(beanContext.getDeploymentID());
-            registry.undeploy(virtualHost, appName(event.getApp(), beanContext), name);
+            registry.undeploy(virtualHost, appName(event.getApplicationInfo(), beanContext), name);
             LOGGER.info("Undeployed hessian service " + name);
         }
     }

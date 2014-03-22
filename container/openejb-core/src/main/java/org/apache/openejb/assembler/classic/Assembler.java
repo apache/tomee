@@ -45,6 +45,8 @@ import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
+import org.apache.openejb.assembler.classic.event.StartApplicationContext;
+import org.apache.openejb.assembler.classic.event.StopApplicationContext;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.cdi.CdiAppContextsService;
@@ -886,6 +888,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             deployedApplications.put(appInfo.path, appInfo);
             resumePersistentSchedulers(appContext);
 
+            systemInstance.fireEvent(new StartApplicationContext(appInfo, appContext));
+
             logger.info("createApplication.success", appInfo.path);
             systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, allDeployments));
 
@@ -1523,6 +1527,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Context globalContext = containerSystem.getJNDIContext();
             final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
             final ClassLoader classLoader = appContext.getClassLoader();
+
+            SystemInstance.get().fireEvent(new StopApplicationContext(appInfo, appContext));
 
             if (null == appContext) {
                 logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
