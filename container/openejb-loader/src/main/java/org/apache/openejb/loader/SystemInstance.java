@@ -104,8 +104,8 @@ public class SystemInstance {
 
     }
 
-    public void fireEvent(Object event) {
-        observerManager.fireEvent(event);
+    public <E> E fireEvent(E event) {
+        return observerManager.fireEvent(event);
     }
 
     public boolean addObserver(Object observer) {

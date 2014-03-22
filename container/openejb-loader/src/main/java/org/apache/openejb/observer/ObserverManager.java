@@ -67,11 +67,12 @@ public class ObserverManager {
         return removed;
     }
 
-    public <T> void fireEvent(final T event) {
+    public <T> T fireEvent(final T event) {
         if (event == null) throw new IllegalArgumentException("event cannot be null");
 
         doFire(event);
         doFire(new AfterEventImpl<T>(event));
+        return event;
     }
 
     private void doFire(final Object event) {

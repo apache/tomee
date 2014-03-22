@@ -18,61 +18,126 @@ package org.apache.openejb.loader;
 
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.AfterEvent;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class EventTest {
-    @After
     @Before
     public void reset() {
         SystemInstance.reset();
-        SimpleObserver.id = -1;
+        final SystemInstance s = SystemInstance.get();
+        s.addObserver(new AfterSimpleObserver());
+        s.addObserver(new SimpleObserver());
     }
 
     @Test
     public void simple() {
         final SystemInstance s = SystemInstance.get();
-        assertEquals(-1, SimpleObserver.id);
-        s.addObserver(new SimpleObserver());
-        s.fireEvent(new SimpleEvent());
-        assertEquals(1, SimpleObserver.id);
+        final OrangeEvent orangeEvent = s.fireEvent(new OrangeEvent());
+
+        assertEvent(orangeEvent.observed, SimpleObserver.orange);
     }
 
     @Test
     public void afterEvent() {
         final SystemInstance s = SystemInstance.get();
-        assertEquals(-1, SimpleObserver.id);
-        s.addObserver(new SimpleObserver());
-        s.addObserver(new AfterSimpleObserver());
-        final SimpleEvent event = new SimpleEvent();
-        s.fireEvent(event);
-        assertEquals(1, SimpleObserver.id);
-        assertNotNull(AfterSimpleObserver.event);
-        assertEquals(event, AfterSimpleObserver.event.getEvent());
+
+        assertEvent(s.fireEvent(new GreenEvent()).observed,
+                SimpleObserver.green,
+                AfterSimpleObserver.afterGreen
+        );
+
+        assertEvent(s.fireEvent(new SquareEvent()).observed,
+                AfterSimpleObserver.afterSquare
+        );
     }
 
-    public static class SimpleEvent {}
+    public static class ColorEvent {
+        final List<String> observed = new ArrayList<String>();
+    }
+
+    public static class OrangeEvent extends ColorEvent {
+    }
+
+    public static class GreenEvent extends ColorEvent {
+    }
+
+    public static class SquareEvent {
+        final List<String> observed = new ArrayList<String>();
+    }
+
+
+    public static class ColorObserver {
+        private static final String afterColor = "ColorObserver.afterColor";
+        private static final String color = "ColorObserver.color";
+
+        public void observe(@Observes ColorEvent event) {
+            event.observed.add(color);
+        }
+
+        public void observe(@Observes AfterEvent<ColorEvent> event) {
+            assertThat(event.getEvent(), instanceOf(ColorEvent.class));
+            event.getEvent().observed.add(color);
+        }
+    }
 
     public static class AfterSimpleObserver {
-        private static AfterEvent<SimpleEvent> event;
 
-        public void observe(final @Observes AfterEvent<SimpleEvent> event) {
-            AfterSimpleObserver.event = event;
-            assertThat(event.getEvent(), instanceOf(SimpleEvent.class));
+        private static final String afterGreen = "AfterSimpleObserver.afterGreen";
+        private static final String afterSquare = "AfterSimpleObserver.afterSquare";
+
+        public void afterGreen(final @Observes AfterEvent<GreenEvent> event) {
+            assertThat(event.getEvent(), instanceOf(GreenEvent.class));
+            event.getEvent().observed.add(afterGreen);
+        }
+
+        public void afterSquare(final @Observes AfterEvent<SquareEvent> event) {
+            assertThat(event.getEvent(), instanceOf(SquareEvent.class));
+            event.getEvent().observed.add(afterSquare);
         }
     }
 
     public static class SimpleObserver {
-        private static int id = -1;
 
-        public void observe(final @Observes SimpleEvent event) {
-            id = 1;
+        private static final String orange = "SimpleObserver.orange";
+        private static final String green = "SimpleObserver.green";
+
+        public void observe(final @Observes OrangeEvent event) {
+            event.observed.add(orange);
+        }
+
+        public void observe(final @Observes GreenEvent event) {
+            event.observed.add(green);
         }
     }
+
+    private static void assertEvent(List<String> observed, String... expected) {
+        assertEquals(join(expected), join(observed));
+    }
+
+    public static String join(final Object... collection) {
+        return join(Arrays.asList(collection));
+    }
+
+    public static String join(final Collection<?> collection) {
+        final String delimiter = "\n";
+        if (collection.size() == 0) {
+            return "";
+        }
+        final StringBuilder sb = new StringBuilder();
+        for (final Object obj : collection) {
+            sb.append(obj).append(delimiter);
+        }
+        return sb.substring(0, sb.length() - delimiter.length());
+    }
+
 }
