@@ -37,6 +37,7 @@ public class EventTest {
         final SystemInstance s = SystemInstance.get();
         s.addObserver(new AfterSimpleObserver());
         s.addObserver(new SimpleObserver());
+        s.addObserver(new BlueObserver());
     }
 
     @Test
@@ -61,6 +62,17 @@ public class EventTest {
         );
     }
 
+    @Test
+    public void observeBoth() {
+        final SystemInstance s = SystemInstance.get();
+
+        assertEvent(s.fireEvent(new BlueEvent()).observed,
+                BlueObserver.blue,
+                BlueObserver.afterBlue
+        );
+
+    }
+
     public static class ColorEvent {
         final List<String> observed = new ArrayList<String>();
     }
@@ -69,6 +81,9 @@ public class EventTest {
     }
 
     public static class GreenEvent extends ColorEvent {
+    }
+
+    public static class BlueEvent extends ColorEvent {
     }
 
     public static class SquareEvent {
@@ -119,6 +134,21 @@ public class EventTest {
             event.observed.add(green);
         }
     }
+
+    public static class BlueObserver {
+
+        private static final String blue = "BlueObserver.blue";
+        private static final String afterBlue = "BlueObserver.afterBlue";
+
+        public void observe(final @Observes BlueEvent event) {
+            event.observed.add(blue);
+        }
+
+        public void observeAfter(final @Observes AfterEvent<BlueEvent> event) {
+            event.getEvent().observed.add(afterBlue);
+        }
+    }
+
 
     private static void assertEvent(List<String> observed, String... expected) {
         assertEquals(join(expected), join(observed));
