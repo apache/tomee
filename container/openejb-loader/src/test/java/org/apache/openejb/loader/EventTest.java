@@ -18,6 +18,7 @@ package org.apache.openejb.loader;
 
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.AfterEvent;
+import org.apache.openejb.observer.event.BeforeEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,10 +64,11 @@ public class EventTest {
     }
 
     @Test
-    public void observeBoth() {
+    public void observeAll() {
         final SystemInstance s = SystemInstance.get();
 
         assertEvent(s.fireEvent(new BlueEvent()).observed,
+                BlueObserver.beforeBlue,
                 BlueObserver.blue,
                 BlueObserver.afterBlue
         );
@@ -139,6 +141,11 @@ public class EventTest {
 
         private static final String blue = "BlueObserver.blue";
         private static final String afterBlue = "BlueObserver.afterBlue";
+        private static final String beforeBlue = "BlueObserver.beforeBlue";
+
+        public void observeBefore(final @Observes BeforeEvent<BlueEvent> event) {
+            event.getEvent().observed.add(beforeBlue);
+        }
 
         public void observe(final @Observes BlueEvent event) {
             event.observed.add(blue);
