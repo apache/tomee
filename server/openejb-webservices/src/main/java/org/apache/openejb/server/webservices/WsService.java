@@ -31,9 +31,9 @@ import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
-import org.apache.openejb.assembler.classic.event.StartApplicationContext;
-import org.apache.openejb.assembler.classic.event.StopApplicationContext;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -187,7 +187,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
                 final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
-                deploy(new StartApplicationContext(appInfo, appContext));
+                deploy(new AssemblerAfterApplicationCreated(appInfo, appContext, null));
             }
         }
     }
@@ -197,7 +197,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
             for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                undeploy(new StopApplicationContext(appInfo, null));
+                undeploy(new AssemblerBeforeApplicationDestroyed(appInfo, null));
             }
             assembler = null;
             if (SystemInstance.get().getComponent(WsService.class) == this) {
@@ -221,10 +221,10 @@ public abstract class WsService implements ServerService, SelfManaging {
         deployApp(event.getApp(), event.getBeanContexts());
     }
 
-    public void deploy(final @Observes StartApplicationContext event) {
-        final AppInfo appInfo = event.getApplicationInfo();
+    public void deploy(final @Observes AssemblerAfterApplicationCreated event) {
+        final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
-            deployApp(appInfo, event.getApplicationContext().getBeanContexts());
+            deployApp(appInfo, event.getContext().getBeanContexts());
         }
     }
 
@@ -426,8 +426,8 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    public void undeploy(@Observes final StopApplicationContext event) {
-        final AppInfo appInfo = event.getApplicationInfo();
+    public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed event) {
+        final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
                 final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
