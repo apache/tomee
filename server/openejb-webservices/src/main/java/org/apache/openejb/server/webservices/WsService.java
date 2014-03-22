@@ -187,7 +187,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
                 final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
-                afterApplicationCreated(new StartApplicationContext(appInfo, appContext));
+                deploy(new StartApplicationContext(appInfo, appContext));
             }
         }
     }
@@ -197,7 +197,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
             for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                beforeApplicationDestroyed(new StopApplicationContext(appInfo, null));
+                undeploy(new StopApplicationContext(appInfo, null));
             }
             assembler = null;
             if (SystemInstance.get().getComponent(WsService.class) == this) {
@@ -221,7 +221,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         deployApp(event.getApp(), event.getBeanContexts());
     }
 
-    public void afterApplicationCreated(final @Observes StartApplicationContext event) {
+    public void deploy(final @Observes StartApplicationContext event) {
         final AppInfo appInfo = event.getApplicationInfo();
         if (deployedApplications.add(appInfo)) {
             deployApp(appInfo, event.getApplicationContext().getBeanContexts());
@@ -426,7 +426,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    public void beforeApplicationDestroyed(@Observes final StopApplicationContext event) {
+    public void undeploy(@Observes final StopApplicationContext event) {
         final AppInfo appInfo = event.getApplicationInfo();
         if (deployedApplications.remove(appInfo)) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {

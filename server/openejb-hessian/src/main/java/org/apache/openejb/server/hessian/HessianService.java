@@ -114,7 +114,7 @@ public class HessianService implements ServerService, SelfManaging {
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new StartApplicationContext(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId)));
+                deploy(new StartApplicationContext(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId)));
             }
         }
     }
@@ -160,12 +160,12 @@ public class HessianService implements ServerService, SelfManaging {
         deploy(event.getApp(), event.getBeanContexts());
     }
 
-    public void afterApplicationCreated(final @Observes StartApplicationContext event) {
+    public void deploy(final @Observes StartApplicationContext event) {
         final AppInfo appInfo = event.getApplicationInfo();
         deploy(appInfo, event.getApplicationContext().getBeanContexts());
     }
 
-    public void beforeApplicationDestroyed(@Observes final StopApplicationContext event) {
+    public void undeploy(@Observes final StopApplicationContext event) {
         if (disabled) {
             return;
         }

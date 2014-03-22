@@ -885,7 +885,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return cl;
     }
 
-    public void beforeApplicationDestroyed(@Observes final StopApplicationContext event) {
+    public void deploy(@Observes final StopApplicationContext event) {
         final AppInfo app = event.getApplicationInfo();
         if (deployedApplications.contains(app)) {
             for (final WebAppInfo webApp : app.webApps) {
@@ -931,7 +931,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
             for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                beforeApplicationDestroyed(new StopApplicationContext(appInfo, null));
+                deploy(new StopApplicationContext(appInfo, null));
             }
         }
 
