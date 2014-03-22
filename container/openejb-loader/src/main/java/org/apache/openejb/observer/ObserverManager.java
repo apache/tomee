@@ -17,6 +17,7 @@
 package org.apache.openejb.observer;
 
 import org.apache.openejb.observer.event.AfterEvent;
+import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.openejb.observer.event.ObserverAdded;
 import org.apache.openejb.observer.event.ObserverFailed;
 import org.apache.openejb.observer.event.ObserverRemoved;
@@ -70,6 +71,7 @@ public class ObserverManager {
     public <T> T fireEvent(final T event) {
         if (event == null) throw new IllegalArgumentException("event cannot be null");
 
+        doFire(new BeforeEventImpl<T>(event));
         doFire(event);
         doFire(new AfterEventImpl<T>(event));
         return event;
@@ -193,6 +195,28 @@ public class ObserverManager {
                         return new Invocation(this, m.getValue(), event);
                     }
                 }
+            } else if (method == null && BeforeEventImpl.class.isInstance(event)) {
+                final Type type = new ParameterizedType() {
+                    @Override
+                    public Type[] getActualTypeArguments() {
+                        return new Type[] { BeforeEventImpl.class.cast(event).getEvent().getClass() };
+                    }
+
+                    @Override
+                    public Type getRawType() {
+                        return BeforeEvent.class;
+                    }
+
+                    @Override
+                    public Type getOwnerType() {
+                        return null;
+                    }
+                };
+                for (final Map.Entry<Type, Method> m : methods.entrySet()) {
+                    if (m.getKey().equals(type)) {
+                        return new Invocation(this, m.getValue(), event);
+                    }
+                }
             }
 
             if (method != null) {
@@ -276,6 +300,18 @@ public class ObserverManager {
         private final T event;
 
         public AfterEventImpl(final T event) {
+            this.event = event;
+        }
+
+        public T getEvent() {
+            return event;
+        }
+    }
+
+    private static class BeforeEventImpl<T> implements BeforeEvent<T> {
+        private final T event;
+
+        public BeforeEventImpl(final T event) {
             this.event = event;
         }
 
