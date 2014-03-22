@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic.event;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.observer.Event;
@@ -25,17 +26,21 @@ import java.util.Collection;
 @Event
 public class AssemblerAfterApplicationCreated {
     private final AppInfo app;
+    private final AppContext context;
     private final Collection<BeanContext> deployedEjbs;
-    private final String s;
 
-    public AssemblerAfterApplicationCreated(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
+    public AssemblerAfterApplicationCreated(final AppInfo appInfo, final AppContext appContext, final Collection<BeanContext> ejbs) {
         app = appInfo;
+        context = appContext;
         deployedEjbs = ejbs;
-        this.s = "AssemblerAfterApplicationCreated{app=" + app.appId +"}";
     }
 
     public AppInfo getApp() {
         return app;
+    }
+
+    public AppContext getContext() {
+        return context;
     }
 
     public Collection<BeanContext> getDeployedEjbs() {
@@ -44,6 +49,6 @@ public class AssemblerAfterApplicationCreated {
 
     @Override
     public String toString() {
-        return s;
+        return "AssemblerAfterApplicationCreated{app=" + app.appId +"}";
     }
 }

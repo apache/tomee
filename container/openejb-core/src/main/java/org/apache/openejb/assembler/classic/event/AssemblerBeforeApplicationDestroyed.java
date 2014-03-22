@@ -16,25 +16,30 @@
  */
 package org.apache.openejb.assembler.classic.event;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.observer.Event;
 
 @Event
 public class AssemblerBeforeApplicationDestroyed {
     private final AppInfo app;
-    private final String s;
+    private final AppContext context;
 
-    public AssemblerBeforeApplicationDestroyed(final AppInfo appInfo) {
+    public AssemblerBeforeApplicationDestroyed(final AppInfo appInfo, final AppContext appContext) {
         app = appInfo;
-        s = "AssemblerBeforeApplicationDestroyed{app=" + app.appId + "}";
+        context = appContext;
     }
 
     public AppInfo getApp() {
         return app;
     }
 
+    public AppContext getContext() {
+        return context;
+    }
+
     @Override
     public String toString() {
-        return s;
+        return "AssemblerBeforeApplicationDestroyed{app=" + app.appId + "}";
     }
 }

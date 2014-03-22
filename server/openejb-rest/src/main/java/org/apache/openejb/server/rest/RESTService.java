@@ -30,8 +30,8 @@ import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.event.StartApplicationContext;
-import org.apache.openejb.assembler.classic.event.StopApplicationContext;
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -535,11 +535,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return additionalProviders;
     }
 
-    public void afterApplicationCreated(@Observes final StartApplicationContext event) {
+    public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
         if (!enabled)
             return;
 
-        final AppInfo appInfo = event.getApplicationInfo();
+        final AppInfo appInfo = event.getApp();
         if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
             return;
         }
@@ -885,8 +885,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return cl;
     }
 
-    public void deploy(@Observes final StopApplicationContext event) {
-        final AppInfo app = event.getApplicationInfo();
+    public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed event) {
+        final AppInfo app = event.getApp();
         if (deployedApplications.contains(app)) {
             for (final WebAppInfo webApp : app.webApps) {
                 final List<DeployedService> toRemove = new ArrayList<DeployedService>();
@@ -914,7 +914,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
                 final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
-                afterApplicationCreated(new StartApplicationContext(appInfo, appContext));
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, appContext, null));
             }
         }
     }
@@ -931,7 +931,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
             for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                deploy(new StopApplicationContext(appInfo, null));
+                undeploy(new AssemblerBeforeApplicationDestroyed(appInfo, null));
             }
         }
 
