@@ -119,9 +119,7 @@ public class AlternativeDriver implements Driver {
 
     @Override
     public boolean acceptsURL(final String url) throws SQLException {
-        final boolean equals = this.url.equals(url);
-        System.out.printf("JDBC DriverManager.acceptsURL %s %s %s%n", equals, url, this.url);
-        return equals;
+        return this.url.equals(url);
     }
 
     @Override
