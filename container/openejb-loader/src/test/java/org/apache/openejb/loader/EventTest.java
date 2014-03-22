@@ -17,50 +17,62 @@
 package org.apache.openejb.loader;
 
 import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.AfterEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class EventTest {
     @After
     @Before
     public void reset() {
         SystemInstance.reset();
+        SimpleObserver.id = -1;
     }
 
-    private static final AtomicInteger ID = new AtomicInteger(0);
-
     @Test
-    public void order() {
+    public void simple() {
         final SystemInstance s = SystemInstance.get();
         assertEquals(-1, SimpleObserver.id);
-        assertEquals(-1, OrderedSimpleObserver.id);
-        s.addObserver(new OrderedSimpleObserver());
         s.addObserver(new SimpleObserver());
         s.fireEvent(new SimpleEvent());
         assertEquals(1, SimpleObserver.id);
-        assertEquals(2, OrderedSimpleObserver.id);
+    }
+
+    @Test
+    public void afterEvent() {
+        final SystemInstance s = SystemInstance.get();
+        assertEquals(-1, SimpleObserver.id);
+        s.addObserver(new SimpleObserver());
+        s.addObserver(new AfterSimpleObserver());
+        final SimpleEvent event = new SimpleEvent();
+        s.fireEvent(event);
+        assertEquals(1, SimpleObserver.id);
+        assertNotNull(AfterSimpleObserver.event);
+        assertEquals(event, AfterSimpleObserver.event.getEvent());
     }
 
     public static class SimpleEvent {}
+
+    public static class AfterSimpleObserver {
+        private static AfterEvent<SimpleEvent> event;
+
+        public void observe(final @Observes AfterEvent<SimpleEvent> event) {
+            AfterSimpleObserver.event = event;
+            assertThat(event.getEvent(), instanceOf(SimpleEvent.class));
+        }
+    }
 
     public static class SimpleObserver {
         private static int id = -1;
 
         public void observe(final @Observes SimpleEvent event) {
-            id = ID.incrementAndGet();
-        }
-    }
-
-    public static class OrderedSimpleObserver {
-        private static int id = -1;
-
-        public void observe(final @Observes(after = SimpleObserver.class) SimpleEvent event) {
-            id = ID.incrementAndGet();
+            id = 1;
         }
     }
 }
