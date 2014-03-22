@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -185,7 +186,8 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new StartApplicationContext(appInfo, null));
+                final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+                afterApplicationCreated(new StartApplicationContext(appInfo, appContext));
             }
         }
     }
