@@ -52,7 +52,7 @@ public class ObserverManager {
         final boolean added = observers.add(obs);
         if (added) {
             // Observers can observe they have been added and are active
-            doFire(new ObserverAdded(observer));
+            doFire(new ObserverAdded(observer), true);
         }
         return added;
     }
@@ -63,7 +63,7 @@ public class ObserverManager {
         final boolean removed = observers.remove(new Observer(observer));
         if (removed) {
             // Observers can observe they are to be removed
-            doFire(new ObserverRemoved(observer));
+            doFire(new ObserverRemoved(observer), true);
         }
         return removed;
     }
@@ -71,16 +71,16 @@ public class ObserverManager {
     public <T> T fireEvent(final T event) {
         if (event == null) throw new IllegalArgumentException("event cannot be null");
 
-        doFire(new BeforeEventImpl<T>(event));
-        doFire(event);
-        doFire(new AfterEventImpl<T>(event));
+        doFire(new BeforeEventImpl<T>(event), true);
+        doFire(event, false);
+        doFire(new AfterEventImpl<T>(event), true);
         return event;
     }
 
-    private void doFire(final Object event) {
+    private void doFire(final Object event, final boolean internal) {
         final List<Invocation> invocations = new LinkedList<Invocation>();
         for (final Observer observer : observers) {
-            final Invocation i = observer.toInvocation(event);
+            final Invocation i = observer.toInvocation(event, internal);
             if (i != null) {
                 invocations.add(i);
             }
@@ -167,51 +167,28 @@ public class ObserverManager {
             }
         }
 
-        public Invocation toInvocation(final Object event) {
+        public Invocation toInvocation(final Object event, final boolean internal) {
             if (event == null) throw new IllegalArgumentException("event cannot be null");
 
             final Class eventType = event.getClass();
             final Method method = methods.get(eventType);
+            if (internal && method == null) {
+                return null;
+            }
 
             if (method == null && AfterEventImpl.class.isInstance(event)) {
-                final Type type = new ParameterizedType() {
-                    @Override
-                    public Type[] getActualTypeArguments() {
-                        return new Type[] { AfterEventImpl.class.cast(event).getEvent().getClass() };
-                    }
-
-                    @Override
-                    public Type getRawType() {
-                        return AfterEvent.class;
-                    }
-
-                    @Override
-                    public Type getOwnerType() {
-                        return null;
-                    }
-                };
+                final Type[] types = new Type[] {AfterEventImpl.class.cast(event).getEvent().getClass()};
+                final Type raw = AfterEvent.class;
+                final Type type = new ParameterizedTypeImpl(types, raw) ;
                 for (final Map.Entry<Type, Method> m : methods.entrySet()) {
                     if (m.getKey().equals(type)) {
                         return new Invocation(this, m.getValue(), event);
                     }
                 }
             } else if (method == null && BeforeEventImpl.class.isInstance(event)) {
-                final Type type = new ParameterizedType() {
-                    @Override
-                    public Type[] getActualTypeArguments() {
-                        return new Type[] { BeforeEventImpl.class.cast(event).getEvent().getClass() };
-                    }
-
-                    @Override
-                    public Type getRawType() {
-                        return BeforeEvent.class;
-                    }
-
-                    @Override
-                    public Type getOwnerType() {
-                        return null;
-                    }
-                };
+                final Type[] types = new Type[] { BeforeEventImpl.class.cast(event).getEvent().getClass() };
+                final Type raw = BeforeEvent.class;
+                final Type type = new ParameterizedTypeImpl(types, raw) ;
                 for (final Map.Entry<Type, Method> m : methods.entrySet()) {
                     if (m.getKey().equals(type)) {
                         return new Invocation(this, m.getValue(), event);
@@ -317,6 +294,31 @@ public class ObserverManager {
 
         public T getEvent() {
             return event;
+        }
+    }
+
+    private static class ParameterizedTypeImpl implements ParameterizedType {
+        private final Type[] types;
+        private final Type raw;
+
+        private ParameterizedTypeImpl(final Type[] types, final Type raw) {
+            this.types = types;
+            this.raw = raw;
+        }
+
+        @Override
+        public Type[] getActualTypeArguments() {
+            return types;
+        }
+
+        @Override
+        public Type getRawType() {
+            return raw;
+        }
+
+        @Override
+        public Type getOwnerType() {
+            return null;
         }
     }
 }
