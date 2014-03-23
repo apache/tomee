@@ -172,11 +172,12 @@ public class ObserverManager {
 
             final Class eventType = event.getClass();
             final Method method = methods.get(eventType);
-            if (internal && method == null) {
-                return null;
+
+            if (method != null) {
+                return new Invocation(this, method, event);
             }
 
-            if (method == null && AfterEventImpl.class.isInstance(event)) {
+            if (AfterEventImpl.class.isInstance(event)) {
                 final Type[] types = new Type[] {AfterEventImpl.class.cast(event).getEvent().getClass()};
                 final Type raw = AfterEvent.class;
                 final Type type = new ParameterizedTypeImpl(types, raw) ;
@@ -185,7 +186,7 @@ public class ObserverManager {
                         return new Invocation(this, m.getValue(), event);
                     }
                 }
-            } else if (method == null && BeforeEventImpl.class.isInstance(event)) {
+            } else if (BeforeEventImpl.class.isInstance(event)) {
                 final Type[] types = new Type[] { BeforeEventImpl.class.cast(event).getEvent().getClass() };
                 final Type raw = BeforeEvent.class;
                 final Type type = new ParameterizedTypeImpl(types, raw) ;
@@ -196,9 +197,11 @@ public class ObserverManager {
                 }
             }
 
-            if (method != null) {
-                return new Invocation(this, method, event);
-            } else if (defaultMethod != null) {
+            if (internal) {
+                return null;
+            }
+
+            if (defaultMethod != null) {
                 return new Invocation(this, defaultMethod, event);
             }
             return null;
