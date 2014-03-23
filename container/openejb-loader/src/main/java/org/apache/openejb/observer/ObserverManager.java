@@ -19,6 +19,7 @@ package org.apache.openejb.observer;
 import org.apache.openejb.observer.event.AfterEvent;
 import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.openejb.observer.event.ObserverAdded;
+import org.apache.openejb.observer.event.ObserverFailed;
 import org.apache.openejb.observer.event.ObserverRemoved;
 
 import java.lang.annotation.Annotation;
@@ -36,8 +37,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ObserverManager {
+
+    private final Stack stack = new Stack();
+
+    private static final ThreadLocal<Set<Invocation>> seen = new ThreadLocal<Set<Invocation>>() {
+        @Override
+        protected Set<Invocation> initialValue() {
+            return new HashSet<Invocation>();
+        }
+    };
+
+    private static final Logger LOGGER = Logger.getLogger(ObserverManager.class.getName());
     private final Set<Observer> observers = new LinkedHashSet<Observer>();
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
 
@@ -79,6 +93,14 @@ public class ObserverManager {
             throw new IllegalArgumentException("event cannot be null");
         }
 
+        try {
+            return doFire(event);
+        } finally {
+            seen.remove();
+        }
+    }
+
+    private <E> E doFire(E event) {
         final Class<?> type = event.getClass();
 
         final Invocation invocation = getInvocation(type);
@@ -154,7 +176,7 @@ public class ObserverManager {
     /**
      * @version $Rev$ $Date$
      */
-    public static class Observer {
+    public class Observer {
 
         private final Map<Class, Invocation> before = new ConcurrentHashMap<Class, Invocation>();
         private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
@@ -355,7 +377,7 @@ public class ObserverManager {
     };
 
 
-    public static class MethodInvocation implements Invocation {
+    public class MethodInvocation implements Invocation {
         private final Method method;
         private final Object observer;
 
@@ -369,11 +391,19 @@ public class ObserverManager {
             try {
                 method.invoke(observer, event);
             } catch (InvocationTargetException e) {
+                if (!seen.get().add(this)) return;
+
                 final Throwable t = e.getTargetException() == null ? e : e.getTargetException();
 
-//                if (e.getTargetException() != null) {
-//                    logger.log(Level.WARNING, "Observer method invocation failed", t);
-//                }
+                if (!(event instanceof ObserverFailed)) {
+                    doFire(new ObserverFailed(observer, method, event, t));
+                }
+
+                if (t instanceof InvocationTargetException && t.getCause() != null) {
+                    LOGGER.log(Level.SEVERE, "error invoking " + observer, t.getCause());
+                } else {
+                    LOGGER.log(Level.SEVERE, "error invoking " + observer, t);
+                }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -385,7 +415,28 @@ public class ObserverManager {
         }
     }
 
-    private static class AfterInvocation extends MethodInvocation {
+    private static class Stack {
+        private final int[] seen = new int[10];
+        private int i = 0;
+
+        public boolean seen(Invocation invocation) {
+            int code = invocation.hashCode();
+
+            for (int j = 0; j < seen.length; j++) {
+                if (seen[j] == code) return true;
+            }
+
+            seen[i++] = code;
+
+            if (i >= seen.length) {
+                i = 0;
+            }
+
+            return false;
+        }
+    }
+
+    private class AfterInvocation extends MethodInvocation {
 
         private AfterInvocation(Method method, Object observer) {
             super(method, observer);
@@ -402,7 +453,7 @@ public class ObserverManager {
         }
     }
 
-    private static class BeforeInvocation extends MethodInvocation {
+    private class BeforeInvocation extends MethodInvocation {
 
         private BeforeInvocation(Method method, Object observer) {
             super(method, observer);

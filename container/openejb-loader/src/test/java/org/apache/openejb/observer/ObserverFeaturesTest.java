@@ -18,6 +18,7 @@ package org.apache.openejb.observer;
 
 import org.apache.openejb.observer.event.AfterEvent;
 import org.apache.openejb.observer.event.BeforeEvent;
+import org.apache.openejb.observer.event.ObserverFailed;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.apache.openejb.observer.Util.caller;
+import static org.apache.openejb.observer.Util.description;
 
 public class ObserverFeaturesTest {
 
@@ -235,6 +237,82 @@ public class ObserverFeaturesTest {
         }, 42, new Date(), URI.create("foo:bar"));
     }
 
+    @Test
+    @Assert({ "number", "failed" })
+    public void failure() {
+        a(new Object() {
+            public void number(final @Observes Integer event) {
+                invoked();
+                throw new RuntimeException("testing exceptions");
+            }
+
+            public void failed(final @Observes ObserverFailed event) {
+                invoked();
+            }
+        }, 42);
+    }
+
+    @Test
+    @Assert({ "number", "failed" })
+    public void circularFailureDirect() {
+        a(new Object() {
+            public void number(final @Observes Integer event) {
+                invoked();
+                throw new RuntimeException("testing exceptions");
+            }
+
+            public void failed(final @Observes ObserverFailed event) {
+                invoked();
+                throw new RuntimeException("testing exceptions");
+            }
+        }, 42);
+    }
+
+    @Test
+    @Assert({
+            "number.Integer",
+            "afterObject.AfterEvent<ObserverFailed{number}>",
+            "afterObject.AfterEvent<ObserverFailed{afterObject}>",
+            "afterObject.AfterEvent<Integer>",
+    })
+    public void circularFailureAfterObject() {
+        a(new Object() {
+            public void number(final @Observes Integer event) {
+                invoked(description(event));
+                throw new RuntimeException("testing exceptions");
+            }
+
+            public void afterObject(final @Observes AfterEvent<Object> event) {
+                invoked(description(event));
+                throw new RuntimeException("testing exceptions");
+            }
+        }, 42);
+    }
+
+    @Test
+    @Assert({
+            "number.Integer",
+            "afterObject.AfterEvent<Integer>",
+            "failed.ObserverFailed{afterObject}",
+            "afterObject.AfterEvent<ObserverFailed{afterObject}>",
+    })
+    public void circluarFailureProtection() {
+        a(new Object() {
+            public void number(final @Observes Integer event) {
+                invoked(description(event));
+            }
+
+            public void afterObject(final @Observes AfterEvent<Object> event) {
+                invoked(description(event));
+                throw new RuntimeException("testing exceptions");
+            }
+
+            public void failed(final @Observes ObserverFailed event) {
+                invoked(description(event));
+                throw new RuntimeException("testing exceptions");
+            }
+        }, 42);
+    }
 
     private List<Boolean> conditions = new ArrayList<Boolean>();
     private List<String> invocations = new ArrayList<String>();
@@ -255,6 +333,11 @@ public class ObserverFeaturesTest {
     public void invoked() {
         final Method method = caller(2);
         invocations.add(method.getName());
+    }
+
+    public void invoked(String suffix) {
+        final Method method = caller(2);
+        invocations.add(method.getName() + "." + suffix);
     }
 
     private void a(final Object observer, Object... events) {
@@ -283,31 +366,5 @@ public class ObserverFeaturesTest {
         }
     }
 
-    private Method caller(final int i) {
-        try {
-            final StackTraceElement[] stackTrace = new Exception().fillInStackTrace().getStackTrace();
-            final String methodName = stackTrace[i].getMethodName();
-            final String className = stackTrace[i].getClassName();
-
-            final Class<?> clazz = this.getClass().getClassLoader().loadClass(className);
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (methodName.endsWith(method.getName())) {
-                    return method;
-                }
-            }
-
-            throw new NoSuchMethodException(methodName);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-    @java.lang.annotation.Target({ java.lang.annotation.ElementType.METHOD })
-    public @interface Assert {
-        String[] value();
-    }
 
 }
