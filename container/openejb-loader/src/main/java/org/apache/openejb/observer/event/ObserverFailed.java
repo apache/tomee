@@ -18,6 +18,8 @@ package org.apache.openejb.observer.event;
 
 import org.apache.openejb.observer.Event;
 
+import java.lang.reflect.Method;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -26,14 +28,21 @@ public class ObserverFailed {
 
     private final Object observer;
 
+    private final Method method;
+
     private final Object event;
 
     private final Throwable throwable;
 
-    public ObserverFailed(Object observer, Object event, Throwable throwable) {
+    public ObserverFailed(Object observer, Method method, Object event, Throwable throwable) {
         this.observer = observer;
         this.event = event;
+        this.method = method;
         this.throwable = throwable;
+    }
+
+    public Method getMethod() {
+        return method;
     }
 
     public Object getObserver() {
@@ -52,6 +61,7 @@ public class ObserverFailed {
     public String toString() {
         return "ObserverFailed{" +
                 "observer=" + observer.getClass().getName() +
+                ", method='" + method.toString() + "'" +
                 ", throwable=" + throwable.getClass().getName() +
                 "} " + event;
     }

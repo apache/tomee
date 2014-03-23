@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.observer;
 
+import org.apache.openejb.observer.event.AfterEvent;
+import org.apache.openejb.observer.event.BeforeEvent;
+import org.apache.openejb.observer.event.ObserverFailed;
+
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -42,5 +47,40 @@ public class Util {
 
     static void assertEvent(List<String> observed, String... expected) {
         assertEquals(join(expected), join(observed));
+    }
+
+    static Method caller(final int i) {
+        try {
+            final StackTraceElement[] stackTrace = new Exception().fillInStackTrace().getStackTrace();
+            final String methodName = stackTrace[i].getMethodName();
+            final String className = stackTrace[i].getClassName();
+
+            final Class<?> clazz = Util.class.getClassLoader().loadClass(className);
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (methodName.endsWith(method.getName())) {
+                    return method;
+                }
+            }
+
+            throw new NoSuchMethodException(methodName);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String description(Object event) {
+        if (event instanceof ObserverFailed) {
+            ObserverFailed observerFailed = (ObserverFailed) event;
+            return "ObserverFailed{" + observerFailed.getMethod().getName() + "}";
+        }
+        if (event instanceof BeforeEvent) {
+            return "BeforeEvent<" + description(((BeforeEvent) event).getEvent()) + ">";
+        }
+        if (event instanceof AfterEvent) {
+            return "AfterEvent<" + description(((AfterEvent) event).getEvent()) + ">";
+        }
+        return event.getClass().getSimpleName();
     }
 }
