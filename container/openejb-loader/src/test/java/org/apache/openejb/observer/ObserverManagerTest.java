@@ -37,21 +37,18 @@ public class ObserverManagerTest extends Assert {
     }
 
     @Test
-    @Ignore("Passed with previous ObserverManager, now fails")
     public void canObserveObject() throws Exception {
         observers.fireEvent("");
         assertEvent(BasicObserver.object);
     }
 
     @Test
-    @Ignore("Passed with previous ObserverManager, now fails")
     public void objectNotInvoked() throws Exception {
         observers.fireEvent(new Color());
         assertEvent(BasicObserver.color);
     }
 
     @Test
-    @Ignore("Passed with previous ObserverManager, now fails")
     public void observeEmerald() throws Exception {
         observers.fireEvent(new Emerald());
         assertEvent(BasicObserver.emerald);
