@@ -19,7 +19,6 @@ package org.apache.openejb.observer;
 import org.apache.openejb.observer.event.AfterEvent;
 import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.openejb.observer.event.ObserverAdded;
-import org.apache.openejb.observer.event.ObserverFailed;
 import org.apache.openejb.observer.event.ObserverRemoved;
 
 import java.lang.annotation.Annotation;
@@ -28,77 +27,127 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.lang.reflect.WildcardType;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ObserverManager {
-    private final List<Observer> observers = new ArrayList<Observer>();
+    private final Set<Observer> observers = new LinkedHashSet<Observer>();
+    private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
 
     public boolean addObserver(Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
-        final Observer obs;
         try {
-            obs = new Observer(observer);
+            if (observers.add(new Observer(observer))) {
+                methods.clear();
+                fireEvent(new ObserverAdded(observer));
+                return true;
+            } else {
+                return false;
+            }
         } catch (NotAnObserverException naoe) {
             return false;
         }
-
-        final boolean added = observers.add(obs);
-        if (added) {
-            // Observers can observe they have been added and are active
-            doFire(new ObserverAdded(observer), true);
-        }
-        return added;
     }
 
-    public boolean removeObserver(Object observer) {
-        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
-
-        final boolean removed = observers.remove(new Observer(observer));
-        if (removed) {
-            // Observers can observe they are to be removed
-            doFire(new ObserverRemoved(observer), true);
+    public boolean removeObserver(final Object observer) {
+        if (observer == null) {
+            throw new IllegalArgumentException("listener cannot be null");
         }
-        return removed;
+        try {
+            if (observers.remove(new Observer(observer))) {
+                methods.clear();
+                fireEvent(new ObserverRemoved(observer));
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NotAnObserverException naoe) {
+            return false;
+        }
     }
 
-    public <T> T fireEvent(final T event) {
-        if (event == null) throw new IllegalArgumentException("event cannot be null");
+    public <E> E fireEvent(E event) {
+        if (event == null) {
+            throw new IllegalArgumentException("event cannot be null");
+        }
 
-        doFire(new BeforeEventImpl<T>(event), true);
-        doFire(event, false);
-        doFire(new AfterEventImpl<T>(event), true);
+        final Class<?> type = event.getClass();
+
+        final Invocation invocation = getInvocation(type);
+
+        invocation.invoke(event);
+
         return event;
     }
 
-    private void doFire(final Object event, final boolean internal) {
-        final List<Invocation> invocations = new LinkedList<Invocation>();
-        for (final Observer observer : observers) {
-            final Invocation i = observer.toInvocation(event, internal);
-            if (i != null) {
-                invocations.add(i);
+    private Invocation getInvocation(Class<?> type) {
+        {
+            final Invocation invocation = methods.get(type);
+            if (invocation != null) {
+                return invocation;
             }
         }
 
-        for (final Invocation invocation : invocations) {
-            try {
-                invocation.proceed();
-            } catch (final Throwable t) {
-                if (!(event instanceof ObserverFailed) && !AfterEventImpl.class.isInstance(event)) {
-                    fireEvent(new ObserverFailed(invocation.observer, event, t));
-                }
-                if (t instanceof InvocationTargetException && t.getCause() != null) {
-                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + invocation.observer, t.getCause());
-                } else {
-                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + invocation.observer, t);
-                }
+        final Invocation invocation = buildInvocation(type);
+        methods.put(type, invocation);
+        return invocation;
+    }
+
+    private static enum Phase {
+        BEFORE,
+        INVOKE,
+        AFTER
+    }
+
+    private Invocation buildInvocation(final Class<?> type) {
+        final Invocation before = buildInvocation(Phase.BEFORE, type);
+        final Invocation after = buildInvocation(Phase.AFTER, type);
+        final Invocation invoke = buildInvocation(Phase.INVOKE, type);
+
+        if (IGNORE == before && IGNORE == after) {
+
+            return invoke;
+
+        } else {
+
+            return new BeforeAndAfterInvocationSet(before, invoke, after);
+        }
+    }
+
+    private Invocation buildInvocation(final Phase phase, final Class<?> type) {
+
+        final InvocationList list = new InvocationList();
+
+        for (final Observer observer : observers) {
+
+            final Invocation method = observer.get(phase, type);
+
+            if (method != null && method != IGNORE) {
+
+                list.add(method);
+
             }
+        }
+
+        if (list.getInvocations().size() == 0) {
+
+            return IGNORE;
+
+        } else if (list.getInvocations().size() == 1) {
+
+            return list.getInvocations().get(0);
+
+        } else {
+
+            return list;
         }
     }
 
@@ -106,19 +155,24 @@ public class ObserverManager {
      * @version $Rev$ $Date$
      */
     public static class Observer {
-        private final Map<Type, Method> methods = new HashMap<Type, Method>();
-        private final Object observer;
-        private final Class<?> observerClass;
-        private final Method defaultMethod;
 
-        public Observer(Object observer) {
-            if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+        private final Map<Class, Invocation> before = new ConcurrentHashMap<Class, Invocation>();
+        private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
+        private final Map<Class, Invocation> after = new ConcurrentHashMap<Class, Invocation>();
+        private final Object observer;
+
+        public Observer(final Object observer) {
+            if (observer == null) {
+                throw new IllegalArgumentException("observer cannot be null");
+            }
+
+            final Set<Method> methods = new HashSet<Method>();
+            methods.addAll(Arrays.asList(observer.getClass().getMethods()));
+            methods.addAll(Arrays.asList(observer.getClass().getDeclaredMethods()));
 
             this.observer = observer;
-            this.observerClass = observer.getClass();
-            for (final Method method : observer.getClass().getMethods()) {
-                final Observes annotation = isObserver(method);
-                if (annotation == null) {
+            for (final Method method : methods) {
+                if (!isObserver(method)) {
                     continue;
                 }
 
@@ -130,102 +184,147 @@ public class ObserverManager {
                     throw new IllegalArgumentException("@Observes method must not be abstract: " + method.toString());
                 }
 
+                if (Modifier.isStatic(method.getModifiers())) {
+                    throw new IllegalArgumentException("@Observes method must not be static: " + method.toString());
+                }
+
                 if (!Modifier.isPublic(method.getModifiers())) {
                     throw new IllegalArgumentException("@Observes method must be public: " + method.toString());
                 }
 
-                final Type type = method.getGenericParameterTypes()[0];
-                final Class<?> raw = method.getParameterTypes()[0];
+                final Class<?> type = method.getParameterTypes()[0];
 
-                if (raw.isAnnotation()) {
-                    throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an annotation): " + method.toString());
+                if (AfterEvent.class.equals(type)) {
+
+                    final Class parameterClass = getParameterClass(method);
+                    this.after.put(parameterClass, new AfterInvocation(method, observer));
+
+                } else if (BeforeEvent.class.equals(type)) {
+
+                    final Class parameterClass = getParameterClass(method);
+                    this.before.put(parameterClass, new BeforeInvocation(method, observer));
+
+                } else {
+
+                    validate(method, type);
+                    this.methods.put(type, new MethodInvocation(method, observer));
+
                 }
-
-                if (Modifier.isAbstract(raw.getModifiers()) && raw == type) {
-                    throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an abstract class): " + method.toString());
-                }
-
-                if (raw.isInterface() && raw == type) {
-                    throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an interface): " + method.toString());
-                }
-
-                if (raw.isArray()) {
-                    throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an array): " + method.toString());
-                }
-
-                if (raw.isPrimitive()) {
-                    throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not a primitive): " + method.toString());
-                }
-
-                methods.put(type, method);
             }
 
-            defaultMethod = methods.get(Object.class);
-
-            if (methods.size() == 0) {
+            if (methods.size() == 0 && after.size() == 0 && before.size() == 0) {
                 throw new NotAnObserverException("Object has no @Observes methods. For example: public void observe(@Observes RetryConditionAdded event){...}");
             }
         }
 
-        public Invocation toInvocation(final Object event, final boolean internal) {
-            if (event == null) throw new IllegalArgumentException("event cannot be null");
+        private Class getParameterClass(final Method method) {
 
-            final Class eventType = event.getClass();
-            final Method method = methods.get(eventType);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
 
-            if (method != null) {
-                return new Invocation(this, method, event);
+            final Type generic = genericParameterTypes[0];
+
+            if (!(generic instanceof ParameterizedType)) {
+                final Class<?> event = method.getParameterTypes()[0];
+                throw new IllegalArgumentException("@Observes " + event.getSimpleName() + " missing generic type: " + method.toString());
             }
 
-            if (AfterEventImpl.class.isInstance(event)) {
-                final Type[] types = new Type[] {AfterEventImpl.class.cast(event).getEvent().getClass()};
-                final Type raw = AfterEvent.class;
-                final Type type = new ParameterizedTypeImpl(types, raw) ;
-                for (final Map.Entry<Type, Method> m : methods.entrySet()) {
-                    if (m.getKey().equals(type)) {
-                        return new Invocation(this, m.getValue(), event);
-                    }
-                }
-            } else if (BeforeEventImpl.class.isInstance(event)) {
-                final Type[] types = new Type[] { BeforeEventImpl.class.cast(event).getEvent().getClass() };
-                final Type raw = BeforeEvent.class;
-                final Type type = new ParameterizedTypeImpl(types, raw) ;
-                for (final Map.Entry<Type, Method> m : methods.entrySet()) {
-                    if (m.getKey().equals(type)) {
-                        return new Invocation(this, m.getValue(), event);
-                    }
-                }
+            final ParameterizedType parameterized = ParameterizedType.class.cast(generic);
+
+            final Type type = parameterized.getActualTypeArguments()[0];
+
+            final Class clazz;
+
+            if (type instanceof Class) {
+
+                clazz = Class.class.cast(type);
+
+            } else if (type instanceof WildcardType) {
+
+                clazz = Object.class;
+
+            } else {
+
+                final Class<?> event = method.getParameterTypes()[0];
+                throw new IllegalArgumentException("@Observes " + event.getSimpleName() + " unsupported generic type: " + type.getClass().getSimpleName() + "  " + method.toString());
             }
 
-            if (internal) {
-                return null;
-            }
+            validate(method, clazz);
 
-            if (defaultMethod != null) {
-                return new Invocation(this, defaultMethod, event);
-            }
-            return null;
+            return clazz;
         }
 
-        public Class<?> getObserverClass() {
-            return observerClass;
+        private void validate(final Method method, final Class<?> type) {
+            if (type.isAnnotation()) {
+                throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an annotation): " + method.toString());
+            }
+
+            if (type.isInterface()) {
+                throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an interface): " + method.toString());
+            }
+
+            if (type.isArray()) {
+                throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not an array): " + method.toString());
+            }
+
+            if (type.isPrimitive()) {
+                throw new IllegalArgumentException("@Observes method parameter must be a concrete class (not a primitive): " + method.toString());
+            }
         }
 
-        private Observes isObserver(Method method) {
+        private Map<Class, Invocation> map(final Phase event) {
+            switch (event) {
+                case AFTER:
+                    return after;
+                case BEFORE:
+                    return before;
+                case INVOKE:
+                    return methods;
+                default:
+                    throw new IllegalStateException("Unknown Event style " + event);
+            }
+        }
+
+        public Invocation get(final Phase event, final Class eventType) {
+            return get(map(event), eventType);
+        }
+
+        public Invocation getAfter(final Class eventType) {
+            return get(after, eventType);
+        }
+
+        public Invocation getBefore(final Class eventType) {
+            return get(before, eventType);
+        }
+
+        private Invocation get(final Map<Class, Invocation> map, final Class eventType) {
+            if (eventType == null) return IGNORE;
+
+            final Invocation method = map.get(eventType);
+
+            if (method != null) return method;
+
+            return get(map, eventType.getSuperclass());
+        }
+
+        private boolean isObserver(final Method method) {
             for (final Annotation[] annotations : method.getParameterAnnotations()) {
                 for (final Annotation annotation : annotations) {
                     if (annotation.annotationType().equals(Observes.class)) {
-                        return Observes.class.cast(annotation);
+                        return true;
                     }
                 }
             }
-            return null;
+            return false;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Observer observer1 = (Observer) o;
 
@@ -236,92 +335,133 @@ public class ObserverManager {
         public int hashCode() {
             return observer.hashCode();
         }
+    }
+
+    public static interface Invocation {
+
+        public void invoke(Object event);
+    }
+
+
+    private static final Invocation IGNORE = new Invocation() {
+        @Override
+        public void invoke(Object event) {
+        }
 
         @Override
         public String toString() {
-            return "Observer{" +
-                    "class=" + observer.getClass().getName() +
-                    '}';
+            return "IGNORE";
         }
-    }
+    };
 
-    private static class Invocation {
-        private final Observer observer;
+
+    public static class MethodInvocation implements Invocation {
         private final Method method;
-        private final Object event;
+        private final Object observer;
 
-        private Invocation(final Observer observer, final Method method, final Object event) {
-            this.observer = observer;
+        public MethodInvocation(Method method, Object observer) {
             this.method = method;
-            this.event = event;
+            this.observer = observer;
         }
 
-        private void proceed() throws InvocationTargetException, IllegalAccessException {
-            method.invoke(observer.observer, event);
+        @Override
+        public void invoke(final Object event) {
+            try {
+                method.invoke(observer, event);
+            } catch (InvocationTargetException e) {
+                final Throwable t = e.getTargetException() == null ? e : e.getTargetException();
+
+//                if (e.getTargetException() != null) {
+//                    logger.log(Level.WARNING, "Observer method invocation failed", t);
+//                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public String toString() {
-            return "Invocation{" +
-                    "observer=" + observer +
-                    ", method=" + method +
-                    ", event=" + event +
-                    '}';
+            return method.toString();
         }
     }
 
-    private static class NotAnObserverException extends RuntimeException {
-        public NotAnObserverException(final String s) {
+    private static class AfterInvocation extends MethodInvocation {
+
+        private AfterInvocation(Method method, Object observer) {
+            super(method, observer);
+        }
+
+        @Override
+        public void invoke(final Object event) {
+            super.invoke(new AfterEvent() {
+                @Override
+                public Object getEvent() {
+                    return event;
+                }
+            });
+        }
+    }
+
+    private static class BeforeInvocation extends MethodInvocation {
+
+        private BeforeInvocation(Method method, Object observer) {
+            super(method, observer);
+        }
+
+        @Override
+        public void invoke(final Object event) {
+            super.invoke(new BeforeEvent() {
+                @Override
+                public Object getEvent() {
+                    return event;
+                }
+            });
+        }
+    }
+
+    private static class BeforeAndAfterInvocationSet implements Invocation {
+
+        private final Invocation before;
+        private final Invocation invoke;
+        private final Invocation after;
+
+        private BeforeAndAfterInvocationSet(Invocation before, Invocation invoke, Invocation after) {
+            this.before = before;
+            this.invoke = invoke;
+            this.after = after;
+        }
+
+        @Override
+        public void invoke(Object event) {
+            before.invoke(event);
+            invoke.invoke(event);
+            after.invoke(event);
+        }
+    }
+
+    public static class InvocationList implements Invocation {
+
+        private final List<Invocation> invocations = new LinkedList<Invocation>();
+
+        public boolean add(Invocation invocation) {
+            return invocations.add(invocation);
+        }
+
+        public List<Invocation> getInvocations() {
+            return invocations;
+        }
+
+        @Override
+        public void invoke(Object event) {
+            for (Invocation invocation : invocations) {
+                invocation.invoke(event);
+            }
+        }
+    }
+
+    public static class NotAnObserverException extends IllegalArgumentException {
+        public NotAnObserverException(String s) {
             super(s);
-        }
-    }
-
-    private static class AfterEventImpl<T> implements AfterEvent<T> {
-        private final T event;
-
-        public AfterEventImpl(final T event) {
-            this.event = event;
-        }
-
-        public T getEvent() {
-            return event;
-        }
-    }
-
-    private static class BeforeEventImpl<T> implements BeforeEvent<T> {
-        private final T event;
-
-        public BeforeEventImpl(final T event) {
-            this.event = event;
-        }
-
-        public T getEvent() {
-            return event;
-        }
-    }
-
-    private static class ParameterizedTypeImpl implements ParameterizedType {
-        private final Type[] types;
-        private final Type raw;
-
-        private ParameterizedTypeImpl(final Type[] types, final Type raw) {
-            this.types = types;
-            this.raw = raw;
-        }
-
-        @Override
-        public Type[] getActualTypeArguments() {
-            return types;
-        }
-
-        @Override
-        public Type getRawType() {
-            return raw;
-        }
-
-        @Override
-        public Type getOwnerType() {
-            return null;
         }
     }
 }
