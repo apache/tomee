@@ -357,14 +357,10 @@ public class ObserverManager {
         }
     }
 
-<<<<<<< .mine
     public interface Invocation {
 
         void invoke(Object event);
-=======
-    public interface Invocation {
-        void invoke(Object event);
->>>>>>> .r1580853
+
     }
 
 
