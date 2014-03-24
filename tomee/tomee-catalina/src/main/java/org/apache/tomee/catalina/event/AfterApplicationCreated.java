@@ -18,7 +18,9 @@ package org.apache.tomee.catalina.event;
 
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.observer.Event;
 
+@Event
 public class AfterApplicationCreated {
     private final AppInfo app;
     private final WebAppInfo web;
@@ -34,5 +36,14 @@ public class AfterApplicationCreated {
 
     public WebAppInfo getWeb() {
         return web;
+    }
+
+
+    @Override
+    public String toString() {
+        return "AfterApplicationCreated{" +
+                "app=" + (app == null ? null : app.appId) +
+                ", web=" + (web == null ? null : web.contextRoot) +
+                '}';
     }
 }
