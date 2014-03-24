@@ -42,8 +42,6 @@ import java.util.logging.Logger;
 
 public class ObserverManager {
 
-    private final Stack stack = new Stack();
-
     private static final ThreadLocal<Set<Invocation>> seen = new ThreadLocal<Set<Invocation>>() {
         @Override
         protected Set<Invocation> initialValue() {
@@ -359,9 +357,8 @@ public class ObserverManager {
         }
     }
 
-    public static interface Invocation {
-
-        public void invoke(Object event);
+    public interface Invocation {
+        void invoke(Object event);
     }
 
 
