@@ -357,8 +357,14 @@ public class ObserverManager {
         }
     }
 
+<<<<<<< .mine
+    public interface Invocation {
+
+        void invoke(Object event);
+=======
     public interface Invocation {
         void invoke(Object event);
+>>>>>>> .r1580853
     }
 
 
@@ -412,27 +418,6 @@ public class ObserverManager {
         }
     }
 
-    private static class Stack {
-        private final int[] seen = new int[10];
-        private int i = 0;
-
-        public boolean seen(Invocation invocation) {
-            int code = invocation.hashCode();
-
-            for (int j = 0; j < seen.length; j++) {
-                if (seen[j] == code) return true;
-            }
-
-            seen[i++] = code;
-
-            if (i >= seen.length) {
-                i = 0;
-            }
-
-            return false;
-        }
-    }
-
     private class AfterInvocation extends MethodInvocation {
 
         private AfterInvocation(Method method, Object observer) {
@@ -445,6 +430,10 @@ public class ObserverManager {
                 @Override
                 public Object getEvent() {
                     return event;
+                }
+
+                public String toString() {
+                    return "AfterEvent{} " + event;
                 }
             });
         }
@@ -462,6 +451,10 @@ public class ObserverManager {
                 @Override
                 public Object getEvent() {
                     return event;
+                }
+
+                public String toString() {
+                    return "BeforeEvent{} " + event;
                 }
             });
         }
