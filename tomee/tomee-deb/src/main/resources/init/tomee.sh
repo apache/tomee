@@ -1,5 +1,9 @@
 #!/bin/bash
-
+### BEGIN INIT INFO
+# Provides:          tomee
+# Short-Description: Apache TomEE
+# Description:       Manages the Apache TomEE server.
+### END INIT INFO
 CATALINA_HOME=/opt/tomee
 TOMCAT_USER=apachetomee
 
