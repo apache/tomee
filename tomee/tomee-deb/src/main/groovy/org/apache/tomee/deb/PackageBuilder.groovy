@@ -126,6 +126,12 @@ class PackageBuilder {
                 todir: new File(dataDir, 'var/lib/tomee').absolutePath,
                 file: new File(distributionTomeeDir, 'webapps').absolutePath
         )
+        ant.move(todir: new File(dataDir, 'usr/share/doc/tomee/').absolutePath) {
+            fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
+            fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
+            fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
+            fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
+        }
         new File(dataDir, 'var/log/tomee').mkdirs()
         new File(dataDir, 'var/tmp/tomee/temp').mkdirs()
         new File(dataDir, 'var/tmp/tomee/work').mkdirs()
@@ -163,7 +169,6 @@ class PackageBuilder {
         }
         gzFile
     }
-
 
     private static void arItem(ArArchiveOutputStream output, File file) {
         def entry = new ArArchiveEntry(file.name, file.length())
