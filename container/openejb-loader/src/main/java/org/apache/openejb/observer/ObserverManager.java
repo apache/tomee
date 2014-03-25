@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,8 @@ public class ObserverManager {
         }
     };
 
-    private static final Logger LOGGER = Logger.getLogger(ObserverManager.class.getName());
+    // lazy init since it is used in SystemInstance
+    private static final AtomicReference<Logger> LOGGER = new AtomicReference<Logger>();
     private final Set<Observer> observers = new LinkedHashSet<Observer>();
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
 
@@ -399,9 +401,9 @@ public class ObserverManager {
                 }
 
                 if (t instanceof InvocationTargetException && t.getCause() != null) {
-                    LOGGER.log(Level.SEVERE, "error invoking " + observer, t.getCause());
+                    logger().log(Level.SEVERE, "error invoking " + observer, t.getCause());
                 } else {
-                    LOGGER.log(Level.SEVERE, "error invoking " + observer, t);
+                    logger().log(Level.SEVERE, "error invoking " + observer, t);
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -412,6 +414,16 @@ public class ObserverManager {
         public String toString() {
             return method.toString();
         }
+    }
+
+    // done lazily since this class is used in SystemInstance
+    private static Logger logger() {
+        Logger value = LOGGER.get();
+        if (value == null) {
+            value = Logger.getLogger(ObserverManager.class.getName());
+            LOGGER.set(value);
+        }
+        return value;
     }
 
     private class AfterInvocation extends MethodInvocation {
