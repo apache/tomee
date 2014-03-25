@@ -1,15 +1,13 @@
 #!/bin/sh
 
-kill -9 $(ps aux | grep org.apache.catalina.startup.Bootstrap | grep -v grep | awk '{print $2}')
+CATALINA_HOME=/usr/share/tomee
+su - apachetomee -c "$CATALINA_HOME/bin/shutdown.sh -force"
 
-rm -f /opt/tomee/conf
-rm -f /opt/tomee/logs
-rm -f /opt/tomee/temp
-rm -f /opt/tomee/work
-rm -f /opt/tomee/webapps
+rm -f /usr/share/tomee/conf
+rm -f /usr/share/tomee/logs
+rm -f /usr/share/tomee/temp
+rm -f /usr/share/tomee/work
+rm -f /usr/share/tomee/webapps
 
-rm -Rf /var/tmp/tomee/work/*
-rm -Rf /var/tmp/tomee/temp/*
+rm -Rf /var/lib/tomee/*
 rm -Rf /var/log/tomee/*
-
-update-rc.d -f tomee remove

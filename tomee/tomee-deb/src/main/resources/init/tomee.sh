@@ -4,20 +4,20 @@
 # Short-Description: Apache TomEE
 # Description:       Manages the Apache TomEE server.
 ### END INIT INFO
-CATALINA_HOME=/opt/tomee
+CATALINA_HOME=/usr/share/tomee
 TOMCAT_USER=apachetomee
 
 RETVAL=0
 start(){
    echo "Starting TomEE: "
-   su - $TOMCAT_USER -c "$CATALINA_HOME/bin/startup.sh"
+   su - $TOMCAT_USER -c "$CATALINA_HOME/bin/catalina.sh start"
    RETVAL=$?
    return $RETVAL
 }
 
 stop(){
    echo "Shutting down TomEE: "
-   su - $TOMCAT_USER -c "$CATALINA_HOME/bin/shutdown.sh"
+   su - $TOMCAT_USER -c "$CATALINA_HOME/bin/shutdown.sh -force"
    RETVAL=$?
    return $RETVAL
 }
@@ -29,12 +29,12 @@ case "$1" in
    stop)
       stop
       ;;
-   force-reload)
+   restart)
       stop
       start
       ;;
    *)
-      echo $"Usage: $0 {start|stop|force-reload}"
+      echo $"Usage: $0 {start|stop|restart}"
       exit 1
       ;;
 esac
