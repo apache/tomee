@@ -31,8 +31,6 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,35 +50,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private ClassLoaderConfigurer configurer = null;
     private final int hashCode;
 
-    // ugly but break the whole container in embedded mode at least, tomcat change had a lot of side effect
-    private void setj2seClassLoader(final ClassLoader loader) {
-        try {
-            final Field field = WebappClassLoader.class.getDeclaredField("j2seClassLoader");
-
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-
-            if (Modifier.isFinal(field.getModifiers())) {
-                final Field modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-            }
-
-            field.set(this, loader);
-        } catch (final Exception e) {
-            LOGGER.warning("Can't set field j2seClassLoader");
-        }
-    }
-
     public LazyStopWebappClassLoader() {
-        setj2seClassLoader(getSystemClassLoader());
+        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
         super(parent);
-        setj2seClassLoader(getSystemClassLoader());
+        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
     }
 
@@ -108,13 +85,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
                 final ClassLoader old = j2seClassLoader;
-                setj2seClassLoader(NoClassClassLoader.INSTANCE);
+                j2seClassLoader = NoClassClassLoader.INSTANCE;
                 final boolean delegate = getDelegate();
                 setDelegate(false);
                 try {
                     return super.loadClass(name);
                 } finally {
-                    setj2seClassLoader(old);
+                    j2seClassLoader = old;
                     setDelegate(delegate);
                 }
             }
