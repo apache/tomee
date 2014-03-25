@@ -148,23 +148,23 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.3.1</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
         <executions>
           <execution>
-            <id>install-deb-package</id>
-            <phase>install</phase>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
             <goals>
-              <goal>install-file</goal>
+              <goal>attach-artifact</goal>
             </goals>
             <configuration>
-              <file>${project.build.directory}/apache-tomee-${project.version}.deb</file>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>apache-tomee</artifactId>
-              <version>${project.version}</version>
-              <packaging>deb</packaging>
-              <generatePom>${true}</generatePom>
+              <artifacts>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-${project.version}.deb</file>
+                  <type>deb</type>
+                </artifact>
+              </artifacts>
             </configuration>
           </execution>
         </executions>
