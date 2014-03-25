@@ -43,15 +43,13 @@ class PackageBuilder {
         outputDir.delete()
         aux.renameTo(outputDir)
         ant.delete(includeemptydirs: true) {
+            fileset(dir: outputDir.absolutePath, includes: '**/*.txt')
             fileset(dir: outputDir.absolutePath, includes: '**/*.exe')
             fileset(dir: outputDir.absolutePath, includes: '**/*.bat')
             fileset(dir: outputDir.absolutePath, includes: '**/*.original')
             fileset(dir: outputDir.absolutePath, includes: '**/*.tmp')
-            fileset(dir: new File(outputDir, 'webapps').absolutePath) {
-                include(name: '**/*')
-                exclude(name: '**/tomee/**')
-            }
         }
+        ant.delete(includeemptydirs: true, dir: new File(outputDir, 'webapps').absolutePath)
         outputDir.absolutePath
     }
 
@@ -98,6 +96,15 @@ class PackageBuilder {
         new File(controlDir, 'prerm').withWriter { BufferedWriter out ->
             out.write(this.class.getResource('/control/prerm.sh').text)
         }
+        new File(controlDir, 'postrm').withWriter { BufferedWriter out ->
+            out.write(this.class.getResource('/control/postrm.sh').text)
+        }
+        new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
+            new File(dataDir, 'etc/tomee').eachFile {
+                out.writeLine("/etc/tomee/${it.name}")
+            }
+            out.writeLine('/etc/init.d/tomee')
+        }
         controlDir.absolutePath
     }
 
@@ -106,7 +113,7 @@ class PackageBuilder {
         def outputDir = new File(exploded.parent, 'output')
         def dataDir = new File(outputDir, 'data')
         dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, 'opt/tomee')
+        def distributionTomeeDir = new File(dataDir, 'usr/share/tomee')
         ant.move(todir: distributionTomeeDir.absolutePath) {
             fileset(dir: explodedPath) {
                 include(name: "**/*")
@@ -122,10 +129,6 @@ class PackageBuilder {
         new File(initd, 'tomee').withWriter { BufferedWriter out ->
             out.write(this.class.getResource('/init/tomee.sh').text)
         }
-        ant.move(
-                todir: new File(dataDir, 'var/lib/tomee').absolutePath,
-                file: new File(distributionTomeeDir, 'webapps').absolutePath
-        )
         ant.move(todir: new File(dataDir, 'usr/share/doc/tomee/').absolutePath) {
             fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
@@ -133,13 +136,24 @@ class PackageBuilder {
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
         new File(dataDir, 'var/log/tomee').mkdirs()
-        new File(dataDir, 'var/tmp/tomee/temp').mkdirs()
-        new File(dataDir, 'var/tmp/tomee/work').mkdirs()
+        new File(dataDir, 'var/lib/tomee/temp').mkdirs()
+        new File(dataDir, 'var/lib/tomee/work').mkdirs()
+        new File(dataDir, 'var/lib/tomee/webapps').mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
-        new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/tmp/tomee/temp"
-        new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/tmp/tomee/work"
-        new File(distributionTomeeDir, 'webapps').delete() // add link from "/usr/lib/tomee/webapps" to "/var/lib/tomee/webapps"
+        new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
+        new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
+        new File(dataDir, 'usr/share/doc/tomee/copyright').withWriter { BufferedWriter out ->
+            def template = new GStringTemplateEngine().createTemplate(
+                    this.class.getResource('/copyright.template')
+            ).make([
+                    formattedDate: new Date().toString()
+            ])
+            out.write(template.toString())
+        }
+        new File(distributionTomeeDir, 'bin/setenv.sh').withWriter { BufferedWriter out ->
+            out.write(this.class.getResource('/init/setenv.sh').text)
+        }
         exploded.delete()
         dataDir.absolutePath
     }
@@ -155,12 +169,14 @@ class PackageBuilder {
                     exclude(name: "**/*.sh")
                     exclude(name: "**/postinst")
                     exclude(name: "**/prerm")
+                    exclude(name: "**/postrm")
                     exclude(name: "**/init.d/tomee")
                 }
                 tarfileset(dir: dataDir.absolutePath, username: 'root', group: 'root', filemode: '755', prefix: './') {
                     include(name: "**/*.sh")
                     include(name: "**/postinst")
                     include(name: "**/prerm")
+                    include(name: "**/postrm")
                     include(name: "**/init.d/tomee")
                 }
             }
