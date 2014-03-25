@@ -121,7 +121,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.52</tomcat.version>
+    <tomcat.version>7.0.53</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.13</cxf.version>
@@ -554,6 +554,17 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>tomcat-rc</id>
+      <name>Tomcat RC Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomcat-1010/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
