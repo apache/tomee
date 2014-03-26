@@ -11,8 +11,10 @@ useradd apachetomee -g apachetomee
 
 chown -R root:apachetomee /var/log/tomee/${tomeeVersion}
 chown -R root:apachetomee /var/lib/tomee/${tomeeVersion}
+chown -R root:apachetomee /etc/tomee/${tomeeVersion}
 chmod -R g+w /var/log/tomee/${tomeeVersion}
 chmod -R g+w /var/lib/tomee/${tomeeVersion}
+chmod -R o-rwx /etc/tomee/${tomeeVersion}
 
 update-rc.d tomee defaults
 echo "Reboot your machine or run 'service tomee start' to start the Apache TomEE server (version: ${tomeeVersion})"
