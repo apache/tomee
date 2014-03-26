@@ -78,5 +78,5 @@ public class CheckAnnotationTest {
 
     @Local
     @Stateless
-    class EjbWithoutInterface {}
+    public static class EjbWithoutInterface {}
 }
