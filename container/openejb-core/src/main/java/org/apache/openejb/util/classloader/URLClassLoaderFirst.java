@@ -42,7 +42,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
     // first skip container APIs if not in the jaxrs or plus version
-    private static final boolean SKIP_JAXRS = skipLib("org.apache.cxf.jaxrs.JAXRSInvoker");
     private static final boolean SKIP_JAXWS = skipLib("org.apache.cxf.jaxws.support.JaxWsImplementorInfo");
     private static final boolean SKIP_JMS = skipLib("org.apache.activemq.broker.BrokerFactory");
 
@@ -500,9 +499,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean isInServer(final String name) {
         if (name.startsWith("javax.")) {
             final String sub = name.substring("javax.".length());
-            if (sub.startsWith("ws.rs.")) {
-                return SKIP_JAXRS;
-            }
             if (sub.startsWith("jws.")) {
                 return SKIP_JAXWS;
             }
