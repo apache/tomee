@@ -1,28 +1,34 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          tomee
-# Short-Description: Apache TomEE ${tomeeVersion}
+# Provides:          tomee-${classifier}
+# Required-Start:    \$local_fs \$remote_fs \$network
+# Required-Stop:     \$local_fs \$remote_fs \$network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Apache TomEE ${classifier} ${tomeeVersion}
 # Description:       Manages the Apache TomEE server.
 ### END INIT INFO
-CATALINA_HOME=/usr/share/tomee/${tomeeVersion}
+TOMEE_VERSION=${tomeeVersion}
+TOMEE_CLASSIFIER=${classifier}
+CATALINA_HOME=/usr/share/tomee
 TOMCAT_USER=apachetomee
-
 RETVAL=0
+
 start(){
-   echo "Starting TomEE ${properties.tomeeVersion}: "
-   su - \$TOMCAT_USER -c "\$CATALINA_HOME/bin/catalina.sh start"
+   echo "Starting TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
+   su - \$TOMCAT_USER -c "\$CATALINA_HOME/\$TOMEE_CLASSIFIER/\$TOMEE_VERSION/bin/catalina.sh start"
    RETVAL=\$?
    return \$RETVAL
 }
 
 stop(){
-   echo "Shutting down TomEE ${properties.tomeeVersion}: "
-   su - \$TOMCAT_USER -c "\$CATALINA_HOME/bin/shutdown.sh -force"
+   echo "Shutting down TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
+   su - \$TOMCAT_USER -c "\$CATALINA_HOME/\$TOMEE_CLASSIFIER/\$TOMEE_VERSION/bin/shutdown.sh -force"
    RETVAL=\$?
    return \$RETVAL
 }
 
-case "\$1" in
+case \$1 in
    start)
       start
       ;;
