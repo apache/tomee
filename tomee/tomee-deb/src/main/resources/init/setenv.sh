@@ -1,2 +1,2 @@
 #!/bin/sh
-export CATALINA_PID=/usr/share/tomee/temp/tomee.pid
+export CATALINA_PID=/usr/share/tomee/${tomeeVersion}/temp/tomee.pid
