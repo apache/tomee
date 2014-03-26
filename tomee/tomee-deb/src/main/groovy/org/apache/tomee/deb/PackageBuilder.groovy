@@ -27,8 +27,9 @@ class PackageBuilder {
     def ant = new AntBuilder()
     def properties
 
-    String unzip(String tarPath) {
-        def outputDir = new File(new File(tarPath).parent, 'exploded')
+    String unzip(String classifier, String tarPath) {
+        def outputDir = new File(new File(tarPath).parent, "exploded-${classifier}")
+        ant.delete(includeemptydirs: true, dir: outputDir.absolutePath) // remove old files
         outputDir.mkdirs()
         ant.unzip(
                 src: tarPath,
@@ -81,7 +82,7 @@ class PackageBuilder {
         }
     }
 
-    String createControlDir(String dataDirPath) {
+    String createControlDir(String classifier, String dataDirPath) {
         def dataDir = new File(dataDirPath)
         def controlDir = new File(dataDir.parent, 'control')
         controlDir.mkdirs()
@@ -95,69 +96,72 @@ class PackageBuilder {
         }
         Double installedSize = dataDir.directorySize() / 1024
         writeTemplate(new File(controlDir, 'control'), '/control/control.template', [
+                classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion,
                 inMB        : installedSize.longValue()
         ])
-        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [tomeeVersion: properties.tomeeVersion])
-        writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion])
-        writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion])
+        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
+        writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
+        writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(dataDir, "etc/tomee/${properties.tomeeVersion}").eachFile {
-                out.writeLine("/etc/tomee/${properties.tomeeVersion}/${it.name}")
+            new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}").eachFile {
+                out.writeLine("/etc/tomee/${classifier}/${properties.tomeeVersion}/${it.name}")
             }
-            out.writeLine('/etc/init.d/tomee')
+            out.writeLine("/etc/init.d/tomee-${classifier}")
         }
         controlDir.absolutePath
     }
 
-    String createDataDir(String explodedPath) {
+    String createDataDir(String classifier, String explodedPath) {
         def exploded = new File(explodedPath)
-        def outputDir = new File(exploded.parent, 'output')
+        def outputDir = new File(exploded.parent, "output-${classifier}")
         def dataDir = new File(outputDir, 'data')
         dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, "usr/share/tomee/${properties.tomeeVersion}")
+        def distributionTomeeDir = new File(dataDir, "usr/share/tomee/${classifier}/${properties.tomeeVersion}")
         ant.move(todir: distributionTomeeDir.absolutePath) {
             fileset(dir: explodedPath) {
                 include(name: "**/*")
             }
         }
-        ant.move(todir: new File(dataDir, "etc/tomee/${properties.tomeeVersion}").absolutePath) {
+        ant.move(todir: new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}").absolutePath) {
             fileset(dir: new File(distributionTomeeDir, 'conf')) {
                 include(name: "**/*")
             }
         }
         def initd = new File(dataDir, 'etc/init.d/')
         initd.mkdirs()
-        writeTemplate(new File(initd, 'tomee'), '/init/tomee.sh', [
+        writeTemplate(new File(initd, "tomee-${classifier}"), '/init/tomee.sh', [
+                classifier: classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
-        ant.move(todir: new File(dataDir, "usr/share/doc/tomee/${properties.tomeeVersion}/").absolutePath) {
+        ant.move(todir: new File(dataDir, "usr/share/doc/tomee/${classifier}/${properties.tomeeVersion}/").absolutePath) {
             fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
-        new File(dataDir, "var/log/tomee/${properties.tomeeVersion}").mkdirs()
-        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/temp").mkdirs()
-        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/work").mkdirs()
-        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/webapps").mkdirs()
+        new File(dataDir, "var/log/tomee/${classifier}/${properties.tomeeVersion}").mkdirs()
+        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/temp").mkdirs()
+        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/work").mkdirs()
+        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/webapps").mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
         new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
         new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
         writeTemplate(
-                new File(dataDir, "usr/share/doc/tomee/${properties.tomeeVersion}/copyright"),
+                new File(dataDir, "usr/share/doc/tomee/${classifier}/${properties.tomeeVersion}/copyright"),
                 '/copyright.template',
                 [formattedDate: new Date().toString()]
         )
         writeTemplate(new File(distributionTomeeDir, 'bin/setenv.sh'), '/init/setenv.sh', [
+                classifier: classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
         exploded.delete()
         dataDir.absolutePath
     }
 
-    private File createTarGz(String path) {
+    private File createTarGz(String classifier, String path) {
         def dataDir = new File(path)
         def tarFile = new File(dataDir.parent, "${dataDir.name}.tar")
         def gzFile = new File(tarFile.parent, "${tarFile.name}.gz")
@@ -169,14 +173,14 @@ class PackageBuilder {
                     exclude(name: "**/postinst")
                     exclude(name: "**/prerm")
                     exclude(name: "**/postrm")
-                    exclude(name: "**/init.d/tomee")
+                    exclude(name: "**/init.d/tomee-${classifier}")
                 }
                 tarfileset(dir: dataDir.absolutePath, username: 'root', group: 'root', filemode: '755', prefix: './') {
                     include(name: "**/*.sh")
                     include(name: "**/postinst")
                     include(name: "**/prerm")
                     include(name: "**/postrm")
-                    include(name: "**/init.d/tomee")
+                    include(name: "**/init.d/tomee-${classifier}")
                 }
             }
             gzip(src: tarFile, destfile: gzFile)
@@ -200,13 +204,13 @@ class PackageBuilder {
         output.closeArchiveEntry()
     }
 
-    File compressFiles(String... paths) {
-        def packageName = "apache-tomee-${properties.tomeeVersion}.deb"
+    File compressFiles(String classifier, String... paths) {
+        def packageName = "apache-tomee-${classifier}-${properties.tomeeVersion}.deb"
         def ar = new File(new File(paths[0]).parent, packageName)
         def output = new ArArchiveOutputStream(new FileOutputStream(ar))
         arDebianBinary(output)
         paths.collect({
-            createTarGz(it)
+            createTarGz(classifier, it)
         }).each {
             arItem(output, it)
         }
@@ -214,12 +218,12 @@ class PackageBuilder {
         ar
     }
 
-    void createPackage() {
-        def filePath = new File(properties.workDir as String, 'tomee.zip').absolutePath
-        def explodedPath = unzip(filePath)
-        def dataDir = createDataDir(explodedPath)
-        def controlDir = createControlDir(dataDir)
-        def deb = compressFiles(controlDir, dataDir)
+    void createPackage(String classifier, String fileName) {
+        def filePath = new File(properties.workDir as String, fileName).absolutePath
+        def explodedPath = unzip(classifier, filePath)
+        def dataDir = createDataDir(classifier, explodedPath)
+        def controlDir = createControlDir(classifier, dataDir)
+        def deb = compressFiles(classifier, controlDir, dataDir)
         deb.renameTo(new File(properties.buildDir as String, deb.name))
     }
 }
