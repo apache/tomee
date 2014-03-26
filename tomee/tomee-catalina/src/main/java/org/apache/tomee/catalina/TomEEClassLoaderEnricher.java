@@ -144,7 +144,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             "javax.jms.Queue", // JMS
             "javax.enterprise.context.ApplicationScoped", // CDI
             "javax.inject.Inject", // CDI
-            // "javax.ws.rs.Path", // JAXRS - commented since we manage to find why jersey-core brings the api!
+            "javax.ws.rs.Path", // JAXRS - commented since we manage to find why jersey-core brings the api!
             "javax.ejb.EJB", // EJB
             "javax.annotation.PostConstruct" // javax.annotation
     };
