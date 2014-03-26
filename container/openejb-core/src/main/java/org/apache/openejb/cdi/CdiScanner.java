@@ -26,7 +26,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
-import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
@@ -34,9 +33,7 @@ import org.apache.webbeans.inject.AlternativesManager;
 import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
-import org.apache.webbeans.util.AnnotationUtil;
 
-import javax.interceptor.Interceptor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -94,8 +91,6 @@ public class CdiScanner implements ScannerService {
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
-        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
-
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
@@ -129,12 +124,6 @@ public class CdiScanner implements ScannerService {
                 final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
 
                 if (clazz != null) {
-// TODO: Move check to validation phase
-                    if (AnnotationUtil.hasAnnotation(clazz.getDeclaredAnnotations(), Interceptor.class) && !annotationManager.hasInterceptorBindingMetaAnnotation(
-                        clazz.getDeclaredAnnotations())) {
-                        throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
-                    }
-
                     if (!interceptorsManager.isInterceptorClassEnabled(clazz)) {
                         interceptorsManager.addEnabledInterceptorClass(clazz);
                         classes.add(clazz);
