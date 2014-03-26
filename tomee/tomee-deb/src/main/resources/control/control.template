@@ -1,4 +1,5 @@
-Package: tomee
+Package: tomee-${tomeeVersion}
+Provides: tomee
 Version: ${tomeeVersion}
 Section: java
 Priority: optional

@@ -68,6 +68,19 @@ class PackageBuilder {
         return "${md5} ${file.absolutePath.substring(root.absolutePath.length() + 1)}"
     }
 
+    private void writeTemplate(File file, String templatePath, Map variables) {
+        try {
+            file.withWriter { BufferedWriter out ->
+                def template = new GStringTemplateEngine().createTemplate(
+                        this.class.getResource(templatePath)
+                ).make(variables)
+                out.write(template.toString())
+            }
+        } catch (e) {
+            throw new RuntimeException("Error building $templatePath", e)
+        }
+    }
+
     String createControlDir(String dataDirPath) {
         def dataDir = new File(dataDirPath)
         def controlDir = new File(dataDir.parent, 'control')
@@ -81,27 +94,16 @@ class PackageBuilder {
             }
         }
         Double installedSize = dataDir.directorySize() / 1024
-        new File(controlDir, 'control').withWriter { BufferedWriter out ->
-            def template = new GStringTemplateEngine().createTemplate(
-                    this.class.getResource('/control/control.template')
-            ).make([
-                    tomeeVersion: properties.tomeeVersion,
-                    inMB        : installedSize.longValue()
-            ])
-            out.write(template.toString())
-        }
-        new File(controlDir, 'postinst').withWriter { BufferedWriter out ->
-            out.write(this.class.getResource('/control/postinst.sh').text)
-        }
-        new File(controlDir, 'prerm').withWriter { BufferedWriter out ->
-            out.write(this.class.getResource('/control/prerm.sh').text)
-        }
-        new File(controlDir, 'postrm').withWriter { BufferedWriter out ->
-            out.write(this.class.getResource('/control/postrm.sh').text)
-        }
+        writeTemplate(new File(controlDir, 'control'), '/control/control.template', [
+                tomeeVersion: properties.tomeeVersion,
+                inMB        : installedSize.longValue()
+        ])
+        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [tomeeVersion: properties.tomeeVersion])
+        writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion])
+        writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion])
         new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(dataDir, 'etc/tomee').eachFile {
-                out.writeLine("/etc/tomee/${it.name}")
+            new File(dataDir, "etc/tomee/${properties.tomeeVersion}").eachFile {
+                out.writeLine("/etc/tomee/${properties.tomeeVersion}/${it.name}")
             }
             out.writeLine('/etc/init.d/tomee')
         }
@@ -113,47 +115,44 @@ class PackageBuilder {
         def outputDir = new File(exploded.parent, 'output')
         def dataDir = new File(outputDir, 'data')
         dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, 'usr/share/tomee')
+        def distributionTomeeDir = new File(dataDir, "usr/share/tomee/${properties.tomeeVersion}")
         ant.move(todir: distributionTomeeDir.absolutePath) {
             fileset(dir: explodedPath) {
                 include(name: "**/*")
             }
         }
-        ant.move(todir: new File(dataDir, 'etc/tomee').absolutePath) {
+        ant.move(todir: new File(dataDir, "etc/tomee/${properties.tomeeVersion}").absolutePath) {
             fileset(dir: new File(distributionTomeeDir, 'conf')) {
                 include(name: "**/*")
             }
         }
         def initd = new File(dataDir, 'etc/init.d/')
         initd.mkdirs()
-        new File(initd, 'tomee').withWriter { BufferedWriter out ->
-            out.write(this.class.getResource('/init/tomee.sh').text)
-        }
-        ant.move(todir: new File(dataDir, 'usr/share/doc/tomee/').absolutePath) {
+        writeTemplate(new File(initd, 'tomee'), '/init/tomee.sh', [
+                tomeeVersion: properties.tomeeVersion
+        ])
+        ant.move(todir: new File(dataDir, "usr/share/doc/tomee/${properties.tomeeVersion}/").absolutePath) {
             fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
-        new File(dataDir, 'var/log/tomee').mkdirs()
-        new File(dataDir, 'var/lib/tomee/temp').mkdirs()
-        new File(dataDir, 'var/lib/tomee/work').mkdirs()
-        new File(dataDir, 'var/lib/tomee/webapps').mkdirs()
+        new File(dataDir, "var/log/tomee/${properties.tomeeVersion}").mkdirs()
+        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/temp").mkdirs()
+        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/work").mkdirs()
+        new File(dataDir, "var/lib/tomee/${properties.tomeeVersion}/webapps").mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
         new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
         new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
-        new File(dataDir, 'usr/share/doc/tomee/copyright').withWriter { BufferedWriter out ->
-            def template = new GStringTemplateEngine().createTemplate(
-                    this.class.getResource('/copyright.template')
-            ).make([
-                    formattedDate: new Date().toString()
-            ])
-            out.write(template.toString())
-        }
-        new File(distributionTomeeDir, 'bin/setenv.sh').withWriter { BufferedWriter out ->
-            out.write(this.class.getResource('/init/setenv.sh').text)
-        }
+        writeTemplate(
+                new File(dataDir, "usr/share/doc/tomee/${properties.tomeeVersion}/copyright"),
+                '/copyright.template',
+                [formattedDate: new Date().toString()]
+        )
+        writeTemplate(new File(distributionTomeeDir, 'bin/setenv.sh'), '/init/setenv.sh', [
+                tomeeVersion: properties.tomeeVersion
+        ])
         exploded.delete()
         dataDir.absolutePath
     }
