@@ -4,7 +4,7 @@ ln -sf /etc/tomee/${classifier}/${tomeeVersion} /usr/share/tomee/${classifier}/$
 ln -sf /var/log/tomee/${classifier}/${tomeeVersion} /var/lib/tomee/${classifier}/${tomeeVersion}/logs
 
 groupadd apachetomee
-useradd apachetomee -g apachetomee
+useradd --system apachetomee -g apachetomee
 
 chown -R root:apachetomee /var/log/tomee/${classifier}/${tomeeVersion}
 chown -R root:apachetomee /var/lib/tomee/${classifier}/${tomeeVersion}
