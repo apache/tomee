@@ -613,14 +613,14 @@ public class ReadDescriptors implements DynamicDeployer {
             }
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
         } catch (final SAXException e) {
-            throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the beans.xml", e);// file: " + url.toExternalForm(), e);
         } catch (final JAXBException e) {
             e.printStackTrace();
-            throw new OpenEJBException("Cannot unmarshall the beans.xml");// file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot unmarshall the beans.xml", e);// file: " + url.toExternalForm(), e);
         } catch (final IOException e) {
-            throw new OpenEJBException("Cannot read the beans.xml");// file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the beans.xml", e);// file: " + url.toExternalForm(), e);
         } catch (final Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the beans.xml");// file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the beans.xml", e);// file: " + url.toExternalForm(), e);
         }
     }
 
