@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 export CATALINA_HOME=/usr/share/tomee/$classifier/$tomeeVersion
 export CATALINA_BASE=\$(cd \$(dirname \$0) && cd .. && pwd)
 
@@ -9,7 +9,7 @@ buildIt() {
         exit 1
     fi
     if [ -d "\$1" ]; then
-        echo "'\$1' already exists. Please chose another path."
+        echo "'\$1' already exists. Please choose another path."
         exit 1
     fi
     home=\$1
@@ -29,16 +29,27 @@ buildIt() {
     return 0
 }
 
+checkInstance(){
+    if [ \$CATALINA_HOME == "\$CATALINA_BASE" ]; then
+        echo "Please use 'service tomee-plus start|stop' to start|stop the system-wide instance of TomEE."
+        echo "    CATALINA_HOME=\$CATALINA_HOME"
+        echo "    CATALINA_BASE=\$CATALINA_BASE"
+        exit 1
+    fi
+}
+
 start(){
-   echo "Starting TomEE ${classifier} (version ${tomeeVersion}): "
-   \$CATALINA_HOME/bin/catalina.sh start
-   return \$?
+    checkInstance
+    echo "Starting TomEE ${classifier} (version ${tomeeVersion}): "
+    \$CATALINA_HOME/bin/catalina.sh start
+    return \$?
 }
 
 stop(){
-   echo "Shutting down TomEE ${classifier} (version ${tomeeVersion}): "
-   \$CATALINA_HOME/bin/shutdown.sh
-   return \$?
+    checkInstance
+    echo "Shutting down TomEE ${classifier} (version ${tomeeVersion}): "
+    \$CATALINA_HOME/bin/shutdown.sh
+    return \$?
 }
 
 case \$1 in
