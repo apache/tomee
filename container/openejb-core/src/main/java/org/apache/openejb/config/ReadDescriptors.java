@@ -636,7 +636,16 @@ public class ReadDescriptors implements DynamicDeployer {
         final LengthInputStream in = new LengthInputStream(is);
         final InputSource inputSource = new InputSource(in);
 
-        final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
+        final SAXParser parser;
+
+        final Thread thread = Thread.currentThread();
+        final ClassLoader original = thread.getContextClassLoader();
+        thread.setContextClassLoader(Saxs.class.getClassLoader());
+        try {
+            parser = Saxs.namespaceAwareFactory().newSAXParser();
+        } finally {
+            thread.setContextClassLoader(original);
+        }
 
         try {
             parser.parse(inputSource, new DefaultHandler() {
