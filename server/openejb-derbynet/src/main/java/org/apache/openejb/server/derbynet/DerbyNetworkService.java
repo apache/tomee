@@ -22,6 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LoggingPrintWriter;
 
 import java.io.IOException;
@@ -35,11 +37,13 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class DerbyNetworkService implements ServerService, SelfManaging {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, DerbyNetworkService.class);
 
     private NetworkServerControl serverControl;
     private int port = 1527;
     private boolean disabled;
     private InetAddress host;
+    private boolean verbose = false;
 
     @Override
     public String getIP() {
@@ -61,6 +65,7 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         final Options options = new Options(properties);
         this.port = options.get("port", 1527);
         this.disabled = options.get("disabled", false);
+        this.verbose = options.get("verbose", false);
         this.host = InetAddress.getByName("0.0.0.0");
         System.setProperty(
                 "derby.system.home",
@@ -86,6 +91,9 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         try {
             this.serverControl = new NetworkServerControl(host, port);
             this.serverControl.start(new LoggingPrintWriter("Derby"));
+            if (verbose) {
+                LOGGER.info("Starting openejb-derbynet with derby " + serverControl.getRuntimeInfo() + " " + serverControl.getSysinfo());
+            }
         } catch (Exception e) {
             throw new ServiceException(e);
         }
