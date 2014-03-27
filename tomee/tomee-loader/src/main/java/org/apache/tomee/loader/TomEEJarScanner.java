@@ -131,6 +131,8 @@ public class TomEEJarScanner extends StandardJarScanner {
                                 return Globals.STRICT_SERVLET_COMPLIANCE;
                             } else if ("getTldValidation".equals(method.getName())) {
                                 return Globals.STRICT_SERVLET_COMPLIANCE;
+                            } else if ("getXmlValidation".equals(method.getName())) {
+                                return Globals.STRICT_SERVLET_COMPLIANCE;
                             } else if ("getXmlBlockExternal".equals(method.getName())) {
                                 return Globals.IS_SECURITY_ENABLED;
                             }
