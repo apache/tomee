@@ -183,6 +183,10 @@ class PackageBuilder {
                 classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
+        writeTemplate(new File(distributionTomeeDir, 'bin/tomee-instance.sh'), '/init/tomee-instance.sh', [
+                classifier  : classifier,
+                tomeeVersion: properties.tomeeVersion
+        ])
         exploded.delete()
         dataDir.absolutePath
     }
