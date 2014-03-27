@@ -100,7 +100,25 @@ class PackageBuilder {
                 tomeeVersion: properties.tomeeVersion,
                 inMB        : installedSize.longValue()
         ])
-        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
+        def priority
+        switch (classifier) {
+            case 'plus':
+                priority = 4
+                break
+            case 'plume':
+                priority = 3
+                break
+            case 'jaxrs':
+                priority = 2
+                break
+            default:
+                priority = 1
+        }
+        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [
+                tomeeVersion: properties.tomeeVersion,
+                classifier  : classifier,
+                priority    : priority
+        ])
         writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->

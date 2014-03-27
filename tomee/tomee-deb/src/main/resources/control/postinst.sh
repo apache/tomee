@@ -13,4 +13,7 @@ chmod -R g+w /var/log/tomee/${classifier}/${tomeeVersion}
 chmod -R g+w /var/lib/tomee/${classifier}/${tomeeVersion}
 
 update-rc.d tomee-${classifier} defaults
+
+update-alternatives --install /etc/init.d/tomee tomee /etc/init.d/tomee-${classifier} ${priority}
+
 echo "Reboot your machine or run 'service tomee-${classifier} start' to start the Apache TomEE ${classifier} server (version: ${tomeeVersion})"

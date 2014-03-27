@@ -13,13 +13,13 @@ export CATALINA_BASE=/var/lib/tomee/${classifier}/${tomeeVersion}
 TOMEE_USER=apachetomee
 
 start(){
-   echo "Starting TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
+   echo "Starting TomEE ${classifier} (version ${tomeeVersion}): "
    su - \$TOMEE_USER --preserve-environment -c "\$TOMEE_HOME/bin/catalina.sh start"
    return \$?
 }
 
 stop(){
-   echo "Shutting down TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
+   echo "Shutting down TomEE ${classifier} (version ${tomeeVersion}): "
    su - \$TOMEE_USER --preserve-environment -c "\$TOMEE_HOME/bin/shutdown.sh -force"
    return \$?
 }
@@ -35,8 +35,11 @@ case \$1 in
       stop
       start
       ;;
+   version)
+      echo "TomEE ${classifier} (version ${tomeeVersion})"
+      ;;
    *)
-      echo \$"Usage: \$0 {start|stop|restart}"
+      echo \$"Usage: \$0 {start|stop|restart|version}"
       exit 1
       ;;
 esac
