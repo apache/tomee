@@ -123,7 +123,8 @@ class PackageBuilder {
                 include(name: "**/*")
             }
         }
-        ant.move(todir: new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}").absolutePath) {
+        def homeConf = new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}")
+        ant.move(todir: homeConf.absolutePath) {
             fileset(dir: new File(distributionTomeeDir, 'conf')) {
                 include(name: "**/*")
             }
@@ -131,7 +132,7 @@ class PackageBuilder {
         def initd = new File(dataDir, 'etc/init.d/')
         initd.mkdirs()
         writeTemplate(new File(initd, "tomee-${classifier}"), '/init/tomee.sh', [
-                classifier: classifier,
+                classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
         ant.move(todir: new File(dataDir, "usr/share/doc/tomee/${classifier}/${properties.tomeeVersion}/").absolutePath) {
@@ -141,6 +142,13 @@ class PackageBuilder {
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
         new File(dataDir, "var/log/tomee/${classifier}/${properties.tomeeVersion}").mkdirs()
+        def baseConfDir = new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/conf")
+        baseConfDir.mkdirs()
+        ant.copy(todir: baseConfDir.absolutePath) {
+            fileset(file: new File(homeConf, 'server.xml'))
+        }
+        def baseBinDir = new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/bin")
+        baseBinDir.mkdirs()
         new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/temp").mkdirs()
         new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/work").mkdirs()
         new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/webapps").mkdirs()
@@ -153,8 +161,8 @@ class PackageBuilder {
                 '/copyright.template',
                 [formattedDate: new Date().toString()]
         )
-        writeTemplate(new File(distributionTomeeDir, 'bin/setenv.sh'), '/init/setenv.sh', [
-                classifier: classifier,
+        writeTemplate(new File(baseBinDir, 'setenv.sh'), '/init/setenv.sh', [
+                classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
         exploded.delete()

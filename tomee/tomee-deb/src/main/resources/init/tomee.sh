@@ -8,24 +8,20 @@
 # Short-Description: Apache TomEE ${classifier} ${tomeeVersion}
 # Description:       Manages the Apache TomEE server.
 ### END INIT INFO
-TOMEE_VERSION=${tomeeVersion}
-TOMEE_CLASSIFIER=${classifier}
-CATALINA_HOME=/usr/share/tomee
-TOMCAT_USER=apachetomee
-RETVAL=0
+TOMEE_HOME=/usr/share/tomee/${classifier}/${tomeeVersion}
+export CATALINA_BASE=/var/lib/tomee/${classifier}/${tomeeVersion}
+TOMEE_USER=apachetomee
 
 start(){
    echo "Starting TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
-   su - \$TOMCAT_USER -c "\$CATALINA_HOME/\$TOMEE_CLASSIFIER/\$TOMEE_VERSION/bin/catalina.sh start"
-   RETVAL=\$?
-   return \$RETVAL
+   su - \$TOMEE_USER --preserve-environment -c "\$TOMEE_HOME/bin/catalina.sh start"
+   return \$?
 }
 
 stop(){
    echo "Shutting down TomEE (\$TOMEE_CLASSIFIER \$TOMEE_VERSION): "
-   su - \$TOMCAT_USER -c "\$CATALINA_HOME/\$TOMEE_CLASSIFIER/\$TOMEE_VERSION/bin/shutdown.sh -force"
-   RETVAL=\$?
-   return \$RETVAL
+   su - \$TOMEE_USER --preserve-environment -c "\$TOMEE_HOME/bin/shutdown.sh -force"
+   return \$?
 }
 
 case \$1 in
