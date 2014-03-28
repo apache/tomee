@@ -597,11 +597,11 @@ public class ReadDescriptors implements DynamicDeployer {
             }
             return EjbJarXml.unmarshal(new ByteArrayInputStream(content.getBytes()));
         } catch (final SAXException e) {
-            throw new OpenEJBException("Cannot parse the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the ejb-jar.xml", e); // file: " + url.toExternalForm(), e);
         } catch (final IOException e) {
-            throw new OpenEJBException("Cannot read the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the ejb-jar.xml", e); // file: " + url.toExternalForm(), e);
         } catch (final Exception e) {
-            throw new OpenEJBException("Encountered error parsing the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered error parsing the ejb-jar.xml", e); // file: " + url.toExternalForm(), e);
         }
     }
 
