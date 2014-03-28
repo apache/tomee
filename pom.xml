@@ -520,6 +520,17 @@
       </snapshots>
     </repository>
     <repository>
+      <id>apache-staging</id>
+      <name>Apache Staging Repository</name>
+      <url>http://repository.apache.org/content/groups/staging/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>sonatype-snapshots</id>
       <name>Sonatype OSS Snapshots Repository</name>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
