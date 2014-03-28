@@ -60,6 +60,7 @@
     <module>decorators</module>
     <module>deltaspike-configproperty</module>
     <module>deltaspike-exception-handling</module>
+    <module>deltaspike-fullstack</module>
     <module>deltaspike-i18n</module>
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
