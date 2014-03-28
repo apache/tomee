@@ -260,16 +260,16 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("geronimo.")) {
                     return true;
                 }
-                if (apache.startsWith("coyote")) {
+                if (apache.startsWith("coyote.")) {
                     return true;
                 }
                 if (apache.startsWith("webbeans.")) {
                     return true;
                 }
-                if (apache.startsWith("log4j") && SKIP_LOG4J) {
+                if (apache.startsWith("log4j.") && SKIP_LOG4J) {
                     return true;
                 }
-                if (apache.startsWith("catalina")) {
+                if (apache.startsWith("catalina.")) {
                     return true;
                 }
                 if (apache.startsWith("jasper.")) {
@@ -282,7 +282,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     return true;
                 }
                 // if (apache.startsWith("jsp")) return true; // precompiled jsp have to be loaded from the webapp
-                if (apache.startsWith("naming")) {
+                if (apache.startsWith("naming.")) {
                     return true;
                 }
                 if (apache.startsWith("taglibs.")) {
@@ -297,37 +297,40 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     final String commons = apache.substring("commons.".length());
 
                     // don't stop on commons package since we don't bring all commons
-                    if (commons.startsWith("beanutils")) {
+                    if (commons.startsWith("beanutils.")) {
                         return true;
                     }
-                    if (commons.startsWith("cli")) {
+                    if (commons.startsWith("cli.")) {
                         return true;
                     }
-                    if (commons.startsWith("codec")) {
+                    if (commons.startsWith("codec.")) {
                         return true;
                     }
-                    if (commons.startsWith("collections")) {
+                    if (commons.startsWith("collections.")) {
                         return true;
                     }
-                    if (commons.startsWith("dbcp")) {
+                    if (commons.startsWith("dbcp.")) {
                         return true;
                     }
-                    if (commons.startsWith("digester")) {
+                    if (commons.startsWith("digester.")) {
                         return true;
                     }
-                    if (commons.startsWith("jocl")) {
+                    if (commons.startsWith("jocl.")) {
                         return true;
                     }
-                    if (commons.startsWith("lang")) {
+                    if (commons.startsWith("lang.")) { // openjpa
                         return true;
                     }
-                    if (commons.startsWith("logging")) {
+                    if (commons.startsWith("lang3.")) {  // us
+                        return true;
+                    }
+                    if (commons.startsWith("logging.")) {
                         return false;
                     }
-                    if (commons.startsWith("pool")) {
+                    if (commons.startsWith("pool.")) {
                         return true;
                     }
-                    if (commons.startsWith("net") && SKIP_COMMONS_NET) {
+                    if (commons.startsWith("net.") && SKIP_COMMONS_NET) {
                         return true;
                     }
 
@@ -338,7 +341,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     // we bring only myfaces-impl (+api but that's javax)
                     // mainly inspired from a comparison with tomahawk packages
                     final String myfaces = name.substring("myfaces.".length());
-                    if (myfaces.startsWith("shared")) {
+                    if (myfaces.startsWith("shared.")) {
                         return true;
                     }
                     if (myfaces.startsWith("ee6.")) {
@@ -468,7 +471,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 }
                 return false;
             }
-            if (org.startsWith("w3c.dom")) {
+            if (org.startsWith("w3c.dom.")) {
                 return isInJvm(name);
             }
             if (org.startsWith("eclipse.jdt.")) {
@@ -485,7 +488,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("com.sun.")) {
             return isInJvm(name);
         }
-        if (name.startsWith("serp.bytecode")) {
+        if (name.startsWith("serp.bytecode.")) {
             return true;
         }
 
