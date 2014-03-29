@@ -44,7 +44,7 @@ public class OpenEjbContainerTest extends TestCase {
 
         OpenEjbContainer openEjbContainer = (OpenEjbContainer) EJBContainer.createEJBContainer(map);
 
-        openEjbContainer.inject(this);
+        Injector.inject(this);
 
         assertNotNull(widget);
 
@@ -78,7 +78,7 @@ public class OpenEjbContainerTest extends TestCase {
             OpenEjbContainer openEjbContainer = (OpenEjbContainer) EJBContainer.createEJBContainer(map);
 
             try {
-                openEjbContainer.inject(this);
+                Injector.inject(this);
 
                 assertNotNull(widget);
 

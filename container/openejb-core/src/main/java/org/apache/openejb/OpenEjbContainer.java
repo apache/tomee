@@ -16,7 +16,6 @@
  */
 package org.apache.openejb;
 
-import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -27,10 +26,8 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ValidationFailedException;
-import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -44,7 +41,6 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.JuliLogStreamFactory;
@@ -53,7 +49,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.xbean.naming.context.ContextFlyweight;
@@ -181,92 +176,6 @@ public final class OpenEjbContainer extends EJBContainer {
         return globalJndiContext;
     }
 
-    public <T> T inject(final T object) {
-
-        assert object != null;
-
-        final Class<?> clazz = object.getClass();
-
-        final BeanContext context = resolve(clazz);
-
-        if (context != null) { // found the test class directly
-            final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
-            cdiInjections(context, object);
-            try {
-                return (T) processor.createInstance();
-            } catch (final OpenEJBException e) {
-                throw new InjectionException(clazz.getName(), e);
-            }
-        } else if (!isAnnotatedLocalClient(clazz)) { // nothing to do
-            throw new NoInjectionMetaDataException(clazz.getName());
-        }
-
-        // the test class was not found in beans (OpenEJB ran from parent) but was annotated @LocalClient
-        try {
-            final InjectionProcessor<?> processor = ClientInjections.clientInjector(object);
-            cdiInjections(null, object);
-            return (T) processor.createInstance();
-        } catch (final OpenEJBException e) {
-            throw new NoInjectionMetaDataException("Injection failed", e);
-        }
-    }
-
-    private <T> void cdiInjections(final BeanContext context, final T object) {
-        ThreadContext oldContext = null;
-        if (context != null) {
-            final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-            oldContext = ThreadContext.enter(callContext);
-        }
-        try {
-            OWBInjector.inject(webBeanContext.getBeanManagerImpl(), object, null);
-        } catch (final Throwable t) {
-            logger().warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
-        } finally {
-            if (context != null) {
-                ThreadContext.exit(oldContext);
-            }
-        }
-    }
-
-    private boolean isAnnotatedLocalClient(final Class<?> clazz) {
-        Class<?> current = clazz;
-        while (current != null && current != Object.class) {
-            if (current.getAnnotation(LocalClient.class) != null) {
-                return true;
-            }
-            current = current.getSuperclass();
-        }
-        return false;
-    }
-
-    private BeanContext resolve(Class<?> clazz) {
-
-        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-        while (clazz != null && clazz != Object.class) {
-
-            {
-                final BeanContext context = containerSystem.getBeanContext(clazz.getName());
-
-                if (context != null) {
-                    return context;
-                }
-            }
-
-            for (final BeanContext context : containerSystem.deployments()) {
-
-                if (clazz == context.getBeanClass()) {
-                    return context;
-                }
-
-            }
-
-            clazz = clazz.getSuperclass();
-        }
-
-        return null;
-    }
-
 
     private void startNetworkServices() {
         if (!options.get(OPENEJB_EMBEDDED_REMOTABLE, false)) {
@@ -286,23 +195,6 @@ public final class OpenEjbContainer extends EJBContainer {
             logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, OpenEjbContainer.class);
         }
         return logger;
-    }
-
-
-    public static class NoInjectionMetaDataException extends IllegalStateException {
-        public NoInjectionMetaDataException(final String s) {
-            this(s, null);
-        }
-
-        public NoInjectionMetaDataException(final String s, final Exception e) {
-            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, javax.annotation.ManagedBean.class.getName()), e);
-        }
-    }
-
-    public static class InjectionException extends IllegalStateException {
-        public InjectionException(final String message, final Throwable cause) {
-            super(message, cause);
-        }
     }
 
     public static class Provider implements EJBContainerProvider {
@@ -705,7 +597,7 @@ public final class OpenEjbContainer extends EJBContainer {
         @Override
         public void bind(final Name name, final Object obj) throws NamingException {
             if (name.size() == 1 && "inject".equals(name.get(0))) {
-                inject(obj);
+                Injector.inject(obj);
             } else {
                 super.bind(name, obj);
             }
@@ -714,7 +606,7 @@ public final class OpenEjbContainer extends EJBContainer {
         @Override
         public void bind(final String name, final Object obj) throws NamingException {
             if (name != null && "inject".equals(name)) {
-                inject(obj);
+                Injector.inject(obj);
             } else {
                 super.bind(name, obj);
             }
