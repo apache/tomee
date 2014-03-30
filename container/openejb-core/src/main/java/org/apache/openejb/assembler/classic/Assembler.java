@@ -2148,7 +2148,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 loader = new URLClassLoaderFirst(urls, loader);
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);
         }
 
