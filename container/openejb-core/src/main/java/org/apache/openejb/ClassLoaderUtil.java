@@ -501,13 +501,15 @@ public class ClassLoaderUtil {
     }
 
     public static void cleanOpenJPACache(final ClassLoader classLoader) {
-        try {
-            final Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
-            final Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
-            deRegisterMethod.invoke(null, classLoader);
-        } catch (final Throwable ignored) {
-            // there is nothing a user could do about this anyway
-        }
+        if (classLoader != ClassLoader.getSystemClassLoader()) {
+            try {
+                final Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
+                final Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
+                deRegisterMethod.invoke(null, classLoader);
+            } catch (final Throwable ignored) {
+                // there is nothing a user could do about this anyway
+            }
+        } // else keep it since OpenJPA uses static block to init meta we can't clean it for each app
     }
 
     private static String toString(final ClassLoader classLoader) {
