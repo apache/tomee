@@ -88,6 +88,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         put(p, "ServerName", datasource.getServerName());
         put(p, "Definition", rawDefinition(datasource)); // do we need it??
         put(p, AutoConfig.ORIGIN_FLAG, AutoConfig.ORIGIN_ANNOTATION);
+
         setProperties(datasource, p);
 
         // to force it to be bound in JndiEncBuilder

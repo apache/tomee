@@ -66,12 +66,12 @@ public class DataSourceFactory {
     }};
 
     public static CommonDataSource create(final String name,
-                                    final boolean configuredManaged,
-                                    final Class impl,
-                                    final String definition,
-                                    final Duration maxWaitTime,
-                                    final Duration timeBetweenEvictionRuns,
-                                    final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
+                                          final boolean configuredManaged,
+                                          final Class impl,
+                                          final String definition,
+                                          final Duration maxWaitTime,
+                                          final Duration timeBetweenEvictionRuns,
+                                          final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
@@ -94,15 +94,15 @@ public class DataSourceFactory {
 
         if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null) {
             try {
-                final AlternativeDriver driver = new AlternativeDriver((Driver)impl.newInstance(), jdbcUrl);
+                final AlternativeDriver driver = new AlternativeDriver((Driver) impl.newInstance(), jdbcUrl);
                 driver.register();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 throw new IllegalStateException(e);
             }
         }
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
-                                                                     "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
         final boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
@@ -158,7 +158,7 @@ public class DataSourceFactory {
 
             if (logSql) {
                 ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                                                         new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+                        new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
             }
 
             return ds;
@@ -186,7 +186,7 @@ public class DataSourceFactory {
                 final String newUrl = helper.updatedUrl(jdbcUrl);
                 properties.setProperty(key, newUrl);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -215,7 +215,7 @@ public class DataSourceFactory {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
-            && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;

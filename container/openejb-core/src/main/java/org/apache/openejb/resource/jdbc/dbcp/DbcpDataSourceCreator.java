@@ -73,10 +73,9 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     }
 
     private <T> void setDriverLoader(final T object) {
-        if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
+        if (org.apache.commons.dbcp.BasicDataSource.class.isInstance(object)) {
             final org.apache.commons.dbcp.BasicDataSource basicDataSource = (org.apache.commons.dbcp.BasicDataSource) object;
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            System.out.println("Setting DriverClassLoader to " + contextClassLoader);
             basicDataSource.setDriverClassLoader(contextClassLoader);
         }
     }

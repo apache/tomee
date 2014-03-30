@@ -54,17 +54,17 @@ class PackageBuilder {
         outputDir.absolutePath
     }
 
-    private String getCheckSum(File file) {
+    private static String getCheckSum(File file) {
         return getCheckSum(new FileInputStream(file))
     }
 
-    private String getCheckSum(InputStream input) {
+    private static String getCheckSum(InputStream input) {
         String md5 = DigestUtils.md5Hex(input)
         input.close()
         return md5
     }
 
-    private String getCheckSumLine(File root, File file) {
+    private static String getCheckSumLine(File root, File file) {
         String md5 = getCheckSum(file)
         return "${md5} ${file.absolutePath.substring(root.absolutePath.length() + 1)}"
     }

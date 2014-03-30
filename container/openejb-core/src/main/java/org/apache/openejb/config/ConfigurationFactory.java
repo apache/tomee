@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.Extensions;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
@@ -82,7 +83,6 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
-import org.apache.openejb.Extensions;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -117,6 +117,7 @@ import java.util.Set;
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static final String OPENEJB_JDBC_DATASOURCE_CREATOR = "openejb.jdbc.datasource-creator";
@@ -135,7 +136,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private String configLocation;
     private OpenEjbConfiguration sys;
     private Openejb openejb;
-    private DynamicDeployer deployer;
+    private final DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
     private final boolean offline;
     private final boolean serviceTypeIsAdjustable; // offline is a bit different from this and offline could be off and this on
@@ -298,8 +299,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(final boolean offline,
-                                   final DynamicDeployer preAutoConfigDeployer,
-                                   final OpenEjbConfiguration configuration) {
+                                final DynamicDeployer preAutoConfigDeployer,
+                                final OpenEjbConfiguration configuration) {
         this(offline, preAutoConfigDeployer);
         sys = configuration;
     }
@@ -737,6 +738,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             } catch (final URISyntaxException e) {
                 throw new OpenEJBException("Unable to parse URI parameters '" + uri + "'. URISyntaxException: " + e.getMessage());
             }
+
             if (object instanceof AbstractService) {
                 final AbstractService service = (AbstractService) object;
                 service.setId(id);
@@ -745,6 +747,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setClassName(map.remove("class-name"));
                 service.setConstructor(map.remove("constructor"));
                 service.setFactoryName(map.remove("factory-name"));
+
+                final String cp = map.remove("classpath");
+                if (null != cp) {
+                    service.setClasspath(cp);
+                }
 
                 if (object instanceof Resource) {
                     final String aliases = map.remove("aliases");
@@ -1175,10 +1182,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             return info;
         } catch (final NoSuchProviderException e) {
-            final String message = logger.fatal("configureService.failed", e, service.getId());
+            final String message = logger.fatal("configureService.failed", e, (null != service ? service.getId() : ""));
             throw new OpenEJBException(message + ": " + e.getMessage());
         } catch (final Throwable e) {
-            final String message = logger.fatal("configureService.failed", e, service.getId());
+            final String message = logger.fatal("configureService.failed", e, (null != service ? service.getId() : ""));
             throw new OpenEJBException(message, e);
         }
     }
@@ -1251,7 +1258,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // because we just have the service properties, not our defaults
             final Properties properties = service.getProperties();
             if ((properties.containsKey("JdbcDriver") || properties.containsKey("JdbcUrl") || properties.containsKey("url"))
-                && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
+                    && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
                 service.setType("javax.sql.DataSource");
             }
         }
@@ -1298,7 +1305,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * @param serviceType        String
      * @return ServiceInfo T
      * @throws OpenEJBException
-     *
      */
     public <T extends ServiceInfo> T configureService(final Class<? extends T> type, final String serviceId, final Properties declaredProperties, final String providerId, final String serviceType) throws OpenEJBException {
         if (type == null) {
@@ -1361,7 +1367,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return overrides;
     }
 
-    static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
+    private static final Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
 
     static {
         containerTypes.put(BeanTypes.SINGLETON, SingletonSessionContainerInfo.class);
@@ -1560,7 +1566,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             // both null or the same id
             if (refA == null && refB == null ||
-                refA != null && refA.equals(refB)) {
+                    refA != null && refA.equals(refB)) {
                 return EQUAL;
             }
 
