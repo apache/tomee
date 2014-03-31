@@ -63,6 +63,7 @@ google-
 gragent.jar
 groovy-
 gson-
+guava-
 guice-
 hamcrest-
 hawtbuf-
