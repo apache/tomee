@@ -1059,6 +1059,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // breaks cdi
         standardContext.setTldValidation(Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.tld.validation", "false")));
+        // breaks jstl
+        standardContext.setXmlValidation(Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.xml.validation", "false")));
     }
 
     /**
