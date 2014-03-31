@@ -101,7 +101,9 @@ public class ExecMojo extends BuildTomEEMojo {
         config.put("workingDir", runtimeWorkingDir);
         config.put("command", script);
         final List<String> jvmArgs = generateJVMArgs();
-        config.put("catalinaOpts", toString(jvmArgs));
+
+        final String catalinaOpts = toString(jvmArgs);
+        config.put("catalinaOpts", catalinaOpts);
         config.put("timestamp", Long.toString(System.currentTimeMillis()));
         // java only
         final String cp = getAdditionalClasspath();
@@ -110,8 +112,13 @@ public class ExecMojo extends BuildTomEEMojo {
         }
         config.put("shutdownCommand", tomeeShutdownCommand);
         int i = 0;
+        boolean encodingSet = catalinaOpts.contains("-Dfile.encoding");
         for (final String jvmArg : jvmArgs) {
             config.put("jvmArg." + i++, jvmArg);
+            encodingSet = encodingSet || jvmArg.contains("-Dfile.encoding");
+        }
+        if (!encodingSet) { // forcing encoding for launched process to be able to read conf files
+            config.put("jvmArg." + i, "-Dfile.encoding=UTF-8");
         }
 
         // create an executable jar with main runner and zipFile
