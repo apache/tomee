@@ -133,7 +133,7 @@ public class ExecMojo extends BuildTomEEMojo {
             os.putArchiveEntry(new JarArchiveEntry("configuration.properties"));
             final StringWriter writer = new StringWriter();
             config.store(writer, "");
-            IOUtils.copy(new ByteArrayInputStream(writer.toString().getBytes()), os);
+            IOUtils.copy(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), os);
             os.closeArchiveEntry();
         }
 
