@@ -121,7 +121,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.52</tomcat.version>
+    <tomcat.version>7.0.53</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.9</cxf.version>
@@ -517,17 +517,6 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>apache-staging</id>
-      <name>Apache Staging Repository</name>
-      <url>http://repository.apache.org/content/groups/staging/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>
