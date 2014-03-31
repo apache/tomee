@@ -133,7 +133,7 @@ public final class Mvn {
 
             if (LibraryContainer.class.isInstance(webArchive)) {
                 try {
-                    final File[] deps = Maven.resolver().offline().loadPomFromFile(new File(basedir, "pom.xml"))
+                    final File[] deps = Maven.configureResolver().workOffline().loadPomFromFile(new File(basedir, "pom.xml"))
                         .importDependencies(scopes).resolve().withTransitivity().asFile();
                     if (deps.length > 0) {
                         LibraryContainer.class.cast(webArchive).addAsLibraries(deps);

@@ -178,9 +178,8 @@
     <version.eclipselink>2.4.2</version.eclipselink>
 
     <!-- arquillian related -->
-    <version.arquillian.bom>1.1.2.Final</version.arquillian.bom>
-    <version.shrinkwrap.resolver.bom>2.0.1</version.shrinkwrap.resolver.bom>
-    <version.shrinkwrap.resolvers>2.0.2</version.shrinkwrap.resolvers>
+    <version.arquillian.bom>1.1.4.Final</version.arquillian.bom>
+    <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
   </properties>
 
   <build>
@@ -560,17 +559,6 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
-    <repository>
-      <id>tomcat-rc</id>
-      <name>Tomcat RC Repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomcat-1010/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
