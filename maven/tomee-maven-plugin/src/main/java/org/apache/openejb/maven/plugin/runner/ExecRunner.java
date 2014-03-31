@@ -25,6 +25,7 @@ import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -50,7 +51,7 @@ public class ExecRunner {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         final InputStream is = contextClassLoader.getResourceAsStream("configuration.properties");
         if (is != null) {
-            config.load(is);
+            config.load(new InputStreamReader(is, "UTF-8"));
             is.close();
         } else {
             throw new IllegalArgumentException("Config not found");
