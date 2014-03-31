@@ -168,7 +168,7 @@
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
     <myfaces.version>2.1.15</myfaces.version>
     <mojarra.version>2.1.27</mojarra.version>
-    <slf4j.version>1.7.5</slf4j.version>
+    <slf4j.version>1.7.6</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <version.hsqldb>2.3.0</version.hsqldb>
@@ -1524,7 +1524,7 @@
       <dependency>
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
         <exclusions>
           <exclusion>
             <groupId>org.codehaus.woodstox</groupId>
