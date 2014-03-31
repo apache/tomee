@@ -36,13 +36,9 @@ class PackageBuilder {
                 dest: outputDir.absolutePath
         )
         def files = outputDir.listFiles()
-        if (files.size() > 1) {
-            return outputDir.absolutePath
+        if (files.size() == 1) {
+            outputDir = files[0]
         }
-        def aux = new File(new File(tarPath).parent, 'aux')
-        files[0].renameTo(aux)
-        outputDir.delete()
-        aux.renameTo(outputDir)
         ant.delete(includeemptydirs: true) {
             fileset(dir: outputDir.absolutePath, includes: '**/*.txt')
             fileset(dir: outputDir.absolutePath, includes: '**/*.exe')
