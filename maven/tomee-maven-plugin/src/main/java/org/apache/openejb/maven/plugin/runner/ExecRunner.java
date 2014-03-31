@@ -157,6 +157,7 @@ public class ExecRunner {
 
         System.out.flush();
         System.err.flush();
+        System.out.println("Exited Successfully!");
     }
 
     private ExecRunner() {
