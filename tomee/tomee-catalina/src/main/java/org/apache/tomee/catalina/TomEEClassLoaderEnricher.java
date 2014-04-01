@@ -49,7 +49,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
 
-    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] {
+    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[]{
             "openwebbeans-jsf", // to be able to provide jsf impl
             "tomee-mojarra",
             "tomee-myfaces", // to be able to embedded myfaces in the webapp
@@ -136,17 +136,17 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
     /**
      * Validation part
      */
-    private static final String[] FORBIDDEN_CLASSES = new String[]{
-            "javax.persistence.Entity", // JPA
-            "javax.transaction.Transaction", // JTA
-            "javax.jws.WebService", // JAXWS
-            "javax.validation.Validation", // BVal
-            "javax.jms.Queue", // JMS
-            "javax.enterprise.context.ApplicationScoped", // CDI
-            "javax.inject.Inject", // CDI
-            "javax.ws.rs.Path", // JAXRS - commented since we manage to find why jersey-core brings the api!
-            "javax.ejb.EJB", // EJB
-            "javax.annotation.PostConstruct" // javax.annotation
+    private static final String[][] FORBIDDEN_CLASSES = new String[][]{
+            {"javax.persistence.Entity", null}, // JPA
+            {"javax.transaction.Transaction", null}, // JTA
+            {"javax.jws.WebService", null}, // JAXWS
+            {"javax.validation.Validation", null}, // BVal
+            {"javax.jms.Queue", null}, // JMS
+            {"javax.enterprise.context.ApplicationScoped", null}, // CDI
+            {"javax.inject.Inject", null}, // CDI
+            {"javax.ws.rs.Path", "You provide JAXRS API in the webapp, we tolerate it to support some advanced feature but if you expect TomEE to provide it you should remove it"}, // JAXRS - commented since we manage to find why jersey-core brings the api!
+            {"javax.ejb.EJB", null}, // EJB
+            {"javax.annotation.PostConstruct", null} // javax.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {
@@ -156,13 +156,13 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
         try {
             jarFile = new JarFile(file);
-            for (String name : FORBIDDEN_CLASSES) {
+            for (final String[] name : FORBIDDEN_CLASSES) {
                 // if we can't load if from our classLoader we'll not impose anything on this class
                 boolean found = false;
                 for (int i = 0; i < 2; i++) {
                     try {
                         try {
-                            parent.loadClass(name);
+                            parent.loadClass(name[0]);
                             found = true;
                             break;
                         } catch (Exception e) {
@@ -178,12 +178,17 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                 }
 
                 // we found it so let's check it is or not in the file (potential conflict)
-                final String entry = name.replace('.', '/') + ".class";
+                final String entry = name[0].replace('.', '/') + ".class";
                 final JarEntry jarEntry = jarFile.getJarEntry(entry);
                 if (jarEntry != null) {
-                    LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name
-                                                + ". It will be ignored.");
-                    return false;
+                    if (name[1] == null) {
+                        LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
+                                + ". It will be ignored.");
+                        return false;
+                    }
+                    LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
+                            + "but: " + name[1]);
+                    return true;
                 }
             }
             return true;
