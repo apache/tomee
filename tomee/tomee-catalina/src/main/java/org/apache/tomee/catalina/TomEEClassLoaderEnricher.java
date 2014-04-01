@@ -136,17 +136,17 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
     /**
      * Validation part
      */
-    private static final String[][] FORBIDDEN_CLASSES = new String[][]{
-            {"javax.persistence.Entity", null}, // JPA
-            {"javax.transaction.Transaction", null}, // JTA
-            {"javax.jws.WebService", null}, // JAXWS
-            {"javax.validation.Validation", null}, // BVal
-            {"javax.jms.Queue", null}, // JMS
-            {"javax.enterprise.context.ApplicationScoped", null}, // CDI
-            {"javax.inject.Inject", null}, // CDI
-            {"javax.ws.rs.Path", "You provide JAXRS API in the webapp, we tolerate it to support some advanced feature but if you expect TomEE to provide it you should remove it"}, // JAXRS - commented since we manage to find why jersey-core brings the api!
-            {"javax.ejb.EJB", null}, // EJB
-            {"javax.annotation.PostConstruct", null} // javax.annotation
+    private static final String[][] FORBIDDEN_CLASSES = new String[][]{ // name, spec +1 name, message. Note: [1] != null => [2] != null
+            {"javax.persistence.Entity", null, null}, // JPA
+            {"javax.transaction.Transaction", null, null}, // JTA
+            {"javax.jws.WebService", null, null}, // JAXWS
+            {"javax.validation.Validation", null, null}, // BVal
+            {"javax.jms.Queue", null, null}, // JMS
+            {"javax.enterprise.context.ApplicationScoped", null, null}, // CDI
+            {"javax.inject.Inject", null, null}, // CDI
+            {"javax.ws.rs.Path", "javax.ws.rs.core.Configurable", "You provide JAXRS 2 API in the webapp, we tolerate it to support some advanced feature but if you expect TomEE to provide it you should remove it"}, // JAXRS - commented since we manage to find why jersey-core brings the api!
+            {"javax.ejb.EJB", null, null}, // EJB
+            {"javax.annotation.PostConstruct", "javax.annotation.Priority", "You provide javax.annotation API 1.2 so we'll tolerate new classes but it should surely be upgraded in the container"} // javax.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {
@@ -181,14 +181,16 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                 final String entry = name[0].replace('.', '/') + ".class";
                 final JarEntry jarEntry = jarFile.getJarEntry(entry);
                 if (jarEntry != null) {
-                    if (name[1] == null) {
-                        LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
-                                + ". It will be ignored.");
-                        return false;
+                    if (name[1] != null) {
+                        if (jarFile.getJarEntry(name[1].replace('.', '/') + ".class") != null) {
+                            LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
+                                    + "but: " + name[2]);
+                            return true;
+                        }
                     }
                     LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
-                            + "but: " + name[1]);
-                    return true;
+                            + ". It will be ignored.");
+                    return false;
                 }
             }
             return true;
