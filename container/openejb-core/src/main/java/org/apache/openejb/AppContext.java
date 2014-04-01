@@ -34,6 +34,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class AppContext extends DeploymentContext {
+    private final long startTime = System.currentTimeMillis();
     private final SystemInstance systemInstance;
     private final ClassLoader classLoader;
     private final Context globalJndiContext;
@@ -129,5 +130,9 @@ public class AppContext extends DeploymentContext {
 
     public AsynchronousPool getAsynchronousPool() {
         return get(AsynchronousPool.class);
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }
