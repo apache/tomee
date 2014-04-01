@@ -56,7 +56,7 @@ public class FilterRegistrationTest {
 
     @Test
     public void touch() throws IOException {
-        assertEquals("http://ok/filter/touch", IO.slurp(new URL("http://localhost:4204/filter/touch")));
+        assertEquals("/filter/touch", IO.slurp(new URL("http://localhost:4204/filter/touch")));
         assertTrue(TestFilter.init);
         assertTrue(TestFilter.ok);
         assertTrue(TestFilter2.ok);

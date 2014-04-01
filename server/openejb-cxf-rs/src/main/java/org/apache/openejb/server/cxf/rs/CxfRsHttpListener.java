@@ -69,7 +69,6 @@ import javax.naming.Context;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
@@ -113,6 +112,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
+    private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
@@ -159,8 +159,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         // fix the address (to manage multiple connectors)
-        if (httpRequest instanceof HttpRequestImpl) {
-            ((HttpRequestImpl) httpRequest).initPathFromContext(context);
+        if (HttpRequestImpl.class.isInstance(httpRequest)) {
+            final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(httpRequest);
+            requestImpl.initPathFromContext(context);
+            requestImpl.initServletPath(servlet);
         }
 
         String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
@@ -175,21 +177,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
-                // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
-                // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
-                // so without stripping the address until the context the behavior is weird
-                // this is just a workaround waiting for something better
-                @Override
-                public String getRequestURI() {
-
-                    if (httpRequest instanceof HttpRequestImpl) {
-                        return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
-                    } else {
-                        return strip(context, super.getRequestURI());
-                    }
-                }
-            }, httpResponse);
+            destination.invoke(null, httpRequest.getServletContext(), httpRequest, httpResponse);
         } finally {
             if (oldLoader != null) {
                 CxfUtil.clearBusLoader(oldLoader);
@@ -237,13 +225,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
         }
 
-    }
-
-    private String strip(final String context, final String requestURI) {
-        if (requestURI.startsWith(context)) {
-            return requestURI.substring(context.length());
-        }
-        return requestURI;
     }
 
     @Override
@@ -429,6 +410,11 @@ public class CxfRsHttpListener implements RsHttpListener {
             this.context = webContext;
             if (!webContext.startsWith("/")) {
                 this.context = "/" + webContext;
+            }
+            final int servletIdx = 1 + this.context.substring(1).indexOf('/');
+            if (servletIdx > 0) {
+                this.servlet = this.context.substring(servletIdx);
+                this.context = this.context.substring(0, servletIdx);
             }
             destination = (AbstractHTTPDestination) server.getDestination();
 
