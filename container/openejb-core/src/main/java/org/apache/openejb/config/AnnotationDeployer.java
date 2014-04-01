@@ -1111,31 +1111,40 @@ public class AnnotationDeployer implements DynamicDeployer {
            /*
             * REST
             */
-            // get by annotations
-            webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
-            addJaxRsProviders(finder, webModule.getJaxrsProviders(), Provider.class);
-
-            // Applications with a default constructor
-            // findSubclasses will not work by default to gain a lot of time
-            // look FinderFactory for the flag to activate it or
-            // use @ApplicationPath("/")
-            final List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
-            for (final Class<? extends Application> app : applications) {
-                addRestApplicationIfPossible(webModule, app);
+            boolean restHandledByTheWebApp;
+            try {
+                restHandledByTheWebApp = webModule.getClassLoader().loadClass(Application.class.getName()) != Application.class;
+            } catch (final Throwable e) { // ClassNotFoundException or NoClassDefFoundError
+                restHandledByTheWebApp = false;
             }
 
-            // look for ApplicationPath, it will often return the same than the previous one
-            // but without finder.link() invocation it still works
-            // so it can save a lot of startup time
-            final List<Annotated<Class<?>>> applicationsByAnnotation = finder.findMetaAnnotatedClasses(ApplicationPath.class);
-            for (final Annotated<Class<?>> annotatedApp : applicationsByAnnotation) {
-                final Class<?> app = annotatedApp.get();
-                if (!Application.class.isAssignableFrom(app)) {
-                    logger.error("class '" + app.getName() + "' is annotated with @ApplicationPath but doesn't implement " + Application.class.getName());
-                    continue;
+            if (!restHandledByTheWebApp) {
+                // get by annotations
+                webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
+                addJaxRsProviders(finder, webModule.getJaxrsProviders(), Provider.class);
+
+                // Applications with a default constructor
+                // findSubclasses will not work by default to gain a lot of time
+                // look FinderFactory for the flag to activate it or
+                // use @ApplicationPath("/")
+                final List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
+                for (final Class<? extends Application> app : applications) {
+                    addRestApplicationIfPossible(webModule, app);
                 }
 
-                addRestApplicationIfPossible(webModule, (Class<? extends Application>) app);
+                // look for ApplicationPath, it will often return the same than the previous one
+                // but without finder.link() invocation it still works
+                // so it can save a lot of startup time
+                final List<Annotated<Class<?>>> applicationsByAnnotation = finder.findMetaAnnotatedClasses(ApplicationPath.class);
+                for (final Annotated<Class<?>> annotatedApp : applicationsByAnnotation) {
+                    final Class<?> app = annotatedApp.get();
+                    if (!Application.class.isAssignableFrom(app)) {
+                        logger.error("class '" + app.getName() + "' is annotated with @ApplicationPath but doesn't implement " + Application.class.getName());
+                        continue;
+                    }
+
+                    addRestApplicationIfPossible(webModule, (Class<? extends Application>) app);
+                }
             }
 
             /*
