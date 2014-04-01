@@ -467,15 +467,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {
-        final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
-        if (path != null) {
-            final String appPath = path.value();
-            if (appPath.startsWith("/")) {
-                return appPath.substring(1);
-            } else {
-                return appPath;
-            }
-        }
+        StringBuilder builder = null;
 
         // no annotation, try servlets
         for (final ServletInfo s : info.servlets) {
@@ -504,11 +496,35 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 if (mapping.startsWith("/")) {
                     mapping = mapping.substring(1);
                 }
-                return mapping;
+
+                builder = new StringBuilder();
+                builder.append(mapping);
+                break;
             }
         }
 
-        return null;
+        // annotation
+        final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
+        if (path != null) {
+            final String appPath = path.value();
+
+            if (builder == null) {
+                builder = new StringBuilder();
+            } else if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '/') {
+                builder.append('/');
+            }
+
+            if (appPath.startsWith("/")) {
+                builder.append(appPath.substring(1));
+            } else {
+                builder.append(appPath);
+            }
+        }
+
+        if (builder == null) {
+            return null;
+        }
+        return builder.toString();
     }
 
     private static <T> boolean isProvider(final Class<T> clazz) {
@@ -860,7 +876,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         HttpListener listener = rsRegistry.removeListener(context);
         if (listener != null) {
 
-            if(BasicAuthHttpListenerWrapper.class.isInstance(listener)){
+            if (BasicAuthHttpListenerWrapper.class.isInstance(listener)) {
                 listener = BasicAuthHttpListenerWrapper.class.cast(listener).getHttpListener();
             }
 

@@ -144,6 +144,7 @@ public class HttpRequestImpl implements HttpRequest {
     private String encoding = "UTF-8";
     private ServletContext context = null;
     private String contextPath = "";
+    private String servletPath = null;
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -222,6 +223,9 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getPathInfo() {
+        if (servletPath != null) {
+            return path.substring(servletPath.length());
+        }
         return path;
     }
 
@@ -258,7 +262,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getRequestURI() {
-        return getURI().toString();
+        return getURI().getRawPath();
     }
 
     @Override
@@ -268,7 +272,14 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getServletPath() {
+        if (servletPath != null) {
+            return servletPath;
+        }
         return getPathInfo();
+    }
+
+    public void initServletPath(final String servlet) {
+        servletPath = servlet;
     }
 
     /**

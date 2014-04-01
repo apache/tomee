@@ -83,7 +83,7 @@ public class CdiInterceptorContextTest {
 
         @AroundInvoke
         public Object invoke(final InvocationContext ic) throws Exception {
-            if (ic.getMethod().getName().equals("bar") && "foo".equals(request.getRequestURI())) {
+            if (ic.getMethod().getName().equals("bar") && "/app/foo".equals(request.getRequestURI())) {
                 return "perfect";
             }
             return ic.proceed();
