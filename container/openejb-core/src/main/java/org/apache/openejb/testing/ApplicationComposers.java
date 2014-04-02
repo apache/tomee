@@ -134,7 +134,7 @@ public final class ApplicationComposers {
 
     public ApplicationComposers(final Class<?> klass) {
         testClass = klass;
-        testClassFinder = new ClassFinder(klass);
+        testClassFinder = new ClassFinder(org.apache.openejb.util.Classes.ancestors(klass));
         validate();
     }
 
