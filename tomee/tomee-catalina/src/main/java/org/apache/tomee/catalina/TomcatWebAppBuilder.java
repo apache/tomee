@@ -1083,8 +1083,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void startInternal(final StandardContext standardContext) {
         if (isIgnored(standardContext)) return;
 
-        forceWebAppLoaderToGetAParent(standardContext.getLoader().getClassLoader(), standardContext.getParentClassLoader());
-
         final CoreContainerSystem cs = getContainerSystem();
 
         final Assembler a = getAssembler();
@@ -1370,18 +1368,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setPrefix(standardContext.getName());
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
-        }
-    }
-
-    private void forceWebAppLoaderToGetAParent(final ClassLoader classLoader, final ClassLoader parent) {
-        if (!LazyStopWebappClassLoader.class.isInstance(classLoader)) {
-            return;
-        }
-
-        // workaround since tomcat doesn't support reload anymore
-        if (Reflections.get(classLoader, "parent") == null) { // then the current loader was reloaded and is now broken if we need parent
-            // this algorithm is broken for ears but ears will not be reloaded this way normally
-            Reflections.set(classLoader, "parent", parent);
         }
     }
 

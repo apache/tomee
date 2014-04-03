@@ -336,7 +336,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            server.stop();
+            server.destroy();
         } catch (final RuntimeException ise) {
             LOGGER.warning("Can't stop correctly the endpoint " + server);
             if (LOGGER.isDebugEnabled()) {
