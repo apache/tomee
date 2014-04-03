@@ -16,47 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
-import static org.apache.tomee.catalina.Contexts.warPath;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import javax.ejb.spi.HandleDelegate;
-import javax.el.ELResolver;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspFactory;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
@@ -167,6 +126,46 @@ import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
+
+import javax.ejb.spi.HandleDelegate;
+import javax.el.ELResolver;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import javax.servlet.ServletContext;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
+import static org.apache.tomee.catalina.Contexts.warPath;
 
 /**
  * Web application builder.
@@ -1084,6 +1083,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void startInternal(final StandardContext standardContext) {
         if (isIgnored(standardContext)) return;
 
+        forceWebAppLoaderToGetAParent(standardContext.getLoader().getClassLoader(), standardContext.getParentClassLoader());
+
         final CoreContainerSystem cs = getContainerSystem();
 
         final Assembler a = getAssembler();
@@ -1369,6 +1370,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setPrefix(standardContext.getName());
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
+        }
+    }
+
+    private void forceWebAppLoaderToGetAParent(final ClassLoader classLoader, final ClassLoader parent) {
+        if (!LazyStopWebappClassLoader.class.isInstance(classLoader)) {
+            return;
+        }
+
+        // workaround since tomcat doesn't support reload anymore
+        if (Reflections.get(classLoader, "parent") == null) { // then the current loader was reloaded and is now broken if we need parent
+            // this algorithm is broken for ears but ears will not be reloaded this way normally
+            Reflections.set(classLoader, "parent", parent);
         }
     }
 
