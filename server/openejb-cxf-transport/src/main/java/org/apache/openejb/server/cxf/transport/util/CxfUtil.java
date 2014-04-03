@@ -29,6 +29,8 @@ import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.management.InstrumentationManager;
+import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -36,8 +38,10 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.util.PropertiesHelper;
 
+import javax.management.MBeanServer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -233,6 +237,19 @@ public final class CxfUtil {
         // ensure cxf classes are loaded from container to avoid conflicts with app
         bus.setExtension(new CxfContainerClassLoader(), ClassLoader.class);
 
+        // activate jmx, by default isEnabled() == false in InstrumentationManagerImpl
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.jmx", "true"))) {
+            final InstrumentationManager mgr = bus.getExtension(InstrumentationManager.class);
+            if (InstrumentationManagerImpl.class.isInstance(mgr)) {
+                bus.setExtension(LocalMBeanServer.get(), MBeanServer.class); // just to keep everything consistent
+
+                final InstrumentationManagerImpl manager = InstrumentationManagerImpl.class.cast(mgr);
+                manager.setEnabled(true);
+                manager.setServer(LocalMBeanServer.get());
+                manager.setDaemon(true);
+            }
+        }
+
         if (bus instanceof CXFBusImpl) {
             final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
                     SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
@@ -261,6 +278,8 @@ public final class CxfUtil {
             configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
 
             SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
+
+            busImpl.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
         }
     }
 
