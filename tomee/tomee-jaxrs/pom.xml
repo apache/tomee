@@ -82,5 +82,12 @@
       <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-coyote</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
