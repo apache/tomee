@@ -749,13 +749,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
                 String line;
                 while ((line = reader.nextLine()) != null) {
-                    if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
-                        break;
-                    }
 
                     if (!handleLine(line.trim())) {
                         System.out.flush();
                         getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
+                    } else {
+                        break;
                     }
                 }
 
@@ -881,8 +880,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         stopCondition.countDown();
     }
 
-    protected boolean handleLine(final String line) {
-        return false;
+    protected boolean handleLine(String line) {
+        if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
+            return true;
+        }
+
+        //Command line can buffer chars fifo 'tiuq'
+        line = new StringBuilder(line).reverse().toString();
+
+        return QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line);
     }
 
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
@@ -929,7 +935,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))
-                || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
+            || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
             tomeeClassifier = null;
         }
 
@@ -965,12 +971,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 final File dest = new File(catalinaBase.getAbsolutePath(), name);
                 if (!dest.exists()) {
                     final File parent = dest.getParentFile();
-                    parent.mkdirs();
-                    parent.setWritable(true);
-                    parent.setReadable(true);
+                    if ((!parent.exists() && !parent.mkdirs())
+                        || (!parent.canWrite() && !parent.setWritable(true))
+                        || (!parent.canRead() && !parent.setReadable(true))) {
+                        throw new RuntimeException("Failed to create or set permissions on: " + parent);
+                    }
                 }
                 if (entry.isDirectory()) {
-                    dest.mkdir();
+                    if (!dest.exists() && !dest.mkdir()) {
+                        throw new RuntimeException("Failed to create: " + dest);
+                    }
                 } else {
                     final FileOutputStream fos = new FileOutputStream(dest);
                     try {
@@ -980,9 +990,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     }
                     close(fos);
 
-                    dest.setReadable(true);
+                    if (!dest.canRead() && !dest.setReadable(true)) {
+                        throw new RuntimeException("Failed to set readable on: " + dest);
+                    }
                     if (dest.getName().endsWith(".sh")) {
-                        dest.setExecutable(true);
+                        if (!dest.canExecute() && !dest.setExecutable(true)) {
+                            throw new RuntimeException("Failed to set executable on: " + dest);
+                        }
                     }
                 }
             }
@@ -1007,8 +1021,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             writer.close();
 
             final File appsFolder = new File(catalinaBase, "apps");
-            if (!appsFolder.exists()) {
-                appsFolder.mkdirs();
+            if (!appsFolder.exists() && !appsFolder.mkdirs()) {
+                throw new RuntimeException("Failed to create: " + appsFolder);
             }
 
             getLog().info(container + " was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
