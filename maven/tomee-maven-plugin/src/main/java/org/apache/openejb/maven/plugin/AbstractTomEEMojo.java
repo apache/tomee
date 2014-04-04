@@ -885,7 +885,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             return true;
         }
 
-        //Command line can buffer chars fifo 'tiuq'
+        //http://youtrack.jetbrains.com/issue/IDEA-94826
         line = new StringBuilder(line).reverse().toString();
 
         return QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line);
