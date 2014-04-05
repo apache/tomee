@@ -23,6 +23,7 @@ import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.bus.managers.BindingFactoryManagerImpl;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.spring.MapProvider;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public final class CxfUtil {
     public static final String ENDPOINT_PROPERTIES = "properties";
@@ -247,6 +249,12 @@ public final class CxfUtil {
                 manager.setEnabled(true);
                 manager.setServer(LocalMBeanServer.get());
                 manager.setDaemon(true);
+
+                try { // avoid to bother our nice logs
+                    LogUtils.getL7dLogger(InstrumentationManagerImpl.class).setLevel(Level.WARNING);
+                } catch (final Throwable th) {
+                    // no-op
+                }
             }
         }
 
