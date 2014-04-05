@@ -49,6 +49,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DynamicSubclass implements Opcodes {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
+    public static final String IMPL_SUFFIX = "$$Impl";
 
     public static boolean isDynamic(final Class beanClass) {
         return Modifier.isAbstract(beanClass.getModifiers()) && InvocationHandler.class.isAssignableFrom(beanClass);
@@ -165,7 +166,7 @@ public class DynamicSubclass implements Opcodes {
     }
 
     private static String getSubclassName(final Class<?> classToProxy) {
-        return classToProxy.getName() + "$$Impl";
+        return classToProxy.getName() + IMPL_SUFFIX;
     }
 
     private static void getNonPrivateMethods(Class<?> clazz, final Map<String, List<Method>> methodMap) {
