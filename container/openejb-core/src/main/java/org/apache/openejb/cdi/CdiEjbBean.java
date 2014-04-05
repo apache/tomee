@@ -394,7 +394,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         }
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
-            return super.newInstance(CreationalContextImpl.class.cast(creationalContext));
+            return (T) super.newInstance(CreationalContextImpl.class.cast(creationalContext));
         }
     }
 }
