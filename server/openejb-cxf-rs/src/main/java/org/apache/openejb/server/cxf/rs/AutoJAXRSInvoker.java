@@ -57,10 +57,12 @@ public class AutoJAXRSInvoker implements Invoker {
     public Object invoke(Exchange exchange, Object o) { // mainly a select the right invoker impl
         final ClassResourceInfo cri = (ClassResourceInfo) exchange.get("root.resource.class");
 
-        if (cri != null
-                && ejbs.containsKey(cri.getServiceClass().getName())
-                && !BeanType.MANAGED.equals(ejbs.get(cri.getServiceClass().getName()).context.getComponentType())) {
-            return ejbInvoker.invoke(exchange, o);
+        if (cri != null) {
+            final String clazz = cri.getServiceClass().getName();
+            final EJBRestServiceInfo restServiceInfo = ejbs.get(clazz);
+            if (restServiceInfo != null && !BeanType.MANAGED.equals(restServiceInfo.context.getComponentType())) {
+                return ejbInvoker.invoke(exchange, o);
+            }
         }
 
         return jaxrsInvoker.invoke(exchange, o);

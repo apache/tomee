@@ -47,6 +47,7 @@ import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -378,11 +379,20 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
 
             for (final Class<?> clazz : classes) {
-                final String name = clazz.getName();
-                if (restEjbs.containsKey(name)) {
-                    final BeanContext bc = restEjbs.get(name).context;
-                    final Object proxy = ProxyEJB.subclassProxy(bc);
-                    factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
+                String name = clazz.getName();
+                EJBRestServiceInfo restServiceInfo = restEjbs.get(name);
+
+                if (name.endsWith(DynamicSubclass.IMPL_SUFFIX)) {
+                    name = name.substring(0, name.length() - DynamicSubclass.IMPL_SUFFIX.length());
+                    restServiceInfo = restEjbs.get(name);
+                    if (restServiceInfo != null) { // AutoJAXRSInvoker relies on it
+                        restEjbs.put(clazz.getName(), restServiceInfo);
+                    }
+                }
+
+                if (restServiceInfo != null) {
+                    final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
+                    factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
                 } else {
                     factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(classLoader, clazz, injections, context, owbCtx));
                 }
