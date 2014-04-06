@@ -118,7 +118,7 @@ public class ManagedConnection implements InvocationHandler {
                         transaction.registerSynchronization(new ClosingSynchronization(delegate, connectionByTx));
 
                         try {
-                            delegate.setAutoCommit(false);
+                            setAutoCommit(false);
                         } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
                             final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
                             if (LOGGER.isDebugEnabled()) { // we don't want to print the exception by default
@@ -137,6 +137,10 @@ public class ManagedConnection implements InvocationHandler {
         } catch (final InvocationTargetException ite) {
             throw ite.getTargetException();
         }
+    }
+
+    protected void setAutoCommit(final boolean value) throws SQLException {
+        delegate.setAutoCommit(value);
     }
 
     private static Object invoke(final Method method, final Connection delegate, final Object[] args) throws Throwable {

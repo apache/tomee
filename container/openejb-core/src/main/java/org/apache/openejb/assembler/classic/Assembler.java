@@ -2287,7 +2287,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 importer.doImport();
             }
 
-            logUnusedProperties(DataSourceFactory.forgetRecipe(service, serviceRecipe), serviceInfo);
+            final ObjectRecipe recipe = DataSourceFactory.forgetRecipe(service, serviceRecipe);
+            if (recipe != serviceRecipe || !serviceInfo.properties.containsKey("XaDataSource")) {
+                logUnusedProperties(recipe, serviceInfo);
+            } // else logged on xadatasource itself
 
             final Properties prop = serviceInfo.properties;
             String url = prop.getProperty("JdbcUrl", prop.getProperty("url"));
@@ -2618,7 +2621,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         final ObjectRecipe serviceRecipe = prepareRecipe(info);
+        final Object value = info.properties.remove("SkipImplicitAttributes"); // we don't want this one to go in recipe
         serviceRecipe.setAllProperties(info.properties);
+        if (value != null) {
+            info.properties.put("SkipImplicitAttributes", value);
+        }
 
         if (serviceLogger.isDebugEnabled()) {
             for (final Map.Entry<String, Object> entry : serviceRecipe.getProperties().entrySet()) {

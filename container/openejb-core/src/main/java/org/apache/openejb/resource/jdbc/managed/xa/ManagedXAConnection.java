@@ -37,4 +37,9 @@ public class ManagedXAConnection extends ManagedConnection {
     public XAResource getXAResource() throws SQLException {
         return xaConnection.getXAResource();
     }
+
+    @Override
+    protected void setAutoCommit(final boolean value) throws SQLException {
+        // no-op
+    }
 }
