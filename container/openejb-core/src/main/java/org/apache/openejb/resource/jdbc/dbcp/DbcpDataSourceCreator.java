@@ -16,12 +16,16 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
+import javax.transaction.TransactionManager;
 import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator
@@ -33,7 +37,21 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
+    public DataSource managed(final String name, final CommonDataSource ds) {
+        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
+        if (ds instanceof XADataSource) {
+            return new ManagedXADataSource(ds, transactionManager);
+        }
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
+    }
+
+    @Override
     public CommonDataSource pool(final String name, final String driver, final Properties properties) {
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            return XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+        }
+
         if (!properties.containsKey("JdbcDriver")) {
             properties.setProperty("driverClassName", driver);
         }
@@ -41,14 +59,7 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
 
         final BasicDataSource ds = build(BasicDataSource.class, properties);
         ds.setDriverClassName(driver);
-
-        final String xa = String.class.cast(properties.remove("XaDataSource"));
-        if (xa != null) {
-            cleanProperty(ds, "xadatasource");
-
-            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-            ds.setDelegate(xaDs);
-        }
+        // if (xa != null) ds.setDelegate(XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa));
 
         return ds;
     }
