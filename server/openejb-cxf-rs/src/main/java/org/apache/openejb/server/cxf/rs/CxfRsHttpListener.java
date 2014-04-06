@@ -589,7 +589,9 @@ public class CxfRsHttpListener implements RsHttpListener {
             final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
             if (provider != null) {
                 providersConfig = new HashSet<String>();
-                providersConfig.addAll(Arrays.asList(provider.split(",")));
+                for (final String p : Arrays.asList(provider.split(","))) {
+                    providersConfig.add(p.trim());
+                }
             }
 
             {
