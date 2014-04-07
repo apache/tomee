@@ -25,22 +25,95 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Resource;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(ApplicationComposer.class)
 public class JMXDataSourceTest {
+
+    @Resource(name = "JMXDataSourceTest")
+    private DataSource dataSource;
+
     @Test
     public void checkDsIsRegistered() throws MalformedObjectNameException {
         final ObjectName on = new ObjectName("openejb.management:ObjectType=datasources,DataSource=JMXDataSourceTest");
         assertTrue(ManagementFactory.getPlatformMBeanServer().isRegistered(on));
+    }
+
+    @Test
+    public void checkNumActiveAndNumIdle() throws MalformedObjectNameException, IntrospectionException,
+                                                  InstanceNotFoundException, ReflectionException,
+                                                  AttributeNotFoundException, MBeanException {
+
+        Map<String, Object> map = getDatasourceJmxMap();
+        assertNotNull(map.get("numActive"));
+        assertNotNull(map.get("numIdle"));
+
+
+        assertAttributeValue("numActive", ((Integer) 0));
+        assertAttributeValue("numIdle", ((Integer) 0));
+
+        assertNotNull(dataSource);
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            assertAttributeValue("numActive", ((Integer) 1));
+
+        } catch (SQLException e) {
+            fail();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                fail();
+            }
+        }
+        assertAttributeValue("numActive", ((Integer) 0));
+    }
+
+    private <T> void assertAttributeValue(final String name, final T value) throws MalformedObjectNameException,
+                                                                                   IntrospectionException,
+                                                                                   InstanceNotFoundException,
+                                                                                   AttributeNotFoundException,
+                                                                                   MBeanException, ReflectionException {
+        final Map<String, Object> map = getDatasourceJmxMap();
+        assertEquals((T) value, (T) map.get(name));
+    }
+
+    private Map<String, Object> getDatasourceJmxMap() throws MalformedObjectNameException, InstanceNotFoundException,
+                                                             IntrospectionException, ReflectionException,
+                                                             MBeanException, AttributeNotFoundException {
+        final ObjectName on = new ObjectName("openejb.management:ObjectType=datasources,DataSource=JMXDataSourceTest");
+        final MBeanInfo mBeanInfo = ManagementFactory.getPlatformMBeanServer().getMBeanInfo(on);
+        assertNotNull(mBeanInfo);
+        final Map<String, Object> map = new HashMap<String, Object>();
+        int found = 0;
+        for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanInfo.getAttributes()) {
+            final String name = mBeanAttributeInfo.getName();
+            final Object value = ManagementFactory.getPlatformMBeanServer().getAttribute(on, name);
+            map.put(name, value);
+        }
+        return map;
     }
 
     @Configuration
