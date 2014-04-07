@@ -208,6 +208,18 @@ public class JMXBasicDataSource {
         return ds.getDefaultTransactionIsolation();
     }
 
+    @ManagedAttribute
+    @Description("The number of active connections in the pool.")
+    public int getNumActive() {
+        return ds.getNumActive();
+    }
+
+    @ManagedAttribute
+    @Description("The number of idle connections in the pool.")
+    public int getNumIdle() {
+        return ds.getNumIdle();
+    }
+
     @ManagedOperation
     @Description("Execute the validation query.")
     public String executeValidationQuery() {
