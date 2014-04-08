@@ -1,3 +1,0 @@
-server      = org.apache.openejb.server.cxf.rs.CxfRSService
-auth = NONE
-realm = PropertiesLogin
