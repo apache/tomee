@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.4.0.xsd">
+
+
+    <!-- Allows us to use system properties as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="store" class="org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter">
+        <property name="checkpointInterval" value="60000"/>
+        <property name="directory" value="data/activemq"/>
+    </bean>
+
+  <bean name="address" factory-bean="org.apache.openejb.util.NetworkUtil" factory-method="getLocalAddress">
+      <constructor-arg value="tcp://"/>
+      <constructor-arg value="?daemon=true&amp;keepAlive=true&amp;wireFormat.maxInactivityDuration=0"/>
+    </bean>
+
+    <broker xmlns="http://activemq.apache.org/schema/core"
+            useJmx="false"
+            brokerName="openejb"
+            dataDirectory="data/activemq"
+            useShutdownHook="true"
+            persistent="true"
+            start="false"
+            persistenceAdapter="#store">
+
+        <!-- The transport connectors ActiveMQ will listen to -->
+        <transportConnectors>
+            <transportConnector uri="#{address}"/>
+        </transportConnectors>
+
+    </broker>
+
+</beans>

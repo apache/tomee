@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+    <entity name="Holding" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.Holding">
+        <description>TestModule#HoldingEJB</description>
+        <table name="HOLDINGEJB"/>
+        <named-query name="Holding.ejbSelectQuoteFromSymbol(java.lang.String)">
+            <query>SELECT OBJECT(q) from Quote q WHERE q.symbol = ?1</query>
+        </named-query>
+        <named-query name="Holding.findAll">
+            <query>SELECT OBJECT(h) from Holding h</query>
+        </named-query>
+        <named-query name="Holding.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.account.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="Holding.findByAccountID(java.lang.Integer)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.account.accountID = ?1</query>
+        </named-query>
+        <named-query name="Holding.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(h) FROM Holding h WHERE h.holdingID = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="holdingID">
+                <column name="holdingID"/>
+            </id>
+            <basic name="purchasePrice">
+                <column name="purchasePrice"/>
+            </basic>
+            <basic name="quantity">
+                <column name="quantity"/>
+            </basic>
+            <basic name="purchaseDate">
+                <column name="purchaseDate"/>
+            </basic>
+            <many-to-one name="account">
+                <join-column referenced-column-name="accountID" name="account_accountID"/>
+            </many-to-one>
+            <many-to-one name="quote">
+                <join-column referenced-column-name="symbol" name="quote_symbol"/>
+            </many-to-one>
+            <one-to-one name="Orders_holding" mapped-by="holding"/>
+        </attributes>
+    </entity>
+    <entity name="AccountProfile" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.AccountProfile">
+        <description>TestModule#AccountProfileEJB</description>
+        <table name="AccountProfileEJB"/>
+        <named-query name="AccountProfile.findAll">
+            <query>SELECT OBJECT(a) FROM AccountProfile a</query>
+        </named-query>
+        <named-query name="AccountProfile.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM AccountProfile a where a.userID = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="userID">
+                <column name="userID"/>
+            </id>
+            <basic name="address">
+                <column name="address"/>
+            </basic>
+            <basic name="passwd">
+                <column name="passwd"/>
+            </basic>
+            <basic name="email">
+                <column name="email"/>
+            </basic>
+            <basic name="creditCard">
+                <column name="creditCard"/>
+            </basic>
+            <basic name="fullName">
+                <column name="fullName"/>
+            </basic>
+            <one-to-one name="account" mapped-by="profile"/>
+        </attributes>
+    </entity>
+    <entity name="Quote" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.Quote">
+        <description>TestModule#QuoteEJB</description>
+        <table name="QuoteEJB"/>
+        <named-query name="Quote.findAll">
+            <query>SELECT OBJECT(q) FROM Quote q</query>
+        </named-query>
+        <named-query name="Quote.findQuotes(java.lang.String)">
+            <query>SELECT OBJECT(q) FROM Quote q</query>
+        </named-query>
+        <named-query name="Quote.findOne">
+            <query>SELECT OBJECT(q) FROM Quote q where q.symbol = 's:0'</query>
+        </named-query>
+        <named-query name="Quote.findTSIAQuotesOrderByChange">
+            <query>SELECT OBJECT(q) FROM Quote q WHERE q.symbol LIKE 's:1__' ORDER BY q.change DESC</query>
+        </named-query>
+        <named-query name="Quote.ejbSelectTotalVolume">
+            <query>SELECT q.volume FROM Quote q</query>
+        </named-query>
+        <named-query name="Quote.findTSIAQuotes">
+            <query>SELECT OBJECT(q) FROM Quote q WHERE q.symbol LIKE 's:1__'</query>
+        </named-query>
+        <named-query name="Quote.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(q) FROM Quote q where q.symbol = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="symbol">
+                <column name="symbol"/>
+            </id>
+            <basic name="low">
+                <column name="low"/>
+            </basic>
+            <basic name="open">
+                <column name="open1"/>
+            </basic>
+            <basic name="volume">
+                <column name="volume"/>
+            </basic>
+            <basic name="price">
+                <column name="price"/>
+            </basic>
+            <basic name="high">
+                <column name="high"/>
+            </basic>
+            <basic name="companyName">
+                <column name="companyName"/>
+            </basic>
+            <basic name="change">
+                <column name="change1"/>
+            </basic>
+            <one-to-many name="Holding_quote" mapped-by="quote"/>
+            <one-to-many name="orders" mapped-by="quote">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+        </attributes>
+    </entity>
+    <entity name="KeyGen" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.KeyGen">
+        <description>TestModule#KeyGenEJB</description>
+        <table name="KeyGenEJB"/>
+        <named-query name="KeyGen.findByPrimaryKeyForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(kg) FROM KeyGen kg where kg.keyName = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="keyName">
+                <column name="keyName"/>
+            </id>
+            <basic name="keyVal">
+                <column name="keyVal"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Account" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.Account">
+        <description>TestModule#AccountEJB</description>
+        <table name="AccountEJB"/>
+        <named-query name="Account.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM Account a WHERE a.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="Account.findAll">
+            <query>SELECT OBJECT(a) FROM Account a</query>
+        </named-query>
+        <named-query name="Account.findByUserIDForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(a) FROM Account a WHERE a.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="Account.ejbSelectClosedOrders(java.lang.Integer)">
+            <query>SELECT o.orderID FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.accountID = ?1</query>
+        </named-query>
+        <named-query name="Account.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(a) FROM Account a where a.accountID = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="accountID">
+                <column name="accountID"/>
+            </id>
+            <basic name="creationDate">
+                <column name="creationDate"/>
+            </basic>
+            <basic name="openBalance">
+                <column name="openBalance"/>
+            </basic>
+            <basic name="logoutCount">
+                <column name="logoutCount"/>
+            </basic>
+            <basic name="balance">
+                <column name="balance"/>
+            </basic>
+            <basic name="lastLogin">
+                <column name="lastLogin"/>
+            </basic>
+            <basic name="loginCount">
+                <column name="loginCount"/>
+            </basic>
+            <one-to-many name="orders" mapped-by="account">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="holdings" mapped-by="account">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+            <one-to-one name="profile">
+                <join-column referenced-column-name="userID" name="profile_userID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity name="Orders" class="openejb.org.apache.openejb.test.entity.cmp2.daytrader.ejb.Orders">
+        <description>TestModule#OrderEJB</description>
+        <table name="OrderEJB"/>
+        <named-query name="Orders.findAll">
+            <query>SELECT OBJECT(o) FROM Orders o</query>
+        </named-query>
+        <named-query name="Orders.findClosedOrders(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.profile.userID = ?1</query>
+        </named-query>
+        <named-query name="Orders.findByUserID(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.account.profile.userID = ?1 ORDER BY o.orderID DESC</query>
+        </named-query>
+        <named-query name="Orders.findByPrimaryKeyForUpdate(java.lang.Integer)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderID = ?1</query>
+        </named-query>
+        <named-query name="Orders.findClosedOrdersForUpdate(java.lang.String)">
+            <query>SELECT OBJECT(o) FROM Orders o WHERE o.orderStatus = 'closed' AND o.account.profile.userID = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="orderID">
+                <column name="orderID"/>
+            </id>
+            <basic name="orderFee">
+                <column name="orderFee"/>
+            </basic>
+            <basic name="completionDate">
+                <column name="completionDate"/>
+            </basic>
+            <basic name="orderType">
+                <column name="orderType"/>
+            </basic>
+            <basic name="orderStatus">
+                <column name="orderStatus"/>
+            </basic>
+            <basic name="price">
+                <column name="price"/>
+            </basic>
+            <basic name="quantity">
+                <column name="quantity"/>
+            </basic>
+            <basic name="openDate">
+                <column name="openDate"/>
+            </basic>
+            <many-to-one name="account">
+                <join-column referenced-column-name="accountID" name="account_accountID"/>
+            </many-to-one>
+            <many-to-one name="quote">
+                <join-column referenced-column-name="symbol" name="quote_symbol"/>
+            </many-to-one>
+            <one-to-one name="holding">
+                <join-column referenced-column-name="holdingID" name="holding_holdingID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

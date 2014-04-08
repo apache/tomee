@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+              version="1.2">
+
+    <application>
+        <message-bundle>org.apache.openejb.faces.Messages</message-bundle>
+        <locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>de</supported-locale>
+            <supported-locale>fr</supported-locale>
+            <supported-locale>es</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <base-name>org.apache.openejb.faces.Resources</base-name>
+            <var>bundle</var>
+        </resource-bundle>
+    </application>
+
+<!-- converters -->
+    <converter>
+        <description>
+ 			Social Security Converter
+        </description>
+        <converter-id>SocialSecurityConverter</converter-id>
+        <converter-class>org.apache.openejb.faces.SocialSecurityConverter</converter-class>
+    </converter>
+
+<!-- managed beans -->
+    <managed-bean>
+        <description>
+ 			Employee managed bean
+        </description>
+        <managed-bean-name>emp</managed-bean-name>
+        <managed-bean-class>
+            org.apache.openejb.faces.EmployeeBean
+        </managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+        <managed-property>
+            <description>
+ 				The first name of the employee
+            </description>
+            <property-name>firstName</property-name>
+            <value>Kartar</value>
+        </managed-property>
+        <managed-property>
+            <description>
+				The last name of the employee
+            </description>
+            <property-name>lastName</property-name>
+            <value>Singh</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>one</managed-bean-name>
+        <managed-bean-class>
+            org.apache.openejb.faces.OneBean
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>two</managed-bean-name>
+        <managed-bean-class>
+            org.apache.openejb.faces.TwoBean
+        </managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- validators -->
+    <validator>
+        <description>
+            Some description about validators
+        </description>
+        <validator-id>CreditCardValidator</validator-id>
+        <validator-class>org.apache.openejb.faces.CreditCardValidator</validator-class>
+        <attribute>
+            <description>
+                The separator between numbers
+            </description>
+            <attribute-name>separator</attribute-name>
+            <attribute-class>java.lang.String</attribute-class>
+        </attribute>
+    </validator>
+
+</faces-config>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<!-- START SNIPPET: code -->
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
+  <enterprise-beans>
+    <session>
+      <ejb-name>Configuration</ejb-name>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>orange</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
+        <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
+        <env-entry-value>TRIANGLE</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/strategy</env-entry-name>
+        <env-entry-type>java.lang.Class</env-entry-type>
+        <env-entry-value>org.superbiz.injection.enventry.Widget</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
+        <env-entry-name>date</env-entry-name>
+        <env-entry-type>java.lang.Long</env-entry-type>
+        <env-entry-value>123456789</env-entry-value>
+      </env-entry>
+    </session>
+  </enterprise-beans>
+</ejb-jar>
+    <!-- END SNIPPET: code -->

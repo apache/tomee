@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<html lang="en">
+<head>
+    <title>OpenEJB REST Example</title>
+</head>
+<body>
+<p>
+    Here are the REST services (all return xml or json).
+<ul>
+    <li><em>Note 1: for all services base is http://localhost:1234/rest-example/</em></li>
+    <li><em>Note 3: for all services base is http://localhost:1234/rest-example/</em></li>
+</ul>
+
+<table border="1">
+    <tbody>
+    <tr>
+        <th><em>Entity</em></th>
+        <th><b>User</b></th>
+        <th><b>Post</b></th>
+        <th><b>Comment</b></th>
+    </tr>
+    <tr>
+        <td><em>create</em></td>
+        <td>PUT /api/user/create?name=NAME&pwd=PASSWORD&mail=EMAIL</td>
+        <td>PUT /api/post/create?title=TITLE&content=CONTENT&userId=USER_ID</td>
+        <td>PUT /api/comment/create?author=NAME&content=CONTENT&postId=POST_ID</td>
+    </tr>
+    <tr>
+        <td><em>update</em></td>
+        <td>POST /api/user/update/USER_ID?name=NAME&pwd=PASSWOR&mail=MAIL</td>
+        <td>POST /api/post/update/POST_ID?userId=USER_ID&title=TITLE&content=CONTENT</td>
+        <td>POST /api/comment/update/COMMENT_ID?author=NAME&content=CONTENT</td>
+    </tr>
+    <tr>
+        <td><em>delete</em></td>
+        <td>DELETE /api/user/USER_ID</td>
+        <td>DELETE /api/post/POST_ID</td>
+        <td>DELETE /api/comment/COMMENT_ID</td>
+    </tr>
+    <tr>
+        <td><em>list</em></td>
+        <td>GET /api/user/list</td>
+        <td>GET /api/post/list</td>
+        <td>GET /api/comment/list/POST_ID</td>
+    </tr>
+    </tbody>
+</table>
+</p>
+</body>
+</html> 

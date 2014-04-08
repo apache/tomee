@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/template.xhtml">
+  <ui:define name="title">
+    <h:outputText value="#{bundle.ViewMovieTitle}"></h:outputText>
+  </ui:define>
+  <ui:define name="body">
+    <h:panelGroup id="messagePanel" layout="block">
+      <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+    </h:panelGroup>
+    <h:form>
+      <h:panelGrid columns="2">
+        <h:outputText value="#{bundle.ViewMovieLabel_id}"/>
+        <h:outputText value="#{movieController.selected.id}" title="#{bundle.ViewMovieTitle_id}"/>
+        <h:outputText value="#{bundle.ViewMovieLabel_director}"/>
+        <h:outputText value="#{movieController.selected.director}" title="#{bundle.ViewMovieTitle_director}"/>
+        <h:outputText value="#{bundle.ViewMovieLabel_title}"/>
+        <h:outputText value="#{movieController.selected.title}" title="#{bundle.ViewMovieTitle_title}"/>
+        <h:outputText value="#{bundle.ViewMovieLabel_year}"/>
+        <h:outputText value="#{movieController.selected.year}" title="#{bundle.ViewMovieTitle_year}"/>
+        <h:outputText value="#{bundle.ViewMovieLabel_genre}"/>
+        <h:outputText value="#{movieController.selected.genre}" title="#{bundle.ViewMovieTitle_genre}"/>
+        <h:outputText value="#{bundle.ViewMovieLabel_rating}"/>
+        <h:outputText value="#{movieController.selected.rating}" title="#{bundle.ViewMovieTitle_rating}"/>
+      </h:panelGrid>
+      <br/>
+      <h:commandLink action="#{movieController.destroyAndView}" value="#{bundle.ViewMovieDestroyLink}"/>
+      <br/>
+      <br/>
+      <h:commandLink action="Edit" value="#{bundle.ViewMovieEditLink}"/>
+      <br/>
+      <h:commandLink action="#{movieController.prepareCreate}" value="#{bundle.ViewMovieCreateLink}"/>
+      <br/>
+      <h:commandLink action="#{movieController.prepareList}" value="#{bundle.ViewMovieShowAllLink}"/>
+      <br/>
+      <br/>
+      <h:commandLink value="#{bundle.ViewMovieIndexLink}" action="/index" immediate="true"/>
+
+    </h:form>
+  </ui:define>
+</ui:composition>
+
+</html>

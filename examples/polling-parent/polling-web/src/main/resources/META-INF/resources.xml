@@ -1,0 +1,67 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+  <!-- router -->
+  <Resource id="ClientRouter" type="jug.routing.PollingRouter" provider="jug.polling:PollingRouter"/>
+
+  <!-- routed datasources -->
+  <Resource id="jdbc/polling" provider="RoutedDataSource" type="javax.sql.DataSource">
+    Router = ClientRouter
+  </Resource>
+
+  <!-- real datasources -->
+  <Resource id="jdbc/client1" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client1
+    UserName sa
+    Password
+    JtaManaged true
+  </Resource>
+
+  <Resource id="jdbc/client1-non-jta" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client1
+    UserName sa
+    Password
+    JtaManaged false
+  </Resource>
+
+  <Resource id="jdbc/client2" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client2
+    UserName sa
+    Password
+    JtaManaged true
+  </Resource>
+
+  <Resource id="jdbc/client2-non-jta" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client2
+    UserName sa
+    Password
+    JtaManaged false
+  </Resource>
+
+  <!-- for remote ejb injection
+  <Resource id="middle-server" type="org.apache.openejb.config.sys.JndiProvider">
+    java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
+    java.naming.provider.url = failover:ejb://192.168.1.20:4201,ejbd://192.168.1.30:4201
+    # java.naming.provider.url = multicast:ejb://192168120:4201?group=default
+  </Resource>
+  -->
+</resources>

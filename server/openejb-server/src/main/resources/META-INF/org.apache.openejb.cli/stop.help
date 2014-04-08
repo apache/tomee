@@ -1,0 +1,15 @@
+Usage: openejb stop [options]
+
+Stops the OpenEJB Server running on host 127.0.0.1 and port 4201
+
+OPTIONS
+ -h host    Stops the server at the specified host address
+            Default host is 127.0.0.1
+ -p port    Stops the server running on the specified port. 
+            Default port is 4201.
+
+OpenEJB -- EJB Container System and EJB Server.
+For OpenEJB updates and additional information, visit
+http://openejb.apache.org
+
+Bug Reports to <users@openejb.apache.org>

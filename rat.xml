@@ -1,0 +1,165 @@
+<?xml version='1.0'?> 
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project default="scan" name="Ant task examples"> 
+  <description> 
+    A few examples of using the Ant task, for more examples see the
+    AntUnit tests
+  </description> 
+ 
+ 
+  <target name="scan" depends="-taskdef"
+    description="runs the task over RAT's source tree"> 
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"> 
+      <fileset dir="."> 
+        <patternset id="exclusions"> 
+          <exclude name="**/.settings/**"/>
+          <exclude name="**/.idea/**"/>
+          <exclude name="**/*.json"/>
+          <exclude name="**/target/**"/>
+          <exclude name="**/*.iml"/>
+          <exclude name="**/*.log"/>
+          <exclude name="**/*.rej"/>
+          <exclude name="**/*.orig"/>
+          <exclude name="**/.project"/>
+          <exclude name="**/.classpath"/>
+          <exclude name="**/README.md"/>
+          <exclude name="**/README.mdtext"/>
+
+          <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
+          <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.container.test.spi.RemoteLoadableExtension" />
+          <exclude name="arquillian/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
+          <exclude name="arquillian/arquillian-tomee-tests/arquillian-tomee-webprofile-tests/src/test/resources/test.getresources"/>
+          <exclude name="arquillian/arquillian-tomee-webapp-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
+          <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/cucumber.runtime.io.ResourceIteratorFactory" />
+          <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
+          <exclude name="container/openejb-core/src/main/resources/default.exclusions"/>
+          <exclude name="container/openejb-core/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
+          <exclude name="container/openejb-core/src/test/resources/META-INF/services/javax.validation.spi.ValidationProvider"/>
+          <exclude name="container/openejb-core/src/test/resources/META-INF/services/org.apache.openejb.core.security.jaas.LoginProvider" />
+          <exclude name="container/openejb-junit/src/main/resources/META-INF/openejb-test-login.config"/>
+          <exclude name="osgi/openejb-core-osgi/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension"/>
+          <exclude name="server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/>
+          <exclude name="server/openejb-cxf-rs/src/main/resources/META-INF/services/javax.ws.rs.ext.RuntimeDelegate"/>
+          <exclude name="server/openejb-ssh/src/test/key/ssh-key.ser"/>
+          <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
+          <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
+          <exclude name="examples/webapps/rest-example/TODO"/>
+          <exclude name="examples/cucumber-jvm/src/test/resources/org/superbiz/cucumber/hello.feature"/>
+          <exclude name="examples/deltaspike-configproperty/src/main/resources/META-INF/services/org.apache.deltaspike.core.spi.config.ConfigSourceProvider" />
+          <exclude name="examples/server-events/src/main/resources/META-INF/org.apache.openejb.extension" />
+          <exclude name="examples/testing-security-3/src/main/resources/META-INF/services/org.apache.openejb.core.security.jaas.LoginProvider" />
+          <exclude name="utils/openejb-mockito/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension"/>
+          <exclude name="tomee/apache-tomee/src/main/resources/service.readme.txt"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/prerm"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/postinst"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/control"/>
+          <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
+          <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/org.apache.webbeans.spi.plugins.OpenWebBeansPlugin"/>
+          <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProviderFactory"/>
+          <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigurationProviderFactory" />
+          <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigResourceProviderFactory"/>
+          <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
+          <exclude name="tomee/tomee-jdbc/src/test/resources/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/Mock" />
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/require/**" />
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/bootstrap/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/codemirror/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/handlebars/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/jquery/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/less/**" />
+          <!-- TODO check if that's really excluded -->
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/js/templates/**" />
+
+          <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
+          <exclude name="**/default.openejb.conf"/> 
+          <exclude name="**/groups.properties"/> 
+          <exclude name="**/users.properties"/> 
+          <exclude name="**/logging.properties"/> 
+          <exclude name="**/login.config"/> 
+ 
+          <!-- license in this file results in bad generated release notes --> 
+          <exclude name="**/release-notes.vm"/> 
+ 
+          <!-- empty placeholder --> 
+          <exclude name="**/assembly/openejb-standalone/src/main/resources/DATA-README.txt"/> 
+ 
+          <!-- tiny plugin descriptors - some user owned --> 
+          <exclude name="**/META-INF/org.apache.openejb.cli/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.client.IdentityResolver/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.server.ServerService/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin/**"/>
+          <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/**"/>
+          <exclude name="**/META-INF/services/org/apache/activemq/broker/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.tomcat/ServerClassLoader"/>
+
+
+          <!-- insignificant test descriptors -->
+          <exclude name="**/container/openejb-core/src/test/resources/altddPU1/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp1/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.properties"/>
+          <exclude name="**/container/openejb-core/src/test/resources/convert/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/mixedcase/**/*.xml"/>
+          <exclude name="**/container/openejb-spring/src/test/resources/META-INF/ejb-jar.xml"/>
+
+          <!-- empty or insignificant descriptors from examples --> 
+          <exclude name="**/examples/**/src/*/resources/META-INF/ejb-jar.xml"/> 
+          <exclude name="**/examples/**/src/*/resources/META-INF/application-client.xml"/> 
+          <exclude name="**/examples/alternate-descriptors/src/main/resources/META-INF/test.ejb-jar.xml"/> 
+          <exclude name="**/examples/simple-cmp2/src/main/resources/META-INF/openejb-jar.xml"/> 
+          <exclude name="**/examples/webapps/struts/src/main/webapp/prelude.jspf"/> 
+ 
+          <!-- boiler plate --> 
+          <exclude name="**/examples/webservice-ws-security/src/*/resources/META-INF/CalculatorImpl*.properties"/> 
+ 
+          <!-- W3C licensed --> 
+          <exclude name="**/container/openejb-jee/src/main/resources/META-INF/schema/xml.xsd"/> 
+          <exclude name="**/server/openejb-axis/src/main/resources/META-INF/schema/soap_encoding_1_1.xsd"/> 
+
+          <!-- CDDL licensed -->
+          <exclude name="container/openejb-jee/src/main/resources/META-INF/schema/*.xsd"/>
+        </patternset>
+      </fileset> 
+    </rat:report> 
+  </target>
+
+  <condition property="rat.already.downloaded">
+    <not><available file="${java.io.tmpdir}/rat.zip"/></not>
+  </condition>
+
+  <target name="download-rat" if="rat.already.downloaded">
+    <get src="http://archive.apache.org/dist/incubator/rat/apache-rat-incubating-current-bin.zip" dest="${java.io.tmpdir}/rat.zip"/>
+  </target>
+
+  <target name="-taskdef" depends="download-rat">
+    <unzip src="${java.io.tmpdir}/rat.zip" dest="${java.io.tmpdir}/rat"/>
+
+    <typedef resource="org/apache/rat/anttasks/antlib.xml"
+             uri="antlib:org.apache.rat.anttasks">
+
+      <classpath>
+        <fileset dir="${java.io.tmpdir}/rat/">
+           <include name="**/apache-rat*.jar"/>
+           <include name="**/lib/**/commons-*.jar"/>
+        </fileset> 
+      </classpath> 
+    </typedef> 
+  </target> 
+</project> 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+            version="1.0">
+    <persistence-unit transaction-type="JTA" name="foo">
+        <description>description</description>
+        <provider>org.acme.Provider</provider>
+        <jta-data-source>jtadatasource</jta-data-source>
+        <non-jta-data-source>nonjtadatasource</non-jta-data-source>
+        <mapping-file>mappingfile1</mapping-file>
+        <mapping-file>mappingfile2</mapping-file>
+        <jar-file>jarfile1</jar-file>
+        <jar-file>jarfile2</jar-file>
+        <class>org.acme.Person</class>
+        <class>org.acme.Animal</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property value="rab" name="bar"/>
+            <property value="zab" name="baz"/>
+            <property value="oof" name="foo"/>
+        </properties>
+    </persistence-unit>
+    <persistence-unit transaction-type="RESOURCE_LOCAL" name="bar">
+        <description>description2</description>
+        <provider>org.acme.Provider2</provider>
+        <jta-data-source>jtadatasource2</jta-data-source>
+        <non-jta-data-source>nonjtadatasource2</non-jta-data-source>
+        <mapping-file>mappingfile12</mapping-file>
+        <mapping-file>mappingfile22</mapping-file>
+        <jar-file>jarfile12</jar-file>
+        <jar-file>jarfile22</jar-file>
+        <class>org.acme.Person2</class>
+        <class>org.acme.Animal2</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property value="rab2" name="bar2"/>
+            <property value="oof2" name="foo2"/>
+            <property value="zab2" name="baz2"/>
+        </properties>
+    </persistence-unit>
+</persistence>

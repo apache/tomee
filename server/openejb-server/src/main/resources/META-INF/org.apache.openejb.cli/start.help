@@ -1,0 +1,53 @@
+Usage: openejb start [options]
+
+Starts OpenEJB as an EJB Server that can be accessed by remote 
+clients via the OpenEJB Remote Server.
+
+ALWAYS check your openejb.log file for warnings immediately after 
+starting the Remote Server.  
+
+OpenEJB issues warnings when it works around a potential problem, 
+encounters something it didn't expect, or when OpenEJB wants to 
+let you know something may not work as you expected it.
+
+OPTIONS
+ -h host    Binds the Remote Server to the specified host address.     
+            Default host address is 127.0.0.1.
+  
+ -p port    Binds the Remote Server to the specified port. 
+            Default port is 4201.
+  
+ -t int     Sets the number of concurrent threads the Remote 
+            server should use to service requests from clients.
+            Default number of threads is 20.
+  
+ -d dir     Sets the OPENEJB_HOME to the specified directory.
+
+ -l file    Sets the log4j configuration to the specified file.
+ 
+ -conf file Sets the OpenEJB configuration to the specified file.
+
+ -version   Print the version.
+ 
+ -help      Print this help message.
+
+ -examples  Show examples of how to use the options.
+
+ --admin-ip A comma delimited list of hosts and IP addresses that
+            are allowed to administer this server.
+
+ --local-copy=[true|false]
+            
+            When set to true, the container system will marshall
+            (ie, copy) all calls between beans are required by 
+            the EJB 1.1 specification.  When set to false, the 
+            container system will pass parameters and return 
+            values without copying or marshalling as is required
+            for EJB 2.0 Local interfaces.  Default is true.
+
+
+OpenEJB -- EJB Container System and EJB Server.
+For OpenEJB updates and additional information, visit
+http://openejb.apache.org
+
+Bug Reports to <users@openejb.apache.org>
