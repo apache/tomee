@@ -16,29 +16,39 @@
  */
 package org.apache.openejb.resource.jdbc.managed;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
-import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.NamingException;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
+import javax.transaction.TransactionManager;
 
 public class JTADataSourceWrapperFactory {
     private String serviceId;
     private String delegate = "datasource";
-    private String dataSourceCreator = "dbcp-alternative";
     private boolean logSql = false;
 
-    public DataSource create() {
-        final DataSourceCreator creator = DataSourceFactory.creator(dataSourceCreator, logSql);
-        DataSource ds = creator.managed(serviceId, findDelegate());
-        DataSourceFactory.setCreatedWith(creator, ds);
-        if (logSql) {
-            ds = DataSourceFactory.makeItLogging(ds);
+    public CommonDataSource create() {
+        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
+
+        CommonDataSource cds = findDelegate();
+        if (cds instanceof XADataSource) {
+            cds = new ManagedXADataSource(cds, transactionManager);
+        } else {
+            cds = new ManagedDataSource(DataSource.class.cast(cds), transactionManager);
         }
-        return ds;
+
+        if (logSql) {
+            cds = DataSourceFactory.makeItLogging(cds);
+        }
+        return cds;
     }
 
     private DataSource findDelegate() {
@@ -56,10 +66,6 @@ public class JTADataSourceWrapperFactory {
 
     public void setDelegate(final String delegate) {
         this.delegate = delegate;
-    }
-
-    public void setDataSourceCreator(final String dataSourceCreator) {
-        this.dataSourceCreator = dataSourceCreator;
     }
 
     public void setLogSql(final boolean logSql) {
