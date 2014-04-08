@@ -118,8 +118,8 @@ class PackageBuilder {
         writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}").eachFile {
-                out.writeLine("/etc/tomee/${classifier}/${properties.tomeeVersion}/${it.name}")
+            new File(dataDir, "etc/tomee-${classifier}-${properties.tomeeVersion}").eachFile {
+                out.writeLine("/etc/tomee-${classifier}-${properties.tomeeVersion}/${it.name}")
             }
             out.writeLine("/etc/init.d/tomee-${classifier}")
         }
@@ -131,13 +131,13 @@ class PackageBuilder {
         def outputDir = new File(exploded.parent, "output-${classifier}")
         def dataDir = new File(outputDir, 'data')
         dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, "usr/share/tomee/${classifier}/${properties.tomeeVersion}")
+        def distributionTomeeDir = new File(dataDir, "usr/share/tomee-${classifier}-${properties.tomeeVersion}")
         ant.move(todir: distributionTomeeDir.absolutePath) {
             fileset(dir: explodedPath) {
                 include(name: "**/*")
             }
         }
-        def homeConf = new File(dataDir, "etc/tomee/${classifier}/${properties.tomeeVersion}")
+        def homeConf = new File(dataDir, "etc/tomee-${classifier}-${properties.tomeeVersion}")
         ant.move(todir: homeConf.absolutePath) {
             fileset(dir: new File(distributionTomeeDir, 'conf')) {
                 include(name: "**/*")
@@ -149,29 +149,31 @@ class PackageBuilder {
                 classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
-        ant.move(todir: new File(dataDir, "usr/share/doc/tomee/${classifier}/${properties.tomeeVersion}/").absolutePath) {
+        ant.move(todir: new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/").absolutePath) {
             fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
-        new File(dataDir, "var/log/tomee/${classifier}/${properties.tomeeVersion}").mkdirs()
-        def baseConfDir = new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/conf")
+        new File(dataDir, "var/log/tomee-${classifier}-${properties.tomeeVersion}").mkdirs()
+        def baseConfDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf")
         baseConfDir.mkdirs()
         ant.copy(todir: baseConfDir.absolutePath) {
             fileset(file: new File(homeConf, 'server.xml'))
+            fileset(file: new File(homeConf, 'tomcat-users.xml'))
         }
-        def baseBinDir = new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/bin")
+        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/bin")
         baseBinDir.mkdirs()
-        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/temp").mkdirs()
-        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/work").mkdirs()
-        new File(dataDir, "var/lib/tomee/${classifier}/${properties.tomeeVersion}/webapps").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/temp").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/work").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/webapps").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/apps").mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
         new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
         new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
         writeTemplate(
-                new File(dataDir, "usr/share/doc/tomee/${classifier}/${properties.tomeeVersion}/copyright"),
+                new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/copyright"),
                 '/copyright.template',
                 [formattedDate: new Date().toString()]
         )
