@@ -104,6 +104,7 @@ import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.resource.PropertiesFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.resource.jdbc.managed.JTADataSourceWrapperFactory;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
@@ -2298,7 +2299,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 url = prop.getProperty("jdbcUrl");
             }
             if (url == null) {
-                logger.info("can't find url for " + serviceInfo.id + " will not monitor it");
+                if (!JTADataSourceWrapperFactory.class.getName().equals(serviceInfo.className)) {
+                    logger.info("can't find url for " + serviceInfo.id + " will not monitor it");
+                }
             } else {
                 final String host = extractHost(url);
                 if (host != null) {
