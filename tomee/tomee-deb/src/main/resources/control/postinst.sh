@@ -1,16 +1,16 @@
-#!/bin/sh
+#!/bin/sh -e
 
-ln -sf /etc/tomee/${classifier}/${tomeeVersion} /usr/share/tomee/${classifier}/${tomeeVersion}/conf
-ln -sf /var/log/tomee/${classifier}/${tomeeVersion} /var/lib/tomee/${classifier}/${tomeeVersion}/logs
+ln -sf /etc/tomee-${classifier}-${tomeeVersion} /usr/share/tomee-${classifier}-${tomeeVersion}/conf
+ln -sf /var/log/tomee-${classifier}-${tomeeVersion} /var/lib/tomee-${classifier}-${tomeeVersion}/logs
 
-groupadd apachetomee
-useradd --system apachetomee -g apachetomee
+groupadd apachetomee || true
+useradd --system apachetomee -g apachetomee || true
 
-chown -R root:apachetomee /var/log/tomee/${classifier}/${tomeeVersion}
-chown -R root:apachetomee /var/lib/tomee/${classifier}/${tomeeVersion}
-chown -R root:apachetomee /etc/tomee/${classifier}/${tomeeVersion}
-chmod -R g+w /var/log/tomee/${classifier}/${tomeeVersion}
-chmod -R g+w /var/lib/tomee/${classifier}/${tomeeVersion}
+chown -R root:apachetomee /var/log/tomee-${classifier}-${tomeeVersion}
+chown -R root:apachetomee /var/lib/tomee-${classifier}-${tomeeVersion}
+chown -R root:apachetomee /etc/tomee-${classifier}-${tomeeVersion}
+chmod -R g+w /var/log/tomee-${classifier}-${tomeeVersion}
+chmod -R g+w /var/lib/tomee-${classifier}-${tomeeVersion}
 
 update-rc.d tomee-${classifier} defaults
 
