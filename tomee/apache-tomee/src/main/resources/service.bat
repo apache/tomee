@@ -108,7 +108,7 @@ set "CATALINA_BASE=%CATALINA_HOME%"
 
 set "EXECUTABLE=%proc%"
 
-rem Set default Service name
+rem Set default Service name (If you change this then rename also TomEE.exe to the same name)
 set SERVICE_NAME=TomEE
 set PR_DISPLAYNAME=Apache TomEE
 
