@@ -480,10 +480,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (obj == null) {
             return false;
         }
-        try {
-            obj = ProxyManager.getInvocationHandler(obj);
-        } catch (final IllegalArgumentException e) {
-            return false;
+        if (!BaseEjbProxyHandler.class.isInstance(obj)) {
+            try {
+                obj = ProxyManager.getInvocationHandler(obj);
+            } catch (final IllegalArgumentException e) {
+                return false;
+            }
         }
         if (this == obj) {
             return true;
