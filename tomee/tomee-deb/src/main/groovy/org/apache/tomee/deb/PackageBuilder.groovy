@@ -122,6 +122,16 @@ class PackageBuilder {
                 out.writeLine("/etc/tomee-${classifier}-${properties.tomeeVersion}/${it.name}")
             }
             out.writeLine("/etc/init.d/tomee-${classifier}")
+            new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf").eachFile {
+                if(it.isFile()) {
+                    out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/${it.name}")
+                }
+            }
+            new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d").eachFile {
+                if(it.isFile()) {
+                    out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d/${it.name}")
+                }
+            }
         }
         controlDir.absolutePath
     }
@@ -162,8 +172,25 @@ class PackageBuilder {
             fileset(file: new File(homeConf, 'server.xml'))
             fileset(file: new File(homeConf, 'tomcat-users.xml'))
         }
-        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/bin")
-        baseBinDir.mkdirs()
+        new File(baseConfDir.absolutePath, 'openejb.conf').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/default.openejb.conf').text
+            out.write(data)
+        }
+        def baseConfDDir = new File(baseConfDir, 'conf.d')
+        baseConfDDir.mkdirs()
+        // Saving default configuration files
+        new File(baseConfDDir, 'cxf.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf').text
+            out.write(data)
+        }
+        new File(baseConfDDir, 'cxf-rs.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf-rs').text
+            out.write(data)
+        }
+        new File(baseConfDDir, 'hsql.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/hsql').text
+            out.write(data)
+        }
         new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/temp").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/work").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/webapps").mkdirs()
@@ -177,6 +204,8 @@ class PackageBuilder {
                 '/copyright.template',
                 [formattedDate: new Date().toString()]
         )
+        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/bin")
+        baseBinDir.mkdirs()
         writeTemplate(new File(baseBinDir, 'setenv.sh'), '/init/setenv.sh', [
                 classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
