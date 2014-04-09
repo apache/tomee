@@ -31,7 +31,6 @@ import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 
 public class JTADataSourceWrapperFactory {
-    private String serviceId;
     private String delegate = "datasource";
     private boolean logSql = false;
 
@@ -58,10 +57,6 @@ public class JTADataSourceWrapperFactory {
         } catch (final NamingException e) {
             throw new IllegalArgumentException("'" + delegate + "' not found", e);
         }
-    }
-
-    public void setServiceId(final String serviceId) {
-        this.serviceId = serviceId;
     }
 
     public void setDelegate(final String delegate) {
