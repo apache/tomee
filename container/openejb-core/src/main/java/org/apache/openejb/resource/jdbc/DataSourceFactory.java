@@ -154,11 +154,10 @@ public class DataSourceFactory {
             }
 
             // ds and creator are associated here, not after the proxying of the next if if active
-            creatorByDataSource.put(ds, creator);
+            setCreatedWith(creator, ds);
 
             if (logSql) {
-                ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                        new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+                ds = makeItLogging(ds);
             }
 
             return ds;
@@ -167,6 +166,15 @@ public class DataSourceFactory {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
         }
+    }
+
+    public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
+        creatorByDataSource.put(ds, creator);
+    }
+
+    public static DataSource makeItLogging(final CommonDataSource ds) {
+        return (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
     }
 
     private static void normalizeJdbcUrl(final Properties properties) {
