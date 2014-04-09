@@ -750,11 +750,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 String line;
                 while ((line = reader.nextLine()) != null) {
 
+                    if (isQuit(line)) {
+                        break;
+                    }
+
                     if (!handleLine(line.trim())) {
                         System.out.flush();
                         getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
-                    } else {
-                        break;
                     }
                 }
 
@@ -880,7 +882,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         stopCondition.countDown();
     }
 
-    protected boolean handleLine(String line) {
+    private static boolean isQuit(String line) {
         if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
             return true;
         }
@@ -889,6 +891,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         line = new StringBuilder(line).reverse().toString();
 
         return QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line);
+    }
+
+    protected boolean handleLine(String line) {
+        return false;
     }
 
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
