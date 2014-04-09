@@ -186,11 +186,22 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     protected boolean handleLine(final String line) {
         if (super.handleLine(line)) {
             return true;
-        } else if (RELOAD_CMD.equalsIgnoreCase(line)) {
+        } else if (isReload(line)) {
             reload();
             return true;
         }
         return false;
+    }
+
+    private static boolean isReload(String line) {
+        if (RELOAD_CMD.equalsIgnoreCase(line)) {
+            return true;
+        }
+
+        //http://youtrack.jetbrains.com/issue/IDEA-94826
+        line = new StringBuilder(line).reverse().toString();
+
+        return RELOAD_CMD.equalsIgnoreCase(line);
     }
 
     protected synchronized void reload() {
