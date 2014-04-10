@@ -2,6 +2,9 @@
 
 service tomee-${classifier} stop || true
 
+# removing alternative
+update-alternatives --remove tomee /etc/init.d/tomee-${classifier}
+
 # removing link to /var/logs
 rm -f /var/lib/tomee-${classifier}-${tomeeVersion}/logs
 
