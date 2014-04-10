@@ -18,14 +18,80 @@
 
 package org.apache.tomee.deb
 
+import com.atlassian.jira.rest.client.api.domain.Issue
+import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.compress.archivers.ar.ArArchiveEntry
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
 
+import java.util.concurrent.TimeUnit
+
 class PackageBuilder {
+
+    static final JIRA_SRV = 'https://issues.apache.org/jira'
+
     def ant = new AntBuilder()
     def properties
+
+    def buildChangelogContent = { String classifier ->
+        def factory = new AsynchronousJiraRestClientFactory()
+        def restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
+        def results = []
+        try {
+            String version = properties.tomeeVersion
+            version = version.replaceAll('-SNAPSHOT$', '')
+            def query = "project = TOMEE AND issuetype in standardIssueTypes() AND affectedVersion in (${version}) AND status in (Resolved, Closed)"
+            def searchResult = restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
+            def templateFile = this.class.getResource('/changelog.template')
+            searchResult.issues.each { Issue issue ->
+                def urgency
+                switch (issue.priority.name) {
+                    case 'Blocker':
+                        urgency = 'critical'
+                        break
+                    case 'Critical':
+                        urgency = 'emergency'
+                        break
+                    case 'Major':
+                        urgency = 'high'
+                        break
+                    case 'Minor':
+                        urgency = 'medium'
+                        break
+                    default: //Trivial
+                        urgency = 'low'
+                        break
+                }
+                def maintainer = issue.assignee ?: issue.reporter
+                def template = new GStringTemplateEngine().createTemplate(templateFile).make([
+                        classifier          : classifier,
+                        tomeeVersion        : version,
+                        urgency             : urgency,
+                        issueTitle          : issue.summary,
+                        issueID             : issue.key,
+                        issueMaintainer     : maintainer.name,
+                        issueMaintainerEmail: maintainer.emailAddress,
+                        issueFixDate        : issue.updateDate.toString('EEE, d MMM yyyy HH:mm:ss Z')
+                ])
+                results << template.toString()
+            }
+        } finally {
+            restClient?.close()
+        }
+        results
+    }.memoize() // execute it just once per instance
+
+    void buildChangelog(File docDir, String classifier) {
+        def issues = buildChangelogContent(classifier)
+        new File(docDir, 'changelog.txt').withWriter { BufferedWriter writer ->
+            issues.each { String issue ->
+                writer.write(issue)
+                writer.writeLine('')
+            }
+        }
+    }
 
     String unzip(String classifier, String tarPath) {
         def outputDir = new File(new File(tarPath).parent, "exploded-${classifier}")
@@ -123,12 +189,12 @@ class PackageBuilder {
             }
             out.writeLine("/etc/init.d/tomee-${classifier}")
             new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf").eachFile {
-                if(it.isFile()) {
+                if (it.isFile()) {
                     out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/${it.name}")
                 }
             }
             new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d").eachFile {
-                if(it.isFile()) {
+                if (it.isFile()) {
                     out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d/${it.name}")
                 }
             }
@@ -159,12 +225,14 @@ class PackageBuilder {
                 classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
-        ant.move(todir: new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/").absolutePath) {
+        def docDir = new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/")
+        ant.move(todir: docDir.absolutePath) {
             fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
+        buildChangelog(docDir, classifier)
         new File(dataDir, "var/log/tomee-${classifier}-${properties.tomeeVersion}").mkdirs()
         def baseConfDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf")
         baseConfDir.mkdirs()
