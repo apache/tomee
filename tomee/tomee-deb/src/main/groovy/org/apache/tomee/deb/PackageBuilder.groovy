@@ -35,53 +35,58 @@ class PackageBuilder {
     def ant = new AntBuilder()
     def properties
 
-    def buildChangelogContent = { String classifier ->
+    def getJiraData = {
         def factory = new AsynchronousJiraRestClientFactory()
         def restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
-        def results = []
         try {
             String version = properties.tomeeVersion
             version = version.replaceAll('-SNAPSHOT$', '')
             def query = "project = TOMEE AND issuetype in standardIssueTypes() AND affectedVersion in (${version}) AND status in (Resolved, Closed)"
-            def searchResult = restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
-            def templateFile = this.class.getResource('/changelog.template')
-            searchResult.issues.each { Issue issue ->
-                def urgency
-                switch (issue.priority.name) {
-                    case 'Blocker':
-                        urgency = 'critical'
-                        break
-                    case 'Critical':
-                        urgency = 'emergency'
-                        break
-                    case 'Major':
-                        urgency = 'high'
-                        break
-                    case 'Minor':
-                        urgency = 'medium'
-                        break
-                    default: //Trivial
-                        urgency = 'low'
-                        break
-                }
-                def maintainer = issue.assignee ?: issue.reporter
-                def template = new GStringTemplateEngine().createTemplate(templateFile).make([
-                        classifier          : classifier,
-                        tomeeVersion        : version,
-                        urgency             : urgency,
-                        issueTitle          : issue.summary,
-                        issueID             : issue.key,
-                        issueMaintainer     : maintainer.name,
-                        issueMaintainerEmail: maintainer.emailAddress,
-                        issueFixDate        : issue.updateDate.toString('EEE, d MMM yyyy HH:mm:ss Z')
-                ])
-                results << template.toString()
-            }
+            return restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
         } finally {
             restClient?.close()
         }
-        results
     }.memoize() // execute it just once per instance
+
+    List<String> buildChangelogContent(String classifier) {
+        def results = []
+        String version = properties.tomeeVersion
+        version = version.replaceAll('-SNAPSHOT$', '')
+        def templateFile = this.class.getResource('/changelog.template')
+        getJiraData().issues.each { Issue issue ->
+            def urgency
+            switch (issue.priority.name) {
+                case 'Blocker':
+                    urgency = 'critical'
+                    break
+                case 'Critical':
+                    urgency = 'emergency'
+                    break
+                case 'Major':
+                    urgency = 'high'
+                    break
+                case 'Minor':
+                    urgency = 'medium'
+                    break
+                default: //Trivial
+                    urgency = 'low'
+                    break
+            }
+            def maintainer = issue.assignee ?: issue.reporter
+            def template = new GStringTemplateEngine().createTemplate(templateFile).make([
+                    classifier          : classifier,
+                    tomeeVersion        : version,
+                    urgency             : urgency,
+                    issueTitle          : issue.summary,
+                    issueID             : issue.key,
+                    issueMaintainer     : maintainer.name,
+                    issueMaintainerEmail: maintainer.emailAddress,
+                    issueFixDate        : issue.updateDate.toString('EEE, d MMM yyyy HH:mm:ss Z')
+            ])
+            results << template.toString()
+        }
+        results
+    }
 
     void buildChangelog(File docDir, String classifier) {
         def issues = buildChangelogContent(classifier)
