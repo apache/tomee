@@ -77,7 +77,7 @@ class PackageBuilder {
                     classifier          : classifier,
                     tomeeVersion        : version,
                     urgency             : urgency,
-                    issueTitle          : issue.summary,
+                    issueTitle          : "[${issue.issueType.name}] ${issue.summary}",
                     issueID             : issue.key,
                     issueMaintainer     : maintainer.name,
                     issueMaintainerEmail: maintainer.emailAddress,
