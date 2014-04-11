@@ -36,14 +36,19 @@ class PackageBuilder {
     def properties
 
     def getJiraData = {
-        def factory = new AsynchronousJiraRestClientFactory()
-        def restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
+        def restClient = null
         try {
+            def factory = new AsynchronousJiraRestClientFactory()
+            restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
             String version = properties.tomeeVersion
             version = version.replaceAll('-SNAPSHOT$', '')
             def query = "project = TOMEE AND issuetype in standardIssueTypes() AND affectedVersion in (${version}) AND status in (Resolved, Closed)"
             return restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
-        } finally {
+        } catch (e) {
+            e.printStackTrace()
+            return null
+        }
+        finally {
             restClient?.close()
         }
     }.memoize() // execute it just once per instance
@@ -53,7 +58,7 @@ class PackageBuilder {
         String version = properties.tomeeVersion
         version = version.replaceAll('-SNAPSHOT$', '')
         def templateFile = this.class.getResource('/changelog.template')
-        getJiraData().issues.each { Issue issue ->
+        getJiraData()?.issues?.each { Issue issue ->
             def urgency
             switch (issue.priority.name) {
                 case 'Blocker':
@@ -90,12 +95,18 @@ class PackageBuilder {
 
     void buildChangelog(File docDir, String classifier) {
         def issues = buildChangelogContent(classifier)
-        new File(docDir, 'changelog.txt').withWriter { BufferedWriter writer ->
+        if(!issues) {
+            return
+        }
+        def changelogFile = new File(docDir, 'changelog.Debian')
+        changelogFile.withWriter { BufferedWriter writer ->
             issues.each { String issue ->
-                writer.write(issue)
-                writer.writeLine('')
+                writer.writeLine(issue)
             }
         }
+        def changelogFileGz = new File(changelogFile.parent, 'changelog.Debian.gz')
+        ant.gzip(src: changelogFile.absolutePath, destfile: changelogFileGz.absolutePath)
+        changelogFile.delete()
     }
 
     String unzip(String classifier, String tarPath) {
@@ -189,20 +200,15 @@ class PackageBuilder {
         writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
         new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(dataDir, "etc/tomee-${classifier}-${properties.tomeeVersion}").eachFile {
-                out.writeLine("/etc/tomee-${classifier}-${properties.tomeeVersion}/${it.name}")
+            new File(dataDir, "etc/tomee-${classifier}").eachFile {
+                if (it.isFile()) {
+                    out.writeLine("/etc/tomee-${classifier}/${it.name}")
+                }
+            }
+            new File(dataDir, "etc/tomee-${classifier}/conf.d").eachFile {
+                out.writeLine("/etc/tomee-${classifier}/conf.d/${it.name}")
             }
             out.writeLine("/etc/init.d/tomee-${classifier}")
-            new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf").eachFile {
-                if (it.isFile()) {
-                    out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/${it.name}")
-                }
-            }
-            new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d").eachFile {
-                if (it.isFile()) {
-                    out.writeLine("/var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf/conf.d/${it.name}")
-                }
-            }
         }
         controlDir.absolutePath
     }
@@ -212,17 +218,37 @@ class PackageBuilder {
         def outputDir = new File(exploded.parent, "output-${classifier}")
         def dataDir = new File(outputDir, 'data')
         dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, "usr/share/tomee-${classifier}-${properties.tomeeVersion}")
+        def distributionTomeeDir = new File(dataDir, "usr/share/tomee-${classifier}")
         ant.move(todir: distributionTomeeDir.absolutePath) {
             fileset(dir: explodedPath) {
                 include(name: "**/*")
             }
         }
-        def homeConf = new File(dataDir, "etc/tomee-${classifier}-${properties.tomeeVersion}")
+        new File(distributionTomeeDir, 'LICENSE').delete() // Unnecessary (lintian complains about this guy.)
+        def homeConf = new File(dataDir, "etc/tomee-${classifier}")
         ant.move(todir: homeConf.absolutePath) {
             fileset(dir: new File(distributionTomeeDir, 'conf')) {
                 include(name: "**/*")
             }
+        }
+        new File(homeConf, 'openejb.conf').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/default.openejb.conf').text
+            out.write(data)
+        }
+        def homeConfD = new File(homeConf, 'conf.d')
+        homeConfD.mkdirs()
+        // Saving default configuration files
+        new File(homeConfD, 'cxf.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf').text
+            out.write(data)
+        }
+        new File(homeConfD, 'cxf-rs.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf-rs').text
+            out.write(data)
+        }
+        new File(homeConfD, 'hsql.properties').withWriter { BufferedWriter out ->
+            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/hsql').text
+            out.write(data)
         }
         def initd = new File(dataDir, 'etc/init.d/')
         initd.mkdirs()
@@ -230,54 +256,29 @@ class PackageBuilder {
                 classifier  : classifier,
                 tomeeVersion: properties.tomeeVersion
         ])
-        def docDir = new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/")
+        def docDir = new File(dataDir, "usr/share/doc/tomee-${classifier}/")
         ant.move(todir: docDir.absolutePath) {
-            fileset(file: new File(distributionTomeeDir, 'LICENSE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
         buildChangelog(docDir, classifier)
-        new File(dataDir, "var/log/tomee-${classifier}-${properties.tomeeVersion}").mkdirs()
-        def baseConfDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/conf")
-        baseConfDir.mkdirs()
-        ant.copy(todir: baseConfDir.absolutePath) {
-            fileset(file: new File(homeConf, 'server.xml'))
-            fileset(file: new File(homeConf, 'tomcat-users.xml'))
-        }
-        new File(baseConfDir.absolutePath, 'openejb.conf').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/default.openejb.conf').text
-            out.write(data)
-        }
-        def baseConfDDir = new File(baseConfDir, 'conf.d')
-        baseConfDDir.mkdirs()
-        // Saving default configuration files
-        new File(baseConfDDir, 'cxf.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf').text
-            out.write(data)
-        }
-        new File(baseConfDDir, 'cxf-rs.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf-rs').text
-            out.write(data)
-        }
-        new File(baseConfDDir, 'hsql.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/hsql').text
-            out.write(data)
-        }
-        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/temp").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/work").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/webapps").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/apps").mkdirs()
+        new File(dataDir, "var/log/tomee-${classifier}").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}/conf").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}/temp").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}/work").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}/webapps").mkdirs()
+        new File(dataDir, "var/lib/tomee-${classifier}/apps").mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
         new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
         new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
         writeTemplate(
-                new File(dataDir, "usr/share/doc/tomee-${classifier}-${properties.tomeeVersion}/copyright"),
+                new File(dataDir, "usr/share/doc/tomee-${classifier}/copyright"),
                 '/copyright.template',
                 [formattedDate: new Date().toString()]
         )
-        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}-${properties.tomeeVersion}/bin")
+        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}/bin")
         baseBinDir.mkdirs()
         writeTemplate(new File(baseBinDir, 'setenv.sh'), '/init/setenv.sh', [
                 classifier  : classifier,
