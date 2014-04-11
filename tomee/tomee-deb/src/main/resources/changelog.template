@@ -2,4 +2,5 @@ tomee-${classifier} (${tomeeVersion}) stable; urgency=${urgency}
 
   * ${issueTitle}
     https://issues.apache.org/jira/browse/${issueID}
-  -- ${issueMaintainer} <${issueMaintainerEmail}>  ${issueFixDate}
+
+ -- ${issueMaintainer} <${issueMaintainerEmail}>  ${issueFixDate}

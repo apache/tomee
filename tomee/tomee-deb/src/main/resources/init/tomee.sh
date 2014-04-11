@@ -8,8 +8,8 @@
 # Short-Description: Apache TomEE ${classifier} ${tomeeVersion}
 # Description:       Manages the Apache TomEE server.
 ### END INIT INFO
-TOMEE_HOME=/usr/share/tomee-${classifier}-${tomeeVersion}
-export CATALINA_BASE=/var/lib/tomee-${classifier}-${tomeeVersion}
+TOMEE_HOME=/usr/share/tomee-${classifier}
+export CATALINA_BASE=/var/lib/tomee-${classifier}
 TOMEE_USER=apachetomee
 
 start(){
@@ -32,6 +32,10 @@ case \$1 in
       stop
       ;;
    restart)
+      stop
+      start
+      ;;
+   force-reload)
       stop
       start
       ;;
