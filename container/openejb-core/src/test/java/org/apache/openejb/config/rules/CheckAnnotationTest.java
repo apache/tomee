@@ -22,12 +22,16 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.test.annotated.Green;
 import org.apache.openejb.test.annotated.Red;
 import org.apache.openejb.test.annotated.Yellow;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runner.RunWith;
+
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 
 @RunWith(ValidationRunner.class)
 public class CheckAnnotationTest {
@@ -39,8 +43,7 @@ public class CheckAnnotationTest {
         EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Green.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
-        return appModule;
+        return new AppModule(ejbModule);
     }
 
     @Keys({@Key(value = "annotation.invalid.messagedriven.webservice", type = KeyType.WARNING)})
@@ -50,8 +53,7 @@ public class CheckAnnotationTest {
         EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Yellow.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
-        return appModule;
+        return new AppModule(ejbModule);
     }
 
 
@@ -62,9 +64,19 @@ public class CheckAnnotationTest {
         EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Red.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
-        return appModule;
+        return new AppModule(ejbModule);
     }
 
+    @Keys({@Key(value = "ann.local.forLocalBean", type = KeyType.WARNING)})
+    public EjbModule shouldWarnForLocalAnnotationOnBeanWithNoInterface() {
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(EjbWithoutInterface.class));
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(EjbWithoutInterface.class)).link());
+        return ejbModule;
+    }
 
+    @Local
+    @Stateless
+    public static class EjbWithoutInterface {}
 }
