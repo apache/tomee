@@ -125,6 +125,8 @@ public class DeployTimeEnhancer {
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         final ClassLoader fakeClassLoader = new URLClassLoaderFirst(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
 
+        LOGGER.info("Enhancing url(s): " + usedUrls);
+
         Thread.currentThread().setContextClassLoader(fakeClassLoader);
         try {
             for (final Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
@@ -139,9 +141,11 @@ public class DeployTimeEnhancer {
                     return;
                 }
 
-                LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
+                final String[] args = toFilePaths(entry.getValue());
+                LOGGER.info("Enhancing: " + Arrays.asList(args));
+
                 try {
-                    enhancerMethod.invoke(null, toFilePaths(entry.getValue()), optsArg);
+                    enhancerMethod.invoke(null, args, optsArg);
                 } catch (final Exception e) {
                     LOGGER.warning("can't enhanced at deploy-time entities", e);
                 }
