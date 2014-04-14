@@ -16,9 +16,17 @@
  */
 package org.apache.openejb.core.webservices;
 
-import org.apache.openejb.Injection;
-import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
@@ -26,15 +34,18 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
-import static org.apache.openejb.InjectionProcessor.unwrap;
+import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 
 public class HandlerResolverImpl implements HandlerResolver {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, HandlerResolverImpl.class);
+
     private final List<HandlerChainData> handlerChains;
     private final Collection<Injection> injections;
     private final Context context;
@@ -74,7 +85,37 @@ public class HandlerResolverImpl implements HandlerResolver {
 
         final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
         for (final HandlerData handler : handlerChain.getHandlers()) {
-            try {
+            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+            if (webBeansContext != null) { // cdi
+                final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
+                if (bm.isInUse()) {
+                    try {
+                        final Set<Bean<?>> beans = bm.getBeans(handler.getHandlerClass());
+                        final Bean<?> bean = bm.resolve(beans);
+                        if (bean != null) { // proxy so faster to do it
+                            final boolean normalScoped = bm.isNormalScope(bean.getScope());
+                            final CreationalContextImpl<?> creationalContext = bm.createCreationalContext(bean);
+                            final Handler instance = Handler.class.cast(bm.getReference(bean, bean.getBeanClass(), creationalContext));
+
+                            // hack for destroyHandlers()
+                            handlers.add(instance);
+                            handlerInstances.add(new InjectionProcessor<Handler>(instance, Collections.<Injection>emptySet(), null) {
+                                @Override
+                                public void preDestroy() {
+                                    if (!normalScoped) {
+                                        creationalContext.release();
+                                    }
+                                }
+                            });
+                            continue;
+                        }
+                    } catch (final InjectionException ie) {
+                        LOGGER.info(ie.getMessage(), ie);
+                    }
+                }
+            }
+
+            try { // old way
                 final Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
                 final InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
                         injections,
