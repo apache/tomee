@@ -66,7 +66,7 @@
   </dependencies>
 
   <properties>
-    <tomee.version>1.6.0.1</tomee.version>
+    <tomee.version>1.6.0.1-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
