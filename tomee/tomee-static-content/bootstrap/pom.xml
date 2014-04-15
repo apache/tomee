@@ -22,10 +22,10 @@
   <parent>
     <groupId>org.apache.openejb.staticweb</groupId>
     <artifactId>tomee-static-content</artifactId>
-    <version>1.6.0.1-SNAPSHOT</version>
+    <version>1.6.0.1</version>
   </parent>
   <artifactId>static-tomee-bootstrap</artifactId>
-  <version>1.6.0.1-SNAPSHOT</version>
+  <version>1.6.0.1</version>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: static-tomee-content :: bootstrap</name>
   <description>Contains bootstrap 2.3.2</description>
