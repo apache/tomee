@@ -51,7 +51,7 @@ if [ -z "$OPENEJB_HOME" -o ! -d "$OPENEJB_HOME" ] ; then
   progname=`basename "$0"`
 
   # need this for relative symlinks
-  while [ -h "$PRG" ] ; do
+  while [ -L "$PRG" ] ; do
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`
     if expr "$link" : '/.*' > /dev/null; then
@@ -74,15 +74,15 @@ fi
 
 #echo OPENEJB_HOME = $OPENEJB_HOME
 
-OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
-
-OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar:$OPENEJB_HOME/lib/$(ls $OPENEJB_HOME/lib | grep javaee-api)"
+OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar"
+OPENEJB_JAVAEE_JAR=$(echo "$OPENEJB_HOME"/lib/javaee-api*)
+OPENEJB_CP="$OPENEJB_CORE_JAR:$OPENEJB_JAVAEE_JAR"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
 args="$@"
-if [ "x$@" = "xdebug" ]; then
-    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
-    args="start"
+if [ "$1" = "debug" ]; then
+    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $OPENEJB_OPTS"
+	args="start"
 fi
 
-java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CORE_JAR"  org.apache.openejb.cli.Bootstrap "$args"
+java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CP"  org.apache.openejb.cli.Bootstrap $args
