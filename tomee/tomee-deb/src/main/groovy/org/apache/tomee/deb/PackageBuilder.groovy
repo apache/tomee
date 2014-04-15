@@ -25,8 +25,11 @@ import groovy.text.GStringTemplateEngine
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.compress.archivers.ar.ArArchiveEntry
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
+import org.apache.commons.compress.compressors.gzip.GzipParameters
 
 import java.util.concurrent.TimeUnit
+import java.util.zip.Deflater
 
 class PackageBuilder {
 
@@ -93,9 +96,22 @@ class PackageBuilder {
         results
     }
 
+    private void gz(String file, String gzipFile) {
+        new File(file).withInputStream { fis ->
+            new File(gzipFile).withOutputStream { fos ->
+                def gzParams = new GzipParameters(
+                        compressionLevel: Deflater.BEST_COMPRESSION
+                )
+                def gzo = new GzipCompressorOutputStream(fos, gzParams)
+                gzo << fis
+                gzo.close()
+            }
+        }
+    }
+
     void buildChangelog(File docDir, String classifier) {
         def issues = buildChangelogContent(classifier)
-        if(!issues) {
+        if (!issues) {
             return
         }
         def changelogFile = new File(docDir, 'changelog.Debian')
@@ -105,7 +121,7 @@ class PackageBuilder {
             }
         }
         def changelogFileGz = new File(changelogFile.parent, 'changelog.Debian.gz')
-        ant.gzip(src: changelogFile.absolutePath, destfile: changelogFileGz.absolutePath)
+        gz(changelogFile.absolutePath, changelogFileGz.absolutePath)
         changelogFile.delete()
     }
 
