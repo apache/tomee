@@ -16,34 +16,39 @@
  */
 package org.apache.openejb.junit;
 
-import java.util.List;
+import java.util.concurrent.Callable;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.testing.ApplicationComposers;
-import org.junit.rules.MethodRule;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-/**
- * @version $Rev$ $Date$
- */
-public class ApplicationComposer extends BlockJUnit4ClassRunner {
+public class DeployApplication extends Statement {
+    // The TestCase instance
+    private final Object testInstance;
+    private final Statement next;
     private final ApplicationComposers delegate;
 
-    public ApplicationComposer(final Class<?> klass) throws InitializationError {
-        super(klass);
-        delegate = new ApplicationComposers(klass);
+    public DeployApplication(final Object testInstance, final Statement next, final ApplicationComposers delegate) {
+        this.testInstance = testInstance;
+        this.next = next;
+        this.delegate = delegate;
     }
 
     @Override
-    protected List<MethodRule> rules(final Object test) {
-        final List<MethodRule> rules = super.rules(test);
-        rules.add(new MethodRule(){
-            public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-                return new DeployApplication(target, base, delegate);
+    public void evaluate() throws Throwable {
+        delegate.evaluate(testInstance, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    next.evaluate();
+                } catch (final Throwable throwable) {
+                    if (throwable instanceof Exception) {
+                        throw (Exception) throwable;
+                    }
+                    throw new OpenEJBRuntimeException("Failed test evaluation", throwable);
+                }
+                return null;
             }
         });
-        return rules;
     }
 }
