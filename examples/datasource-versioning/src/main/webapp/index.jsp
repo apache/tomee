@@ -18,7 +18,7 @@ limitations under the License.
 -->
 <html>
 <head>
-  <title>Realm In TomEE</title>
+  <title>Just an empty page for now</title>
 </head>
 <body>
 <h1>Home</h1>

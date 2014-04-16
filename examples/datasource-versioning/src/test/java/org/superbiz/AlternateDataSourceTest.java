@@ -34,6 +34,7 @@ public class AlternateDataSourceTest {
         return ShrinkWrap.create(WebArchive.class, "test.war")
             .addClasses(DataSourceTester.class)
             .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
+        //.addAsResource(new ClassLoaderAsset("META-INF/resources.xml"), "META-INF/resources.xml");
         //.addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
     }
 
@@ -52,7 +53,7 @@ public class AlternateDataSourceTest {
         @Resource(name = "DatabaseOne")
         DataSource dataSourceOne;
 
-        @Resource(name = "DatabaseOne")
+        @Resource(name = "DatabaseTwo")
         DataSource dataSourceTwo;
 
         public String getOne() throws Exception {
