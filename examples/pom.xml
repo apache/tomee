@@ -57,6 +57,7 @@
     <module>custom-injection</module>
     <module>datasource-ciphered-password</module>
     <module>datasource-definition</module>
+    <module>datasource-versioning</module>
     <module>decorators</module>
     <module>deltaspike-configproperty</module>
     <module>deltaspike-exception-handling</module>
