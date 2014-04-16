@@ -123,8 +123,7 @@
 
     <tomcat.version>7.0.53</tomcat.version>
 
-    <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.13</cxf.version>
+    <cxf.version>2.6.14</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -1455,7 +1454,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.14</version>
+        <version>1.6.15</version>
         <exclusions>
           <exclusion>
             <artifactId>commons-logging</artifactId>
