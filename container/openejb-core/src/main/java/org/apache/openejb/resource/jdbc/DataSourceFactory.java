@@ -59,6 +59,7 @@ public class DataSourceFactory {
 
     private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<CommonDataSource, DataSourceCreator>();
     private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
+        put("simple", "org.apache.openejb.resource.jdbc.SimpleDataSourceCreator"); // use user provided DS, pooling not supported
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
         put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only
         put("tomcat", "org.apache.tomee.jdbc.TomEEDataSourceCreator"); // tomee
@@ -120,6 +121,7 @@ public class DataSourceFactory {
                 recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
                 recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
                 recipe.allow(Option.NAMED_PARAMETERS);
+                recipe.allow(Option.PRIVATE_PROPERTIES);
                 recipe.setAllProperties(properties);
                 if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
                     recipe.setProperty("url", properties.getProperty("JdbcUrl"));
@@ -252,7 +254,18 @@ public class DataSourceFactory {
     }
 
     private static boolean usePool(final Properties properties) {
-        return "true".equalsIgnoreCase(properties.getProperty(POOL_PROPERTY, "true"));
+        String property = properties.getProperty(POOL_PROPERTY);
+        if (property != null) {
+            properties.remove(POOL_PROPERTY);
+        } else { // defined from @DataSourceDefinition and doesn't need pooling
+            final String initialPoolSize = properties.getProperty("initialPoolSize");
+            final String maxPoolSize = properties.getProperty("maxPoolSize");
+            if ((null == initialPoolSize || "-1".equals(initialPoolSize))
+                    && ("-1".equals(maxPoolSize) || maxPoolSize == null)) {
+                property = "false";
+            }
+        }
+        return "true".equalsIgnoreCase(property) || null == property;
     }
 
     private static Properties asProperties(final String definition) throws IOException {
