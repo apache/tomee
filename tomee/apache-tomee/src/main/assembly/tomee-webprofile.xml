@@ -78,6 +78,9 @@
       <includes>
         <include>**/bin/**/*</include>
       </includes>
+      <excludes>
+        <exclude>**/bin/tomcat-native.tar.gz</exclude>
+      </excludes>
       <fileMode>0755</fileMode>
     </fileSet>
   </fileSets>
