@@ -18,13 +18,12 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
 
 import javax.enterprise.inject.spi.Extension;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,32 +123,5 @@ public class OptimizedLoaderService implements LoaderService {
             }
         }
         return list;
-    }
-
-    private static final class ClassLoaderAwareHandler implements InvocationHandler {
-        private final Object delegate;
-        private final ClassLoader loader;
-        private final String toString;
-
-        private ClassLoaderAwareHandler(final String toString, final Object delegate, final ClassLoader loader) {
-            this.delegate = delegate;
-            this.loader = loader;
-            this.toString = toString;
-        }
-
-        @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            if (method.getName().equals("toString")) {
-                return toString;
-            }
-
-            final ClassLoader old = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(loader);
-            try {
-                return method.invoke(delegate, args);
-            } finally {
-                Thread.currentThread().setContextClassLoader(old);
-            }
-        }
     }
 }
