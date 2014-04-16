@@ -119,7 +119,9 @@ public class DeployTimeEnhancer {
                     // ignored
                 } finally {
                     try {
-                        jar.close();
+                        if (jar != null) {
+                            jar.close();
+                        }
                     } catch (final IOException e) {
                         // no-op
                     }
