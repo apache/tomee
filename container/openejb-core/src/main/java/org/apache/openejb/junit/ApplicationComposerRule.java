@@ -16,34 +16,26 @@
  */
 package org.apache.openejb.junit;
 
-import java.util.List;
-
 import org.apache.openejb.testing.ApplicationComposers;
-import org.junit.rules.MethodRule;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-/**
- * @version $Rev$ $Date$
- */
-public class ApplicationComposer extends BlockJUnit4ClassRunner {
-    private final ApplicationComposers delegate;
+public class ApplicationComposerRule implements TestRule {
+    private final Object instance;
+    private final Object[] modules;
 
-    public ApplicationComposer(final Class<?> klass) throws InitializationError {
-        super(klass);
-        delegate = new ApplicationComposers(klass);
+    public ApplicationComposerRule(final Object instance, final Object... modules) {
+        this.instance = instance;
+        if (modules == null) {
+            this.modules = new Object[0];
+        } else {
+            this.modules = modules;
+        }
     }
 
     @Override
-    protected List<MethodRule> rules(final Object test) {
-        final List<MethodRule> rules = super.rules(test);
-        rules.add(new MethodRule(){
-            public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-                return new DeployApplication(target, base, delegate);
-            }
-        });
-        return rules;
+    public Statement apply(final Statement base, final Description description) {
+        return new DeployApplication(instance, base, new ApplicationComposers(instance.getClass(), modules));
     }
 }
