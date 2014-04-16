@@ -121,6 +121,7 @@ import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -172,9 +173,11 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.ByteArrayInputStream;
+import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
@@ -202,6 +205,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static java.util.Arrays.asList;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
@@ -2140,6 +2145,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
+        boolean customLoader = false;
         try {
             if (serviceInfo.classpath != null && serviceInfo.classpath.length > 0) {
                 final URL[] urls = new URL[serviceInfo.classpath.length];
@@ -2147,12 +2153,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     urls[i] = serviceInfo.classpath[i].toURL();
                 }
                 loader = new URLClassLoaderFirst(urls, loader);
+                customLoader = true;
             }
         } catch (final MalformedURLException e) {
             throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);
         }
 
         Object service = serviceRecipe.create(loader);
+        if (customLoader) {
+            final Collection<Class<?>> apis = new ArrayList<Class<?>>(asList(service.getClass().getInterfaces()));
+
+            if (apis.size() - (apis.contains(Serializable.class) ? 1 : 0) - (apis.contains(Externalizable.class) ? 1 : 0) > 0) {
+                service = Proxy.newProxyInstance(loader, apis.toArray(new Class<?>[apis.size()]), new ClassLoaderAwareHandler(null, service, loader));
+            } // else proxy would be useless
+        }
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
