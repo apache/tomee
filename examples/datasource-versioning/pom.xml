@@ -23,10 +23,12 @@
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Datasource Versioning</name>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.1-SNAPSHOT</openejb.version>
+    <tomee.version>1.6.1-SNAPSHOT</tomee.version>
   </properties>
+
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -37,6 +39,16 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.openejb.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>1.6.1-SNAPSHOT</version>
+        <configuration>
+          <tomeeClassifier>plus</tomeeClassifier>
+          <args>-Xmx512m -XX:PermSize=256m</args>
+          <config>${project.basedir}/src/main/tomee/</config>
         </configuration>
       </plugin>
       <plugin>
@@ -78,6 +90,34 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>arquillian-tomee-embedded</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>arquillian-tomee-embedded</artifactId>
+          <version>${tomee.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>arquillian-tomee-remote</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>${tomee.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -86,12 +126,45 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- Override dependency resolver with test version. This must go *BEFORE*
+        the Arquillian BOM. -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>2.1.0</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <!-- Now pull in our server-based unit testing framework -->
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.1.4.Final</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0-5</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-depchain</artifactId>
+      <type>pom</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
