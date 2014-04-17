@@ -22,10 +22,10 @@
   <parent>
     <groupId>org.apache.openejb.staticweb</groupId>
     <artifactId>tomee-static-content</artifactId>
-    <version>1.6.0.1</version>
+    <version>1.6.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>static-tomee-backbone</artifactId>
-  <version>1.6.0.1</version>
+  <version>1.6.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: static-tomee-content :: backbone</name>
   <description>Contains backbone 1.0.0</description>
