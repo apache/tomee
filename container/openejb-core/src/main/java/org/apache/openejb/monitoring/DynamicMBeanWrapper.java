@@ -16,16 +16,17 @@
  */
 package org.apache.openejb.monitoring;
 
-import org.apache.openejb.api.internal.Internal;
-import org.apache.openejb.api.jmx.Description;
-import org.apache.openejb.api.jmx.MBean;
-import org.apache.openejb.api.jmx.ManagedAttribute;
-import org.apache.openejb.api.jmx.ManagedOperation;
-import org.apache.openejb.api.jmx.NotificationInfo;
-import org.apache.openejb.api.jmx.NotificationInfos;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.webbeans.config.WebBeansContext;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -41,20 +42,23 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
 
-public class DynamicMBeanWrapper implements DynamicMBean {
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
+import org.apache.openejb.api.jmx.NotificationInfo;
+import org.apache.openejb.api.jmx.NotificationInfos;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
+
+public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DynamicMBeanWrapper.class);
 
     private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<Class<?>, CacheInfo>();
@@ -424,6 +428,63 @@ public class DynamicMBeanWrapper implements DynamicMBean {
             }
         }
         throw new MBeanException(new IllegalArgumentException(), actionName + " doesn't exist");
+    }
+
+    @Override
+    public ObjectName preRegister(final MBeanServer server, final ObjectName name) throws Exception {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldCl = thread.getContextClassLoader();
+        thread.setContextClassLoader(classloader);
+        try {
+            if (MBeanRegistration.class.isInstance(instance)) {
+                return MBeanRegistration.class.cast(instance).preRegister(server, name);
+            }
+            return name;
+        } finally {
+            thread.setContextClassLoader(oldCl);
+        }
+    }
+
+    @Override
+    public void postRegister(final Boolean registrationDone) {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldCl = thread.getContextClassLoader();
+        thread.setContextClassLoader(classloader);
+        try {
+            if (MBeanRegistration.class.isInstance(instance)) {
+                MBeanRegistration.class.cast(instance).postRegister(registrationDone);
+            }
+        } finally {
+            thread.setContextClassLoader(oldCl);
+        }
+    }
+
+    @Override
+    public void preDeregister() throws Exception {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldCl = thread.getContextClassLoader();
+        thread.setContextClassLoader(classloader);
+        try {
+            if (MBeanRegistration.class.isInstance(instance)) {
+                MBeanRegistration.class.cast(instance).preDeregister();
+            }
+        } finally {
+            thread.setContextClassLoader(oldCl);
+        }
+    }
+
+    @Override
+    public void postDeregister() {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldCl = thread.getContextClassLoader();
+        thread.setContextClassLoader(classloader);
+        try {
+            if (MBeanRegistration.class.isInstance(instance)) {
+                MBeanRegistration.class.cast(instance).postDeregister();
+            }
+        } finally {
+            thread.setContextClassLoader(oldCl);
+        }
     }
 
     private static class AnnotationHandler implements InvocationHandler {
