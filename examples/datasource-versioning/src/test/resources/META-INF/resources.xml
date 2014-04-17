@@ -4,13 +4,13 @@
 
   <Resource id="DatabaseOne" type="DataSource" classpath="${catalina.base}/../../drivers/derby-10.10.1.1.jar">
     JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
-    JdbcUrl jdbc:derby:databaseOne;create=true
+    JdbcUrl jdbc:derby:target/databaseOne;create=true
     UserName SA
   </Resource>
 
   <Resource id="DatabaseTwo" type="DataSource" classpath="${catalina.base}/../../drivers/derby-10.9.1.0.jar">
     JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
-    JdbcUrl jdbc:derby:databaseTwo;create=true
+    JdbcUrl jdbc:derby:target/databaseTwo;create=true
     UserName SA
   </Resource>
 
