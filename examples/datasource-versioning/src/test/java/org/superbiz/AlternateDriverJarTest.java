@@ -88,14 +88,8 @@ public class AlternateDriverJarTest {
 
     @Test
     public void testBoth() throws Exception {
-
-        final String oneDriverVersion = one.getDriverVersion();
-        System.out.println("oneDriverVersion = " + oneDriverVersion);
-        Assert.assertEquals("Should be using 10.10.1.1 - (1458268)", "10.10.1.1 - (1458268)", oneDriverVersion);
-
-        final String twoDriverVersion = two.getDriverVersion();
-        System.out.println("twoDriverVersion = " + twoDriverVersion);
-        Assert.assertEquals("Should be using 10.9.1.0 - (1344872)", "10.9.1.0 - (1344872)", twoDriverVersion);
+        Assert.assertEquals("Should be using 10.10.1.1 - (1458268)", "10.10.1.1 - (1458268)", one.getDriverVersion());
+        Assert.assertEquals("Should be using 10.9.1.0 - (1344872)", "10.9.1.0 - (1344872)", two.getDriverVersion());
     }
 
     @LocalBean
