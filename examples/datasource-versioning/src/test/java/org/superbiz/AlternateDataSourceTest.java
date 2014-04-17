@@ -1,12 +1,18 @@
-/**
- * Tomitribe Confidential
- * <p/>
- * Copyright(c) Tomitribe Corporation. 2014
- * <p/>
- * The source code for this program is not published or otherwise divested
- * of its trade secrets, irrespective of what has been deposited with the
- * U.S. Copyright Office.
- * <p/>
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz;
 
@@ -15,6 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,11 +38,12 @@ public class AlternateDataSourceTest {
 
     @Deployment
     public static WebArchive createDeployment() {
+
         return ShrinkWrap.create(WebArchive.class, "test.war")
             .addClasses(DataSourceTester.class)
             .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
-        //.addAsResource(new ClassLoaderAsset("META-INF/resources.xml"), "META-INF/resources.xml");
-        //.addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
+        //We are using src/test/conf/tomee.xml, but this also works - .addAsResource(new ClassLoaderAsset("META-INF/resources.xml"), "META-INF/resources.xml");
+        //Or even using a persistence context - .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
     }
 
     @EJB
@@ -43,9 +51,18 @@ public class AlternateDataSourceTest {
 
     @Test
     public void testDataSourceOne() throws Exception {
-        System.out.println("tester = " + tester.getBoth());
+        Assert.assertEquals("Should be using 10.10.1.1 - (1458268)", "10.10.1.1 - (1458268)", tester.getOne());
     }
 
+    @Test
+    public void testDataSourceTwo() throws Exception {
+        Assert.assertEquals("Should be using 10.9.1.0 - (1344872)", "10.9.1.0 - (1344872)", tester.getTwo());
+    }
+
+    @Test
+    public void testDataSourceBoth() throws Exception {
+        Assert.assertEquals("Should be using 10.10.1.1 - (1458268)|10.9.1.0 - (1344872)", "10.10.1.1 - (1458268)|10.9.1.0 - (1344872)", tester.getBoth());
+    }
 
     @Stateless
     public static class DataSourceTester {
