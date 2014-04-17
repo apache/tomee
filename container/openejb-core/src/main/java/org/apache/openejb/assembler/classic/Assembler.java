@@ -206,8 +206,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static java.util.Arrays.asList;
-
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
@@ -2161,7 +2159,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create(loader);
         if (customLoader) {
-            final Collection<Class<?>> apis = new ArrayList<Class<?>>(asList(service.getClass().getInterfaces()));
+            final Collection<Class<?>> apis = new ArrayList<Class<?>>(Arrays.asList(service.getClass().getInterfaces()));
 
             if (apis.size() - (apis.contains(Serializable.class) ? 1 : 0) - (apis.contains(Externalizable.class) ? 1 : 0) > 0) {
                 service = Proxy.newProxyInstance(loader, apis.toArray(new Class<?>[apis.size()]), new ClassLoaderAwareHandler(null, service, loader));
