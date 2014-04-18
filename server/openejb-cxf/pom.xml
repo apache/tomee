@@ -72,15 +72,6 @@
       <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <scope>runtime</scope> <!-- transitive from xerces -->
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -114,18 +105,6 @@
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
       <version>1.3.18</version>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>serializer</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xml-resolver</groupId>
-      <artifactId>xml-resolver</artifactId>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
          on Sun's internal copy of Xerces. See OPENEJB-1126. -->
