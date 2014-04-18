@@ -17,13 +17,13 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.xbean.asm4.AnnotationVisitor;
-import org.apache.xbean.asm4.Attribute;
-import org.apache.xbean.asm4.ClassReader;
-import org.apache.xbean.asm4.ClassVisitor;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm5.AnnotationVisitor;
+import org.apache.xbean.asm5.Attribute;
+import org.apache.xbean.asm5.ClassReader;
+import org.apache.xbean.asm5.ClassVisitor;
+import org.apache.xbean.asm5.FieldVisitor;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.BufferedInputStream;
@@ -326,7 +326,7 @@ public class AnnotationFinder {
         private final Filter filter;
 
         public Visitor(final Filter filter) {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
             this.filter = filter;
 
             try {

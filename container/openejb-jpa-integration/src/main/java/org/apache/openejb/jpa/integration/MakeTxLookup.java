@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jpa.integration;
 
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.Label;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.Label;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +54,7 @@ public class MakeTxLookup implements Opcodes {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, abstractJtaPlatformPackage + "/AbstractJtaPlatform", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, abstractJtaPlatformPackage + "/AbstractJtaPlatform", "<init>", "()V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -62,7 +62,7 @@ public class MakeTxLookup implements Opcodes {
         {
             mv = cw.visitMethod(ACC_PROTECTED, "locateTransactionManager", "()Ljavax/transaction/TransactionManager;", null, null);
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;");
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -75,13 +75,13 @@ public class MakeTxLookup implements Opcodes {
             Label l2 = new Label();
             mv.visitTryCatchBlock(l0, l1, l2, "javax/naming/NamingException");
             mv.visitLabel(l0);
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/loader/SystemInstance", "get", "()Lorg/apache/openejb/loader/SystemInstance;");
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/loader/SystemInstance", "get", "()Lorg/apache/openejb/loader/SystemInstance;", false);
             mv.visitLdcInsn(Type.getType("Lorg/apache/openejb/spi/ContainerSystem;"));
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/apache/openejb/loader/SystemInstance", "getComponent", "(Ljava/lang/Class;)Ljava/lang/Object;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/apache/openejb/loader/SystemInstance", "getComponent", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "org/apache/openejb/spi/ContainerSystem");
-            mv.visitMethodInsn(INVOKEINTERFACE, "org/apache/openejb/spi/ContainerSystem", "getJNDIContext", "()Ljavax/naming/Context;");
+            mv.visitMethodInsn(INVOKEINTERFACE, "org/apache/openejb/spi/ContainerSystem", "getJNDIContext", "()Ljavax/naming/Context;", true);
             mv.visitLdcInsn("comp/UserTransaction");
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/naming/Context", "lookup", "(Ljava/lang/String;)Ljava/lang/Object;");
+            mv.visitMethodInsn(INVOKEINTERFACE, "javax/naming/Context", "lookup", "(Ljava/lang/String;)Ljava/lang/Object;", true);
             mv.visitTypeInsn(CHECKCAST, "javax/transaction/UserTransaction");
             mv.visitLabel(l1);
             mv.visitInsn(ARETURN);
@@ -117,7 +117,7 @@ public class MakeTxLookup implements Opcodes {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -125,7 +125,7 @@ public class MakeTxLookup implements Opcodes {
         {
             mv = cw.visitMethod(ACC_PUBLIC, "getTransactionManager", "(Ljava/util/Properties;)Ljavax/transaction/TransactionManager;", null, new String[]{"org/hibernate/HibernateException"});
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;");
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 2);
             mv.visitEnd();
@@ -172,7 +172,7 @@ public class MakeTxLookup implements Opcodes {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "oracle/toplink/essentials/transaction/JTATransactionController", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, "oracle/toplink/essentials/transaction/JTATransactionController", "<init>", "()V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -180,7 +180,7 @@ public class MakeTxLookup implements Opcodes {
         {
             mv = cw.visitMethod(ACC_PROTECTED, "acquireTransactionManager", "()Ljavax/transaction/TransactionManager;", null, new String[]{"java/lang/Exception"});
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;");
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();

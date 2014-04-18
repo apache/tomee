@@ -85,7 +85,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm4-shaded</artifactId>
+      <artifactId>xbean-asm5-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -273,8 +273,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm4;version="[3.1,4)",
-      org.apache.xbean.asm4.commons;version="[3.1,4)",
+      org.apache.xbean.asm5;version="[3.1,4)",
+      org.apache.xbean.asm5.commons;version="[3.1,4)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",

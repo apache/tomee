@@ -17,11 +17,11 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.Label;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.Label;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -151,7 +151,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     }
 
     public static byte[] generateProxy(final Class<?> classToProxy, final String proxyName, final Class<?>... interfaces) throws ProxyGenerationException {
-        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
         final String proxyClassFileName = proxyName.replace('.', '/');
         final String classFileName = classToProxy.getName().replace('.', '/');
@@ -222,12 +222,10 @@ public class LocalBeanProxyFactory implements Opcodes {
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {
-                    if (isOverridden(methods, method)) { //NOPMD
-                        // method is overridden in superclass, so do nothing
-                    } else {
+                    if (!isOverridden(methods, method)) {
                         // method is not overridden, so add it
                         methods.add(method);
-                    }
+                    } // else method is overridden in superclass, so do nothing
                 }
             }
 
@@ -321,7 +319,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
 
         // invoke getMethod() with the method name and the array of types
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;", false);
 
         // store the returned method for later
         mv.visitVarInsn(ASTORE, length);
@@ -362,7 +360,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 final String wrapperType = getWrapperType(parameterType);
                 mv.visitVarInsn(getVarInsn(parameterType), index);
 
-                mv.visitMethodInsn(INVOKESTATIC, wrapperType, "valueOf", "(" + getPrimitiveLetter(parameterType) + ")L" + wrapperType + ";");
+                mv.visitMethodInsn(INVOKESTATIC, wrapperType, "valueOf", "(" + getPrimitiveLetter(parameterType) + ")L" + wrapperType + ";", false);
                 mv.visitInsn(AASTORE);
 
                 if (Long.TYPE.equals(parameterType) || Double.TYPE.equals(parameterType)) {
@@ -378,14 +376,14 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
 
         // invoke the invocationHandler
-        mv.visitMethodInsn(INVOKEINTERFACE, "java/lang/reflect/InvocationHandler", "invoke", "(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
+        mv.visitMethodInsn(INVOKEINTERFACE, "java/lang/reflect/InvocationHandler", "invoke", "(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;", true);
 
         // cast the result
         mv.visitTypeInsn(CHECKCAST, getCastType(returnType));
 
         if (returnType.isPrimitive() && !Void.TYPE.equals(returnType)) {
             // get the primitive value
-            mv.visitMethodInsn(INVOKEVIRTUAL, getWrapperType(returnType), getPrimitiveMethod(returnType), "()" + getPrimitiveLetter(returnType));
+            mv.visitMethodInsn(INVOKEVIRTUAL, getWrapperType(returnType), getPrimitiveMethod(returnType), "()" + getPrimitiveLetter(returnType), false);
         }
 
         // push return
@@ -410,9 +408,9 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 mv.visitLdcInsn(Type.getType("L" + exceptionType.getName().replace('.', '/') + ";"));
                 mv.visitVarInsn(ALOAD, length);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
 
                 final Label l6 = new Label();
                 mv.visitJumpInsn(IFEQ, l6);
@@ -421,7 +419,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 mv.visitLabel(l7);
 
                 mv.visitVarInsn(ALOAD, length);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;", false);
                 mv.visitTypeInsn(CHECKCAST, exceptionType.getName().replace('.', '/'));
                 mv.visitInsn(ATHROW);
                 mv.visitLabel(l6);
@@ -430,7 +428,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                     mv.visitTypeInsn(NEW, "java/lang/reflect/UndeclaredThrowableException");
                     mv.visitInsn(DUP);
                     mv.visitVarInsn(ALOAD, length);
-                    mv.visitMethodInsn(INVOKESPECIAL, "java/lang/reflect/UndeclaredThrowableException", "<init>", "(Ljava/lang/Throwable;)V");
+                    mv.visitMethodInsn(INVOKESPECIAL, "java/lang/reflect/UndeclaredThrowableException", "<init>", "(Ljava/lang/Throwable;)V", false);
                     mv.visitInsn(ATHROW);
                 }
             }

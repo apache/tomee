@@ -45,16 +45,16 @@
  */
 package org.apache.openejb;
 
-import org.apache.xbean.asm4.AnnotationVisitor;
-import org.apache.xbean.asm4.Attribute;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.Label;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
-import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
-import org.apache.xbean.asm4.signature.SignatureReader;
-import org.apache.xbean.asm4.signature.SignatureVisitor;
+import org.apache.xbean.asm5.AnnotationVisitor;
+import org.apache.xbean.asm5.Attribute;
+import org.apache.xbean.asm5.FieldVisitor;
+import org.apache.xbean.asm5.Label;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
+import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm5.signature.SignatureReader;
+import org.apache.xbean.asm5.signature.SignatureVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -200,6 +200,16 @@ public class DependencyVisitor extends EmptyVisitor {
             final String owner,
             final String name,
             final String desc) {
+        addName(owner);
+        addMethodDesc(desc);
+    }
+
+    public void visitMethodInsn(
+            final int opcode,
+            final String owner,
+            final String name,
+            final String desc,
+            final boolean itf) {
         addName(owner);
         addMethodDesc(desc);
     }
@@ -391,7 +401,7 @@ public class DependencyVisitor extends EmptyVisitor {
         private final DependencyVisitor delegate;
 
         public SignatureAdapter(final DependencyVisitor dependencyVisitor) {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
             delegate = dependencyVisitor;
         }
 

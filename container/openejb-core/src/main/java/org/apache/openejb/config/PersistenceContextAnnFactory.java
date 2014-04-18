@@ -18,12 +18,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm4.AnnotationVisitor;
-import org.apache.xbean.asm4.ClassReader;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm5.AnnotationVisitor;
+import org.apache.xbean.asm5.ClassReader;
+import org.apache.xbean.asm5.FieldVisitor;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
@@ -232,7 +232,7 @@ public class PersistenceContextAnnFactory {
         private AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(final String className, final String memberName, final Map<String, AsmPersistenceContext> contexts) {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
             this.contexts = contexts;
             persistenceContext.name = className + "/" + memberName;
         }
