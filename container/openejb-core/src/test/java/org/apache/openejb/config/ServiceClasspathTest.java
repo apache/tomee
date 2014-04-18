@@ -28,9 +28,9 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,11 +52,11 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.apache.xbean.asm4.Opcodes.ACC_PUBLIC;
-import static org.apache.xbean.asm4.Opcodes.ACC_SUPER;
-import static org.apache.xbean.asm4.Opcodes.ALOAD;
-import static org.apache.xbean.asm4.Opcodes.INVOKESPECIAL;
-import static org.apache.xbean.asm4.Opcodes.RETURN;
+import static org.apache.xbean.asm5.Opcodes.ACC_PUBLIC;
+import static org.apache.xbean.asm5.Opcodes.ACC_SUPER;
+import static org.apache.xbean.asm5.Opcodes.ALOAD;
+import static org.apache.xbean.asm5.Opcodes.INVOKESPECIAL;
+import static org.apache.xbean.asm5.Opcodes.RETURN;
 
 /**
  * @version $Rev$ $Date$
@@ -279,7 +279,7 @@ public class ServiceClasspathTest extends Assert {
             final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, parentClassNameInternal, "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, parentClassNameInternal, "<init>", "()V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();

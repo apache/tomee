@@ -17,12 +17,12 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.Label;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.FieldVisitor;
+import org.apache.xbean.asm5.Label;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
 
 import javax.ejb.EntityContext;
 import java.lang.reflect.Field;
@@ -139,7 +139,7 @@ public class Cmp2Generator implements Opcodes {
         // The class writer will be used for all generator activies, while the 
         // postCreateGenerator will be used to add the ejbPostCreatexxxx methods as a 
         // last step. 
-        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
 
@@ -298,7 +298,7 @@ public class Cmp2Generator implements Opcodes {
         final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V");
+        mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V", false);
 
         for (final CmrField cmrField : cmrFields) {
             initCmrFields(mv, cmrField);
@@ -381,19 +381,19 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(DUP);
         mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
         mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
         mv.visitLdcInsn("Unknown cmr field ");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitLdcInsn(" on entity bean of type ");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
         mv.visitInsn(ATHROW);
 
         mv.visitMaxs(0, 0);
@@ -432,19 +432,19 @@ public class Cmp2Generator implements Opcodes {
         mv.visitInsn(DUP);
         mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
         mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
         mv.visitLdcInsn("Unknown cmr field ");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitLdcInsn(" on entity bean of type ");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
         mv.visitInsn(ATHROW);
 
         mv.visitMaxs(0, 0);
@@ -609,7 +609,7 @@ public class Cmp2Generator implements Opcodes {
             // new Pk();
             mv.visitTypeInsn(NEW, pkImplName);
             mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, pkImplName, "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, pkImplName, "<init>", "()V", false);
             mv.visitVarInsn(ASTORE, 1);
             mv.visitVarInsn(ALOAD, 1);
 
@@ -690,7 +690,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitTypeInsn(NEW, initialValueType.getInternalName());
             mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, initialValueType.getInternalName(), "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, initialValueType.getInternalName(), "<init>", "()V", false);
             mv.visitFieldInsn(PUTFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
         }
 
@@ -722,7 +722,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitMethodInsn(INVOKESPECIAL,
                 cmrField.getAccessorInternalName(),
                 "<init>",
-                "(Ljavax/ejb/EntityBean;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/String;)V");
+                "(Ljavax/ejb/EntityBean;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/String;)V", false);
 
         // bCmr = result
         mv.visitFieldInsn(PUTFIELD,
@@ -758,7 +758,7 @@ public class Cmp2Generator implements Opcodes {
         // return this.${cmrField.name}Cmr.get(this.${cmdField.name});  
         // this takes the value stored in the CMR field (which might be a single value or 
         // a Set or Collection), and hands it to the appropriate accessor. 
-        mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "get", cmrField.getCmrStyle().getGetterDescriptor());
+        mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "get", cmrField.getCmrStyle().getGetterDescriptor(), false);
         // if the style is a single value, then we're going to need to cast this 
         // to the target class before returning.  
         if (cmrField.getCmrStyle() == CmrStyle.SINGLE) {
@@ -796,7 +796,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "set", cmrField.getCmrStyle().getSetterDescriptor());
+            mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "set", cmrField.getCmrStyle().getSetterDescriptor(), false);
             mv.visitInsn(RETURN);
         } else {
             // this is a single value.  We pass the existing value and the old value to 
@@ -808,7 +808,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "set", cmrField.getCmrStyle().getSetterDescriptor());
+            mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "set", cmrField.getCmrStyle().getSetterDescriptor(), false);
             mv.visitTypeInsn(CHECKCAST, cmrField.getType().getInternalName());
             mv.visitFieldInsn(PUTFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
             mv.visitInsn(RETURN);
@@ -832,7 +832,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName() + "Cmr", cmrField.getAccessorDescriptor());
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, implClassName, cmrField.getName(), cmrField.getDescriptor());
-        mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "deleted", cmrField.getCmrStyle().getDeletedDescriptor());
+        mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "deleted", cmrField.getCmrStyle().getDeletedDescriptor(), false);
     }
 
     /**
@@ -849,7 +849,7 @@ public class Cmp2Generator implements Opcodes {
         // if (${cmrField.name}.equals(arg1))
         mv.visitLdcInsn(cmrField.getName());
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
         // if not equal jump to end
         final Label end = new Label();
         mv.visitJumpInsn(IFEQ, end);
@@ -866,7 +866,7 @@ public class Cmp2Generator implements Opcodes {
             // lazy creation of the collection type if not already created. 
             mv.visitTypeInsn(NEW, cmrField.getInitialValueType().getInternalName());
             mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, cmrField.getInitialValueType().getInternalName(), "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, cmrField.getInitialValueType().getInternalName(), "<init>", "()V", false);
             mv.visitVarInsn(ASTORE, 3);
             mv.visitLabel(fieldNotNull);
 
@@ -876,7 +876,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitMethodInsn(INVOKEINTERFACE,
                     cmrField.getCmrStyle().getCollectionType().getInternalName(),
                     "add",
-                    "(Ljava/lang/Object;)Z");
+                    "(Ljava/lang/Object;)Z", true);
             mv.visitInsn(POP);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 3);
@@ -936,7 +936,7 @@ public class Cmp2Generator implements Opcodes {
         // if (${cmrField.name}.equals(arg1))
         mv.visitLdcInsn(cmrField.getName());
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
         // if not equal jump to end
         final Label end = new Label();
         mv.visitJumpInsn(IFEQ, end);
@@ -950,7 +950,7 @@ public class Cmp2Generator implements Opcodes {
             mv.visitMethodInsn(INVOKEINTERFACE,
                     cmrField.getCmrStyle().getCollectionType().getInternalName(),
                     "remove",
-                    "(Ljava/lang/Object;)Z");
+                    "(Ljava/lang/Object;)Z", true);
             mv.visitInsn(POP);
 
             // return;
@@ -1028,7 +1028,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitMethodInsn(INVOKESTATIC,
                 Type.getInternalName(executeMethod.getDeclaringClass()),
                 executeMethod.getName(),
-                Type.getMethodDescriptor(executeMethod));
+                Type.getMethodDescriptor(executeMethod), false);
 
         // if this is a void type, we just return.  Otherwise, the return type 
         // needs to match the type returned from the method call 
@@ -1201,12 +1201,12 @@ public class Cmp2Generator implements Opcodes {
         }
 
         public void primitiveToObject(final MethodVisitor mv) {
-            mv.visitMethodInsn(INVOKESTATIC, objectType.getInternalName(), toObject.getName(), Type.getMethodDescriptor(toObject));
+            mv.visitMethodInsn(INVOKESTATIC, objectType.getInternalName(), toObject.getName(), Type.getMethodDescriptor(toObject), false);
         }
 
         public void objectToPrimitive(final MethodVisitor mv) {
             mv.visitTypeInsn(CHECKCAST, objectType.getInternalName());
-            mv.visitMethodInsn(INVOKEVIRTUAL, objectType.getInternalName(), toPrimitive.getName(), Type.getMethodDescriptor(toPrimitive));
+            mv.visitMethodInsn(INVOKEVIRTUAL, objectType.getInternalName(), toPrimitive.getName(), Type.getMethodDescriptor(toPrimitive), false);
         }
 
     }

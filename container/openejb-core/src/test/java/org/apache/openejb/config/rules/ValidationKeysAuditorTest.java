@@ -19,8 +19,8 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.ClassInfo;
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.MethodInfo;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm4.ClassReader;
-import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm5.ClassReader;
+import org.apache.xbean.asm5.ClassWriter;
 import org.codehaus.swizzle.confluence.Confluence;
 import org.codehaus.swizzle.confluence.Page;
 import org.junit.BeforeClass;
@@ -349,7 +349,7 @@ public class ValidationKeysAuditorTest {
             final InputStream in = IO.read(file);
             try {
                 final ClassReader classReader = new ClassReader(in);
-                classReader.accept(visitor, ClassWriter.COMPUTE_MAXS);
+                classReader.accept(visitor, ClassWriter.COMPUTE_FRAMES);
             } finally {
                 IO.close(in);
             }

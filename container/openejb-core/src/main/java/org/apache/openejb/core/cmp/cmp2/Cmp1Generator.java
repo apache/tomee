@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.FieldVisitor;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
 
 /**
  * Class for generating a class file that implements 
@@ -44,7 +44,7 @@ public class Cmp1Generator implements Opcodes {
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
 
-        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
@@ -88,7 +88,7 @@ public class Cmp1Generator implements Opcodes {
         MethodVisitor mv = mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V");
+        mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V", false);
 
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);

@@ -17,6 +17,8 @@
 package org.apache.openejb.persistence;
 
 
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.resource.jdbc.managed.xa.DataSourceXADataSource;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
@@ -25,7 +27,9 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -175,16 +179,24 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return jtaDataSource;
     }
 
-    public void setJtaDataSource(final DataSource jtaDataSource) {
-        this.jtaDataSource = jtaDataSource;
+    public void setJtaDataSource(final CommonDataSource jtaDataSource) {
+        if (XADataSource.class.isInstance(jtaDataSource)) {
+            this.jtaDataSource = new DataSourceXADataSource(jtaDataSource, OpenEJB.getTransactionManager());
+        } else {
+            this.jtaDataSource = DataSource.class.cast(jtaDataSource);
+        }
     }
 
     public DataSource getNonJtaDataSource() {
         return nonJtaDataSource;
     }
 
-    public void setNonJtaDataSource(final DataSource nonJtaDataSource) {
-        this.nonJtaDataSource = nonJtaDataSource;
+    public void setNonJtaDataSource(final CommonDataSource nonJtaDataSource) {
+        if (XADataSource.class.isInstance(nonJtaDataSource)) {
+            this.nonJtaDataSource = new DataSourceXADataSource(nonJtaDataSource, OpenEJB.getTransactionManager());
+        } else {
+            this.nonJtaDataSource = DataSource.class.cast(nonJtaDataSource);
+        }
     }
 
     public List<String> getMappingFileNames() {

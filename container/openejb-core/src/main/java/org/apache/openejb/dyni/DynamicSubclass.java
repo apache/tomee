@@ -20,13 +20,13 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
-import org.apache.xbean.asm4.AnnotationVisitor;
-import org.apache.xbean.asm4.ClassReader;
-import org.apache.xbean.asm4.ClassVisitor;
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.AnnotationVisitor;
+import org.apache.xbean.asm5.ClassReader;
+import org.apache.xbean.asm5.ClassVisitor;
+import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm5.MethodVisitor;
+import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm5.Type;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class DynamicSubclass implements Opcodes {
 
         final Map<String, MethodVisitor> visitors = new HashMap<String, MethodVisitor>();
 
-        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
         final String proxyClassFileName = getSubclassName(classToProxy).replace('.', '/');
         final String classFileName = classToProxy.getName().replace('.', '/');
@@ -155,7 +155,7 @@ public class DynamicSubclass implements Opcodes {
             index += size(type);
         }
 
-        mv.visitMethodInsn(INVOKESPECIAL, classFileName, "<init>", descriptor);
+        mv.visitMethodInsn(INVOKESPECIAL, classFileName, "<init>", descriptor, false);
 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 0);
@@ -270,7 +270,7 @@ public class DynamicSubclass implements Opcodes {
         private MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM4, movedMethod);
+            super(Opcodes.ASM5, movedMethod);
             this.newMethod = newMethod;
         }
 
@@ -296,7 +296,7 @@ public class DynamicSubclass implements Opcodes {
         private final ClassVisitor newClass;
 
         public CopyClassAnnotations(final ClassVisitor newClass) {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
             this.newClass = newClass;
         }
 
@@ -310,7 +310,7 @@ public class DynamicSubclass implements Opcodes {
         private final Map<String, MethodVisitor> visitors;
 
         public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
             this.visitors = visitors;
         }
 

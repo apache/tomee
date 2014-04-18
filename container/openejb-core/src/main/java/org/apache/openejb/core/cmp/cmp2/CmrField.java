@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm5.Type;
 
 public class CmrField {
     private final String name;

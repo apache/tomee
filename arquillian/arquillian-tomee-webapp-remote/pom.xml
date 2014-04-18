@@ -170,7 +170,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm4-shaded</artifactId>
+          <artifactId>xbean-asm5-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>

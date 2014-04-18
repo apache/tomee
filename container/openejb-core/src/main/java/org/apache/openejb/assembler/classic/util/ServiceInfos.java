@@ -21,7 +21,6 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.config.sys.MapFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -136,7 +135,7 @@ public final class ServiceInfos {
         serviceRecipe.allow(Option.FIELD_INJECTION);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
 
-        if (MapFactory.class.getName().equals(info.className)) {
+        if ("org.apache.openejb.config.sys.MapFactory".equals(info.className)) {
             serviceRecipe.setProperty("prop", info.properties);
         } else {
             for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
