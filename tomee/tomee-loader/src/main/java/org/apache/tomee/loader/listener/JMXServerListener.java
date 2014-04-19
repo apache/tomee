@@ -19,6 +19,8 @@ package org.apache.tomee.loader.listener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
@@ -27,29 +29,49 @@ import java.lang.management.ManagementFactory;
 
 // intended for custom jmx server as jmxmp
 public class JMXServerListener implements LifecycleListener {
+    private static final Log LOGGER = LogFactory.getLog(JMXServerListener.class);
+
     private String protocol = null; // default if null is jmxmp
     private String host = null; // if null localhost
     private int port = -1;
     private String urlPath = null; // if null empty
 
     private JMXConnectorServer server = null;
+    private JMXServiceURL serviceURL = null;
 
     @Override
     public synchronized void lifecycleEvent(final LifecycleEvent event) {
         try {
             if (server == null && Lifecycle.START_EVENT.equals(event.getType())) {
-                server = JMXConnectorServerFactory.newJMXConnectorServer(
-                        new JMXServiceURL(protocol, host, port, urlPath),
-                        null,
-                        ManagementFactory.getPlatformMBeanServer());
+                serviceURL = new JMXServiceURL(protocol, host, port, urlPath);
+                server = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, null,
+                                                    ManagementFactory.getPlatformMBeanServer());
                 server.start();
+                LOGGER.info("Started JMX server: " + serviceURL.toString());
             } else if (server != null && Lifecycle.STOP_EVENT.equals(event.getType())) {
                 server.stop();
                 server = null;
+                LOGGER.info("Stopped JMX server: " + serviceURL.toString());
             }
         } catch (final Exception e) {
             throw new JMXException(e);
         }
+    }
+
+    public void setProtocol(final String protocol) {
+        this.protocol = protocol;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
+    }
+
+    public void setPort(final int port) {
+        this.port = port;
+    }
+
+    public void setUrlPath(final String urlPath) {
+        this.urlPath = urlPath;
     }
 
     private static class JMXException extends RuntimeException {
