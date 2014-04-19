@@ -28,8 +28,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.loader.TomcatHelper;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -98,8 +101,8 @@ public class ServerListener implements LifecycleListener {
                 // System.setProperty("tomcat.version", "x.y.z.w");
                 // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
                 // set the System properties, tomcat.version, tomcat.built
+                final ClassLoader classLoader = ServerListener.class.getClassLoader();
                 try {
-                    final ClassLoader classLoader = ServerListener.class.getClassLoader();
                     final Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
                     String serverNumber = tomcatServerInfo.getProperty("server.number");
@@ -124,10 +127,19 @@ public class ServerListener implements LifecycleListener {
                 }
 
                 // manage additional libraries
-                try {
-                    ProvisioningUtil.addAdditionalLibraries();
-                } catch (final IOException e) {
-                    // ignored
+                if (URLClassLoader.class.isInstance(classLoader)) {
+                    final URLClassLoader ucl = URLClassLoader.class.cast(classLoader);
+                    try {
+                        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                        for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
+                            if (!addUrl.isAccessible()) { // set it lazily
+                                addUrl.setAccessible(true);
+                            }
+                            addUrl.invoke(ucl, f.toURI().toURL());
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
                 }
 
                 final TomcatLoader loader = new TomcatLoader();

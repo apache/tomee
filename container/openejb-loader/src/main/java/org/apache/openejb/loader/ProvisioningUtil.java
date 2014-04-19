@@ -331,7 +331,7 @@ public class ProvisioningUtil {
     private static File copy(final File file, final File lib) throws IOException {
         final File dest = new File(lib, file.getName());
         if (dest.exists()) {
-            return null;
+            return dest;
         }
         IO.copy(file, dest);
         return dest;

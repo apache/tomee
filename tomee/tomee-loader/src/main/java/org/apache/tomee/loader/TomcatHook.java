@@ -19,7 +19,12 @@ package org.apache.tomee.loader;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Properties;
+import java.util.logging.Level;
+
 import org.apache.openejb.loader.Embedder;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
@@ -121,8 +126,8 @@ class TomcatHook {
         // System.setProperty("tomcat.version", "x.y.z.w");
         // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
         // set the System properties, tomcat.version, tomcat.built
+        ClassLoader classLoader = TomcatHook.class.getClassLoader();
         try {
-            ClassLoader classLoader = TomcatHook.class.getClassLoader();
             Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
             String serverNumber = tomcatServerInfo.getProperty("server.number");
@@ -151,10 +156,19 @@ class TomcatHook {
         }
 
         // manage additional libraries
-        try {
-            ProvisioningUtil.addAdditionalLibraries();
-        } catch (IOException e) {
-            // ignored
+        if (URLClassLoader.class.isInstance(classLoader)) {
+            final URLClassLoader ucl = URLClassLoader.class.cast(classLoader);
+            try {
+                final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
+                    if (!addUrl.isAccessible()) { // set it lazily
+                        addUrl.setAccessible(true);
+                    }
+                    addUrl.invoke(ucl, f.toURI().toURL());
+                }
+            } catch (final Exception e) {
+                e.printStackTrace(); // shouldn't block
+            }
         }
 
         // set the embedder
