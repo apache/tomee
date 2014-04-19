@@ -16,6 +16,25 @@
  */
 package org.apache.openejb.junit.jee;
 
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.junit.jee.config.Properties;
+import org.apache.openejb.junit.jee.config.Property;
+import org.apache.openejb.junit.jee.config.PropertyFile;
+import org.apache.openejb.junit.jee.resources.TestResource;
+import org.apache.openejb.junit.jee.transaction.TransactionRule;
+import org.apache.openejb.osgi.client.LocalInitialContextFactory;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -25,39 +44,8 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.junit.jee.config.Properties;
-import org.apache.openejb.junit.jee.config.Property;
-import org.apache.openejb.junit.jee.config.PropertyFile;
-import org.apache.openejb.junit.jee.resources.TestResource;
-import org.apache.openejb.junit.jee.transaction.TransactionRule;
-import org.apache.openejb.log.SingleLineFormatter;
-import org.apache.openejb.osgi.client.LocalInitialContextFactory;
-import org.apache.openejb.util.JuliLogStreamFactory;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
 
 public class EJBContainerRunner extends BlockJUnit4ClassRunner {
-    static { // logging conf
-        if (!System.getProperties().containsKey("java.util.logging.manager")) {
-            System.setProperty("java.util.logging.manager", JuliLogStreamFactory.OpenEJBLogManager.class.getName());
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("net");
-            logger.setUseParentHandlers(false);
-            logger.addHandler(new ConsoleHandler());
-            logger.getHandlers()[0].setFormatter(new SingleLineFormatter());
-        }
-    }
-
     private java.util.Properties properties;
     private EJBContainer container;
 
@@ -66,15 +54,13 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected Statement withBeforeClasses(Statement statement) {
-        final Statement superStatement = super.withBeforeClasses(statement);
-        return new StartingStatement(superStatement);
+    protected Statement withBeforeClasses(final Statement statement) {
+        return new StartingStatement(super.withBeforeClasses(statement));
     }
 
     @Override
-    protected Statement withAfterClasses(Statement statement) {
-        final Statement superStatement = super.withAfterClasses(statement);
-        return new ShutingDownStatement(superStatement);
+    protected Statement withAfterClasses(final Statement statement) {
+        return new ShutingDownStatement(super.withAfterClasses(statement));
     }
 
     @Override
@@ -85,7 +71,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected List<TestRule> getTestRules(Object target) {
+    protected List<TestRule> getTestRules(final Object target) {
         final List<TestRule> rules = new ArrayList<TestRule>();
         rules.add(new InjectRule(target));
         rules.add(new TransactionRule());
