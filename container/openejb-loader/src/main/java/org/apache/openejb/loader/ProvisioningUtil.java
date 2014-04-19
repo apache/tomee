@@ -289,10 +289,10 @@ public class ProvisioningUtil {
         return defaultVersion;
     }
 
-    public static void addAdditionalLibraries() throws IOException {
+    public static Collection<File> addAdditionalLibraries() throws IOException {
         final File conf = SystemInstance.get().getConf(ADDITIONAL_LIB_CONFIG);
         if (conf == null || !conf.exists()) {
-            return;
+            return Collections.emptyList();
         }
 
         final Properties additionalLibProperties = IO.readProperties(conf);
@@ -321,17 +321,20 @@ public class ProvisioningUtil {
             Files.mkdirs(destination);
         }
 
+        final Collection<File> newFiles = new ArrayList<File>(libToCopy.size());
         for (final String lib : libToCopy) {
-            copy(new File(lib), destination);
+            newFiles.add(copy(new File(lib), destination));
         }
+        return newFiles;
     }
 
-    private static void copy(final File file, final File lib) throws IOException {
+    private static File copy(final File file, final File lib) throws IOException {
         final File dest = new File(lib, file.getName());
         if (dest.exists()) {
-            return;
+            return null;
         }
         IO.copy(file, dest);
+        return dest;
     }
 
     private static Collection<String> extract(final String zip) throws IOException {
