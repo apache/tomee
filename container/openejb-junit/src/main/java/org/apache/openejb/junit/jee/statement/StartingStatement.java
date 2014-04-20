@@ -30,7 +30,6 @@ import javax.naming.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Map;
 
 public class StartingStatement extends DecoratingStatement {
     private final Class<?> clazz;
@@ -57,6 +56,14 @@ public class StartingStatement extends DecoratingStatement {
             properties.put(OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY, b.toString());
         }
 
+        // default implicit config
+        {
+            final InputStream is = clazz.getClassLoader().getResourceAsStream("openejb-junit.properties");
+            if (is != null) {
+                properties.load(is);
+            }
+        }
+
         final PropertyFile propertyFile = clazz.getAnnotation(PropertyFile.class);
         if (propertyFile != null) {
             final String path = propertyFile.value();
@@ -71,11 +78,7 @@ public class StartingStatement extends DecoratingStatement {
                     }
                 }
 
-                final java.util.Properties fileProps = new java.util.Properties();
-                fileProps.load(is);
-                for (final Map.Entry<Object, Object> entry : fileProps.entrySet()) {
-                    properties.put(entry.getKey().toString(), entry.getValue().toString());
-                }
+                properties.load(is);
             }
         }
 
