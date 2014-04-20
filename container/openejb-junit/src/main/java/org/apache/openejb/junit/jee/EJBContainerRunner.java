@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.junit.jee;
 
-import org.apache.openejb.junit.jee.rule.InjectRule;
 import org.apache.openejb.junit.jee.statement.ShutingDownStatement;
 import org.apache.openejb.junit.jee.statement.StartingStatement;
 import org.apache.openejb.junit.jee.transaction.TransactionRule;
