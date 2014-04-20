@@ -1,6 +1,5 @@
-package org.apache.openejb.junit.jee.rule;
+package org.apache.openejb.junit.jee;
 
-import org.apache.openejb.junit.jee.EJBContainerRule;
 import org.apache.openejb.junit.jee.statement.InjectStatement;
 import org.apache.openejb.junit.jee.statement.StartingStatement;
 import org.junit.rules.TestRule;

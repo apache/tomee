@@ -17,12 +17,17 @@
 package org.apache.openejb.junit.jee;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.junit.jee.statement.InjectStatement;
 import org.apache.openejb.junit.jee.statement.ShutingDownStatement;
 import org.apache.openejb.junit.jee.statement.StartingStatement;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+
+import javax.naming.NamingException;
 
 // @Rule works but mainly designed for @ClassRule for perf reasons
 public class EJBContainerRule implements TestRule {
@@ -56,6 +61,7 @@ public class EJBContainerRule implements TestRule {
         return new ShutingDownStatement(startingStatement, startingStatement);
     }
 
+    // inject in test class or a class of org.apache.openejb.OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY list
     public void inject(final Object target) {
         try { // reuse this logic to get @TestResource for free
             new InjectStatement(null, target.getClass(), target, startingStatement).evaluate();
@@ -64,7 +70,19 @@ public class EJBContainerRule implements TestRule {
         }
     }
 
-    public StartingStatement getStartingStatement() {
+    // helper method to get a resource
+    public <T> T resource(final Class<T> type, final String name) {
+        try {
+            return type.cast(
+                    SystemInstance.get().getComponent(ContainerSystem.class)
+                            .getJNDIContext().lookup("java:" + Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name));
+        } catch (final NamingException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+    }
+
+    // internal API to make it easily integrated
+    StartingStatement getStartingStatement() {
         return startingStatement;
     }
 }
