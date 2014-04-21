@@ -46,8 +46,8 @@
       <version>2.4.2</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.persistence</groupId>
-          <artifactId>persistence-api</artifactId>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>javax.persistence</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -46,12 +46,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>javax.faces</groupId>
-      <artifactId>javax.faces-api</artifactId>
-      <version>2.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-webapp</artifactId>
       <version>${tomee.version}</version>
