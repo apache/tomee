@@ -1,7 +1,5 @@
 Title: DataSource Versioning
 
-# Datasource Versioning
-
 This example shows you how to use versioned DataSources of the same provider using the classpath attribute.
 
 # Configuration
@@ -31,6 +29,14 @@ Note the differing driver version paths, yet still using the same provider (org.
       </Resource>
 
     </tomee>
+	
+# Developer Information
+When testing within a Maven environment it is also possible to use direct maven coordinates rather than a file link, like so:
+
+    ....
+	<Resource id="DatabaseOne" type="DataSource" classpath="mvn:org.apache.derby:derby:10.10.1.1">
+	....
+	
 
 # AlternateDriverJarTest.java
 
@@ -68,10 +74,6 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
         p.put("JdbcTwo.JtaManaged", "false");
         return p;
     }
-
-# Documentation
-
-For more information please see the [documentation](http://openejb.apache.org/3.0/datasource-password-encryption.html)
 
 # Full Test Source for AlternateDataSourceTest.java
 
