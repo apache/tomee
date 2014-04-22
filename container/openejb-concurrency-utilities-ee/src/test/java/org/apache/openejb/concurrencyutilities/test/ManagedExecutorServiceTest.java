@@ -19,6 +19,7 @@ package org.apache.openejb.concurrencyutilities.test;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,10 +50,18 @@ public class ManagedExecutorServiceTest {
         return new Class<?>[]{ ExecutorFacade.class, CdiExecutorFacade.class, RequestBean.class, MyCallable.class };
     }
 
+    private ThreadContext ctx;
+
     @Before
     public void cleanUpContext() {
+        ctx = ThreadContext.getThreadContext();
         ThreadContext.exit(null);
         RequestBean.ID = 0;
+    }
+
+    @After
+    public void reset() {
+        ThreadContext.enter(ctx);
     }
 
     @Test
