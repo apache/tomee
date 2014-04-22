@@ -80,6 +80,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -185,7 +186,7 @@ public class TomcatJndiBuilder {
             contextInfo = builder.getContextInfo(standardContext);
             if (webContext == null && contextInfo != null && contextInfo.appInfo != null) { // can happen if deployed from apps/
                 for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-                    if (webAppInfo.path != null && webAppInfo.path.equals(standardContext.getDocBase())) {
+                    if (webAppInfo.path != null && webAppInfo.path.replace(File.separatorChar, '/').equals(standardContext.getDocBase())) {
                         webContext = cs.getWebContext(webAppInfo.moduleId);
                         if (webContext != null) {
                             break;
