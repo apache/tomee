@@ -9,7 +9,7 @@ Before we start, if you take a peek in the project pom.xml and look for the mave
 two completely different driver files for this example.
 
 # AlternateDataSourceTest.java
-This test utilizes the Arquillian testing framework. See [here](arquillian-available-adapters.html) for more details.
+This test utilizes the Arquillian testing framework. See [here](http://tomee.apache.org/arquillian-available-adapters.html) for more details.
 
 The example uses src/test/resources/arquillian.xml and src/test/conf/tomee.xml to define the DataSources.
 Note the differing driver version paths, yet still using the same provider (org.apache.derby.jdbc.EmbeddedDriver):
