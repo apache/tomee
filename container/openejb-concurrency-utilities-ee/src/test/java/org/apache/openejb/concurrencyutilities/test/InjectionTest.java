@@ -25,6 +25,7 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,9 +68,17 @@ public class InjectionTest {
     @EJB
     private CUBean bean;
 
+    private ThreadContext ctx;
+
     @Before
     public void cleanUpContext() {
+        ctx = ThreadContext.getThreadContext();
         ThreadContext.exit(null);
+    }
+
+    @After
+    public void reset() {
+        ThreadContext.enter(ctx);
     }
 
     @Test
