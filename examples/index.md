@@ -71,7 +71,6 @@ All the examples show code, but some are better documented than others.  Example
 ### REST
 
  - [simple-rest](simple-rest/README.html)
- - [rest-cdi](rest-cdi/README.html)
  - [rest-example](rest-example/README.html)
  - [rest-example-with-application](rest-example-with-application/README.html)
  - [rest-on-ejb](rest-on-ejb/README.html)
@@ -125,7 +124,6 @@ All the examples show code, but some are better documented than others.  Example
 
  - [injection-of-datasource](injection-of-datasource/README.html)
  - [datasource-ciphered-password](datasource-ciphered-password/README.html) *
- - [datasource-versioning](datasource-versioning/README.html)
  - [dynamic-datasource-routing](dynamic-datasource-routing/README.html) *
  - [resources-declared-in-webapp](resources-declared-in-webapp/README.html)
 }
@@ -166,7 +164,7 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ###  Frameworks
 
- - [spring-integration](spring-integration/README.html)
+ - [spring-data-proxy-meta](spring-data-proxy-meta/README.html)
  - [spring-data-proxy](spring-data-proxy/README.html)
  - [struts](struts/README.html)
 }
@@ -227,4 +225,3 @@ All the examples show code, but some are better documented than others.  Example
  - [polling-parent](polling-parent/README.html)
 }
 }
- - [absolute](/foo.html)

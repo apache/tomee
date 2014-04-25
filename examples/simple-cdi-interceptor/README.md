@@ -74,10 +74,6 @@ But we'll see that in another example on multiple-cdi-interceptors.
 
 Fire up the test, and we should see a 'Entering method: getMoviesList' printed in the console.
 
-#Download
-
-[Download as zip](${zip}) 
-
 #Tests
     Apache OpenEJB 4.0.0-beta-2    build: 20111103-01:00
     http://openejb.apache.org/
