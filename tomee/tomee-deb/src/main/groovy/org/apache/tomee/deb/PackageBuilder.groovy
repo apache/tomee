@@ -21,6 +21,7 @@ package org.apache.tomee.deb
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
+import groovy.io.FileType
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.compress.archivers.ar.ArArchiveEntry
@@ -28,6 +29,7 @@ import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipParameters
 
+import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import java.util.zip.Deflater
 
@@ -37,6 +39,14 @@ class PackageBuilder {
 
     def ant = new AntBuilder()
     def properties
+
+    private String executionDate = ''
+
+    PackageBuilder() {
+        def dft = new SimpleDateFormat('yyyy-MM-dd-HH-mm-ss')
+        dft.timeZone = TimeZone.getTimeZone('GMT-0')
+        executionDate = dft.format(new Date())
+    }
 
     def getJiraData = {
         def restClient = null
@@ -189,9 +199,13 @@ class PackageBuilder {
             }
         }
         Double installedSize = dataDir.directorySize() / 1024
+        String version = properties.tomeeVersion
+        if (version.toLowerCase().endsWith('-snapshot')) {
+            version += "-${executionDate}"
+        }
         writeTemplate(new File(controlDir, 'control'), '/control/control.template', [
                 classifier  : classifier,
-                tomeeVersion: properties.tomeeVersion,
+                tomeeVersion: version,
                 inMB        : installedSize.longValue()
         ])
         def priority
@@ -308,6 +322,43 @@ class PackageBuilder {
         dataDir.absolutePath
     }
 
+    void maskCodelessJars(String classifier, String dataDirPath) {
+        def jars = []
+        new File(dataDirPath).eachFileRecurse(FileType.FILES) {
+            if (it.name.endsWith('.jar')) {
+                jars << it
+            }
+        }
+        def codelessJars = jars.findAll { jar ->
+            def explodedJar = new File(properties.workDir as String, "unjar/${classifier}/${jar.name}")
+            ant.unjar(src: jar, dest: explodedJar)
+            def dotClassFiles = []
+            explodedJar.eachFileRecurse(FileType.FILES) {
+                if (it.name.endsWith('.class')) {
+                    dotClassFiles << it
+                }
+            }
+            explodedJar.listFiles(
+                    { dir, file -> file ==~ /.*?\.class/ } as FilenameFilter
+            )
+            def result = dotClassFiles.size() == 0
+            if (!result) {
+                ant.delete(dir: explodedJar)
+            }
+            result
+        }
+        codelessJars.each { jar ->
+            ant.echo(message: "Masking codeless jar: ${jar.absolutePath}")
+            def explodedJar = new File(properties.workDir as String, "unjar/${classifier}/${jar.name}")
+            jar.delete()
+            ant.zip(destfile: jar.absolutePath) {
+                fileset(dir: explodedJar.absolutePath) {
+                    exclude(name: '**/META-INF/MANIFEST.MF')
+                }
+            }
+        }
+    }
+
     private File createTarGz(String classifier, String path) {
         def dataDir = new File(path)
         def tarFile = new File(dataDir.parent, "${dataDir.name}.tar")
@@ -369,6 +420,7 @@ class PackageBuilder {
         def filePath = new File(properties.workDir as String, fileName).absolutePath
         def explodedPath = unzip(classifier, filePath)
         def dataDir = createDataDir(classifier, explodedPath)
+        maskCodelessJars(classifier, dataDir)
         def controlDir = createControlDir(classifier, dataDir)
         def deb = compressFiles(classifier, controlDir, dataDir)
         deb.renameTo(new File(properties.buildDir as String, deb.name))
