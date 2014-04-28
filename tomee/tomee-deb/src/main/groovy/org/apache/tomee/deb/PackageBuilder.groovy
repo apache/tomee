@@ -263,6 +263,7 @@ class PackageBuilder {
         }
         new File(homeConf, 'openejb.conf').withWriter { BufferedWriter out ->
             def data = this.class.getResource('/default.openejb.conf').text
+            data = data.replace('jdbc:hsqldb:file:data/hsqldb/hsqldb', 'jdbc:hsqldb:file:temp/data/hsqldb/hsqldb')
             out.write(data)
         }
         def homeConfD = new File(homeConf, 'conf.d')

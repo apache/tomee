@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -42,4 +42,6 @@ update-rc.d tomee-${classifier} defaults
 
 update-alternatives --install /etc/init.d/tomee tomee /etc/init.d/tomee-${classifier} ${priority}
 
-echo "Reboot your machine or run 'service tomee-${classifier} start' to start the Apache TomEE ${classifier} server (version: ${tomeeVersion})"
+echo "Apache TomEE classifier ${tomeeVersion} installed."
+echo "Reboot your machine or run 'service tomee-${classifier} start' to start the Apache TomEE."
+
