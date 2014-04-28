@@ -29,7 +29,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version $Rev:$ $Date:$

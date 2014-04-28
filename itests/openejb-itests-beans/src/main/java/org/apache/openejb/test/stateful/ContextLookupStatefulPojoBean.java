@@ -42,7 +42,7 @@ import javax.jms.JMSException;
 import javax.naming.InitialContext;
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 
 public class ContextLookupStatefulPojoBean {

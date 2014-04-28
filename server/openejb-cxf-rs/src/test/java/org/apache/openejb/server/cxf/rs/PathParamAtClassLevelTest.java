@@ -31,7 +31,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class PathParamAtClassLevelTest {
     private static EJBContainer container;

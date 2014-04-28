@@ -28,7 +28,7 @@ import javax.servlet.ServletOutputStream;
 import javax.ejb.EJB;
 
 import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class EjbServlet extends HttpServlet {
     @EJB

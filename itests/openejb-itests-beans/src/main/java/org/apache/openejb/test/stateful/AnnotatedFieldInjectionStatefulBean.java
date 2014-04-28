@@ -44,7 +44,7 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
 import javax.jms.JMSException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 
 @RemoteHome(org.apache.openejb.test.stateful.EncStatefulHome.class)

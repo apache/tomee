@@ -24,7 +24,7 @@ import org.superbiz.rest.model.User;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 public class UserDaoTest {
 

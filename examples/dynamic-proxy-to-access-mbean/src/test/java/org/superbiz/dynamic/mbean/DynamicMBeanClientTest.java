@@ -30,7 +30,7 @@ import javax.management.Attribute;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DynamicMBeanClientTest {
 

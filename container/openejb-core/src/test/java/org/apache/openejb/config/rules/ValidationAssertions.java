@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.config.ValidationFailedException;
 

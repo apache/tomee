@@ -28,7 +28,7 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for https://issues.apache.org/jira/browse/OPENEJB-2014

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;

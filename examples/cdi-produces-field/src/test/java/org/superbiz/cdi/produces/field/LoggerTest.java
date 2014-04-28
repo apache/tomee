@@ -23,7 +23,7 @@ import org.junit.Test;
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class AbstractCDIInjectionTest {

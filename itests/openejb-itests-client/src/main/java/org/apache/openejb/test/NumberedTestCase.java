@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.Protectable;
 import junit.framework.Test;
 import junit.framework.TestResult;

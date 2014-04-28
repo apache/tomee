@@ -174,23 +174,23 @@ public class JaxWsInvocationTest extends TestCase {
              */
             MessageContext messageContext = (MessageContext)context.getContextData();
             
-            junit.framework.Assert.assertNotNull("message context should not be null", messageContext);
-            junit.framework.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
+            org.junit.Assert.assertNotNull("message context should not be null", messageContext);
+            org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
 
             // Try to get JAX-RPC context, should throw an exception since it's JAX-WS
             try {
                 ctx.getMessageContext();
-                junit.framework.Assert.fail("Did not throw exception");
+                org.junit.Assert.fail("Did not throw exception");
             } catch (IllegalStateException e) {
                 // that's expected since it's JAX-WS
             }
             
             // test @Resource WebServiceContext injection
-            junit.framework.Assert.assertNotNull("web service context should not be null", wsContext);
-            junit.framework.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
+            org.junit.Assert.assertNotNull("web service context should not be null", wsContext);
+            org.junit.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
 
-            junit.framework.Assert.assertFalse("user in role 'foo'", wsContext.isUserInRole("foo"));
-            junit.framework.Assert.assertNotNull("user principal", wsContext.getUserPrincipal());
+            org.junit.Assert.assertFalse("user in role 'foo'", wsContext.isUserInRole("foo"));
+            org.junit.Assert.assertNotNull("user principal", wsContext.getUserPrincipal());
 
             calls.add(Call.Bean_Invoke_BEFORE);
             Object o = context.proceed();

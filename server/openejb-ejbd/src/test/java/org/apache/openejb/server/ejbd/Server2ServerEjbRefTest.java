@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;

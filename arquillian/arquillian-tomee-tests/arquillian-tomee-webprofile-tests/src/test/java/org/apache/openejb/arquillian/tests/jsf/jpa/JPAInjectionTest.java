@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.URL;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class JPAInjectionTest extends JSFs {

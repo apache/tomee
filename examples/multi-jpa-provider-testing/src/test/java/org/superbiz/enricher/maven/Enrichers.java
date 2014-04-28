@@ -19,8 +19,6 @@ package org.superbiz.enricher.maven;
 
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.strategy.AcceptScopesStrategy;
 
 import javax.enterprise.inject.ResolutionException;
 import java.io.File;
@@ -43,12 +41,12 @@ public final class Enrichers {
                 CACHE.put(pom, Maven.resolver()
                                     .offline(true)
                                     .loadPomFromFile(pom)
-                                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
                                     .asFile());
             } catch (ResolutionException re) { // try on central
                 CACHE.put(pom, Maven.resolver()
                                     .loadPomFromFile(pom)
-                                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
                                     .asFile());
             }
         }

@@ -16,7 +16,7 @@
  */
 package org.superbiz.counter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;

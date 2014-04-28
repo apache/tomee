@@ -32,9 +32,9 @@ import javax.ejb.Stateful;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @version $Rev$ $Date$

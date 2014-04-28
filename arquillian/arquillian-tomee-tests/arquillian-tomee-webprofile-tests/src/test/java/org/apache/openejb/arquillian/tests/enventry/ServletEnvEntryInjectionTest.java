@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO Add float and double
