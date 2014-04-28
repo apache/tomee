@@ -29,8 +29,8 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.URL;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class JSFInjectionTest extends JSFs {

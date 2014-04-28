@@ -32,8 +32,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 @RunWith(ApplicationComposer.class)
 public class ReloadableEntityManagerFactoryTest {

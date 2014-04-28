@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EmbeddedTomEEContainerTest {
     @Test

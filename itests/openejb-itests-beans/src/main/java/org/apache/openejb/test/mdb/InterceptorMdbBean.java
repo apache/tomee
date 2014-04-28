@@ -18,7 +18,7 @@
 
 package org.apache.openejb.test.mdb;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 

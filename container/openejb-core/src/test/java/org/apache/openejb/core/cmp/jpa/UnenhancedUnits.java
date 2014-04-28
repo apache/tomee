@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

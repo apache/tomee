@@ -32,7 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class EntitiesScanningPackageLimitedTest {

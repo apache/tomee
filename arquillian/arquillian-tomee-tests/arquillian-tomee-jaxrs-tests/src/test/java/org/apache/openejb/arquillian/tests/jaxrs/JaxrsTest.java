@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

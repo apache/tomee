@@ -26,7 +26,7 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class GuessHowManyMBeanTest {
 

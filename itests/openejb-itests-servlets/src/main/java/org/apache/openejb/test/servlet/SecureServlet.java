@@ -29,7 +29,7 @@ import java.io.PrintStream;
 import java.security.Principal;
 import java.lang.reflect.Method;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class SecureServlet extends HttpServlet {
     @EJB

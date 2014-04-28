@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DiscoverCustomProviderTest {
     private static EJBContainer container;

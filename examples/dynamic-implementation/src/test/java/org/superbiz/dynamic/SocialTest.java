@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 public class SocialTest {
 

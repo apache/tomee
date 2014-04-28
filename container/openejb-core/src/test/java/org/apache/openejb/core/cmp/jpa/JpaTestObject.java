@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 
-public class JpaTestObject extends junit.framework.Assert {
+public class JpaTestObject extends org.junit.Assert {
     private EntityManagerFactory entityManagerFactory;
     private TransactionManager transactionManager;
     private DataSource nonJtaDs;

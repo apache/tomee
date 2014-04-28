@@ -30,7 +30,7 @@ import javax.naming.NamingException;
 import java.util.Collection;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * the UserDao can be injected but doesn't manage transaction so we create

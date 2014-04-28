@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;

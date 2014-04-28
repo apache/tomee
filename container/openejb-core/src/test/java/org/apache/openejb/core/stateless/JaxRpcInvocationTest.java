@@ -165,8 +165,8 @@ public class JaxRpcInvocationTest extends TestCase {
              */
             MessageContext messageContext = ctx.getMessageContext();
 
-            junit.framework.Assert.assertNotNull("message context should not be null", messageContext);
-            junit.framework.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
+            org.junit.Assert.assertNotNull("message context should not be null", messageContext);
+            org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
 
             calls.add(Call.Bean_Invoke_BEFORE);
             Object o = context.proceed();

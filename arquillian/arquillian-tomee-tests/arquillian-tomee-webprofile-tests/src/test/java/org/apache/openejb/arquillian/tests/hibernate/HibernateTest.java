@@ -50,12 +50,12 @@ public class HibernateTest {
             hibernate = Maven.resolver()
                     .offline(true)
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
                     .asFile();
         } catch (ResolutionException re) { // try on central
             hibernate = Maven.resolver()
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
                     .asFile();
         }
 

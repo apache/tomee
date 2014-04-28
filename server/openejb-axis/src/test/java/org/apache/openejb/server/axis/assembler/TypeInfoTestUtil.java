@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.lang.reflect.Field;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public final class TypeInfoTestUtil {
     private TypeInfoTestUtil() {

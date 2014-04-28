@@ -35,13 +35,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${javaee-api.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>2.0.0-alpha-5</version>
+      <version>2.0.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -213,43 +212,43 @@
                     props['skip.webapp.plume'] = 'true'
 
                     if ("true" != skip) {
-                    def minProfile = props['profile-under-test']
+                      def minProfile = props['profile-under-test']
 
-                    if ("webprofile" == minProfile) {
-                    props['skip.embedded'] = 'false'
-                    props['skip.remote.webprofile'] = 'false'
-                    props['skip.webapp.webprofile'] = 'false'
-                    props['skip.remote.jaxrs'] = 'false'
-                    props['skip.webapp.jaxrs'] = 'false'
-                    props['skip.remote.plus'] = 'false'
-                    props['skip.webapp.plus'] = 'false'
-                    props['skip.remote.plume'] = 'false'
-                    props['skip.webapp.plume'] = 'false'
-                    } else if ("jaxrs" == minProfile) {
-                    props['skip.embedded'] = 'false'
-                    props['skip.remote.jaxrs'] = 'false'
-                    props['skip.webapp.jaxrs'] = 'false'
-                    props['skip.remote.plus'] = 'false'
-                    props['skip.webapp.plus'] = 'false'
-                    props['skip.remote.plume'] = 'false'
-                    props['skip.webapp.plume'] = 'false'
-                    } else if ("plus" == minProfile) {
-                    props['skip.embedded'] = 'false'
-                    props['skip.remote.plus'] = 'false'
-                    props['skip.webapp.plus'] = 'false'
-                    props['skip.remote.plume'] = 'false'
-                    props['skip.webapp.plume'] = 'false'
-                    }
+                      if ("webprofile" == minProfile) {
+                        props['skip.embedded'] = 'false'
+                        props['skip.remote.webprofile'] = 'false'
+                        props['skip.webapp.webprofile'] = 'false'
+                        props['skip.remote.jaxrs'] = 'false'
+                        props['skip.webapp.jaxrs'] = 'false'
+                        props['skip.remote.plus'] = 'false'
+                        props['skip.webapp.plus'] = 'false'
+                        props['skip.remote.plume'] = 'false'
+                        props['skip.webapp.plume'] = 'false'
+                      } else if ("jaxrs" == minProfile) {
+                        props['skip.embedded'] = 'false'
+                        props['skip.remote.jaxrs'] = 'false'
+                        props['skip.webapp.jaxrs'] = 'false'
+                        props['skip.remote.plus'] = 'false'
+                        props['skip.webapp.plus'] = 'false'
+                        props['skip.remote.plume'] = 'false'
+                        props['skip.webapp.plume'] = 'false'
+                      } else if ("plus" == minProfile) {
+                        props['skip.embedded'] = 'false'
+                        props['skip.remote.plus'] = 'false'
+                        props['skip.webapp.plus'] = 'false'
+                        props['skip.remote.plume'] = 'false'
+                        props['skip.webapp.plume'] = 'false'
+                      }
                     }
 
                     println("Embedded adapter activated ? " + !Boolean.parseBoolean(props['skip.embedded']))
                     println("Remote webprofile adapter activated ? " +
-                    !Boolean.parseBoolean(props['skip.remote.webprofile']))
+                        !Boolean.parseBoolean(props['skip.remote.webprofile']))
                     println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
                     println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
                     println("Remote plume adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plume']))
                     println("Webapp weprofile adapter activated ? " +
-                    !Boolean.parseBoolean(props['skip.webapp.webprofile']))
+                        !Boolean.parseBoolean(props['skip.webapp.webprofile']))
                     println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
                     println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
                     println("Webapp plume adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plume']))

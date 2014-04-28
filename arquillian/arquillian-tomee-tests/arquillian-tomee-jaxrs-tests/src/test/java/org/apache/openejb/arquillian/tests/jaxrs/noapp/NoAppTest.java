@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.noapp;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;

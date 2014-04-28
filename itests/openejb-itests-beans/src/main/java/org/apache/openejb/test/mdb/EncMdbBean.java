@@ -48,7 +48,7 @@ import javax.jms.Message;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 
 public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.unpack;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.loader.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
