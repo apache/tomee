@@ -21,7 +21,9 @@ import org.apache.deltaspike.core.spi.config.ConfigSourceProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public final class ProjectStageProducer implements ConfigSourceProvider {
@@ -55,6 +57,16 @@ public final class ProjectStageProducer implements ConfigSourceProvider {
                 @Override
                 public String getConfigName() {
                     return "test-project-stage";
+                }
+
+                @Override
+                public Map<String, String> getProperties() {
+                    return Collections.emptyMap();
+                }
+
+                @Override
+                public boolean isScannable() {
+                    return false;
                 }
             });
         }};
