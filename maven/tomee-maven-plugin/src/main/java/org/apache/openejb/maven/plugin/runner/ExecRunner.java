@@ -135,9 +135,11 @@ public class ExecRunner {
 
             final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
 
+            final String additionalArgs = System.getProperty("additionalSystemProperties");
+            final String existingOpts = System.getenv("CATALINA_OPTS");
             final String catalinaOpts = config.getProperty("catalinaOpts");
-            if (catalinaOpts != null) { // inherit from existing env
-                builder.environment().put("CATALINA_OPTS", catalinaOpts);
+            if (catalinaOpts != null || existingOpts != null || additionalArgs != null) { // inherit from existing env
+                builder.environment().put("CATALINA_OPTS", identityOrEmpty(catalinaOpts) + " " + identityOrEmpty(existingOpts) + " " + identityOrEmpty(additionalArgs));
             }
 
             boolean redirectOut = false;
@@ -158,6 +160,10 @@ public class ExecRunner {
         System.out.flush();
         System.err.flush();
         System.out.println("Exited Successfully!");
+    }
+
+    private static String identityOrEmpty(final String value) {
+        return (value != null ? value : "");
     }
 
     private ExecRunner() {
