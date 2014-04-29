@@ -22,6 +22,7 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
 import org.apache.openejb.resource.jdbc.driver.AlternativeDriver;
 import org.apache.openejb.resource.jdbc.logging.LoggingSqlDataSource;
+import org.apache.openejb.resource.jdbc.plugin.AbstractDataSourcePlugin;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
@@ -192,7 +193,7 @@ public class DataSourceFactory {
             final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(jdbcUrl);
 
             // configure this
-            if (helper != null) {
+            if (AbstractDataSourcePlugin.isActive(helper)) {
                 final String newUrl = helper.updatedUrl(jdbcUrl);
                 properties.setProperty(key, newUrl);
             }

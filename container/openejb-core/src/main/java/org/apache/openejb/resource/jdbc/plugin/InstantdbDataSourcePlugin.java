@@ -23,7 +23,7 @@ import org.apache.xbean.finder.ResourceFinder;
 import java.io.File;
 import java.io.IOException;
 
-public class InstantdbDataSourcePlugin implements DataSourcePlugin {
+public class InstantdbDataSourcePlugin extends AbstractDataSourcePlugin {
 
     @Override
     public String updatedUrl(final String jdbcUrl) {
@@ -64,7 +64,7 @@ public class InstantdbDataSourcePlugin implements DataSourcePlugin {
     }
 
     public boolean enableUserDirHack() {
-        return true;
+        return isActive(this);
     }
 
 }
