@@ -20,7 +20,7 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 
-public class HsqldbDataSourcePlugin implements DataSourcePlugin {
+public class HsqldbDataSourcePlugin extends AbstractDataSourcePlugin {
     private static final String HSQL_FILE_URL = "jdbc:hsqldb:file:";
 
 

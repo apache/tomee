@@ -18,17 +18,17 @@ package org.apache.openejb.resource.jdbc.plugin;
 
 import org.apache.openejb.loader.SystemInstance;
 
-public class DerbyDataSourcePlugin extends AbstractDataSourcePlugin {
-    @Override
-    public String updatedUrl(final String dataSourceUrl) {
-
-        System.setProperty("derby.system.home"
-                , SystemInstance.get().getProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath()));
-        return dataSourceUrl;
+public abstract class AbstractDataSourcePlugin implements DataSourcePlugin {
+    public boolean isActive() {
+        final SystemInstance systemInstance = SystemInstance.get();
+        return "true".equals(systemInstance.getProperty(
+                "openejb.datasource.plugin." + getClass().getSimpleName().replace("DataSourcePlugin", "") + ".activaed",
+                systemInstance.getProperty("openejb.datasource.plugin.activated", "true")));
     }
 
-    @Override
-    public boolean enableUserDirHack() {
-        return isActive(this);
+    public static boolean isActive(final DataSourcePlugin helper) {
+        return helper != null
+                && (!AbstractDataSourcePlugin.class.isInstance(helper)
+                    || AbstractDataSourcePlugin.class.cast(helper).isActive());
     }
 }
