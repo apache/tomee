@@ -56,8 +56,10 @@ public class JobProcessorTest extends TestCase {
         final long total = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
 
         // Execution should be around 9 - 21 seconds
-        assertTrue("" + total, total > 9);
-        assertTrue("" + total, total < 21);
+		// The execution time depends on the number of threads available for asynchronous execution.
+		// In the best case it is 10s plus some minimal processing time. 
+        assertTrue("Expected > 9 but was: " + total, total > 9);
+        assertTrue("Expected < 21 but was: " + total, total < 21);
 
     }
 
