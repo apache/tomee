@@ -48,12 +48,12 @@ public class StratocasterTest extends TestCase {
 
         assertEquals("Strat.getStyle()", Style.VINTAGE, strat.getStyle());
 
-        assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, strat.getStringGuage("E1"));
-        assertEquals("Strat.getStringGuage(\"A\")", 0.042F, strat.getStringGuage("A"));
-        assertEquals("Strat.getStringGuage(\"D\")", 0.030F, strat.getStringGuage("D"));
-        assertEquals("Strat.getStringGuage(\"G\")", 0.017F, strat.getStringGuage("G"));
-        assertEquals("Strat.getStringGuage(\"B\")", 0.013F, strat.getStringGuage("B"));
-        assertEquals("Strat.getStringGuage(\"E\")", 0.010F, strat.getStringGuage("E"));
+        assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, strat.getStringGuage("E1"), 1e-15);
+        assertEquals("Strat.getStringGuage(\"A\")", 0.042F, strat.getStringGuage("A"), 1e-15);
+        assertEquals("Strat.getStringGuage(\"D\")", 0.030F, strat.getStringGuage("D"), 1e-15);
+        assertEquals("Strat.getStringGuage(\"G\")", 0.017F, strat.getStringGuage("G"), 1e-15);
+        assertEquals("Strat.getStringGuage(\"B\")", 0.013F, strat.getStringGuage("B"), 1e-15);
+        assertEquals("Strat.getStringGuage(\"E\")", 0.010F, strat.getStringGuage("E"), 1e-15);
 
         File file = new File("/tmp/strat-certificate.txt");
         assertEquals("Strat.getCertificateOfAuthenticity()", file, strat.getCertificateOfAuthenticity());
