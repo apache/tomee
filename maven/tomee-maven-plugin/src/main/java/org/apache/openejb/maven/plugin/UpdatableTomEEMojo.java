@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -69,6 +70,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     protected void run() {
         if (synchronization != null) {
             initSynchronization(synchronization);
+			avoidAutoReload();
         }
         if (synchronizations != null) {
             for (final Synch s : synchronizations) {
@@ -77,6 +79,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                     continue;
                 }
                 initSynch(s);
+				avoidAutoReload();
             }
         }
 
@@ -91,7 +94,16 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         super.run();
     }
 
-    private void initSynch(final AbstractSynchronizable s) {
+	private void avoidAutoReload() {
+		if (systemVariables == null) {
+			systemVariables = new HashMap<String, String>();
+		}
+		if (!systemVariables.containsKey("tomee.classloader.backgroundProcess")) {
+			systemVariables.put("tomee.classloader.backgroundProcess", "true");
+		}
+	}
+
+	private void initSynch(final AbstractSynchronizable s) {
         s.getExtensions().addAll(s.getUpdateOnlyExtenions());
         if (reloadOnUpdate) {
             deployOpenEjbApplication = true;

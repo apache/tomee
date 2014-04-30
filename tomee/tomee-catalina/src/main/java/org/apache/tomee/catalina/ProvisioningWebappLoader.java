@@ -25,6 +25,7 @@ import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.File;
@@ -45,8 +46,14 @@ import java.io.File;
  *
  */
 public class ProvisioningWebappLoader extends VirtualWebappLoader {
+	private static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.backgroundProcess", "true"));
+
     @Override
     public void backgroundProcess() {
+		if (SKIP_BACKGROUND_PROCESS) {
+			return;
+		}
+
         final ClassLoader classloader = super.getClassLoader();
         if (classloader instanceof LazyStopWebappClassLoader) {
             final LazyStopWebappClassLoader lazyStopWebappClassLoader = (LazyStopWebappClassLoader) classloader;
@@ -61,7 +68,12 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         }
     }
 
-    @Override
+	@Override
+	public boolean modified() {
+		return !SKIP_BACKGROUND_PROCESS;
+	}
+
+	@Override
     protected void startInternal() throws LifecycleException {
         // standard tomcat part
         final StringBuilder builder = new StringBuilder();
