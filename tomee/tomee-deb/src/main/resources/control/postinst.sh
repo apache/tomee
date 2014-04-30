@@ -22,6 +22,7 @@ ln -sf /var/log/tomee-${classifier} /var/lib/tomee-${classifier}/logs
 ln -sf /etc/tomee-${classifier}/server.xml /var/lib/tomee-${classifier}/conf/server.xml
 ln -sf /etc/tomee-${classifier}/tomcat-users.xml /var/lib/tomee-${classifier}/conf/tomcat-users.xml
 ln -sf /etc/tomee-${classifier}/openejb.conf /var/lib/tomee-${classifier}/conf/openejb.conf
+ln -sf /etc/tomee-${classifier}/tomee.xml /var/lib/tomee-${classifier}/conf/tomee.xml
 ln -sf /etc/tomee-${classifier}/conf.d /var/lib/tomee-${classifier}/conf/conf.d
 
 groupadd apachetomee || true
