@@ -25,6 +25,12 @@ ln -sf /etc/tomee-${classifier}/openejb.conf /var/lib/tomee-${classifier}/conf/o
 ln -sf /etc/tomee-${classifier}/tomee.xml /var/lib/tomee-${classifier}/conf/tomee.xml
 ln -sf /etc/tomee-${classifier}/conf.d /var/lib/tomee-${classifier}/conf/conf.d
 
+# Linking tomcat jars
+for tomcatJar in /usr/share/tomee-lib-tomcat/lib/*
+do
+    ln -sf \$tomcatJar /usr/share/tomee-${classifier}/lib/\$(basename "\$tomcatJar")
+done
+
 groupadd apachetomee || true
 useradd --system apachetomee -g apachetomee || true
 
@@ -44,5 +50,5 @@ update-rc.d tomee-${classifier} defaults
 update-alternatives --install /etc/init.d/tomee tomee /etc/init.d/tomee-${classifier} ${priority}
 
 echo "Apache TomEE classifier ${tomeeVersion} installed."
-echo "Reboot your machine or run 'service tomee-${classifier} start' to start the Apache TomEE."
+echo "Reboot your machine or run 'service tomee-${classifier} start' to start TomEE."
 

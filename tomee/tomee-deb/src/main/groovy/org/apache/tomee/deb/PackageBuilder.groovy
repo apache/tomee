@@ -28,6 +28,7 @@ import org.apache.commons.compress.archivers.ar.ArArchiveEntry
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipParameters
+import org.apache.maven.project.MavenProject
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
@@ -36,16 +37,19 @@ import java.util.zip.Deflater
 class PackageBuilder {
 
     static final JIRA_SRV = 'https://issues.apache.org/jira'
+    static final TOMCAT_EXPLODED_DIR = 'tomcat-exploded'
+    static final TOMCAT_PACKAGE_NAME = 'lib-tomcat'
 
     def ant = new AntBuilder()
-    def properties
+    MavenProject project
 
     private String executionDate = ''
 
-    PackageBuilder() {
+    PackageBuilder(MavenProject myProject) {
         def dft = new SimpleDateFormat('yyyy-MM-dd-HH-mm-ss')
         dft.timeZone = TimeZone.getTimeZone('GMT-0')
         executionDate = dft.format(new Date())
+        project = myProject
     }
 
     def getJiraData = {
@@ -53,7 +57,7 @@ class PackageBuilder {
         try {
             def factory = new AsynchronousJiraRestClientFactory()
             restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
-            String version = properties.tomeeVersion
+            String version = project.version
             version = version.replaceAll('-SNAPSHOT$', '')
             def query = "project = TOMEE AND issuetype in standardIssueTypes() AND affectedVersion in (${version}) AND status in (Resolved, Closed)"
             return restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
@@ -68,7 +72,7 @@ class PackageBuilder {
 
     List<String> buildChangelogContent(String classifier) {
         def results = []
-        String version = properties.tomeeVersion
+        String version = project.version
         version = version.replaceAll('-SNAPSHOT$', '')
         def templateFile = this.class.getResource('/changelog.template')
         getJiraData()?.issues?.each { Issue issue ->
@@ -186,7 +190,7 @@ class PackageBuilder {
         }
     }
 
-    String createControlDir(String classifier, String dataDirPath) {
+    private ControlData prepareControlData(String dataDirPath) {
         def dataDir = new File(dataDirPath)
         def controlDir = new File(dataDir.parent, 'control')
         controlDir.mkdirs()
@@ -199,14 +203,24 @@ class PackageBuilder {
             }
         }
         Double installedSize = dataDir.directorySize() / 1024
-        String version = properties.tomeeVersion
+        String version = project.version
         if (version.toLowerCase().endsWith('-snapshot')) {
             version += "-${executionDate}"
         }
-        writeTemplate(new File(controlDir, 'control'), '/control/control.template', [
+        new ControlData(
+                installedSize: installedSize,
+                version: version,
+                dataDir: dataDir,
+                controlDir: controlDir
+        )
+    }
+
+    private String createControlDir(String classifier, String dataDirPath) {
+        def controlData = prepareControlData(dataDirPath)
+        writeTemplate(new File(controlData.controlDir, 'control'), '/control/control.template', [
                 classifier  : classifier,
-                tomeeVersion: version,
-                inMB        : installedSize.longValue()
+                tomeeVersion: controlData.version,
+                inMB        : controlData.installedSize.longValue()
         ])
         def priority
         switch (classifier) {
@@ -222,25 +236,29 @@ class PackageBuilder {
             default:
                 priority = 1
         }
-        writeTemplate(new File(controlDir, 'postinst'), '/control/postinst.sh', [
-                tomeeVersion: properties.tomeeVersion,
+        writeTemplate(new File(controlData.controlDir, 'postinst'), '/control/postinst.sh', [
+                tomeeVersion: project.version,
                 classifier  : classifier,
                 priority    : priority
         ])
-        writeTemplate(new File(controlDir, 'prerm'), '/control/prerm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
-        writeTemplate(new File(controlDir, 'postrm'), '/control/postrm.sh', [tomeeVersion: properties.tomeeVersion, classifier: classifier])
-        new File(controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(dataDir, "etc/tomee-${classifier}").eachFile {
+        writeTemplate(new File(controlData.controlDir, 'prerm'), '/control/prerm.sh', [
+                tomeeVersion: project.version, classifier: classifier
+        ])
+        writeTemplate(new File(controlData.controlDir, 'postrm'), '/control/postrm.sh', [
+                tomeeVersion: project.version, classifier: classifier
+        ])
+        new File(controlData.controlDir, 'conffiles').withWriter { BufferedWriter out ->
+            new File(controlData.dataDir, "etc/tomee-${classifier}").eachFile {
                 if (it.isFile()) {
                     out.writeLine("/etc/tomee-${classifier}/${it.name}")
                 }
             }
-            new File(dataDir, "etc/tomee-${classifier}/conf.d").eachFile {
+            new File(controlData.dataDir, "etc/tomee-${classifier}/conf.d").eachFile {
                 out.writeLine("/etc/tomee-${classifier}/conf.d/${it.name}")
             }
             out.writeLine("/etc/init.d/tomee-${classifier}")
         }
-        controlDir.absolutePath
+        controlData.controlDir.absolutePath
     }
 
     String createDataDir(String classifier, String explodedPath) {
@@ -288,7 +306,7 @@ class PackageBuilder {
         initd.mkdirs()
         writeTemplate(new File(initd, "tomee-${classifier}"), '/init/tomee.sh', [
                 classifier  : classifier,
-                tomeeVersion: properties.tomeeVersion
+                tomeeVersion: project.version
         ])
         def docDir = new File(dataDir, "usr/share/doc/tomee-${classifier}/")
         ant.move(todir: docDir.absolutePath) {
@@ -316,13 +334,23 @@ class PackageBuilder {
         baseBinDir.mkdirs()
         writeTemplate(new File(baseBinDir, 'setenv.sh'), '/init/setenv.sh', [
                 classifier  : classifier,
-                tomeeVersion: properties.tomeeVersion
+                tomeeVersion: project.version
         ])
         writeTemplate(new File(distributionTomeeDir, 'bin/tomee-instance.sh'), '/init/tomee-instance.sh', [
                 classifier  : classifier,
-                tomeeVersion: properties.tomeeVersion
+                tomeeVersion: project.version
         ])
         exploded.delete()
+        // Removing tomcat jars. It will come from an extra tomcat debian package.
+        def tomcatLibs = new File(project.properties['distribution.workdir'] as String,
+                "$TOMCAT_EXPLODED_DIR/apache-tomcat-${project.properties['tomcat.version']}/lib")
+        ant.echo(message: "Removing Tomcat lib files from our TomEE distribution. Tomcat path: ${tomcatLibs.absolutePath}")
+        tomcatLibs.eachFile { jar ->
+            def existing = new File(dataDir, "usr/share/tomee-${classifier}/lib/${jar.name}")
+            if (existing.exists()) {
+                existing.delete()
+            }
+        }
         dataDir.absolutePath
     }
 
@@ -334,7 +362,10 @@ class PackageBuilder {
             }
         }
         def codelessJars = jars.findAll { jar ->
-            def explodedJar = new File(properties.workDir as String, "unjar/${classifier}/${jar.name}")
+            def explodedJar = new File(
+                    project.properties['distribution.workdir'] as String,
+                    "unjar/${classifier}/${jar.name}"
+            )
             ant.unjar(src: jar, dest: explodedJar)
             def dotClassFiles = []
             explodedJar.eachFileRecurse(FileType.FILES) {
@@ -353,7 +384,10 @@ class PackageBuilder {
         }
         codelessJars.each { jar ->
             ant.echo(message: "Masking codeless jar: ${jar.absolutePath}")
-            def explodedJar = new File(properties.workDir as String, "unjar/${classifier}/${jar.name}")
+            def explodedJar = new File(
+                    project.properties['distribution.workdir'] as String,
+                    "unjar/${classifier}/${jar.name}"
+            )
             jar.delete()
             ant.zip(destfile: jar.absolutePath) {
                 fileset(dir: explodedJar.absolutePath) {
@@ -375,14 +409,18 @@ class PackageBuilder {
                     exclude(name: "**/postinst")
                     exclude(name: "**/prerm")
                     exclude(name: "**/postrm")
-                    exclude(name: "**/init.d/tomee-${classifier}")
+                    if (classifier) {
+                        exclude(name: "**/init.d/tomee-${classifier}")
+                    }
                 }
                 tarfileset(dir: dataDir.absolutePath, username: 'root', group: 'root', filemode: '755', prefix: './') {
                     include(name: "**/*.sh")
                     include(name: "**/postinst")
                     include(name: "**/prerm")
                     include(name: "**/postrm")
-                    include(name: "**/init.d/tomee-${classifier}")
+                    if (classifier) {
+                        include(name: "**/init.d/tomee-${classifier}")
+                    }
                 }
             }
             gzip(src: tarFile, destfile: gzFile)
@@ -407,8 +445,7 @@ class PackageBuilder {
     }
 
     File compressFiles(String classifier, String... paths) {
-        def packageName = "apache-tomee-${classifier}-${properties.tomeeVersion}.deb"
-        def ar = new File(new File(paths[0]).parent, packageName)
+        def ar = new File(new File(paths[0]).parent, 'distribution.deb')
         def output = new ArArchiveOutputStream(new FileOutputStream(ar))
         arDebianBinary(output)
         paths.collect({
@@ -420,13 +457,66 @@ class PackageBuilder {
         ar
     }
 
-    void createPackage(String classifier, String fileName) {
-        def filePath = new File(properties.workDir as String, fileName).absolutePath
+    private File createPackageUnit(String classifier, String fileName) {
+        def filePath = new File(project.properties['distribution.workdir'] as String, fileName).absolutePath
         def explodedPath = unzip(classifier, filePath)
         def dataDir = createDataDir(classifier, explodedPath)
         maskCodelessJars(classifier, dataDir)
         def controlDir = createControlDir(classifier, dataDir)
         def deb = compressFiles(classifier, controlDir, dataDir)
-        deb.renameTo(new File(properties.buildDir as String, deb.name))
+        def debDir = new File(project.build.directory as String, 'deb')
+        debDir.mkdirs()
+        def result = new File(debDir, "apache-tomee-${classifier}-${project.version}.deb")
+        deb.renameTo(result)
+        result
     }
+
+    private File createLibPackage(String packageName, File[] jars) {
+        def dataDir = new File(project.properties['distribution.workdir'] as String, "libDist/${packageName}/data")
+        def libDistDir = new File(dataDir, "usr/share/tomee-${packageName}/lib")
+        libDistDir.mkdirs()
+        jars.each { jar ->
+            ant.copy(file: jar, todir: libDistDir)
+        }
+        maskCodelessJars(packageName, dataDir.absolutePath)
+        def docDir = new File(dataDir, "usr/share/doc/tomee-${packageName}")
+        docDir.mkdirs()
+        buildChangelog(docDir, packageName)
+        writeTemplate(
+                new File(docDir, 'copyright'),
+                '/copyright.template',
+                [formattedDate: new Date().toString()]
+        )
+        def controlData = prepareControlData(dataDir.absolutePath)
+        writeTemplate(new File(controlData.controlDir, 'control'), '/control/lib_control.template', [
+                packageName : packageName,
+                tomeeVersion: controlData.version,
+                inMB        : controlData.installedSize.longValue()
+        ])
+        def deb = compressFiles(null as String, controlData.controlDir.absolutePath, controlData.dataDir.absolutePath)
+        def debDir = new File(project.build.directory as String, 'deb')
+        debDir.mkdirs()
+        def result = new File(debDir, "apache-tomee-${packageName}-${project.version}.deb")
+        deb.renameTo(result)
+        result
+    }
+
+    private File createTomcatLibPackage() {
+        def exploded = new File(project.properties['distribution.workdir'] as String, TOMCAT_EXPLODED_DIR)
+        ant.unzip(
+                src: new File(project.properties['distribution.workdir'] as String, 'tomcat.zip'),
+                dest: exploded
+        )
+        def tomcatLibs = new File(exploded, "apache-tomcat-${project.properties['tomcat.version']}/lib")
+        createLibPackage(TOMCAT_PACKAGE_NAME, tomcatLibs.listFiles())
+    }
+
+    void createPackage() {
+        createTomcatLibPackage()
+        createPackageUnit('jaxrs', 'tomee-jaxrs.zip')
+        createPackageUnit('webprofile', 'tomee-webprofile.zip')
+        createPackageUnit('plume', 'tomee-plume.zip')
+        createPackageUnit('plus', 'tomee-plus.zip')
+    }
+
 }

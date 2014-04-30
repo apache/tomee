@@ -57,6 +57,11 @@
     </repositories>
     <dependencies>
         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-ant</artifactId>
             <version>2.2.1</version>
@@ -150,6 +155,14 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>tomcat</artifactId>
+                                    <version>${tomcat.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${distribution.workdir}</outputDirectory>
+                                    <destFileName>tomcat.zip</destFileName>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.apache.openejb</groupId>
                                     <artifactId>apache-tomee</artifactId>
                                     <version>${project.version}</version>
@@ -213,17 +226,8 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <properties>
-                                <tomeeVersion>${project.version}</tomeeVersion>
-                                <workDir>${distribution.workdir}</workDir>
-                                <buildDir>${project.build.directory}</buildDir>
-                            </properties>
                             <source>
-                                def builder = new org.apache.tomee.deb.PackageBuilder(properties: properties)
-                                builder.createPackage('plus', 'tomee-plus.zip')
-                                builder.createPackage('jaxrs', 'tomee-jaxrs.zip')
-                                builder.createPackage('webprofile', 'tomee-webprofile.zip')
-                                builder.createPackage('plume', 'tomee-plume.zip')
+                                new org.apache.tomee.deb.PackageBuilder(project).createPackage()
                             </source>
                         </configuration>
                     </execution>
@@ -243,25 +247,30 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.build.directory}/apache-tomee-plus-${project.version}.deb</file>
+                                    <file>${project.build.directory}/deb/apache-tomee-plus-${project.version}.deb</file>
                                     <type>deb</type>
                                     <classifier>plus</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/apache-tomee-jaxrs-${project.version}.deb</file>
+                                    <file>${project.build.directory}/deb/apache-tomee-jaxrs-${project.version}.deb</file>
                                     <type>deb</type>
                                     <classifier>jaxrs</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.deb
+                                    <file>${project.build.directory}/deb/apache-tomee-webprofile-${project.version}.deb
                                     </file>
                                     <type>deb</type>
                                     <classifier>webprofile</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/apache-tomee-plume-${project.version}.deb</file>
+                                    <file>${project.build.directory}/deb/apache-tomee-plume-${project.version}.deb</file>
                                     <type>deb</type>
                                     <classifier>plume</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/deb/apache-tomee-lib-tomcat-${project.version}.deb</file>
+                                    <type>deb</type>
+                                    <classifier>lib-tomcat</classifier>
                                 </artifact>
                             </artifacts>
                         </configuration>

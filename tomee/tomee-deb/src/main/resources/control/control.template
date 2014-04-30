@@ -5,6 +5,7 @@ Section: java
 Priority: optional
 Homepage: http://tomee.apache.org/
 Architecture: all
+Depends: tomee-lib-tomcat (= ${tomeeVersion})
 Installed-Size: ${inMB}
 Maintainer: devlist <dev@tomee.apache.org>
 Description: Apache TomEE (${classifier})
