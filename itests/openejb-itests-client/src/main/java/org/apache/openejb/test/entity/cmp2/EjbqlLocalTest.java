@@ -17,18 +17,19 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import org.apache.openejb.test.entity.ejbql.QueryHome;
 import org.apache.openejb.test.entity.ejbql.QueryDataHome;
 import org.apache.openejb.test.entity.ejbql.QueryDataLocal;
 import org.apache.openejb.test.entity.ejbql.QueryDataRemote;
+import org.apache.openejb.test.entity.ejbql.QueryHome;
 
 import javax.rmi.PortableRemoteObject;
-import java.util.Collection;
-import java.util.Arrays;
-import java.util.TreeSet;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
+@SuppressWarnings("UnusedDeclaration")
 public class EjbqlLocalTest extends Cmp2TestClient {
     private QueryHome queryHome;
 
@@ -114,7 +115,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      */
     public void testSelectSingleFloatField() throws Exception {
         float result = queryHome.selectSingleFloatField(2);
-        assertEquals((float)2.0, result);
+        assertEquals((float) 2.0, result, 1e-15);
     }
 
     /**
@@ -122,7 +123,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      */
     public void testSelectSingleDoubleField() throws Exception {
         double result = queryHome.selectSingleDoubleField(2);
-        assertEquals(2.0, result);
+        assertEquals(2.0, result, 1e-15);
     }
 
     /**
@@ -162,7 +163,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Collection result = queryHome.selectCollectionByteField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
-        assertCollection(result, (byte)0, (byte)1, (byte)2, (byte)3);
+        assertCollection(result, (byte) 0, (byte) 1, (byte) 2, (byte) 3);
     }
 
     /**
@@ -172,7 +173,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Collection result = queryHome.selectCollectionShortField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
-        assertCollection(result, (short)0, (short)1, (short)2, (short)3);
+        assertCollection(result, (short) 0, (short) 1, (short) 2, (short) 3);
     }
 
     /**
@@ -192,7 +193,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Collection result = queryHome.selectCollectionLongField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
-        assertCollection(result, (long)0, (long)1, (long)2, (long)3);
+        assertCollection(result, (long) 0, (long) 1, (long) 2, (long) 3);
     }
 
     /**
@@ -202,7 +203,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Collection result = queryHome.selectCollectionFloatField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
-        assertCollection(result, (float)0, (float)1, (float)2, (float)3);
+        assertCollection(result, (float) 0, (float) 1, (float) 2, (float) 3);
     }
 
     /**
@@ -222,7 +223,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Object result = queryHome.selectSingleLocalEjb(2);
         assertNotNull("result is null", result);
         assertTrue("result should be an instance of QueryDataLocal", result instanceof QueryDataLocal);
-        QueryDataLocal queryData = (QueryDataLocal)result;
+        QueryDataLocal queryData = (QueryDataLocal) result;
         assertEquals(2, queryData.getIntField());
     }
 
@@ -233,7 +234,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Object result = queryHome.selectSingleRemoteEjb(2);
         assertNotNull("result is null", result);
         assertTrue("result should be an instance of QueryDataRemote", result instanceof QueryDataRemote);
-        QueryDataRemote queryData = (QueryDataRemote)result;
+        QueryDataRemote queryData = (QueryDataRemote) result;
         assertEquals(2, queryData.getIntField());
     }
 
@@ -248,7 +249,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         List<Integer> values = new ArrayList<Integer>();
         for (Object object : result) {
             assertTrue("result item should be an instance of QueryDataLocal but is instance of " + Arrays.toString(object.getClass().getInterfaces()), object instanceof QueryDataLocal);
-            QueryDataLocal queryData = (QueryDataLocal)object;
+            QueryDataLocal queryData = (QueryDataLocal) object;
             values.add(queryData.getIntField());
         }
         assertCollection(values, 0, 1, 2, 3);
@@ -265,7 +266,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         List<Integer> values = new ArrayList<Integer>();
         for (Object object : result) {
             assertTrue("result item should be an instance of QueryDataRemote", object instanceof QueryDataRemote);
-            QueryDataRemote queryData = (QueryDataRemote)object;
+            QueryDataRemote queryData = (QueryDataRemote) object;
             values.add(queryData.getIntField());
         }
         assertCollection(values, 0, 1, 2, 3);
