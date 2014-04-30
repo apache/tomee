@@ -31,6 +31,12 @@ rm -Rf /var/lib/tomee-${classifier}/temp
 rm -Rf /var/lib/tomee-${classifier}/webapps
 rm -Rf /var/lib/tomee-${classifier}/work
 
+# Unlinking tomcat jars
+for tomcatJar in /usr/share/tomee-lib-tomcat/lib/*
+do
+    rm /usr/share/tomee-${classifier}/lib/\$(basename "\$tomcatJar")
+done
+
 # removing files created by tomcat
 rm -Rf /var/lib/tomee-${classifier}/conf/Catalina
 
