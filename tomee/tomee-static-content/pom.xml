@@ -17,12 +17,12 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0.1</version>
+    <version>1.6.0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.openejb.staticweb</groupId>
   <artifactId>tomee-static-content</artifactId>
-  <version>1.6.0.1</version>
+  <version>1.6.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE :: static-tomee-content </name>
   <modules>
