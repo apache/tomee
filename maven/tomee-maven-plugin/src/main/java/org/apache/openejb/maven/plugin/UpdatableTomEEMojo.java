@@ -70,7 +70,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     protected void run() {
         if (synchronization != null) {
             initSynchronization(synchronization);
-			avoidAutoReload();
+            avoidAutoReload();
         }
         if (synchronizations != null) {
             for (final Synch s : synchronizations) {
@@ -79,7 +79,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                     continue;
                 }
                 initSynch(s);
-				avoidAutoReload();
+                avoidAutoReload();
             }
         }
 
@@ -94,16 +94,16 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         super.run();
     }
 
-	private void avoidAutoReload() {
-		if (systemVariables == null) {
-			systemVariables = new HashMap<String, String>();
-		}
-		if (!systemVariables.containsKey("tomee.classloader.backgroundProcess")) {
-			systemVariables.put("tomee.classloader.backgroundProcess", "true");
-		}
-	}
+    private void avoidAutoReload() {
+        if (systemVariables == null) {
+            systemVariables = new HashMap<String, String>();
+        }
+        if (!systemVariables.containsKey("tomee.classloader.backgroundProcess")) {
+            systemVariables.put("tomee.classloader.backgroundProcess", "true");
+        }
+    }
 
-	private void initSynch(final AbstractSynchronizable s) {
+    private void initSynch(final AbstractSynchronizable s) {
         s.getExtensions().addAll(s.getUpdateOnlyExtenions());
         if (reloadOnUpdate) {
             deployOpenEjbApplication = true;
@@ -226,7 +226,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             deployer().reload(path);
         } else {
             getLog().warn("Reload command needs to activate openejb internal application. " +
-              "Add <deployOpenEjbApplication>true</deployOpenEjbApplication> to the plugin configuration to force it.");
+                    "Add <deployOpenEjbApplication>true</deployOpenEjbApplication> to the plugin configuration to force it.");
         }
     }
 
