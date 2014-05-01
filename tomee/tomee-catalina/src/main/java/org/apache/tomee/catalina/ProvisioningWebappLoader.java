@@ -32,27 +32,25 @@ import java.io.File;
 
 /**
  * Usage example in META-INF/context.xml
- *
-
- <Context antiJARLocking="true" >
-     <Loader
-         className="org.apache.tomee.catalina.ProvisioningWebappLoader"
-         searchExternalFirst="true"
-         virtualClasspath="mvn:commons-el:commons-el:1.0;mvn:commons-el:commons-el:1.0"
-         searchVirtualFirst="true"
-     />
- </Context>
-
- *
+ * <p/>
+ * <p/>
+ * <Context antiJARLocking="true" >
+ * <Loader
+ * className="org.apache.tomee.catalina.ProvisioningWebappLoader"
+ * searchExternalFirst="true"
+ * virtualClasspath="mvn:commons-el:commons-el:1.0;mvn:commons-el:commons-el:1.0"
+ * searchVirtualFirst="true"
+ * />
+ * </Context>
  */
 public class ProvisioningWebappLoader extends VirtualWebappLoader {
-	private static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.backgroundProcess", "true"));
+    public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.backgroundProcess", "true"));
 
     @Override
     public void backgroundProcess() {
-		if (SKIP_BACKGROUND_PROCESS) {
-			return;
-		}
+        if (SKIP_BACKGROUND_PROCESS) {
+            return;
+        }
 
         final ClassLoader classloader = super.getClassLoader();
         if (classloader instanceof LazyStopWebappClassLoader) {
@@ -68,12 +66,12 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         }
     }
 
-	@Override
-	public boolean modified() {
-		return !SKIP_BACKGROUND_PROCESS;
-	}
+    @Override
+    public boolean modified() {
+        return !SKIP_BACKGROUND_PROCESS;
+    }
 
-	@Override
+    @Override
     protected void startInternal() throws LifecycleException {
         // standard tomcat part
         final StringBuilder builder = new StringBuilder();
