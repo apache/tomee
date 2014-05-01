@@ -27,8 +27,8 @@ rm -f /var/lib/tomee-${classifier}/logs
 rm -Rf /var/lib/tomee-${classifier}/apps
 rm -Rf /var/lib/tomee-${classifier}/conf
 rm -Rf /var/lib/tomee-${classifier}/bin
-rm -Rf /var/lib/tomee-${classifier}/temp
-rm -Rf /var/lib/tomee-${classifier}/webapps
+rm /var/lib/tomee-${classifier}/temp
+rm /var/lib/tomee-${classifier}/webapps
 rm -Rf /var/lib/tomee-${classifier}/work
 
 # Unlinking tomcat jars

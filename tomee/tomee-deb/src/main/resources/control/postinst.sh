@@ -31,12 +31,22 @@ do
     ln -sf \$tomcatJar /usr/share/tomee-${classifier}/lib/\$(basename "\$tomcatJar")
 done
 
+# Creating user apps directory. We dont want to erase it during an upgrade.
+if [ ! -d /var/lib/tomee-${classifier}-user-data ] ; then
+    mkdir -p /var/lib/tomee-${classifier}-user-data/temp
+	mkdir -p /var/lib/tomee-${classifier}-user-data/webapps
+	ln -sf /usr/share/tomee-${classifier}/tomee-webapp /var/lib/tomee-${classifier}-user-data/webapps/tomee
+fi
+ln -sf /var/lib/tomee-${classifier}-user-data/temp /var/lib/tomee-${classifier}/temp
+ln -sf /var/lib/tomee-${classifier}-user-data/webapps /var/lib/tomee-${classifier}/webapps
+
 groupadd apachetomee || true
 useradd --system apachetomee -g apachetomee || true
 
 chown -R root:apachetomee /var/log/tomee-${classifier}
 chown -R root:apachetomee /var/lib/tomee-${classifier}
 chown -R root:apachetomee /etc/tomee-${classifier}
+chown -R root:apachetomee /var/lib/tomee-${classifier}-user-data
 
 # users from the apachetomee group should be able to change settings.
 # there is no need to be root.
@@ -44,6 +54,7 @@ chmod -R g+w /etc/tomee-${classifier}
 
 chmod -R g+w /var/log/tomee-${classifier}
 chmod -R g+w /var/lib/tomee-${classifier}
+chmod -R g+w /var/lib/tomee-${classifier}-user-data
 
 update-rc.d tomee-${classifier} defaults
 
