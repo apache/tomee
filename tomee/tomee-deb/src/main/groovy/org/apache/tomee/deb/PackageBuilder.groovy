@@ -158,6 +158,9 @@ class PackageBuilder {
             fileset(dir: outputDir.absolutePath, includes: '**/*.original')
             fileset(dir: outputDir.absolutePath, includes: '**/*.tmp')
         }
+        // Moving the default tomee webapp to /usr/share/tomee-${classifier}
+        new File(outputDir, 'webapps/tomee').renameTo(new File(outputDir, 'tomee-webapp'))
+        // Removing all extra webapps, including the webapps directory
         ant.delete(includeemptydirs: true, dir: new File(outputDir, 'webapps').absolutePath)
         outputDir.absolutePath
     }
@@ -317,9 +320,7 @@ class PackageBuilder {
         buildChangelog(docDir, classifier)
         new File(dataDir, "var/log/tomee-${classifier}").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}/conf").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}/temp").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}/work").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}/webapps").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}/apps").mkdirs()
         new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
         new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"

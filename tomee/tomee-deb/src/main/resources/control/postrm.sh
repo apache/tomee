@@ -16,3 +16,7 @@
 # limitations under the License.
 
 update-rc.d -f tomee-${classifier} remove
+
+if [ purge = "\$1" ]; then
+    rm -Rf /var/lib/tomee-${classifier}-user-data
+fi
