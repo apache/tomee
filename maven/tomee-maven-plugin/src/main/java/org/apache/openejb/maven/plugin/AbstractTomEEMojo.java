@@ -964,16 +964,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                if (name.startsWith("apache-tomee-") || name.startsWith("apache-openejb-")) {
-                    int idx = name.indexOf("/");
-                    if (idx < 0) {
-                        idx = name.indexOf(File.separator);
-                    }
-                    if (idx < 0) {
-                        continue;
-                    }
-                    name = name.substring(idx + 1);
+                int idx = name.indexOf("/");
+                if (idx < 0) {
+                    idx = name.indexOf(File.separator);
                 }
+                if (idx < 0) {
+                    continue;
+                }
+                name = name.substring(idx + 1);
                 final File dest = new File(catalinaBase.getAbsolutePath(), name);
                 if (!dest.exists()) {
                     final File parent = dest.getParentFile();
@@ -1018,13 +1016,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
 
-            final FileWriter writer = new FileWriter(file);
-            final String rootTag = container.toLowerCase(Locale.ENGLISH);
-            writer.write("<?xml version=\"1.0\"?>\n" +
-                "<" + rootTag + ">\n" +
-                "  <Deployments dir=\"apps\" />\n" +
-                "</" + rootTag + ">\n");
-            writer.close();
+            if (file.exists()) {
+                final FileWriter writer = new FileWriter(file);
+                final String rootTag = container.toLowerCase(Locale.ENGLISH);
+                writer.write("<?xml version=\"1.0\"?>\n" +
+                        "<" + rootTag + ">\n" +
+                        "  <Deployments dir=\"apps\" />\n" +
+                        "</" + rootTag + ">\n");
+                writer.close();
+            }
 
             final File appsFolder = new File(catalinaBase, "apps");
             if (!appsFolder.exists() && !appsFolder.mkdirs()) {
