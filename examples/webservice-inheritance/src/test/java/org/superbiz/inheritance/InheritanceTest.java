@@ -31,6 +31,9 @@ public class InheritanceTest extends TestCase {
 
     //START SNIPPET: setup	
     private InitialContext initialContext;
+	
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     protected void setUp() throws Exception {
 
@@ -46,6 +49,9 @@ public class InheritanceTest extends TestCase {
         p.put("wakeBoardDatabaseUnmanaged.JtaManaged", "false");
 
         p.put("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+        p.put("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(p);
     }
@@ -59,7 +65,7 @@ public class InheritanceTest extends TestCase {
     //START SNIPPET: webservice
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                                            new URL("http://127.0.0.1:4204/webservice-inheritance/WakeRiderImpl?wsdl"),
+                                            new URL("http://localhost:" + port + "/webservice-inheritance/WakeRiderImpl?wsdl"),
                                             new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 
