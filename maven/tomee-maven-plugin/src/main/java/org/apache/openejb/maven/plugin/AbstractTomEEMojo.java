@@ -1025,7 +1025,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         "</" + rootTag + ">\n");
                 writer.close();
             }
-
             final File appsFolder = new File(catalinaBase, "apps");
             if (!appsFolder.exists() && !appsFolder.mkdirs()) {
                 throw new RuntimeException("Failed to create: " + appsFolder);
