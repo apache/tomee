@@ -722,11 +722,6 @@
       <artifactId>jansi</artifactId>
       <version>1.8</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>openejb-shade-quartz</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
   <profiles>
     <profile>
