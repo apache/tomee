@@ -155,8 +155,12 @@ public class RemoteServer {
                 final File lib = new File(home, "lib");
                 final File webapplib = new File(new File(new File(home, "webapps"), "tomee"), "lib");
 
-                final File openejbJar = lib("openejb-core", lib, webapplib);
-                final File javaagentJar = lib("openejb-javaagent", lib, webapplib);
+                File javaagentJar = null;
+                try {
+                    javaagentJar = lib("openejb-javaagent", lib, webapplib);
+                } catch (final IllegalStateException ise) {
+                    // no-op
+                }
 
                 final File conf = new File(home, "conf");
                 final File loggingProperties = new File(conf, "logging.properties");
@@ -213,7 +217,9 @@ public class RemoteServer {
                     argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
                 }
 
-                argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
+                if (javaagentJar != null && javaagentJar.exists()) {
+                    argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
+                }
 
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
@@ -221,6 +227,7 @@ public class RemoteServer {
 
                 final String[] args;
                 if (!tomcat) {
+                    final File openejbJar = lib("openejb-core", lib, webapplib);
                     final StringBuilder cp = new StringBuilder(openejbJar.getAbsolutePath());
                     if (additionalClasspath != null) {
                         cp.append(ps).append(additionalClasspath);
@@ -365,8 +372,10 @@ public class RemoteServer {
             }
         }
 
-        for (final File dir : dirs) {
-            dumpLibs(dir);
+        if (debug) {
+            for (final File dir : dirs) {
+                dumpLibs(dir);
+            }
         }
         throw new IllegalStateException("Cannot find the " + name + " jar");
     }
