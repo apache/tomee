@@ -124,7 +124,7 @@
     <tomcat.version>7.0.53</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.9</cxf.version>
+    <cxf.version>2.6.14</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
