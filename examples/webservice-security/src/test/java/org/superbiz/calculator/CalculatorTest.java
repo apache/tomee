@@ -30,11 +30,17 @@ public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup
     private InitialContext initialContext;
+	
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+		properties.setProperty("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(properties);
     }
@@ -47,7 +53,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        URL url = new URL("http://127.0.0.1:4204/webservice-security/CalculatorImpl?wsdl");
+        URL url = new URL("http://localhost:" + port + "/webservice-security/CalculatorImpl?wsdl");
         QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
         Service calcService = Service.create(url, calcServiceQName);
         assertNotNull(calcService);
