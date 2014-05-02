@@ -45,11 +45,18 @@ import java.util.Properties;
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup
+	
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+	
     @Override
     protected void setUp() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+		properties.setProperty("httpejbd.port", "" + port);
 
         new InitialContext(properties);
     }
@@ -57,7 +64,7 @@ public class CalculatorTest extends TestCase {
 
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImpl?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImpl?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -87,7 +94,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp1way() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -115,7 +122,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp2ways() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -149,7 +156,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPassword() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -188,7 +195,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenHashedPassword() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -227,7 +234,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPasswordEncrypt() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -269,7 +276,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithSign() throws Exception {
-        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplSign?wsdl"),
+        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplSign?wsdl"),
                                                    new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 

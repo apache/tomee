@@ -38,12 +38,18 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     //START SNIPPET: setup	
     private InitialContext initialContext;
+	
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+		properties.setProperty("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(properties);
     }
@@ -52,13 +58,13 @@ public class CxfJaxWsProviderTest extends TestCase {
     public void test00_runCheckedException() {
         try {
             AuthenticatorService withHandler = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/AuthenticatorServiceBean?wsdl"),
+                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
             AuthenticatorService noHandler = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(noHandler);
@@ -91,13 +97,13 @@ public class CxfJaxWsProviderTest extends TestCase {
     public void test01_runRuntimeException() {
         try {
             AuthenticatorService withHandler = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/AuthenticatorServiceBean?wsdl"),
+                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
             AuthenticatorService noHandler = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(noHandler);

@@ -31,10 +31,17 @@ import static org.junit.Assert.assertNotNull;
 
 public class CalculatorTest {
 
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+
     @BeforeClass
     public static void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+		properties.setProperty("httpejbd.port", "" + port);
+		
         // properties.setProperty("httpejbd.print", "true");
         // properties.setProperty("httpejbd.indent.xml", "true");
         EJBContainer.createEJBContainer(properties);
@@ -43,7 +50,7 @@ public class CalculatorTest {
     @Test
     public void outParams() throws Exception {
         final Service calculatorService = Service.create(
-                                                            new URL("http://127.0.0.1:4204/webservice-holder/Calculator?wsdl"),
+                                                            new URL("http://localhost:" + port + "/webservice-holder/Calculator?wsdl"),
                                                             new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
         assertNotNull(calculatorService);

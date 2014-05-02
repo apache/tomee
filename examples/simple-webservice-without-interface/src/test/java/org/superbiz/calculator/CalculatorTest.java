@@ -32,11 +32,17 @@ import static org.junit.Assert.assertTrue;
 public class CalculatorTest {
 
     private static EJBContainer container;
+	
+	//Random port to avoid test conflicts
+    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     @BeforeClass
     public static void setUp() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty("openejb.embedded.remotable", "true");
+		
+		//Just for this test we change the default port from 4204 to avoid conflicts
+		properties.setProperty("httpejbd.port", "" + port);
 
         container = EJBContainer.createEJBContainer(properties);
     }
@@ -57,7 +63,7 @@ public class CalculatorTest {
 
     @Test
     public void wsdlExists() throws Exception {
-        final URL url = new URL("http://127.0.0.1:4204/simple-webservice-without-interface/Calculator?wsdl");
+        final URL url = new URL("http://localhost:" + port + "/simple-webservice-without-interface/Calculator?wsdl");
         assertTrue(IOUtils.readLines(url.openStream()).size() > 0);
         assertTrue(IOUtils.readLines(url.openStream()).toString().contains("CalculatorWsService"));
     }
