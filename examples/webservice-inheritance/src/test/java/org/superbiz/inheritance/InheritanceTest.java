@@ -51,7 +51,7 @@ public class InheritanceTest extends TestCase {
         p.put("openejb.embedded.remotable", "true");
 		
 		//Just for this test we change the default port from 4204 to avoid conflicts
-		properties.setProperty("httpejbd.port", "" + port);
+		p.put("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(p);
     }
