@@ -55,6 +55,19 @@ public class MoviesTest extends TestCase {
         EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        transactionalCaller.call(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                for (final Movie m : movies.getMovies()) {
+                    movies.deleteMovie(m);
+                }
+                return null;
+            }
+        });
+    }
+
     private void doWork() throws Exception {
 
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
