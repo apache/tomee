@@ -1,6 +1,4 @@
-tomee-${classifier} (${tomeeVersion}) stable; urgency=${urgency}
+${projectName} (${version}) stable; urgency=${urgency}
 
-  * ${issueTitle}
-    https://issues.apache.org/jira/browse/${issueID}
-
- -- ${issueMaintainer} <${issueMaintainerEmail}>  ${issueFixDate}
+${issues}
+ -- devlist <dev@tomee.apache.org>  ${fixDate}

@@ -18,9 +18,6 @@
 
 package org.apache.tomee.deb
 
-import com.atlassian.jira.rest.client.api.domain.Issue
-import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import groovy.io.FileType
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.codec.digest.DigestUtils
@@ -29,14 +26,13 @@ import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipParameters
 import org.apache.maven.project.MavenProject
+import org.apache.tomee.deb.jira.ChangeLogBuilder
 
 import java.text.SimpleDateFormat
-import java.util.concurrent.TimeUnit
 import java.util.zip.Deflater
 
 class PackageBuilder {
 
-    static final JIRA_SRV = 'https://issues.apache.org/jira'
     static final TOMCAT_EXPLODED_DIR = 'tomcat-exploded'
     static final TOMCAT_PACKAGE_NAME = 'lib-tomcat'
 
@@ -52,63 +48,10 @@ class PackageBuilder {
         project = myProject
     }
 
-    def getJiraData = {
-        def restClient = null
-        try {
-            def factory = new AsynchronousJiraRestClientFactory()
-            restClient = factory.create(new URI(JIRA_SRV), new AnonymousAuthenticationHandler())
-            String version = project.version
-            version = version.replaceAll('-SNAPSHOT$', '')
-            def query = "project = TOMEE AND issuetype in standardIssueTypes() AND affectedVersion in (${version}) AND status in (Resolved, Closed)"
-            return restClient.searchClient.searchJql(query).get(1, TimeUnit.MINUTES)
-        } catch (e) {
-            e.printStackTrace()
-            return null
-        }
-        finally {
-            restClient?.close()
-        }
+    def buildChangelogContent = {
+        def builder = new ChangeLogBuilder()
+        builder.buildChangelogContent('TOMEE')
     }.memoize() // execute it just once per instance
-
-    List<String> buildChangelogContent(String classifier) {
-        def results = []
-        String version = project.version
-        version = version.replaceAll('-SNAPSHOT$', '')
-        def templateFile = this.class.getResource('/changelog.template')
-        getJiraData()?.issues?.each { Issue issue ->
-            def urgency
-            switch (issue.priority.name) {
-                case 'Blocker':
-                    urgency = 'critical'
-                    break
-                case 'Critical':
-                    urgency = 'emergency'
-                    break
-                case 'Major':
-                    urgency = 'high'
-                    break
-                case 'Minor':
-                    urgency = 'medium'
-                    break
-                default: //Trivial
-                    urgency = 'low'
-                    break
-            }
-            def maintainer = issue.assignee ?: issue.reporter
-            def template = new GStringTemplateEngine().createTemplate(templateFile).make([
-                    classifier          : classifier,
-                    tomeeVersion        : version,
-                    urgency             : urgency,
-                    issueTitle          : "[${issue.issueType.name}] ${issue.summary}",
-                    issueID             : issue.key,
-                    issueMaintainer     : maintainer.name,
-                    issueMaintainerEmail: maintainer.emailAddress,
-                    issueFixDate        : issue.updateDate.toString('EEE, d MMM yyyy HH:mm:ss Z')
-            ])
-            results << template.toString()
-        }
-        results
-    }
 
     private void gz(String file, String gzipFile) {
         new File(file).withInputStream { fis ->
@@ -123,16 +66,14 @@ class PackageBuilder {
         }
     }
 
-    void buildChangelog(File docDir, String classifier) {
-        def issues = buildChangelogContent(classifier)
-        if (!issues) {
+    void buildChangelog(File docDir) {
+        String content = buildChangelogContent()
+        if (!content) {
             return
         }
         def changelogFile = new File(docDir, 'changelog.Debian')
         changelogFile.withWriter { BufferedWriter writer ->
-            issues.each { String issue ->
-                writer.writeLine(issue)
-            }
+            writer.writeLine(content)
         }
         def changelogFileGz = new File(changelogFile.parent, 'changelog.Debian.gz')
         gz(changelogFile.absolutePath, changelogFileGz.absolutePath)
@@ -157,6 +98,7 @@ class PackageBuilder {
             fileset(dir: outputDir.absolutePath, includes: '**/*.bat')
             fileset(dir: outputDir.absolutePath, includes: '**/*.original')
             fileset(dir: outputDir.absolutePath, includes: '**/*.tmp')
+            fileset(dir: outputDir.absolutePath, includes: '**/LICENSE') // lintian does not like it.
         }
         // Moving the default tomee webapp to /usr/share/tomee-${classifier}
         new File(outputDir, 'webapps/tomee').renameTo(new File(outputDir, 'tomee-webapp'))
@@ -317,7 +259,7 @@ class PackageBuilder {
             fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
             fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
         }
-        buildChangelog(docDir, classifier)
+        buildChangelog(docDir)
         new File(dataDir, "var/log/tomee-${classifier}").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}/conf").mkdirs()
         new File(dataDir, "var/lib/tomee-${classifier}/work").mkdirs()
@@ -482,7 +424,7 @@ class PackageBuilder {
         maskCodelessJars(packageName, dataDir.absolutePath)
         def docDir = new File(dataDir, "usr/share/doc/tomee-${packageName}")
         docDir.mkdirs()
-        buildChangelog(docDir, packageName)
+        buildChangelog(docDir)
         writeTemplate(
                 new File(docDir, 'copyright'),
                 '/copyright.template',
