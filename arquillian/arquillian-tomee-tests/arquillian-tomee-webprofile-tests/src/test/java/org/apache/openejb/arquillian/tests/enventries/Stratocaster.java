@@ -76,12 +76,12 @@ public class Stratocaster extends HttpServlet {
 
             assertEquals("Strat.getStyle()", Style.VINTAGE, this.getStyle());
 
-            assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, this.getStringGuage("E1"));
-            assertEquals("Strat.getStringGuage(\"A\")", 0.042F, this.getStringGuage("A"));
-            assertEquals("Strat.getStringGuage(\"D\")", 0.030F, this.getStringGuage("D"));
-            assertEquals("Strat.getStringGuage(\"G\")", 0.017F, this.getStringGuage("G"));
-            assertEquals("Strat.getStringGuage(\"B\")", 0.013F, this.getStringGuage("B"));
-            assertEquals("Strat.getStringGuage(\"E\")", 0.010F, this.getStringGuage("E"));
+            assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, this.getStringGuage("E1"), 0.);
+            assertEquals("Strat.getStringGuage(\"A\")", 0.042F, this.getStringGuage("A"), 0.);
+            assertEquals("Strat.getStringGuage(\"D\")", 0.030F, this.getStringGuage("D"), 0.);
+            assertEquals("Strat.getStringGuage(\"G\")", 0.017F, this.getStringGuage("G"), 0.);
+            assertEquals("Strat.getStringGuage(\"B\")", 0.013F, this.getStringGuage("B"), 0.);
+            assertEquals("Strat.getStringGuage(\"E\")", 0.010F, this.getStringGuage("E"), 0.);
 
             File file = new File("/tmp/strat-certificate.txt");
             assertEquals("Strat.getCertificateOfAuthenticity()", file, this.getCertificateOfAuthenticity());
