@@ -57,19 +57,29 @@
     </repositories>
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
+
             <version>3.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-ant</artifactId>
+            <artifactId>groovy-all</artifactId>
             <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>${commons.compress}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -132,11 +142,6 @@
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-hsql</artifactId>
             <version>${openejb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-core</artifactId>
-            <version>2.0.0-m26</version>
         </dependency>
     </dependencies>
     <build>
@@ -252,7 +257,8 @@
                                     <classifier>plus</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-jaxrs-${project.version}.deb</file>
+                                    <file>${project.build.directory}/deb/apache-tomee-jaxrs-${project.version}.deb
+                                    </file>
                                     <type>deb</type>
                                     <classifier>jaxrs</classifier>
                                 </artifact>
@@ -263,12 +269,15 @@
                                     <classifier>webprofile</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-plume-${project.version}.deb</file>
+                                    <file>${project.build.directory}/deb/apache-tomee-plume-${project.version}.deb
+                                    </file>
                                     <type>deb</type>
                                     <classifier>plume</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-lib-tomcat-${project.version}.deb</file>
+                                    <file>
+                                        ${project.build.directory}/deb/apache-tomee-lib-tomcat-${project.version}.deb
+                                    </file>
                                     <type>deb</type>
                                     <classifier>lib-tomcat</classifier>
                                 </artifact>
