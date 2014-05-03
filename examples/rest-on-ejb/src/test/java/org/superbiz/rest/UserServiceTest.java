@@ -66,11 +66,11 @@ public class UserServiceTest {
     public void create() {
         int expected = service.list(0, 100).size() + 1;
         Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
-                                     .path("/user/create")
-                                     .query("name", "dummy")
-                                     .query("pwd", "unbreakable")
-                                     .query("mail", "foo@bar.fr")
-                                     .put(null);
+                .path("/user/create")
+                .query("name", "dummy")
+                .query("pwd", "unbreakable")
+                .query("mail", "foo@bar.fr")
+                .put(null);
         List<User> list = service.list(0, 100);
         for (User u : list) {
             if (!users.contains(u)) {
@@ -94,8 +94,8 @@ public class UserServiceTest {
     @Test
     public void show() {
         User user = WebClient.create("http://localhost:4204/rest-on-ejb")
-                             .path("/user/show/" + users.iterator().next().getId())
-                             .get(User.class);
+                .path("/user/show/" + users.iterator().next().getId())
+                .get(User.class);
         assertEquals("foo", user.getFullname());
         assertEquals("foopwd", user.getPassword());
         assertEquals("foo@foo.com", user.getEmail());
@@ -104,24 +104,25 @@ public class UserServiceTest {
     @Test
     public void list() throws Exception {
         String users = WebClient.create("http://localhost:4204/rest-on-ejb")
-                                .path("/user/list")
-                                .get(String.class);
-        assertEquals(
-                        inline("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                               "<users>" +
-                               "  <user>" +
-                               "    <email>foo@foo.com</email>" +
-                               "    <fullname>foo</fullname>" +
-                               "    <id>1</id>" +
-                               "    <password>foopwd</password>" +
-                               "  </user>" +
-                               "  <user>" +
-                               "    <email>bar@bar.com</email>" +
-                               "    <fullname>bar</fullname>" +
-                               "    <id>2</id>" +
-                               "    <password>barpwd</password>" +
-                               "  </user>" +
-                               "</users>"), inline(users));
+                .path("/user/list")
+                .get(String.class);
+        assertEquals(users,
+                inline("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<users>" +
+                        "  <user>" +
+                        "    <email>bar@bar.com</email>" +
+                        "    <fullname>bar</fullname>" +
+                        "    <id>2</id>" +
+                        "    <password>barpwd</password>" +
+                        "  </user>" +
+                        "  <user>" +
+                        "    <email>foo@foo.com</email>" +
+                        "    <fullname>foo</fullname>" +
+                        "    <id>1</id>" +
+                        "    <password>foopwd</password>" +
+                        "  </user>" +
+                        "</users>"), inline(users)
+        );
     }
 
     private static String inline(String s) {
@@ -133,11 +134,11 @@ public class UserServiceTest {
     public void update() throws Exception {
         User created = service.create("name", "pwd", "mail");
         Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
-                                     .path("/user/update/" + created.getId())
-                                     .query("name", "corrected")
-                                     .query("pwd", "userpwd")
-                                     .query("mail", "it@is.ok")
-                                     .post(null);
+                .path("/user/update/" + created.getId())
+                .query("name", "corrected")
+                .query("pwd", "userpwd")
+                .query("mail", "it@is.ok")
+                .post(null);
 
         JAXBContext ctx = JAXBContext.newInstance(User.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
@@ -146,5 +147,6 @@ public class UserServiceTest {
         assertEquals("corrected", modified.getFullname());
         assertEquals("userpwd", modified.getPassword());
         assertEquals("it@is.ok", modified.getEmail());
+        service.delete(created.getId());
     }
 }

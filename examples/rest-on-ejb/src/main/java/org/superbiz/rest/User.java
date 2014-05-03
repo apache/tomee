@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @NamedQueries({
-                  @NamedQuery(name = "user.list", query = "select u from User u")
+                  @NamedQuery(name = "user.list", query = "select u from User u order by u.fullname")
               })
 @XmlRootElement(name = "user")
 public class User implements Cloneable {
