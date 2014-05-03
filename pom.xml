@@ -98,7 +98,7 @@
     <tomee.version>1.6.1-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0-SNAPSHOT</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.3</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.4</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -562,6 +562,10 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>temp-owb</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1003/</url>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
