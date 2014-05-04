@@ -21,12 +21,15 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.LifecycleBase;
 import org.apache.openejb.config.sys.PropertiesAdapter;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.webbeans.config.WebBeansContext;
@@ -44,7 +47,7 @@ import java.security.cert.X509Certificate;
 import java.util.Properties;
 import java.util.Set;
 
-public class LazyRealm implements Realm {
+public class LazyRealm extends LifecycleBase implements Realm {
     private String realmClass;
     private String properties;
     private boolean cdi = false;
@@ -121,6 +124,40 @@ public class LazyRealm implements Realm {
             }
         }
         return delegate;
+    }
+
+    @Override
+    protected void initInternal() throws LifecycleException {
+        final Realm r = instance();
+        if (Lifecycle.class.isInstance(r)) {
+            Lifecycle.class.cast(r).init();
+        }
+    }
+
+    @Override
+    protected void startInternal() throws LifecycleException {
+        final Realm r = instance();
+        if (Lifecycle.class.isInstance(r)) {
+            Lifecycle.class.cast(r).start();
+        }
+        setState(LifecycleState.STARTING);
+    }
+
+    @Override
+    protected void stopInternal() throws LifecycleException {
+        final Realm r = instance();
+        if (Lifecycle.class.isInstance(r)) {
+            Lifecycle.class.cast(r).stop();
+        }
+        setState(LifecycleState.STOPPING);
+    }
+
+    @Override
+    protected void destroyInternal() throws LifecycleException {
+        final Realm r = instance();
+        if (Lifecycle.class.isInstance(r)) {
+            Lifecycle.class.cast(r).destroy();
+        }
     }
 
     @Override

@@ -49,7 +49,6 @@ import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.realm.RealmBase;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
@@ -208,6 +207,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
+    private final Map<String, Realm> realms = new ConcurrentHashMap<String, Realm>();
+
     private final Map<ClassLoader, InstanceManager> instanceManagers = new ConcurrentHashMap<ClassLoader, InstanceManager>();
 
     /**
@@ -265,6 +266,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     public TomcatWebAppBuilder() {
         SystemInstance.get().setComponent(WebAppBuilder.class, this);
+        SystemInstance.get().setComponent(TomcatWebAppBuilder.class, this);
         initJEEInfo = "true".equalsIgnoreCase(SystemInstance.get().getProperty(TOMEE_INIT_J2EE_INFO, "true"));
 
         // TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
@@ -379,9 +381,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     protected Realm tomeeRealm(final Realm realm) {
         final TomEERealm trealm = new TomEERealm();
-        if (RealmBase.class.isInstance(realm)) {
-            trealm.setRealmPath("/tomee/" + RealmBase.class.cast(realm).getRealmPath());
-        }
+        trealm.setRealmPath("/tomee");
         trealm.addRealm(realm);
         return trealm;
     }
@@ -489,6 +489,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             StandardContext standardContext;
             if (contextXml != null) {
                 synchronized (CONTEXT_DIGESTER) {
+                    ClassLoader loader = null;
+                    if (classLoader != null) {
+                        loader = CONTEXT_DIGESTER.getClassLoader();
+                        CONTEXT_DIGESTER.setClassLoader(classLoader);
+                    }
                     try {
                         standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
                         standardContext.setConfigFile(contextXmlUrl);
@@ -497,6 +502,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         standardContext = new StandardContext();
                     } finally {
                         CONTEXT_DIGESTER.reset();
+                        if (classLoader != null) {
+                            CONTEXT_DIGESTER.setClassLoader(loader);
+                        }
                     }
                 }
             } else {
@@ -1369,6 +1377,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
         }
+
+        // register realm to have it in TomcatSecurityService
+        final Realm realm = standardContext.getRealm();
+        realms.put(standardContext.getName(), realm);
     }
 
     private static File rootPath(final File file) {
@@ -1857,8 +1869,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
             instanceManagers.remove(old);
         } else if (standardContext.getLoader() != null && standardContext.getLoader().getClassLoader() != null) {
-            instanceManagers.remove(standardContext.getLoader().getClassLoader());
+            final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
+            instanceManagers.remove(classLoader);
         }
+        realms.remove(standardContext.getName());
 
         if (contextInfo != null && (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone)) {
             removeContextInfo(standardContext);
@@ -2358,5 +2372,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     @Override
     public ClassLoader getParentClassLoader(final ClassLoader fallback) {
         return (null != this.parentClassLoader ? this.parentClassLoader : fallback);
+    }
+
+    public Map<String, Realm> getRealms() {
+        return realms;
     }
 }

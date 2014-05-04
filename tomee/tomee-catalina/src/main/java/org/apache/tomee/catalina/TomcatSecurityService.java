@@ -26,6 +26,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.security.AbstractSecurityService;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.tomee.loader.TomcatHelper;
 
@@ -37,9 +38,14 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlException;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.UUID;
 
 public class TomcatSecurityService extends AbstractSecurityService {
+    private static final boolean ONLY_DEFAULT_REALM = "true".equals(SystemInstance.get().getProperty("tomee.realm.only-default", "false"));
     static protected final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
         protected LinkedList<Subject> initialValue() {
             return new LinkedList<Subject>();
@@ -105,15 +111,32 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     public UUID login(String realmName, String username, String password) throws LoginException {
-        if (defaultRealm == null) {
+        final Realm realm = findRealm(realmName);
+        if (realm == null) {
             throw new LoginException("No Tomcat realm available");
         }
 
-        final Principal principal = defaultRealm.authenticate(username, password);
+        final Principal principal = realm.authenticate(username, password);
         if (principal == null) throw new CredentialNotFoundException(username);
 
-        final Subject subject = createSubject(defaultRealm, principal);
+        final Subject subject = createSubject(realm, principal);
         return registerSubject(subject);
+    }
+
+    private Realm findRealm(final String realmName) {
+        if (ONLY_DEFAULT_REALM || realmName == null || realmName.isEmpty()) {
+            return defaultRealm;
+        }
+
+        final TomcatWebAppBuilder webAppBuilder = SystemInstance.get().getComponent(TomcatWebAppBuilder.class);
+        if (webAppBuilder != null) {
+            final Realm r = webAppBuilder.getRealms().get('/' + realmName);
+            if (r != null) {
+                return r;
+            }
+        }
+
+        return defaultRealm;
     }
 
     private Subject createSubject(Realm realm, Principal principal) {
