@@ -33,10 +33,7 @@ public class TelephoneTest extends TestCase {
     protected void setUp() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4202 to avoid conflicts
-        properties.setProperty("ejbd.port", port);		
+        properties.setProperty("openejb.embedded.remotable", "true");	
 		
         // Uncomment these properties to change the defaults
         //properties.setProperty("ejbd.port", "4202");
