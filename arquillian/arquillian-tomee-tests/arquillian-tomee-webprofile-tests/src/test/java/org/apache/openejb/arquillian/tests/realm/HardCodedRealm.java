@@ -18,7 +18,6 @@ package org.apache.openejb.arquillian.tests.realm;
 
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.realm.RealmBase;
-import org.apache.http.auth.BasicUserPrincipal;
 
 import java.security.Principal;
 
