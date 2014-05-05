@@ -28,20 +28,15 @@ import java.util.Properties;
 public class TelephoneTest extends TestCase {
 
     //START SNIPPET: setup
-	
-	//Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("ejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     @Override
     protected void setUp() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4202 to avoid conflicts
-        properties.setProperty("ejbd.port", "" + port);		
+        properties.setProperty("openejb.embedded.remotable", "true");	
 		
         // Uncomment these properties to change the defaults
+        //properties.setProperty("ejbd.port", "4202");
         //properties.setProperty("ejbd.bind", "localhost");
         //properties.setProperty("ejbd.threads", "200");
         //properties.setProperty("ejbd.disabled", "false");
@@ -60,7 +55,7 @@ public class TelephoneTest extends TestCase {
     public void testTalkOverLocalNetwork() throws Exception {
 
         final Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");		
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         final InitialContext localContext = new InitialContext(properties);
 
         final Telephone telephone = (Telephone) localContext.lookup("TelephoneBeanRemote");
@@ -89,7 +84,7 @@ public class TelephoneTest extends TestCase {
     public void testTalkOverRemoteNetwork() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + port);
+        properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + Integer.parseInt(System.getProperty("ejbd.port", "4201")));
         final InitialContext remoteContext = new InitialContext(properties);
 
         final Telephone telephone = (Telephone) remoteContext.lookup("TelephoneBeanRemote");
