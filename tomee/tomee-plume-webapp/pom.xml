@@ -19,7 +19,9 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -27,6 +29,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
+
   <artifactId>tomee-plume-webapp</artifactId>
   <name>OpenEJB :: TomEE :: Plume Webapp</name>
   <packaging>war</packaging>
@@ -36,19 +39,16 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core-eclipselink</artifactId>
-      <version>${openejb.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.faces</artifactId>
-      <version>${mojarra.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-webapp</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
@@ -66,7 +66,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -78,7 +77,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
-      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -90,7 +88,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -102,12 +99,12 @@
     <dependency>
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
-      <scope>runtime</scope> <!-- transitive from xerces but in test scope in parent so needed here -->
+      <scope>runtime</scope>
+      <!-- transitive from xerces but in test scope in parent so needed here -->
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -119,7 +116,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${openejb.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>
@@ -131,7 +127,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -155,13 +151,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-provisionning</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ssh</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>runtime</scope>
     </dependency>
     -->

@@ -52,22 +52,22 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml.stream</groupId>
@@ -78,32 +78,32 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-loader</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
