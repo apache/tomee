@@ -98,8 +98,8 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         if (systemVariables == null) {
             systemVariables = new HashMap<String, String>();
         }
-        if (!systemVariables.containsKey("tomee.classloader.backgroundProcess")) {
-            systemVariables.put("tomee.classloader.backgroundProcess", "true");
+        if (!systemVariables.containsKey("tomee.classloader.skip-background-process")) {
+            systemVariables.put("tomee.classloader.skip-background-process", "true");
         }
     }
 
