@@ -104,8 +104,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>2.1.0</version>
-      <!-- spock doesn't work with 2.0.0-rc-4 -->
+      <version>2.2.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

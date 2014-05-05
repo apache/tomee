@@ -18,17 +18,24 @@
 -->
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.6.1-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee</artifactId>
   <version>1.6.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE</name>
+
+  <properties>
+    <version.openejb>4.6.1-SNAPSHOT</version.openejb>
+  </properties>
 
   <modules>
     <module>tomee-loader</module>
@@ -75,7 +82,7 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${openejb.version}</version>
+          <version>${version.openejb}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openejb</groupId>
@@ -116,7 +123,7 @@
         <dependency> <!-- to avoid to force exclusions everywhere -->
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${openejb.version}</version>
+          <version>${version.openejb}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openjpa</groupId>
@@ -164,7 +171,7 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core-hibernate</artifactId>
           <type>pom</type>
-          <version>${openejb.version}</version>
+          <version>${version.openejb}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openejb</groupId>
@@ -195,6 +202,191 @@
       </dependencies>
     </profile>
   </profiles>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <artifactId>ecj</artifactId>
+        <version>3.5.1</version>
+      </dependency>
+      <dependency>
+        <artifactId>commons-beanutils</artifactId>
+        <groupId>commons-beanutils</groupId>
+        <version>1.8.3</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity</artifactId>
+        <version>1.6.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant-nodeps</artifactId>
+        <version>1.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jdbc</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-dbcp</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-catalina</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-catalina-ha</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-coyote</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>${tomcat.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openwebbeans</groupId>
+        <artifactId>openwebbeans-jsf</artifactId>
+        <version>${org.apache.openwebbeans.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.myfaces.core</groupId>
+        <artifactId>myfaces-api</artifactId>
+        <version>${myfaces.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.myfaces.core</groupId>
+        <artifactId>myfaces-impl</artifactId>
+        <version>${myfaces.version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>commons-beanutils</artifactId>
+            <groupId>commons-beanutils</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-client</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-core</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat</artifactId>
+        <version>${tomcat.version}</version>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-server</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-ejbd</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-rest</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-cxf-rs</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-http</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat7-websocket</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-cxf-transport</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-loader</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.faces</groupId>
+        <artifactId>javax.faces-api</artifactId>
+        <version>2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.faces</artifactId>
+        <version>${mojarra.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-webservices</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-cxf</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-core-eclipselink</artifactId>
+        <version>${version.openejb}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>
 

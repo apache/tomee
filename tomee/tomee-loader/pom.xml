@@ -19,33 +19,36 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>1.6.1-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-loader</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Loader</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
+
 </project>
 

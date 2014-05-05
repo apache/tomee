@@ -26,20 +26,22 @@
     <groupId>org.apache.openejb</groupId>
     <version>1.6.1-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-catalina</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Catalina</name>
   <description>This module contains the classes that will be added to the catalina class loader</description>
+
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
+
   <build>
     <plugins>
       <plugin>
@@ -54,7 +56,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.0.1</version>
         <configuration>
           <linkXRef>true</linkXRef>
           <sourceEncoding>utf-8</sourceEncoding>
@@ -89,55 +90,48 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-loader</artifactId>
-      <version>${tomee.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-server</artifactId>
-      <version>${openejb.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-ejbd</artifactId>
-      <version>${openejb.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-http</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jdbc</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-ejbd</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-http</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat7-websocket</artifactId>
-      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-coyote</artifactId>
-      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina-ha</artifactId>
-      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

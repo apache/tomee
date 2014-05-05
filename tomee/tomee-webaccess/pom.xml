@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -181,13 +181,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

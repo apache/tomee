@@ -63,13 +63,11 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-
             <version>3.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -126,22 +124,22 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-core</artifactId>
-            <version>${openejb.version}</version>
+            <version>${version.openejb}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-cxf</artifactId>
-            <version>${openejb.version}</version>
+            <version>${version.openejb}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-cxf-rs</artifactId>
-            <version>${openejb.version}</version>
+            <version>${version.openejb}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-hsql</artifactId>
-            <version>${openejb.version}</version>
+            <version>${version.openejb}</version>
         </dependency>
     </dependencies>
     <build>
