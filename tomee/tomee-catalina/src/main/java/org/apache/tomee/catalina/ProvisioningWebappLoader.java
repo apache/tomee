@@ -44,7 +44,7 @@ import java.io.File;
  * </Context>
  */
 public class ProvisioningWebappLoader extends VirtualWebappLoader {
-    public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.backgroundProcess", "true"));
+    public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
 
     @Override
     public void backgroundProcess() {
@@ -68,7 +68,10 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
 
     @Override
     public boolean modified() {
-        return !SKIP_BACKGROUND_PROCESS;
+        if (SKIP_BACKGROUND_PROCESS) {
+            return false;
+        }
+        return super.modified();
     }
 
     @Override
