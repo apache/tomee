@@ -29,6 +29,8 @@ import org.apache.maven.project.MavenProject
 import org.apache.tomee.deb.jira.ChangeLogBuilder
 
 import java.text.SimpleDateFormat
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 import java.util.zip.Deflater
 
 class PackageBuilder {
@@ -297,47 +299,39 @@ class PackageBuilder {
         dataDir.absolutePath
     }
 
-    void maskCodelessJars(String classifier, String dataDirPath) {
-        def jars = []
-        new File(dataDirPath).eachFileRecurse(FileType.FILES) {
-            if (it.name.endsWith('.jar')) {
-                jars << it
+    private boolean hasClasses(File jarFile) {
+        def entriesEnumerator = new JarFile(jarFile).entries()
+        while (entriesEnumerator.hasMoreElements()) {
+            def jarEntry = entriesEnumerator.nextElement() as JarEntry
+            if (jarEntry.name.endsWith('.class')) {
+                return true
             }
         }
-        def codelessJars = jars.findAll { jar ->
-            def explodedJar = new File(
-                    project.properties['distribution.workdir'] as String,
-                    "unjar/${classifier}/${jar.name}"
-            )
-            ant.unjar(src: jar, dest: explodedJar)
-            def dotClassFiles = []
-            explodedJar.eachFileRecurse(FileType.FILES) {
-                if (it.name.endsWith('.class')) {
-                    dotClassFiles << it
-                }
-            }
-            explodedJar.listFiles(
-                    { dir, file -> file ==~ /.*?\.class/ } as FilenameFilter
-            )
-            def result = dotClassFiles.size() == 0
-            if (!result) {
-                ant.delete(dir: explodedJar)
-            }
-            result
-        }
-        codelessJars.each { jar ->
-            ant.echo(message: "Masking codeless jar: ${jar.absolutePath}")
-            def explodedJar = new File(
-                    project.properties['distribution.workdir'] as String,
-                    "unjar/${classifier}/${jar.name}"
-            )
-            jar.delete()
-            ant.zip(destfile: jar.absolutePath) {
-                fileset(dir: explodedJar.absolutePath) {
-                    exclude(name: '**/META-INF/MANIFEST.MF')
+        false
+    }
+
+    void maskCodelessJars(String classifier, String dataDir) {
+        def unjarDir = new File(project.properties['distribution.workdir'] as String, 'unjar')
+        unjarDir.mkdirs()
+        new File(dataDir).eachFileRecurse(FileType.FILES) { File jarFile ->
+            if (jarFile.name.endsWith('.jar')) {
+                if (!hasClasses(jarFile)) {
+                    ant.echo(message: "Masking codeless jar: ${jarFile.absolutePath}")
+                    def explodedJar = new File(
+                            project.properties['distribution.workdir'] as String,
+                            "unjar/${classifier}/${jarFile.name}"
+                    )
+                    ant.unjar(src: jarFile, dest: explodedJar)
+                    jarFile.delete()
+                    ant.zip(destfile: jarFile.absolutePath) {
+                        fileset(dir: explodedJar.absolutePath) {
+                            exclude(name: '**/META-INF/MANIFEST.MF')
+                        }
+                    }
                 }
             }
         }
+        ant.delete(dir: unjarDir)
     }
 
     private File createTarGz(String classifier, String path) {
