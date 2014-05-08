@@ -40,6 +40,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
   <reporting>
     <plugins>
       <plugin>
@@ -49,6 +50,7 @@
       </plugin>
     </plugins>
   </reporting>
+  
   <build>
     <plugins>
       <plugin>
