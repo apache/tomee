@@ -91,7 +91,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
-            <artifactId>apache-tomee</artifactId>
+            <artifactId>tomee-plume-webapp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
