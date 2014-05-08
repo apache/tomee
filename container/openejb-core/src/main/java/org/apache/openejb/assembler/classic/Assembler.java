@@ -110,6 +110,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
+import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -798,8 +799,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
 
             if ("true".equalsIgnoreCase(SystemInstance.get()
-                    .getProperty(PROPAGATE_APPLICATION_EXCEPTIONS,
-                            appInfo.properties.getProperty(PROPAGATE_APPLICATION_EXCEPTIONS, "false")))) {
+                .getProperty(PROPAGATE_APPLICATION_EXCEPTIONS,
+                    appInfo.properties.getProperty(PROPAGATE_APPLICATION_EXCEPTIONS, "false")))) {
                 propagateApplicationExceptions(appInfo, classLoader, allDeployments);
             }
 
@@ -1040,12 +1041,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             final MethodContext methodContext = entry.getValue();
                             for (final ScheduleData scheduleData : methodContext.getSchedules()) {
                                 timerStore.createCalendarTimer(timerService,
-                                        (String) beanContext.getDeploymentID(),
-                                        null,
-                                        entry.getKey(),
-                                        scheduleData.getExpression(),
-                                        scheduleData.getConfig(),
-                                        true);
+                                    (String) beanContext.getDeploymentID(),
+                                    null,
+                                    entry.getKey(),
+                                    scheduleData.getExpression(),
+                                    scheduleData.getConfig(),
+                                    true);
                             }
                         }
                         beanContext.setEjbTimerService(timerService);
@@ -1117,7 +1118,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     if (container.getBeanContext(deployment.getDeploymentID()) == null) {
                         container.deploy(deployment);
                         if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                                && !deployment.isHidden()) {
+                            && !deployment.isHidden()) {
                             logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                         }
                         if (logger.isDebugEnabled()) {
@@ -1138,7 +1139,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     final Container container = deployment.getContainer();
                     container.start(deployment);
                     if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                            && !deployment.isHidden()) {
+                        && !deployment.isHidden()) {
                         logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                     }
                 } catch (final Throwable t) {
@@ -1192,10 +1193,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final MBeanServer server = LocalMBeanServer.get();
             try {
                 final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
-                        .set("application", id)
-                        .set("group", clazz.getPackage().getName())
-                        .set("name", clazz.getSimpleName())
-                        .build();
+                    .set("application", id)
+                    .set("group", clazz.getPackage().getName())
+                    .set("name", clazz.getSimpleName())
+                    .build();
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
@@ -1701,7 +1702,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             } catch (final NamingException e) {
                 undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/local namespaces, this could cause future deployments to fail.",
-                        e));
+                    e));
             }
 
             deployments.clear();
@@ -1943,7 +1944,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             initialContext = new InitialContext(contextInfo.properties);
         } catch (final NamingException ne) {
             throw new OpenEJBException(String.format("JndiProvider(id=\"%s\") could not be created.  Failed to create the InitialContext using the supplied properties",
-                    contextInfo.id), ne);
+                contextInfo.id), ne);
         }
 
         try {
@@ -2125,10 +2126,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (final Map.Entry<Object, Object> entry : p.entrySet()) {
                     final String key = entry.getKey().toString();
                     if (!props.containsKey(key)
-                            // never override from Definition, just use it to complete the properties set
-                            &&
-                            !(key.equalsIgnoreCase("url") &&
-                                    props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
+                        // never override from Definition, just use it to complete the properties set
+                        &&
+                        !(key.equalsIgnoreCase("url") &&
+                            props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
                         props.put(key, entry.getValue());
                     }
                 }
@@ -2174,9 +2175,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
             final Executor threadPool;
             if (threadPoolSize <= 0) {
+                logger.warning("Thread pool for '" + serviceInfo.id + "' is (unbounded), consider setting a size using: " + serviceInfo.id + ".QueueSize=[size]");
                 threadPool = Executors.newCachedThreadPool(new DaemonThreadFactory(serviceInfo.id + "-worker-"));
             } else {
-                threadPool = Executors.newFixedThreadPool(threadPoolSize, new DaemonThreadFactory(serviceInfo.id + "-worker-"));
+                threadPool = new ExecutorBuilder()
+                    .size(threadPoolSize)
+                    .prefix(serviceInfo.id)
+                    .threadFactory(new DaemonThreadFactory(serviceInfo.id + "-worker-"))
+                    .build(SystemInstance.get().getOptions());
+                logger.info("Thread pool size for '" + serviceInfo.id + "' is (" + threadPoolSize + ")");
             }
 
             // WorkManager: the resource adapter can use this to dispatch messages or perform tasks
@@ -2205,8 +2212,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final BootstrapContext bootstrapContext;
             if (transactionManager instanceof GeronimoTransactionManager) {
                 bootstrapContext = new GeronimoBootstrapContext(GeronimoWorkManager.class.cast(workManager),
-                        (GeronimoTransactionManager) transactionManager,
-                        (GeronimoTransactionManager) transactionManager);
+                    (GeronimoTransactionManager) transactionManager,
+                    (GeronimoTransactionManager) transactionManager);
             } else if (transactionManager instanceof XATerminator) {
                 bootstrapContext = new SimpleBootstrapContext(workManager, (XATerminator) transactionManager);
             } else {
@@ -2269,7 +2276,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // init cm if needed
             final Object eagerInit = unset.remove("eagerInit");
             if (eagerInit != null && eagerInit instanceof String && "true".equalsIgnoreCase((String) eagerInit)
-                    && connectionManager instanceof AbstractConnectionManager) {
+                && connectionManager instanceof AbstractConnectionManager) {
                 try {
                     ((AbstractConnectionManager) connectionManager).doStart();
                     try {
@@ -2327,7 +2334,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             bindResource(alias, service);
         }
         if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)
-                && !serviceInfo.id.startsWith("global")) {
+            && !serviceInfo.id.startsWith("global")) {
             final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
             serviceInfo.aliases.add(baseJndiName);
             final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
