@@ -54,7 +54,7 @@
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
-    <module>tomee-deb</module>
+    <!--module>tomee-deb</module-->
   </modules>
 
   <repositories>
@@ -126,7 +126,7 @@
           <version>${version.openejb}</version>
           <exclusions>
             <exclusion>
-              <groupId>org.apache.openejb.patch</groupId>
+              <groupId>org.apache.openjpa</groupId>
               <artifactId>openjpa</artifactId>
             </exclusion>
             <exclusion>

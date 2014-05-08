@@ -130,9 +130,9 @@
       otherwise arquillian has some difficulties in embedded mode to find your classes
     -->
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
+      <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>2.4.0-nonfinal-1591689</version>
+      <version>2.2.0</version>
       <scope>test</scope>
     </dependency>
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
