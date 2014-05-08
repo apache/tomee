@@ -97,7 +97,7 @@
     <openejb.version>4.6.1-SNAPSHOT</openejb.version>
     <tomee.version>1.6.1-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0-nonfinal-1591689</openjpa.version>
+    <openjpa.version>2.4.0-SNAPSHOT</openjpa.version>
     <org.apache.openwebbeans.version>1.2.4</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
@@ -155,7 +155,7 @@
     <commons-codec.version>1.9</commons-codec.version>
     <commons-fileupload.version>1.3.1</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.3.2</commons-lang3.version>
+    <commons-lang3.version>3.2.1</commons-lang3.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-net.version>3.3</commons-net.version>
 
@@ -1330,7 +1330,7 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.patch</groupId>
+        <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>
@@ -1620,11 +1620,6 @@
         <artifactId>commons-collections</artifactId>
         <groupId>commons-collections</groupId>
         <version>${commons-collections.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-compress</artifactId>
-        <version>1.8</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
