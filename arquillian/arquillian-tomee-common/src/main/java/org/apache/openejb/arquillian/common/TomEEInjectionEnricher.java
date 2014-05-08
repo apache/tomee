@@ -38,11 +38,14 @@ public class TomEEInjectionEnricher implements TestEnricher {
     }
 
     private AppContext getAppContext(final String className) {
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(className);
-        if (context == null) {
-            return null;
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        for (final AppContext app : containerSystem.getAppContexts()) {
+            final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
+            if (context != null) {
+                return context.getModuleContext().getAppContext();
+            }
         }
-        return context.getModuleContext().getAppContext();
+        return null;
     }
 
     @Override

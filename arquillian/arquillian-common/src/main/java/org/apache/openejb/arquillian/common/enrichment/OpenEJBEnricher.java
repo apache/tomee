@@ -56,7 +56,7 @@ public final class OpenEJBEnricher {
         new MockitoEnricher().enrich(testInstance);
 
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                .getBeanContext(testInstance.getClass().getName());
+                .getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
 
         final BeanManagerImpl bm = findBeanManager(ctx);
         if (bm != null && bm.isInUse()) {

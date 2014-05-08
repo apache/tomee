@@ -23,24 +23,11 @@
     <artifactId>tomee-deb</artifactId>
     <packaging>jar</packaging>
     <name>OpenEJB :: TomEE :: Debian Package Builder</name>
+	
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <commons.compress>1.8</commons.compress>
-        <commons.io>2.4</commons.io>
-        <commons.codec>1.9</commons.codec>
         <distribution.workdir>${project.build.directory}/work-dir</distribution.workdir>
     </properties>
     <repositories>
-        <repository>
-            <id>apache.snapshots</id>
-            <url>http://repository.apache.org/snapshots/</url>
-            <releases>
-                <updatePolicy>daily</updatePolicy>
-            </releases>
-            <snapshots>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-        </repository>
         <repository>
             <id>atlassian-public</id>
             <url>https://m2proxy.atlassian.com/repository/public</url>
@@ -55,8 +42,8 @@
             </releases>
         </repository>
     </repositories>
-    <dependencies>
 
+    <dependencies>
         <!-- Dependencies used by builder logic. -->
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -70,22 +57,18 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>${commons.compress}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons.io}</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons.codec}</version>
         </dependency>
 
         <!-- We need to be sure the ZIP files are built before the debian package. -->

@@ -698,7 +698,7 @@
       <artifactId>openwebbeans-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openjpa</groupId>
+      <groupId>org.apache.openejb.patch</groupId>
       <artifactId>openjpa</artifactId>
     </dependency>
     <!--

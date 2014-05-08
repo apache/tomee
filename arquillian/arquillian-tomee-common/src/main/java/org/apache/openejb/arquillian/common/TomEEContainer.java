@@ -367,7 +367,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     protected Assignable archiveWithTestInfo(final Archive<?> archive) {
-        return archive.add(new StringAsset(testClass.get().getJavaClass().getName()), ArchivePaths.create("arquillian-tomee-info.txt"));
+        String name = archive.getName();
+        if (name.endsWith(".war") || name.endsWith(".ear")) {
+            name = name.substring(0, name.length() - ".war".length());
+        }
+        return archive.add(
+                new StringAsset(testClass.get().getJavaClass().getName() + '#' + name),
+                ArchivePaths.create("arquillian-tomee-info.txt"));
     }
 
     protected Deployer deployer() throws NamingException {
