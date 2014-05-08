@@ -2182,7 +2182,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     .size(threadPoolSize)
                     .prefix(serviceInfo.id)
                     .threadFactory(new DaemonThreadFactory(serviceInfo.id + "-worker-"))
-                    .build(SystemInstance.get().getOptions());
+                    .build(new Options(serviceInfo.properties, SystemInstance.get().getOptions()));
                 logger.info("Thread pool size for '" + serviceInfo.id + "' is (" + threadPoolSize + ")");
             }
 
