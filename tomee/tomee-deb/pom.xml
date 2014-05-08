@@ -93,6 +93,7 @@
             <groupId>org.apache.openejb</groupId>
             <artifactId>apache-tomee</artifactId>
             <version>${project.version}</version>
+            <type>pom</type>
         </dependency>
 
         <!-- We use resources from these guys below. -->
