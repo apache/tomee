@@ -93,29 +93,6 @@
             <groupId>org.apache.openejb</groupId>
             <artifactId>apache-tomee</artifactId>
             <version>${project.version}</version>
-            <classifier>plus</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>apache-tomee</artifactId>
-            <version>${project.version}</version>
-            <classifier>jaxrs</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>apache-tomee</artifactId>
-            <version>${project.version}</version>
-            <classifier>webprofile</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>apache-tomee</artifactId>
-            <version>${project.version}</version>
-            <classifier>plume</classifier>
-            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
