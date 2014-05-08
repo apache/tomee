@@ -18,442 +18,181 @@
 
 package org.apache.tomee.deb
 
-import groovy.io.FileType
-import groovy.text.GStringTemplateEngine
-import org.apache.commons.codec.digest.DigestUtils
-import org.apache.commons.compress.archivers.ar.ArArchiveEntry
-import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
-import org.apache.commons.compress.compressors.gzip.GzipParameters
 import org.apache.maven.project.MavenProject
-import org.apache.tomee.deb.jira.ChangeLogBuilder
-
-import java.text.SimpleDateFormat
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
-import java.util.zip.Deflater
 
 class PackageBuilder {
 
-    static final TOMCAT_EXPLODED_DIR = 'tomcat-exploded'
-    static final TOMCAT_PACKAGE_NAME = 'lib-tomcat'
-
-    def ant = new AntBuilder()
-    MavenProject project
-
-    private String executionDate = ''
+    private MavenProject project
+    private CompressTool compressTool
+    private File workDir
+    private Map<String, PackageInfo> packageInfoMap = [:]
 
     PackageBuilder(MavenProject myProject) {
-        def dft = new SimpleDateFormat('yyyy-MM-dd-HH-mm-ss')
-        dft.timeZone = TimeZone.getTimeZone('GMT-0')
-        executionDate = dft.format(new Date())
         project = myProject
+        compressTool = new CompressTool(myProject)
+        workDir = new File(myProject.properties['distribution.workdir'] as String)
     }
 
-    def buildChangelogContent = {
-        def builder = new ChangeLogBuilder()
-        builder.buildChangelogContent('TOMEE')
-    }.memoize() // execute it just once per instance
-
-    private void gz(String file, String gzipFile) {
-        new File(file).withInputStream { fis ->
-            new File(gzipFile).withOutputStream { fos ->
-                def gzParams = new GzipParameters(
-                        compressionLevel: Deflater.BEST_COMPRESSION
-                )
-                def gzo = new GzipCompressorOutputStream(fos, gzParams)
-                gzo << fis
-                gzo.close()
-            }
-        }
-    }
-
-    void buildChangelog(File docDir) {
-        String content = buildChangelogContent()
-        if (!content) {
-            return
-        }
-        def changelogFile = new File(docDir, 'changelog.Debian')
-        changelogFile.withWriter { BufferedWriter writer ->
-            writer.writeLine(content)
-        }
-        def changelogFileGz = new File(changelogFile.parent, 'changelog.Debian.gz')
-        gz(changelogFile.absolutePath, changelogFileGz.absolutePath)
-        changelogFile.delete()
-    }
-
-    String unzip(String classifier, String tarPath) {
-        def outputDir = new File(new File(tarPath).parent, "exploded-${classifier}")
-        ant.delete(includeemptydirs: true, dir: outputDir.absolutePath) // remove old files
-        outputDir.mkdirs()
-        ant.unzip(
-                src: tarPath,
-                dest: outputDir.absolutePath
-        )
-        def files = outputDir.listFiles()
-        if (files.size() == 1) {
-            outputDir = files[0]
-        }
-        ant.delete(includeemptydirs: true) {
-            fileset(dir: outputDir.absolutePath, includes: '**/*.txt')
-            fileset(dir: outputDir.absolutePath, includes: '**/*.exe')
-            fileset(dir: outputDir.absolutePath, includes: '**/*.bat')
-            fileset(dir: outputDir.absolutePath, includes: '**/*.original')
-            fileset(dir: outputDir.absolutePath, includes: '**/*.tmp')
-            fileset(dir: outputDir.absolutePath, includes: '**/LICENSE') // lintian does not like it.
-        }
-        // Moving the default tomee webapp to /usr/share/tomee-${classifier}
-        new File(outputDir, 'webapps/tomee').renameTo(new File(outputDir, 'tomee-webapp'))
-        // Removing all extra webapps, including the webapps directory
-        ant.delete(includeemptydirs: true, dir: new File(outputDir, 'webapps').absolutePath)
-        outputDir.absolutePath
-    }
-
-    private static String getCheckSum(File file) {
-        return getCheckSum(new FileInputStream(file))
-    }
-
-    private static String getCheckSum(InputStream input) {
-        String md5 = DigestUtils.md5Hex(input)
-        input.close()
-        return md5
-    }
-
-    private static String getCheckSumLine(File root, File file) {
-        String md5 = getCheckSum(file)
-        return "${md5} ${file.absolutePath.substring(root.absolutePath.length() + 1)}"
-    }
-
-    private void writeTemplate(File file, String templatePath, Map variables) {
-        try {
-            file.withWriter { BufferedWriter out ->
-                def template = new GStringTemplateEngine().createTemplate(
-                        this.class.getResource(templatePath)
-                ).make(variables)
-                out.write(template.toString())
-            }
-        } catch (e) {
-            throw new RuntimeException("Error building $templatePath", e)
-        }
-    }
-
-    private ControlData prepareControlData(String dataDirPath) {
-        def dataDir = new File(dataDirPath)
-        def controlDir = new File(dataDir.parent, 'control')
-        controlDir.mkdirs()
-        new File(controlDir, 'md5sums').withWriter { BufferedWriter out ->
-            dataDir.eachFileRecurse {
-                if (it.directory) {
-                    return
-                }
-                out.writeLine(getCheckSumLine(dataDir, it))
-            }
-        }
-        Double installedSize = dataDir.directorySize() / 1024
-        String version = project.version
-        if (version.toLowerCase().endsWith('-snapshot')) {
-            version += "-${executionDate}"
-        }
-        new ControlData(
-                installedSize: installedSize,
-                version: version,
-                dataDir: dataDir,
-                controlDir: controlDir
-        )
-    }
-
-    private String createControlDir(String classifier, String dataDirPath) {
-        def controlData = prepareControlData(dataDirPath)
-        writeTemplate(new File(controlData.controlDir, 'control'), '/control/control.template', [
-                classifier  : classifier,
-                tomeeVersion: controlData.version,
-                inMB        : controlData.installedSize.longValue()
-        ])
-        def priority
-        switch (classifier) {
-            case 'plus':
-                priority = 4
-                break
-            case 'plume':
-                priority = 3
-                break
-            case 'jaxrs':
-                priority = 2
-                break
-            default:
-                priority = 1
-        }
-        writeTemplate(new File(controlData.controlDir, 'postinst'), '/control/postinst.sh', [
-                tomeeVersion: project.version,
-                classifier  : classifier,
-                priority    : priority
-        ])
-        writeTemplate(new File(controlData.controlDir, 'prerm'), '/control/prerm.sh', [
-                tomeeVersion: project.version, classifier: classifier
-        ])
-        writeTemplate(new File(controlData.controlDir, 'postrm'), '/control/postrm.sh', [
-                tomeeVersion: project.version, classifier: classifier
-        ])
-        new File(controlData.controlDir, 'conffiles').withWriter { BufferedWriter out ->
-            new File(controlData.dataDir, "etc/tomee-${classifier}").eachFile {
-                if (it.isFile()) {
-                    out.writeLine("/etc/tomee-${classifier}/${it.name}")
+    private void createLibStructure(List<String> dependencyOrder) {
+        Set<String> previousJars = []
+        Set<File> duplicatedJars = []
+        dependencyOrder.each { classifier ->
+            def recurse = { DataBuilder builder, String path, File file ->
+                if (previousJars.contains(file.name)) {
+                    duplicatedJars << file
+                } else {
+                    previousJars << file.name
+                    file.renameTo(new File(file.parentFile, "libtomee-${classifier}-${file.name}"))
                 }
             }
-            new File(controlData.dataDir, "etc/tomee-${classifier}/conf.d").eachFile {
-                out.writeLine("/etc/tomee-${classifier}/conf.d/${it.name}")
-            }
-            out.writeLine("/etc/init.d/tomee-${classifier}")
+            def builder = new DataBuilder(project, "libtomee-${classifier}-java", "tomee-${classifier}.zip", compressTool)
+                    .buildDataDir()
+                    .move('lib', 'usr/share/java')
+                    .eachFileRecurse('usr/share/java', recurse)
+                    .writeTemplate("usr/share/doc/libtomee-${classifier}-java/copyright", '/data/copyright.template', [:])
+                    .move('NOTICE', "usr/share/doc/libtomee-${classifier}-java/NOTICE")
+                    .move('RELEASE-NOTES', "usr/share/doc/libtomee-${classifier}-java/RELEASE-NOTES")
+                    .buildChangelog()
+                    .clean()
+            packageInfoMap.put("libtomee-${classifier}-java", new PackageInfo(
+                    classifier: "libtomee-${classifier}-java",
+                    dataBuilder: builder
+            ))
         }
-        controlData.controlDir.absolutePath
+        duplicatedJars.each { it.delete() }
+        def writeTpl = { ControlBuilder me, String toPath, String tplPath, String classifier ->
+            def params = [
+                    classifier  : classifier,
+                    tomeeVersion: me.version,
+                    inMB        : me.installedSize.longValue().toString()
+            ] as Map<String, String>
+            me.writeTemplate(toPath, tplPath, params)
+        }
+        def myDepency = null
+        dependencyOrder.each { String classifier ->
+            String libClassifier = "libtomee-${classifier}-java"
+            def builder = new ControlBuilder(project, "libtomee-${classifier}-java").buildControlDir()
+                    .withMe({
+                writeTpl(it as ControlBuilder, 'control', '/control/lib_control.template', libClassifier)
+            })
+            if (myDepency) {
+                builder.withBaseDir({ File baseDir ->
+                    def control = new File(baseDir, 'control/control')
+                    control.append("Depends: libtomee-${myDepency}-java (= ${builder.version})\n")
+                })
+            }
+            myDepency = classifier
+            packageInfoMap.get("libtomee-${classifier}-java").controlBuilder = builder
+        }
     }
 
-    String createDataDir(String classifier, String explodedPath) {
-        def exploded = new File(explodedPath)
-        def outputDir = new File(exploded.parent, "output-${classifier}")
-        def dataDir = new File(outputDir, 'data')
-        dataDir.mkdirs()
-        def distributionTomeeDir = new File(dataDir, "usr/share/tomee-${classifier}")
-        ant.move(todir: distributionTomeeDir.absolutePath) {
-            fileset(dir: explodedPath) {
-                include(name: "**/*")
-            }
-        }
-        new File(distributionTomeeDir, 'LICENSE').delete() // Unnecessary (lintian complains about this guy.)
-        def homeConf = new File(dataDir, "etc/tomee-${classifier}")
-        ant.move(todir: homeConf.absolutePath) {
-            fileset(dir: new File(distributionTomeeDir, 'conf')) {
-                include(name: "**/*")
-            }
-        }
-        new File(homeConf, 'openejb.conf').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/default.openejb.conf').text
-            out.write(data)
-        }
-        new File(homeConf, 'tomee.xml').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/tomee_xml.template').text
-            out.write(data)
-        }
-        def homeConfD = new File(homeConf, 'conf.d')
-        homeConfD.mkdirs()
-        // Saving default configuration files
-        new File(homeConfD, 'cxf.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf').text
-            out.write(data)
-        }
-        new File(homeConfD, 'cxf-rs.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/cxf-rs').text
-            out.write(data)
-        }
-        new File(homeConfD, 'hsql.properties').withWriter { BufferedWriter out ->
-            def data = this.class.getResource('/META-INF/org.apache.openejb.server.ServerService/hsql').text
-            out.write(data)
-        }
-        def initd = new File(dataDir, 'etc/init.d/')
-        initd.mkdirs()
-        writeTemplate(new File(initd, "tomee-${classifier}"), '/init/tomee.sh', [
-                classifier  : classifier,
-                tomeeVersion: project.version
-        ])
-        def docDir = new File(dataDir, "usr/share/doc/tomee-${classifier}/")
-        ant.move(todir: docDir.absolutePath) {
-            fileset(file: new File(distributionTomeeDir, 'NOTICE').absolutePath)
-            fileset(file: new File(distributionTomeeDir, 'RELEASE-NOTES').absolutePath)
-            fileset(file: new File(distributionTomeeDir, 'RUNNING.txt').absolutePath)
-        }
-        buildChangelog(docDir)
-        new File(dataDir, "var/log/tomee-${classifier}").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}/conf").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}/work").mkdirs()
-        new File(dataDir, "var/lib/tomee-${classifier}/apps").mkdirs()
-        new File(distributionTomeeDir, 'conf').delete() // add link from "/usr/lib/tomee/conf" to "/etc/tomee"
-        new File(distributionTomeeDir, 'logs').delete() // add link from "/usr/lib/tomee/logs" to "/var/log/tomee"
-        new File(distributionTomeeDir, 'temp').delete() // add link from "/usr/lib/tomee/temp" to "/var/lib/tomee/temp"
-        new File(distributionTomeeDir, 'work').delete() // add link from "/usr/lib/tomee/work" to "/var/lib/tomee/work"
-        writeTemplate(
-                new File(dataDir, "usr/share/doc/tomee-${classifier}/copyright"),
-                '/copyright.template',
-                [formattedDate: new Date().toString()]
-        )
-        def baseBinDir = new File(dataDir, "var/lib/tomee-${classifier}/bin")
-        baseBinDir.mkdirs()
-        writeTemplate(new File(baseBinDir, 'setenv.sh'), '/init/setenv.sh', [
-                classifier  : classifier,
-                tomeeVersion: project.version
-        ])
-        writeTemplate(new File(distributionTomeeDir, 'bin/tomee-instance.sh'), '/init/tomee-instance.sh', [
-                classifier  : classifier,
-                tomeeVersion: project.version
-        ])
-        exploded.delete()
-        // Removing tomcat jars. It will come from an extra tomcat debian package.
-        def tomcatLibs = new File(project.properties['distribution.workdir'] as String,
-                "$TOMCAT_EXPLODED_DIR/apache-tomcat-${project.properties['tomcat.version']}/lib")
-        ant.echo(message: "Removing Tomcat lib files from our TomEE distribution. Tomcat path: ${tomcatLibs.absolutePath}")
-        tomcatLibs.eachFile { jar ->
-            def existing = new File(dataDir, "usr/share/tomee-${classifier}/lib/${jar.name}")
-            if (existing.exists()) {
-                existing.delete()
-            }
-        }
-        dataDir.absolutePath
+    private Set<String> getLibJarNames(String classifier) {
+        def workDir = new File(project.properties['distribution.workdir'] as String)
+        def libDir = new File(workDir, "exploded-libtomee-${classifier}-java/data/usr/share/java")
+        int startIndex = "libtomee-${classifier}-".size()
+        libDir.list().collect { it.substring(startIndex) }
     }
 
-    private boolean hasClasses(File jarFile) {
-        def entriesEnumerator = new JarFile(jarFile).entries()
-        while (entriesEnumerator.hasMoreElements()) {
-            def jarEntry = entriesEnumerator.nextElement() as JarEntry
-            if (jarEntry.name.endsWith('.class')) {
-                return true
+    private void createDataStructure(String classifier) {
+        def jarsWebprofile = getLibJarNames('webprofile')
+        def jarsJaxrs = getLibJarNames('jaxrs')
+        def jarsPlus = getLibJarNames('plus')
+        def jarsPlume = getLibJarNames('plume')
+        def recurse = { DataBuilder builder, String path, File file ->
+            def addSymLink = { jarClassifier ->
+                builder.addSymbolicLink(path, "/usr/share/java/libtomee-${jarClassifier}-${file.name}")
+                file.delete()
+            }
+            if (jarsWebprofile.contains(file.name)) {
+                addSymLink('webprofile')
+            } else if (jarsJaxrs.contains(file.name)) {
+                addSymLink('jaxrs')
+            } else if (jarsPlus.contains(file.name)) {
+                addSymLink('plus')
+            } else if (jarsPlume.contains(file.name)) {
+                addSymLink('plume')
             }
         }
-        false
+        def tplParams = [classifier: classifier, tomeeVersion: project.version]
+        def builder = new DataBuilder(project, "tomee-${classifier}", "tomee-${classifier}.zip", compressTool)
+                .buildDataDir()
+                .move('lib', "usr/share/tomee-${classifier}/lib")
+                .eachFileRecurse("usr/share/tomee-${classifier}/lib", recurse)
+                .move('webapps/tomee', "usr/share/tomee-${classifier}/extras/tomee")
+                .move('endorsed', "usr/share/tomee-${classifier}/endorsed")
+                .move('bin', "usr/share/tomee-${classifier}/bin")
+                .move('conf', "etc/tomee-${classifier}")
+                .writeTemplate("usr/share/doc/tomee-${classifier}/copyright", '/data/copyright.template', [:])
+                .move('NOTICE', "usr/share/doc/tomee-${classifier}/NOTICE")
+                .move('RELEASE-NOTES', "usr/share/doc/tomee-${classifier}/RELEASE-NOTES")
+                .copyContent("etc/tomee-${classifier}/conf.d/cxf.properties", '/META-INF/org.apache.openejb.server.ServerService/cxf')
+                .copyContent("etc/tomee-${classifier}/conf.d/cxf-rs.properties", '/META-INF/org.apache.openejb.server.ServerService/cxf-rs')
+                .copyContent("etc/tomee-${classifier}/conf.d/hsql.properties", '/META-INF/org.apache.openejb.server.ServerService/hsql')
+                .copyContent("var/lib/tomee-${classifier}/bin/setenv.sh", '/init/setenv.sh')
+                .copyContent("etc/tomee-${classifier}/openejb.conf", '/default.openejb.conf')
+                .copyContent("etc/tomee-${classifier}/tomee.xml", '/tomee_xml.template')
+                .writeTemplate("usr/share/tomee-${classifier}/bin/tomee-instance.sh", '/init/tomee-instance.sh', tplParams)
+                .writeTemplate("etc/init.d/tomee-${classifier}", '/init/tomee.sh', tplParams)
+                .buildChangelog()
+                .clean()
+        packageInfoMap.put(classifier, new PackageInfo(
+                classifier: classifier,
+                dataBuilder: builder
+        ))
     }
 
-    void maskCodelessJars(String classifier, String dataDir) {
-        def unjarDir = new File(project.properties['distribution.workdir'] as String, 'unjar')
-        unjarDir.mkdirs()
-        new File(dataDir).eachFileRecurse(FileType.FILES) { File jarFile ->
-            if (jarFile.name.endsWith('.jar')) {
-                if (!hasClasses(jarFile)) {
-                    ant.echo(message: "Masking codeless jar: ${jarFile.absolutePath}")
-                    def explodedJar = new File(
-                            project.properties['distribution.workdir'] as String,
-                            "unjar/${classifier}/${jarFile.name}"
-                    )
-                    ant.unjar(src: jarFile, dest: explodedJar)
-                    jarFile.delete()
-                    ant.zip(destfile: jarFile.absolutePath) {
-                        fileset(dir: explodedJar.absolutePath) {
-                            exclude(name: '**/META-INF/MANIFEST.MF')
+    private String getLibLinks(String classifier) {
+        def sw = new StringWriter()
+        def bw = new BufferedWriter(sw)
+        packageInfoMap.get(classifier).dataBuilder.symbolicLinks.each { String path, String reference ->
+            bw.writeLine("ln -sf ${reference} ${path}")
+        }
+        bw.close()
+        sw.close()
+        sw.toString().trim()
+    }
+
+    private createControlStructure(String classifier) {
+        def writeTpl = { ControlBuilder me, String toPath, String tplPath ->
+            def params = [
+                    classifier  : classifier,
+                    tomeeVersion: me.version,
+                    inMB        : me.installedSize.longValue().toString(),
+                    priority    : me.priority,
+                    libLinks    : getLibLinks(classifier)
+            ] as Map<String, String>
+            me.writeTemplate(toPath, tplPath, params)
+        }
+        def writeConffiles = { ControlBuilder me ->
+            me.withWriter('conffiles', { BufferedWriter out ->
+                me.withBaseDir { File baseDir ->
+                    def dataDir = new File(baseDir, 'data')
+                    new File(dataDir, "etc/tomee-${classifier}").eachFile {
+                        if (it.isFile()) {
+                            out.writeLine("/etc/tomee-${classifier}/${it.name}")
                         }
                     }
-                }
-            }
-        }
-        ant.delete(dir: unjarDir)
-    }
-
-    private File createTarGz(String classifier, String path) {
-        def dataDir = new File(path)
-        def tarFile = new File(dataDir.parent, "${dataDir.name}.tar")
-        def gzFile = new File(tarFile.parent, "${tarFile.name}.gz")
-        ant.with {
-            tar(destfile: tarFile) {
-                tarfileset(dir: dataDir.absolutePath, username: 'root', group: 'root', prefix: './') {
-                    include(name: "**/*")
-                    exclude(name: "**/*.sh")
-                    exclude(name: "**/postinst")
-                    exclude(name: "**/prerm")
-                    exclude(name: "**/postrm")
-                    if (classifier) {
-                        exclude(name: "**/init.d/tomee-${classifier}")
+                    new File(dataDir, "etc/tomee-${classifier}/conf.d").eachFile {
+                        out.writeLine("/etc/tomee-${classifier}/conf.d/${it.name}")
                     }
+                    out.writeLine("/etc/init.d/tomee-${classifier}")
                 }
-                tarfileset(dir: dataDir.absolutePath, username: 'root', group: 'root', filemode: '755', prefix: './') {
-                    include(name: "**/*.sh")
-                    include(name: "**/postinst")
-                    include(name: "**/prerm")
-                    include(name: "**/postrm")
-                    if (classifier) {
-                        include(name: "**/init.d/tomee-${classifier}")
-                    }
-                }
-            }
-            gzip(src: tarFile, destfile: gzFile)
-            delete(file: tarFile)
+            })
         }
-        gzFile
-    }
-
-    private static void arItem(ArArchiveOutputStream output, File file) {
-        def entry = new ArArchiveEntry(file.name, file.length())
-        output.putArchiveEntry(entry)
-        output << new FileInputStream(file)
-        output.closeArchiveEntry()
-    }
-
-    private static void arDebianBinary(ArArchiveOutputStream output) {
-        byte[] text = "2.0\n".getBytes()
-        def entry = new ArArchiveEntry('debian-binary', text.length)
-        output.putArchiveEntry(entry)
-        output.write(text)
-        output.closeArchiveEntry()
-    }
-
-    File compressFiles(String classifier, String... paths) {
-        def ar = new File(new File(paths[0]).parent, 'distribution.deb')
-        def output = new ArArchiveOutputStream(new FileOutputStream(ar))
-        arDebianBinary(output)
-        paths.collect({
-            createTarGz(classifier, it)
-        }).each {
-            arItem(output, it)
-        }
-        output.close()
-        ar
-    }
-
-    private File createPackageUnit(String classifier, String fileName) {
-        def filePath = new File(project.properties['distribution.workdir'] as String, fileName).absolutePath
-        def explodedPath = unzip(classifier, filePath)
-        def dataDir = createDataDir(classifier, explodedPath)
-        maskCodelessJars(classifier, dataDir)
-        def controlDir = createControlDir(classifier, dataDir)
-        def deb = compressFiles(classifier, controlDir, dataDir)
-        def debDir = new File(project.build.directory as String, 'deb')
-        debDir.mkdirs()
-        def result = new File(debDir, "apache-tomee-${classifier}-${project.version}.deb")
-        deb.renameTo(result)
-        result
-    }
-
-    private File createLibPackage(String packageName, File[] jars) {
-        def dataDir = new File(project.properties['distribution.workdir'] as String, "libDist/${packageName}/data")
-        def libDistDir = new File(dataDir, "usr/share/tomee-${packageName}/lib")
-        libDistDir.mkdirs()
-        jars.each { jar ->
-            ant.copy(file: jar, todir: libDistDir)
-        }
-        maskCodelessJars(packageName, dataDir.absolutePath)
-        def docDir = new File(dataDir, "usr/share/doc/tomee-${packageName}")
-        docDir.mkdirs()
-        buildChangelog(docDir)
-        writeTemplate(
-                new File(docDir, 'copyright'),
-                '/copyright.template',
-                [formattedDate: new Date().toString()]
-        )
-        def controlData = prepareControlData(dataDir.absolutePath)
-        writeTemplate(new File(controlData.controlDir, 'control'), '/control/lib_control.template', [
-                packageName : packageName,
-                tomeeVersion: controlData.version,
-                inMB        : controlData.installedSize.longValue()
-        ])
-        def deb = compressFiles(null as String, controlData.controlDir.absolutePath, controlData.dataDir.absolutePath)
-        def debDir = new File(project.build.directory as String, 'deb')
-        debDir.mkdirs()
-        def result = new File(debDir, "apache-tomee-${packageName}-${project.version}.deb")
-        deb.renameTo(result)
-        result
-    }
-
-    private File createTomcatLibPackage() {
-        def exploded = new File(project.properties['distribution.workdir'] as String, TOMCAT_EXPLODED_DIR)
-        ant.unzip(
-                src: new File(project.properties['distribution.workdir'] as String, 'tomcat.zip'),
-                dest: exploded
-        )
-        def tomcatLibs = new File(exploded, "apache-tomcat-${project.properties['tomcat.version']}/lib")
-        createLibPackage(TOMCAT_PACKAGE_NAME, tomcatLibs.listFiles())
+        new ControlBuilder(project, "tomee-${classifier}").buildControlDir()
+                .withMe({ writeTpl(it as ControlBuilder, 'control', '/control/control.template') })
+                .withMe({ writeTpl(it as ControlBuilder, 'postinst', '/control/postinst.sh') })
+                .withMe({ writeTpl(it as ControlBuilder, 'prerm', '/control/prerm.sh') })
+                .withMe({ writeTpl(it as ControlBuilder, 'postrm', '/control/postrm.sh') })
+                .withMe(writeConffiles)
     }
 
     void createPackage() {
-        createTomcatLibPackage()
-        createPackageUnit('jaxrs', 'tomee-jaxrs.zip')
-        createPackageUnit('webprofile', 'tomee-webprofile.zip')
-        createPackageUnit('plume', 'tomee-plume.zip')
-        createPackageUnit('plus', 'tomee-plus.zip')
+        def classifiers = ['webprofile', 'jaxrs', 'plus', 'plume']
+        createLibStructure(classifiers)
+        classifiers.each { createDataStructure(it) }
+        classifiers.each { createControlStructure(it) }
+        compressTool.createDebs()
     }
 
 }

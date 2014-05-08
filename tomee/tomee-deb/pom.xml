@@ -158,14 +158,6 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.apache.tomcat</groupId>
-                                    <artifactId>tomcat</artifactId>
-                                    <version>${tomcat.version}</version>
-                                    <type>zip</type>
-                                    <outputDirectory>${distribution.workdir}</outputDirectory>
-                                    <destFileName>tomcat.zip</destFileName>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>org.apache.openejb</groupId>
                                     <artifactId>apache-tomee</artifactId>
                                     <version>${project.version}</version>
@@ -250,34 +242,51 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-plus-${project.version}.deb</file>
+                                    <file>${project.build.directory}/work-dir/apache-tomee-plus.deb</file>
                                     <type>deb</type>
                                     <classifier>plus</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-jaxrs-${project.version}.deb
+                                    <file>${project.build.directory}/work-dir/apache-tomee-jaxrs.deb
                                     </file>
                                     <type>deb</type>
                                     <classifier>jaxrs</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-webprofile-${project.version}.deb
+                                    <file>${project.build.directory}/work-dir/apache-tomee-webprofile.deb
                                     </file>
                                     <type>deb</type>
                                     <classifier>webprofile</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/deb/apache-tomee-plume-${project.version}.deb
+                                    <file>${project.build.directory}/work-dir/apache-tomee-plume.deb
                                     </file>
                                     <type>deb</type>
                                     <classifier>plume</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>
-                                        ${project.build.directory}/deb/apache-tomee-lib-tomcat-${project.version}.deb
+                                    <file>${project.build.directory}/work-dir/apache-libtomee-jaxrs-java.deb
                                     </file>
                                     <type>deb</type>
-                                    <classifier>lib-tomcat</classifier>
+                                    <classifier>lib-jaxrs</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/work-dir/apache-libtomee-plume-java.deb
+                                    </file>
+                                    <type>deb</type>
+                                    <classifier>lib-plume</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/work-dir/apache-libtomee-plus-java.deb
+                                    </file>
+                                    <type>deb</type>
+                                    <classifier>lib-plus</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/work-dir/apache-libtomee-webprofile-java.deb
+                                    </file>
+                                    <type>deb</type>
+                                    <classifier>lib-webprofile</classifier>
                                 </artifact>
                             </artifacts>
                         </configuration>

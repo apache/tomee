@@ -1,4 +1,4 @@
-Package: tomee-${packageName}
+Package: ${classifier}
 Version: ${tomeeVersion}
 Section: java
 Priority: optional
@@ -6,5 +6,5 @@ Homepage: http://tomee.apache.org/
 Architecture: all
 Installed-Size: ${inMB}
 Maintainer: devlist <dev@tomee.apache.org>
-Description: Apache TomEE Library (${packageName})
+Description: Apache TomEE Library (${classifier})
  This package provides libraries required by Apache TomEE

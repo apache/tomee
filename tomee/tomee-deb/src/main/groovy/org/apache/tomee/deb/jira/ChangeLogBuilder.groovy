@@ -32,7 +32,7 @@ class ChangeLogBuilder {
             'fixVersion+is+not+EMPTY+' +
             'ORDER+BY+fixVersion+ASC&' +
             'startAt=${startAt}&maxResults=${maxResults}&' +
-            'fields=issuetype,priority,fixVersions,summary,resolutiondate'
+            'fields=issuetype,priority,fixVersions,summary,resolutiondate,project'
 
     static final JIRA_DT_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     static final JIRA_RELEASE_DT_FORMAT = new SimpleDateFormat('yyyy-MM-dd')
@@ -66,12 +66,13 @@ class ChangeLogBuilder {
                 )
                 issue.fields.fixVersions.each { fixVersion ->
                     String versionName = fixVersion.name as String
-                    if (versionName.toLowerCase().contains('trunk') || !fixVersion.releaseDate) {
+                    if (!versionName.matches('[[0-9]+\\.]+[0-9]') || !fixVersion.releaseDate) {
                         return // not released yet
                     }
                     Date releaseDate = JIRA_RELEASE_DT_FORMAT.parse(fixVersion.releaseDate as String)
                     if (!versionsMap.containsKey(versionName)) {
                         versionsMap.put(versionName, new VersionIssues(
+                                project: issue.fields.project.name,
                                 version: versionName,
                                 releaseDate: releaseDate
                         ))
@@ -127,7 +128,7 @@ class ChangeLogBuilder {
             entryWriter.close()
 
             resultBufWriter.writeLine(logTemplate.make([
-                    projectName: projectName,
+                    projectName: versionIssues.project,
                     version    : versionIssues.version,
                     urgency    : versionUrgency,
                     fixDate    : LOG_RELEASE_DT_FORMAT.format(versionIssues.releaseDate),

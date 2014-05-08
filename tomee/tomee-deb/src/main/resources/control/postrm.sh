@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-update-rc.d -f tomee-${classifier} remove
+update-rc.d -f tomee-${classifier} remove >/dev/null 2>&1
 
 if [ purge = "\$1" ]; then
     rm -Rf /var/lib/tomee-${classifier}-user-data

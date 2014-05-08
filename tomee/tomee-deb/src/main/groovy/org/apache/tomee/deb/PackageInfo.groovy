@@ -18,9 +18,8 @@
 
 package org.apache.tomee.deb
 
-class ControlData {
-    Double installedSize
-    String version
-    File dataDir
-    File controlDir
+class PackageInfo {
+    String classifier
+    DataBuilder dataBuilder
+    ControlBuilder controlBuilder
 }
