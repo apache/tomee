@@ -223,15 +223,17 @@
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
   </properties>
+  
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
+  
   <build>
     <resources>
       <resource>
