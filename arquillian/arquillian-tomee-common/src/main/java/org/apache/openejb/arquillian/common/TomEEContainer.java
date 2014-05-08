@@ -68,11 +68,18 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Inject
     private Instance<TestClass> testClass;
 
-	@Inject
-	protected Instance<DeploymentDescription> deployment;
+    @Inject
+    protected Instance<DeploymentDescription> deployment;
 
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
+    }
+
+    protected boolean isTestable(final Archive<?> archive, final DeploymentDescription deploymentDescription) {
+        return deploymentDescription != null
+                && deploymentDescription.isArchiveDeployment()
+                && (deploymentDescription.getArchive() == archive || deploymentDescription.getTestableArchive() == archive)
+                && deploymentDescription.testable();
     }
 
     @Override
@@ -337,11 +344,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         Files.deleteOnExit(file.getParentFile());
 
-		if (deployment.get().testable()) {
-			archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
-		} else {
-			archive.as(ZipExporter.class).exportTo(file, true);
-		}
+        if (isTestable(archive, deployment.get())) {
+            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+        } else {
+            archive.as(ZipExporter.class).exportTo(file, true);
+        }
 
         return file;
     }

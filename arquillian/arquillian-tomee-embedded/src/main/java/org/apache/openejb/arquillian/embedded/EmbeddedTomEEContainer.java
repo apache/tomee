@@ -38,17 +38,11 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
-import org.jboss.arquillian.container.spi.client.deployment.Deployment;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
@@ -75,11 +69,11 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
      * Depending on tomee-embedded is fine in this adapter, but less desirable in the others, as we'd get loads of stuff in the classpath we don't need.
      */
     private Configuration convertConfiguration(final EmbeddedTomEEConfiguration tomeeConfiguration) {
-    	final Configuration configuration = new Configuration();
+        final Configuration configuration = new Configuration();
 
-    	configuration.setDir(tomeeConfiguration.getDir());
-    	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
-    	configuration.setStopPort(tomeeConfiguration.getStopPort());
+        configuration.setDir(tomeeConfiguration.getDir());
+        configuration.setHttpPort(tomeeConfiguration.getHttpPort());
+        configuration.setStopPort(tomeeConfiguration.getStopPort());
         configuration.setHost(tomeeConfiguration.getHost());
         configuration.setServerXml(tomeeConfiguration.getServerXml());
         configuration.setProperties(tomeeConfiguration.systemPropertiesAsProperties());
@@ -95,8 +89,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setKeyAlias(tomeeConfiguration.getKeyAlias());
         configuration.setSslProtocol(tomeeConfiguration.getSslProtocol());
 
-		return configuration;
-	}
+        return configuration;
+    }
 
     @Override
     public void start() throws LifecycleException {
@@ -127,7 +121,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
-    	try {
+        try {
             /* don't do it since it should be configurable
             final File tempDir = Files.createTempDir();
             final File file = new File(tempDir, name);
@@ -135,11 +129,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final String name = archive.getName();
             final File file = this.dumpFile(archive);
             ARCHIVES.put(archive, file);
-			if (deployment.get().testable()) {
-            	this.archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
-			} else {
-				archive.as(ZipExporter.class).exportTo(file, true);
-			}
 
             this.container.deploy(name, file);
             final AppInfo info = this.container.getInfo(name);
