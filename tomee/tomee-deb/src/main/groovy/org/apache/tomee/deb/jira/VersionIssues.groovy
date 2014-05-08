@@ -19,6 +19,7 @@
 package org.apache.tomee.deb.jira
 
 class VersionIssues implements Comparable<VersionIssues> {
+    String project
     String version
     Date releaseDate
     List<IssueLog> issues = []

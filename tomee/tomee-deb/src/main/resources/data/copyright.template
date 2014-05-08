@@ -1,5 +1,5 @@
 This package was debianized by the Apache TomEE dev Team <dev@tomee.apache.org> on
-${formattedDate}
+${new Date().toString()}
 
 Upstream Authors:
 
