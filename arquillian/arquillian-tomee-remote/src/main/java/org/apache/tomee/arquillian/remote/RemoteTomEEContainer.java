@@ -107,7 +107,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             if (configuration.getProperties() != null) {
                 final Properties props = new Properties();
-                IO.readProperties(IO.read(configuration.getProperties().getBytes()), new Properties());
+                IO.readProperties(IO.read(configuration.getProperties().getBytes()), props);
 
                 containerArchives = ArquillianUtil.toDeploy(props);
                 for (Archive<?> archive : containerArchives) {
