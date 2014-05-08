@@ -155,11 +155,12 @@ public class OpenEJBArchiveProcessor {
         if (javaClass != null) {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
-            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass.getSimpleName(), javaClass.getName(), true));
+            final String ejbName = appModule.getModuleId() + "_" + javaClass.getName();
+            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, javaClass.getName(), true));
             bean.localBean();
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
-            ejbDeployment.setDeploymentId(javaClass.getName());
+            ejbDeployment.setDeploymentId(ejbName);
             final EjbModule e = new EjbModule(ejbJar, openejbJar);
             e.setClassLoader(tempClassLoader);
             appModule.getEjbModules().add(e);

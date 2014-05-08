@@ -34,9 +34,22 @@ import java.io.InputStream;
 public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
     @Override
     public AppModule discover(final AppModule module) {
-        final String name = findTestName(module.getFile(), module.getClassLoader());
-        if (name == null) {
+        final File file = module.getFile();
+        final String line = findTestName(file, module.getClassLoader());
+        if (line == null) {
             return module;
+        }
+
+        final String name;
+        final int endIndex = line.indexOf('#');
+        if (endIndex > 0) {
+            name = line.substring(0, endIndex);
+            if (file != null && !file.getName().equals(line.substring(endIndex + 1, line.length()))) {
+                // skip
+                return module;
+            }
+        } else {
+            name = line;
         }
 
         try {
@@ -56,11 +69,12 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
 
         final EjbJar ejbJar = new EjbJar();
         final OpenejbJar openejbJar = new OpenejbJar();
-        final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, name, true));
+        final String ejbName = module.getModuleId() + "_" + name;
+        final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, name, true));
         bean.localBean();
         bean.setTransactionType(TransactionType.BEAN);
         final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
-        ejbDeployment.setDeploymentId(name);
+        ejbDeployment.setDeploymentId(ejbName);
         module.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
         return module;
     }
