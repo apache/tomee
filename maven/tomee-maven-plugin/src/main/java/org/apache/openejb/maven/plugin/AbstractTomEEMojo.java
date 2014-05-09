@@ -279,7 +279,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 existingWebapps = Collections.emptyList();
             }
 
-            unzip(resolve(), catalinaBase);
+            unzip(resolve());
             if (removeDefaultWebapps) { // do it first to let add other war
                 removeDefaultWebapps(removeTomeeWebapp, existingWebapps);
             }
@@ -955,7 +955,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void unzip(final File mvnTomEE, final File catalinaBase) {
+    private void unzip(final File mvnTomEE) {
         ZipFile in = null;
         try {
             in = new ZipFile(mvnTomEE);
@@ -1016,19 +1016,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
 
-            if (file.exists()) {
-                final FileWriter writer = new FileWriter(file);
-                final String rootTag = container.toLowerCase(Locale.ENGLISH);
-                writer.write("<?xml version=\"1.0\"?>\n" +
-                        "<" + rootTag + ">\n" +
-                        "  <Deployments dir=\"apps\" />\n" +
-                        "</" + rootTag + ">\n");
-                writer.close();
-            }
-            final File appsFolder = new File(catalinaBase, "apps");
-            if (!appsFolder.exists() && !appsFolder.mkdirs()) {
-                throw new RuntimeException("Failed to create: " + appsFolder);
-            }
+            ensureAppsFolderExistAndIsConfiguredByDefault(file);
 
             getLog().info(container + " was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (Exception e) {
@@ -1040,6 +1028,24 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 } catch (IOException e) {
                     // no-op
                 }
+            }
+        }
+    }
+
+    private void ensureAppsFolderExistAndIsConfiguredByDefault(final File file) throws IOException {
+        if ("openejb".equals(container.toLowerCase(Locale.ENGLISH))
+                || (file.exists() && apps != null && !apps.isEmpty())) { // webapps doesn't need apps folder in tomee
+            final FileWriter writer = new FileWriter(file);
+            final String rootTag = container.toLowerCase(Locale.ENGLISH);
+            writer.write("<?xml version=\"1.0\"?>\n" +
+                    "<" + rootTag + ">\n" +
+                    "  <Deployments dir=\"apps\" />\n" +
+                    "</" + rootTag + ">\n");
+            writer.close();
+
+            final File appsFolder = new File(catalinaBase, "apps");
+            if (!appsFolder.exists() && !appsFolder.mkdirs()) {
+                throw new RuntimeException("Failed to create: " + appsFolder);
             }
         }
     }
