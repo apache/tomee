@@ -190,7 +190,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                     }
                     LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
                             + ". It will be ignored.");
-                    return false;
+                    return !"true".equals(SystemInstance.get().getProperty("openejb.api." + name[0] + ".validation", "true"));
                 }
             }
             return true;
