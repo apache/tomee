@@ -275,20 +275,21 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     @Override
     public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
-        final SecurityContext securityContext = threadContext.get(SecurityContext.class);
-
+        final BeanContext beanContext = threadContext.getBeanContext();
         try {
-
-            final BeanContext beanContext = threadContext.getBeanContext();
             final String ejbName = beanContext.getEjbName();
-
             String name = type == null ? null : type.getSpecName();
             if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
                 name = null;
             }
-
+            final Identity currentIdentity = clientIdentity.get();
+            final SecurityContext securityContext;
+            if(currentIdentity == null) {
+                securityContext= threadContext.get(SecurityContext.class);
+            } else {
+                securityContext = new SecurityContext(currentIdentity.getSubject());
+            }
             securityContext.acc.checkPermission(new EJBMethodPermission(ejbName, name, method));
-
         } catch (final AccessControlException e) {
             return false;
         }

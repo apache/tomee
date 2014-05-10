@@ -63,6 +63,11 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
 
     private final BeanContext beanContext;
+    private final boolean isDependentAndStateful;
+
+    // initialized a bit later in the lifecycle but could be final otherwise
+    private BeanContext.BusinessLocalBeanHome homeLocalBean = null;
+    private BeanContext.BusinessLocalHome home = null;
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at) {
         this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
@@ -75,6 +80,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
+        isDependentAndStateful = getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType());
     }
 
     public BeanContext getBeanContext() {
@@ -182,23 +188,18 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
     }
 
     protected T createEjb(final CreationalContext<T> creationalContext) {
-        final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         final CreationalContext existing = currentCreationalContext.get();
         currentCreationalContext.set(creationalContext);
         try {
             final T instance;
-            if (classes.size() == 0 && beanContext.isLocalbean()) {
-                final BeanContext.BusinessLocalBeanHome home = beanContext.getBusinessLocalBeanHome();
-                instance = (T) home.create();
+            if (homeLocalBean != null) {
+                instance = (T) homeLocalBean.create();
             } else {
-                final Class<?> mainInterface = classes.get(0);
-                final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
-                final BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
                 instance = (T) home.create();
             }
 
-            if (getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType())) {
+            if (isDependentAndStateful) {
                 CreationalContextImpl.class.cast(creationalContext).addDependent(this, instance);
             }
 
@@ -236,6 +237,21 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     public void storeStatefulInstance(final Object proxy, final T instance) {
         dependentSFSBToBeRemoved.put(System.identityHashCode(proxy), instance);
+    }
+
+    public void initInternals()
+    {
+        final List<Class> classes = beanContext.getBusinessLocalInterfaces();
+        final boolean noLocalInterface = classes.isEmpty();
+        if (noLocalInterface && beanContext.isLocalbean()) {
+            homeLocalBean = beanContext.getBusinessLocalBeanHome();
+            home = null;
+        } else if (!noLocalInterface) {
+            final Class<?> mainInterface = classes.get(0);
+            final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+            home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
+            homeLocalBean = null;
+        } // else remote
     }
 
     private static class EJBBeanAttributesImpl<T> extends BeanAttributesImpl<T> {

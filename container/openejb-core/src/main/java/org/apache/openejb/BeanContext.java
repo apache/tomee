@@ -30,6 +30,7 @@ import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
@@ -327,6 +328,7 @@ public class BeanContext extends DeploymentContext {
      */
     private BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final BeanType componentType, final boolean localBean, final Class beanClass) {
         super(id, moduleContext.getOptions());
+        set(AbstractSecurityService.AuthorizationCache.class, new AbstractSecurityService.AuthorizationCache());
 
         if (beanClass == null) {
             throw new NullPointerException("beanClass input parameter is null");
