@@ -200,6 +200,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 }
                 bc.mergeOWBAndOpenEJBInfo();
                 bc.set(InterceptorResolutionService.BeanInterceptorInfo.class, InjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).getInterceptorInfo());
+                cdiEjbBean.initInternals();
             }
 
             //Start actual starting on sub-classes
