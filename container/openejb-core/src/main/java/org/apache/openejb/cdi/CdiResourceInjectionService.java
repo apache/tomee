@@ -82,7 +82,12 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
     @Override
     public void injectJavaEEResources(final Object managedBeanInstance) {
-        if (managedBeanInstance != null && ejbPlugin.isSessionBean(managedBeanInstance.getClass())) { // already done
+        if (managedBeanInstance == null) {
+            return;
+        }
+
+        final Class<?> managedBeanInstanceClass = managedBeanInstance.getClass();
+        if (ejbPlugin.isSessionBean(managedBeanInstanceClass)) { // already done
             return;
         }
 

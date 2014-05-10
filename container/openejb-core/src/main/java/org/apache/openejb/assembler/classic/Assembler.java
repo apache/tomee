@@ -149,7 +149,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.jms.MessageListener;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -1067,7 +1066,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // if local bean or mdb generate proxy class now to avoid bottleneck on classloader later
-                if (beanContext.isLocalbean() || beanContext.getBusinessLocalInterfaces().contains(MessageListener.class)) {
+                if (beanContext.isLocalbean() || beanContext.getComponentType().isMessageDriven()) {
                     final List<Class> interfaces = new ArrayList<Class>(3);
                     interfaces.add(Serializable.class);
                     interfaces.add(IntraVmProxy.class);
