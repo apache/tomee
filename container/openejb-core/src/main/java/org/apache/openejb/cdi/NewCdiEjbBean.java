@@ -40,6 +40,7 @@ public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
     public NewCdiEjbBean(final CdiEjbBean<T> that) {
         super(that.getBeanContext(), that.getWebBeansContext(), that.getBeanContext().getManagedClass(), that.getAnnotatedType(), new NewEjbInjectionTargetFactory<T>(that.getAnnotatedType(), that.getWebBeansContext(), that.getInjectionTarget()));
         this.id = that.getId() + "NewBean";
+        initInternals();
     }
 
     @Override
