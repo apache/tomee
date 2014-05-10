@@ -1816,4 +1816,16 @@ public class BeanContext extends DeploymentContext {
         private Class localInterface;
         private Method createMethod;
     }
+
+    public static final class ProxyClass {
+        private final Class<?> proxy;
+
+        public ProxyClass(final Class<?> proxy) {
+            this.proxy = proxy;
+        }
+
+        public Class<?> getProxy() {
+            return proxy;
+        }
+    }
 }

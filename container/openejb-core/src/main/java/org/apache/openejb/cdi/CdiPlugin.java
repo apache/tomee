@@ -193,62 +193,74 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             return instance;
         }
 
-        final Class<? extends Annotation> scopeClass = inBean.getScope();
-        final CdiEjbBean<Object> cdiEjbBean = (CdiEjbBean<Object>) inBean;
-        final CreationalContext<Object> cc = (CreationalContext<Object>) creationalContext;
-
-        if (scopeClass == null || Dependent.class == scopeClass) { // no need to add any layer, null = @New
-            return cdiEjbBean.createEjb(cc);
-        }
-
-        // only stateful normally
-        final InstanceBean<Object> bean = new InstanceBean<Object>(cdiEjbBean);
-        if (webBeansContext.getBeanManagerImpl().isNormalScope(scopeClass)) {
-            final BeanContext beanContext = cdiEjbBean.getBeanContext();
-            final Provider provider = webBeansContext.getNormalScopeProxyFactory().getInstanceProvider(beanContext.getClassLoader(), cdiEjbBean);
-
-            if (!beanContext.isLocalbean()) {
-                final List<Class> interfaces = new ArrayList<Class>();
-                final InterfaceType type = beanContext.getInterfaceType(interfce);
-                if (type != null) {
-                    interfaces.addAll(beanContext.getInterfaces(type));
-                } else { // can happen when looked up from impl instead of API in OWB -> default to business local
-                    interfaces.addAll(beanContext.getInterfaces(InterfaceType.BUSINESS_LOCAL));
-                }
-                interfaces.add(Serializable.class);
-                interfaces.add(IntraVmProxy.class);
-                if (BeanType.STATEFUL.equals(beanContext.getComponentType()) || BeanType.MANAGED.equals(beanContext.getComponentType())) {
-                    interfaces.add(BeanContext.Removable.class);
-                }
-
-                try {
-                    instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), new InvocationHandler() {
-                        @Override
-                        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                            try {
-                                return method.invoke(provider.get(), args);
-                            } catch (final InvocationTargetException ite) {
-                                throw ite.getCause();
-                            }
-                        }
-                    });
-                } catch (final IllegalAccessException e) {
-                    throw new OpenEJBRuntimeException(e);
-                }
-
-            } else {
-                final NormalScopeProxyFactory normalScopeProxyFactory = webBeansContext.getNormalScopeProxyFactory();
-                final Class<?> proxyClass = normalScopeProxyFactory.createProxyClass(beanContext.getClassLoader(), beanContext.getBeanClass());
-                instance = normalScopeProxyFactory.createProxyInstance(proxyClass, provider);
+        synchronized (inBean) { // singleton for the app so safe to sync on it
+            instance = cacheProxies.get(inBean);
+            if (instance != null) {
+                return instance;
             }
 
-            cacheProxies.put(inBean, instance);
-        } else {
-            final Context context = webBeansContext.getBeanManagerImpl().getContext(scopeClass);
-            instance = context.get(bean, cc);
+            final Class<? extends Annotation> scopeClass = inBean.getScope();
+            final CdiEjbBean<Object> cdiEjbBean = (CdiEjbBean<Object>) inBean;
+            final CreationalContext<Object> cc = (CreationalContext<Object>) creationalContext;
+
+            if (scopeClass == null || Dependent.class == scopeClass) { // no need to add any layer, null = @New
+                return cdiEjbBean.createEjb(cc);
+            }
+
+            // only stateful normally
+            final InstanceBean<Object> bean = new InstanceBean<Object>(cdiEjbBean);
+            if (webBeansContext.getBeanManagerImpl().isNormalScope(scopeClass)) {
+                final BeanContext beanContext = cdiEjbBean.getBeanContext();
+                final Provider provider = webBeansContext.getNormalScopeProxyFactory().getInstanceProvider(beanContext.getClassLoader(), cdiEjbBean);
+
+                if (!beanContext.isLocalbean()) {
+                    final List<Class> interfaces = new ArrayList<Class>();
+                    final InterfaceType type = beanContext.getInterfaceType(interfce);
+                    if (type != null) {
+                        interfaces.addAll(beanContext.getInterfaces(type));
+                    } else { // can happen when looked up from impl instead of API in OWB -> default to business local
+                        interfaces.addAll(beanContext.getInterfaces(InterfaceType.BUSINESS_LOCAL));
+                    }
+                    interfaces.add(Serializable.class);
+                    interfaces.add(IntraVmProxy.class);
+                    if (BeanType.STATEFUL.equals(beanContext.getComponentType()) || BeanType.MANAGED.equals(beanContext.getComponentType())) {
+                        interfaces.add(BeanContext.Removable.class);
+                    }
+
+                    try {
+                        instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), new InvocationHandler()
+                        {
+                            @Override
+                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable
+                            {
+                                try
+                                {
+                                    return method.invoke(provider.get(), args);
+                                }
+                                catch (final InvocationTargetException ite)
+                                {
+                                    throw ite.getCause();
+                                }
+                            }
+                        });
+                    } catch (final IllegalAccessException e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+
+                } else {
+                    final NormalScopeProxyFactory normalScopeProxyFactory = webBeansContext.getNormalScopeProxyFactory();
+                    final Class<?> proxyClass = normalScopeProxyFactory.createProxyClass(beanContext.getClassLoader(), beanContext.getBeanClass());
+                    instance = normalScopeProxyFactory.createProxyInstance(proxyClass, provider);
+                }
+
+                cacheProxies.put(inBean, instance);
+            } else {
+                final Context context = webBeansContext.getBeanManagerImpl().getContext(scopeClass);
+                instance = context.get(bean, cc);
+            }
+            bean.setOwbProxy(instance);
+            return instance;
         }
-        bean.setOwbProxy(instance);
-        return instance;
     }
 
     @Override

@@ -141,14 +141,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             }
 
             if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
-                final List<Class> interfaces = new ArrayList<Class>(3);
-                interfaces.add(Serializable.class);
-                interfaces.add(IntraVmProxy.class);
-                if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
-                    interfaces.add(BeanContext.Removable.class);
-                }
-
-                return LocalBeanProxyFactory.newProxyInstance(di.getClassLoader(), handler, di.getBeanClass(), interfaces.toArray(new Class<?>[interfaces.size()]));
+                return LocalBeanProxyFactory.constructProxy(di.get(BeanContext.ProxyClass.class).getProxy(), handler);
             } else {
                 final List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));

@@ -72,6 +72,7 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
@@ -124,6 +125,7 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
@@ -147,6 +149,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.jms.MessageListener;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -1061,6 +1064,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     if (entry.getValue().isAsynchronous() && beanContext.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
                         beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
                     }
+                }
+
+                // if local bean or mdb generate proxy class now to avoid bottleneck on classloader later
+                if (beanContext.isLocalbean() || beanContext.getBusinessLocalInterfaces().contains(MessageListener.class)) {
+                    final List<Class> interfaces = new ArrayList<Class>(3);
+                    interfaces.add(Serializable.class);
+                    interfaces.add(IntraVmProxy.class);
+                    final BeanType type = beanContext.getComponentType();
+                    if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
+                        interfaces.add(BeanContext.Removable.class);
+                    }
+
+                    beanContext.set(
+                            BeanContext.ProxyClass.class,
+                            new BeanContext.ProxyClass(
+                                LocalBeanProxyFactory.createProxy(
+                                    beanContext.getBeanClass(),
+                                    beanContext.getClassLoader(),
+                                    interfaces.toArray(new Class<?>[interfaces.size()])
+                                )
+                            ));
                 }
             }
             // process application exceptions
