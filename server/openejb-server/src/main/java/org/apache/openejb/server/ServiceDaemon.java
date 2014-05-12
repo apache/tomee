@@ -153,7 +153,11 @@ public class ServiceDaemon implements ServerService {
                 }
 
                 serverSocket.setSoTimeout(this.timeout);
-                this.port = serverSocket.getLocalPort();
+                int serverPort = serverSocket.getLocalPort();
+                if (this.port == 0 && next.getName() != null) {
+                    SystemInstance.get().getProperties().put(next.getName() + ".port", Integer.toString(serverPort));
+                    this.port = serverPort;
+                }
 
             } catch (Exception e) {
                 throw new ServiceException("Service failed to open socket", e);
