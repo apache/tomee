@@ -172,7 +172,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     case AVAILABLE:
                         break;
                     case CHECKED_OUT:
-                        throw new IllegalStateException("The entry " + key + " is already checked-out");
+                        return entry.getValue();
+                        // throw new IllegalStateException("The entry " + key + " is already checked-out");
                     case PASSIVATED:
                         // Entry was passivated between get and lock, we need to load the Entry again
                         // If the cache somehow got corrupted by an entry containing in state PASSIVATED, this remove
