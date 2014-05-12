@@ -25,6 +25,7 @@ import org.apache.webbeans.config.WebBeansContext;
 
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +72,19 @@ public class OpenEJBHttpRegistry {
         }
 
         List<String> addresses = new ArrayList<String>();
-        for (URI baseUri : baseUris) {
-            URI address = baseUri.resolve(suffix);
+        for (final URI baseUri : baseUris) {
+            URI uri = baseUri;
+            if (baseUri.getPort() == 0) { // if port was set to 0 we need to get httpejbd service port which was updated in SystemInstance
+                final int port = Integer.parseInt(SystemInstance.get().getProperty("httpejbd.port", "0"));
+                if (port != 0) {
+                    try {
+                        uri = new URI(baseUri.getScheme(), baseUri.getUserInfo(), baseUri.getHost(), port, baseUri.getPath(), baseUri.getQuery(), baseUri.getFragment());
+                    } catch (final URISyntaxException e) {
+                        // no-op
+                    }
+                }
+            }
+            final URI address = uri.resolve(suffix);
             addresses.add(address.toString());
         }
         return  addresses;
