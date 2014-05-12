@@ -41,26 +41,24 @@ class CompressTool {
     private File createTarGz(String classifier, File dataDir) {
         def tarFile = new File(dataDir.parent, "${dataDir.name}.tar")
         def gzFile = new File(dataDir.parent, "${tarFile.name}.gz")
-        ant.with {
-            tar(destfile: tarFile) {
-                tarfileset(dir: dataDir, username: 'root', group: 'root', prefix: './') {
-                    include(name: "**/*")
-                    exclude(name: "**/*.sh")
-                    exclude(name: "**/postinst")
-                    exclude(name: "**/prerm")
-                    exclude(name: "**/postrm")
-                    exclude(name: "**/init.d/${classifier}")
-                }
-                tarfileset(dir: dataDir, username: 'root', group: 'root', filemode: '755', prefix: './') {
-                    include(name: "**/*.sh")
-                    include(name: "**/postinst")
-                    include(name: "**/prerm")
-                    include(name: "**/postrm")
-                    include(name: "**/init.d/${classifier}")
-                }
+        ant.tar(destfile: tarFile, longfile: 'gnu') {
+            tarfileset(dir: dataDir, username: 'root', group: 'root', prefix: './') {
+                include(name: "**/*")
+                exclude(name: "**/*.sh")
+                exclude(name: "**/postinst")
+                exclude(name: "**/prerm")
+                exclude(name: "**/postrm")
+                exclude(name: "**/init.d/${classifier}")
             }
-            gzip(src: tarFile, destfile: gzFile)
+            tarfileset(dir: dataDir, username: 'root', group: 'root', filemode: '755', prefix: './') {
+                include(name: "**/*.sh")
+                include(name: "**/postinst")
+                include(name: "**/prerm")
+                include(name: "**/postrm")
+                include(name: "**/init.d/${classifier}")
+            }
         }
+        gz(tarFile.absolutePath, gzFile.absolutePath)
         tarFile.delete()
         gzFile
     }
