@@ -35,11 +35,10 @@ class PackageBuilder {
 
     private void createLibStructure(List<String> dependencyOrder) {
         Set<String> previousJars = []
-        Set<File> duplicatedJars = []
         dependencyOrder.each { classifier ->
             def recurse = { DataBuilder builder, String path, File file ->
                 if (previousJars.contains(file.name)) {
-                    duplicatedJars << file
+                    file.delete()
                 } else {
                     previousJars << file.name
                     file.renameTo(new File(file.parentFile, "libtomee-${classifier}-${file.name}"))
@@ -59,7 +58,6 @@ class PackageBuilder {
                     dataBuilder: builder
             ))
         }
-        duplicatedJars.each { it.delete() }
         def writeTpl = { ControlBuilder me, String toPath, String tplPath, String classifier ->
             def params = [
                     classifier  : classifier,
