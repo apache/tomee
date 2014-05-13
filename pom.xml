@@ -655,13 +655,13 @@
     <!--</repository>-->
   </repositories>
   <pluginRepositories>
-	<repository>
+	<pluginRepository>
       <id>patch-openjpa-plugin</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
 	  <releases>
         <enabled>true</enabled>
       </releases>
-    </repository>
+    </pluginRepository>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
       <name>Apache Software Foundation M2 Snapshot Repository</name>
