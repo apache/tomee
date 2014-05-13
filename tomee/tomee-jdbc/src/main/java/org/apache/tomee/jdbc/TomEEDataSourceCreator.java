@@ -18,10 +18,11 @@ package org.apache.tomee.jdbc;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.apache.openejb.cipher.Ciphers;
+import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
@@ -128,17 +129,13 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         } else {
             String password = properties.getProperty("Password");
             if (passwordCipher != null) {
-                try {
-                    final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
-                    final String plainPwd = cipher.decrypt(password.toCharArray());
-                    converted.setProperty("password", plainPwd);
+                final PasswordCipher cipher = Ciphers.getPasswordCipher(passwordCipher);
+                final String plainPwd = cipher.decrypt(password.toCharArray());
+                converted.setProperty("password", plainPwd);
 
-                    // all went fine so remove it to avoid errors later
-                    properties.remove("PasswordCipher");
-                    properties.remove("Password");
-                } catch (SQLException e) {
-                    LOGGER.error("Can't decrypt password", e);
-                }
+                // all went fine so remove it to avoid errors later
+                properties.remove("PasswordCipher");
+                properties.remove("Password");
             }
         }
 
@@ -158,7 +155,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                             converted.setProperty("jdbcInterceptors",
                                     "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
                             LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
-                        } else if  (!interceptors.contains("StatementCache")) {
+                        } else if (!interceptors.contains("StatementCache")) {
                             converted.setProperty("jdbcInterceptors", interceptors
                                     + ";StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
                             LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
@@ -211,7 +208,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
     public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource {
         private static final Log LOGGER = LogFactory.getLog(TomEEDataSource.class);
-        private static final Class<?>[] CONNECTION_POOL_CLASS = new Class<?>[] { PoolConfiguration.class };
+        private static final Class<?>[] CONNECTION_POOL_CLASS = new Class<?>[]{ PoolConfiguration.class };
 
         private ObjectName internalOn = null;
 
@@ -284,7 +281,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             try {
                 internalOn = ObjectNameBuilder.uniqueName("datasources", name.replace("/", "_"), this);
                 try {
-                    if (pool.getJmxPool()!=null) {
+                    if (pool.getJmxPool() != null) {
                         LocalMBeanServer.get().registerMBean(pool.getJmxPool(), internalOn);
                     }
                 } catch (final Exception e) {
