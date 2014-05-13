@@ -18,8 +18,8 @@ package org.apache.tomee.jdbc;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.apache.openejb.cipher.Ciphers;
 import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
@@ -129,7 +129,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         } else {
             String password = properties.getProperty("Password");
             if (passwordCipher != null) {
-                final PasswordCipher cipher = Ciphers.getPasswordCipher(passwordCipher);
+                final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
                 final String plainPwd = cipher.decrypt(password.toCharArray());
                 converted.setProperty("password", plainPwd);
 
