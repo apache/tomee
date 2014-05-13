@@ -17,36 +17,12 @@
 package org.apache.openejb.resource.jdbc.cipher;
 
 /**
- * Implementations of {@link PasswordCipher} allow to encode and decode passwords
- * used to connect to a database.
- * <p/>
- * Several implementations may exist, as several encryption algorithms may be
- * supported. One-way encryption algorithm (hash) can't be used as we need to
- * give a plain password to the database. {@link #encrypt(String)} method is not
- * mandatory as we don't need to encode a password, but it's useful to get the
- * encrypted value for a given plain text password. In the case you have
- * implemented both methods, you can use the PasswordCodec command line tool to
- * encode/decode a password.
+ * In order to reuse that same interface for every passwords in TomEE, it has been moved
+ * to another package. Just keeping that interface for compatibility reasons.
+ * 
+ * @See org.apache.openejb.cipher.PasswordCipher
  */
-public interface PasswordCipher {
-
-    /**
-     * Encodes a given plain text password and returns the encoded password.
-     * 
-     * @param plainPassword
-     *            The password to encode. May not be <code>null</code>, nor empty.
-     * @return The encoded password.
-     */
-    char[] encrypt(String plainPassword);
-
-    /**
-     * Decodes an encoded password and returns a plain text password.
-     * 
-     * @param encryptedPassword
-     *            The ciphered password to decode. May not be <code>null</code>,
-     *            nor empty.
-     * @return The plain text password.
-     */
-    String decrypt(char[] encryptedPassword);
-
+@Deprecated
+public interface PasswordCipher extends org.apache.openejb.cipher.PasswordCipher {
+    
 }

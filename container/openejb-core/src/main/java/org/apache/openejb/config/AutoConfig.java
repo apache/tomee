@@ -179,6 +179,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
         final AppResources appResources = new AppResources(appModule);
 
+        appResources.dump();
+
         processApplicationResources(appModule);
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
@@ -1110,6 +1112,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                                     final EjbDeployment ejbDeployment,
                                     final AppResources appResources,
                                     final EjbModule ejbModule) throws OpenEJBException {
+
         // skip destinations with lookup name
         if (ref.getLookupName() != null) {
             return;
@@ -2006,7 +2009,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         if (resourceId.startsWith("osgi:")) {
             return resourceId;
         }
-
         return null;
     }
 
@@ -2158,16 +2160,41 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private static class AppResources {
 
+        private String appId;
+
         @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
         private final Set<String> resourceAdapterIds = new TreeSet<String>();
         private final Map<String, List<String>> resourceIdsByType = new TreeMap<String, List<String>>();
         private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<String, List<String>>();
         private final Map<String, List<String>> containerIdsByType = new TreeMap<String, List<String>>();
 
+        public void dump() {
+            for (final String s : resourceAdapterIds) {
+                logger.warning(appId + " module contains resource adapter id: " + s);
+            }
+            for (final String s : resourceIdsByType.keySet()) {
+                for (final String value : resourceIdsByType.get(s)) {
+                    logger.warning(appId + " module contains resource type: " + s + " --> " + value);
+                }
+            }
+            for (final String s : resourceEnvIdsByType.keySet()) {
+                for (final String value : resourceEnvIdsByType.get(s)) {
+                    logger.warning(appId + " module contains resource env type: " + s + " --> " + value);
+                }
+            }
+            for (final String s : containerIdsByType.keySet()) {
+                for (final String value : containerIdsByType.get(s)) {
+                    logger.warning(appId + " module contains container type: " + s + " --> " + value);
+                }
+            }
+        }
+
         public AppResources() {
         }
 
         public AppResources(final AppModule appModule) {
+
+            this.appId = appModule.getModuleId();
 
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
@@ -2332,5 +2359,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
             return ids;
         }
+
     }
 }

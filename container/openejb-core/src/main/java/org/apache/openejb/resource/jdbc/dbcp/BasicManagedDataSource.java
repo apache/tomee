@@ -18,11 +18,11 @@ package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
-import org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
@@ -34,7 +34,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-@SuppressWarnings({"UnusedDeclaration"})
+@SuppressWarnings({ "UnusedDeclaration" })
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
 
     private static final ReentrantLock lock = new ReentrantLock();
@@ -46,7 +46,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * ciphered value.
      * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
+     * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;
@@ -76,7 +76,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     private void setJndiXaDataSource(final String xaDataSource) {
         setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate
-            XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
+                XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
 
         if (getTransactionManager() == null) {
             setTransactionManager(OpenEJB.getTransactionManager());
@@ -220,7 +220,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
             // check password codec if available
             if (null != passwordCipher) {
-                final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+                final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
                 final String plainPwd = cipher.decrypt(password.toCharArray());
 
                 // override previous password value

@@ -20,11 +20,11 @@ import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DataSourceConnectionFactory;
 import org.apache.commons.dbcp.managed.DataSourceXAConnectionFactory;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
-import org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.util.reflection.Reflections;
 
@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-@SuppressWarnings({"UnusedDeclaration"})
+@SuppressWarnings({ "UnusedDeclaration" })
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     private static final ReentrantLock lock = new ReentrantLock();
@@ -50,7 +50,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      * ciphered value.
      * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
+     * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;
@@ -217,7 +217,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
             // check password codec if available
             if (null != passwordCipher) {
-                final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+                final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
                 final String plainPwd = cipher.decrypt(password.toCharArray());
 
                 // override previous password value
