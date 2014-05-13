@@ -480,13 +480,13 @@
         </repository>
       </repositories>
       <pluginRepositories>
-		<repository>
+		<pluginRepository>
 		  <id>patch-openjpa</id>
 		  <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
 		  <releases>
 			<enabled>true</enabled>
 		  </releases>
-		</repository>
+		</pluginRepository>
         <pluginRepository>
           <releases>
             <enabled>false</enabled>
