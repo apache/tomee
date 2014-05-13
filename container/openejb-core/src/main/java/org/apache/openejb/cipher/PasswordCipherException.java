@@ -32,9 +32,4 @@ public class PasswordCipherException extends RuntimeException {
     public PasswordCipherException(final Throwable cause) {
         super(cause);
     }
-
-    protected PasswordCipherException(final String message, final Throwable cause, final boolean enableSuppression,
-                                      final boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
