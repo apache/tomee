@@ -1066,7 +1066,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // if local bean or mdb generate proxy class now to avoid bottleneck on classloader later
-                if (beanContext.isLocalbean() || beanContext.getComponentType().isMessageDriven()) {
+                if (beanContext.isLocalbean() && !beanContext.getComponentType().isMessageDriven()) {
                     final List<Class> interfaces = new ArrayList<Class>(3);
                     interfaces.add(Serializable.class);
                     interfaces.add(IntraVmProxy.class);

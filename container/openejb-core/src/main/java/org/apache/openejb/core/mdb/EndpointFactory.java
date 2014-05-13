@@ -41,6 +41,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    private final Class<?> proxy;
 
     public EndpointFactory(final ActivationSpec activationSpec, final MdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
@@ -50,6 +51,14 @@ public class EndpointFactory implements MessageEndpointFactory {
         classLoader = container.getMessageListenerInterface().getClassLoader();
         interfaces = new Class[]{container.getMessageListenerInterface(), MessageEndpoint.class};
         this.xaResourceWrapper = xaResourceWrapper;
+
+        final BeanContext.ProxyClass proxyClass = beanContext.get(BeanContext.ProxyClass.class);
+        if (proxyClass == null) {
+            proxy = LocalBeanProxyFactory.createProxy(beanContext.getBeanClass(), beanContext.getClassLoader(), interfaces);
+            beanContext.set(BeanContext.ProxyClass.class, new BeanContext.ProxyClass(proxy));
+        } else {
+            proxy = proxyClass.getProxy();
+        }
     }
 
     public ActivationSpec getActivationSpec() {
@@ -67,7 +76,7 @@ public class EndpointFactory implements MessageEndpointFactory {
         }
         final EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
         try {
-            return (MessageEndpoint) LocalBeanProxyFactory.constructProxy(beanContext.get(BeanContext.ProxyClass.class).getProxy(), endpointHandler);
+            return (MessageEndpoint) LocalBeanProxyFactory.constructProxy(proxy, endpointHandler);
         } catch (final InternalError e) { // should be useless
             //try to create the proxy with tccl once again.
             try {
