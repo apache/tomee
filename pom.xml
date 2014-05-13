@@ -464,6 +464,13 @@
         </plugins>
       </build>
       <repositories>
+		<repository>
+		  <id>patch-openjpa</id>
+		  <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+		  <releases>
+			<enabled>true</enabled>
+		  </releases>
+		</repository>
         <repository>
           <releases>
             <enabled>false</enabled>
@@ -473,6 +480,13 @@
         </repository>
       </repositories>
       <pluginRepositories>
+		<repository>
+		  <id>patch-openjpa</id>
+		  <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+		  <releases>
+			<enabled>true</enabled>
+		  </releases>
+		</repository>
         <pluginRepository>
           <releases>
             <enabled>false</enabled>
