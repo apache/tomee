@@ -24,14 +24,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.openejb.cipher.PasswordCipherFactory;
+import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cli.SystemExitException;
-import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ResourceFinder;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -80,7 +79,7 @@ public class Cipher {
         }
 
         try {
-            final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(cipherName);
+            final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(cipherName);
 
             if (line.hasOption("decrypt")) {
                 final String pwdArg = (String) line.getArgList().get(0);
@@ -88,12 +87,12 @@ public class Cipher {
                 System.out.println(cipher.decrypt(encryptdPassword));
 
             } else { // if option neither encrypt/decrypt is specified, we assume
-                     // it is encrypt.
+                // it is encrypt.
                 final String plainPassword = (String) line.getArgList().get(0);
                 System.out.println(new String(cipher.encrypt(plainPassword)));
             }
 
-        } catch (final SQLException e) {
+        } catch (final RuntimeException e) {
             System.out.println("Could not load password cipher implementation class. Check your classpath.");
 
             availableCiphers();
@@ -107,7 +106,7 @@ public class Cipher {
         try {
             final ResourceFinder finder = new ResourceFinder("META-INF/");
             final Map<String, Class<? extends PasswordCipher>> impls = finder.mapAllImplementations(PasswordCipher.class);
-            System.out.println("Available ciphers are: "+ Join.join(", ", impls.keySet()));
+            System.out.println("Available ciphers are: " + Join.join(", ", impls.keySet()));
         } catch (final Exception dontCare) {
             // no-op
         }

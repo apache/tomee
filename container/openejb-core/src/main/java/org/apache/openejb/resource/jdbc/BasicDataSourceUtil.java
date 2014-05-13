@@ -16,14 +16,10 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.xbean.finder.ResourceFinder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -90,71 +86,4 @@ public final class BasicDataSourceUtil {
         return jdbcUrl;
     }
     
-    /**
-     * Create a {@link PasswordCipher} instance from the
-     *  passwordCipher class name.
-     * 
-     * @param passwordCipherClass the password cipher to look for
-     * @return the password cipher from the passwordCipher class name
-     *         optionally set.
-     * @throws SQLException
-     *             if the driver can not be found.
-     */
-    public static PasswordCipher getPasswordCipher(final String passwordCipherClass) throws SQLException {
-        // Load the password cipher class
-        Class<? extends PasswordCipher> pwdCipher;
-
-        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.org.apache.openejb.resource.jdbc.cipher.PasswordCipher
-        final ResourceFinder finder = new ResourceFinder("META-INF/");
-        final Map<String, Class<? extends PasswordCipher>> impls;
-        try {
-            impls = finder.mapAllImplementations(PasswordCipher.class);
-            
-        } catch (final Throwable t) {
-            final String message =
-                "Password cipher '" + passwordCipherClass +
-                "' not found in META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher.";
-            throw new SQLException(message, t);
-        }
-        pwdCipher = impls.get(passwordCipherClass);
-
-        //
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final URL url = tccl.getResource("META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/" + passwordCipherClass);
-        if (url != null) {
-            try {
-                final String clazz = new BufferedReader(new InputStreamReader(url.openStream())).readLine().trim();
-                pwdCipher = tccl.loadClass(clazz).asSubclass(PasswordCipher.class);
-            } catch (final Exception e) {
-                // ignored
-            }
-        }
-
-        // if not found in META-INF/org.apache.openejb.resource.jdbc.org.apache.openejb.resource.jdbc.cipher.PasswordCipher
-        // we can try to load the class.
-        if (null == pwdCipher) {
-            try {
-                try {
-                    pwdCipher = Class.forName(passwordCipherClass).asSubclass(PasswordCipher.class);
-                    
-                } catch (final ClassNotFoundException cnfe) {
-                    pwdCipher = tccl.loadClass(passwordCipherClass).asSubclass(PasswordCipher.class);
-                }
-            } catch (final Throwable t) {
-                final String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
-                throw new SQLException(message, t);
-            }
-        }
-
-        // Create an instance
-        final PasswordCipher cipher;
-        try {
-            cipher = pwdCipher.newInstance();
-        } catch (final Throwable t) {
-            final String message = "Cannot create password cipher instance";
-            throw new SQLException(message, t);
-        }
-
-        return cipher;
-    }
 }
