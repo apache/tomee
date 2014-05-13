@@ -2170,21 +2170,21 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         public void dump() {
             for (final String s : resourceAdapterIds) {
-                logger.warning(appId + " module contains resource adapter id: " + s);
+                logger.debug(appId + " module contains resource adapter id: " + s);
             }
             for (final String s : resourceIdsByType.keySet()) {
                 for (final String value : resourceIdsByType.get(s)) {
-                    logger.warning(appId + " module contains resource type: " + s + " --> " + value);
+                    logger.debug(appId + " module contains resource type: " + s + " --> " + value);
                 }
             }
             for (final String s : resourceEnvIdsByType.keySet()) {
                 for (final String value : resourceEnvIdsByType.get(s)) {
-                    logger.warning(appId + " module contains resource env type: " + s + " --> " + value);
+                    logger.debug(appId + " module contains resource env type: " + s + " --> " + value);
                 }
             }
             for (final String s : containerIdsByType.keySet()) {
                 for (final String value : containerIdsByType.get(s)) {
-                    logger.warning(appId + " module contains container type: " + s + " --> " + value);
+                    logger.debug(appId + " module contains container type: " + s + " --> " + value);
                 }
             }
         }
