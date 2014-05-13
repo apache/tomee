@@ -17,6 +17,7 @@
 package org.apache.openejb.util.classloader;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public final class ClassLoaderAwareHandler implements InvocationHandler {
@@ -41,6 +42,11 @@ public final class ClassLoaderAwareHandler implements InvocationHandler {
         thread.setContextClassLoader(loader);
         try {
             return method.invoke(delegate, args);
+        } catch (InvocationTargetException e) {
+            // Reflection wraps all exceptions thrown from the Method with
+            // InvocationTargetException.  We must unwrap it and throw the
+            // real exception otherwise TomEE/OpenEJB will see 'UndeclaredThrowableException'
+            throw e.getCause();
         } finally {
             thread.setContextClassLoader(old);
         }
