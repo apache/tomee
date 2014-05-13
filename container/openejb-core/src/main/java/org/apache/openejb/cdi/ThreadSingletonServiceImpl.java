@@ -254,12 +254,14 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         for (final AppContext appContext : containerSystem.getAppContexts()) {
-            if (appContext.getClassLoader().equals(cl)) {
+            final ClassLoader appContextClassLoader = appContext.getClassLoader();
+            if (appContextClassLoader.equals(cl) || (cl != null && cl.equals(appContextClassLoader))) { // CxfContainerLoader is not symmetric
                 context = appContext.getWebBeansContext();
                 break;
             }
             for (final WebContext web : appContext.getWebContexts()) {
-                if (web.getClassLoader().equals(cl)) {
+                final ClassLoader webClassLoader = web.getClassLoader();
+                if (webClassLoader.equals(cl) || (cl != null && cl.equals(webClassLoader))) {
                     if (web.getWebbeansContext() != null) { // ear
                         context = web.getWebbeansContext();
                         break;
