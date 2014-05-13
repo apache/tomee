@@ -89,12 +89,13 @@
             <version>6.0-5</version>
           </dependency>
           <dependency> <!-- because entities was enhanced -->
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.patch</groupId>
             <artifactId>openjpa</artifactId>
-            <version>2.2.0</version>
+            <version>2.4.0-nonfinal-1591689</version>
           </dependency>
         </dependencies>
       </plugin>
     </plugins>
   </build>
+   
 </project>

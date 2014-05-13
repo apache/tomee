@@ -51,13 +51,28 @@
   </build>
 
   <repositories>
+	<repository>
+      <id>patch-openjpa</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+	  <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
-    </repository>
+    </repository>		
   </repositories>
+  
   <pluginRepositories>
+	<pluginRepository>
+      <id>patch-openjpa-plugin</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+	  <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
     <pluginRepository>
       <id>apache-m2-plugin-snapshot</id>
       <name>Apache Snapshot Plugin Repository</name>

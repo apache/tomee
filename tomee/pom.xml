@@ -126,7 +126,7 @@
           <version>${version.openejb}</version>
           <exclusions>
             <exclusion>
-              <groupId>org.apache.openjpa</groupId>
+              <groupId>org.apache.openejb.patch</groupId>
               <artifactId>openjpa</artifactId>
             </exclusion>
             <exclusion>

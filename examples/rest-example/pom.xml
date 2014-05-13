@@ -23,11 +23,14 @@
   <packaging>war</packaging>
   <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: REST Example</name>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <openejb.version>4.6.1-SNAPSHOT</openejb.version>
     <tomee.version>1.6.1-SNAPSHOT</tomee.version>
+    <version.openjpa>2.4.0-nonfinal-1591689</version.openjpa>
   </properties>
+  
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -39,14 +42,30 @@
       <name>Tomcat Dev Repository</name>
       <url>http://tomcat.apache.org/dev/dist/m2-repository/</url>
     </repository>
+	<repository>
+      <id>patch-openjpa</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+	  <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
   </repositories>
+  
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
     </pluginRepository>
+	<pluginRepository>
+      <id>patch-openjpa-plugin</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+	  <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
   </pluginRepositories>
+  
   <build>
     <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
@@ -70,7 +89,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>${tomee.version}</version>
         <configuration>
           <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
@@ -79,12 +98,12 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>${tomee.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>tomee-jaxrs</artifactId>
-            <version>1.6.1-SNAPSHOT</version>
+            <version>${tomee.version}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -95,7 +114,7 @@
         <configuration>
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
-          <tomcatVersion>7.0.27</tomcatVersion>
+          <tomcatVersion>7.0.53</tomcatVersion>
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
@@ -107,9 +126,9 @@
         </configuration>
       </plugin>
       <plugin> <!-- needed otherwise it will not work at runtime -->
-        <groupId>org.apache.openjpa</groupId>
+        <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>2.3.0</version>
+        <version>${version.openjpa}</version>
         <configuration>
           <includes>org/superbiz/rest/model/*.class</includes>
           <addDefaultConstructor>true</addDefaultConstructor>
@@ -126,14 +145,15 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.patch</groupId>
             <artifactId>openjpa</artifactId>
-            <version>2.3.0</version>
+            <version>${version.openjpa}</version>
           </dependency>
         </dependencies>
       </plugin>
     </plugins>
   </build>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -168,7 +188,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.6.1-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
