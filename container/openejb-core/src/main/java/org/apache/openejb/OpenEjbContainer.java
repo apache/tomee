@@ -358,7 +358,7 @@ public final class OpenEjbContainer extends EJBContainer {
                 final Class<?> clazz = loader.loadClass(caller);
 
                 final int modifiers = clazz.getModifiers();
-                return !clazz.isEnum() && !clazz.isInterface() && !Modifier.isAbstract(modifiers) && !Modifier.isFinal(modifiers);
+                return !clazz.isEnum() && !clazz.isInterface() && !Modifier.isAbstract(modifiers);
             } catch (final ClassNotFoundException e) {
                 return false;
             }
