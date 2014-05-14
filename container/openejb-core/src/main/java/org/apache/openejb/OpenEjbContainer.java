@@ -357,7 +357,8 @@ public final class OpenEjbContainer extends EJBContainer {
 
                 final Class<?> clazz = loader.loadClass(caller);
 
-                return !clazz.isEnum() && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
+                final int modifiers = clazz.getModifiers();
+                return !clazz.isEnum() && !clazz.isInterface() && !Modifier.isAbstract(modifiers) && !Modifier.isFinal(modifiers);
             } catch (final ClassNotFoundException e) {
                 return false;
             }
@@ -638,6 +639,7 @@ public final class OpenEjbContainer extends EJBContainer {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static class InvalidModulesPropertyException extends InitializationException {
         public InvalidModulesPropertyException(final String s) {
             super(s);
