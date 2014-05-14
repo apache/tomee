@@ -34,8 +34,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>openejb-shade-quartz</artifactId>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

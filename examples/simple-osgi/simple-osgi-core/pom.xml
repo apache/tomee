@@ -70,26 +70,26 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <repositories>
-	<repository>
+    <repository>
       <id>patch-openjpa</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-	  <releases>
+      <releases>
         <enabled>true</enabled>
       </releases>
     </repository>
-  </repositories> 
+  </repositories>
 
   <pluginRepositories>
-	<pluginRepository>
+    <pluginRepository>
       <id>patch-openjpa-plugin</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-	  <releases>
+      <releases>
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
-  </pluginRepositories>  
+  </pluginRepositories>
 
   <dependencies>
     <dependency>

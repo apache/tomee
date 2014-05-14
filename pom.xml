@@ -161,7 +161,7 @@
 
     <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.9.1</org.apache.activemq.version>
-    <quartz.version>2.2.1</quartz.version>
+    <quartz.version>2.2.1-SNAPSHOT</quartz.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -406,7 +406,6 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>shade</module>
         <module>itests</module>
         <module>maven</module>
         <module>container</module>
@@ -423,7 +422,6 @@
       <id>quick</id>
       <modules>
         <module>maven</module>
-        <module>shade</module>
         <module>container</module>
         <module>server</module>
         <module>assembly</module>
@@ -435,7 +433,6 @@
     <profile>
       <id>openejb</id>
       <modules>
-        <module>shade</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
@@ -1521,27 +1518,25 @@
         <artifactId>tomcat-catalina</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
-      <!-- we now use our shade
-        <dependency>
-          <groupId>org.quartz-scheduler</groupId>
-          <artifactId>quartz</artifactId>
-          <version>${quartz.version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>javax.transaction</groupId>
-              <artifactId>jta</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>c3p0</groupId>
-              <artifactId>c3p0</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.slf4j</groupId>
-              <artifactId>slf4j-api</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      -->
+      <dependency>
+        <groupId>quartz-openejb-shade</groupId>
+        <artifactId>quartz-openejb-shade</artifactId>
+        <version>${quartz.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
