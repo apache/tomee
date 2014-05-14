@@ -31,11 +31,14 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.util.Join;
 
 import javax.naming.NamingException;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
@@ -173,7 +176,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", not controlled by us
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -193,10 +196,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertNull(unitInfo.nonJtaDataSource);
     }
-    
+
     /**
      * Existing data source "orange-unit", jta-managed
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -221,7 +224,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("false", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-unit", jta-managed
      *
@@ -234,6 +237,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromUnitNameJtaWithClasspath() throws Exception {
+
+        final FileUtils base = SystemInstance.get().getBase();
+
+        File f = base.getDirectory("foo");
+        if(!f.exists() && !f.mkdir())throw new Exception("failed to create test directory 'foo'");
+        f = new File(f, "bar.jar");
+        if(!f.exists() && !Files.touch(f).exists())throw new Exception("failed to create test file " + f);
+
         Resource resource = new Resource("orange-unit", "DataSource");
         resource.setClasspath("foo/bar.jar");
         ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
@@ -258,7 +269,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", non-jta-managed
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -283,11 +294,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("true", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-id", not controlled by us
-     * 
-     * Application contains a web module with id "orange-id" 
+     *
+     * Application contains a web module with id "orange-id"
      *
      * Persistence xml like so:
      *
@@ -298,10 +309,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppIdThirdParty() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -320,11 +331,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertNull(unitInfo.nonJtaDataSource);
     }
-    
+
     /**
      * Existing data source "orange-web", jta managed
-     * 
-     * Application contains a web module with id "orange-id" 
+     *
+     * Application contains a web module with id "orange-id"
      *
      * Persistence xml like so:
      *
@@ -335,10 +346,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppIdJta() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -361,11 +372,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("false", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-id", non-jta managed
-     * 
-     * Application contains a web module with id "orange-id" 
+     *
+     * Application contains a web module with id "orange-id"
      *
      * Persistence xml like so:
      *
@@ -376,10 +387,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppIdNonJta() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -402,11 +413,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("true", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-web", not controlled by us
-     * 
-     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Application contains a web module with root context path as "orange-web"
      *
      * Persistence xml like so:
      *
@@ -417,10 +428,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppContextThirdParty() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -439,11 +450,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertNull(unitInfo.nonJtaDataSource);
     }
-    
+
     /**
      * Existing data source "orange-web", jta managed
-     * 
-     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Application contains a web module with root context path as "orange-web"
      *
      * Persistence xml like so:
      *
@@ -454,10 +465,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppContextJta() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -480,11 +491,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("false", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-web", non-jta managed
-     * 
-     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Application contains a web module with root context path as "orange-web"
      *
      * Persistence xml like so:
      *
@@ -495,10 +506,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromWebAppContextNonJta() throws Exception {
-        
+
         ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
-        
+
         PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         ClassLoader cl = this.getClass().getClassLoader();
@@ -525,7 +536,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit-app", not controlled by us
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -545,10 +556,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertNull(unitInfo.nonJtaDataSource);
     }
-    
+
     /**
      * Existing data source "orange-unit-app", jta-managed
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -573,10 +584,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("false", generated.properties.get("JtaManaged"));
     }
-    
+
     /**
      * Existing data source "orange-unit-app", non-jta-managed
-     * 
+     *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit" />
@@ -600,8 +611,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("true", generated.properties.get("JtaManaged"));
-    }    
-    
+    }
+
     /**
      * Existing data source "Orange", not controlled by us
      * Existing data source "OrangeUnmanaged", also not controlled by us
