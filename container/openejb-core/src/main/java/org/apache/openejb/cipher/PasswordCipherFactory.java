@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class PasswordCipherFactory {
 
     /**
