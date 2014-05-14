@@ -61,10 +61,18 @@
   </build>
   <dependencyManagement>
     <dependencies>
+      <!--
+      TomEE/OpenEJB uses a shaded version of quartz
+      allowing users to use their own version of quartz
+      and avoid version conflicts.
+
+      This example shows an application that uses its
+      own version of quartz.
+      -->
       <dependency>
-        <groupId>org.apache.openejb.shade</groupId>
-        <artifactId>openejb-shade-quartz</artifactId>
-        <version>${version.openejb}</version>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>2.2.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openejb</groupId>

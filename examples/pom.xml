@@ -156,6 +156,15 @@
     <module>moviefun</module>
     <module>moviefun-rest</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openjpa-maven-plugin</artifactId>
+      <version>${openjpa.version}</version>
+    </dependency>
+  </dependencies>
+
   <profiles>
     <profile>
       <id>apache-release</id>
