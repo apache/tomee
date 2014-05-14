@@ -97,6 +97,7 @@ import org.apache.xbean.finder.ResourceFinder;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -1166,16 +1167,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             if (service.getClasspath() != null && service.getClasspath().length() > 0) {
-                final String[] strings = service.getClasspath().split(File.pathSeparator);
-                final URI[] classpath = new URI[strings.length];
-                for (int i = 0; i < strings.length; i++) {
-                    final String string = strings[i];
-                    final String pathname = PropertyPlaceHolderHelper.simpleValue(ProvisioningUtil.realLocation(string));
-                    final File file = new File(pathname);
-                    classpath[i] = file.toURI();
-                }
-
-                info.classpath = classpath;
+                info.classpath = resolveClasspath(service.getClasspath());
             }
 
             specialProcessing(info);
@@ -1188,6 +1180,33 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final String message = logger.fatal("configureService.failed", e, (null != service ? service.getId() : ""));
             throw new OpenEJBException(message, e);
         }
+    }
+
+    /**
+     * Takes a raw unparsed string expected to be in jvm classpath syntax
+     * and parses it, producing a collection of URIs representing the absolute
+     * file paths of the classpath to be created.
+     *
+     * OS specific delimiters are supported.
+     *
+     * @param rawstring unparsed string in "classpath" syntax
+     * @return
+     * @throws IOException if path cannot be resolved or file referenced does not exist
+     */
+    public static URI[] resolveClasspath(String rawstring) throws IOException {
+
+        final FileUtils base = SystemInstance.get().getBase();
+        final String[] strings = rawstring.split(File.pathSeparator);
+        final URI[] classpath = new URI[strings.length];
+
+        for (int i = 0; i < strings.length; i++) {
+            final String string = strings[i];
+            final String pathname = PropertyPlaceHolderHelper.simpleValue(ProvisioningUtil.realLocation(string));
+            final File file = base.getFile(pathname);
+            classpath[i] = file.toURI();
+        }
+
+        return classpath;
     }
 
     private String overrideKey(final org.apache.openejb.config.Service service) {
