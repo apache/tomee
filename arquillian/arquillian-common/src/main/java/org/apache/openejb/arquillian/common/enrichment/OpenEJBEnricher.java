@@ -54,9 +54,11 @@ public final class OpenEJBEnricher {
     public static void enrich(final Object testInstance, final AppContext ctx) {
         // don't rely on arquillian since this enrichment should absolutely be done before the following ones
         new MockitoEnricher().enrich(testInstance);
+        if (ctx == null) {
+            return;
+        }
 
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                .getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
 
         final BeanManagerImpl bm = findBeanManager(ctx);
         if (bm != null && bm.isInUse()) {
