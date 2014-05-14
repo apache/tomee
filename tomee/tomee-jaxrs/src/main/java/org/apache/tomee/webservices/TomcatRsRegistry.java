@@ -16,8 +16,13 @@
  */
 package org.apache.tomee.webservices;
 
-import org.apache.catalina.*;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Service;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.util.HttpUtil;
@@ -28,7 +33,12 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);
@@ -60,13 +70,36 @@ public class TomcatRsRegistry implements RsRegistry {
 
         // find the existing host (we do not auto-create hosts)
         if (virtualHost == null) virtualHost = engine.getDefaultHost();
-        Container host = engine.findChild(virtualHost);
+
+        Container host = null;
+        Context context = null;
+
+        // first try to find a host with the given webContext
+        for (Container container : engine.findChildren()) {
+            if (container instanceof StandardHost) {
+                final StandardHost standardHost = (StandardHost) container;
+                final Context c = ((Context) standardHost.findChild(webContext));
+                if (c != null) {
+                    host = standardHost;
+                    context = c;
+                    break;
+                }
+            }
+        }
+
+        // else try to get the default host or the provided virtualhost
+        if (host == null) {
+            host = engine.findChild(virtualHost);
+        }
+
         if (host == null) {
             throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
         }
 
-        // get the webapp context
-        Context context = (Context) host.findChild(webContext);
+        // get the webapp context from the default host
+        if (context == null) {
+            context = (Context) host.findChild(webContext);
+        }
 
         if (context == null && "/".equals(webContext)) { // ROOT
             context = (Context) host.findChild("");
