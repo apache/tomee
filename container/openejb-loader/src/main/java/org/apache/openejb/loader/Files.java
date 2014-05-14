@@ -112,6 +112,11 @@ public class Files {
         return file;
     }
 
+    public static File touch(final File file) throws IOException {
+        if (!file.createNewFile()) throw new FileRuntimeException("Cannot create file: " + file.getAbsolutePath());
+        return file;
+    }
+
     public static File file(final File file) {
         exists(file);
         if (!file.isFile()) throw new FileRuntimeException("Not a file: " + file.getAbsolutePath());
