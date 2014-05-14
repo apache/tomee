@@ -1186,14 +1186,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * Takes a raw unparsed string expected to be in jvm classpath syntax
      * and parses it, producing a collection of URIs representing the absolute
      * file paths of the classpath to be created.
-     *
+     * <p/>
      * OS specific delimiters are supported.
      *
      * @param rawstring unparsed string in "classpath" syntax
-     * @return
+     * @return URI array
      * @throws IOException if path cannot be resolved or file referenced does not exist
      */
-    public static URI[] resolveClasspath(String rawstring) throws IOException {
+    public static URI[] resolveClasspath(final String rawstring) throws IOException {
 
         final FileUtils base = SystemInstance.get().getBase();
         final String[] strings = rawstring.split(File.pathSeparator);
@@ -1277,7 +1277,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // because we just have the service properties, not our defaults
             final Properties properties = service.getProperties();
             if ((properties.containsKey("JdbcDriver") || properties.containsKey("JdbcUrl") || properties.containsKey("url"))
-                    && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
+                && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
                 service.setType("javax.sql.DataSource");
             }
         }
@@ -1586,7 +1586,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             // both null or the same id
             if (refA == null && refB == null ||
-                    refA != null && refA.equals(refB)) {
+                refA != null && refA.equals(refB)) {
                 return EQUAL;
             }
 
