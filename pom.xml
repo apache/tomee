@@ -179,6 +179,7 @@
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.12.Final</version.hibernate>
     <version.eclipselink>2.4.2</version.eclipselink>
+    <version.groovy>2.3.0</version.groovy>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.4.Final</version.arquillian.bom>
@@ -1838,7 +1839,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.2.2</version>
+        <version>${version.groovy}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
