@@ -199,7 +199,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-jsr223</artifactId>
-      <version>2.2.1</version>
+      <version>${version.groovy}</version>
     </dependency>
   </dependencies>
   <build>
@@ -274,7 +274,7 @@
         <version>0.18-1</version>
         <configuration>
           <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
-          <groovyVersion>2.2.1</groovyVersion>
+          <groovyVersion>${version.groovy}</groovyVersion>
           <codeNarcVersion>0.20</codeNarcVersion>
           <maxPriority1Violations>0</maxPriority1Violations>
           <maxPriority2Violations>0</maxPriority2Violations>
