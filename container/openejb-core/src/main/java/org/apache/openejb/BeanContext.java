@@ -42,6 +42,7 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -1820,12 +1821,23 @@ public class BeanContext extends DeploymentContext {
     public static final class ProxyClass {
         private final Class<?> proxy;
 
-        public ProxyClass(final Class<?> proxy) {
-            this.proxy = proxy;
+        public ProxyClass(final BeanContext beanContext,
+                          final Class<?>[] interfaces) {
+            Class<?> clazz;
+            try {
+                clazz = LocalBeanProxyFactory.createProxy(
+                        beanContext.getBeanClass(),
+                        beanContext.getClassLoader(),
+                        interfaces);
+            } catch (final Throwable e) { // VerifyError
+                logger.debug(beanContext.getBeanClass().getName() + " is not proxiable", e);
+                clazz = null;
+            }
+            this.proxy = clazz;
         }
 
         public Class<?> getProxy() {
-            return proxy;
+            return proxy; // let it generate a NPE if null, shouldn't occur (tested elsewhere) excepted for test where we don't use it
         }
     }
 }

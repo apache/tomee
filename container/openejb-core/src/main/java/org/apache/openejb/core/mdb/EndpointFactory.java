@@ -55,7 +55,7 @@ public class EndpointFactory implements MessageEndpointFactory {
         final BeanContext.ProxyClass proxyClass = beanContext.get(BeanContext.ProxyClass.class);
         if (proxyClass == null) {
             proxy = LocalBeanProxyFactory.createProxy(beanContext.getBeanClass(), beanContext.getClassLoader(), interfaces);
-            beanContext.set(BeanContext.ProxyClass.class, new BeanContext.ProxyClass(proxy));
+            beanContext.set(BeanContext.ProxyClass.class, new BeanContext.ProxyClass(beanContext, interfaces));
         } else {
             proxy = proxyClass.getProxy();
         }

@@ -31,14 +31,11 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.util.Join;
 
 import javax.naming.NamingException;
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
@@ -237,13 +234,6 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * @throws Exception
      */
     public void testFromUnitNameJtaWithClasspath() throws Exception {
-
-        final FileUtils base = SystemInstance.get().getBase();
-
-        File f = base.getDirectory("foo");
-        if(!f.exists() && !f.mkdir())throw new Exception("failed to create test directory 'foo'");
-        f = new File(f, "bar.jar");
-        if(!f.exists() && !Files.touch(f).exists())throw new Exception("failed to create test file " + f);
 
         Resource resource = new Resource("orange-unit", "DataSource");
         resource.setClasspath("foo/bar.jar");
