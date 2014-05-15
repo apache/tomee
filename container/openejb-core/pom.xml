@@ -255,6 +255,7 @@
           <enableRulesSummary>false</enableRulesSummary>
           <configLocation>src/main/config/checkstyle.xml</configLocation>
           <consoleOutput>true</consoleOutput>
+          <headerLocation>${project.basedir}/src/main/config/java.header</headerLocation>
         </configuration>
         <executions>
           <execution>

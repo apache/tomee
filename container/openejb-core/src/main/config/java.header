@@ -14,18 +14,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.openejb.assembler.classic;
-
-import java.util.Properties;
-
-/**
- * @version $Rev$ $Date$
- */
-public class PersistenceContextReferenceInfo extends InjectableInfo {
-    public String persistenceUnitName;
-    public String unitId;
-    public boolean extended;
-    public final Properties properties = new Properties();
-
-}
