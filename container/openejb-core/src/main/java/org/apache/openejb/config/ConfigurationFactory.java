@@ -1428,7 +1428,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-                logger.debug(String.format("Trying to match resource type %s with classname %s, service %s.", type, resourceInfo.className, resourceInfo.service));
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Trying to match resource type %s with classname %s, service %s.", type, resourceInfo.className, resourceInfo.service));
+                }
                 if ((type != null && type.equals(resourceInfo.className) || isResourceType(resourceInfo.service, resourceInfo.types, type)) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
                     resourceIds.addAll(resourceInfo.aliases);
