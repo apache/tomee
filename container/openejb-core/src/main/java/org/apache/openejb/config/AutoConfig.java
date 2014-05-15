@@ -2169,7 +2169,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         private final Map<String, List<String>> containerIdsByType = new TreeMap<String, List<String>>();
 
         public void dump() {
-            if (!logger.isDebugEnabled()) return;
+            if (!logger.isDebugEnabled()) {
+                return;
+            }
             for (final String s : resourceAdapterIds) {
                 logger.debug(appId + " module contains resource adapter id: " + s);
             }
