@@ -104,6 +104,8 @@ public class ExecRunner {
             }
         }
 
+        final String additionalArgs = System.getProperty("additionalSystemProperties");
+
         final Collection<String> params = new ArrayList<String>();
         if ("java".equals(cmd)) {
             final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
@@ -118,6 +120,11 @@ public class ExecRunner {
             }
 
             final List<String> jvmArgs = new LinkedList<String>();
+            if (additionalArgs != null) {
+                for (final String kv : additionalArgs.split(" ")) {
+                    jvmArgs.add(kv);
+                }
+            }
             for (final String k : config.stringPropertyNames()) {
                 if (k.startsWith("jvmArg.")) {
                     jvmArgs.add(config.getProperty(k));
@@ -135,7 +142,6 @@ public class ExecRunner {
 
             final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
 
-            final String additionalArgs = System.getProperty("additionalSystemProperties");
             final String existingOpts = System.getenv("CATALINA_OPTS");
             final String catalinaOpts = config.getProperty("catalinaOpts");
             if (catalinaOpts != null || existingOpts != null || additionalArgs != null) { // inherit from existing env
