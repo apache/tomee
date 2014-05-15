@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -105,7 +104,7 @@ public class Pool<T> {
             greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
         }
         this.executor = executor != null ? executor : createExecutor();
-        this.supplier = supplier != null ? supplier : new NoSupplier();
+        this.supplier = supplier != null ? supplier : new NoSupplier<T>();
         this.available = strict ? new Semaphore(max) : new Overdraft(max);
         this.minimum = new Semaphore(min);
         this.instances = new Semaphore(max);
@@ -202,34 +201,21 @@ public class Pool<T> {
             throw new TimeoutException("Waited " + timeout + " " + unit);
         }
 
-        Entry entry = null;
-        while (entry == null) {
-
-            synchronized (pool) {
-                try {
-                    entry = pool.removeFirst();
-                } catch (final NoSuchElementException e) {
-                    return null;
+        synchronized (pool) {
+            while (!pool.isEmpty()) {
+                final Entry entry = pool.removeFirst();
+                final Pool<T>.Entry.Instance instance = entry.soft.get();
+                if (instance != null) {
+                    final boolean notBusy = entry.active.compareAndSet(null, instance);
+                    if (notBusy) {
+                        return entry;
+                    }
+                } else {
+                    // the SoftReference was garbage collected
+                    instances.release();
                 }
             }
-
-            final Pool<T>.Entry.Instance instance = entry.soft.get();
-
-            if (instance != null) {
-
-                final boolean notBusy = entry.active.compareAndSet(null, instance);
-
-                if (notBusy) {
-                    return entry;
-                }
-            } else {
-                // the SoftReference was garbage collected
-                instances.release();
-            }
-
-            entry = null;
         }
-
         return null;
     }
 
@@ -880,13 +866,13 @@ public class Pool<T> {
 
     }
 
-    private static class NoSupplier implements Supplier {
+    private static class NoSupplier<T> implements Supplier<T> {
         @Override
         public void discard(final Object o, final Event reason) {
         }
 
         @Override
-        public Object create() {
+        public T create() {
             return null;
         }
     }

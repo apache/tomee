@@ -40,7 +40,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
     /**
      * The name of the transformation defines Triple-DES encryption
      */
-    private static final String TRANSFORMATION = new String("DESede");
+    private static final String TRANSFORMATION = "DESede";
 
     /**
      * @see org.apache.openejb.cipher.PasswordCipher#encrypt(String)
@@ -88,8 +88,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
             cipher.init(Cipher.DECRYPT_MODE, KEY);
 
             // Decrypt data
-            final String plainText = new String(cipher.doFinal(cipherText));
-            return plainText;
+            return new String(cipher.doFinal(cipherText));
 
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);

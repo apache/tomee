@@ -17,5 +17,6 @@
 package org.apache.openejb.resource.jdbc.cipher;
 
 @Deprecated
+@SuppressWarnings("deprecation")
 public class StaticDESPasswordCipher extends org.apache.openejb.cipher.StaticDESPasswordCipher implements PasswordCipher {
 }
