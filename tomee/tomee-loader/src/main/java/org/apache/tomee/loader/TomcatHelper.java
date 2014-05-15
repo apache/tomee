@@ -19,9 +19,11 @@ package org.apache.tomee.loader;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Server;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -40,6 +42,7 @@ public class TomcatHelper {
 
     public static void setServer(StandardServer server) {
         TomcatHelper.server = server;
+        SystemInstance.get().setComponent(Server.class, server);
     }
 
     public static void setStopping(boolean stopping) {

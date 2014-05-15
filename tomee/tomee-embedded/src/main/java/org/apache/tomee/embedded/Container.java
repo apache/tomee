@@ -288,6 +288,7 @@ public class Container {
         initProps.putAll(properties);
         SystemInstance.init(initProps);
         SystemInstance.get().setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
+        SystemInstance.get().setComponent(Server.class, tomcat.getServer()); // needed again cause of init()
 
         loader.initialize(properties);
 
