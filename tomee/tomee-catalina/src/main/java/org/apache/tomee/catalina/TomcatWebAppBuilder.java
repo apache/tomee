@@ -114,6 +114,7 @@ import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
+import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
@@ -228,7 +229,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     //Key is the host name
     private final Map<String, HostConfig> deployers = new TreeMap<String, HostConfig>();
-    private final Map<String, Host> hosts = new TreeMap<String, Host>();
+    private final Hosts hosts;
     /**
      * Deployed web applications
      */
@@ -252,8 +253,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
 
     private Class<?> sessionManagerClass = null;
-
-    private String defaultHost = "localhost";
 
     private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
@@ -280,6 +279,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // could search mbeans
 
         //Getting host config listeners
+        hosts = new Hosts();
+        SystemInstance.get().setComponent(Hosts.class, hosts);
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
@@ -295,7 +296,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 parentClassLoader = engine.getParentClassLoader();
 
                 manageCluster(engine.getCluster());
-                defaultHost = engine.getDefaultHost();
+                hosts.setDefault(engine.getDefaultHost());
                 addTomEERealm(engine);
 
                 for (final Container engineChild : engine.findChildren()) {
@@ -303,7 +304,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         final StandardHost host = (StandardHost) engineChild;
                         manageCluster(host.getCluster());
                         addTomEERealm(host);
-                        hosts.put(host.getName(), host);
+                        hosts.add(host);
                         for (final LifecycleListener listener : host.findLifecycleListeners()) {
                             if (listener instanceof HostConfig) {
                                 final HostConfig hostConfig = (HostConfig) listener;
@@ -508,7 +509,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
             } else {
-                final Host host = hosts.get(defaultHost);
+                final Host host = hosts.getDefault();
                 if (StandardHost.class.isInstance(host)) {
                     try {
                         standardContext = StandardContext.class.cast(ParentClassLoaderFinder.Helper.get().loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
@@ -591,7 +592,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 String host = webApp.host;
                 if (host == null) {
-                    host = defaultHost;
+                    host = hosts.getDefaultHost();
                     logger.info("using default host: " + host);
                 }
 
@@ -620,15 +621,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             deployer.manageApp(standardContext);
-        } else if (hosts.containsKey(host)) {
+        } else {
             final Host theHost = hosts.get(host);
-            if (info != null) {
-                final ContextInfo contextInfo = addContextInfo(host, standardContext);
-                contextInfo.appInfo = info;
-                contextInfo.host = theHost;
-            }
+            if (theHost != null) {
+                if (info != null) {
+                    final ContextInfo contextInfo = addContextInfo(host, standardContext);
+                    contextInfo.appInfo = info;
+                    contextInfo.host = theHost;
+                }
 
-            theHost.addChild(standardContext);
+                theHost.addChild(standardContext);
+            }
         }
     }
 
@@ -781,7 +784,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // just adding a carriage return to get logs more readable
         logger.info("------------------------- "
-                + Contexts.getHostname(standardContext).replace("_", defaultHost) + " -> "
+                + Contexts.getHostname(standardContext).replace("_", hosts.getDefaultHost()) + " -> "
                 + finalName(standardContext.getPath()));
 
         if (FORCE_RELOADABLE && getContextInfo(standardContext) == null) { // don't do it for ears
@@ -2222,7 +2225,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (host != null) {
             return host + contextRoot;
         }
-        return defaultHost + contextRoot;
+        return hosts.getDefaultHost() + contextRoot;
     }
 
     /**
@@ -2248,7 +2251,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private synchronized ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot) {
         String host = webAppHost;
         if (host == null) {
-            host = defaultHost;
+            host = hosts.getDefaultHost();
         }
 
         final String id = getId(host, webAppContextRoot);

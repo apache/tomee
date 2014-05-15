@@ -19,17 +19,18 @@ package org.apache.tomee.webservices;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardServer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.rest.RsServlet;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
@@ -42,20 +43,19 @@ import java.util.TreeMap;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);
+    private final Hosts hosts;
 
-    private Engine engine;
     private List<Connector> connectors;
     private final Map<String, HttpListener> listeners = new TreeMap<String, HttpListener>();
 
     public TomcatRsRegistry() {
-        StandardServer standardServer = TomcatHelper.getServer();
-        for (Service service : standardServer.findServices()) {
+        for (final Service service : TomcatHelper.getServer().findServices()) {
             if (service.getContainer() instanceof Engine) {
                 connectors = Arrays.asList(service.findConnectors());
-                engine = (Engine) service.getContainer();
                 break;
             }
         }
+        hosts = SystemInstance.get().getComponent(Hosts.class);
     }
 
     @Override
@@ -69,47 +69,37 @@ public class TomcatRsRegistry implements RsRegistry {
         }
 
         // find the existing host (we do not auto-create hosts)
-        if (virtualHost == null) virtualHost = engine.getDefaultHost();
-
         Container host = null;
         Context context = null;
+        if (virtualHost == null) {
+            host = hosts.getDefault();
+        } else {
+            host = hosts.get(virtualHost);
+        }
 
-        // first try to find a host with the given webContext
-        for (Container container : engine.findChildren()) {
-            if (container instanceof StandardHost) {
-                final StandardHost standardHost = (StandardHost) container;
-                final Context c = ((Context) standardHost.findChild(webContext));
-                if (c != null) {
-                    host = standardHost;
-                    context = c;
-                    break;
+        if (host == null) {
+            for (final Host h : hosts) {
+                context = findContext(h, webContext);
+                if (context != null) {
+                    host = h;
+                    if (classLoader != null && classLoader.equals(context.getLoader().getClassLoader())) {
+                        break;
+                    } // else try next to find something better
                 }
             }
-        }
 
-        // else try to get the default host or the provided virtualhost
-        if (host == null) {
-            host = engine.findChild(virtualHost);
-        }
-
-        if (host == null) {
-            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
-        }
-
-        // get the webapp context from the default host
-        if (context == null) {
-            context = (Context) host.findChild(webContext);
-        }
-
-        if (context == null && "/".equals(webContext)) { // ROOT
-            context = (Context) host.findChild("");
+            if (host == null) {
+                throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
+            }
+        } else {
+            context = findContext(host, webContext);
         }
 
         if (context == null) {
             throw new IllegalStateException("Invalid context '" + webContext + "'.  Cannot find context in host " + host.getName());
         }
 
-        Wrapper wrapper = context.createWrapper();
+        final Wrapper wrapper = context.createWrapper();
         final String name = "rest_" + listener.hashCode();
         wrapper.setName(name);
         wrapper.setServletClass(RsServlet.class.getName());
@@ -136,6 +126,14 @@ public class TomcatRsRegistry implements RsRegistry {
         listeners.put(key, listener);
 
         return new AddressInfo(path, key);
+    }
+
+    private static Context findContext(final Container host, final String webContext) {
+        Context webapp = Context.class.cast(host.findChild(webContext));
+        if (webapp == null && "/".equals(webContext)) { // ROOT
+            webapp = Context.class.cast(host.findChild(""));
+        }
+        return webapp;
     }
 
     private static String removeWebContext(final String webContext, final String completePath) {
