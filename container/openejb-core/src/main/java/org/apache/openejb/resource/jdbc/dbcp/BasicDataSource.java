@@ -242,7 +242,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                 try {
                     return super.createDataSource();
                 } catch (final Throwable e) {
-                    throw new SQLException("Failed to create DataSource", e);
+                    throw toSQLException(e);
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
@@ -255,7 +255,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                     try {
                         return super.createDataSource();
                     } catch (final Throwable e) {
-                        throw new SQLException("Failed to create DataSource", e);
+                        throw toSQLException(e);
                     }
                 } finally {
                     systemProperties.setProperty("user.dir", userDir);
@@ -265,6 +265,13 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         } finally {
             l.unlock();
         }
+    }
+
+    public static SQLException toSQLException(Throwable e) {
+        if (e instanceof SQLException) {
+            return (SQLException) e;
+        }
+        return new SQLException("Failed to create DataSource", e);
     }
 
     public void close() throws SQLException {
