@@ -98,7 +98,8 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
-            <descriptor>src/main/assembly/bin.xml</descriptor>
+            <descriptor>src/main/assembly/dos.xml</descriptor>
+            <descriptor>src/main/assembly/unix.xml</descriptor>
           </descriptors>
           <archive>
             <manifest>
