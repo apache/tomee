@@ -100,7 +100,6 @@ public class Installer implements InstallerInterface {
         installConfigFiles();
 
         removeTomcatLibJar("annotations-api.jar");
-        removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
 
         addTomEEAdminConfInTomcatUsers();
@@ -169,7 +168,6 @@ public class Installer implements InstallerInterface {
         installConfigFiles();
 
         removeTomcatLibJar("annotations-api.jar");
-        removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
         moveLibs();
 
