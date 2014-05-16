@@ -267,7 +267,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
-    public static SQLException toSQLException(Throwable e) {
+    public static SQLException toSQLException(final Throwable e) {
         if (e instanceof SQLException) {
             return (SQLException) e;
         }
