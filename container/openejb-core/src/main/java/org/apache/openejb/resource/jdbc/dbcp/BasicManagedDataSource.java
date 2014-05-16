@@ -246,7 +246,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
                 try {
                     return super.createDataSource();
                 } catch (final Throwable e) {
-                    throw new SQLException("Failed to create DataSource", e);
+                    throw BasicDataSource.toSQLException(e);
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
@@ -259,7 +259,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
                     try {
                         return super.createDataSource();
                     } catch (final Throwable e) {
-                        throw new SQLException("Failed to create DataSource", e);
+                        throw BasicDataSource.toSQLException(e);
                     }
                 } finally {
                     systemProperties.setProperty("user.dir", userDir);
