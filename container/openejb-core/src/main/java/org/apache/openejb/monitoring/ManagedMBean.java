@@ -53,10 +53,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.sort;
+
 /**
  * @version $Rev$ $Date$
  */
 public class ManagedMBean implements DynamicMBean {
+
+    private static final MBeanNotificationInfo[] EMPTY_NOTIFICATIONS = new MBeanNotificationInfo[0];
 
     private final List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>();
     private final List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>();
@@ -110,22 +114,6 @@ public class ManagedMBean implements DynamicMBean {
         filterAttributes = true;
         excludeInfo = new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"" + excludes.pattern() + "\"");
         includeInfo = new MBeanParameterInfo("includeRegex", "java.lang.String", "\"" + includes.pattern() + "\"");
-    }
-
-    private void sortAttributes(final List<MBeanAttributeInfo> attributes) {
-        Collections.sort(attributes, new Comparator<MBeanAttributeInfo>() {
-            public int compare(final MBeanAttributeInfo o1, final MBeanAttributeInfo o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-    }
-
-    private void sortOperations(final List<MBeanOperationInfo> operations) {
-        Collections.sort(operations, new Comparator<MBeanOperationInfo>() {
-            public int compare(final MBeanOperationInfo o1, final MBeanOperationInfo o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
     }
 
     private void scan(final Object target, final String prefix) {
@@ -245,12 +233,8 @@ public class ManagedMBean implements DynamicMBean {
                         field.setAccessible(true);
                         final Object key = field.get(o);
                         final ManagedMBean bean = new ManagedMBean(o, key.toString());
-                        for (final MBeanAttributeInfo info : bean.getMBeanInfo().getAttributes()) {
-                            attributes.add(info);
-                        }
-                        for (final MBeanOperationInfo info : bean.getMBeanInfo().getOperations()) {
-                            operations.add(info);
-                        }
+                        Collections.addAll(attributes, bean.getMBeanInfo().getAttributes());
+                        Collections.addAll(operations, bean.getMBeanInfo().getOperations());
                         attributesMap.putAll(bean.attributesMap);
                         operationsMap.putAll(bean.operationsMap);
                     } catch (final Exception e) {
@@ -262,8 +246,8 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        sortOperations(operations);
-        sortAttributes(attributes);
+        sort(operations, MBeanFeatureInfoComparator.INSTANCE);
+        sort(attributes, MBeanFeatureInfoComparator.INSTANCE);
 
         if (filterAttributes) {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();
@@ -278,7 +262,7 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        return new MBeanInfo(this.getClass().getName(), "", attributes.toArray(new MBeanAttributeInfo[0]), new MBeanConstructorInfo[0], operations.toArray(new MBeanOperationInfo[0]), new MBeanNotificationInfo[0]);
+        return new MBeanInfo(this.getClass().getName(), "", attributes.toArray(new MBeanAttributeInfo[attributes.size()]), new MBeanConstructorInfo[0], operations.toArray(new MBeanOperationInfo[operations.size()]), EMPTY_NOTIFICATIONS);
     }
 
     public void setAttributesFilter(String exclude, String include) {
@@ -350,7 +334,7 @@ public class ManagedMBean implements DynamicMBean {
         /**
          * The method name needs to be changed from "getFoo" to "foo"
          *
-         * @return
+         * @return attribute name
          */
         public String getName() {
             final String method = getter.getName();
@@ -464,4 +448,12 @@ public class ManagedMBean implements DynamicMBean {
         }
     }
 
+    private static class MBeanFeatureInfoComparator implements Comparator<MBeanFeatureInfo> {
+        private static final MBeanFeatureInfoComparator INSTANCE = new MBeanFeatureInfoComparator();
+
+        @Override
+        public int compare(final MBeanFeatureInfo o1, final MBeanFeatureInfo o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
 }
