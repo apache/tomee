@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class EJBHomeProxyHandle implements Externalizable {
 
@@ -44,7 +49,15 @@ public class EJBHomeProxyHandle implements Externalizable {
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
-        out.writeByte(1);
+        out.writeByte(2);
+
+        final boolean hasExec = handler.executor != null && handler.executor != JNDIContext.globalExecutor();
+        out.writeBoolean(hasExec);
+        if (hasExec) {
+            out.writeInt(handler.executor.getMaximumPoolSize());
+            final BlockingQueue<Runnable> queue = handler.executor.getQueue();
+            out.writeInt(queue.size() + queue.remainingCapacity());
+        }
 
         handler.client.setMetaData(metaData);
         handler.client.writeExternal(out);
@@ -66,6 +79,20 @@ public class EJBHomeProxyHandle implements Externalizable {
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final byte version = in.readByte(); // future use
 
+        ThreadPoolExecutor executorService;
+        if (version > 1) {
+            if (in.readBoolean()) {
+                final int queue = in.readInt();
+                final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+                final int threads = in.readInt();
+                executorService = JNDIContext.newExecutor(threads, blockingQueue);
+            } else {
+                executorService = null;
+            }
+        } else {
+            executorService = JNDIContext.globalExecutor();
+        }
+
         final ClientMetaData client = new ClientMetaData();
         final EJBMetaDataImpl ejb = new EJBMetaDataImpl();
         final ServerMetaData server = new ServerMetaData();
@@ -83,7 +110,7 @@ public class EJBHomeProxyHandle implements Externalizable {
         server.setMetaData(metaData);
         server.readExternal(in);
 
-        handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, /* TODO */ null);
+        handler = EJBHomeHandler.createEJBHomeHandler(executorService, ejb, server, client, /* TODO */ null);
     }
 
     private Object readResolve() throws ObjectStreamException {

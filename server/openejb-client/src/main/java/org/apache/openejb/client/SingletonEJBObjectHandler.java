@@ -18,6 +18,8 @@ package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class SingletonEJBObjectHandler extends EJBObjectHandler {
 
@@ -26,16 +28,17 @@ public class SingletonEJBObjectHandler extends EJBObjectHandler {
     public SingletonEJBObjectHandler() {
     }
 
-    public SingletonEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, auth);
+    public SingletonEJBObjectHandler(final ThreadPoolExecutor executorService, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(executorService, ejb, server, client, auth);
     }
 
-    public SingletonEJBObjectHandler(final EJBMetaDataImpl ejb,
+    public SingletonEJBObjectHandler(final ThreadPoolExecutor executorService,
+                                     final EJBMetaDataImpl ejb,
                                      final ServerMetaData server,
                                      final ClientMetaData client,
                                      final Object primaryKey,
                                      final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, primaryKey, auth);
+        super(executorService, ejb, server, client, primaryKey, auth);
     }
 
     public static Object createRegistryId(final Object primKey, final Object deployId, final String containerID) {

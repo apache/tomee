@@ -31,24 +31,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
-
-    public static final String OPENEJB_CLIENT_INVOKER_THREADS = "openejb.client.invoker.threads";
-    public static final String OPENEJB_CLIENT_INVOKER_QUEUE = "openejb.client.invoker.queue";
-
     protected static final Method GETEJBHOME = getMethod(EJBObject.class, "getEJBHome", null);
     protected static final Method GETHANDLE = getMethod(EJBObject.class, "getHandle", null);
     protected static final Method GETPRIMARYKEY = getMethod(EJBObject.class, "getPrimaryKey", null);
@@ -56,72 +48,6 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     protected static final Method REMOVE = getMethod(EJBObject.class, "remove", null);
     protected static final Method GETHANDLER = getMethod(EJBObjectProxy.class, "getEJBObjectHandler", null);
     protected static final Method CANCEL = getMethod(Future.class, "cancel", boolean.class);
-
-    //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
-    private static final int threads = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_INVOKER_THREADS, "10"));
-    private static final int queue = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_INVOKER_QUEUE, "2"));
-    private static final LinkedBlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
-
-    protected static final ThreadPoolExecutor executorService;
-
-    static {
-        /**
-         This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
-         If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
-         It can accept upto the number of processes defined by 'queue'.
-         If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
-         Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
-         is true then a final attempt is made to run the process in the current thread (the service thread).
-         */
-
-        executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue);
-        executorService.setThreadFactory(new ThreadFactory() {
-
-            private final AtomicInteger i = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(final Runnable r) {
-                final Thread t = new Thread(r, "OpenEJB.Client." + i.incrementAndGet());
-                t.setDaemon(true);
-                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(final Thread t, final Throwable e) {
-                        Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE, "Uncaught error in: " + t.getName(), e);
-                    }
-                });
-
-                return t;
-            }
-
-        });
-
-        executorService.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
-
-                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                    return;
-                }
-
-                final Logger log = Logger.getLogger(EJBObjectHandler.class.getName());
-
-                if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capicity for process: " + r);
-                }
-
-                boolean offer = false;
-                try {
-                    offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    //Ignore
-                }
-
-                if (!offer) {
-                    log.log(Level.SEVERE, "EJBObjectHandler ExecutorService failed to run asynchronous process: " + r);
-                }
-            }
-        });
-    }
 
     /*
     * The registryId is a logical identifier that is used as a key when placing EntityEJBObjectHandler into
@@ -136,26 +62,32 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     EJBHomeProxy ejbHome = null;
 
+    protected ThreadPoolExecutor executor = null;
+
     public EJBObjectHandler() {
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+    public EJBObjectHandler(final ThreadPoolExecutor es, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         super(ejb, server, client, null, auth);
+        this.executor = es;
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb,
+    public EJBObjectHandler(final ThreadPoolExecutor es,
+                            final EJBMetaDataImpl ejb,
                             final ServerMetaData server,
                             final ClientMetaData client,
                             final Object primaryKey,
                             final JNDIContext.AuthenticationInfo auth) {
         super(ejb, server, client, primaryKey, auth);
+        this.executor = es;
     }
 
     protected void setEJBHomeProxy(final EJBHomeProxy ejbHome) {
         this.ejbHome = ejbHome;
     }
 
-    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb,
+    public static EJBObjectHandler createEJBObjectHandler(final ThreadPoolExecutor executorService,
+                                                          final EJBMetaDataImpl ejb,
                                                           final ServerMetaData server,
                                                           final ClientMetaData client,
                                                           final Object primaryKey,
@@ -165,19 +97,19 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBObjectHandler(ejb, server, client, primaryKey, auth);
+                return new EntityEJBObjectHandler(executorService, ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBObjectHandler(ejb, server, client, primaryKey, auth);
+                return new StatefulEJBObjectHandler(executorService, ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBObjectHandler(ejb, server, client, primaryKey, auth);
+                return new StatelessEJBObjectHandler(executorService, ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey, auth);
+                return new SingletonEJBObjectHandler(executorService, ejb, server, client, primaryKey, auth);
         }
 
         throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
@@ -305,7 +237,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     protected Object getEJBHome(final Method method, final Object[] args, final Object proxy) throws Throwable {
         if (ejbHome == null) {
-            ejbHome = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, authenticationInfo).createEJBHomeProxy();
+            ejbHome = EJBHomeHandler.createEJBHomeHandler(executor, ejb, server, client, authenticationInfo).createEJBHomeProxy();
         }
         return ejbHome;
     }
@@ -330,7 +262,10 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 final String requestId = UUID.randomUUID().toString();
                 final EJBResponse response = new EJBResponse();
                 final AsynchronousCall asynchronousCall = new AsynchronousCall(method, args, proxy, requestId, response);
-                return new FutureAdapter(executorService.submit(asynchronousCall), response, requestId);
+                if (executor == null) {
+                    executor = JNDIContext.newExecutor(-1, null);
+                }
+                return new FutureAdapter(executor.submit(asynchronousCall), response, requestId);
             } catch (RejectedExecutionException e) {
                 throw new EJBException("failed to allocate internal resource to execute the target task", e);
             }
@@ -455,7 +390,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             if (canceled) {
                 return true;
             }
-            if (blockingQueue.remove(target)) {
+            if (executor.getQueue().remove(target)) {
                 // We successfully remove the task from the queue
                 canceled = true;
                 return true;
