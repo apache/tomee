@@ -42,6 +42,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     protected String properties = "";
     protected String webContextToUseWithEars = null;
+    protected boolean keepServerXmlAsThis;
 
     public boolean isUnpackWars() {
         return unpackWars;
@@ -188,5 +189,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setWebContextToUseWithEars(final String webContextToUseWithEars) {
         this.webContextToUseWithEars = webContextToUseWithEars;
+    }
+
+    public boolean getKeepServerXmlAsThis() {
+        return keepServerXmlAsThis;
+    }
+
+    public void setKeepServerXmlAsThis(final boolean keepServerXmlAsThis) {
+        this.keepServerXmlAsThis = keepServerXmlAsThis;
     }
 }
