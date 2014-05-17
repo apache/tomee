@@ -18,14 +18,15 @@ package org.apache.openejb.client;
 
 import javax.ejb.RemoveException;
 import java.lang.reflect.Method;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StatelessEJBHomeHandler extends EJBHomeHandler {
 
     public StatelessEJBHomeHandler() {
     }
 
-    public StatelessEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, auth);
+    public StatelessEJBHomeHandler(final ThreadPoolExecutor executor, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(executor, ejb, server, client, auth);
     }
 
     @Override

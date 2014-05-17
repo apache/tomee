@@ -18,22 +18,25 @@ package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StatefulEJBObjectHandler extends EJBObjectHandler {
 
     public StatefulEJBObjectHandler() {
     }
 
-    public StatefulEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, auth);
+    public StatefulEJBObjectHandler(final ThreadPoolExecutor executorService, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(executorService, ejb, server, client, auth);
     }
 
-    public StatefulEJBObjectHandler(final EJBMetaDataImpl ejb,
+    public StatefulEJBObjectHandler(final ThreadPoolExecutor executorService,
+                                    final EJBMetaDataImpl ejb,
                                     final ServerMetaData server,
                                     final ClientMetaData client,
                                     final Object primaryKey,
                                     final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, primaryKey, auth);
+        super(executorService, ejb, server, client, primaryKey, auth);
         registerHandler(primaryKey, this);
     }
 

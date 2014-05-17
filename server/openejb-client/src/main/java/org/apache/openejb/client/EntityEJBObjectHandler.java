@@ -18,22 +18,24 @@ package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class EntityEJBObjectHandler extends EJBObjectHandler {
 
     public EntityEJBObjectHandler() {
     }
 
-    public EntityEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, auth);
+    public EntityEJBObjectHandler(final ThreadPoolExecutor executorService, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(executorService, ejb, server, client, auth);
     }
 
-    public EntityEJBObjectHandler(final EJBMetaDataImpl ejb,
+    public EntityEJBObjectHandler(final ThreadPoolExecutor executorService,
+                                  final EJBMetaDataImpl ejb,
                                   final ServerMetaData server,
                                   final ClientMetaData client,
                                   final Object primaryKey,
                                   final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, primaryKey, auth);
+        super(executorService, ejb, server, client, primaryKey, auth);
         registryId = ejb.deploymentID + ":" + primaryKey;
         registerHandler(registryId, this);
     }

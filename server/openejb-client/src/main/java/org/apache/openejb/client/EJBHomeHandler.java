@@ -27,6 +27,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
@@ -39,15 +40,18 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     @SuppressWarnings("RedundantArrayCreation")
     protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
     protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
+    protected ThreadPoolExecutor executor;
 
     public EJBHomeHandler() {
     }
 
-    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+    public EJBHomeHandler(final ThreadPoolExecutor executor, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         super(ejb, server, client, auth);
+        this.executor = executor;
     }
 
-    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb,
+    public static EJBHomeHandler createEJBHomeHandler(final ThreadPoolExecutor executor,
+                                                      final EJBMetaDataImpl ejb,
                                                       final ServerMetaData server,
                                                       final ClientMetaData client,
                                                       final JNDIContext.AuthenticationInfo auth) {
@@ -55,19 +59,19 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBHomeHandler(ejb, server, client, auth);
+                return new EntityEJBHomeHandler(executor, ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBHomeHandler(ejb, server, client, auth);
+                return new StatefulEJBHomeHandler(executor, ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBHomeHandler(ejb, server, client, auth);
+                return new StatelessEJBHomeHandler(executor, ejb, server, client, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBHomeHandler(ejb, server, client, auth);
+                return new SingletonEJBHomeHandler(executor, ejb, server, client, auth);
         }
 
         throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
@@ -223,7 +227,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             case ResponseCodes.EJB_OK:
 
                 final Object primKey = res.getResult();
-                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
+                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(executor, ejb, server, client, primKey, authenticationInfo);
                 handler.setEJBHomeProxy((EJBHomeProxy) proxy);
 
                 return handler.createEJBObjectProxy();

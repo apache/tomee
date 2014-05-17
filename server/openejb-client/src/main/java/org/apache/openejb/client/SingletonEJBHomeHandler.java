@@ -18,14 +18,15 @@ package org.apache.openejb.client;
 
 import javax.ejb.RemoveException;
 import java.lang.reflect.Method;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class SingletonEJBHomeHandler extends EJBHomeHandler {
 
     public SingletonEJBHomeHandler() {
     }
 
-    public SingletonEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
-        super(ejb, server, client, auth);
+    public SingletonEJBHomeHandler(final ThreadPoolExecutor executor, final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(executor, ejb, server, client, auth);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class SingletonEJBHomeHandler extends EJBHomeHandler {
         return null;
     }
 
-    protected EJBObjectHandler newEJBObjectHandler() {
+    protected EJBObjectHandler newEJBObjectHandler() { // shouldn't be called
         return new SingletonEJBObjectHandler();
     }
 

@@ -48,16 +48,30 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
  */
 @SuppressWarnings("UseOfObsoleteCollectionType")
 public class JNDIContext implements InitialContextFactory, Context {
+    private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
     public static final String SERIALIZER = "openejb.ejbd.serializer";
     public static final String AUTHENTICATE_WITH_THE_REQUEST = "openejb.ejbd.authenticate-with-request";
+    public static final String POOL_QUEUE_SIZE = "openejb.client.invoker.queue";
+    public static final String POOL_THREAD_NUMBER = "openejb.client.invoker.threads";
 
     private String tail = "/";
     private ServerMetaData server;
@@ -66,7 +80,114 @@ public class JNDIContext implements InitialContextFactory, Context {
     private String moduleId;
     private ClientInstance clientIdentity;
 
+    private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
+    static {
+        ClassLoader classLoader = Client.class.getClassLoader();
+        Class<?> container;
+        try {
+            container = Class.forName("org.apache.openejb.OpenEJB", false, classLoader);
+        } catch (final Throwable e) {
+            container = null;
+        }
+        if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
+                || (container != null && container.getClassLoader() == classLoader)) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    waitEndOfTasks(GLOBAL_CLIENT_POOL);
+                }
+            });
+        }
+    }
+
     private AuthenticationInfo authenticationInfo = null;
+
+    //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
+    private transient int threads;
+    private transient LinkedBlockingQueue<Runnable> blockingQueue;
+
+    protected transient ThreadPoolExecutor executorService;
+
+    public static ThreadPoolExecutor globalExecutor() {
+        return GLOBAL_CLIENT_POOL;
+    }
+
+    private ThreadPoolExecutor executor() {
+        if (executorService != null) {
+            return executorService;
+        }
+        if (threads < 0) {
+            return GLOBAL_CLIENT_POOL;
+        }
+        synchronized (this) {
+            if (executorService != null) {
+                return executorService;
+            }
+            executorService = newExecutor(threads, blockingQueue);
+        }
+        return executorService;
+    }
+
+    public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue)
+    {
+        /**
+         This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
+         If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
+         It can accept upto the number of processes defined by 'queue'.
+         If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
+         Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
+         is true then a final attempt is made to run the process in the current thread (the service thread).
+         */
+
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue == null ? new LinkedBlockingDeque<Runnable>(Integer.parseInt(getProperty(null, POOL_QUEUE_SIZE, "2"))) : blockingQueue);
+        executorService.setThreadFactory(new ThreadFactory() {
+
+            private final AtomicInteger i = new AtomicInteger(0);
+
+            @Override
+            public Thread newThread(final Runnable r) {
+                final Thread t = new Thread(r, "OpenEJB.Client." + i.incrementAndGet());
+                t.setDaemon(true);
+                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(final Thread t, final Throwable e) {
+                        Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE, "Uncaught error in: " + t.getName(), e);
+                    }
+                });
+
+                return t;
+            }
+
+        });
+
+        executorService.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
+                }
+
+                final Logger log = Logger.getLogger(EJBObjectHandler.class.getName());
+
+                if (log.isLoggable(Level.WARNING)) {
+                    log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capicity for process: " + r);
+                }
+
+                boolean offer = false;
+                try {
+                    offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+
+                if (!offer) {
+                    log.log(Level.SEVERE, "EJBObjectHandler ExecutorService failed to run asynchronous process: " + r);
+                }
+            }
+        });
+        return executorService;
+    }
 
     public JNDIContext() {
     }
@@ -156,7 +277,20 @@ public class JNDIContext implements InitialContextFactory, Context {
             }
         }
 
+        final int queue = Integer.parseInt(getProperty(env, JNDIContext.POOL_QUEUE_SIZE, "2"));
+        blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+        threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
+
         return this;
+    }
+
+    private static String getProperty(final Hashtable env, final String key, final String defaultValue)
+    {
+        Object value = env == null ? null : env.get(key);
+        if (value != null) {
+            return value.toString();
+        }
+        return System.getProperty(key, defaultValue);
     }
 
     /**
@@ -217,7 +351,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
-        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client, authenticationInfo);
+        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(executor(), ejbData, server, client, authenticationInfo);
         final EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
 
@@ -229,7 +363,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
         final Object primaryKey = ejb.getPrimaryKey();
 
-        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, authenticationInfo);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(executor(), ejb, server, client, primaryKey, authenticationInfo);
         return handler.createEJBObjectProxy();
     }
 
@@ -574,6 +708,23 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     @Override
     public void close() throws NamingException {
+        waitEndOfTasks(executorService);
+    }
+
+    private static void waitEndOfTasks(final ExecutorService executor)
+    {
+        if (executor == null) {
+            return;
+        }
+
+        final List<Runnable> runnables = executor.shutdownNow();
+        for (final Runnable r : runnables) {
+            try {
+                r.run();
+            } catch (final Throwable th) {
+                LOGGER.log(Level.SEVERE, th.getMessage(), th);
+            }
+        }
     }
 
     @Override
