@@ -65,6 +65,10 @@ public class Setup {
 
     public static void updateServerXml(File tomeeHome, TomEEConfiguration configuration) throws IOException {
         final File serverXml = Files.path(new File(tomeeHome.getAbsolutePath()), "conf", "server.xml");
+        if (!serverXml.exists()) {
+            return;
+        }
+
         final QuickServerXmlParser ports = QuickServerXmlParser.parse(serverXml);
         if (configuration.getKeepServerXmlAsThis()) {
             // force ports to be able to stop the server and get @ArquillianResource
@@ -238,14 +242,6 @@ public class Setup {
                 final String data = IO.slurp(serverXml);
 
                 IO.copy(data.getBytes(), Files.path(tomeeHome, "conf", "server.xml"));
-
-                if (configuration.getKeepServerXmlAsThis()) {
-                    final QuickServerXmlParser parser = QuickServerXmlParser.parse(data);
-                    // force ports to be able to stop the server
-                    configuration.setHttpPort(Integer.parseInt(parser.http()));
-                    configuration.setStopPort(Integer.parseInt(parser.stop()));
-                    return; // in this case we don't want to override the conf
-                }
             }
         }
         updateServerXml(tomeeHome, configuration);
