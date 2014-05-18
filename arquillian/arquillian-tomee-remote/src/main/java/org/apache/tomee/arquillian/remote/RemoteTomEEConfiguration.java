@@ -40,20 +40,11 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String bin;
     private String lib;
     private boolean cleanOnStartUp;
-    protected boolean keepServerXmlAsthis = false;
     private boolean debug;
     private int debugPort = 5005;
     private String catalina_opts = null; // using this format to match the script one
     private boolean simpleLog = false;
     private String deployerProperties = "";
-
-    public boolean isKeepServerXmlAsthis() {
-        return keepServerXmlAsthis;
-    }
-
-    public void setKeepServerXmlAsthis(boolean keepServerXmlAsthis) {
-        this.keepServerXmlAsthis = keepServerXmlAsthis;
-    }
 
     public String getGroupId() {
         return groupId;

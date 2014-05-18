@@ -201,9 +201,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(tomeeHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(tomeeHome, configuration.getLib(), "lib");
 
-        if (!configuration.isKeepServerXmlAsthis()) {
-            Setup.configureServerXml(tomeeHome, configuration);
-        }
+        Setup.configureServerXml(tomeeHome, configuration);
 
         Setup.configureSystemProperties(tomeeHome, configuration);
 
