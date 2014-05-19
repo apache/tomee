@@ -21,8 +21,6 @@ import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
@@ -59,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.apache.openejb.loader.JarLocation.decode;
 
@@ -77,7 +77,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class PersistenceBootstrap {
 
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, PersistenceBootstrap.class);
+    public static final Logger logger = Logger.getLogger(PersistenceBootstrap.class.getName());
 
     public static final String DEFAULT_PROVIDER = getDefaultProvider();
 
@@ -93,7 +93,7 @@ public class PersistenceBootstrap {
                 return trim;
             }
         } catch (final Exception e) {
-            logger.warning("Could not read " + name, e);
+            logger.log(Level.WARNING, "Could not read " + name, e);
         }
 
         return "org.apache.openjpa.persistence.PersistenceProviderImpl";
@@ -443,7 +443,7 @@ public class PersistenceBootstrap {
             return null;
         }
 
-        public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
             return null;
         }
 

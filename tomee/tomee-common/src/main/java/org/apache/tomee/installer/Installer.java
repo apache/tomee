@@ -101,12 +101,29 @@ public class Installer implements InstallerInterface {
 
         removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
+        addTomEEJuli();
 
         addTomEEAdminConfInTomcatUsers();
         addTomEELinkToTomcatHome();
 
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
+        }
+    }
+
+    // switch tomcat-juli with tomee-juli
+    // we keep the same name to let all tomcat tooling work as expected
+    private void addTomEEJuli() {
+        final File original = new File(paths.getCatalinaBinDir(), "tomcat-juli.jar");
+
+        final File juli = paths.findOpenEJBJar("tomee-juli");
+        try {
+            Installers.copyFile(juli, new File(original.getAbsolutePath()));
+            if (!juli.delete()) { // remove original
+                juli.deleteOnExit();
+            }
+        } catch (IOException e) {
+            alerts.addInfo("Add tomee user to tomcat-users.xml");
         }
     }
 
@@ -169,6 +186,7 @@ public class Installer implements InstallerInterface {
 
         removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
+        addTomEEJuli(); // before moveLibs
         moveLibs();
 
         addTomEEAdminConfInTomcatUsers();

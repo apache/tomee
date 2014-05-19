@@ -39,6 +39,14 @@ public class Logger {
         configure();
     }
 
+    // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
+    public static String delegateClass() {
+        if (logStreamFactory == null) {
+            throw new IllegalStateException("Call this method after having configured the logger");
+        }
+        return logStreamFactory.getClass().getName();
+    }
+
     public static synchronized void configure() {
         if (logStreamFactory != null) {
             return;

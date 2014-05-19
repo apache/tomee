@@ -104,7 +104,6 @@ public class Core {
 
         try { // logging classes should be loaded before any other classes so do it here synchronously
             Class.forName("org.apache.openejb.util.Logger", true, loader);
-            Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
         } catch (final Throwable e) {
             // no-op
         }

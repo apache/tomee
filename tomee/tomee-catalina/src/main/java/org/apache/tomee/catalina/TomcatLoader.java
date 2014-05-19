@@ -46,8 +46,6 @@ import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.spi.Service;
 import org.apache.openejb.util.Join;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomee.catalina.deployment.TomcatWebappDeployer;
@@ -65,6 +63,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <h1>Prerequisites</h1>
@@ -93,7 +93,7 @@ import java.util.Set;
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
 public class TomcatLoader implements Loader {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatLoader.class);
+    private static final Logger logger = Logger.getLogger(TomcatLoader.class.getName());
     public static final String TOMEE_NOSHUTDOWNHOOK_PROP = "tomee.noshutdownhook";
 
     /**
@@ -268,7 +268,7 @@ public class TomcatLoader implements Loader {
             try {
                 manager = (ServiceManager) cl.loadClass(clazz).newInstance();
             } catch (ClassNotFoundException cnfe) {
-                logger.error("can't find the service manager " + clazz + ", the TomEE one will be used");
+                logger.severe("can't find the service manager " + clazz + ", the TomEE one will be used");
                 manager = new TomEEServiceManager();
             }
             manager.init();
@@ -283,8 +283,7 @@ public class TomcatLoader implements Loader {
             } catch (ClassNotFoundException ignored) {
                 // no-op
             } catch (Exception e) {
-                Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
-                logger.error("Webservices failed to start", e);
+                logger.log(Level.SEVERE, "Webservices failed to start", e);
             }
 
             // REST
@@ -296,7 +295,7 @@ public class TomcatLoader implements Loader {
             } catch (ClassNotFoundException ignored) {
                 // no-op
             } catch (Exception e) {
-                logger.error("REST failed to start", e);
+                logger.log(Level.SEVERE, "REST failed to start", e);
             }
         }
 
@@ -327,10 +326,10 @@ public class TomcatLoader implements Loader {
             Service service = (Service) getClass().getClassLoader().loadClass(className).newInstance();
             service.init(properties);
             return true;
-        } catch (ClassNotFoundException e) {
-            logger.info("Optional service not installed: " + className);
-        } catch (Exception e) {
-            logger.error("Failed to start: " + className, e);
+        } catch (final ClassNotFoundException e) {
+            // no-op: logger.info("Optional service not installed: " + className);
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "Failed to start: " + className, e);
         }
         return false;
     }

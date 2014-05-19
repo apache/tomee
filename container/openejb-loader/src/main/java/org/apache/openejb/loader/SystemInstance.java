@@ -155,10 +155,16 @@ public class SystemInstance {
     }
 
     public FileUtils getHome() {
+        if (!isInitialized()) {
+            return new FileUtils("openejb.home", "user.dir", System.getProperties());
+        }
         return home;
     }
 
     public FileUtils getBase() {
+        if (!isInitialized()) {
+            return new FileUtils("openejb.base", "openejb.home", System.getProperties());
+        }
         return base;
     }
 
