@@ -246,6 +246,8 @@ public class BeanContext extends DeploymentContext {
     private Stateful stateful;
     private Cmp cmp;
     private LegacyView legacyView;
+    
+    private final Map<String, String> securityRoleReferences = new HashMap<String, String>();
 
     /**
      * TODO: Move to MethodContext
@@ -1772,6 +1774,15 @@ public class BeanContext extends DeploymentContext {
         if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
             ((EjbTimerServiceImpl) ejbTimerService).stop();
         }
+    }
+    
+    public void addSecurityRoleReference(final String roleName, final String roleLink) {
+        securityRoleReferences.put(roleName, roleLink);
+    }
+    
+    public String getSecurityRoleReference(final String roleName) {
+        final String roleLink = securityRoleReferences.get(roleName);
+        return roleLink != null ? roleLink : roleName;
     }
 
     private static class Cmp {

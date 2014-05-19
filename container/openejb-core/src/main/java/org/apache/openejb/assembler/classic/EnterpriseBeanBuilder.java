@@ -319,6 +319,10 @@ class EnterpriseBeanBuilder {
             deployment.createAsynchronousMethodSet();
         }
 
+        for (final SecurityRoleReferenceInfo securityRoleReference : bean.securityRoleReferences) {
+            deployment.addSecurityRoleReference(securityRoleReference.roleName, securityRoleReference.roleLink);
+        }
+        
         return deployment;
     }
 
