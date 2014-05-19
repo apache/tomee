@@ -116,7 +116,12 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     protected boolean isCallerInRole(final SecurityService securityService, final String roleName) {
         check(Call.isCallerInRole);
-        return securityService.isCallerInRole(roleName);
+        
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
+        final String roleLink = di.getSecurityRoleReference(roleName);
+        
+        return securityService.isCallerInRole(roleLink);
     }
 
     @Override
