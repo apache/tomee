@@ -161,7 +161,6 @@ public class Warmup {
 
         try { // see org.apache.openejb.Core
             Class.forName("org.apache.openejb.util.Logger", true, loader);
-            Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
         } catch (Throwable e) {
             // no-op
         }

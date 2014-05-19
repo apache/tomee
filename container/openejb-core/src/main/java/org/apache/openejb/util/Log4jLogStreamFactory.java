@@ -21,9 +21,11 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.openejb.cdi.logging.Log4jLoggerFactory;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.webbeans.logger.WebBeansLoggerFacade;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +66,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         // OpenJPA should use Log4j also
         System.setProperty("openjpa.Log", "log4j");
         System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
+        System.setProperty(WebBeansLoggerFacade.OPENWEBBEANS_LOGGING_FACTORY_PROP, Log4jLoggerFactory.class.getName());
 
         final boolean embedded = SystemInstance.get().getOptions().get("openejb.logging.embedded", false);
 

@@ -16,9 +16,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -29,44 +26,60 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>tomee-loader</artifactId>
-  <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Loader</name>
+  <artifactId>tomee-juli</artifactId>
+  <name>OpenEJB :: TomEE :: Juli</name>
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.tomcat</groupId>
-          <artifactId>tomcat-juli</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>tomcat-juli</artifactId>
+      <version>${tomcat.version}</version>
+      <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-juli</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>tomee-juli</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createSourcesJar>true</createSourcesJar>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.tomcat:tomcat-juli</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.tomcat:tomcat-juli</artifact>
+                  <excludes>
+                    <exclude>org/apache/juli/logging/LogFactory.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
-

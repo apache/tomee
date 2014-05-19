@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.log.ConsoleColorHandler;
 import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.logger.WebBeansLoggerFacade;
 
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
@@ -96,7 +97,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
 
-        System.setProperty("openwebbeans.logging.factory", "org.apache.webbeans.logger.JULLoggerFactory");
+        System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.webbeans.logger.JULLoggerFactory");
     }
 
     private static void setRootLogger(final OpenEJBLogManager value) {

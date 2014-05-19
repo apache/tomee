@@ -26,6 +26,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.tomee.TomEELogConfigurer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -88,6 +89,7 @@ public class OpenEJBListener implements LifecycleListener {
                 properties.setProperty("openejb.embedder.source", OpenEJBListener.class.getSimpleName());
                 TomcatEmbedder.embed(properties, StandardServer.class.getClassLoader());
                 listenerInstalled = true;
+                TomEELogConfigurer.configureLogs();
             } else if (logWebappNotFound) {
                 LOGGER.info("tomee webapp not found from the listener, will try from the webapp if exists");
                 logWebappNotFound = false;

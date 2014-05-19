@@ -23,6 +23,7 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.common.TomcatVersion;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -300,22 +301,17 @@ public class Paths implements PathsInterface {
         return jar;
     }
 
-    private File findJar(File dir, String namePrefix) {
+    private File findJar(final File dir, final String namePrefix) {
         if (dir == null) return null;
 
-        File openejbLoaderJar = null;
-        final File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                final String name = file.getName();
-                if ((name.startsWith(namePrefix + "-") && name.endsWith(".jar"))
-                        || name.equals(namePrefix)) {
-                    return file;
-                }
+        final File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return (name.startsWith(namePrefix + "-") && name.endsWith(".jar")) || name.equals(namePrefix);
             }
-        }
+        });
 
-        return openejbLoaderJar;
+        return files != null && files.length > 0? files[0] : null;
     }
 
     /**Verifies the following:
