@@ -20,6 +20,7 @@ package org.apache.openejb.util;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -88,8 +89,19 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
                 preprocessProperties(properties);
                 PropertyConfigurator.configure(properties);
             } else {
-                // install our logging.properties file into the conf dir
-                installLoggingPropertiesFile(loggingPropertiesFile);
+                final File log4jProperties = new File(confDir, "log4j.properties");
+                if (log4jProperties.exists()) {
+                    PropertyConfigurator.configure(log4jProperties.toURI().toURL());
+                } else {
+                    final File log4jXml = new File(confDir, "log4j.xml");
+                    if (log4jXml.exists()) {
+                        DOMConfigurator.configure(log4jXml.toURI().toURL());
+                    } else {
+
+                        // install our logging.properties file into the conf dir
+                        installLoggingPropertiesFile(loggingPropertiesFile);
+                    }
+                }
             }
         } else {
             // Embedded and no logging.properties so configure log4j directly
