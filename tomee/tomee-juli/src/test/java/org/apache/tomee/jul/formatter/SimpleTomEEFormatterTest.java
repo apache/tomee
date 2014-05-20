@@ -15,9 +15,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.util;
+package org.apache.tomee.jul.formatter;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.tomee.jul.formatter.SimpleTomEEFormatter;
 import org.junit.Test;
 
 import java.util.logging.Formatter;
@@ -43,9 +44,7 @@ public class SimpleTomEEFormatterTest {
             final Formatter formatter = new SimpleTomEEFormatter();
             final String actualFormatOutput = formatter.format(logRecordInput);
 
-            final StringBuilder expectedFormatOutputSb = new StringBuilder(level.getLocalizedName());
-            expectedFormatOutputSb.append(" - ").append(logMessage).append("\n");
-            final String expectedFormatOutput = expectedFormatOutputSb.toString();
+            final String expectedFormatOutput = level.getLocalizedName() + " - " + logMessage + "\n";
 
             assertEquals(expectedFormatOutput, actualFormatOutput);
         } finally {
@@ -71,11 +70,7 @@ public class SimpleTomEEFormatterTest {
             final Formatter formatter = new SimpleTomEEFormatter();
             final String actualFormatOutput = formatter.format(logRecordInput);
 
-            final StringBuilder expectedFormatOutputSb = new StringBuilder(level.getLocalizedName());
-            expectedFormatOutputSb.append(" - ").append(logMessage).append(lineSeparatorValue);
-            expectedFormatOutputSb.append(ExceptionUtils.getStackTrace(thrown));
-
-            final String expectedFormatOutput = expectedFormatOutputSb.toString();
+            final String expectedFormatOutput = level.getLocalizedName() + " - " + logMessage + lineSeparatorValue + ExceptionUtils.getStackTrace(thrown);
 
             assertEquals(expectedFormatOutput, actualFormatOutput);
         } finally {
