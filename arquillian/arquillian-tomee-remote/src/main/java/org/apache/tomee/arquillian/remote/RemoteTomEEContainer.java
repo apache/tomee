@@ -24,8 +24,6 @@ import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
-import org.apache.tomee.util.InstallationEnrichers;
-import org.apache.tomee.util.SimpleTomEEFormatter;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -101,7 +99,6 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             }
             container = new RemoteServer();
 
-            container.setAdditionalClasspath(InstallationEnrichers.addOneLineFormatter(tomeeHome));
             container.start(args(), "start", true);
             container.killOnExit();
 
@@ -221,7 +218,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             logging.put("handlers", "java.util.logging.ConsoleHandler");
             logging.put(".handlers", "java.util.logging.ConsoleHandler");
             logging.put("java.util.logging.ConsoleHandler.level", "INFO");
-            logging.put("java.util.logging.ConsoleHandler.formatter", SimpleTomEEFormatter.class.getName());
+            logging.put("java.util.logging.ConsoleHandler.formatter", "org.apache.tomee.jul.formatter.SimpleTomEEFormatter");
 
             IO.writeProperties(loggingProperties, logging);
         }
@@ -239,7 +236,10 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         final File conf = new File(configuration.getConf());
 
-        return !(conf.exists() && new File(conf, "logging.properties").exists());
+        return !(conf.exists()
+                    && (new File(conf, "logging.properties").exists()
+                        || new File(conf, "log4j.properties").exists()
+                        || new File(conf, "log4j.xml").exists()));
     }
 
     @Override

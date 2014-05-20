@@ -35,9 +35,7 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.tomee.util.InstallationEnrichers;
 import org.apache.tomee.util.QuickServerXmlParser;
-import org.apache.tomee.util.SimpleTomEEFormatter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -370,19 +368,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return list;
     }
 
-    private String activateSimpleLog() {
-        // adding SimpleTomEEFormatter to the classpath
-        final String cp = InstallationEnrichers.addOneLineFormatter(catalinaBase);
-
+    private void activateSimpleLog() {
         // replacing java.util.logging.SimpleFormatter by SimpleTomEEFormatter
         final File loggingProperties = new File(catalinaBase, "conf/logging.properties");
         if (loggingProperties.exists() && !new File(config, "conf/logging.properties").exists()) {
             try {
                 String content = IO.slurp(loggingProperties);
                 if (!content.contains("java.util.logging.ConsoleHandler.formatter")) {
-                    content += System.getProperty("line.separator") + "java.util.logging.ConsoleHandler.formatter = " + SimpleTomEEFormatter.class.getName();
+                    content += System.getProperty("line.separator") + "java.util.logging.ConsoleHandler.formatter = org.apache.tomee.jul.formatter.SimpleTomEEFormatter";
                 } else {
-                    content = content.replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
+                    content = content.replace(SimpleFormatter.class.getName(), "org.apache.tomee.jul.formatter.SimpleTomEEFormatter");
                 }
 
                 final FileWriter writer = new FileWriter(loggingProperties);
@@ -393,12 +388,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             } catch (final Exception e) {
                 getLog().error("Can't set SimpleTomEEFormatter", e);
-                return null;
             }
-            classpaths.add(cp);
-            return cp;
         }
-        return null;
     }
 
     private void removeDefaultWebapps(final boolean removeTomee, final Collection<String> providedWebapps) {
