@@ -108,6 +108,8 @@ public final class OpenEjbContainer extends EJBContainer {
     }
 
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
+    public static final String OPENEJB_EJBCONTAINER_CLOSE = "openejb.ejbcontainer.close";
+    public static final String OPENEJB_EJBCONTAINER_CLOSE_SINGLE = "single-jvm";
 
     private static OpenEjbContainer instance;
     private static Logger logger = null; // initialized lazily to get the logging config from properties
@@ -141,6 +143,17 @@ public final class OpenEjbContainer extends EJBContainer {
 
     @Override
     public void close() {
+        if (isSingleClose()) {
+            return;
+        }
+        doClose();
+    }
+
+    private static boolean isSingleClose() {
+        return OPENEJB_EJBCONTAINER_CLOSE_SINGLE.equals(SystemInstance.get().getProperty(OPENEJB_EJBCONTAINER_CLOSE, "by-invocation"));
+    }
+
+    private void doClose() {
         if (serviceManager != null) {
             serviceManager.stop();
         }
@@ -212,7 +225,9 @@ public final class OpenEjbContainer extends EJBContainer {
             }
 
             if (instance != null || OpenEJB.isInitialized()) {
-                logger().info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
+                if (!isSingleClose()) {
+                    logger().info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
+                }
                 return instance;
             }
 
@@ -321,7 +336,16 @@ public final class OpenEjbContainer extends EJBContainer {
                 }
 
 
-                return instance = new OpenEjbContainer(map, appContext);
+                final OpenEjbContainer openEjbContainer = instance = new OpenEjbContainer(map, appContext);
+                if (isSingleClose()) {
+                    Runtime.getRuntime().addShutdownHook(new Thread() {
+                        @Override
+                        public void run() {
+                            instance.doClose();
+                        }
+                    });
+                }
+                return openEjbContainer;
 
             } catch (final OpenEJBException e) {
 

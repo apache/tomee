@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.junit.jee.statement;
 
-import org.apache.openejb.OpenEJB;
 import org.junit.runners.model.Statement;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -34,7 +33,6 @@ public class ShutingDownStatement extends DecoratingStatement {
         final EJBContainer container = startingStatement.getContainer();
         if (container != null) {
             container.close();
-            OpenEJB.destroy();
         }
     }
 }
