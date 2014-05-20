@@ -472,7 +472,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 }
                 return false;
             }
-            if (org.startsWith("w3c.dom.")) {
+            if (org.startsWith("w3c.dom.") || org.startsWith("xml.sax.")) {
                 return isInJvm(name);
             }
             if (org.startsWith("eclipse.jdt.")) {
