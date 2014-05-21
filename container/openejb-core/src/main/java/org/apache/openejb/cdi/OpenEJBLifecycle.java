@@ -396,6 +396,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Comment out for commit OWB-502
         //ContextFactory.cleanUpContextFactory();
 
+        CdiAppContextsService.class.cast(contextsService).removeThreadLocals();
+
         WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
@@ -24,6 +25,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.ConversationContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
+import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.FailOverService;
 
 import javax.enterprise.context.Conversation;
@@ -61,6 +63,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * Manages the container lifecycle
      */
     protected WebBeansContext webBeansContext;
+    private final CdiAppContextsService contextsService;
 
     /**
      * Default constructor
@@ -71,9 +74,11 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
         this.webBeansContext = webBeansContext;
         if (webBeansContext != null) {
             this.failoverService = this.webBeansContext.getService(FailOverService.class);
+            this.contextsService = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
             this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
         } else {
             this.contextKey = "notused";
+            this.contextsService= null;
         }
     }
 
@@ -122,6 +127,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
             }
         } finally {
+            contextsService.removeThreadLocals();
             ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
         }
     }
