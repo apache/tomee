@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
       </plugin>
     </plugins>
   </build>
@@ -61,6 +61,14 @@
       <id>java.net</id>
       <url>http://download.java.net/maven/1</url>
     </repository>
+	<repository>
+	  <id>apache.snapshots</id>
+	  <name>Apache Snapshot Repository</name>
+	  <url>http://repository.apache.org/snapshots</url>
+	  <releases>
+	    <enabled>false</enabled>
+	  </releases>
+	</repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -106,7 +114,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

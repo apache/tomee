@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.6.1-SNAPSHOT</version>
+  <version>4.7.0-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -94,8 +94,8 @@
 
   <properties>
 
-    <openejb.version>4.6.1-SNAPSHOT</openejb.version>
-    <tomee.version>1.6.1-SNAPSHOT</tomee.version>
+    <openejb.version>4.7.0-SNAPSHOT</openejb.version>
+    <tomee.version>1.7.0-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0-nonfinal-1591689</openjpa.version>
     <org.apache.openwebbeans.version>1.2.4</org.apache.openwebbeans.version>
@@ -161,7 +161,6 @@
 
     <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.9.1</org.apache.activemq.version>
-    <quartz.version>2.2.1-SNAPSHOT</quartz.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -1519,9 +1518,9 @@
         <version>${tomcat.version}</version>
       </dependency>
       <dependency>
-        <groupId>quartz-openejb-shade</groupId>
-        <artifactId>quartz-openejb-shade</artifactId>
-        <version>${quartz.version}</version>
+		<groupId>org.apache.openejb.shade</groupId>
+		<artifactId>quartz-openejb-shade</artifactId>
+		<version>2.2.1-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>javax.transaction</groupId>

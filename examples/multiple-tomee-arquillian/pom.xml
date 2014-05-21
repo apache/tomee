@@ -27,7 +27,7 @@
   <name>OpenEJB :: Examples :: Multiple TomEE with Arquillian</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>1.6.1-SNAPSHOT</tomee.version>
+    <tomee.version>1.7.0-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.1-SNAPSHOT</version>
+      <version>4.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.6.1-SNAPSHOT</version>
+      <version>1.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
