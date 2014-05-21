@@ -103,7 +103,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.6.1-SNAPSHOT</version>
+      <version>4.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -145,7 +145,7 @@
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>4.6.1-SNAPSHOT</version>
+      <version>4.7.0-SNAPSHOT</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>

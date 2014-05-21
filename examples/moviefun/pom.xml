@@ -22,7 +22,7 @@
   <name>OpenEJB :: Web Examples :: Moviefun</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>1.6.1-SNAPSHOT</tomee.version>
+    <tomee.version>1.7.0-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
@@ -99,7 +99,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
@@ -132,7 +132,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -149,7 +149,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.1-SNAPSHOT</version>
+      <version>4.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -167,7 +167,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>1.6.1-SNAPSHOT</version>
+      <version>1.7.0-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
@@ -190,7 +190,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.6.1-SNAPSHOT</version>
+      <version>1.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

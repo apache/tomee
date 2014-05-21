@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -51,7 +51,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
         <configuration>
           <systemVariables>
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>

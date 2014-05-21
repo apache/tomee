@@ -25,7 +25,7 @@
   <name>OpenEJB :: Examples :: Quartz</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<version.openejb>4.6.1-SNAPSHOT</version.openejb>
+	<version.openejb>4.7.0-SNAPSHOT</version.openejb>
   </properties>
   <modules>
     <module>quartz-ra</module>
@@ -82,7 +82,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-5</version>
+        <version>6.0-6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

@@ -22,7 +22,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-common</artifactId>
   <packaging>jar</packaging>
@@ -202,8 +202,8 @@
           <groupId>wsdl4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>openejb-shade-quartz</artifactId>
-          <groupId>org.apache.openejb.shade</groupId>
+		  <groupId>org.apache.openejb.shade</groupId>
+		  <artifactId>quartz-openejb-shade</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>openwebbeans-impl</artifactId>

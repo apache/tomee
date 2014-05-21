@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: Datasource Definition</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.1-SNAPSHOT</openejb.version>
+    <openejb.version>4.7.0-SNAPSHOT</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-5</version>
+      <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- for the plugin to endorse the build -->
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.1-SNAPSHOT</version>
+      <version>4.7.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
