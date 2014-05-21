@@ -18,11 +18,11 @@
 package org.apache.openejb.core.timer;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.quartz.SchedulerConfigException;
+import org.apache.openejb.quartz.spi.ThreadPool;
 import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.quartz.SchedulerConfigException;
-import org.apache.openejb.quartz.spi.ThreadPool;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
@@ -49,7 +49,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     /**
      * Mock support for property: org.quartz.threadPool.threadCount
      */
-    private int threadCount = 3;
+    private int threadCount = Integer.parseInt(SystemInstance.get().getProperty(OPENEJB_TIMER_POOL_SIZE, "3"));
 
     /**
      * Mock support for property: org.quartz.threadPool.threadPriority
@@ -58,28 +58,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     private final Object threadAvailableLock = new Object();
 
-    private final boolean threadPoolExecutorUsed;
-
-    public DefaultTimerThreadPoolAdapter() {
-        final TimerExecutor timerExecutor = SystemInstance.get().getComponent(TimerExecutor.class);
-
-        if (timerExecutor != null) {
-            this.executor = timerExecutor.executor;
-        } else {
-            this.executor = new ExecutorBuilder()
-                    .size(3)
-                    .prefix("EjbTimerPool")
-                    .build(SystemInstance.get().getOptions());
-
-            SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
-        }
-
-        this.threadPoolExecutorUsed = this.executor instanceof ThreadPoolExecutor;
-
-        if (!this.threadPoolExecutorUsed) {
-            logger.warning("Unrecognized ThreadPool implementation [" + this.executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
-        }
-    }
+    private boolean threadPoolExecutorUsed;
 
     // This is to prevent other parts of the code becoming dependent
     // on the executor produced for EJB Timers
@@ -145,7 +124,25 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     }
 
     @Override
-    public void initialize() throws SchedulerConfigException {
+    public synchronized void initialize() throws SchedulerConfigException {
+        final TimerExecutor timerExecutor = SystemInstance.get().getComponent(TimerExecutor.class);
+
+        if (timerExecutor != null) {
+            this.executor = timerExecutor.executor;
+        } else {
+            this.executor = new ExecutorBuilder()
+                    .size(threadCount)
+                    .prefix("EjbTimerPool")
+                    .build(SystemInstance.get().getOptions());
+
+            SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
+        }
+
+        this.threadPoolExecutorUsed = this.executor instanceof ThreadPoolExecutor;
+
+        if (!this.threadPoolExecutorUsed) {
+            logger.warning("Unrecognized ThreadPool implementation [" + this.executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
+        }
     }
 
     @Override
