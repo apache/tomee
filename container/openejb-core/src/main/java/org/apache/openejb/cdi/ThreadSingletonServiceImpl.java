@@ -210,7 +210,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static WebBeansContext enter(final WebBeansContext newOWBContext) {
         final WebBeansContext oldContext = contexts.get();
-        contexts.set(newOWBContext);
+        if (newOWBContext != null) {
+            contexts.set(newOWBContext);
+        } else {
+            contexts.remove();
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Enter:'" + newOWBContext + "'");

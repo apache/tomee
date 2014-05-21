@@ -47,5 +47,8 @@ public final class ScopeHelper {
         contextsService.endContext(SessionScoped.class, session);
         contextsService.endContext(RequestScoped.class, null);
         contextsService.endContext(ConversationScoped.class, null);
+        if (CdiAppContextsService.class.isInstance(contextsService)) {
+            CdiAppContextsService.class.cast(contextsService).removeThreadLocals();
+        }
     }
 }

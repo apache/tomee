@@ -285,8 +285,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             elStore.destroyELContextStore();
         }
 
-        //Clear thread locals
-        removeThreadLocals();
+        //Clear thread locals - only for request to let user do with deltaspike start(session, request)restart(request)...stop()
+        requestContext.remove();
 
         RequestScopedBeanInterceptorHandler.removeThreadLocals();
     }
