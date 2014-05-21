@@ -153,7 +153,11 @@ public final class OpenEjbContainer extends EJBContainer {
         return OPENEJB_EJBCONTAINER_CLOSE_SINGLE.equals(SystemInstance.get().getProperty(OPENEJB_EJBCONTAINER_CLOSE, "by-invocation"));
     }
 
-    private void doClose() {
+    private synchronized void doClose() {
+        if (instance == null) {
+            return;
+        }
+
         if (serviceManager != null) {
             serviceManager.stop();
         }
@@ -341,7 +345,9 @@ public final class OpenEjbContainer extends EJBContainer {
                     Runtime.getRuntime().addShutdownHook(new Thread() {
                         @Override
                         public void run() {
-                            instance.doClose();
+                            if (instance != null) {
+                                instance.doClose();
+                            }
                         }
                     });
                 }
