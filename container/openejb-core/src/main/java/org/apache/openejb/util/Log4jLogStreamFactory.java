@@ -17,9 +17,7 @@
 
 package org.apache.openejb.util;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.openejb.cdi.logging.Log4jLoggerFactory;
 import org.apache.openejb.loader.FileUtils;
@@ -101,8 +99,17 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
                         DOMConfigurator.configure(log4jXml.toURI().toURL());
                     } else {
 
-                        // install our logging.properties file into the conf dir
-                        installLoggingPropertiesFile(loggingPropertiesFile);
+                        // needs mvn:org.apache.logging.log4j:log4j-1.2-api:2.0-rc1,
+                        // typically container will contain:
+                        //
+                        // mvn:org.apache.logging.log4j:log4j-api:2.0-rc1
+                        // mvn:org.apache.logging.log4j:log4j-core:2.0-rc1
+                        // mvn:org.apache.logging.log4j:log4j-1.2-api:2.0-rc1
+                        final File log4j2Xml = new File(confDir, "log4j2.xml");
+                        if (!log4j2Xml.exists()) {
+                            // install our logging.properties file into the conf dir
+                            installLoggingPropertiesFile(loggingPropertiesFile);
+                        } // else ignore, DOMConfigurator is just a mock doing nothing so don't call it and don't install defaults
                     }
                 }
             }
@@ -168,9 +175,13 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
     private org.apache.log4j.Logger getFallabckLogger() {
         final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("OpenEJB.logging");
 
+        /* will break log4j support and not that needed since we'll get the same by default just not with a nice layout
+           which is good when something is wrong
+
         final SimpleLayout simpleLayout = new SimpleLayout();
         final ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
         logger.addAppender(newAppender);
+        */
         return logger;
     }
 

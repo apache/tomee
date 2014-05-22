@@ -110,20 +110,22 @@ public class TomcatLoader implements Loader {
     private static final List<ServerService> services = new ArrayList<ServerService> ();
 
     /**
-     *  {@inheritDoc}
+     * this method will be split in two to be able to use SystemInstance in between both invocations
+     * ie use configuration before effective boot
      */
+    @Deprecated
     public void init(Properties properties) throws Exception {
+        initSystemInstance(properties);
+        initialize(properties);
+    }
 
+    public void initSystemInstance(final Properties properties) throws Exception {
         // Enable System EJBs like the MEJB and DeployerEJB
         initDefaults(properties);
 
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
         SystemInstance.init(properties);
-
-        Warmup.warmup(); // better than static (we are sure we don't hit it too eagerly) and doesn't cost more since uses static block
-
-        initialize(properties);
     }
 
     public void initDefaults(Properties properties) {
@@ -136,6 +138,8 @@ public class TomcatLoader implements Loader {
     }
 
     public void initialize(Properties properties) throws Exception {
+        Warmup.warmup(); // better than static (we are sure we don't hit it too eagerly) and doesn't cost more since uses static block
+
         //Install Log
         OptionsLog.install();
 
