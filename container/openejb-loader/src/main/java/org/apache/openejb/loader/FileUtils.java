@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class FileUtils {
 
         try {
             home = home.getCanonicalFile();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // this shouldn't happen, but let's get absolute file
             home = home.getAbsoluteFile();
         }
@@ -65,8 +65,9 @@ public class FileUtils {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof FileUtils))
+        if (!(obj instanceof FileUtils)) {
             return false;
+        }
         final FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
     }
@@ -77,9 +78,10 @@ public class FileUtils {
 
         if (!dir.exists() && create) {
             try {
-                if (!dir.mkdirs())
+                if (!dir.mkdirs()) {
                     throw new IOException("Cannot create the directory " + dir.getPath());
-            } catch (SecurityException e) {
+                }
+            } catch (final SecurityException e) {
                 throw new IOException(
                         "Permission denied: Cannot create the directory " + dir.getPath() + " : " + e.getMessage());
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,11 +53,11 @@ public class TomcatClassPath extends BasicURLClassPath {
         this.commonLoader = classLoader;
         try {
             addRepositoryMethod = getAddRepositoryMethod();
-        } catch (Exception tomcat4Exception) {
+        } catch (final Exception tomcat4Exception) {
 
             try {
                 addURLMethod = getAddURLMethod();
-            } catch (Exception tomcat5Exception) {
+            } catch (final Exception tomcat5Exception) {
                 throw new LoaderRuntimeException("Failed accessing classloader for Tomcat 5 or 6", tomcat5Exception);
             }
         }
@@ -65,8 +65,9 @@ public class TomcatClassPath extends BasicURLClassPath {
         final ClassLoader serverLoader = getServerLoader(getContextClassLoader());
         if (serverLoader != null && serverLoader != commonLoader) {
             this.serverLoader = serverLoader;
-        } else
+        } else {
             this.serverLoader = null;
+        }
 
     }
 
@@ -74,7 +75,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         ClassLoader bootstrapCL;
         try {
             bootstrapCL = loader.loadClass("org.apache.catalina.startup.Bootstrap").getClassLoader();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             bootstrapCL = ClassLoader.getSystemClassLoader();
         }
 
@@ -94,7 +95,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     private static ClassLoader getServerLoader(final ClassLoader loader) {
         try {
             return loader.loadClass("org.apache.catalina.Container").getClassLoader();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }
@@ -154,7 +155,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         try {
             final URL url = findResource("META-INF/org.apache.openejb.tomcat/ServerClassLoader", jar);
             return url != null;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
@@ -169,7 +170,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
                     final Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("getURLs", URL.class);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new LoaderRuntimeException(e);
                 }
 
@@ -185,15 +186,16 @@ public class TomcatClassPath extends BasicURLClassPath {
             //noinspection NullArgumentToVariableArgMethod
             final URL[] urls = (URL[]) getURLsMethod.invoke(cp, (Object) null);
 
-            if (urls.length < 1)
+            if (urls.length < 1) {
                 return;
+            }
 
             final StringBuilder path = new StringBuilder(urls.length * 32);
 
             File s;
             try {
                 s = new File(URLDecoder.decode(urls[0].getFile(), "UTF-8"));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 //noinspection deprecation
                 s = new File(URLDecoder.decode(urls[0].getFile()));
             }
@@ -205,7 +207,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
                 try {
                     s = new File(URLDecoder.decode(urls[i].getFile(), "UTF-8"));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //noinspection deprecation
                     s = new File(URLDecoder.decode(urls[i].getFile()));
                 }
@@ -213,7 +215,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                 path.append(s.getPath());
             }
             System.setProperty("java.class.path", path.toString());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "rebuild", e);
         }
 
@@ -228,7 +230,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     final Class clazz = URLClassLoader.class;
                     method = clazz.getDeclaredMethod("addURL", URL.class);
                     method.setAccessible(true);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     e2.printStackTrace();
                 }
                 return method;
@@ -246,7 +248,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     method = clazz.getDeclaredMethod("addRepository", String.class);
                     method.setAccessible(true);
                     return method;
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     throw (IllegalStateException) new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader").initCause(e2);
                 }
             }
@@ -272,7 +274,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             }
             try {
                 currentUrl = new URL("jar", "", -1, currentUrl.toString() + "!/");
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "findResource", e);
             }
 
@@ -289,7 +291,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     try {
                         final JarURLConnection juc = (JarURLConnection) new URL("jar", "", jarURL.toExternalForm() + "!/").openConnection();
                         jarFile = juc.getJarFile();
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         // Don't look for this jar file again
                         search[i] = null;
                         throw e;
@@ -343,7 +345,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     File file2;
                     try {
                         file2 = new File(URLDecoder.decode(filename, "UTF-8"));
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         //noinspection deprecation
                         file2 = new File(URLDecoder.decode(filename));
                     }
@@ -356,7 +358,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
                     try {
                         urlConnection.getInputStream().close();
-                    } catch (SecurityException e) {
+                    } catch (final SecurityException e) {
                         return null;
                     }
                     // HTTP can return a stream on a non-existent file
@@ -370,9 +372,9 @@ public class TomcatClassPath extends BasicURLClassPath {
                         return resourceURL;
                     }
                 }
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // Keep iterating through the URL list
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "findResource", e);
             }
         }

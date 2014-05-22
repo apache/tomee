@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.loader;
 
@@ -26,11 +26,11 @@ import java.util.zip.ZipInputStream;
  * @version $Rev$ $Date$
  */
 public class Zips {
-    public static void unzip(File zipFile, File destination) throws IOException {
+    public static void unzip(final File zipFile, final File destination) throws IOException {
         unzip(zipFile, destination, false);
     }
 
-    public static void unzip(File zipFile, File destination, boolean noparent) throws IOException {
+    public static void unzip(final File zipFile, final File destination, final boolean noparent) throws IOException {
 
         Files.dir(destination);
         Files.writable(destination);
@@ -46,7 +46,7 @@ public class Zips {
         }
     }
 
-    public static void unzip(InputStream read, File destination, boolean noparent) throws IOException {
+    public static void unzip(final InputStream read, final File destination, final boolean noparent) throws IOException {
         try {
             // Open the ZIP file
             final ZipInputStream in = new ZipInputStream(read);
@@ -55,7 +55,9 @@ public class Zips {
 
             while ((entry = in.getNextEntry()) != null) {
                 String path = entry.getName();
-                if (noparent) path = path.replaceFirst("^[^/]+/", "");
+                if (noparent) {
+                    path = path.replaceFirst("^[^/]+/", "");
+                }
                 final File file = new File(destination, path);
 
                 if (entry.isDirectory()) {

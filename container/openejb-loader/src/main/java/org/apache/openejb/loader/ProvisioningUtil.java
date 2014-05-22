@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.loader;
 
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class ProvisioningUtil {
+public final class ProvisioningUtil {
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
     static {
         FACTORY.setNamespaceAware(false);
@@ -123,7 +123,7 @@ public class ProvisioningUtil {
             String path = null;
             try {
                 path = copyTryingProxies(new URI(rawLocation), file);
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 // ignored
             }
 
@@ -145,7 +145,7 @@ public class ProvisioningUtil {
             try {
                 final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
                 return realLocation(repo1Url);
-            } catch (MalformedURLException e1) {
+            } catch (final MalformedURLException e1) {
                 Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
             }
         } else { // try url
@@ -342,7 +342,7 @@ public class ProvisioningUtil {
         if (!tmp.exists()) {
             try {
                 Files.mkdirs(tmp);
-            } catch (Files.FileRuntimeException fre) {
+            } catch (final Files.FileRuntimeException fre) {
                 // ignored
             }
         }
@@ -399,7 +399,7 @@ public class ProvisioningUtil {
         }
 
         @Override
-        public void characters(final char ch[], final int start, final int length) throws SAXException {
+        public void characters(final char[] ch, final int start, final int length) throws SAXException {
             if (readBn && buildNumber != null) {
                 buildNumber.append(new String(ch, start, length));
             } else if (readTs && timestamp != null) {

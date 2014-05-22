@@ -443,6 +443,7 @@
       <id>style</id>
       <modules>
         <module>container/openejb-core</module>
+        <module>container/openejb-loader</module>
       </modules>
       <properties>
         <style.config.dir>${user.dir}/src/main/style</style.config.dir>

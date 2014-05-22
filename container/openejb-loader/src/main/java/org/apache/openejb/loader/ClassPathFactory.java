@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.openejb.loader;
 
 public class ClassPathFactory {
-    public static ClassPath createClassPath(String name) {
+    public static ClassPath createClassPath(final String name) {
         if (name.equalsIgnoreCase("tomcat")) {
             return new TomcatClassPath();
         } else if (name.equalsIgnoreCase("tomcat-common")) {

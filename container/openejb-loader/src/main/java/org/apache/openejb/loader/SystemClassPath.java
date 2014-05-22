@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,7 +48,7 @@ public class SystemClassPath extends BasicURLClassPath {
     public ClassLoader getClassLoader() {
         try {
             return getSystemLoader();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LoaderRuntimeException(e);
         }
     }
@@ -66,8 +66,9 @@ public class SystemClassPath extends BasicURLClassPath {
         final Method getURLsMethod = getGetURLsMethod();
         final URL[] urls = (URL[]) getURLsMethod.invoke(cp);
 
-        if (urls.length < 1)
+        if (urls.length < 1) {
             return;
+        }
 
         final StringBuilder path = new StringBuilder(urls.length * 32);
 
@@ -83,7 +84,7 @@ public class SystemClassPath extends BasicURLClassPath {
         }
         try {
             System.setProperty("java.class.path", path.toString());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
     }
@@ -99,11 +100,11 @@ public class SystemClassPath extends BasicURLClassPath {
 
                     try {
                         return clazz.getDeclaredMethod("getURLs", URL.class);
-                    } catch (NoSuchMethodException e) {
+                    } catch (final NoSuchMethodException e) {
                         return clazz.getDeclaredMethod("getURLs");
                     }
 
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new LoaderRuntimeException(e);
                 }
 
