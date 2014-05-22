@@ -41,7 +41,7 @@
   </description>
   <url>http://openejb.apache.org/</url>
   <inceptionYear>1999</inceptionYear>
-  
+
   <prerequisites>
     <maven>3.0.5</maven>
   </prerequisites>
@@ -283,13 +283,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.12.1</version>
+          <version>2.12.1</version>
         </plugin>
-		<plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-		  <artifactId>maven-release-plugin</artifactId>
-		  <version>2.5</version>
-		</plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -442,32 +442,61 @@
     <profile>
       <id>style</id>
       <modules>
+        <module>container/openejb-core</module>
       </modules>
+      <properties>
+        <style.config.dir>${user.dir}/src/main/style</style.config.dir>
+      </properties>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.3</version>
+          </plugin>
+        </plugins>
+      </reporting>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <configuration>
-              <sourceDirectory>
-                ${project.build.directory}/../container/openejb-core/src/main/java/org/apache/openejb/config
-              </sourceDirectory>
-              <configLocation>checkstyle.xml</configLocation>
-              <consoleOutput>true</consoleOutput>
               <enableRulesSummary>false</enableRulesSummary>
-              <failsOnError>true</failsOnError>
+              <configLocation>${style.config.dir}/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <headerLocation>${style.config.dir}/java.header</headerLocation>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <configuration>
+              <linkXRef>true</linkXRef>
+              <sourceEncoding>utf-8</sourceEncoding>
+              <targetJdk>1.6</targetJdk>
+              <printFailingErrors>true</printFailingErrors>
+              <rulesets>
+                <ruleset>${style.config.dir}/pmd/openejb-empty.xml</ruleset>
+                <ruleset>rulesets/java/finalizers.xml</ruleset>
+                <ruleset>rulesets/java/imports.xml</ruleset>
+                <ruleset>rulesets/java/unusedcode.xml</ruleset>
+                <ruleset>${style.config.dir}/pmd/openejb-controversial.xml</ruleset>
+                <ruleset>${style.config.dir}/pmd/openejb-basic.xml</ruleset>
+                <ruleset>${style.config.dir}/pmd/openejb-optimizations.xml</ruleset>
+              </rulesets>
             </configuration>
           </plugin>
         </plugins>
       </build>
       <repositories>
-		<repository>
-		  <id>patch-openjpa</id>
-		  <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-		  <releases>
-			<enabled>true</enabled>
-		  </releases>
-		</repository>
+        <repository>
+          <id>patch-openjpa</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
         <repository>
           <releases>
             <enabled>false</enabled>
@@ -477,13 +506,13 @@
         </repository>
       </repositories>
       <pluginRepositories>
-		<pluginRepository>
-		  <id>patch-openjpa</id>
-		  <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-		  <releases>
-			<enabled>true</enabled>
-		  </releases>
-		</pluginRepository>
+        <pluginRepository>
+          <id>patch-openjpa</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </pluginRepository>
         <pluginRepository>
           <releases>
             <enabled>false</enabled>
@@ -581,7 +610,7 @@
     <repository>
       <id>patch-openjpa</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-	  <releases>
+      <releases>
         <enabled>true</enabled>
       </releases>
     </repository>
@@ -652,10 +681,10 @@
     <!--</repository>-->
   </repositories>
   <pluginRepositories>
-	<pluginRepository>
+    <pluginRepository>
       <id>patch-openjpa-plugin</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
-	  <releases>
+      <releases>
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
@@ -1792,7 +1821,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
-		<artifactId>commons-compress</artifactId>        
+        <artifactId>commons-compress</artifactId>
         <version>1.8</version>
       </dependency>
       <dependency>
