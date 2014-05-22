@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.loader;
 
@@ -106,18 +106,22 @@ public class Options {
 
     @SuppressWarnings("unchecked")
     public <T> T get(final String property, final T defaultValue) {
-        if (defaultValue == null) throw new NullPointerException("defaultValue");
+        if (defaultValue == null) {
+            throw new NullPointerException("defaultValue");
+        }
 
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) {
+            return parent.get(property, defaultValue);
+        }
 
         try {
             final Class<?> type = defaultValue.getClass();
             final Constructor<?> constructor = type.getConstructor(String.class);
             final T t = (T) constructor.newInstance(value);
             return log(property, t);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             warn(property, value, e);
             return parent.get(property, defaultValue);
@@ -127,11 +131,13 @@ public class Options {
     public int get(final String property, final int defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) {
+            return parent.get(property, defaultValue);
+        }
 
         try {
             return log(property, Integer.parseInt(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -140,11 +146,13 @@ public class Options {
     public long get(final String property, final long defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) {
+            return parent.get(property, defaultValue);
+        }
 
         try {
             return log(property, Long.parseLong(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -153,11 +161,13 @@ public class Options {
     public boolean get(final String property, final boolean defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) {
+            return parent.get(property, defaultValue);
+        }
 
         try {
             return log(property, Boolean.parseBoolean(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -166,12 +176,14 @@ public class Options {
     public Class<?> get(final String property, final Class<?> defaultValue) {
         final String className = properties.getProperty(property);
 
-        if (className == null) return parent.get(property, defaultValue);
+        if (className == null) {
+            return parent.get(property, defaultValue);
+        }
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             return log(property, classLoader.loadClass(className));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLogger().warning("Could not load " + property + " : " + className, e);
             return parent.get(property, defaultValue);
         }
@@ -180,15 +192,19 @@ public class Options {
     public <T extends Enum<T>> T get(final String property, final T defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) {
+            return parent.get(property, defaultValue);
+        }
 
-        if (defaultValue == null) throw new IllegalArgumentException("Must supply a default for property " + property);
+        if (defaultValue == null) {
+            throw new IllegalArgumentException("Must supply a default for property " + property);
+        }
 
         final Class<T> enumType = (Class<T>) defaultValue.getClass();
 
         try {
             return log(property, valueOf(enumType, value.toUpperCase()));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             warn(property, value);
             return parent.get(property, defaultValue);
         }
@@ -204,7 +220,7 @@ public class Options {
         try {
             final T t = defaultValue.iterator().next();
             enumType = (Class<T>) t.getClass();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException("Must supply a default for property " + property);
         }
 
@@ -218,7 +234,9 @@ public class Options {
     protected <T extends Enum<T>> Set<T> getAll(final String property, final Set<T> defaultValue, final Class<T> enumType) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) return parent.getAll(property, defaultValue, enumType);
+        if (value == null || value.equals("")) {
+            return parent.getAll(property, defaultValue, enumType);
+        }
 
         // Shorthand for specifying ALL or NONE for any option
         // that allows for multiple values of the enum
@@ -239,7 +257,7 @@ public class Options {
                 set.add(valueOf(enumType, s.toUpperCase()));
             }
             return logAll(property, set);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             warn(property, value);
             return parent.getAll(property, defaultValue, enumType);
         }
@@ -263,7 +281,9 @@ public class Options {
         final T value = map.get(name.toUpperCase());
 
         // Call Enum.valueOf for the clean exception
-        if (value == null || value.equals("")) Enum.valueOf(enumType, name);
+        if (value == null || value.equals("")) {
+            Enum.valueOf(enumType, name);
+        }
 
         return value;
     }
@@ -277,7 +297,9 @@ public class Options {
     }
 
     private <V> V log(final String property, final V value) {
-        if (!getLogger().isInfoEnabled()) return value;
+        if (!getLogger().isInfoEnabled()) {
+            return value;
+        }
 
         if (value instanceof Class) {
             final Class clazz = (Class) value;
@@ -289,7 +311,9 @@ public class Options {
     }
 
     public <T extends Enum<T>> Set<T> logAll(final String property, final Set<T> value) {
-        if (!getLogger().isInfoEnabled()) return value;
+        if (!getLogger().isInfoEnabled()) {
+            return value;
+        }
 
         getLogger().info("Using \'" + property + "=" + join(", ", lowercase(value)) + "\'");
 
@@ -329,11 +353,13 @@ public class Options {
         for (final Object obj : collection) {
             sb.append(obj).append(delimiter);
         }
-        if (collection.length > 0) sb.delete(sb.length() - delimiter.length(), sb.length());
+        if (collection.length > 0) {
+            sb.delete(sb.length() - delimiter.length(), sb.length());
+        }
         return sb.toString();
     }
 
-    public final static class NullOptions extends Options {
+    public static final class NullOptions extends Options {
 
         private Log logger;
 
@@ -441,7 +467,7 @@ public class Options {
      */
     public static class TomEEPropertyAdapter {
         public static final int OPENEJB_PREFIX_LENGHT = "openejb.".length();
-        private Properties delegate;
+        private final Properties delegate;
 
         public TomEEPropertyAdapter(final Properties properties) {
             this.delegate = properties;

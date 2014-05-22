@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ public abstract class BasicURLClassPath implements ClassPath {
                     cp = getURLClassPath(loader);
                     final Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("addURL", URL.class);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
 
@@ -63,7 +63,9 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     protected synchronized void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
-        if (dir == null || !dir.exists()) return;
+        if (dir == null || !dir.exists()) {
+            return;
+        }
 
         final String[] jarNames = dir.list(new java.io.FilenameFilter() {
             @Override
@@ -80,7 +82,7 @@ public abstract class BasicURLClassPath implements ClassPath {
             final String name = isWindows ? jarNames[j].toLowerCase() : jarNames[j];
             try {
                 jars[j] = new URL(new File(dir, name).getCanonicalFile().getAbsoluteFile().toURI().toURL().toExternalForm());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 jars[j] = new URL(new File(dir, name).getAbsoluteFile().toURI().toURL().toExternalForm());
             }
         }
@@ -105,7 +107,7 @@ public abstract class BasicURLClassPath implements ClassPath {
                     try {
                         ucp = URLClassLoader.class.getDeclaredField("ucp");
                         ucp.setAccessible(true);
-                    } catch (Exception e2) {
+                    } catch (final Exception e2) {
                         e2.printStackTrace();
                     }
                     return ucp;

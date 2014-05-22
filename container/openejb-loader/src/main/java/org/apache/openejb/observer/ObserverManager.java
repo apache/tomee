@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.observer;
 
@@ -55,8 +55,10 @@ public class ObserverManager {
     private final Set<Observer> observers = new LinkedHashSet<Observer>();
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
 
-    public boolean addObserver(Object observer) {
-        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+    public boolean addObserver(final Object observer) {
+        if (observer == null) {
+            throw new IllegalArgumentException("observer cannot be null");
+        }
 
         try {
             if (observers.add(new Observer(observer))) {
@@ -66,7 +68,7 @@ public class ObserverManager {
             } else {
                 return false;
             }
-        } catch (NotAnObserverException naoe) {
+        } catch (final NotAnObserverException naoe) {
             return false;
         }
     }
@@ -83,12 +85,12 @@ public class ObserverManager {
             } else {
                 return false;
             }
-        } catch (NotAnObserverException naoe) {
+        } catch (final NotAnObserverException naoe) {
             return false;
         }
     }
 
-    public <E> E fireEvent(E event) {
+    public <E> E fireEvent(final E event) {
         if (event == null) {
             throw new IllegalArgumentException("event cannot be null");
         }
@@ -100,7 +102,7 @@ public class ObserverManager {
         }
     }
 
-    private <E> E doFire(E event) {
+    private <E> E doFire(final E event) {
         final Class<?> type = event.getClass();
 
         final Invocation invocation = getInvocation(type);
@@ -110,7 +112,7 @@ public class ObserverManager {
         return event;
     }
 
-    private Invocation getInvocation(Class<?> type) {
+    private Invocation getInvocation(final Class<?> type) {
         {
             final Invocation invocation = methods.get(type);
             if (invocation != null) {
@@ -319,11 +321,15 @@ public class ObserverManager {
         }
 
         private Invocation get(final Map<Class, Invocation> map, final Class eventType) {
-            if (eventType == null) return IGNORE;
+            if (eventType == null) {
+                return IGNORE;
+            }
 
             final Invocation method = map.get(eventType);
 
-            if (method != null) return method;
+            if (method != null) {
+                return method;
+            }
 
             return get(map, eventType.getSuperclass());
         }
@@ -368,7 +374,7 @@ public class ObserverManager {
 
     private static final Invocation IGNORE = new Invocation() {
         @Override
-        public void invoke(Object event) {
+        public void invoke(final Object event) {
         }
 
         @Override
@@ -382,7 +388,7 @@ public class ObserverManager {
         private final Method method;
         private final Object observer;
 
-        public MethodInvocation(Method method, Object observer) {
+        public MethodInvocation(final Method method, final Object observer) {
             this.method = method;
             this.observer = observer;
         }
@@ -391,8 +397,10 @@ public class ObserverManager {
         public void invoke(final Object event) {
             try {
                 method.invoke(observer, event);
-            } catch (InvocationTargetException e) {
-                if (!seen.get().add(this)) return;
+            } catch (final InvocationTargetException e) {
+                if (!seen.get().add(this)) {
+                    return;
+                }
 
                 final Throwable t = e.getTargetException() == null ? e : e.getTargetException();
 
@@ -405,7 +413,7 @@ public class ObserverManager {
                 } else {
                     logger().log(Level.SEVERE, "error invoking " + observer, t);
                 }
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -426,9 +434,9 @@ public class ObserverManager {
         return value;
     }
 
-    private class AfterInvocation extends MethodInvocation {
+    private final class AfterInvocation extends MethodInvocation {
 
-        private AfterInvocation(Method method, Object observer) {
+        private AfterInvocation(final Method method, final Object observer) {
             super(method, observer);
         }
 
@@ -447,9 +455,9 @@ public class ObserverManager {
         }
     }
 
-    private class BeforeInvocation extends MethodInvocation {
+    private final class BeforeInvocation extends MethodInvocation {
 
-        private BeforeInvocation(Method method, Object observer) {
+        private BeforeInvocation(final Method method, final Object observer) {
             super(method, observer);
         }
 
@@ -468,20 +476,20 @@ public class ObserverManager {
         }
     }
 
-    private static class BeforeAndAfterInvocationSet implements Invocation {
+    private static final class BeforeAndAfterInvocationSet implements Invocation {
 
         private final Invocation before;
         private final Invocation invoke;
         private final Invocation after;
 
-        private BeforeAndAfterInvocationSet(Invocation before, Invocation invoke, Invocation after) {
+        private BeforeAndAfterInvocationSet(final Invocation before, final Invocation invoke, final Invocation after) {
             this.before = before;
             this.invoke = invoke;
             this.after = after;
         }
 
         @Override
-        public void invoke(Object event) {
+        public void invoke(final Object event) {
             before.invoke(event);
             invoke.invoke(event);
             after.invoke(event);
@@ -492,7 +500,7 @@ public class ObserverManager {
 
         private final List<Invocation> invocations = new LinkedList<Invocation>();
 
-        public boolean add(Invocation invocation) {
+        public boolean add(final Invocation invocation) {
             return invocations.add(invocation);
         }
 
@@ -501,15 +509,15 @@ public class ObserverManager {
         }
 
         @Override
-        public void invoke(Object event) {
-            for (Invocation invocation : invocations) {
+        public void invoke(final Object event) {
+            for (final Invocation invocation : invocations) {
                 invocation.invoke(event);
             }
         }
     }
 
     public static class NotAnObserverException extends IllegalArgumentException {
-        public NotAnObserverException(String s) {
+        public NotAnObserverException(final String s) {
             super(s);
         }
     }

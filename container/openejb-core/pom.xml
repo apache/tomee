@@ -224,16 +224,6 @@
     </openejb.osgi.export>
   </properties>
   
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </reporting>
-  
   <build>
     <resources>
       <resource>
@@ -248,50 +238,6 @@
       </testResource>
     </testResources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <enableRulesSummary>false</enableRulesSummary>
-          <configLocation>src/main/config/checkstyle.xml</configLocation>
-          <consoleOutput>true</consoleOutput>
-          <headerLocation>${project.basedir}/src/main/config/java.header</headerLocation>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <linkXRef>true</linkXRef>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <targetJdk>1.6</targetJdk>
-          <rulesets>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-empty.xml</ruleset>
-            <ruleset>rulesets/java/finalizers.xml</ruleset>
-            <ruleset>rulesets/java/imports.xml</ruleset>
-            <ruleset>rulesets/java/unusedcode.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-controversial.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-basic.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-optimizations.xml</ruleset>
-          </rulesets>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

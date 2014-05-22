@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.loader;
 
@@ -87,55 +87,75 @@ public class Files {
 
     public static List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<File>();
-        if (filter.accept(dir)) accepted.add(dir);
+        if (filter.accept(dir)) {
+            accepted.add(dir);
+        }
 
         final File[] files = dir.listFiles();
-        if (files != null) for (final File file : files) {
-            accepted.addAll(collect(file, filter));
+        if (files != null) {
+            for (final File file : files) {
+                accepted.addAll(collect(file, filter));
+            }
         }
 
         return accepted;
     }
 
     public static File exists(final File file, final String s) {
-        if (!file.exists()) throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) {
+            throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File exists(final File file) {
-        if (!file.exists()) throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) {
+            throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File dir(final File file) {
-        if (!file.isDirectory()) throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
+        if (!file.isDirectory()) {
+            throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File touch(final File file) throws IOException {
-        if (!file.createNewFile()) throw new FileRuntimeException("Cannot create file: " + file.getAbsolutePath());
+        if (!file.createNewFile()) {
+            throw new FileRuntimeException("Cannot create file: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File file(final File file) {
         exists(file);
-        if (!file.isFile()) throw new FileRuntimeException("Not a file: " + file.getAbsolutePath());
+        if (!file.isFile()) {
+            throw new FileRuntimeException("Not a file: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File notHidden(final File file) {
         exists(file);
-        if (file.isHidden()) throw new FileRuntimeException("File is hidden: " + file.getAbsolutePath());
+        if (file.isHidden()) {
+            throw new FileRuntimeException("File is hidden: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File writable(final File file) {
-        if (!file.canWrite()) throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
+        if (!file.canWrite()) {
+            throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
+        }
         return file;
     }
 
     public static File readable(final File file) {
-        if (!file.canRead()) throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
+        if (!file.canRead()) {
+            throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
+        }
         return file;
     }
 
@@ -144,8 +164,12 @@ public class Files {
     }
 
     public static File mkdir(final File file) {
-        if (file.exists()) return file;
-        if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        if (file.exists()) {
+            return file;
+        }
+        if (!file.mkdirs()) {
+            throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        }
         return file;
     }
 
@@ -158,7 +182,7 @@ public class Files {
             File file = null;
             try {
                 file = File.createTempFile("temp", "dir");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Use a local tmp directory
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
@@ -177,7 +201,7 @@ public class Files {
 
             return file;
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new FileRuntimeException(e);
         }
     }
@@ -191,7 +215,9 @@ public class Files {
 
         if (!file.exists()) {
 
-            if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
+            if (!file.mkdirs()) {
+                throw new FileRuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
+            }
 
             return file;
         }
@@ -210,7 +236,7 @@ public class Files {
             final Thread deleteShutdownHook = new DeleteThread();
             try {
                 Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         } finally {
@@ -236,7 +262,7 @@ public class Files {
 
             try {
                 file.deleteOnExit();
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 //Ignore
             }
         }
@@ -262,15 +288,19 @@ public class Files {
                 if (!file.delete()) {
                     file.deleteOnExit();
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
     }
 
     public static void remove(final File file) {
-        if (file == null) return;
-        if (!file.exists()) return;
+        if (file == null) {
+            return;
+        }
+        if (!file.exists()) {
+            return;
+        }
 
         if (file.isDirectory()) {
             final File[] files = file.listFiles();
@@ -287,9 +317,12 @@ public class Files {
 
     public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
-        if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));
-        if (matches.size() > 1)
+        if (matches.size() == 0) {
+            throw new IllegalStateException(String.format("Missing '%s'", pattern));
+        }
+        if (matches.size() > 1) {
             throw new IllegalStateException(String.format("Too many found '%s': %s", pattern, join(", ", matches)));
+        }
         return matches.get(0);
     }
 
@@ -318,7 +351,7 @@ public class Files {
                 return set;
             }
 
-            final String filenames[] = directory.list();
+            final String[] filenames = directory.list();
             Arrays.sort(filenames);
 
             for (final String rawFilename : filenames) {
@@ -334,7 +367,7 @@ public class Files {
 
                 try {
                     set.add(file.toURI().toURL());
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     // no-op
                 }
             }
@@ -347,7 +380,7 @@ public class Files {
 
             try {
                 set.add(file.toURI().toURL());
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // no-op
             }
         }
@@ -364,10 +397,12 @@ public class Files {
                 /*
                  * REMIND: we don't handle nested JAR URLs
                  */
-                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                if (separator == -1) {
+                    throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                }
 
                 return toFile(new URL(spec.substring(0, separator++)));
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 throw new IllegalStateException(e);
             }
         } else if ("file".equals(url.getProtocol())) {

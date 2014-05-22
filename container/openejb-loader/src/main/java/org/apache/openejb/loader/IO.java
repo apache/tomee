@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.loader;
 
@@ -74,7 +74,7 @@ public class IO {
                 final URLConnection urlConnection = uri.toURL().openConnection(proxy);
                 urlConnection.setConnectTimeout(MAX_TIMEOUT);
                 is = urlConnection.getInputStream();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 continue;
             }
 
@@ -117,8 +117,12 @@ public class IO {
      * @throws IOException
      */
     public static Properties readProperties(final InputStream in, final Properties properties) throws IOException {
-        if (in == null) throw new NullPointerException("InputStream is null");
-        if (properties == null) throw new NullPointerException("Properties is null");
+        if (in == null) {
+            throw new NullPointerException("InputStream is null");
+        }
+        if (properties == null) {
+            throw new NullPointerException("Properties is null");
+        }
         try {
             properties.load(in);
         } finally {
@@ -315,23 +319,27 @@ public class IO {
     }
 
     public static void close(final Closeable closeable) {
-        if (closeable == null) return;
+        if (closeable == null) {
+            return;
+        }
         try {
             if (Flushable.class.isInstance(closeable)) {
                 ((Flushable) closeable).flush();
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
         try {
             closeable.close();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }
 
     public static boolean delete(final File file) {
-        if (file == null) return false;
+        if (file == null) {
+            return false;
+        }
         if (!file.delete()) {
             Logger.getLogger(IO.class.getName()).log(Level.WARNING, "Delete failed on: " + file.getAbsolutePath());
             return false;

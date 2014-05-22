@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,7 +37,7 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  * @org.apache.xbean.XBean element="system"
  */
-public class SystemInstance {
+public final class SystemInstance {
     private static final String PROFILE_PROP = "openejb.profile";
     private static final String DEFAULT_PROFILE = "development";
 
@@ -70,21 +70,47 @@ public class SystemInstance {
         // import JVM system property config (if a resource/container/... is set through this way)
         for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()){
             final String key = e.getKey().toString();
-            if (key.startsWith("sun.")) continue;
-            if (key.startsWith("os.")) continue;
-            if (key.startsWith("user.")) continue;
-            if (key.startsWith("awt.")) continue;
+            if (key.startsWith("sun.")) {
+                continue;
+            }
+            if (key.startsWith("os.")) {
+                continue;
+            }
+            if (key.startsWith("user.")) {
+                continue;
+            }
+            if (key.startsWith("awt.")) {
+                continue;
+            }
             if (key.startsWith("java.")) {
                 final String pkg = key.substring("java.".length());
-                if (pkg.startsWith("vm.")) continue;
-                if (pkg.startsWith("runtime.")) continue;
-                if (pkg.startsWith("awt.")) continue;
-                if (pkg.startsWith("specification.")) continue;
-                if (pkg.startsWith("class.")) continue;
-                if (pkg.startsWith("library.")) continue;
-                if (pkg.startsWith("ext.")) continue;
-                if (pkg.startsWith("vendor.")) continue;
-                if (pkg.startsWith("endorsed.")) continue;
+                if (pkg.startsWith("vm.")) {
+                    continue;
+                }
+                if (pkg.startsWith("runtime.")) {
+                    continue;
+                }
+                if (pkg.startsWith("awt.")) {
+                    continue;
+                }
+                if (pkg.startsWith("specification.")) {
+                    continue;
+                }
+                if (pkg.startsWith("class.")) {
+                    continue;
+                }
+                if (pkg.startsWith("library.")) {
+                    continue;
+                }
+                if (pkg.startsWith("ext.")) {
+                    continue;
+                }
+                if (pkg.startsWith("vendor.")) {
+                    continue;
+                }
+                if (pkg.startsWith("endorsed.")) {
+                    continue;
+                }
             }
             this.internalProperties.put(e.getKey(), e.getValue());
         }
@@ -104,15 +130,15 @@ public class SystemInstance {
 
     }
 
-    public <E> E fireEvent(E event) {
+    public <E> E fireEvent(final E event) {
         return observerManager.fireEvent(event);
     }
 
-    public boolean addObserver(Object observer) {
+    public boolean addObserver(final Object observer) {
         return observerManager.addObserver(observer);
     }
 
-    public boolean removeObserver(Object observer) {
+    public boolean removeObserver(final Object observer) {
         return observerManager.removeObserver(observer);
     }
 
@@ -249,13 +275,15 @@ public class SystemInstance {
         try {
             system = new SystemInstance(new Properties()); // don't put system properties here, it is already done
             initialized = false;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
         }
     }
 
     public static synchronized void init(final Properties properties) throws Exception {
-        if (initialized) return;
+        if (initialized) {
+            return;
+        }
         system = new SystemInstance(properties);
         readUserSystemProperties();
         readSystemProperties();
@@ -274,14 +302,14 @@ public class SystemInstance {
         File conf = null;
         try {
             conf = system.getBase().getDirectory("conf");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
 
         if (conf == null || !conf.exists()) {
             try {
                 conf = system.getBase().getDirectory("etc");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // no-op
             }
         }
@@ -322,7 +350,7 @@ public class SystemInstance {
         final Properties systemProperties;
         try {
             systemProperties = IO.readProperties(file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return;
         }
 
