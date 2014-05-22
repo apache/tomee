@@ -22,6 +22,8 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.ServerInfo;
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
@@ -31,7 +33,9 @@ import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
@@ -127,24 +131,38 @@ public class ServerListener implements LifecycleListener {
                     // no-op
                 }
 
+                final TomcatLoader loader = new TomcatLoader();
+                loader.initSystemInstance(properties);
+
                 // manage additional libraries
                 if (URLClassLoader.class.isInstance(classLoader)) {
                     final URLClassLoader ucl = URLClassLoader.class.cast(classLoader);
                     try {
                         final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                        for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
-                            if (!addUrl.isAccessible()) { // set it lazily
-                                addUrl.setAccessible(true);
+                        final boolean acc = addUrl.isAccessible();
+                        try {
+                            for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
+                                addUrl(ucl, addUrl, f.toURI().toURL());
                             }
-                            addUrl.invoke(ucl, f.toURI().toURL());
+
+                            final File globalJaxrsTxt = SystemInstance.get().getConf(QuickJarsTxtParser.FILE_NAME);
+                            final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(globalJaxrsTxt);
+                            if (configurer != null) {
+                                for (final URL f : configurer.additionalURLs()) {
+                                    addUrl(ucl, addUrl, f);
+                                }
+                            }
+                        } finally {
+                            addUrl.setAccessible(acc);
                         }
                     } catch (final Exception e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     }
+                } else {
+                    LOGGER.finer("container classloader is not an URL one so can't check provisining: " + classLoader);
                 }
 
-                final TomcatLoader loader = new TomcatLoader();
-                loader.init(properties);
+                loader.initialize(properties);
 
                 TomEELogConfigurer.configureLogs();
 
@@ -154,6 +172,13 @@ public class ServerListener implements LifecycleListener {
                 // e.printStackTrace(System.err);
             }
         }
+    }
+
+    private static void addUrl(final URLClassLoader ucl, final Method addUrl, final URL url) throws IllegalAccessException, InvocationTargetException, MalformedURLException {
+        if (!addUrl.isAccessible()) { // set it lazily
+            addUrl.setAccessible(true);
+        }
+        addUrl.invoke(ucl, url);
     }
 
     private synchronized void installServerInfo() {

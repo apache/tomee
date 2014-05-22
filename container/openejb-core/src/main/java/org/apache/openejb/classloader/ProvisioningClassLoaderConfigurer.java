@@ -49,8 +49,6 @@ import java.util.Set;
  * Note: if a line doesn't start with '+' it is considered as an addition
  */
 public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ProvisioningClassLoaderConfigurer.class);
-
     // just some default if one is not set
     private URL[] added = new URL[0];
     private Filter excluded = FalseFilter.INSTANCE;
@@ -122,7 +120,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
             }
 
         } catch (final Exception e) {
-            LOGGER.error("Can't read " + configFile, e);
+            Logger.getInstance(LogCategory.OPENEJB, ProvisioningClassLoaderConfigurer.class).error("Can't read " + configFile, e);
         } finally {
             IO.close(reader);
         }
