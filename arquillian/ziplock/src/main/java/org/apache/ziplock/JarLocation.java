@@ -16,10 +16,12 @@
  */
 package org.apache.ziplock;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @version $Rev$ $Date$
@@ -30,18 +32,33 @@ public class JarLocation {
         return jarLocation(JarLocation.class);
     }
 
-    public static File jarLocation(Class clazz) {
+    public static File jarFromPrefix(final String prefix) {
+        return jarFromRegex(prefix + ".*\\.jar");
+    }
+
+    public static File jarFromRegex(final String regex) {
+        final Pattern pattern = Pattern.compile(regex);
         try {
-            String classFileName = clazz.getName().replace(".", "/") + ".class";
-
-            ClassLoader loader = clazz.getClassLoader();
-            URL url;
-            if (loader != null) {
-                url = loader.getResource(classFileName);
-            } else {
-                url = clazz.getResource(classFileName);
+            final Set<URL> urls = ClassLoaders.findUrls(Thread.currentThread().getContextClassLoader());
+            for (final URL url : urls) {
+                final File f = new File(decode(url.getFile()));
+                if (f.exists() && pattern.matcher(f.getName()).matches()) {
+                    return f;
+                }
             }
+            throw new IllegalArgumentException(regex + " not found in " + urls);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
+    public static File jarFromResource(final String resourceName) {
+        return jarFromResource(Thread.currentThread().getContextClassLoader(), resourceName);
+    }
+
+    public static File jarFromResource(final ClassLoader loader, final String resourceName) {
+        try {
+            URL url = loader.getResource(resourceName);
             if (url == null) {
                 throw new IllegalStateException("classloader.getResource(classFileName) returned a null URL");
             }
@@ -60,13 +77,25 @@ public class JarLocation {
                 return new File(decode(url.getFile()));
 
             } else if ("file".equals(url.getProtocol())) {
-                return toFile(classFileName, url);
+                return toFile(resourceName, url);
             } else {
                 throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static File jarLocation(final Class clazz) {
+        try {
+            final String classFileName = clazz.getName().replace(".", "/") + ".class";
+            final ClassLoader loader = clazz.getClassLoader();
+            return jarFromResource(loader, classFileName);
+        } catch (final RuntimeException e) {
+            throw e;
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -77,47 +106,8 @@ public class JarLocation {
         return new File(decode(path));
     }
 
-
-    public static String decode(String fileName) {
-        if (fileName.indexOf('%') == -1) return fileName;
-
-        StringBuilder result = new StringBuilder(fileName.length());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        for (int i = 0; i < fileName.length();) {
-            char c = fileName.charAt(i);
-
-            if (c == '%') {
-                out.reset();
-                do {
-                    if (i + 2 >= fileName.length()) {
-                        throw new IllegalArgumentException("Incomplete % sequence at: " + i);
-                    }
-
-                    int d1 = Character.digit(fileName.charAt(i + 1), 16);
-                    int d2 = Character.digit(fileName.charAt(i + 2), 16);
-
-                    if (d1 == -1 || d2 == -1) {
-                        throw new IllegalArgumentException("Invalid % sequence (" + fileName.substring(i, i + 3) + ") at: " + String.valueOf(i));
-                    }
-
-                    out.write((byte) ((d1 << 4) + d2));
-
-                    i += 3;
-
-                } while (i < fileName.length() && fileName.charAt(i) == '%');
-
-
-                result.append(out.toString());
-
-                continue;
-            } else {
-                result.append(c);
-            }
-
-            i++;
-        }
-        return result.toString();
+    public static String decode(final String fileName) {
+        return ClassLoaders.decode(fileName);
     }
 
 }
