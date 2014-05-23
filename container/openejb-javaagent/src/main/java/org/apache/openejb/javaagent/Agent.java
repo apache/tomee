@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,12 +8,13 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.apache.openejb.javaagent;
 
 import java.io.*;
@@ -44,8 +44,9 @@ public class Agent {
     private static boolean initialized = false;
 
     public static void premain(final String agentArgs, final Instrumentation instrumentation) {
-        if (Agent.instrumentation != null)
+        if (Agent.instrumentation != null) {
             return;
+        }
 
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
@@ -55,8 +56,9 @@ public class Agent {
     }
 
     public static void agentmain(final String agentArgs, final Instrumentation instrumentation) {
-        if (Agent.instrumentation != null)
+        if (Agent.instrumentation != null) {
             return;
+        }
 
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
@@ -65,8 +67,9 @@ public class Agent {
 
     public static synchronized String getAgentArgs() {
         final SecurityManager sm = System.getSecurityManager();
-        if (sm != null)
+        if (sm != null) {
             sm.checkPermission(ACCESS_PERMISSION);
+        }
         checkInitialization();
         return agentArgs;
     }
@@ -79,8 +82,9 @@ public class Agent {
      */
     public static synchronized Instrumentation getInstrumentation() {
         final SecurityManager sm = System.getSecurityManager();
-        if (sm != null)
+        if (sm != null) {
             sm.checkPermission(ACCESS_PERMISSION);
+        }
         checkInitialization();
         return instrumentation;
     }
@@ -99,8 +103,9 @@ public class Agent {
     }
 
     private static void checkSystemClassPath() throws NoSuchFieldException, IllegalAccessException {
-        if (instrumentation != null)
+        if (instrumentation != null) {
             return;
+        }
 
         final Class<?> systemAgentClass;
         try {
@@ -121,8 +126,9 @@ public class Agent {
     }
 
     private static void dynamicLoadAgent() throws Exception {
-        if (instrumentation != null)
+        if (instrumentation != null) {
             return;
+        }
 
         try {
             final Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
@@ -242,6 +248,7 @@ public class Agent {
             try {
                 closeable.close();
             } catch (IOException ignored) {
+                // no-op
             }
         }
     }
@@ -263,8 +270,9 @@ public class Agent {
         }
 
         private void bootstrap(final ClassLoader loader) {
-            if (loader == null || done)
+            if (loader == null || done) {
                 return;
+            }
 
             final String bootstrapClassName = "org.apache.openejb.persistence.PersistenceBootstrap";
             final String bootstrapClassFile = "org/apache/openejb/persistence/PersistenceBootstrap.class";

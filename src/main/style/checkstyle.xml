@@ -38,6 +38,8 @@
   <!-- Following interprets the header file as regular expressions. -->
   <!-- <module name="RegexpHeader"/>                                -->
 
+  <module name="SuppressWarningsFilter" />
+
   <module name="FileTabCharacter">
     <property name="eachLine" value="true"/>
   </module>
@@ -56,6 +58,7 @@
      </module>
 
   <module name="TreeWalker">
+    <module name="SuppressWarningsHolder" />
 
     <property name="cacheFile" value="${checkstyle.cache.file}"/>
 

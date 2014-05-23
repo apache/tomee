@@ -30,7 +30,7 @@ public class PrefixNamingStrategy extends ImprovedNamingStrategy {
     }
 
     @Override
-    public String classToTableName(String className) {
+    public String classToTableName(final String className) {
         return getPrefix() + super.classToTableName(className);
     }
 
