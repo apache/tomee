@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.junit;
 
@@ -47,17 +47,17 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
     private final BeanContext deployment;
     private final Class<?> clazz;
 
-    public LocalClientRunner(Class<?> clazz) throws InitializationError {
+    public LocalClientRunner(final Class<?> clazz) throws InitializationError {
         super(clazz);
         deployment = createDeployment(clazz);
         this.clazz = clazz;
     }
 
     @Override
-    protected Statement methodBlock(FrameworkMethod method) {
-        Object instance = newTestInstance();
+    protected Statement methodBlock(final FrameworkMethod method) {
+        final Object instance = newTestInstance();
 
-        Test test = new Test(clazz, method.getMethod(), instance, deployment);
+        final Test test = new Test(clazz, method.getMethod(), instance, deployment);
 
         Statement statement = methodInvoker(method, instance);
 
@@ -73,14 +73,14 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         return statement;
     }
 
-    private Statement wrap(Test test, Statement statement, Class<? extends AnnotationStatement> clazz, Class<? extends Annotation> annotation) {
+    private Statement wrap(final Test test, final Statement statement, final Class<? extends AnnotationStatement> clazz, final Class<? extends Annotation> annotation) {
 
         if (test.has(annotation)) {
             try {
-                Class[]  types = {annotation, Statement.class, Test.class};
-                Object[] args = {test.get(annotation), statement, test};
+                final Class[]  types = {annotation, Statement.class, Test.class};
+                final Object[] args = {test.get(annotation), statement, test};
                 return clazz.getConstructor(types).newInstance(args);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Cannot construct "+ clazz, e);
             }
         }
@@ -100,27 +100,27 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
                     return createTest();
                 }
             }.run();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return new Fail(e);
         }
     }
 
-    private BeanContext createDeployment(Class<?> testClass) {
+    private BeanContext createDeployment(final Class<?> testClass) {
         try {
             return new BeanContext(null, new IvmContext(), new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), testClass.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext(), null), testClass, null, null, null, null, null, null, null, null, null, BeanType.MANAGED, false);
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static abstract class AnnotationStatement<A extends Annotation> extends Statement {
+    public abstract static class AnnotationStatement<A extends Annotation> extends Statement {
 
         protected final A annotation;
         protected final Statement next;
         protected final Test test;
         protected final BeanContext info;
 
-        protected AnnotationStatement(A annotation, Statement next, Test test) {
+        protected AnnotationStatement(final A annotation, final Statement next, final Test test) {
             this.annotation = annotation;
             this.next = next;
             this.test = test;
@@ -128,25 +128,25 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private static class Test {
+    private static final class Test {
 
         public final Class clazz;
         public final Method method;
         public final Object instance;
         public final BeanContext info;
 
-        private Test(Class clazz, Method method, Object instance, BeanContext info) {
+        private Test(final Class clazz, final Method method, final Object instance, final BeanContext info) {
             this.clazz = clazz;
             this.method = method;
             this.instance = instance;
             this.info = info;
         }
 
-        private <A extends Annotation> boolean has(Class<A> a) {
+        private <A extends Annotation> boolean has(final Class<A> a) {
             return method.isAnnotationPresent(a) || clazz.isAnnotationPresent(a);
         }
 
-        private <A extends Annotation> A get(Class<A> annotationClass) {
+        private <A extends Annotation> A get(final Class<A> annotationClass) {
             A annotation = method.getAnnotation(annotationClass);
 
             if (annotation == null) {
@@ -159,7 +159,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
     public static class RunAs extends AnnotationStatement<javax.annotation.security.RunAs> {
 
-        public RunAs(javax.annotation.security.RunAs annotation, Statement next, Test test) {
+        public RunAs(final javax.annotation.security.RunAs annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
@@ -177,7 +177,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
     public static class RunTestAs extends AnnotationStatement<org.apache.openejb.junit.RunTestAs> {
 
-        public RunTestAs(org.apache.openejb.junit.RunTestAs annotation, Statement next, Test test) {
+        public RunTestAs(final org.apache.openejb.junit.RunTestAs annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
@@ -195,50 +195,60 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
     public static class TransactionAttribute extends AnnotationStatement<javax.ejb.TransactionAttribute> {
 
-        public TransactionAttribute(javax.ejb.TransactionAttribute annotation, Statement next, Test test) {
+        public TransactionAttribute(final javax.ejb.TransactionAttribute annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
         public void evaluate() throws Throwable {
-            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-            JtaTransactionPolicyFactory factory = new JtaTransactionPolicyFactory(transactionManager);
-            TransactionType transactionType = TransactionType.get(annotation.value());
+            final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            final JtaTransactionPolicyFactory factory = new JtaTransactionPolicyFactory(transactionManager);
+            final TransactionType transactionType = TransactionType.get(annotation.value());
             // This creates *and* begins the transaction
-            TransactionPolicy policy = factory.createTransactionPolicy(transactionType);
+            final TransactionPolicy policy = factory.createTransactionPolicy(transactionType);
             try {
                 next.evaluate();
-            } catch (Throwable t) {
-                if (!isApplicationException(t)) policy.setRollbackOnly();
+            } catch (final Throwable t) {
+                if (!isApplicationException(t)) {
+                    policy.setRollbackOnly();
+                }
             } finally {
                 policy.commit();
             }
         }
 
-        private boolean isApplicationException(Throwable t) {
-            if (t.getClass().isAnnotationPresent(javax.ejb.ApplicationException.class)) return true;
-            if (t instanceof Error) return false;
-            if (t instanceof RuntimeException) return false;
+        private boolean isApplicationException(final Throwable t) {
+            if (t.getClass().isAnnotationPresent(javax.ejb.ApplicationException.class)) {
+                return true;
+            }
+            if (t instanceof Error) {
+                return false;
+            }
+            if (t instanceof RuntimeException) {
+                return false;
+            }
             return true;
         }
     }
 
     public static class Transaction extends AnnotationStatement<org.apache.openejb.junit.Transaction> {
 
-        public Transaction(org.apache.openejb.junit.Transaction annotation, Statement next, Test test) {
+        public Transaction(final org.apache.openejb.junit.Transaction annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
         public void evaluate() throws Throwable {
-            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-            JtaTransactionPolicyFactory factory = new JtaTransactionPolicyFactory(transactionManager);
+            final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            final JtaTransactionPolicyFactory factory = new JtaTransactionPolicyFactory(transactionManager);
 
             // This creates *and* begins the transaction
-            TransactionPolicy policy = factory.createTransactionPolicy(TransactionType.RequiresNew);
+            final TransactionPolicy policy = factory.createTransactionPolicy(TransactionType.RequiresNew);
             try {
                 next.evaluate();
             } finally {
 
-                if (annotation.rollback()) policy.setRollbackOnly();
+                if (annotation.rollback()) {
+                    policy.setRollbackOnly();
+                }
 
                 policy.commit();
             }
@@ -246,7 +256,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
     }
 
     public static class Interceptorss extends AnnotationStatement<Interceptors> {
-        public Interceptorss(Interceptors annotation, Statement next, Test test) {
+        public Interceptorss(final Interceptors annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 
 package org.apache.openejb.junit;
 
-import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit.context.ContextWrapperStatement;
 import org.apache.openejb.junit.context.TestContext;
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -29,13 +28,13 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import javax.ejb.EJBAccessException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JUnit4Runner extends BlockJUnit4ClassRunner {
     private OpenEjbRunner runner;
 
-    public JUnit4Runner(OpenEjbRunner runner, Class<?> testClazz) throws InitializationError {
+    public JUnit4Runner(final OpenEjbRunner runner, final Class<?> testClazz) throws InitializationError {
         super(testClazz);
         this.runner = runner;
     }
@@ -51,7 +50,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
      * Prepares a method statement, configuring it for the test context
      */
     @Override
-    protected Statement methodBlock(FrameworkMethod method) {
+    protected Statement methodBlock(final FrameworkMethod method) {
         // check if either the method/class is annotated with the TestSecurity annotation
         TestSecurity testSecurity = null;
         if (method.getMethod().isAnnotationPresent(TestSecurity.class)) {
@@ -74,8 +73,8 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
     /**
      * Builds a method statement that executes in an unauthenticated context
      */
-    protected Statement createUnsecuredStatement(FrameworkMethod method) {
-        Object test = newTestInstance();
+    protected Statement createUnsecuredStatement(final FrameworkMethod method) {
+        final Object test = newTestInstance();
 
         Statement statement = methodInvoker(method, test);
         statement = possiblyExpectingExceptions(method, test, statement);
@@ -83,7 +82,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
 
-        TestContext context = runner.newTestContext(method.getMethod());
+        final TestContext context = runner.newTestContext(method.getMethod());
         return new ContextWrapperStatement(context, statement, test);
     }
 
@@ -97,16 +96,16 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
      * @param testSecurity
      * @return created statement
      */
-    private Statement createSecuredStatementExecutor(FrameworkMethod method, TestSecurity testSecurity) {
-        MultiStatementExecutor statementExecutor = new MultiStatementExecutor();
+    private Statement createSecuredStatementExecutor(final FrameworkMethod method, final TestSecurity testSecurity) {
+        final MultiStatementExecutor statementExecutor = new MultiStatementExecutor();
 
-        for (String role : testSecurity.authorized()) {
-            Statement statement = createSecuredStatement(method, role, false);
+        for (final String role : testSecurity.authorized()) {
+            final Statement statement = createSecuredStatement(method, role, false);
             statementExecutor.addStatement(statement);
         }
 
-        for (String role : testSecurity.unauthorized()) {
-            Statement statement = createSecuredStatement(method, role, true);
+        for (final String role : testSecurity.unauthorized()) {
+            final Statement statement = createSecuredStatement(method, role, true);
             statementExecutor.addStatement(statement);
         }
 
@@ -121,8 +120,8 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
      * @param failWithAccessException
      * @return statement
      */
-    private Statement createSecuredStatement(FrameworkMethod method, String role, boolean failWithAccessException) {
-        Object test = newTestInstance();
+    private Statement createSecuredStatement(final FrameworkMethod method, final String role, final boolean failWithAccessException) {
+        final Object test = newTestInstance();
 
         Statement statement = methodInvoker(method, test);
         statement = possiblyExpectingAccessException(statement, failWithAccessException);
@@ -131,11 +130,11 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
 
-        TestContext context = runner.newTestContext(method.getMethod(), role);
+        final TestContext context = runner.newTestContext(method.getMethod(), role);
         return new ContextWrapperStatement(context, statement, test);
     }
 
-    protected Statement possiblyExpectingAccessException(Statement next, boolean failWithAccessException) {
+    protected Statement possiblyExpectingAccessException(final Statement next, final boolean failWithAccessException) {
         if (failWithAccessException) {
             return new ExpectException(next, EJBAccessException.class);
         } else {
@@ -156,7 +155,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
                     return createTest();
                 }
             }.run();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return new Fail(e);
         }
     }
@@ -166,12 +165,12 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
 
         @Override
         public void evaluate() throws Throwable {
-            for (Statement statement : statements) {
+            for (final Statement statement : statements) {
                 statement.evaluate();
             }
         }
 
-        public void addStatement(Statement statement) {
+        public void addStatement(final Statement statement) {
             statements.add(statement);
         }
     }

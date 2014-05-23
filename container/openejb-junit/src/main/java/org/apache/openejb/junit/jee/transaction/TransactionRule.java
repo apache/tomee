@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.junit.jee.transaction;
 
-import java.lang.reflect.Method;
-import javax.transaction.TransactionManager;
 import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -25,6 +23,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+
+import javax.transaction.TransactionManager;
+import java.lang.reflect.Method;
 
 public class TransactionRule implements TestRule {
     @Override
@@ -61,8 +62,8 @@ public class TransactionRule implements TestRule {
     private static Method getMethod(final Class<?> testClass, final String methodName) {
         try {
             return testClass.getMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            for (Method mtd : testClass.getMethods()) {
+        } catch (final NoSuchMethodException e) {
+            for (final Method mtd : testClass.getMethods()) {
                 if (methodName.equals(mtd.getName())) {
                     return mtd;
                 }
