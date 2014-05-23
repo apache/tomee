@@ -62,6 +62,8 @@
             </goals>
             <configuration>
               <createSourcesJar>true</createSourcesJar>
+              <useBaseVersion>true</useBaseVersion>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <artifactSet>
                 <includes>
                   <include>org.apache.tomcat:tomcat-juli</include>
