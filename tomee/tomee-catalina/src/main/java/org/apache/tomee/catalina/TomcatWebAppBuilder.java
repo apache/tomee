@@ -834,15 +834,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             standardContext.setManager(new StandardManager());
         }
 
-        if (standardContext.getConfigFile() == null) {
-            final String s = File.pathSeparator;
-            final File contextXmlFile = new File(standardContext.getDocBase() + s + "META-INF" + s + "context.xml");
-            if (contextXmlFile.exists()) {
-                BackportUtil.getAPI().setConfigFile(standardContext, contextXmlFile);
-                standardContext.setOverride(true);
-            }
-        }
-
         final LifecycleListener[] listeners = standardContext.findLifecycleListeners();
         for (final LifecycleListener l : listeners) {
             if (l instanceof ContextConfig) {
