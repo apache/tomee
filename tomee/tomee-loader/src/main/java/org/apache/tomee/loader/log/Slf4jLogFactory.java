@@ -18,10 +18,9 @@ package org.apache.tomee.loader.log;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogConfigurationException;
-import org.apache.juli.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 
-public class Slf4jLogFactory extends LogFactory {
+public class Slf4jLogFactory extends org.apache.juli.logging.LogFactory {
     @Override
     public Log getInstance(final String name) throws LogConfigurationException {
         try {

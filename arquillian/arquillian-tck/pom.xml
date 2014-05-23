@@ -31,7 +31,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <tck.version>1.0.0.Final-SNAPSHOT</tck.version>
+    <tck.version>1.0.0.Alpha1</tck.version>
   </properties>
 
   <dependencies>
