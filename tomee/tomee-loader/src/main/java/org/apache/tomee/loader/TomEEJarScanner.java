@@ -65,10 +65,11 @@ public class TomEEJarScanner extends StandardJarScanner {
     private static final Log log = LogFactory.getLog(StandardJarScanner.class);
 
     public static final String DEEP_TREE_MATCH = "**";
-    private static final boolean ON_NETWARE = isNetware();
-    private static final boolean ON_DOS = isDos();
+
     private static final String OS_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
     private static final String PATH_SEP = System.getProperty("path.separator");
+    private static final boolean ON_NETWARE = isNetware();
+    private static final boolean ON_DOS = isDos();
 
     protected static final Set<String[]> DEFAULT_JARS_TO_SKIP;
 
