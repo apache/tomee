@@ -34,7 +34,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-juli</artifactId>
       <version>${tomcat.version}</version>
-      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
