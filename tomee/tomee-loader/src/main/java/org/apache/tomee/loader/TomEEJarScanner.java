@@ -34,7 +34,6 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.descriptor.XmlErrorHandler;
-import org.apache.tomcat.util.file.Matcher;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanner;
@@ -55,13 +54,21 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+@SuppressWarnings("unchecked")
 public class TomEEJarScanner extends StandardJarScanner {
 
     private static final Log log = LogFactory.getLog(StandardJarScanner.class);
+
+    public static final String DEEP_TREE_MATCH = "**";
+    private static final boolean ON_NETWARE = isNetware();
+    private static final boolean ON_DOS = isDos();
+    private static final String OS_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+    private static final String PATH_SEP = System.getProperty("path.separator");
 
     protected static final Set<String[]> DEFAULT_JARS_TO_SKIP;
 
@@ -99,7 +106,7 @@ public class TomEEJarScanner extends StandardJarScanner {
 
         final Set<String[]> ignoredJarsTokens = new HashSet<String[]>();
         for (final String pattern : defaultJarsToSkip) {
-            ignoredJarsTokens.add(Matcher.tokenizePathAsArray(pattern));
+            ignoredJarsTokens.add(tokenizePathAsArray(pattern));
         }
         DEFAULT_JARS_TO_SKIP = ignoredJarsTokens;
 
@@ -109,40 +116,41 @@ public class TomEEJarScanner extends StandardJarScanner {
             tldConfigScanStream = TldConfig.class.getDeclaredMethod("tldScanStream", InputStream.class);
             tldConfigScanStream.setAccessible(true);
             tldConfig = loader.loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback")
-                            .getDeclaredFields()[0]; // there is a unique field and this way it is portable
-                            //.getDeclaredField("this$0");
+                .getDeclaredFields()[0]; // there is a unique field and this way it is portable
+            //.getDeclaredField("this$0");
             tldConfig.setAccessible(true);
 
             final Class<?> tldLocationsCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache");
             tldLocationScanStream = tldLocationsCache.getDeclaredMethod("tldScanStream", String.class, String.class, InputStream.class);
             tldLocationScanStream.setAccessible(true);
             tldLocationCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache$TldJarScannerCallback")
-                                    .getDeclaredFields()[0];
+                .getDeclaredFields()[0];
             tldLocationCache.setAccessible(true);
 
             // init server cache
             SERVER_URLS = TldScanner.scan(TomEEJarScanner.class.getClassLoader());
 
             final Context fakeWebApp = (Context) Proxy.newProxyInstance(loader, new Class<?>[]{Context.class},
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                            if ("getTldNamespaceAware".equals(method.getName())) {
-                                return Globals.STRICT_SERVLET_COMPLIANCE;
-                            } else if ("getTldValidation".equals(method.getName())) {
-                                return Globals.STRICT_SERVLET_COMPLIANCE;
-                            } else if ("getXmlValidation".equals(method.getName())) {
-                                return Globals.STRICT_SERVLET_COMPLIANCE;
-                            } else if ("getXmlBlockExternal".equals(method.getName())) {
-                                return Globals.IS_SECURITY_ENABLED;
-                            }
-                            return null;
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                        if ("getTldNamespaceAware".equals(method.getName())) {
+                            return Globals.STRICT_SERVLET_COMPLIANCE;
+                        } else if ("getTldValidation".equals(method.getName())) {
+                            return Globals.STRICT_SERVLET_COMPLIANCE;
+                        } else if ("getXmlValidation".equals(method.getName())) {
+                            return Globals.STRICT_SERVLET_COMPLIANCE;
+                        } else if ("getXmlBlockExternal".equals(method.getName())) {
+                            return Globals.IS_SECURITY_ENABLED;
                         }
-                    });
+                        return null;
+                    }
+                }
+            );
             final TldConfig config = new TldConfig();
             config.lifecycleEvent(new LifecycleEvent(fakeWebApp, Lifecycle.AFTER_INIT_EVENT, null));
 
-            final Object fakeSc = Proxy.newProxyInstance(loader, new Class<?>[]{ ServletContext.class }, new InvocationHandler() {
+            final Object fakeSc = Proxy.newProxyInstance(loader, new Class<?>[]{ServletContext.class}, new InvocationHandler() {
                 @Override
                 public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                     return null;
@@ -156,9 +164,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                     public void run() {
                         for (URL current : SERVER_URLS) {
                             tldConfig(config, current);
-                            if (tldLocationsCache != null) {
-                                tldLocationCache(locationsCacheInstance, current);
-                            }
+                            tldLocationCache(locationsCacheInstance, current);
                         }
                     }
                 };
@@ -171,7 +177,7 @@ public class TomEEJarScanner extends StandardJarScanner {
 
             TAG_LIB_URIS = (Set<String>) Reflections.get(config, "taglibUris");
             LISTENERS = (ArrayList<String>) Reflections.get(config, "listeners");
-            MAPPINGS= (Hashtable<String, Object>) Reflections.get(locationsCacheInstance, "mappings");
+            MAPPINGS = (Hashtable<String, Object>) Reflections.get(locationsCacheInstance, "mappings");
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -241,15 +247,17 @@ public class TomEEJarScanner extends StandardJarScanner {
                 } catch (OpenEJBException oe) {
                     // no-op
                 }
-            } else { log.debug("This callback " + callback + " is not known and perf optim will not be available"); }
+            } else {
+                log.debug("This callback " + callback + " is not known and perf optim will not be available");
+            }
 
             // Scan WEB-INF/lib
             final Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
             if (dirList != null) {
                 for (final String path : dirList) {
                     if (path.endsWith(Constants.JAR_EXT) &&
-                            !Matcher.matchPath(DEFAULT_JARS_TO_SKIP,
-                                    path.substring(path.lastIndexOf('/') + 1))) {
+                        !matchPath(DEFAULT_JARS_TO_SKIP,
+                            path.substring(path.lastIndexOf('/') + 1))) {
                         // Need to scan this JAR
                         URL url = null;
                         try {
@@ -291,7 +299,7 @@ public class TomEEJarScanner extends StandardJarScanner {
 
                         // Skip JARs known not to be interesting and JARs
                         // in WEB-INF/lib we have already scanned
-                        if (jarName != null && !(Matcher.matchPath(DEFAULT_JARS_TO_SKIP, jarName) || url.toString().contains(Constants.WEB_INF_LIB + jarName))) {
+                        if (jarName != null && !(matchPath(DEFAULT_JARS_TO_SKIP, jarName) || url.toString().contains(Constants.WEB_INF_LIB + jarName))) {
 
                             if (log.isDebugEnabled()) {
                                 log.debug(sm.getString("jarScan.classloaderJarScan", url));
@@ -300,7 +308,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                                 this.process(callback, url);
                             } catch (IOException ioe) {
                                 log.warn(sm.getString(
-                                        "jarScan.classloaderFail", url), ioe);
+                                    "jarScan.classloaderFail", url), ioe);
                             }
                         } else {
                             if (log.isTraceEnabled()) {
@@ -453,5 +461,392 @@ public class TomEEJarScanner extends StandardJarScanner {
         }
 
         return name;
+    }
+
+    public static boolean matchPath(Set<String[]> patternSet, String str) {
+        for (String[] patternTokens : patternSet) {
+            if (matchPath(patternTokens, tokenizePathAsArray(str), true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean matchPath(String[] tokenizedPattern, String[] strDirs,
+                                    boolean isCaseSensitive) {
+        int patIdxStart = 0;
+        int patIdxEnd = tokenizedPattern.length - 1;
+        int strIdxStart = 0;
+        int strIdxEnd = strDirs.length - 1;
+
+        // up to first '**'
+        while (patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
+            String patDir = tokenizedPattern[patIdxStart];
+            if (patDir.equals(DEEP_TREE_MATCH)) {
+                break;
+            }
+            if (!match(patDir, strDirs[strIdxStart], isCaseSensitive)) {
+                return false;
+            }
+            patIdxStart++;
+            strIdxStart++;
+        }
+        if (strIdxStart > strIdxEnd) {
+            // String is exhausted
+            for (int i = patIdxStart; i <= patIdxEnd; i++) {
+                if (!tokenizedPattern[i].equals(DEEP_TREE_MATCH)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            if (patIdxStart > patIdxEnd) {
+                // String not exhausted, but pattern is. Failure.
+                return false;
+            }
+        }
+
+        // up to last '**'
+        while (patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
+            String patDir = tokenizedPattern[patIdxEnd];
+            if (patDir.equals(DEEP_TREE_MATCH)) {
+                break;
+            }
+            if (!match(patDir, strDirs[strIdxEnd], isCaseSensitive)) {
+                return false;
+            }
+            patIdxEnd--;
+            strIdxEnd--;
+        }
+        if (strIdxStart > strIdxEnd) {
+            // String is exhausted
+            for (int i = patIdxStart; i <= patIdxEnd; i++) {
+                if (!tokenizedPattern[i].equals(DEEP_TREE_MATCH)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        while (patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
+            int patIdxTmp = -1;
+            for (int i = patIdxStart + 1; i <= patIdxEnd; i++) {
+                if (tokenizedPattern[i].equals(DEEP_TREE_MATCH)) {
+                    patIdxTmp = i;
+                    break;
+                }
+            }
+            if (patIdxTmp == patIdxStart + 1) {
+                // '**/**' situation, so skip one
+                patIdxStart++;
+                continue;
+            }
+            // Find the pattern between padIdxStart & padIdxTmp in str between
+            // strIdxStart & strIdxEnd
+            int patLength = (patIdxTmp - patIdxStart - 1);
+            int strLength = (strIdxEnd - strIdxStart + 1);
+            int foundIdx = -1;
+            strLoop:
+            for (int i = 0; i <= strLength - patLength; i++) {
+                for (int j = 0; j < patLength; j++) {
+                    String subPat = tokenizedPattern[patIdxStart + j + 1];
+                    String subStr = strDirs[strIdxStart + i + j];
+                    if (!match(subPat, subStr, isCaseSensitive)) {
+                        continue strLoop;
+                    }
+                }
+
+                foundIdx = strIdxStart + i;
+                break;
+            }
+
+            if (foundIdx == -1) {
+                return false;
+            }
+
+            patIdxStart = patIdxTmp;
+            strIdxStart = foundIdx + patLength;
+        }
+
+        for (int i = patIdxStart; i <= patIdxEnd; i++) {
+            if (!tokenizedPattern[i].equals(DEEP_TREE_MATCH)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean match(String pattern, String str,
+                                boolean caseSensitive) {
+        char[] patArr = pattern.toCharArray();
+        char[] strArr = str.toCharArray();
+        int patIdxStart = 0;
+        int patIdxEnd = patArr.length - 1;
+        int strIdxStart = 0;
+        int strIdxEnd = strArr.length - 1;
+        char ch;
+
+        boolean containsStar = false;
+        for (char aPatArr : patArr) {
+            if (aPatArr == '*') {
+                containsStar = true;
+                break;
+            }
+        }
+
+        if (!containsStar) {
+            // No '*'s, so we make a shortcut
+            if (patIdxEnd != strIdxEnd) {
+                return false; // Pattern and string do not have the same size
+            }
+            for (int i = 0; i <= patIdxEnd; i++) {
+                ch = patArr[i];
+                if (ch != '?') {
+                    if (different(caseSensitive, ch, strArr[i])) {
+                        return false; // Character mismatch
+                    }
+                }
+            }
+            return true; // String matches against pattern
+        }
+
+        if (patIdxEnd == 0) {
+            return true; // Pattern contains only '*', which matches anything
+        }
+
+        // Process characters before first star
+        while (true) {
+            ch = patArr[patIdxStart];
+            if (ch == '*' || strIdxStart > strIdxEnd) {
+                break;
+            }
+            if (ch != '?') {
+                if (different(caseSensitive, ch, strArr[strIdxStart])) {
+                    return false; // Character mismatch
+                }
+            }
+            patIdxStart++;
+            strIdxStart++;
+        }
+        if (strIdxStart > strIdxEnd) {
+            // All characters in the string are used. Check if only '*'s are
+            // left in the pattern. If so, we succeeded. Otherwise failure.
+            return allStars(patArr, patIdxStart, patIdxEnd);
+        }
+
+        // Process characters after last star
+        while (true) {
+            ch = patArr[patIdxEnd];
+            if (ch == '*' || strIdxStart > strIdxEnd) {
+                break;
+            }
+            if (ch != '?') {
+                if (different(caseSensitive, ch, strArr[strIdxEnd])) {
+                    return false; // Character mismatch
+                }
+            }
+            patIdxEnd--;
+            strIdxEnd--;
+        }
+        if (strIdxStart > strIdxEnd) {
+            // All characters in the string are used. Check if only '*'s are
+            // left in the pattern. If so, we succeeded. Otherwise failure.
+            return allStars(patArr, patIdxStart, patIdxEnd);
+        }
+
+        // process pattern between stars. padIdxStart and patIdxEnd point
+        // always to a '*'.
+        while (patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
+            int patIdxTmp = -1;
+            for (int i = patIdxStart + 1; i <= patIdxEnd; i++) {
+                if (patArr[i] == '*') {
+                    patIdxTmp = i;
+                    break;
+                }
+            }
+            if (patIdxTmp == patIdxStart + 1) {
+                // Two stars next to each other, skip the first one.
+                patIdxStart++;
+                continue;
+            }
+            // Find the pattern between padIdxStart & padIdxTmp in str between
+            // strIdxStart & strIdxEnd
+            int patLength = (patIdxTmp - patIdxStart - 1);
+            int strLength = (strIdxEnd - strIdxStart + 1);
+            int foundIdx = -1;
+            strLoop:
+            for (int i = 0; i <= strLength - patLength; i++) {
+                for (int j = 0; j < patLength; j++) {
+                    ch = patArr[patIdxStart + j + 1];
+                    if (ch != '?') {
+                        if (different(caseSensitive, ch,
+                            strArr[strIdxStart + i + j])) {
+                            continue strLoop;
+                        }
+                    }
+                }
+
+                foundIdx = strIdxStart + i;
+                break;
+            }
+
+            if (foundIdx == -1) {
+                return false;
+            }
+
+            patIdxStart = patIdxTmp;
+            strIdxStart = foundIdx + patLength;
+        }
+
+        // All characters in the string are used. Check if only '*'s are left
+        // in the pattern. If so, we succeeded. Otherwise failure.
+        return allStars(patArr, patIdxStart, patIdxEnd);
+    }
+
+    private static boolean allStars(char[] chars, int start, int end) {
+        for (int i = start; i <= end; ++i) {
+            if (chars[i] != '*') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean different(
+        boolean caseSensitive, char ch, char other) {
+        return caseSensitive
+            ? ch != other
+            : Character.toUpperCase(ch) != Character.toUpperCase(other);
+    }
+
+    public static String[] tokenizePathAsArray(String path) {
+        if (log.isTraceEnabled()) {
+            log.trace(sm.getString("matcher.tokenize", path));
+        }
+        String root = null;
+        if (isAbsolutePath(path)) {
+            String[] s = dissect(path);
+            root = s[0];
+            path = s[1];
+        }
+        char sep = File.separatorChar;
+        int start = 0;
+        int len = path.length();
+        int count = 0;
+        for (int pos = 0; pos < len; pos++) {
+            if (path.charAt(pos) == sep) {
+                if (pos != start) {
+                    count++;
+                }
+                start = pos + 1;
+            }
+        }
+        if (len != start) {
+            count++;
+        }
+        String[] l = new String[count + ((root == null) ? 0 : 1)];
+
+        if (root != null) {
+            l[0] = root;
+            count = 1;
+        } else {
+            count = 0;
+        }
+        start = 0;
+        for (int pos = 0; pos < len; pos++) {
+            if (path.charAt(pos) == sep) {
+                if (pos != start) {
+                    String tok = path.substring(start, pos);
+                    l[count++] = tok;
+                }
+                start = pos + 1;
+            }
+        }
+        if (len != start) {
+            String tok = path.substring(start);
+            l[count/*++*/] = tok;
+        }
+        return l;
+    }
+
+    private static String[] dissect(String path) {
+        char sep = File.separatorChar;
+        path = path.replace('/', sep).replace('\\', sep);
+
+        String root;
+        int colon = path.indexOf(':');
+        if (colon > 0 && (ON_DOS || ON_NETWARE)) {
+
+            int next = colon + 1;
+            root = path.substring(0, next);
+            char[] ca = path.toCharArray();
+            root += sep;
+            //remove the initial separator; the root has it.
+            next = (ca[next] == sep) ? next + 1 : next;
+
+            StringBuilder sbPath = new StringBuilder();
+            // Eliminate consecutive slashes after the drive spec:
+            for (int i = next; i < ca.length; i++) {
+                if (ca[i] != sep || ca[i - 1] != sep) {
+                    sbPath.append(ca[i]);
+                }
+            }
+            path = sbPath.toString();
+        } else if (path.length() > 1 && path.charAt(1) == sep) {
+            // UNC drive
+            int nextsep = path.indexOf(sep, 2);
+            nextsep = path.indexOf(sep, nextsep + 1);
+            root = (nextsep > 2) ? path.substring(0, nextsep + 1) : path;
+            path = path.substring(root.length());
+        } else {
+            root = File.separator;
+            path = path.substring(1);
+        }
+        return new String[]{root, path};
+    }
+
+    private static boolean isAbsolutePath(String filename) {
+        int len = filename.length();
+        if (len == 0) {
+            return false;
+        }
+        char sep = File.separatorChar;
+        filename = filename.replace('/', sep).replace('\\', sep);
+        char c = filename.charAt(0);
+        if (!(ON_DOS || ON_NETWARE)) {
+            return (c == sep);
+        }
+        if (c == sep) {
+            // CheckStyle:MagicNumber OFF
+            if (!(ON_DOS && len > 4 && filename.charAt(1) == sep)) {
+                return false;
+            }
+            // CheckStyle:MagicNumber ON
+            int nextsep = filename.indexOf(sep, 2);
+            return nextsep > 2 && nextsep + 1 < len;
+        }
+        int colon = filename.indexOf(':');
+        return (Character.isLetter(c) && colon == 1
+            && filename.length() > 2 && filename.charAt(2) == sep)
+            || (ON_NETWARE && colon > 0);
+    }
+
+    /**
+     * Determines if our OS is Netware.
+     *
+     * @return true if we run on Netware
+     */
+    private static boolean isNetware() {
+        return OS_NAME.contains("netware");
+    }
+
+    /**
+     * Determines if our OS is DOS.
+     *
+     * @return true if we run on DOS
+     */
+    private static boolean isDos() {
+        return PATH_SEP.equals(";") && !isNetware();
     }
 }
