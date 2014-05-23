@@ -355,6 +355,8 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public void setState(final Object o) {
         if (Identity.class.isInstance(o)) {
             clientIdentity.set(Identity.class.cast(o));
+        } else if (o == null) {
+            clientIdentity.remove();
         }
     }
 
