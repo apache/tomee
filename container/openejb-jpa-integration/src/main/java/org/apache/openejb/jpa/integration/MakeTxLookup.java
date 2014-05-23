@@ -33,9 +33,9 @@ public class MakeTxLookup implements Opcodes {
     public static final String HIBERNATE_NEW_FACTORY2 = "org.apache.openejb.hibernate.OpenEJBJtaPlatform2";
     public static final String TOPLINK_FACTORY = "org.apache.openejb.toplink.JTATransactionController";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
-        File file = new File(args[0]);
+        final File file = new File(args[0]);
 
         createTopLinkStrategy(file);
         createHibernteStrategy(file);
@@ -45,7 +45,7 @@ public class MakeTxLookup implements Opcodes {
     }
 
     private static void createNewHibernateStrategy(final File basedir, final String target, final String abstractJtaPlatformPackage) throws Exception {
-        ClassWriter cw = new ClassWriter(0);
+        final ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, target.replace('.', '/'), null, abstractJtaPlatformPackage + "/AbstractJtaPlatform", null);
@@ -70,9 +70,9 @@ public class MakeTxLookup implements Opcodes {
         {
             mv = cw.visitMethod(ACC_PROTECTED, "locateUserTransaction", "()Ljavax/transaction/UserTransaction;", null, null);
             mv.visitCode();
-            Label l0 = new Label();
-            Label l1 = new Label();
-            Label l2 = new Label();
+            final Label l0 = new Label();
+            final Label l1 = new Label();
+            final Label l2 = new Label();
             mv.visitTryCatchBlock(l0, l1, l2, "javax/naming/NamingException");
             mv.visitLabel(l0);
             mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/loader/SystemInstance", "get", "()Lorg/apache/openejb/loader/SystemInstance;", false);
@@ -98,15 +98,15 @@ public class MakeTxLookup implements Opcodes {
         write(basedir, cw, target.replace('.', '/'));
     }
 
-    private static void createHibernteStrategy(File baseDir) throws Exception {
+    private static void createHibernteStrategy(final File baseDir) throws Exception {
 
-        String factory = HIBERNATE_FACTORY;
+        final String factory = HIBERNATE_FACTORY;
 
-        String classFilePath = factory.replace('.', '/');
+        final String classFilePath = factory.replace('.', '/');
 
-        String sourceFileName = factory.substring(factory.lastIndexOf('.') + 1, factory.length()) + ".java";
+        final String sourceFileName = factory.substring(factory.lastIndexOf('.') + 1, factory.length()) + ".java";
 
-        ClassWriter cw = new ClassWriter(0);
+        final ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "java/lang/Object", new String[]{"org/hibernate/transaction/TransactionManagerLookup"});
@@ -152,16 +152,16 @@ public class MakeTxLookup implements Opcodes {
         write(baseDir, cw, classFilePath);
     }
 
-    private static void createTopLinkStrategy(File baseDir) throws Exception {
+    private static void createTopLinkStrategy(final File baseDir) throws Exception {
 
-        String factory = TOPLINK_FACTORY;
+        final String factory = TOPLINK_FACTORY;
 
-        String classFilePath = factory.replace('.', '/');
+        final String classFilePath = factory.replace('.', '/');
 
-        String sourceFileName = factory.substring(factory.lastIndexOf('.') + 1, factory.length()) + ".java";
+        final String sourceFileName = factory.substring(factory.lastIndexOf('.') + 1, factory.length()) + ".java";
 
 
-        ClassWriter cw = new ClassWriter(0);
+        final ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "oracle/toplink/essentials/transaction/JTATransactionController", null);
@@ -191,14 +191,14 @@ public class MakeTxLookup implements Opcodes {
         write(baseDir, cw, classFilePath);
     }
 
-    private static void write(File file, ClassWriter cw, String classFileName) throws IOException {
-        classFileName = "classes/" + classFileName + ".class";
-
-        for (String part : classFileName.split("/")) file = new File(file, part);
-
+    private static void write(final File originalFile, final ClassWriter cw, final String originalClassFileName) throws IOException {
+        final String classFileName = "classes/" + originalClassFileName + ".class";
+        File file = originalFile;
+        for (final String part : classFileName.split("/")) {
+            file = new File(file, part);
+        }
         file.getParentFile().mkdirs();
-
-        FileOutputStream out = new FileOutputStream(file);
+        final FileOutputStream out = new FileOutputStream(file);
         out.write(cw.toByteArray());
         out.close();
     }

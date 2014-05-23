@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
     }
 
     @Override
-    public Thread newThread(Runnable r) {
+    public Thread newThread(final Runnable r) {
         final Thread thread = new ManagedThread(r);
         thread.setDaemon(true);
         thread.setName(prefix + ID.incrementAndGet());

@@ -37,11 +37,11 @@ public class PrefixSessionCustomizer implements SessionCustomizer {
         if (JPAThreadContext.infos.containsKey("properties")) {
             final String prefix = ((Properties) JPAThreadContext.infos.get("properties")).getProperty("openejb.jpa.table_prefix");
             final List<DatabaseTable> tables = new ArrayList<DatabaseTable>();
-            for (ClassDescriptor cd : session.getDescriptors().values()) {
-                for (DatabaseTable table : cd.getTables()) {
+            for (final ClassDescriptor cd : session.getDescriptors().values()) {
+                for (final DatabaseTable table : cd.getTables()) {
                     update(prefix, tables, table);
                 }
-                for (DatabaseMapping mapping : cd.getMappings()) {
+                for (final DatabaseMapping mapping : cd.getMappings()) {
                     if (mapping instanceof ManyToManyMapping) {
                         update(prefix, tables, ((ManyToManyMapping) mapping).getRelationTable());
                     } else if (mapping instanceof DirectCollectionMapping) {
