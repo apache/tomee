@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,20 +48,20 @@ public class TestLoginModule implements LoginModule {
 
     private Set principals = new HashSet();
 
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
     }
 
     public boolean login() throws LoginException {
-        Callback[] callbacks = new Callback[2];
+        final Callback[] callbacks = new Callback[2];
 
         callbacks[0] = new NameCallback("Username:");
         callbacks[1] = new PasswordCallback("Password:", false);
         try {
             callbackHandler.handle(callbacks);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw new LoginException("Failed to perform emulated login: " + e.getMessage());
         }
 

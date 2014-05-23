@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import org.apache.openejb.junit.Property;
 import org.apache.openejb.junit.RunTestAs;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -36,7 +37,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.util.Properties;
-import org.apache.openejb.loader.SystemInstance;
 
 /**
  * To implement your own context, you need to create an implementation of TestContext
@@ -81,7 +81,7 @@ public class OpenEjbTestContext implements TestContext {
      *
      * @param testClazz
      */
-    public OpenEjbTestContext(Class clazz) {
+    public OpenEjbTestContext(final Class clazz) {
         this(clazz, null);
     }
 
@@ -91,7 +91,7 @@ public class OpenEjbTestContext implements TestContext {
      * @param testClazz
      * @param method
      */
-    public OpenEjbTestContext(Method method) {
+    public OpenEjbTestContext(final Method method) {
         this(method, null);
     }
 
@@ -100,7 +100,7 @@ public class OpenEjbTestContext implements TestContext {
      *
      * @param testClazz
      */
-    public OpenEjbTestContext(Class clazz, String securityRole) {
+    public OpenEjbTestContext(final Class clazz, final String securityRole) {
         this.clazz = clazz;
         this.securityRole = securityRole;
     }
@@ -111,13 +111,13 @@ public class OpenEjbTestContext implements TestContext {
      * @param testClazz
      * @param method
      */
-    public OpenEjbTestContext(Method method, String securityRole) {
+    public OpenEjbTestContext(final Method method, final String securityRole) {
         this.clazz = method.getDeclaringClass();
         this.method = method;
         this.securityRole = securityRole;
     }
 
-    public void configureTest(Object testObj) {
+    public void configureTest(final Object testObj) {
         try {
             if (testObj.getClass().isAnnotationPresent(LocalClient.class)) {
                 getInitialContext().bind("inject", testObj);
@@ -126,13 +126,13 @@ public class OpenEjbTestContext implements TestContext {
             // perform custom injections
             performInjections(testObj);
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new OpenEJBRuntimeException("Failed to load configuration.", e);
         }
-        catch (NamingException e) {
+        catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Failed to configure object.", e);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw new OpenEJBRuntimeException("Unknown error trying to configure object.", e);
         }
     }
@@ -141,7 +141,7 @@ public class OpenEjbTestContext implements TestContext {
     public void close() {
         try {
             initialContext.close();
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // ignored
         }
         OpenEJB.destroy();
@@ -157,14 +157,14 @@ public class OpenEjbTestContext implements TestContext {
     protected InitialContext getInitialContext() throws NamingException {
         if (initialContext == null) {
             // set the property for security realm RIGHT before we load the InitialContext
-            String loginConfig = OpenEjbTestContext.class.getResource(LOGIN_CONFIG_RESOURCE).toExternalForm();
+            final String loginConfig = OpenEjbTestContext.class.getResource(LOGIN_CONFIG_RESOURCE).toExternalForm();
             System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig));
 
             try {
-                Properties config = getContextConfig();
+                final Properties config = getContextConfig();
                 initialContext = new InitialContext(config);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 throw new NamingException("Failed to load initial context configuration: " + e.getMessage());
             }
         }
@@ -183,7 +183,7 @@ public class OpenEjbTestContext implements TestContext {
             return contextConfig;
         }
 
-        Properties env = new Properties();
+        final Properties env = new Properties();
         boolean loadedConfig = false;
 
         if (clazz.isAnnotationPresent(ContextConfig.class)) {
@@ -196,7 +196,7 @@ public class OpenEjbTestContext implements TestContext {
 
         // no properties loaded, use the "default" configuration
         if (!loadedConfig) {
-            InputStream in = OpenEjbTestContext.class.getResourceAsStream(DEFAULT_CONFIG_FILE_RESOURCE);
+            final InputStream in = OpenEjbTestContext.class.getResourceAsStream(DEFAULT_CONFIG_FILE_RESOURCE);
             if (in == null) {
                 throw new FileNotFoundException("Default configuration file not found. Specify configuration " +
                         "properties to initialize OpenEJB using @ContextConfig.");
@@ -223,7 +223,7 @@ public class OpenEjbTestContext implements TestContext {
      * @param contextConfig
      * @return true if any properties were loaded
      */
-    protected boolean loadConfig(Properties env, ContextConfig contextConfig) throws IOException {
+    protected boolean loadConfig(final Properties env, final ContextConfig contextConfig) throws IOException {
         boolean loadedConfig = false;
 
         loadedConfig = loadConfigFile(env, contextConfig);
@@ -239,11 +239,11 @@ public class OpenEjbTestContext implements TestContext {
      * @param contextConfig
      * @return true if any properties were loaded
      */
-    protected boolean loadConfigProperties(Properties env, ContextConfig contextConfig) {
+    protected boolean loadConfigProperties(final Properties env, final ContextConfig contextConfig) {
         boolean loadedConfig = false;
 
         if (contextConfig.properties().length > 0) {
-            for (Property p : contextConfig.properties()) {
+            for (final Property p : contextConfig.properties()) {
                 if (p.value() != null) {
                     loadedConfig = true;
                     Util.addProperty(env, p.value());
@@ -262,11 +262,11 @@ public class OpenEjbTestContext implements TestContext {
      * @param contextConfig
      * @return true if any properties were loaded
      */
-    protected boolean loadConfigFile(Properties env, ContextConfig contextConfig)
+    protected boolean loadConfigFile(final Properties env, final ContextConfig contextConfig)
             throws IOException {
         // properties file
         if (contextConfig.configFile().length() > 0) {
-            InputStream in = clazz.getResourceAsStream(contextConfig.configFile());
+            final InputStream in = clazz.getResourceAsStream(contextConfig.configFile());
             if (in == null) {
                 throw new FileNotFoundException("Cannot find resource '" + contextConfig.configFile() + "' in classpath: " + clazz.getName());
             }
@@ -283,7 +283,7 @@ public class OpenEjbTestContext implements TestContext {
      *
      * @param env
      */
-    protected void configureSecurity(Properties env) {
+    protected void configureSecurity(final Properties env) {
         // if a securityRole isn't already configured, use the RunTestAs annotation if available
         if (securityRole == null) {
             if (method != null && method.isAnnotationPresent(RunTestAs.class)) {
@@ -309,9 +309,9 @@ public class OpenEjbTestContext implements TestContext {
      * If the setter isn't found OR it fails, then an attempt will be made to set
      * it directly, and a message will be printed when it fails.
      */
-    private void performInjections(Object testObj) throws Exception {
-        for (Field field : clazz.getDeclaredFields()) {
-            Object injectValue = getInjectionValue(field);
+    private void performInjections(final Object testObj) throws Exception {
+        for (final Field field : clazz.getDeclaredFields()) {
+            final Object injectValue = getInjectionValue(field);
 
             // no value determined, try next field
             if (injectValue == null) {
@@ -320,13 +320,13 @@ public class OpenEjbTestContext implements TestContext {
 
             // now inject it through the setter
             try {
-                Method setterMethod = Util.findSetter(clazz, field, injectValue);
+                final Method setterMethod = Util.findSetter(clazz, field, injectValue);
                 if (setterMethod != null) {
                     setterMethod.invoke(testObj, injectValue);
                     continue;
                 }
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 System.err.println("Failed to perform setter injection on: " + clazz.getCanonicalName() + "." + field.getName());
                 e.printStackTrace();
             }
@@ -339,7 +339,7 @@ public class OpenEjbTestContext implements TestContext {
 
                 field.set(testObj, injectValue);
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 throw new OpenEJBRuntimeException("Failed to inject on: " + clazz.getCanonicalName() + "." + field.getName(), e);
             }
         }
@@ -351,11 +351,11 @@ public class OpenEjbTestContext implements TestContext {
      * @param field
      * @return reference to value to inject, or null if nothing should be injected
      */
-    protected Object getInjectionValue(Field field) throws Exception {
+    protected Object getInjectionValue(final Field field) throws Exception {
         // determine the value to inject
         if (field.isAnnotationPresent(TestResource.class)) {
-            TestResource resourceConfig = field.getAnnotation(TestResource.class);
-            String resourceType = resourceConfig.value();
+            final TestResource resourceConfig = field.getAnnotation(TestResource.class);
+            final String resourceType = resourceConfig.value();
 
             if (resourceType == null) {
                 throw new IllegalArgumentException("Null TestResource type '" + resourceType +
@@ -387,7 +387,7 @@ public class OpenEjbTestContext implements TestContext {
      * @param resourceConfig
      * @return instance to inject into annotated field.
      */
-    protected Object getOtherTestResource(TestResource resourceConfig) {
+    protected Object getOtherTestResource(final TestResource resourceConfig) {
         return null;
     }
 

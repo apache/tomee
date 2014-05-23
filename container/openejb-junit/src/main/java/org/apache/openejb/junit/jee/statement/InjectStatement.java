@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class InjectStatement extends Statement {
         if (startingStatement != null) {
             Class<?> clazz = this.clazz;
             while (!Object.class.equals(clazz)) {
-                for (Field field : clazz.getDeclaredFields()) {
+                for (final Field field : clazz.getDeclaredFields()) {
                     final TestResource resource = field.getAnnotation(TestResource.class);
                     if (resource != null) {
                         if (Context.class.isAssignableFrom(field.getType())) {

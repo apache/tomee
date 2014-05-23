@@ -444,6 +444,7 @@
       <modules>
         <module>container/openejb-core</module>
         <module>container/openejb-loader</module>
+        <module>container/openejb-junit</module>
       </modules>
       <properties>
         <style.config.dir>${user.dir}/src/main/style</style.config.dir>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-public class Util {
+public final class Util {
     private Util() {
     }
 
@@ -34,7 +34,7 @@ public class Util {
      * @param instance
      * @return true if the given object is of the specify type of class
      */
-    public static boolean isInstance(Class type, Object instance) {
+    public static boolean isInstance(final Class type, final Object instance) {
         if (type.isPrimitive()) {
             // for primitives the insance can't be null
             if (instance == null) {
@@ -72,7 +72,7 @@ public class Util {
      * @param env
      * @param value
      */
-    public static void addProperty(Hashtable env, String property) {
+    public static void addProperty(final Hashtable env, String property) {
         if (property == null || property.length() == 0) {
             throw new IllegalArgumentException("No property specified.");
         }
@@ -81,11 +81,12 @@ public class Util {
             throw new IllegalArgumentException("Invalid property has no name: " + property);
         }
 
-        String name, value;
+        final String name;
+        final String value;
 
         property = property.trim();
 
-        int esp = property.indexOf('=');
+        final int esp = property.indexOf('=');
         if (esp < 0) {
             name = property;
             value = "";
@@ -111,16 +112,16 @@ public class Util {
      * @param propertyValue
      * @return setter Method or NULL if not found
      */
-    public static Method findSetter(Class<?> testClazz, Field field, Object propertyValue) {
-        String propertyName = field.getName();
-        boolean isStatic = Modifier.isStatic(field.getModifiers());
+    public static Method findSetter(final Class<?> testClazz, final Field field, final Object propertyValue) {
+        final String propertyName = field.getName();
+        final boolean isStatic = Modifier.isStatic(field.getModifiers());
 
-        String setterName = "set" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
 
-        List<Method> methods = new ArrayList<Method>(Arrays.asList(testClazz.getMethods()));
+        final List<Method> methods = new ArrayList<Method>(Arrays.asList(testClazz.getMethods()));
         methods.addAll(Arrays.asList(testClazz.getDeclaredMethods()));
         Method unpreferredValidMethod = null;
-        for (Method clazzMethod : methods) {
+        for (final Method clazzMethod : methods) {
             if (clazzMethod.getName().equals(setterName)) {
                 if (clazzMethod.getParameterTypes().length == 0) {
                     continue;
@@ -138,7 +139,7 @@ public class Util {
                     continue;
                 }
 
-                Class methodParameterType = clazzMethod.getParameterTypes()[0];
+                final Class methodParameterType = clazzMethod.getParameterTypes()[0];
                 if (methodParameterType.isPrimitive() && propertyValue == null) {
                     continue;
                 }
@@ -185,9 +186,9 @@ public class Util {
      * @param clazzMethod
      * @return most specific method
      */
-    public static Method getMostSpecificMethod(Method method1, Method method2) {
-        Class<?> class1 = method1.getParameterTypes()[0];
-        Class<?> class2 = method2.getParameterTypes()[0];
+    public static Method getMostSpecificMethod(final Method method1, final Method method2) {
+        final Class<?> class1 = method1.getParameterTypes()[0];
+        final Class<?> class2 = method2.getParameterTypes()[0];
 
         if (class1.isAssignableFrom(class2)) {
             return method2;

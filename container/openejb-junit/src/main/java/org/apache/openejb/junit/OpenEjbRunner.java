@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,12 +49,12 @@ public class OpenEjbRunner extends Runner {
      * @param testClazz
      * @throws InitializationError
      */
-    public OpenEjbRunner(Class<?> testClazz) throws InitializationError {
+    public OpenEjbRunner(final Class<?> testClazz) throws InitializationError {
         this.testClazz = testClazz;
         try {
             delegate = getDelegateRunner(testClazz);
         }
-        catch (Throwable e) {
+        catch (final Throwable e) {
             throw new InitializationError(Arrays.asList(e));
         }
     }
@@ -67,7 +67,7 @@ public class OpenEjbRunner extends Runner {
      * @return the delegate runner
      * @throws Throwable NFC! Not like you need to declare you're throwing an Error
      */
-    protected Runner getDelegateRunner(Class<?> testClazz) throws Throwable {
+    protected Runner getDelegateRunner(final Class<?> testClazz) throws Throwable {
         if (TestCase.class.isAssignableFrom(testClazz)) {
             throw new UnsupportedOperationException("JUnit 3 tests not supported yet.");
         } else {
@@ -81,7 +81,7 @@ public class OpenEjbRunner extends Runner {
      * @return a new method level context
      * @see #newTestContext(java.lang.reflect.Method, java.lang.String)
      */
-    public TestContext newTestContext(Method method) {
+    public TestContext newTestContext(final Method method) {
         return newTestContext(method, null);
     }
 
@@ -99,7 +99,7 @@ public class OpenEjbRunner extends Runner {
      * @param roleName   Role to execute the context in.
      * @return a new method level context
      */
-    public TestContext newTestContext(Method method, String roleName) {
+    public TestContext newTestContext(final Method method, final String roleName) {
         if (method == null) {
             if (classTestContext == null) {
                 classTestContext = new OpenEjbTestContext(testClazz);
@@ -116,7 +116,7 @@ public class OpenEjbRunner extends Runner {
     }
 
     @Override
-    public void run(RunNotifier runNotifier) {
+    public void run(final RunNotifier runNotifier) {
         delegate.run(runNotifier);
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,8 @@
 package org.apache.openejb.junit;
 
 public interface TestResourceTypes {
-    public static final String CONTEXT_CONFIG = "org.apache.openejb.junit.context-config";
 
-    public static final String INITIALCONTEXT = "org.apache.openejb.junit.initial-context";
+    String CONTEXT_CONFIG = "org.apache.openejb.junit.context-config";
+    String INITIALCONTEXT = "org.apache.openejb.junit.initial-context";
+
 }

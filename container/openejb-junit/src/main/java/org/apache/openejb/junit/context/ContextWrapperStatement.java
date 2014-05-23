@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ public class ContextWrapperStatement extends Statement {
 
     private Object testObj;
 
-    public ContextWrapperStatement(TestContext testContext, Statement junitStatement, Object testObj) {
+    public ContextWrapperStatement(final TestContext testContext, final Statement junitStatement, final Object testObj) {
         this.testContext = testContext;
         this.junitStatement = junitStatement;
         this.testObj = testObj;
