@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.concurrencyutilities.ee.impl;
 
-import org.apache.openejb.api.CloseableResource;
+import org.apache.openejb.api.DestroyableResource;
 import org.apache.openejb.concurrencyutilities.ee.future.CUFuture;
 import org.apache.openejb.concurrencyutilities.ee.task.CUCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.CURunnable;
@@ -24,8 +24,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.enterprise.concurrent.ManagedExecutorService;
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Callable;
@@ -33,8 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-@CloseableResource
-public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService, Closeable {
+public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService, DestroyableResource {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImpl.class);
 
     private final ExecutorService delegate;
@@ -104,7 +101,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     }
 
     @Override
-    public void close() throws IOException {
+    public void destroyResource() {
         final List<Runnable> runnables = delegate.shutdownNow();
         if (runnables.size() > 0) {
             LOGGER.warning(runnables.size() + " tasks to execute");
