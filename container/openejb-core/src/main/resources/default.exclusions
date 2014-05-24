@@ -57,6 +57,7 @@ derbynet-
 dom4j
 ecj-
 eclipselink-
+FastInfoset
 fusemq-leveldb-
 geronimo-
 google-
@@ -78,6 +79,7 @@ httpcore-
 icu4j-
 idb-
 idea_rt.jar
+istack-commons-runtime-
 jackson-annotations-
 jackson-core-
 jackson-databind-
@@ -169,6 +171,7 @@ plexus-
 plugin.jar
 poi-
 quartz-2
+quartz-openejb-
 resources.jar
 rmock-
 rt.jar
