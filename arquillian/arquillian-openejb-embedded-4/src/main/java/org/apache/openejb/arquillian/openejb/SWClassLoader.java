@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,7 @@ public class SWClassLoader extends ClassLoader {
             final Field handler = URL.class.getDeclaredField("handlers");
             handler.setAccessible(true);
             ((Hashtable<String, URLStreamHandler>) handler.get(null)).put("archive", new ArchiveStreamHandler());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
     }
@@ -99,7 +99,7 @@ public class SWClassLoader extends ClassLoader {
         if (node != null) {
             try {
                 return new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler());
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // no-op: let reuse parent method
             }
         }
@@ -168,7 +168,7 @@ public class SWClassLoader extends ClassLoader {
 
         private static String path(final String arName, final URL url) {
             final String p = url.getPath();
-            String out = p.substring(arName.length(), p.length());
+            final String out = p.substring(arName.length(), p.length());
             if (prefixes.get(arName).endsWith("/") && out.startsWith("/")) {
                 return out.substring(1);
             }
@@ -180,7 +180,7 @@ public class SWClassLoader extends ClassLoader {
             if (p == null) {
                 return null;
             }
-            int endIndex = p.indexOf('/');
+            final int endIndex = p.indexOf('/');
             if (endIndex >= 0) {
                 return p.substring(0, endIndex);
             }
@@ -190,10 +190,10 @@ public class SWClassLoader extends ClassLoader {
 
     public void close() {
         ArchiveStreamHandler.reset(archive.getName());
-        for (Closeable cl : closeables) {
+        for (final Closeable cl : closeables) {
             try {
                 cl.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // no-op
             }
         }

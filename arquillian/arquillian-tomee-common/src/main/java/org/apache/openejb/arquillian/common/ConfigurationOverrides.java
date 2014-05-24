@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.common;
 
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class ConfigurationOverrides {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
-    public static List<URL> apply(Object configuration, final Properties systemProperties, String... prefixes) {
+    public static List<URL> apply(final Object configuration, final Properties systemProperties, final String... prefixes) {
         final List<URL> propertiesFiles = findPropertiesFiles("default.arquillian-%s.properties", prefixes);
         if (!propertiesFiles.isEmpty()) {
             apply(configuration, systemProperties, propertiesFiles, false, prefixes);
@@ -58,12 +58,12 @@ public class ConfigurationOverrides {
         final Properties defaults = new Properties();
 
         // Merge all the properties
-        for (Properties p : propertiesList) {
+        for (final Properties p : propertiesList) {
             defaults.putAll(p);
         }
 
         final ObjectMap map = new ObjectMap(configuration);
-        for (Map.Entry<Object, Object> entry : defaults.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : defaults.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString();
             setProperty(map, key, key, value, Level.FINE, overrideNotNull);
@@ -72,8 +72,8 @@ public class ConfigurationOverrides {
         //
         // Override the config with system properties
         //
-        for (String key : map.keySet()) {
-            for (String prefix : prefixes) {
+        for (final String key : map.keySet()) {
+            for (final String prefix : prefixes) {
                 final String property = prefix + "." + key;
                 final String value = systemProperties.getProperty(property);
 
@@ -82,12 +82,12 @@ public class ConfigurationOverrides {
         }
     }
 
-    private static List<Properties> read(List<URL> urls) {
+    private static List<Properties> read(final List<URL> urls) {
         final List<Properties> propertiesList = new ArrayList<Properties>();
-        for (URL url : urls) {
+        for (final URL url : urls) {
             try {
                 propertiesList.add(IO.readProperties(url));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.log(Level.WARNING, "Cannot read : " + url, e);
             }
         }
@@ -99,7 +99,7 @@ public class ConfigurationOverrides {
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        for (String prefix : prefixes) {
+        for (final String prefix : prefixes) {
             final String resourceName = String.format(name, prefix.replace('.', '-'));
             addResources(urls, loader, resourceName);
         }
@@ -107,18 +107,18 @@ public class ConfigurationOverrides {
         return urls;
     }
 
-    private static void addResources(List<URL> urls, ClassLoader loader, String resourceName) {
+    private static void addResources(final List<URL> urls, final ClassLoader loader, final String resourceName) {
         try {
             final Enumeration<URL> resources = loader.getResources(resourceName);
             while (resources.hasMoreElements()) {
                 urls.add(resources.nextElement());
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.log(Level.WARNING, "Failed getResources: " + resourceName, e);
         }
     }
 
-    private static void setProperty(ObjectMap map, String key, String property, String value, final Level info, final boolean overrideNotNull) {
+    private static void setProperty(final ObjectMap map, final String key, final String property, final String value, final Level info, final boolean overrideNotNull) {
         if (value == null) {
             LOGGER.log(Level.FINE, String.format("Unset '%s'", property));
             return;
@@ -132,13 +132,13 @@ public class ConfigurationOverrides {
         try {
             LOGGER.log(info, String.format("Applying override '%s=%s'", property, value));
             map.put(key, value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 map.put(key, Integer.parseInt(value)); // we manage String and int and boolean so let's try an int
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 try {
                     map.put(key, Boolean.parseBoolean(value)); // idem let's try a boolean
-                } catch (Exception ignored2) {
+                } catch (final Exception ignored2) {
                     LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
                 }
             }

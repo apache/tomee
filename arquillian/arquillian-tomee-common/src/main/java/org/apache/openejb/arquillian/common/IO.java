@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.common;
 
@@ -45,11 +45,11 @@ import java.util.zip.ZipOutputStream;
  */
 public class IO {
 
-    public static Properties readProperties(URL resource) throws IOException {
+    public static Properties readProperties(final URL resource) throws IOException {
         return readProperties(resource, new Properties());
     }
 
-    public static Properties readProperties(URL resource, Properties properties) throws IOException {
+    public static Properties readProperties(final URL resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
     }
 
@@ -57,11 +57,11 @@ public class IO {
         return readProperties(resource, new Properties());
     }
 
-    public static Properties readProperties(File resource, Properties properties) throws IOException {
+    public static Properties readProperties(final File resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
     }
 
-    public static Properties writeProperties(File resource, Properties properties) throws IOException {
+    public static Properties writeProperties(final File resource, final Properties properties) throws IOException {
         return writeProperties(write(resource), properties);
     }
 
@@ -72,9 +72,13 @@ public class IO {
      * @return
      * @throws IOException
      */
-    public static Properties readProperties(InputStream in, Properties properties) throws IOException {
-        if (in == null) throw new NullPointerException("InputStream is null");
-        if (properties == null) throw new NullPointerException("Properties is null");
+    public static Properties readProperties(final InputStream in, final Properties properties) throws IOException {
+        if (in == null) {
+            throw new NullPointerException("InputStream is null");
+        }
+        if (properties == null) {
+            throw new NullPointerException("Properties is null");
+        }
         try {
             properties.load(in);
         } finally{
@@ -90,9 +94,13 @@ public class IO {
      * @return
      * @throws IOException
      */
-    public static Properties writeProperties(OutputStream outputStream, Properties properties) throws IOException {
-        if (outputStream == null) throw new NullPointerException("OutputStream is null");
-        if (properties == null) throw new NullPointerException("Properties is null");
+    public static Properties writeProperties(final OutputStream outputStream, final Properties properties) throws IOException {
+        if (outputStream == null) {
+            throw new NullPointerException("OutputStream is null");
+        }
+        if (properties == null) {
+            throw new NullPointerException("Properties is null");
+        }
         try {
             properties.store(outputStream, "");
         } finally{
@@ -102,41 +110,41 @@ public class IO {
     }
 
 
-    public static String readString(URL url) throws IOException {
+    public static String readString(final URL url) throws IOException {
         final InputStream in = url.openStream();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             return reader.readLine();
         } finally {
             close(in);
         }
     }
 
-    public static String readString(File file) throws IOException {
+    public static String readString(final File file) throws IOException {
         final FileReader in = new FileReader(file);
         try {
-            BufferedReader reader = new BufferedReader(in);
+            final BufferedReader reader = new BufferedReader(in);
             return reader.readLine();
         } finally {
             close(in);
         }
     }
 
-    public static String slurp(String fileName) throws IOException {
+    public static String slurp(final String fileName) throws IOException {
         return slurp(new File(fileName));
     }
 
-    public static byte[] slurpBytes(File file) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static byte[] slurpBytes(final File file) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
         return out.toByteArray();
     }
 
-    public static String slurp(File file) throws IOException {
+    public static String slurp(final File file) throws IOException {
         return new String(slurpBytes(file));
     }
 
-    public static String slurp(InputStream in) throws IOException {
+    public static String slurp(final InputStream in) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         int i = -1;
         while ((i = in.read()) != -1) {
@@ -146,13 +154,13 @@ public class IO {
         return new String(outputStream.toByteArray(), "UTF-8");
     }
 
-    public static String slurp(URL url) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final URL url) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(url.openStream(), out);
         return new String(out.toByteArray());
     }
 
-    public static void writeString(File file, String string) throws IOException {
+    public static void writeString(final File file, final String string) throws IOException {
         final FileWriter out = new FileWriter(file);
         try {
             final BufferedWriter bufferedWriter = new BufferedWriter(out);
@@ -167,7 +175,7 @@ public class IO {
         }
     }
 
-    public static void copy(File from, OutputStream to) throws IOException {
+    public static void copy(final File from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
             copy(read, to);
@@ -176,7 +184,7 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to) throws IOException {
+    public static void copy(final InputStream from, final File to) throws IOException {
         final OutputStream write = write(to);
         try {
             copy(from, write);
@@ -185,7 +193,7 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to, boolean append) throws IOException {
+    public static void copy(final InputStream from, final File to, final boolean append) throws IOException {
         final OutputStream write = write(to, append);
         try {
             copy(from, write);
@@ -194,8 +202,8 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, OutputStream to) throws IOException {
-        byte[] buffer = new byte[1024];
+    public static void copy(final InputStream from, final OutputStream to) throws IOException {
+        final byte[] buffer = new byte[1024];
         int length = 0;
         while ((length = from.read(buffer)) != -1) {
             to.write(buffer, 0, length);
@@ -203,26 +211,28 @@ public class IO {
         to.flush();
     }
 
-    public static ZipOutputStream zip(File file) throws IOException {
+    public static ZipOutputStream zip(final File file) throws IOException {
         final OutputStream write = write(file);
         return new ZipOutputStream(write);
     }
 
-    public static ZipInputStream unzip(File file) throws IOException {
+    public static ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
         return new ZipInputStream(read);
     }
 
-    public static IOException close(Closeable closeable) throws IOException {
-        if (closeable == null) return null;
+    public static IOException close(final Closeable closeable) throws IOException {
+        if (closeable == null) {
+            return null;
+        }
         try {
             if (closeable instanceof Flushable) {
                 ((Flushable) closeable).flush();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             try {
                 closeable.close();
-            } catch (IOException e2) {
+            } catch (final IOException e2) {
                 // no-op
             } finally {
                 return e;
@@ -230,7 +240,7 @@ public class IO {
         }
         try {
             closeable.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return e;
         }
         return null;
@@ -246,24 +256,26 @@ public class IO {
         }
     }
 
-    public static void copy(byte[] from, File to) throws IOException {
+    public static void copy(final byte[] from, final File to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
-    public static void copy(byte[] from, OutputStream to) throws IOException {
+    public static void copy(final byte[] from, final OutputStream to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
     public static void closeSilently(final Closeable closeable) {
         try {
             close(closeable);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
     }
 
-    public static boolean delete(File file) {
-        if (file == null) return false;
+    public static boolean delete(final File file) {
+        if (file == null) {
+            return false;
+        }
         if (!file.delete()) {
             System.err.println("Delete failed " + file.getAbsolutePath());
             return false;
@@ -272,26 +284,26 @@ public class IO {
         return true;
     }
 
-    public static OutputStream write(File destination) throws FileNotFoundException {
+    public static OutputStream write(final File destination) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static OutputStream write(File destination, boolean append) throws FileNotFoundException {
+    public static OutputStream write(final File destination, final boolean append) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination, append);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static InputStream read(File source) throws FileNotFoundException {
+    public static InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
     }
 
-    public static InputStream read(byte[] content) {
+    public static InputStream read(final byte[] content) {
         return new ByteArrayInputStream(content);
     }
 
-    public static InputStream read(URL url) throws IOException {
+    public static InputStream read(final URL url) throws IOException {
         return url.openStream();
     }
 

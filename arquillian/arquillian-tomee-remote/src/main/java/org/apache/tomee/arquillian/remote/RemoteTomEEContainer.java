@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -107,7 +107,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                 IO.readProperties(IO.read(configuration.getProperties().getBytes()), props);
 
                 containerArchives = ArquillianUtil.toDeploy(props);
-                for (Archive<?> archive : containerArchives) {
+                for (final Archive<?> archive : containerArchives) {
                     deploy(archive);
                 }
             }
@@ -225,14 +225,16 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         if (logger.isLoggable(Level.FINE)) {
             final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
-            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            for (final Map.Entry<Object, Object> entry : map.entrySet()) {
                 logger.log(Level.FINE, String.format("%s = %s\n", entry.getKey(), entry.getValue()));
             }
         }
     }
 
     private boolean noLoggingConfigProvided() {
-        if (configuration.getConf() == null) return true;
+        if (configuration.getConf() == null) {
+            return true;
+        }
 
         final File conf = new File(configuration.getConf());
 
@@ -262,14 +264,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     protected Deployer deployer() throws NamingException {
         try {
             return super.deployer();
-        } catch (RuntimeException ne) {
+        } catch (final RuntimeException ne) {
             // some debug lines
             if (Boolean.getBoolean("openejb.arquillian.debug")) {
                 container.kill3UNIX();
                 LOGGER.info("Can't connect to deployer through: " + providerUrl());
                 try {
                     LOGGER.info("Here is the server.xml:\n" + IO.slurp(new File(Setup.findHome(new File(configuration.getDir()).getAbsoluteFile()), "conf/server.xml")));
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
             }
@@ -299,7 +301,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                 throw new UnsupportedOperationException("No more element");
             }
 
-            char endChar;
+            final char endChar;
             if (string.charAt(currentIndex) == '"') {
                 currentIndex++;
                 endChar = '"';

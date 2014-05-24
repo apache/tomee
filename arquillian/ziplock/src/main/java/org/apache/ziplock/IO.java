@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ziplock;
 
@@ -71,7 +71,7 @@ public class IO {
         return new String(bytes);
     }
 
-    public static byte[] readBytes(File file) throws IOException {
+    public static byte[] readBytes(final File file) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
         return out.toByteArray();
@@ -82,7 +82,7 @@ public class IO {
         return new String(bytes, "UTF-8");
     }
 
-    public static byte[] readBytes(InputStream in) throws IOException {
+    public static byte[] readBytes(final InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
         return out.toByteArray();
@@ -93,7 +93,7 @@ public class IO {
         return new String(bytes);
     }
 
-    public static byte[] readBytes(URL url) throws IOException {
+    public static byte[] readBytes(final URL url) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(url, out);
         return out.toByteArray();
@@ -170,21 +170,27 @@ public class IO {
     }
 
     public static void close(final Closeable closeable) throws IOException {
-        if (closeable == null) return;
+        if (closeable == null) {
+            return;
+        }
         try {
             if (closeable instanceof Flushable) {
                 ((Flushable) closeable).flush();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
+            // no-op
         }
         try {
             closeable.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
+            // no-op
         }
     }
 
     public static boolean delete(final File file) {
-        if (file == null) return false;
+        if (file == null) {
+            return false;
+        }
         if (!file.delete()) {
             System.err.println("Delete failed " + file.getAbsolutePath());
             return false;

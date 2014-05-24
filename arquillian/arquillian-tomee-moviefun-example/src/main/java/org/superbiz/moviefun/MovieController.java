@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.moviefun;
 
@@ -43,9 +43,6 @@ public class MovieController implements Serializable {
     private Movies ejbFacade;
     private PaginationHelper pagination;
     private int selectedItemIndex;
-
-    public MovieController() {
-    }
 
     public Movie getSelected() {
         if (current == null) {
@@ -99,7 +96,7 @@ public class MovieController implements Serializable {
             getFacade().addMovie(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieCreated"));
             return prepareCreate();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
         }
@@ -116,7 +113,7 @@ public class MovieController implements Serializable {
             getFacade().editMovie(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieUpdated"));
             return "View";
-        } catch (Exception e) {
+        } catch (final Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
         }
@@ -147,13 +144,13 @@ public class MovieController implements Serializable {
         try {
             getFacade().deleteMovieId(current.getId());
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieDeleted"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
         }
     }
 
     private void updateCurrentItem() {
-        int count = getFacade().count();
+        final int count = getFacade().count();
         if (selectedItemIndex >= count) {
             // selected index cannot be bigger than number of items:
             selectedItemIndex = count - 1;
@@ -201,33 +198,33 @@ public class MovieController implements Serializable {
     @FacesConverter(forClass = Movie.class)
     public static class MovieControllerConverter implements Converter {
 
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+        public Object getAsObject(final FacesContext facesContext, final UIComponent component, final String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MovieController controller = (MovieController) facesContext.getApplication().getELResolver().
+            final MovieController controller = (MovieController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "movieController");
             return controller.ejbFacade.find(getKey(value));
         }
 
-        long getKey(String value) {
-            long key;
+        long getKey(final String value) {
+            final long key;
             key = Long.parseLong(value);
             return key;
         }
 
-        String getStringKey(long value) {
-            StringBuffer sb = new StringBuffer();
+        String getStringKey(final long value) {
+            final StringBuffer sb = new StringBuffer();
             sb.append(value);
             return sb.toString();
         }
 
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+        public String getAsString(final FacesContext facesContext, final UIComponent component, final Object object) {
             if (object == null) {
                 return null;
             }
             if (object instanceof Movie) {
-                Movie o = (Movie) object;
+                final Movie o = (Movie) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + MovieController.class.getName());

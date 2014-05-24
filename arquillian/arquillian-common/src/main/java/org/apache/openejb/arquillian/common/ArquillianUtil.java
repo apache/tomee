@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,14 +56,14 @@ public final class ArquillianUtil {
         if (properties.containsKey(ArquillianUtil.PREDEPLOYING_KEY)) {
             final String toSplit = properties.getProperty(PREDEPLOYING_KEY).trim();
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            for (String name : toSplit.split(",")) {
-                int bracket = name.indexOf(".[");
+            for (final String name : toSplit.split(",")) {
+                final int bracket = name.indexOf(".[");
                 if (bracket >= 0) {
-                    int end = name.indexOf("]");
+                    final int end = name.indexOf("]");
                     if (end > bracket) {
                         final String pkg = name.substring(0, bracket + 1);
                         final String classes = name.substring(bracket + 2, end);
-                        for (String n : classes.split("\\|")) {
+                        for (final String n : classes.split("\\|")) {
                             addClass(list, loader, pkg + n);
                         }
                         continue;
@@ -79,14 +79,14 @@ public final class ArquillianUtil {
         final String name = classname.trim();
         try {
             final Class<?> clazz = loader.loadClass(name);
-            for (Method m : clazz.getMethods()) {
+            for (final Method m : clazz.getMethods()) {
                 final int modifiers = m.getModifiers();
                 if (Object.class.equals(m.getDeclaringClass()) || !Archive.class.isAssignableFrom(m.getReturnType())
                         || !Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
                     continue;
                 }
 
-                for (Annotation a : m.getAnnotations()) {
+                for (final Annotation a : m.getAnnotations()) {
                     if ("org.jboss.arquillian.container.test.api.Deployment".equals(a.annotationType().getName())) {
                         final Archive<?> archive = (Archive<?>) m.invoke(null);
                         list.add(archive);
@@ -94,17 +94,17 @@ public final class ArquillianUtil {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
 
-    public static void undeploy(DeployableContainer<?> container, final Collection<Archive<?>> containerArchives) {
+    public static void undeploy(final DeployableContainer<?> container, final Collection<Archive<?>> containerArchives) {
         if (containerArchives != null) {
-            for (Archive<?> a  : containerArchives) {
+            for (final Archive<?> a  : containerArchives) {
                 try {
                     container.undeploy(a);
-                } catch (DeploymentException e) {
+                } catch (final DeploymentException e) {
                     Logger.getLogger(container.getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
                 }
             }

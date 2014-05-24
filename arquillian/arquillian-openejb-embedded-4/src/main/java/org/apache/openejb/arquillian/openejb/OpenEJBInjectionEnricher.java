@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,6 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -55,11 +54,11 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
                 try {
                     final BeanManager bm = appContext.getWebBeansContext().getBeanManagerImpl();
                     final AnnotatedType<?> at = bm.createAnnotatedType(clazz);
-                    final InjectionTarget<Object> it = (InjectionTarget<Object>) bm.createInjectionTarget(at);
+                    bm.createInjectionTarget(at);
                     final CreationalContext<Object> cc = bm.createCreationalContext(null);
                     OWBInjector.inject(bm, testInstance, cc);
                     cc.release();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // no-op
                 }
             }

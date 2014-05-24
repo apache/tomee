@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ public class MockitoEnricher implements TestEnricher {
             final Class<?> clazz = testCase.getClass().getClassLoader().loadClass(MOCKITO_CLASS);
             final Method injectMethod = clazz.getMethod("initMocks", Object.class);
             injectMethod.invoke(null, testCase);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op: can't use mockito, not a big deal for common cases
         }
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.moviefun;
 
@@ -41,7 +41,7 @@ public class Movie implements Serializable {
     public Movie() {
     }
 
-    public Movie(String title, String director, String genre, int rating, int year) {
+    public Movie(final String title, final String director, final String genre, final int rating, final int year) {
         this.director = director;
         this.title = title;
         this.year = year;
@@ -49,7 +49,7 @@ public class Movie implements Serializable {
         this.rating = rating;
     }
 
-    public Movie(String director, String title, int year) {
+    public Movie(final String director, final String title, final int year) {
         this.director = director;
         this.title = title;
         this.year = year;
@@ -59,7 +59,7 @@ public class Movie implements Serializable {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
@@ -67,7 +67,7 @@ public class Movie implements Serializable {
         return director;
     }
 
-    public void setDirector(String director) {
+    public void setDirector(final String director) {
         this.director = director;
     }
 
@@ -75,7 +75,7 @@ public class Movie implements Serializable {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -83,7 +83,7 @@ public class Movie implements Serializable {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(final int year) {
         this.year = year;
     }
 
@@ -91,7 +91,7 @@ public class Movie implements Serializable {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(final String genre) {
         this.genre = genre;
     }
 
@@ -99,7 +99,7 @@ public class Movie implements Serializable {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(final int rating) {
         this.rating = rating;
     }
 }

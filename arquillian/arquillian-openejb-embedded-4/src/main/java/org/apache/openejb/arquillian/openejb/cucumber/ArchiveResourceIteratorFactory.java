@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,7 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(final URL url, final String path, final String suffix) {
         return findResources(path, suffix).iterator();
     }
 
@@ -92,7 +92,7 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
         }
     }
 
-    private static String classloaderPath(ArchivePath key) {
+    private static String classloaderPath(final ArchivePath key) {
         return key.get().replace("/WEB-INF/classes/", "");
     }
 }

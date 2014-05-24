@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ public class AppResourceProducer {
     @SuiteScoped
     private InstanceProducer<Context> context;
 
-    public void produce(final @Observes BeforeClass bs) {
+    public void produce(@Observes final BeforeClass bs) {
         try {
             final Assembler a = SystemInstance.get().getComponent(Assembler.class);
             context.set(a.getContainerSystem().getJNDIContext());

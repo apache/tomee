@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,7 +110,7 @@ public class OpenEJBArchiveProcessor {
                 } else if (FileAsset.class.isInstance(asset)) {
                     try {
                         additionalPaths.add(get(File.class, "file", asset).toURI().toURL());
-                    } catch (MalformedURLException e) {
+                    } catch (final MalformedURLException e) {
                         LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
                     }
                 } else if (ArchiveAsset.class.isInstance(asset)) {
@@ -171,7 +171,7 @@ public class OpenEJBArchiveProcessor {
         if (ejbJarXml != null) {
             try {
                 ejbJar = ReadDescriptors.readEjbJar(ejbJarXml.getAsset().openStream());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 throw new OpenEJBRuntimeException(e);
             }
         } else {
@@ -218,7 +218,7 @@ public class OpenEJBArchiveProcessor {
                 } else if (FileAsset.class.isInstance(asset)) {
                     try {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
-                    } catch (MalformedURLException e) {
+                    } catch (final MalformedURLException e) {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
                     }
                 } else if (ClassLoaderAsset.class.isInstance(asset)) {
@@ -267,7 +267,7 @@ public class OpenEJBArchiveProcessor {
 
                     // do it for test class too
                     appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.log(Level.SEVERE, "can't read env-entries.properties", e);
                 } finally {
                     IO.close(is);
@@ -294,7 +294,7 @@ public class OpenEJBArchiveProcessor {
             final Field field = asset.getClass().getDeclaredField(attr);
             field.setAccessible(true);
             return fileClass.cast(field.get(asset));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -336,7 +336,7 @@ public class OpenEJBArchiveProcessor {
             try {
                 final URL key = new URL("jar:file://!/WEB-INF/classes/"); // no host avoid host resolution in hashcode()
                 classesByUrl.put(key, mainClasses);
-            } catch (MalformedURLException mue) {
+            } catch (final MalformedURLException mue) {
                 // no-op
             }
         }
@@ -358,7 +358,7 @@ public class OpenEJBArchiveProcessor {
         return name.substring(1, name.length() - 6);
     }
 
-    private static class AssetSource implements ReadDescriptors.Source {
+    private static final class AssetSource implements ReadDescriptors.Source {
         private Asset asset;
 
         private AssetSource(final Asset asset) {

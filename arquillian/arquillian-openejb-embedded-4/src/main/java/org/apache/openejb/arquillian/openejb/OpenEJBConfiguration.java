@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class OpenEJBConfiguration implements ContainerConfiguration {
     }
 
     @Multiline
-    public void setProperties(String properties) {
+    public void setProperties(final String properties) {
         this.properties = properties;
     }
 

@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ziplock;
 
@@ -28,54 +28,54 @@ public class Join {
 
     public static final ClassCallback CLASS_CALLBACK = new ClassCallback();
 
-    public static String join(String delimiter, Collection collection) {
+    public static String join(final String delimiter, final Collection collection) {
         if (collection.size() == 0) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : collection) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object obj : collection) {
             sb.append(obj).append(delimiter);
         }
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
-    public static String join(String delimiter, Object... collection) {
+    public static String join(final String delimiter, final Object... collection) {
         if (collection.length == 0) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : collection) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object obj : collection) {
             sb.append(obj).append(delimiter);
         }
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
-    public static <T> String join(String delimiter, NameCallback<T> nameCallback, T... collection) {
+    public static <T> String join(final String delimiter, final NameCallback<T> nameCallback, final T... collection) {
         if (collection.length == 0) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (T obj : collection) {
+        final StringBuilder sb = new StringBuilder();
+        for (final T obj : collection) {
             sb.append(nameCallback.getName(obj)).append(delimiter);
         }
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
-    public static <T> String join(String delimiter, NameCallback<T> nameCallback, Collection<T> collection) {
+    public static <T> String join(final String delimiter, final NameCallback<T> nameCallback, final Collection<T> collection) {
         if (collection.size() == 0) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (T obj : collection) {
+        final StringBuilder sb = new StringBuilder();
+        for (final T obj : collection) {
             sb.append(nameCallback.getName(obj)).append(delimiter);
         }
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
-    public static <T> List<String> strings(Collection<T> collection, NameCallback<T> callback) {
+    public static <T> List<String> strings(final Collection<T> collection, final NameCallback<T> callback) {
         final List<String> list = new ArrayList<String>();
 
-        for (T t : collection) {
+        for (final T t : collection) {
             final String name = callback.getName(t);
             list.add(name);
         }
@@ -83,28 +83,27 @@ public class Join {
         return list;
     }
 
-    public static interface NameCallback<T> {
-
-        public String getName(T object);
+    public interface NameCallback<T> {
+        String getName(T object);
     }
 
     public static class FileCallback implements NameCallback<File> {
 
-        public String getName(File file) {
+        public String getName(final File file) {
             return file.getName();
         }
     }
 
     public static class MethodCallback implements NameCallback<Method> {
 
-        public String getName(Method method) {
+        public String getName(final Method method) {
             return method.getName();
         }
     }
 
     public static class ClassCallback implements NameCallback<Class<?>> {
 
-        public String getName(Class<?> cls) {
+        public String getName(final Class<?> cls) {
             return cls.getName();
         }
     }

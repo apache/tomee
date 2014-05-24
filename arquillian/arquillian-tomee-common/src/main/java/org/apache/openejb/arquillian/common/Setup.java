@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.common;
 
@@ -63,7 +63,7 @@ public class Setup {
         System.setProperty("tomee.home", tomeeHome.getAbsolutePath());
     }
 
-    public static void updateServerXml(File tomeeHome, TomEEConfiguration configuration) throws IOException {
+    public static void updateServerXml(final File tomeeHome, final TomEEConfiguration configuration) throws IOException {
         final File serverXml = Files.path(new File(tomeeHome.getAbsolutePath()), "conf", "server.xml");
         if (!serverXml.exists()) {
             return;
@@ -116,7 +116,9 @@ public class Setup {
         if (null != files) {
 
             for (final File file : files) {
-                if (".".equals(file.getName()) || "..".equals(file.getName())) continue;
+                if (".".equals(file.getName()) || "..".equals(file.getName())) {
+                    continue;
+                }
 
                 final File found = findHome(file);
 
@@ -146,7 +148,9 @@ public class Setup {
 
         try {
             final File artifact = MavenCache.getArtifact(artifactName, altUrl);
-            if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
+            if (artifact == null) {
+                throw new NullPointerException(String.format("No such artifact: %s", artifactName));
+            }
             return artifact.getAbsoluteFile();
         } finally {
             if (cache == null) {
@@ -161,13 +165,13 @@ public class Setup {
             socket = new Socket(host, port);
             socket.getOutputStream().close();
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         } finally {
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
             }
@@ -251,7 +255,7 @@ public class Setup {
         try {
             final Method ajbPort = config.getClass().getMethod("getAjpPort");
             return (Integer) ajbPort.invoke(config);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return Integer.parseInt(QuickServerXmlParser.DEFAULT_AJP_PORT);
         }
     }
@@ -265,7 +269,7 @@ public class Setup {
         if (file.exists()) {
             try {
                 IO.readProperties(file, properties);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.log(Level.SEVERE, "Can't read " + file.getAbsolutePath(), e);
             }
         }
@@ -274,7 +278,7 @@ public class Setup {
             try {
                 final InputStream bytes = IO.read(configuration.getProperties().getBytes());
                 IO.readProperties(bytes, properties);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.log(Level.SEVERE, "Can't parse <property name=\"properties\"> value '" + configuration.getProperties() + "'", e);
             }
         }
@@ -285,7 +289,7 @@ public class Setup {
 
         try {
             IO.writeProperties(file, properties);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, "Can't save system properties " + file.getAbsolutePath(), e);
         }
     }
@@ -298,10 +302,10 @@ public class Setup {
                 final File conf = new File(tomeeHome, dir);
                 final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, new DirectFileOnlyFilter(confSrc));
                 files.remove(confSrc);
-                for (File f : files) {
+                for (final File f : files) {
                     try {
                         org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOGGER.log(Level.WARNING, "Ignoring copy of " + f.getAbsolutePath(), e);
                     }
                 }

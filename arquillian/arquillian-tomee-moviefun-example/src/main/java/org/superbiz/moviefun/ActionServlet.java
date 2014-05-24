@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.moviefun;
 
@@ -35,111 +35,111 @@ public class ActionServlet extends HttpServlet {
     @EJB(name = "movies")
     private Movies moviesBean;
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		process(request, response);
-	}
+    @Override
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        process(request, response);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		process(request, response);
-	}
+    @Override
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        process(request, response);
+    }
 
-	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		
-	    List<Movie> movies = null;
-	    ListIterator<Movie> listIterator = null;
-	    int display = 5;
-	    
-	    String action = request.getParameter("action");
+    private void process(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final HttpSession session = request.getSession();
 
-	    
-		if ("Add".equals(action)) {
+        List<Movie> movies = null;
+        ListIterator<Movie> listIterator = null;
+        final int display = 5;
 
-	        String title = request.getParameter("title");
-	        String director = request.getParameter("director");
-	        String genre = request.getParameter("genre");
-	        int rating = Integer.parseInt(request.getParameter("rating"));
-	        int year = Integer.parseInt(request.getParameter("year"));
+        final String action = request.getParameter("action");
 
-	        Movie movie = new Movie(title, director, genre, rating, year);
 
-	        moviesBean.addMovie(movie);
+        if ("Add".equals(action)) {
 
-	    } else if ("Remove".equals(action)) {
+            final String title = request.getParameter("title");
+            final String director = request.getParameter("director");
+            final String genre = request.getParameter("genre");
+            final int rating = Integer.parseInt(request.getParameter("rating"));
+            final int year = Integer.parseInt(request.getParameter("year"));
 
-	        String[] ids = request.getParameterValues("id");
-	        for (String id : ids) {
-	            moviesBean.deleteMovieId(new Long(id));
-	        }
+            final Movie movie = new Movie(title, director, genre, rating, year);
 
-	    } else if (">>".equals(action)) {
+            moviesBean.addMovie(movie);
 
-	        movies = (List) session.getAttribute("movies.collection");
-	        listIterator = (ListIterator) session.getAttribute("movies.iterator");
+        } else if ("Remove".equals(action)) {
 
-	    } else if ("<<".equals(action)) {
+            final String[] ids = request.getParameterValues("id");
+            for (final String id : ids) {
+                moviesBean.deleteMovieId(new Long(id));
+            }
 
-	        movies = (List) session.getAttribute("movies.collection");
-	        listIterator = (ListIterator) session.getAttribute("movies.iterator");
-	        for (int i = display * 2; i > 0 && listIterator.hasPrevious(); i--) {
-	            listIterator.previous(); // backup
-	        }
+        } else if (">>".equals(action)) {
 
-	    } else if ("findByTitle".equals(action)) {
+            movies = (List) session.getAttribute("movies.collection");
+            listIterator = (ListIterator) session.getAttribute("movies.iterator");
 
-	        movies = moviesBean.findByTitle(request.getParameter("key"));
+        } else if ("<<".equals(action)) {
 
-	    } else if ("findByDirector".equals(action)) {
+            movies = (List) session.getAttribute("movies.collection");
+            listIterator = (ListIterator) session.getAttribute("movies.iterator");
+            for (int i = display * 2; i > 0 && listIterator.hasPrevious(); i--) {
+                listIterator.previous(); // backup
+            }
 
-	        movies = moviesBean.findByDirector(request.getParameter("key"));
+        } else if ("findByTitle".equals(action)) {
 
-	    } else if ("findByGenre".equals(action)) {
+            movies = moviesBean.findByTitle(request.getParameter("key"));
 
-	        movies = moviesBean.findByGenre(request.getParameter("key"));
-	    }
+        } else if ("findByDirector".equals(action)) {
 
-	    if (movies == null) {
-	        try {
-	            movies = moviesBean.getMovies();
-	        } catch (Throwable e) {
-	            // We must not have run setup yet
-	            response.sendRedirect("setup.jsp");
-	            return;
-	        }
-	    }
+            movies = moviesBean.findByDirector(request.getParameter("key"));
 
-	    if (listIterator == null) {
-	        listIterator = movies.listIterator();
-	    }
+        } else if ("findByGenre".equals(action)) {
 
-	    session.setAttribute("movies.collection", movies);
-	    session.setAttribute("movies.iterator", listIterator);
-	    
-	    List<Movie> moviesToShow = new ArrayList<Movie>();
-	    
-	    boolean hasPrevious = listIterator.hasPrevious();
-	    
-	    int start = listIterator.nextIndex();
+            movies = moviesBean.findByGenre(request.getParameter("key"));
+        }
+
+        if (movies == null) {
+            try {
+                movies = moviesBean.getMovies();
+            } catch (final Throwable e) {
+                // We must not have run setup yet
+                response.sendRedirect("setup.jsp");
+                return;
+            }
+        }
+
+        if (listIterator == null) {
+            listIterator = movies.listIterator();
+        }
+
+        session.setAttribute("movies.collection", movies);
+        session.setAttribute("movies.iterator", listIterator);
+
+        final List<Movie> moviesToShow = new ArrayList<Movie>();
+
+        final boolean hasPrevious = listIterator.hasPrevious();
+
+        final int start = listIterator.nextIndex();
         
-	    for (int i=display; i > 0 && listIterator.hasNext(); i-- ) {
-	    	    Movie movie = (Movie) listIterator.next();
-	    	    moviesToShow.add(movie);
-	    }
+        for (int i=display; i > 0 && listIterator.hasNext(); i-- ) {
+                final Movie movie = (Movie) listIterator.next();
+                moviesToShow.add(movie);
+        }
         
-	    boolean hasNext = listIterator.hasNext();
-			
-	    int end = listIterator.nextIndex();
-	    request.setAttribute("movies", moviesToShow);
-	    request.setAttribute("start", start);
-	    request.setAttribute("end", end);
-	    request.setAttribute("total", movies.size());
-	    request.setAttribute("display", display);
-	    request.setAttribute("hasNext", hasNext);
-	    request.setAttribute("hasPrev", hasPrevious);
-		
-	    request.getRequestDispatcher("WEB-INF/moviefun.jsp").forward(request, response);
-	}
+        final boolean hasNext = listIterator.hasNext();
+
+        final int end = listIterator.nextIndex();
+        request.setAttribute("movies", moviesToShow);
+        request.setAttribute("start", start);
+        request.setAttribute("end", end);
+        request.setAttribute("total", movies.size());
+        request.setAttribute("display", display);
+        request.setAttribute("hasNext", hasNext);
+        request.setAttribute("hasPrev", hasPrevious);
+
+        request.getRequestDispatcher("WEB-INF/moviefun.jsp").forward(request, response);
+    }
 
 }

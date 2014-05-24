@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.common;
 
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * @version $Rev: 1157006 $ $Date: 2011-08-12 01:23:04 -0700 (Fri, 12 Aug 2011) $
  */
-public class Files {
+public final class Files {
     private static final Logger LOGGER = Logger.getLogger(Files.class.getName());
 
     public static File path(final String... parts) {
@@ -57,7 +57,7 @@ public class Files {
         File tempDir;
         try {
             tempDir = File.createTempFile(prefix, suffix);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final File tmp = new File("tmp");
             if (!tmp.exists() && !tmp.mkdirs()) {
                 throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -124,7 +124,9 @@ public class Files {
     }
 
     public static void mkdir(final File dir) {
-        if (dir.exists()) return;
+        if (dir.exists()) {
+            return;
+        }
         if (!dir.mkdirs()) {
             throw new IllegalStateException("cannot make directory: " + dir.getAbsolutePath());
         }
