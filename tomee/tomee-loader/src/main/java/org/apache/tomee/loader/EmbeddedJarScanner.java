@@ -77,11 +77,6 @@ public class EmbeddedJarScanner implements JarScanner {
                     continue;
                 }
 
-                // Need to scan this JAR
-                if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("jarScan.webinflibJarScan", url.toExternalForm()));
-                }
-
                 try {
                     process(callback, url);
                 } catch (final IOException e) {
@@ -131,9 +126,8 @@ public class EmbeddedJarScanner implements JarScanner {
                     final URL jarURL = new URL("jar:" + urlStr + "!/");
 
                     final String fileName = URLs.toFile(jarURL).getName();
-                    // bug in tomcat 7.0.47 so we need to handle it manually
-                    // TODO: remove this hack when upgrading to Tomcat 7.0.48
-                    if (fileName.contains("tomcat7-websocket") && FRAGMENT_CALLBACK.equals(callback.getClass().getName())) {
+
+                    if ((fileName.contains("tomcat7-websocket") || fileName.contains("tomcat-websocket")) && FRAGMENT_CALLBACK.equals(callback.getClass().getName())) {
                         final WebXml fragment = new WebXml();
                         fragment.setName("org_apache_tomcat_websocket");
                         fragment.setDistributable(true);

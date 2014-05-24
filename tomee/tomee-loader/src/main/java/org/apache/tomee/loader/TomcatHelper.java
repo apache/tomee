@@ -24,6 +24,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.tomcat.util.scan.StandardJarScanner;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -162,9 +163,11 @@ public class TomcatHelper {
 		return System.getProperty("tomcat.version", "7.").startsWith("7.");
 	}
 
-	public static void configureJarScanner(Context standardContext) {
-		try {
-            if (!(standardContext.getJarScanner() instanceof TomEEJarScanner)) {
+	public static void configureJarScanner(final Context standardContext) {
+		try { // override only if default
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.override.jar-scanner", "true"))
+                    && !TomEEJarScanner.class.isInstance(standardContext.getJarScanner())
+                    && StandardJarScanner.class.isInstance(standardContext.getJarScanner())) {
                 standardContext.setJarScanner(new TomEEJarScanner());
             }
 		} catch (Exception e) {
