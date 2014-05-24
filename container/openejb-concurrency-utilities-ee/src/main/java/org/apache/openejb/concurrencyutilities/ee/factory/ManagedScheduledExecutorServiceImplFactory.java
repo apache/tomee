@@ -30,10 +30,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class ManagedScheduledExecutorServiceImplFactory {
     private int core = 5;
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
-    private Duration waitAtShutdown = new Duration("30 seconds");
 
     public ManagedScheduledExecutorServiceImpl create() {
-        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), waitAtShutdown);
+        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService());
     }
 
     private ScheduledExecutorService createScheduledExecutorService() {
@@ -54,9 +53,5 @@ public class ManagedScheduledExecutorServiceImplFactory {
 
     public void setThreadFactory(final String threadFactory) {
         this.threadFactory = threadFactory;
-    }
-
-    public void setWaitAtShutdown(final Duration waitAtShutdown) {
-        this.waitAtShutdown = waitAtShutdown;
     }
 }
