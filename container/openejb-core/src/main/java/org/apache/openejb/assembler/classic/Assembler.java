@@ -18,6 +18,7 @@
 package org.apache.openejb.assembler.classic;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
@@ -105,6 +106,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.api.CloseableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
@@ -1480,8 +1482,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
             }
-        } else if (ExecutorService.class.isInstance(object)) {
-            ExecutorService.class.cast(object).shutdown();
+        } else if (ExecutorService.class.isInstance(object) && object.getClass().getAnnotation(CloseableResource.class) != null) {
+            try {
+                Closeable.class.cast(object).close();
+            } catch (final IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
         }

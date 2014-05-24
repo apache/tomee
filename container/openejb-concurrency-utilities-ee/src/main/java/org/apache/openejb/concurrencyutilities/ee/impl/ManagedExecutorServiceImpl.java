@@ -16,12 +16,16 @@
  */
 package org.apache.openejb.concurrencyutilities.ee.impl;
 
+import org.apache.openejb.api.CloseableResource;
 import org.apache.openejb.concurrencyutilities.ee.future.CUFuture;
 import org.apache.openejb.concurrencyutilities.ee.task.CUCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.CURunnable;
-import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.enterprise.concurrent.ManagedExecutorService;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Callable;
@@ -29,28 +33,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService {
-    private final ExecutorService delegate;
-    private final Duration waitAtShutdown;
+@CloseableResource
+public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService, Closeable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImpl.class);
 
-    public ManagedExecutorServiceImpl(final ExecutorService delegate, final Duration waitAtShutdown) {
+    private final ExecutorService delegate;
+
+    public ManagedExecutorServiceImpl(final ExecutorService delegate) {
         this.delegate = delegate;
-        this.waitAtShutdown = waitAtShutdown;
     }
 
     @Override
     public void shutdown() {
-        delegate.shutdown();
-        try { // wait a bit to let task a chance to be done
-            delegate.awaitTermination(waitAtShutdown.getTime(), waitAtShutdown.getUnit());
-        } catch (final InterruptedException e) {
-            // no-op
-        }
+        throw new IllegalStateException("You can't call shutdown");
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        return delegate.shutdownNow();
+        throw new IllegalStateException("You can't call shutdownNow");
     }
 
     @Override
@@ -101,5 +101,21 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     public ExecutorService getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public void close() throws IOException {
+        final List<Runnable> runnables = delegate.shutdownNow();
+        if (runnables.size() > 0) {
+            LOGGER.warning(runnables.size() + " tasks to execute");
+            for (final Runnable runnable : runnables) {
+                try {
+                    LOGGER.info("Executing " + runnable);
+                    runnable.run();
+                } catch (final Throwable th) {
+                    LOGGER.error(th.getMessage(), th);
+                }
+            }
+        }
     }
 }

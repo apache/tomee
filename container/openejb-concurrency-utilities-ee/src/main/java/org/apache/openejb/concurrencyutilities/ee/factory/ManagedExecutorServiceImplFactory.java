@@ -36,10 +36,9 @@ public class ManagedExecutorServiceImplFactory {
     private Duration keepAlive = new Duration("5 second");
     private int queue = 15;
     private String threadFactory;
-    private Duration waitAtShutdown = new Duration("30 seconds");
 
     public ManagedExecutorServiceImpl create() {
-        return new ManagedExecutorServiceImpl(createExecutorService(), waitAtShutdown);
+        return new ManagedExecutorServiceImpl(createExecutorService());
     }
 
     private ExecutorService createExecutorService() {
@@ -79,9 +78,5 @@ public class ManagedExecutorServiceImplFactory {
 
     public void setThreadFactory(final String threadFactory) {
         this.threadFactory = threadFactory;
-    }
-
-    public void setWaitAtShutdown(final Duration waitAtShutdown) {
-        this.waitAtShutdown = waitAtShutdown;
     }
 }

@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.concurrencyutilities.ee.impl;
 
+import org.apache.openejb.api.CloseableResource;
 import org.apache.openejb.concurrencyutilities.ee.future.CUScheduleFuture;
 import org.apache.openejb.concurrencyutilities.ee.task.CUCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.CURunnable;
 import org.apache.openejb.concurrencyutilities.ee.task.TriggerCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.TriggerRunnable;
 import org.apache.openejb.concurrencyutilities.ee.task.TriggerTask;
-import org.apache.openejb.util.Duration;
 
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.concurrent.ManagedTask;
@@ -38,11 +38,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+@CloseableResource
 public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceImpl implements ManagedScheduledExecutorService {
     private final ScheduledExecutorService delegate;
 
-    public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate, final Duration waitAtShutdown) {
-        super(delegate, waitAtShutdown);
+    public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate) {
+        super(delegate);
         this.delegate = delegate;
     }
 
