@@ -99,13 +99,13 @@
 
     <!--openjpa.version>2.3.0</openjpa.version-->
     <openjpa.version>2.4.0-nonfinal-1591689</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.4</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.5</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.18-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.18</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -615,6 +615,14 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>owb-staging</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1004/</url>
+    </repository>
+    <repository>
+      <id>xbean-staging</id>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1001/</url>
+    </repository>
     <repository>
       <id>patch-openjpa</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
