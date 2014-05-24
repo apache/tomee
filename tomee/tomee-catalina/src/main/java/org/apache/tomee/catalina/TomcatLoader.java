@@ -23,6 +23,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
+import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -36,7 +37,6 @@ import org.apache.openejb.config.sys.Tomee;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
@@ -191,18 +191,24 @@ public class TomcatLoader implements Loader {
         // set ignorable libraries from a tomee property instead of using the standard openejb one
         // don't ignore standard openejb exclusions file
         final Set<String> exclusions = new HashSet<String>(Arrays.asList(NewLoaderLogic.getExclusions()));
-        final File catalinaProperties = new File(conf, "catalina.properties");
-        if (catalinaProperties.exists()) {
-            final Properties catalinaProps = IO.readProperties(catalinaProperties);
-            final String jarToSkipProp = catalinaProps.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
+        {
+            final String jarToSkipProp = CatalinaProperties.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
             if (jarToSkipProp != null) {
-                for (String s : jarToSkipProp.split(",")) {
+                for (final String s : jarToSkipProp.split(",")) {
+                    exclusions.add(NewLoaderLogic.sanitize(s.trim()));
+                }
+            }
+        }
+        {
+            final String jarToSkipProp = CatalinaProperties.getProperty("org.apache.catalina.startup.ContextConfig.jarsToSkip");
+            if (jarToSkipProp != null) {
+                for (final String s : jarToSkipProp.split(",")) {
                     exclusions.add(NewLoaderLogic.sanitize(s.trim()));
                 }
             }
         }
         NewLoaderLogic.setExclusions(exclusions.toArray(new String[exclusions.size()]));
-        System.setProperty(Constants.SKIP_JARS_PROPERTY, Join.join(",", exclusions));
+        System.setProperty(Constants.SKIP_JARS_PROPERTY, Join.join(",", exclusions)); // not sure we need it actually since we hook our scanner by default
 
         // Install tomcat war builder
         TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
