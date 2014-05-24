@@ -54,32 +54,6 @@
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <linkXRef>true</linkXRef>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <targetJdk>1.6</targetJdk>
-          <rulesets>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-empty.xml</ruleset>
-            <ruleset>rulesets/java/finalizers.xml</ruleset>
-            <ruleset>rulesets/java/imports.xml</ruleset>
-            <ruleset>rulesets/java/unusedcode.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-controversial.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-basic.xml</ruleset>
-            <ruleset>${project.basedir}/src/main/config/pmd/openejb-optimizations.xml</ruleset>
-          </rulesets>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <dependencies>

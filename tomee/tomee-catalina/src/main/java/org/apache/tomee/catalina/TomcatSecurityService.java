@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -41,7 +40,7 @@ import java.util.UUID;
 
 public class TomcatSecurityService extends AbstractSecurityService {
     private static final boolean ONLY_DEFAULT_REALM = "true".equals(SystemInstance.get().getProperty("tomee.realm.only-default", "false"));
-    static protected final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
+    protected static final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
         protected LinkedList<Subject> initialValue() {
             return new LinkedList<Subject>();
         }
@@ -88,7 +87,9 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
 
         final Principal principal = realm.authenticate(username, password);
-        if (principal == null) throw new CredentialNotFoundException(username);
+        if (principal == null) {
+            throw new CredentialNotFoundException(username);
+        }
 
         final Subject subject = createSubject(realm, principal);
         return registerSubject(subject);
@@ -190,7 +191,9 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
         final Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
-        if (runAsSubject != null) return runAsSubject;
+        if (runAsSubject != null) {
+            return runAsSubject;
+        }
 
         final LinkedList<Subject> stack = runAsStack.get();
         if (stack.isEmpty()) {
@@ -217,8 +220,12 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
 
         public TomcatUser(Realm realm, Principal tomcatPrincipal) {
-            if (realm == null) throw new NullPointerException("realm is null");
-            if (tomcatPrincipal == null) throw new NullPointerException("tomcatPrincipal is null");
+            if (realm == null) {
+                throw new NullPointerException("realm is null");
+            }
+            if (tomcatPrincipal == null) {
+                throw new NullPointerException("tomcatPrincipal is null");
+            }
             this.realm = realm;
             this.tomcatPrincipal = tomcatPrincipal;
         }
@@ -240,8 +247,12 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
 
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             TomcatUser that = (TomcatUser) o;
 
@@ -260,7 +271,9 @@ public class TomcatSecurityService extends AbstractSecurityService {
         private final String name;
 
         public RunAsRole(String name) {
-            if (name == null) throw new NullPointerException("name is null");
+            if (name == null) {
+                throw new NullPointerException("name is null");
+            }
             this.name = name;
         }
 
@@ -273,8 +286,12 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
 
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             RunAsRole runAsRole = (RunAsRole) o;
 

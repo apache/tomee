@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -314,7 +313,9 @@ public class TomcatJndiBuilder {
     private static Object normalize(final Object value) {
         try {
 
-            if (!(value instanceof LinkRef)) return value;
+            if (!(value instanceof LinkRef)) {
+                return value;
+            }
 
             final LinkRef ref = (LinkRef) value;
 
@@ -322,7 +323,9 @@ public class TomcatJndiBuilder {
 
             final String address = refAddr.getContent().toString();
 
-            if (address.startsWith("openejb:")) return value;
+            if (address.startsWith("openejb:")) {
+                return value;
+            }
 
             if (!address.startsWith("java:")) {
                 return new LinkRef("java:" + address);
@@ -369,7 +372,9 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextEnvironment environment = naming.findEnvironment(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -389,16 +394,24 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeEnvironment(environment.getName());
+            if (!addEntry) {
+                namingContextListener.removeEnvironment(environment.getName());
+            }
             namingContextListener.addEnvironment(environment);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     private boolean isLookupRef(NamingResources naming, InjectableInfo ref) {
-        if (ref.location == null) return false;
-        if (ref.location.jndiName == null) return false;
-        if (!ref.location.jndiName.startsWith("java:")) return false;
+        if (ref.location == null) {
+            return false;
+        }
+        if (ref.location.jndiName == null) {
+            return false;
+        }
+        if (!ref.location.jndiName.startsWith("java:")) {
+            return false;
+        }
 
         final ContextResourceEnvRef lookup = new ContextResourceEnvRef();
 
@@ -414,7 +427,9 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, EjbReferenceInfo ref) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextEjb ejb = naming.findEjb(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -449,14 +464,18 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeEjb(ejb.getName());
+            if (!addEntry) {
+                namingContextListener.removeEjb(ejb.getName());
+            }
             namingContextListener.addEjb(ejb);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     public void mergeRef(NamingResources naming, EjbLocalReferenceInfo ref) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         // NamingContextListener.addLocalEjb is empty so we'll just use an ejb ref
         ContextEjb ejb = naming.findEjb(ref.referenceName.replaceAll("^comp/env/", ""));
@@ -490,7 +509,9 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeEjb(ejb.getName());
+            if (!addEntry) {
+                namingContextListener.removeEjb(ejb.getName());
+            }
             namingContextListener.addEjb(ejb);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
@@ -498,7 +519,9 @@ public class TomcatJndiBuilder {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public void mergeRef(NamingResources naming, PersistenceContextReferenceInfo ref, URI moduleUri) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -539,7 +562,9 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            if (!addEntry) {
+                namingContextListener.removeResource(resource.getName());
+            }
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
@@ -547,7 +572,9 @@ public class TomcatJndiBuilder {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public void mergeRef(NamingResources naming, PersistenceUnitReferenceInfo ref, URI moduleUri) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -586,14 +613,18 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            if (!addEntry) {
+                namingContextListener.removeResource(resource.getName());
+            }
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     public void mergeRef(NamingResources naming, ResourceReferenceInfo ref) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -623,14 +654,18 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            if (!addEntry) {
+                namingContextListener.removeResource(resource.getName());
+            }
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextResourceEnvRef resourceEnv = naming.findResourceEnvRef(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -675,14 +710,18 @@ public class TomcatJndiBuilder {
 
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeResourceEnvRef(resourceEnv.getName());
+            if (!addEntry) {
+                namingContextListener.removeResourceEnvRef(resourceEnv.getName());
+            }
             namingContextListener.addResourceEnvRef(resourceEnv);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     public void mergeRef(NamingResources naming, ServiceReferenceInfo ref) {
-        if (isLookupRef(naming, ref)) return;
+        if (isLookupRef(naming, ref)) {
+            return;
+        }
 
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -756,7 +795,9 @@ public class TomcatJndiBuilder {
         String serviceName = BackportUtil.findServiceName(naming, ref.referenceName.replaceAll("^comp/env/", ""));
         if (serviceName != null) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) BackportUtil.removeService(namingContextListener, serviceName);
+            if (!addEntry) {
+                BackportUtil.removeService(namingContextListener, serviceName);
+            }
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
 
@@ -768,14 +809,18 @@ public class TomcatJndiBuilder {
         // or replace the exisitng resource entry
         if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
-            if (!addEntry) namingContextListener.removeResource(resource.getName());
+            if (!addEntry) {
+                namingContextListener.removeResource(resource.getName());
+            }
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
     }
 
     private URL getWsdlUrl(ServiceReferenceInfo ref) {
-        if (ref.wsdlFile == null) return null;
+        if (ref.wsdlFile == null) {
+            return null;
+        }
 
         URL wsdlUrl = null;
         try {
