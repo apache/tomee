@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.concurrencyutilities.ee.impl;
 
-import org.apache.openejb.api.CloseableResource;
 import org.apache.openejb.concurrencyutilities.ee.future.CUScheduleFuture;
 import org.apache.openejb.concurrencyutilities.ee.task.CUCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.CURunnable;
@@ -28,6 +27,7 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.concurrent.ManagedTask;
 import javax.enterprise.concurrent.Trigger;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
@@ -38,7 +38,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-@CloseableResource
 public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceImpl implements ManagedScheduledExecutorService {
     private final ScheduledExecutorService delegate;
 
@@ -125,7 +124,11 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            return method.invoke(delegate.get(), args);
+            try {
+                return method.invoke(delegate.get(), args);
+            } catch (final InvocationTargetException ite) {
+                throw ite.getCause();
+            }
         }
 
         private static <V> ScheduledFuture<V> newProxy(final AtomicReference<Future<V>> futureHandle) {

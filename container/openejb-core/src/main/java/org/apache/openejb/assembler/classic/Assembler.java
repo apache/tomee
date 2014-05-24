@@ -17,72 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
-import java.io.Externalizable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
@@ -106,7 +40,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.api.CloseableResource;
+import org.apache.openejb.api.DestroyableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
@@ -211,6 +145,69 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
+
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkManager;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.io.ByteArrayInputStream;
+import java.io.Externalizable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
@@ -1482,10 +1479,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
             }
-        } else if (ExecutorService.class.isInstance(object) && object.getClass().getAnnotation(CloseableResource.class) != null) {
+        } else if (DestroyableResource.class.isInstance(object)) {
             try {
-                Closeable.class.cast(object).close();
-            } catch (final IOException e) {
+                DestroyableResource.class.cast(object).destroyResource();
+            } catch (final RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
