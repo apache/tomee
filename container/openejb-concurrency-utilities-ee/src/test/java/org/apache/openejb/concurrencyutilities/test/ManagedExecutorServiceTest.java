@@ -33,7 +33,9 @@ import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -76,6 +78,11 @@ public class ManagedExecutorServiceTest {
         // assertEquals(1, RequestBean.ID); // CDI is opposed to it in the spirit
     }
 
+    @Test
+    public void runnable() throws Exception {
+        assertTrue(cdiFacade.submitRunnable());
+    }
+
     @Singleton
     @Typed(ExecutorFacade.class)
     public static class ExecutorFacade extends CdiExecutorFacade {
@@ -104,6 +111,22 @@ public class ManagedExecutorServiceTest {
         public Future<Boolean> submit() {
             setContext();
             return es.submit(callable);
+        }
+
+        public boolean submitRunnable() {
+            final CountDownLatch done = new CountDownLatch(1);
+            es.submit(new Runnable() {
+                @Override
+                public void run() {
+                    done.countDown();
+                }
+            });
+            try {
+                done.await();
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+            }
+            return true;
         }
 
         protected void setContext() {

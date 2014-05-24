@@ -89,7 +89,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         final CURunnable wrapper = new CURunnable(task);
         final Future<?> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
-        return new CUFuture<Void>(CUFuture.class.cast(future), wrapper);
+        return new CUFuture<Void>(Future.class.cast(future), wrapper);
     }
 
     @Override
