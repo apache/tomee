@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -60,7 +60,9 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
      * @param event
      */
     private void listenerStart(ContainerEvent event) {
-        if (!isFirstBeforeContextInitializedEvent(event)) return;
+        if (!isFirstBeforeContextInitializedEvent(event)) {
+            return;
+        }
 
         StandardContext standardContext = (StandardContext) event.getContainer();
 
@@ -71,7 +73,9 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
     }
 
     private boolean isFirstBeforeContextInitializedEvent(ContainerEvent event) {
-        if (applicationLifecycleListeners != null) return false;
+        if (applicationLifecycleListeners != null) {
+            return false;
+        }
 
         StandardContext standardContext = (StandardContext) event.getContainer();
         applicationLifecycleListeners = standardContext.getApplicationLifecycleListeners();
@@ -89,7 +93,9 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
      * @param event
      */
     private void listenerStop(ContainerEvent event) {
-        if (!isLastAfterContextDestroyedEvent(event)) return;
+        if (!isLastAfterContextDestroyedEvent(event)) {
+            return;
+        }
 
         StandardContext standardContext = (StandardContext) event.getContainer();
 
@@ -100,10 +106,14 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
 
     private boolean isLastAfterContextDestroyedEvent(ContainerEvent event) {
         // Something very strange is going on if either of these are null at this stage
-        if (destroyed == null || applicationLifecycleListeners == null) return false;
+        if (destroyed == null || applicationLifecycleListeners == null) {
+            return false;
+        }
 
         // We've already been called and processed our last event
-        if (destroyed.size() == applicationLifecycleListeners.length) return false;
+        if (destroyed.size() == applicationLifecycleListeners.length) {
+            return false;
+        }
 
         Object listener = event.getData();
         destroyed.add(listener);

@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -48,7 +47,7 @@ import java.util.logging.Logger;
 public class ServerListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(ServerListener.class.getName());
 
-    static private final AtomicBoolean listenerInstalled = new AtomicBoolean(false);
+    private static final AtomicBoolean listenerInstalled = new AtomicBoolean(false);
 
     public void lifecycleEvent(final LifecycleEvent event) {
 
@@ -67,8 +66,12 @@ public class ServerListener implements LifecycleListener {
         synchronized (listenerInstalled) {
 
             // only install once
-            if (listenerInstalled.get() || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
-            if (!(event.getSource() instanceof StandardServer)) return;
+            if (listenerInstalled.get() || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) {
+                return;
+            }
+            if (!(event.getSource() instanceof StandardServer)) {
+                return;
+            }
 
             try {
                 final StandardServer server = (StandardServer) event.getSource();

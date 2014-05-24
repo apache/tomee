@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *     contributor license agreements.  See the NOTICE file distributed with
- *     this work for additional information regarding copyright ownership.
- *     The ASF licenses this file to You under the Apache License, Version 2.0
- *     (the "License"); you may not use this file except in compliance with
- *     the License.  You may obtain a copy of the License at
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -780,7 +780,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void init(final StandardContext standardContext) {
-        if (isIgnored(standardContext)) return;
+        if (isIgnored(standardContext)) {
+            return;
+        }
 
         // just adding a carriage return to get logs more readable
         logger.info("------------------------- "
@@ -926,7 +928,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         public WebAppInfo get() {
-            if (standardContext == null) return null;
+            if (standardContext == null) {
+                return null;
+            }
 
             final ContextInfo contextInfo = getContextInfo(standardContext);
             if (contextInfo == null) {
@@ -966,7 +970,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         @Override
         public String toString() {
-            if (standardContext == null) return super.toString();
+            if (standardContext == null) {
+                return super.toString();
+            }
 
             return "StandardContextInfo{" +
                     "standardContext=" + standardContext +
@@ -1083,7 +1089,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
 //    @Override
     private void startInternal(final StandardContext standardContext) {
-        if (isIgnored(standardContext)) return;
+        if (isIgnored(standardContext)) {
+            return;
+        }
 
         final CoreContainerSystem cs = getContainerSystem();
 
@@ -1522,7 +1530,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void afterStart(final StandardContext standardContext) {
-        if (isIgnored(standardContext)) return;
+        if (isIgnored(standardContext)) {
+            return;
+        }
 
         final Realm realm = standardContext.getRealm();
         if (realm != null && !(realm instanceof TomEERealm)
@@ -1693,7 +1703,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         final String[] valves = SystemInstance.get().getOptions().get("tomee.valves", "").split(" *, *");
         for (final String className : valves) {
-            if ("".equals(className)) continue;
+            if ("".equals(className)) {
+                continue;
+            }
             try {
                 final Class<?> clazz = standardContext.getLoader().getClassLoader().loadClass(className);
                 if (Valve.class.isAssignableFrom(clazz)) {
@@ -1727,11 +1739,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private WebBeansContext getWebBeansContext(final ContextInfo contextInfo) {
         final AppContext appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
 
-        if (appContext == null) return null;
+        if (appContext == null) {
+            return null;
+        }
 
         WebBeansContext webBeansContext = appContext.getWebBeansContext();
 
-        if (webBeansContext == null) return null;
+        if (webBeansContext == null) {
+            return null;
+        }
 
         for (final WebContext web : appContext.getWebContexts()) {
             final String stdName = removeFirstSlashAndWar(contextInfo.standardContext.getName());
