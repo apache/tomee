@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ziplock;
 
@@ -41,11 +41,11 @@ public class WebModule {
 
     private final WebArchive archive;
 
-    public WebModule(WebArchive archive) {
+    public WebModule(final WebArchive archive) {
         this.archive = archive;
     }
 
-    public WebModule(String name) {
+    public WebModule(final String name) {
         this(ShrinkWrap.create(WebArchive.class, name));
     }
 
@@ -57,14 +57,14 @@ public class WebModule {
         this(clazz, clazz.getSimpleName() + ".war", excluded);
     }
 
-    public WebModule(Class<?> clazz, String appName, final Class<?>... excluded) {
+    public WebModule(final Class<?> clazz, final String appName, final Class<?>... excluded) {
         this(appName);
 
         final URL archiveURL;
         try {
             final File file = JarLocation.jarLocation(clazz);
             archiveURL = file.toURI().toURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new IllegalStateException(e);
         }
 
@@ -74,7 +74,7 @@ public class WebModule {
 
         try {
             final Map<String, URL> map = finder.getResourcesMap(packageName);
-            for (Map.Entry<String, URL> entry : map.entrySet()) {
+            for (final Map.Entry<String, URL> entry : map.entrySet()) {
                 final URL url = entry.getValue();
                 final String name = entry.getKey();
 
@@ -84,7 +84,7 @@ public class WebModule {
                 } else {
                     boolean keep = true;
                     if (excluded != null) {
-                        for (Class<?> excludedClazz : excluded) {
+                        for (final Class<?> excludedClazz : excluded) {
                             if (name.equals(excludedClazz.getSimpleName().concat(".class"))) {
                                 keep = false;
                             }
@@ -98,7 +98,7 @@ public class WebModule {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("cannot list package contents", e);
         }
     }
@@ -108,7 +108,7 @@ public class WebModule {
         private final Asset asset;
         private final String name;
 
-        public Named(String name, Asset asset) {
+        public Named(final String name, final Asset asset) {
             this.asset = asset;
             this.name = name;
         }
@@ -132,7 +132,7 @@ public class WebModule {
 
         private final D descriptor;
 
-        public Descriptor(D descriptor) {
+        public Descriptor(final D descriptor) {
             this.descriptor = descriptor;
         }
 
@@ -142,7 +142,7 @@ public class WebModule {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 JaxbJavaee.marshal(descriptor.getClass(), descriptor, out);
                 return new ByteArrayInputStream(out.toByteArray());
-            } catch (JAXBException e) {
+            } catch (final JAXBException e) {
                 throw new IllegalArgumentException("Unable to marshal descriptor", e);
             }
         }

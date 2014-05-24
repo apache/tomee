@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,11 +44,9 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -79,7 +77,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         try {
             OpenEJBDeployableContainer.class.getClassLoader().loadClass("org.apache.openejb.server.ServiceManager");
             PROPERTIES.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignored
         }
     }
@@ -133,10 +131,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Inject
     private Instance<TestClass> testClass;
 
-    @Inject
-    @ApplicationScoped
-    private InstanceProducer<TransactionConfiguration> txConfig;
-
     @Override
     public Class<OpenEJBConfiguration> getConfigurationClass() {
         return OpenEJBConfiguration.class;
@@ -149,13 +143,13 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         final ByteArrayInputStream bais = new ByteArrayInputStream(openEJBConfiguration.getProperties().getBytes());
         try {
             properties.load(bais);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBRuntimeException(e);
         } finally {
             IO.close(bais);
         }
 
-        for (Map.Entry<Object, Object> defaultKey : PROPERTIES.entrySet()) {
+        for (final Map.Entry<Object, Object> defaultKey : PROPERTIES.entrySet()) {
             final String key = defaultKey.getKey().toString();
             if (!properties.containsKey(key)) {
                 properties.setProperty(key, defaultKey.getValue().toString());
@@ -169,7 +163,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     public void start() throws LifecycleException {
         try {
             initialContext = new InitialContext(properties);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new LifecycleException("can't start the OpenEJB container", e);
         }
 
@@ -184,10 +178,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         contextProducer.set(initialContext);
 
         containerArchives = ArquillianUtil.toDeploy(properties);
-        for (Archive<?> archive : containerArchives) {
+        for (final Archive<?> archive : containerArchives) {
             try {
                 quickDeploy(archive, testClass.get());
-            } catch (DeploymentException e) {
+            } catch (final DeploymentException e) {
                 Logger.getLogger(OpenEJBDeployableContainer.class.getName()).log(Level.SEVERE, e.getMessage(), e);
             }
         }
@@ -203,7 +197,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             appInfoProducer.set(info.appInfo);
             appContextProducer.set(info.appCtx);
             classLoader.set(info.appCtx.getClassLoader());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
 
@@ -229,7 +223,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
 
             return new DeploymentInfo(appServletContext, appSession, appInfo, appCtx);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
     }
@@ -252,7 +246,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         try {
             assembler.destroyApplication(info.get().path);
             stopContexts(appContext.get().getWebBeansContext().getContextsService(), servletContext.get(), session.get());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
         }
     }
@@ -265,7 +259,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             if (initialContext != null) {
                 initialContext.close();
             }
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new LifecycleException("can't close the OpenEJB container", e);
         } finally {
             OpenEJB.destroy();
@@ -278,22 +272,22 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     }
 
     @Override
-    public void deploy(Descriptor descriptor) throws DeploymentException {
+    public void deploy(final Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void undeploy(Descriptor descriptor) throws DeploymentException {
+    public void undeploy(final Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException();
     }
 
-    private static class DeploymentInfo {
+    private static final class DeploymentInfo {
         public final ServletContext appServletContext;
         public final HttpSession appSession;
         public final AppInfo appInfo;
         public final AppContext appCtx;
 
-        private DeploymentInfo(ServletContext appServletContext, HttpSession appSession, AppInfo appInfo, AppContext appCtx) {
+        private DeploymentInfo(final ServletContext appServletContext, final HttpSession appSession, final AppInfo appInfo, final AppContext appCtx) {
             this.appServletContext = appServletContext;
             this.appSession = appSession;
             this.appInfo = appInfo;

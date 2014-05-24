@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.config.AdditionalBeanDiscoverer;
@@ -61,9 +62,9 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
                 current.getCanonicalName();
                 current = current.getSuperclass();
             }
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return module;
-        } catch (NoClassDefFoundError ncdfe) {
+        } catch (final NoClassDefFoundError ncdfe) {
             return module;
         }
 
@@ -96,7 +97,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             if (info.exists()) {
                 try {
                     is = new FileInputStream(info);
-                } catch (FileNotFoundException e) {
+                } catch (final FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
@@ -109,7 +110,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         if (is != null) {
             try {
                 return org.apache.openejb.loader.IO.slurp(is);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             } finally {
                 org.apache.openejb.loader.IO.close(is);

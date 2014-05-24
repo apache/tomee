@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,7 @@ public final class OpenEJBEnricher {
                     context.set(CreationalContext.class, cc);
                 }
                 OWBInjector.inject(bm, testInstance, cc);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 LOGGER.log(Level.SEVERE, "Can't inject in " + testInstance.getClass(), t);
                 if (t instanceof RuntimeException) {
                     throw (RuntimeException) t;
@@ -83,12 +83,12 @@ public final class OpenEJBEnricher {
         }
 
         if (context != null) {
-            ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-            ThreadContext oldContext = ThreadContext.enter(callContext);
+            final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+            final ThreadContext oldContext = ThreadContext.enter(callContext);
             try {
                 final InjectionProcessor processor = new InjectionProcessor<Object>(testInstance, context.getInjections(), context.getJndiContext());
                 processor.createInstance();
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 // ignored
             } finally {
                 ThreadContext.exit(oldContext);

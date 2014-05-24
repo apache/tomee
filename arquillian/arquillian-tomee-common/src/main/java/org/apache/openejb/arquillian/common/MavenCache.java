@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,13 +37,13 @@ public class MavenCache {
         // initializing the SystemInstance because we'll need it for configuration
         try {
             SystemInstance.get().init(new Properties());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
         try {
             return new File(ProvisioningUtil.realLocation(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignored
         }
         try {
@@ -52,7 +52,7 @@ public class MavenCache {
                 // don't cache the fallback
                 // only main artifact should be cached
             }
-        } catch (Exception e1) {
+        } catch (final Exception e1) {
             throw new IllegalStateException(e1);
         }
 
@@ -67,7 +67,7 @@ public class MavenCache {
             is = ProvisioningUtil.inputStreamTryingProxies(new URI(source));
             try {
                 file = File.createTempFile("dload", ".fil");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -83,13 +83,13 @@ public class MavenCache {
             while ((bytesRead = is.read(buffer)) > -1) {
                 os.write(buffer, 0, bytesRead);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath(), e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // no-op
                 }
             }
@@ -97,7 +97,7 @@ public class MavenCache {
             if (os != null) {
                 try {
                     os.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // no-op
                 }
             }

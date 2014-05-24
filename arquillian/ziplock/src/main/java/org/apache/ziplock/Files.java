@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ziplock;
 
@@ -44,19 +44,27 @@ public class Files {
 
     public static List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<File>();
-        if (filter.accept(dir)) accepted.add(dir);
+        if (filter.accept(dir)) {
+            accepted.add(dir);
+        }
 
         final File[] files = dir.listFiles();
-        if (files != null) for (final File file : files) {
-            accepted.addAll(collect(file, filter));
+        if (files != null) {
+            for (final File file : files) {
+                accepted.addAll(collect(file, filter));
+            }
         }
 
         return accepted;
     }
 
     public static void remove(final File file) {
-        if (file == null) return;
-        if (!file.exists()) return;
+        if (file == null) {
+            return;
+        }
+        if (!file.exists()) {
+            return;
+        }
 
         if (file.isDirectory()) {
             final File[] files = file.listFiles();
@@ -77,7 +85,7 @@ public class Files {
             File file = null;
             try {
                 file = File.createTempFile("temp", "dir");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Use a local tmp directory
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
@@ -96,14 +104,18 @@ public class Files {
 
             return file;
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static File mkdir(final File file) {
-        if (file.exists()) return file;
-        if (!file.mkdirs()) throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        if (file.exists()) {
+            return file;
+        }
+        if (!file.mkdirs()) {
+            throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        }
         return file;
     }
 
@@ -120,7 +132,7 @@ public class Files {
                     for (final String path : delete) {
                         try {
                             remove(new File(path));
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             System.err.println(e.getMessage());
                         }
                     }
@@ -128,7 +140,7 @@ public class Files {
             };
             try {
                 Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         } finally {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -130,8 +130,8 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             if (logger.isLoggable(Level.FINE)) {
-                Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
+                for (final Map.Entry<Object, Object> entry : map.entrySet()) {
                     System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
                 }
             }
@@ -175,16 +175,16 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             container = new RemoteServer();
             container.start(Arrays.asList("-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
             container.killOnExit();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LifecycleException("Unable to start remote container", e);
         }
     }
 
-    private static void write(URL resource, File file) throws IOException {
+    private static void write(final URL resource, final File file) throws IOException {
         if (file.exists()) {
             Files.delete(file);
         }
-        InputStream is = org.apache.openejb.loader.IO.read(resource);
+        final InputStream is = org.apache.openejb.loader.IO.read(resource);
 
         try {
             IO.copy(is, file);
@@ -193,13 +193,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         }
     }
 
-    protected void downloadOpenEJBWebapp(File targetDirectory) throws LifecycleException {
-        String artifactName = configuration.getArtifactName();
-        File zipFile = Setup.downloadFile(artifactName, null);
+    protected void downloadOpenEJBWebapp(final File targetDirectory) throws LifecycleException {
+        final String artifactName = configuration.getArtifactName();
+        final File zipFile = Setup.downloadFile(artifactName, null);
         Zips.unzip(zipFile, targetDirectory);
     }
 
-    protected void downloadTomcat(File catalinaDirectory, String tomcatVersion) throws LifecycleException {
+    protected void downloadTomcat(final File catalinaDirectory, final String tomcatVersion) throws LifecycleException {
         String source = null;
 
         if (tomcatVersion.startsWith("7.")) {
@@ -218,7 +218,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             throw new LifecycleException("Unable to find URL for Tomcat " + tomcatVersion);
         }
 
-        File zipFile = Setup.downloadFile("org.apache.tomcat:tomcat:" + tomcatVersion + ":zip", source);
+        final File zipFile = Setup.downloadFile("org.apache.tomcat:tomcat:" + tomcatVersion + ":zip", source);
         Zips.unzip(zipFile, catalinaDirectory);
     }
 

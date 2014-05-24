@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.moviefun.util;
 
@@ -25,22 +25,22 @@ import java.util.List;
 
 public class JsfUtil {
 
-    public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
-        int size = selectOne ? entities.size() + 1 : entities.size();
-        SelectItem[] items = new SelectItem[size];
+    public static SelectItem[] getSelectItems(final List<?> entities, final boolean selectOne) {
+        final int size = selectOne ? entities.size() + 1 : entities.size();
+        final SelectItem[] items = new SelectItem[size];
         int i = 0;
         if (selectOne) {
             items[0] = new SelectItem("", "---");
             i++;
         }
-        for (Object x : entities) {
+        for (final Object x : entities) {
             items[i++] = new SelectItem(x, x.toString());
         }
         return items;
     }
 
-    public static void addErrorMessage(Exception ex, String defaultMsg) {
-        String msg = ex.getLocalizedMessage();
+    public static void addErrorMessage(final Exception ex, final String defaultMsg) {
+        final String msg = ex.getLocalizedMessage();
         if (msg != null && msg.length() > 0) {
             addErrorMessage(msg);
         } else {
@@ -48,28 +48,28 @@ public class JsfUtil {
         }
     }
 
-    public static void addErrorMessages(List<String> messages) {
-        for (String message : messages) {
+    public static void addErrorMessages(final List<String> messages) {
+        for (final String message : messages) {
             addErrorMessage(message);
         }
     }
 
-    public static void addErrorMessage(String msg) {
-        FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg);
+    public static void addErrorMessage(final String msg) {
+        final FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg);
         FacesContext.getCurrentInstance().addMessage(null, facesMsg);
     }
 
-    public static void addSuccessMessage(String msg) {
-        FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg);
+    public static void addSuccessMessage(final String msg) {
+        final FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg);
         FacesContext.getCurrentInstance().addMessage("successInfo", facesMsg);
     }
 
-    public static String getRequestParameter(String key) {
+    public static String getRequestParameter(final String key) {
         return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(key);
     }
 
-    public static Object getObjectFromRequestParameter(String requestParameterName, Converter converter, UIComponent component) {
-        String theId = JsfUtil.getRequestParameter(requestParameterName);
+    public static Object getObjectFromRequestParameter(final String requestParameterName, final Converter converter, final UIComponent component) {
+        final String theId = JsfUtil.getRequestParameter(requestParameterName);
         return converter.getAsObject(FacesContext.getCurrentInstance(), component, theId);
     }
 

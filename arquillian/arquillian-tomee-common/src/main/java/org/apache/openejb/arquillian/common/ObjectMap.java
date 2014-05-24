@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.common;
 
@@ -35,28 +35,32 @@ public class ObjectMap extends AbstractMap<String, Object> {
     private Map<String,Entry<String,Object>> attributes;
     private Set<Entry<String,Object>> entries;
 
-    public ObjectMap(Object object) {
+    public ObjectMap(final Object object) {
         this(object.getClass(), object);
     }
 
-    public ObjectMap(Class clazz) {
+    public ObjectMap(final Class clazz) {
         this(clazz, null);
     }
 
-    public ObjectMap(Class<?> clazz, Object object) {
+    public ObjectMap(final Class<?> clazz, final Object object) {
         this.object = object;
 
         attributes = new HashMap<String, Entry<String, Object>>();
 
-        for (Field field : clazz.getFields()) {
+        for (final Field field : clazz.getFields()) {
             final FieldEntry entry = new FieldEntry(field);
             attributes.put(entry.getKey(), entry);
         }
 
-        for (Method getter : clazz.getMethods()) {
+        for (final Method getter : clazz.getMethods()) {
             try {
-                if (!getter.getName().startsWith("get")) continue;
-                if (getter.getParameterTypes().length != 0) continue;
+                if (!getter.getName().startsWith("get")) {
+                    continue;
+                }
+                if (getter.getParameterTypes().length != 0) {
+                    continue;
+                }
 
 
                 final String name = getter.getName().replaceFirst("get", "set");
@@ -65,7 +69,8 @@ public class ObjectMap extends AbstractMap<String, Object> {
                 final MethodEntry entry = new MethodEntry(getter, setter);
 
                 attributes.put(entry.getKey(), entry);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
+                // no-op
             }
         }
 
@@ -73,26 +78,30 @@ public class ObjectMap extends AbstractMap<String, Object> {
     }
 
     @Override
-    public Object get(Object key) {
+    public Object get(final Object key) {
         final Entry<String, Object> entry = attributes.get(key);
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
         return entry.getValue();
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public Object put(final String key, final Object value) {
         final Entry<String, Object> entry = attributes.get(key);
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
         return entry.setValue(value);
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return attributes.containsKey(key);
     }
 
     @Override
-    public Object remove(Object key) {
+    public Object remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
@@ -105,7 +114,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
 
         private final Field field;
 
-        public FieldEntry(Field field) {
+        public FieldEntry(final Field field) {
             this.field = field;
         }
 
@@ -118,18 +127,18 @@ public class ObjectMap extends AbstractMap<String, Object> {
         public String getValue() {
             try {
                 return (String) field.get(object);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
         }
 
         @Override
-        public Object setValue(Object value) {
+        public Object setValue(final Object value) {
             try {
                 final Object replaced = getValue();
                 field.set(object, value);
                 return replaced;
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalArgumentException(e);
             }
         }
@@ -140,8 +149,8 @@ public class ObjectMap extends AbstractMap<String, Object> {
         private final Method getter;
         private final Method setter;
 
-        public MethodEntry(Method getter, Method setter) {
-            StringBuilder name = new StringBuilder(getter.getName());
+        public MethodEntry(final Method getter, final Method setter) {
+            final StringBuilder name = new StringBuilder(getter.getName());
 
             // remove 'set' or 'get'
             name.delete(0, 3);
@@ -154,12 +163,12 @@ public class ObjectMap extends AbstractMap<String, Object> {
             this.setter = setter;
         }
 
-        protected Object invoke(Method method, Object... args) {
+        protected Object invoke(final Method method, final Object... args) {
             try {
                 return method.invoke(object, args);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalStateException(e);
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 throw new ArquillianRuntimeException(e.getCause());
             }
         }
@@ -175,7 +184,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
         }
 
         @Override
-        public Object setValue(Object value) {
+        public Object setValue(final Object value) {
             final Object original = getValue();
             invoke(setter, value);
             return original;

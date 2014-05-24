@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.arquillian.webapp;
 
@@ -27,9 +27,6 @@ import java.util.List;
  */
 @Prefixes({"tomee", "tomee.webapp"})
 public class TomEEWebappConfiguration extends TomEEConfiguration {
-    private static final String TOMCAT_REFERENCE_ARTIFACT = "org.apache.tomcat:tomcat-catalina";
-    private static final String TOMCAT_VERSION_PREFIX = "7.";
-
     private String tomcatVersion;
     private String groupId;
     private String artifactId;
@@ -43,7 +40,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(final String groupId) {
         this.groupId = groupId;
     }
 
@@ -51,7 +48,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return artifactId;
     }
 
-    public void setArtifactId(String artifactId) {
+    public void setArtifactId(final String artifactId) {
         this.artifactId = artifactId;
     }
 
@@ -59,7 +56,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -67,7 +64,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -75,7 +72,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return useInstallerServlet;
     }
 
-    public void setUseInstallerServlet(boolean useInstallerServlet) {
+    public void setUseInstallerServlet(final boolean useInstallerServlet) {
         this.useInstallerServlet = useInstallerServlet;
     }
 
@@ -89,7 +86,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return tomcatVersion;
     }
 
-    public void setTomcatVersion(String tomcatVersion) {
+    public void setTomcatVersion(final String tomcatVersion) {
         this.tomcatVersion = tomcatVersion;
     }
 
@@ -97,7 +94,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return removeUnusedWebapps;
     }
 
-    public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
+    public void setRemoveUnusedWebapps(final boolean removeUnusedWebapps) {
         this.removeUnusedWebapps = removeUnusedWebapps;
     }
 
@@ -105,7 +102,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         return ajpPort;
     }
 
-    public void setAjpPort(int ajpPort) {
+    public void setAjpPort(final int ajpPort) {
         this.ajpPort = ajpPort;
     }
 

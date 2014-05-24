@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.arquillian.remote;
 
@@ -42,7 +42,10 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean cleanOnStartUp;
     private boolean debug;
     private int debugPort = 5005;
+
+    @SuppressWarnings("checkstyle:membername")
     private String catalina_opts = null; // using this format to match the script one
+
     private boolean simpleLog = false;
     private String deployerProperties = "";
 
@@ -50,7 +53,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(final String groupId) {
         this.groupId = groupId;
     }
 
@@ -58,7 +61,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return artifactId;
     }
 
-    public void setArtifactId(String artifactId) {
+    public void setArtifactId(final String artifactId) {
         this.artifactId = artifactId;
     }
 
@@ -66,7 +69,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -74,7 +77,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return classifier;
     }
 
-    public void setClassifier(String classifier) {
+    public void setClassifier(final String classifier) {
         this.classifier = classifier;
     }
 
@@ -82,7 +85,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -98,7 +101,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return removeUnusedWebapps;
     }
 
-    public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
+    public void setRemoveUnusedWebapps(final boolean removeUnusedWebapps) {
         this.removeUnusedWebapps = removeUnusedWebapps;
     }
 
@@ -106,7 +109,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return ajpPort;
     }
 
-    public void setAjpPort(int ajpPort) {
+    public void setAjpPort(final int ajpPort) {
         this.ajpPort = ajpPort;
     }
 
@@ -114,7 +117,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return conf;
     }
 
-    public void setConf(String conf) {
+    public void setConf(final String conf) {
         this.conf = conf;
     }
 
@@ -122,7 +125,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return bin;
     }
 
-    public void setBin(String bin) {
+    public void setBin(final String bin) {
         this.bin = bin;
     }
 
@@ -130,7 +133,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return lib;
     }
 
-    public void setLib(String lib) {
+    public void setLib(final String lib) {
         this.lib = lib;
     }
 
@@ -161,7 +164,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return toInts(value);
     }
 
-    public void setCleanOnStartUp(boolean clearOnStartUp) {
+    public void setCleanOnStartUp(final boolean clearOnStartUp) {
         this.cleanOnStartUp = clearOnStartUp;
     }
 
@@ -173,7 +176,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return debug;
     }
 
-    public void setDebug(boolean debug) {
+    public void setDebug(final boolean debug) {
         this.debug = debug;
     }
 
@@ -181,7 +184,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         return debugPort;
     }
 
-    public void setDebugPort(int debugPort) {
+    public void setDebugPort(final int debugPort) {
         this.debugPort = debugPort;
     }
 

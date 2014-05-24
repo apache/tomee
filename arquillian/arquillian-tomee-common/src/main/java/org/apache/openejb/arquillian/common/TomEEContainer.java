@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -83,12 +83,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     @Override
-    public void setup(Configuration configuration) {
+    public void setup(final Configuration configuration) {
         this.configuration = configuration;
 
         final Prefixes prefixes = configuration.getClass().getAnnotation(Prefixes.class);
 
-        if (prefixes == null) return;
+        if (prefixes == null) {
+            return;
+        }
 
         final Properties systemProperties = System.getProperties();
         ConfigurationOverrides.apply(configuration, systemProperties, prefixes.value());
@@ -101,8 +103,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             //
             // Export the config back out to properties
             //
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                for (String prefix : prefixes.value()) {
+            for (final Map.Entry<String, Object> entry : map.entrySet()) {
+                for (final String prefix : prefixes.value()) {
                     try {
                         final String property = prefix + "." + entry.getKey();
                         final String value = entry.getValue().toString();
@@ -110,7 +112,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                         LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
 
                         System.setProperty(property, value);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         // value cannot be converted to a string
                     }
                 }
@@ -125,16 +127,18 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         // Set ports if they are unspecified
         //
         final Collection<Integer> randomPorts = new ArrayList<Integer>();
-        for (int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
+        for (final int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
             randomPorts.add(i);
         }
 
         final ObjectMap map = new ObjectMap(configuration);
         for (final Map.Entry<String, Object> entry : map.entrySet()) {
-            if (!entry.getKey().toLowerCase().endsWith("port")) continue;
+            if (!entry.getKey().toLowerCase().endsWith("port")) {
+                continue;
+            }
             try {
-                Object value = entry.getValue();
-                int port = new Integer(value + "");
+                final Object value = entry.getValue();
+                int port = new Integer(String.valueOf(value));
                 if (port <= 0) {
                     int retry = 0;
                     do { // nextPort can in some case returns twice the same port since it doesn't hold the port
@@ -149,7 +153,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     entry.setValue(port);
                     randomPorts.add(port);
                 }
-            } catch (NumberFormatException mustNotBeAPortConfig) {
+            } catch (final NumberFormatException mustNotBeAPortConfig) {
                 // no-op
             }
         }
@@ -160,7 +164,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         if (portRange == null || portRange.isEmpty()) {
             int retry = 10;
             while (retry > 0) {
-                int port = NetworkUtil.getNextAvailablePort();
+                final int port = NetworkUtil.getNextAvailablePort();
                 if (!excluded.contains(port)) {
                     return port;
                 }
@@ -170,13 +174,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
 
         if (!portRange.contains("-")) {
-            int port = Integer.parseInt(portRange.trim());
+            final int port = Integer.parseInt(portRange.trim());
             return NetworkUtil.getNextAvailablePort(new int[]{port});
         }
 
         final String[] minMax = portRange.trim().split("-");
-        int min = Integer.parseInt(minMax[0]);
-        int max = Integer.parseInt(minMax[1]);
+        final int min = Integer.parseInt(minMax[0]);
+        final int max = Integer.parseInt(minMax[1]);
         return NetworkUtil.getNextAvailablePort(min, max, excluded);
     }
 
@@ -185,21 +189,21 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void stop() throws LifecycleException {
         try {
-            Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
-            OutputStream out = socket.getOutputStream();
+            final Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
+            final OutputStream out = socket.getOutputStream();
             out.write((configuration.getStopCommand() + Character.toString((char) 0)).getBytes());
 
             waitForShutdown(socket, 10);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LifecycleException("Unable to stop TomEE", e);
         }
     }
 
-    protected void waitForShutdown(Socket socket, int tries) {
+    protected void waitForShutdown(final Socket socket, int tries) {
         try {
-            OutputStream out = socket.getOutputStream();
+            final OutputStream out = socket.getOutputStream();
             out.close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (tries > 2) {
                 Threads.sleep(2000);
 
@@ -209,7 +213,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             if (socket != null && !socket.isClosed()) {
                 try {
                     socket.close();
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
             }
@@ -222,8 +226,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     public void addServlets(final HTTPContext httpContext, final AppInfo appInfo) {
-        for (WebAppInfo webApps : appInfo.webApps) {
-            for (ServletInfo servlet : webApps.servlets) {
+        for (final WebAppInfo webApps : appInfo.webApps) {
+            for (final ServletInfo servlet : webApps.servlets) {
                 // weird but arquillian url doesn't match the servlet url but its context
                 String clazz = servlet.servletClass;
                 if (clazz == null) {
@@ -245,13 +249,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     @Override
-    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
+    public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
             final File file = dumpFile(archive);
 
             final String fileName = file.getName();
             if (fileName.endsWith(".war")) { // ??
-                File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
+                final File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
                 if (extracted.exists()) {
                     extracted.deleteOnExit();
                 }
@@ -283,7 +287,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
-            } catch (OpenEJBException re) { // clean up in undeploy needs it
+            } catch (final OpenEJBException re) { // clean up in undeploy needs it
                 moduleIds.put(archiveName, new DeployedApp(file.getPath(), file.getParentFile()));
                 throw re;
             }
@@ -292,9 +296,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 Info.marshal(appInfo);
             }
 
-            HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
+            final HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
 
-            String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
             if (archiveName.endsWith(".war")) {
                 httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
@@ -313,7 +316,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             addServlets(httpContext, appInfo);
 
             return new ProtocolMetaData().addContext(httpContext);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
@@ -324,19 +327,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     protected File dumpFile(final Archive<?> archive) {
-        String tmpDir = configuration.getAppWorkingDir();
+        final String tmpDir = configuration.getAppWorkingDir();
         Files.deleteOnExit(new File(tmpDir));
 
-        File file, folderFile;
+        File file;
         int i = 0;
         do { // be sure we don't override something existing
             file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
-            if (file.isDirectory() || !file.getName().endsWith("ar")) {
-                folderFile = file;
-            } else {
-                final String name = file.getName();
-                folderFile = new File(file.getParentFile(), name.substring(0, name.length() - 4));
-            }
         } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
             LOGGER.warning("can't create " + file.getParent());
@@ -357,10 +354,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         final Collection<String> paths = new ArrayList<String>();
         try {
             final Collection<AppInfo> appInfos = deployer().getDeployedApps();
-            for (AppInfo info : appInfos) {
+            for (final AppInfo info : appInfos) {
                 paths.add(info.path);
             }
-        } catch (Exception e) { // don't throw an exception just because of this log info
+        } catch (final Exception e) { // don't throw an exception just because of this log info
             // no-op
         }
         return paths;
@@ -380,17 +377,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         return lookupDeployerWithRetry(5);
     }
 
-    protected Deployer lookupDeployerWithRetry(int retry) throws NamingException {
+    protected Deployer lookupDeployerWithRetry(final int retry) throws NamingException {
         try {
             final Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
             properties.setProperty(Context.PROVIDER_URL, providerUrl());
             return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
-        } catch (RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
+        } catch (final RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
             if (retry > 1) {
                 try { // wait a bit before retrying
                     Thread.sleep(200);
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                     // no-op
                 }
                 return lookupDeployerWithRetry(retry - 1);
@@ -398,7 +395,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             if (Boolean.getBoolean("openejb.arquillian.debug") && retry >= 0) {
                 try { // wait a lot to be sure that's not a timing issue
                     Thread.sleep(10000);
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                     // no-op
                 }
                 return lookupDeployerWithRetry(-1);
@@ -421,11 +418,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     @Override
-    public void undeploy(Archive<?> archive) throws DeploymentException {
+    public void undeploy(final Archive<?> archive) throws DeploymentException {
         final DeployedApp deployed = moduleIds.get(archive.getName());
         try {
             deployer().undeploy(deployed.path);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
@@ -441,35 +438,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     @Override
-    public void deploy(Descriptor descriptor) throws DeploymentException {
+    public void deploy(final Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void undeploy(Descriptor descriptor) throws DeploymentException {
+    public void undeploy(final Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Not implemented");
-    }
-
-    private static String startWithSlash(final String s) {
-        if (s == null) {
-            return "/";
-        }
-        if (s.startsWith("/")) {
-            return s;
-        }
-        return "/" + s;
-    }
-
-    private static String uniqueSlash(final String contextRoot, final String mapping) {
-        boolean ctxSlash = contextRoot.endsWith("/");
-        boolean mappingSlash = mapping.startsWith("/");
-        if (ctxSlash && mappingSlash) {
-            return contextRoot.substring(0, contextRoot.length() - 1) + mapping;
-        }
-        if ((!ctxSlash && mappingSlash) || (ctxSlash && !mappingSlash)) {
-            return contextRoot + mapping;
-        }
-        return contextRoot + "/" + mapping;
     }
 
     public static class DeployedApp {

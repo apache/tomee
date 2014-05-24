@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ziplock;
 
@@ -64,13 +64,15 @@ public class JarLocation {
             }
 
             if ("jar".equals(url.getProtocol())) {
-                String spec = url.getFile();
+                final String spec = url.getFile();
 
                 int separator = spec.indexOf('!');
                 /*
                  * REMIND: we don't handle nested JAR URLs
                  */
-                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                if (separator == -1) {
+                    throw new MalformedURLException("no ! found in jar url spec:" + spec);
+                }
 
                 url = new URL(spec.substring(0, separator++));
 
@@ -100,7 +102,7 @@ public class JarLocation {
         }
     }
 
-    private static File toFile(String classFileName, URL url) {
+    private static File toFile(final String classFileName, final URL url) {
         String path = url.getFile();
         path = path.substring(0, path.length() - classFileName.length());
         return new File(decode(path));

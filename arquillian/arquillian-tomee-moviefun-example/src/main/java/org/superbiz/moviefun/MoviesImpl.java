@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.moviefun;
 
@@ -39,7 +39,7 @@ public class MoviesImpl implements Movies, MoviesRemote {
     private EntityManager entityManager;
 
     @Override
-    public Movie find(Long id) {
+    public Movie find(final Long id) {
         return entityManager.find(Movie.class, id);
     }
 
@@ -49,56 +49,56 @@ public class MoviesImpl implements Movies, MoviesRemote {
     }
 
     @Override
-    public void addMovie(Movie movie) {
+    public void addMovie(final Movie movie) {
         entityManager.persist(movie);
     }
 
     @Override
-    public void editMovie(Movie movie) {
+    public void editMovie(final Movie movie) {
         entityManager.merge(movie);
     }
 
     @Override
-    public void deleteMovie(Movie movie) {
+    public void deleteMovie(final Movie movie) {
         entityManager.remove(movie);
     }
 
     @Override
-    public void deleteMovieId(long id) {
-        Movie movie = entityManager.find(Movie.class, id);
+    public void deleteMovieId(final long id) {
+        final Movie movie = entityManager.find(Movie.class, id);
         deleteMovie(movie);
     }
 
     @Override
     public List<Movie> getMovies() {
-        CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+        final CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
         cq.select(cq.from(Movie.class));
         return entityManager.createQuery(cq).getResultList();
     }
 
     @Override
-    public List<Movie> findByTitle(String title) {
+    public List<Movie> findByTitle(final String title) {
         return findByStringField("title", title);
     }
 
     @Override
-    public List<Movie> findByGenre(String genre) {
+    public List<Movie> findByGenre(final String genre) {
         return findByStringField("genre", genre);
     }
 
     @Override
-    public List<Movie> findByDirector(String director) {
+    public List<Movie> findByDirector(final String director) {
         return findByStringField("director", director);
     }
 
-    private List<Movie> findByStringField(String fieldname, String param) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-        Root<Movie> root = query.from(Movie.class);
-        EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
+    private List<Movie> findByStringField(final String fieldname, final String param) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+        final Root<Movie> root = query.from(Movie.class);
+        final EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
 
-        Path<String> path = root.get(type.getDeclaredSingularAttribute(fieldname, String.class));
-        Predicate condition = builder.like(path, "%" + param + "%");
+        final Path<String> path = root.get(type.getDeclaredSingularAttribute(fieldname, String.class));
+        final Predicate condition = builder.like(path, "%" + param + "%");
 
         query.where(condition);
 
@@ -106,10 +106,10 @@ public class MoviesImpl implements Movies, MoviesRemote {
     }
 
     @Override
-    public List<Movie> findRange(int[] range) {
-        CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+    public List<Movie> findRange(final int[] range) {
+        final CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
         cq.select(cq.from(Movie.class));
-        TypedQuery<Movie> q = entityManager.createQuery(cq);
+        final TypedQuery<Movie> q = entityManager.createQuery(cq);
         q.setMaxResults(range[1] - range[0]);
         q.setFirstResult(range[0]);
         return q.getResultList();
@@ -117,11 +117,11 @@ public class MoviesImpl implements Movies, MoviesRemote {
 
     @Override
     public int count() {
-        CriteriaQuery<Long> cq = entityManager.getCriteriaBuilder().createQuery(Long.class);
-        Root<Movie> rt = cq.from(Movie.class);
+        final CriteriaQuery<Long> cq = entityManager.getCriteriaBuilder().createQuery(Long.class);
+        final Root<Movie> rt = cq.from(Movie.class);
         cq.select(entityManager.getCriteriaBuilder().count(rt));
-        TypedQuery<Long> q = entityManager.createQuery(cq);
-        return (q.getSingleResult()).intValue();
+        final TypedQuery<Long> q = entityManager.createQuery(cq);
+        return q.getSingleResult().intValue();
     }
 
 }

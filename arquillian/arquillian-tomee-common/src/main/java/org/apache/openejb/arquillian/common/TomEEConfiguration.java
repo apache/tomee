@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,7 +48,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return unpackWars;
     }
 
-    public void setUnpackWars(boolean unpackWars) {
+    public void setUnpackWars(final boolean unpackWars) {
         this.unpackWars = unpackWars;
     }
 
@@ -56,7 +56,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return httpPort;
     }
 
-    public void setHttpPort(int httpPort) {
+    public void setHttpPort(final int httpPort) {
         this.httpPort = httpPort;
     }
 
@@ -64,7 +64,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return stopPort;
     }
 
-    public void setStopPort(int stopPort) {
+    public void setStopPort(final int stopPort) {
         this.stopPort = stopPort;
     }
 
@@ -72,7 +72,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return dir;
     }
 
-    public void setDir(String dir) {
+    public void setDir(final String dir) {
         this.dir = dir;
     }
 
@@ -80,7 +80,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return appWorkingDir;
     }
 
-    public void setAppWorkingDir(String appWorkingDir) {
+    public void setAppWorkingDir(final String appWorkingDir) {
         this.appWorkingDir = appWorkingDir;
     }
 
@@ -91,7 +91,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return exportConfAsSystemProperty;
     }
 
-    public void setExportConfAsSystemProperty(boolean exportConfAsSystemProperty) {
+    public void setExportConfAsSystemProperty(final boolean exportConfAsSystemProperty) {
         this.exportConfAsSystemProperty = exportConfAsSystemProperty;
     }
 
@@ -99,7 +99,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -107,7 +107,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return serverXml;
     }
 
-    public void setServerXml(String serverXml) {
+    public void setServerXml(final String serverXml) {
         this.serverXml = serverXml;
     }
 
@@ -116,7 +116,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     }
 
     @Multiline
-    public void setProperties(String properties) {
+    public void setProperties(final String properties) {
         this.properties = properties;
     }
 
@@ -128,7 +128,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return portRange;
     }
 
-    public void setPortRange(String portRange) {
+    public void setPortRange(final String portRange) {
         this.portRange = portRange;
     }
 
@@ -136,7 +136,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return quickSession;
     }
 
-    public void setQuickSession(boolean quickSession) {
+    public void setQuickSession(final boolean quickSession) {
         this.quickSession = quickSession;
     }
 
@@ -151,8 +151,8 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return toInts(value);
     }
 
-    protected int[] toInts(List<Integer> values) {
-        int[] array = new int[values.size()];
+    protected int[] toInts(final List<Integer> values) {
+        final int[] array = new int[values.size()];
         for (int i = 0; i < array.length; i++) {
             array[i] = values.get(i);
         }
@@ -163,7 +163,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return stopHost;
     }
 
-    public void setStopHost(String stopHost) {
+    public void setStopHost(final String stopHost) {
         this.stopHost = stopHost;
     }
 
@@ -171,7 +171,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return stopCommand +  Character.toString((char) 0); // last char to avoid warning/error log message
     }
 
-    public void setStopCommand(String stopCommand) {
+    public void setStopCommand(final String stopCommand) {
         this.stopCommand = stopCommand;
     }
 
