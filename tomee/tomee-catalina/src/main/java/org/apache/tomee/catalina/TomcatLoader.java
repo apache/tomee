@@ -193,17 +193,23 @@ public class TomcatLoader implements Loader {
         final Set<String> exclusions = new HashSet<String>(Arrays.asList(NewLoaderLogic.getExclusions()));
         {
             final String jarToSkipProp = CatalinaProperties.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
-            if (jarToSkipProp != null) {
+            if (jarToSkipProp != null && !jarToSkipProp.isEmpty()) {
                 for (final String s : jarToSkipProp.split(",")) {
-                    exclusions.add(NewLoaderLogic.sanitize(s.trim()));
+                    final String sanitize = NewLoaderLogic.sanitize(s.trim());
+                    if (!sanitize.isEmpty()) {
+                        exclusions.add(sanitize);
+                    }
                 }
             }
         }
         {
             final String jarToSkipProp = CatalinaProperties.getProperty("org.apache.catalina.startup.ContextConfig.jarsToSkip");
-            if (jarToSkipProp != null) {
+            if (jarToSkipProp != null && !jarToSkipProp.isEmpty()) {
                 for (final String s : jarToSkipProp.split(",")) {
-                    exclusions.add(NewLoaderLogic.sanitize(s.trim()));
+                    final String sanitize = NewLoaderLogic.sanitize(s.trim());
+                    if (!sanitize.isEmpty()) {
+                        exclusions.add(sanitize);
+                    }
                 }
             }
         }
