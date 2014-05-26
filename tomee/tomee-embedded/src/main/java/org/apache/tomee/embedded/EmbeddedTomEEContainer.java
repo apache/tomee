@@ -101,7 +101,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
 
             if ((provider == null && ejbContainerProviders > 1)
                     || (!EmbeddedTomEEContainer.class.equals(provider)
-                        && !CONTAINER_NAMES.contains(provider))) {
+                        && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
                 return null;
             }
 
