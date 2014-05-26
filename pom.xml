@@ -620,10 +620,6 @@
       <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1004/</url>
     </repository>
     <repository>
-      <id>xbean-staging</id>
-      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1001/</url>
-    </repository>
-    <repository>
       <id>patch-openjpa</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
       <releases>
