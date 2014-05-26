@@ -25,7 +25,7 @@ public class SimpleTomEEFormatter extends java.util.logging.Formatter {
     private static final String LN = System.getProperty("line.separator");
 
     @Override
-    public synchronized String format(LogRecord record) {
+    public synchronized String format(final LogRecord record) {
         final Throwable thrown = record.getThrown();
         final StringBuilder sbuf = new StringBuilder();
         sbuf.append(record.getLevel().getLocalizedName());
@@ -39,7 +39,7 @@ public class SimpleTomEEFormatter extends java.util.logging.Formatter {
                 thrown.printStackTrace(pw);
                 pw.close();
                 sbuf.append(sw.toString());
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 // no-op
             }
         }

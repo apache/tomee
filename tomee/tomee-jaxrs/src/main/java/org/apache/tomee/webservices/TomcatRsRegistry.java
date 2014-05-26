@@ -59,7 +59,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost, String auth, String realm) {
+    public AddressInfo createRsHttpListener(final String webContext, final HttpListener listener, final ClassLoader classLoader, final String completePath, final String virtualHost, final String auth, final String realm) {
         String path = webContext;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -144,12 +144,12 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     private static String address(final Collection<Connector> connectors, final String host, final String path) {
-        List<String> addresses = new ArrayList<String>();
-        for (Connector connector : connectors) {
-            URI address;
+        final List<String> addresses = new ArrayList<String>();
+        for (final Connector connector : connectors) {
+            final URI address;
             try {
                 address = new URI(connector.getScheme(), null, host, connector.getPort(), path, null, null);
-            } catch (Exception e) { // just an URI problem normally...shouldn't occur
+            } catch (final Exception e) { // just an URI problem normally...shouldn't occur
                 LOGGER.error("can't add container for path " + path, e);
                 continue;
             }

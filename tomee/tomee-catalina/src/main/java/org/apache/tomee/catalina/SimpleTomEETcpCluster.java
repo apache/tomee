@@ -42,13 +42,13 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
         setManagerTemplate(from.getManagerTemplate());
         setClusterDeployer(from.getClusterDeployer());
 
-        for (Valve valve : from.getValves()) {
+        for (final Valve valve : from.getValves()) {
             addValve(valve);
         }
 
         final Iterator<String> propertyNames = from.getPropertyNames();
         while (propertyNames.hasNext()) {
-            String next = propertyNames.next();
+            final String next = propertyNames.next();
             setProperty(next, from.getProperty(next));
         }
     }
@@ -61,7 +61,7 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
         }
 
         // else force the new cluster listener
-        for (ClusterListener clusterListener : currentListeners) {
+        for (final ClusterListener clusterListener : currentListeners) {
             clusterListener.setCluster(this); // we don't care about TomEEClusterListener since it is stateless
         }
         if (getClusterDeployer() != null) {

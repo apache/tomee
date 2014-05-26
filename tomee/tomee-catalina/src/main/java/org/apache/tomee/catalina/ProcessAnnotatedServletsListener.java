@@ -28,12 +28,12 @@ import org.apache.tomee.common.LegacyAnnotationProcessor;
  */
 public class ProcessAnnotatedServletsListener extends LegacyAnnotationProcessorListener implements InstanceListener {
 
-    public ProcessAnnotatedServletsListener(LegacyAnnotationProcessor annotationProcessor) {
+    public ProcessAnnotatedServletsListener(final LegacyAnnotationProcessor annotationProcessor) {
         super(annotationProcessor);
     }
 
-    public void instanceEvent(InstanceEvent event) {
-        String type = event.getType();
+    public void instanceEvent(final InstanceEvent event) {
+        final String type = event.getType();
         if (InstanceEvent.BEFORE_INIT_EVENT.equals(type)) {
             beforeInit(event);
         } else if (InstanceEvent.AFTER_DESTROY_EVENT.equals(type)) {
@@ -41,14 +41,14 @@ public class ProcessAnnotatedServletsListener extends LegacyAnnotationProcessorL
         }
     }
 
-    private void beforeInit(InstanceEvent event) {
-        Object object = event.getServlet();
+    private void beforeInit(final InstanceEvent event) {
+        final Object object = event.getServlet();
         processAnnotations(object);
         postConstruct(object);
     }
 
-    private void afterDestroy(InstanceEvent event) {
-        Object object = event.getServlet();
+    private void afterDestroy(final InstanceEvent event) {
+        final Object object = event.getServlet();
         preDestroy(object);
     }
 

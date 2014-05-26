@@ -56,27 +56,27 @@ public class NamingUtil {
     private static StandardContext currentContext = null;
     private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
 
-    public static String getProperty(Reference ref, String name) {
-        RefAddr addr = ref.get(name);
+    public static String getProperty(final Reference ref, final String name) {
+        final RefAddr addr = ref.get(name);
         if (addr == null) return null;
-        Object value = addr.getContent();
+        final Object value = addr.getContent();
         return (String) value;
     }
 
-    public static boolean isPropertyTrue(Reference ref, String name) {
-        RefAddr addr = ref.get(name);
+    public static boolean isPropertyTrue(final Reference ref, final String name) {
+        final RefAddr addr = ref.get(name);
         if (addr == null) return false;
-        Object value = addr.getContent();
+        final Object value = addr.getContent();
         return Boolean.parseBoolean("" + value);
     }
 
-    public static void setStaticValue(Resource resource, Object value) {
+    public static void setStaticValue(final Resource resource, final Object value) {
         setStaticValue(resource, null, value);
     }
 
-    public static void setStaticValue(Resource resource, String name, Object value) {
+    public static void setStaticValue(final Resource resource, String name, final Object value) {
         name = name != null ? "-" + name : "";
-        String token = "" + id.incrementAndGet();
+        final String token = "" + id.incrementAndGet();
         registry.put(token, value);
         resource.setProperty("static-token" + name, token);
         if (currentContext != null) {
@@ -90,34 +90,34 @@ public class NamingUtil {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static<T> T getStaticValue(Reference ref) {
+    public static<T> T getStaticValue(final Reference ref) {
         return (T) getStaticValue(ref, null);
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T> T getStaticValue(Reference ref, String name) {
+    public static <T> T getStaticValue(final Reference ref, String name) {
         name = name != null ? "-" + name : "";
-        String token = getProperty(ref, "static-token" + name);
+        final String token = getProperty(ref, "static-token" + name);
         if (token == null) {
             return null;
         }
-        T object = (T) registry.get(token);
+        final T object = (T) registry.get(token);
         return object;
     }
 
-    public static Class<?> loadClass(String className) {
+    public static Class<?> loadClass(final String className) {
         if (className == null) return null;
         try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader != null) {
                 try {
-                    Class clazz = classLoader.loadClass(className);
+                    final Class clazz = classLoader.loadClass(className);
                     return clazz;
-                } catch(ClassNotFoundException e) {
+                } catch(final ClassNotFoundException e) {
                 }
             }
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }
@@ -130,14 +130,14 @@ public class NamingUtil {
         void setProperty(String name, Object value);
     }
 
-    public static void setCurrentContext(StandardContext currentContext) {
+    public static void setCurrentContext(final StandardContext currentContext) {
         NamingUtil.currentContext = currentContext;
     }
 
     public static void cleanUpContextResource(final StandardContext context) {
         final Collection<String> keys = ID_BY_CONTEXT.remove(context);
         if (keys != null) {
-            for (String k : keys) {
+            for (final String k : keys) {
                 registry.remove(k);
             }
         }

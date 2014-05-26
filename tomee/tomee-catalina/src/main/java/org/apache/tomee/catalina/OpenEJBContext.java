@@ -40,182 +40,182 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
-    public Object lookup(Name name) throws NamingException {
+    public Object lookup(final Name name) throws NamingException {
         return getThreadContext().lookup(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object lookup(String name) throws NamingException {
+    public Object lookup(final String name) throws NamingException {
         return getThreadContext().lookup(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void bind(Name name, Object obj) throws NamingException {
+    public void bind(final Name name, final Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void bind(String name, Object obj) throws NamingException {
+    public void bind(final String name, final Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void rebind(Name name, Object obj) throws NamingException {
+    public void rebind(final Name name, final Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void rebind(String name, Object obj) throws NamingException {
+    public void rebind(final String name, final Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void unbind(Name name) throws NamingException {
+    public void unbind(final Name name) throws NamingException {
         getThreadContext().unbind(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void unbind(String name) throws NamingException {
+    public void unbind(final String name) throws NamingException {
         getThreadContext().unbind(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void rename(Name oldName, Name newName) throws NamingException {
+    public void rename(final Name oldName, final Name newName) throws NamingException {
         getThreadContext().rename(oldName, newName);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void rename(String oldName, String newName) throws NamingException {
+    public void rename(final String oldName, final String newName) throws NamingException {
         getThreadContext().rename(oldName, newName);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
         return getThreadContext().list(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
         return getThreadContext().list(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
         return getThreadContext().listBindings(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
         return getThreadContext().listBindings(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void destroySubcontext(Name name) throws NamingException {
+    public void destroySubcontext(final Name name) throws NamingException {
         getThreadContext().destroySubcontext(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void destroySubcontext(String name) throws NamingException {
+    public void destroySubcontext(final String name) throws NamingException {
         getThreadContext().destroySubcontext(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Context createSubcontext(Name name) throws NamingException {
+    public Context createSubcontext(final Name name) throws NamingException {
         return getThreadContext().createSubcontext(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Context createSubcontext(String name) throws NamingException {
+    public Context createSubcontext(final String name) throws NamingException {
         return getThreadContext().createSubcontext(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object lookupLink(Name name) throws NamingException {
+    public Object lookupLink(final Name name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object lookupLink(String name) throws NamingException {
+    public Object lookupLink(final String name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NameParser getNameParser(Name name) throws NamingException {
+    public NameParser getNameParser(final Name name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public NameParser getNameParser(String name) throws NamingException {
+    public NameParser getNameParser(final String name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Name composeName(Name name, Name prefix) throws NamingException {
+    public Name composeName(final Name name, final Name prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String composeName(String name, String prefix) throws NamingException {
+    public String composeName(final String name, final String prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object addToEnvironment(String propName, Object propVal) throws NamingException {
+    public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         return getThreadContext().addToEnvironment(propName, propVal);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object removeFromEnvironment(String propName) throws NamingException {
+    public Object removeFromEnvironment(final String propName) throws NamingException {
         return getThreadContext().removeFromEnvironment(propName);
     }
 
@@ -247,11 +247,11 @@ public class OpenEJBContext implements Context {
      * @throws NamingException for exception
      */
     private Context getThreadContext() throws NamingException {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
         if (skipEjbContext(threadContext)) {
             return ContextBindings.getClassLoader();
         }
-        Context context = threadContext.getBeanContext().getJndiEnc();
+        final Context context = threadContext.getBeanContext().getJndiEnc();
         return context;
     }
 

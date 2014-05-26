@@ -29,15 +29,15 @@ import javax.naming.Reference;
 import java.util.Hashtable;
 
 public class PersistenceContextFactory extends AbstractObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non resource-refs
         if (!(object instanceof ResourceRef)) {
             return null;
         }
 
-        Reference ref = (Reference) object;
+        final Reference ref = (Reference) object;
 
-        Object value;
+        final Object value;
         if (getProperty(ref, JNDI_NAME) != null) {
             // lookup the value in JNDI
             value = super.getObjectInstance(object, name, context, environment);
@@ -49,7 +49,7 @@ public class PersistenceContextFactory extends AbstractObjectFactory {
         return value;
     }
 
-    protected String buildJndiName(Reference reference) throws NamingException {
+    protected String buildJndiName(final Reference reference) throws NamingException {
         throw new UnsupportedOperationException();
     }
 }

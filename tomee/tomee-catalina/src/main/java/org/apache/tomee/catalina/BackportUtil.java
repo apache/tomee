@@ -64,19 +64,19 @@ public class BackportUtil {
         return api;
     }
 
-    public static Servlet getServlet(Wrapper wrapper) {
+    public static Servlet getServlet(final Wrapper wrapper) {
         return getAPI().getServlet(wrapper);
     }
 
-    public static NamingContextListener getNamingContextListener(StandardContext standardContext) {
+    public static NamingContextListener getNamingContextListener(final StandardContext standardContext) {
         return getAPI().getNamingContextListener(standardContext);
     }
 
-    public static String findServiceName(NamingResources naming, String refName) {
+    public static String findServiceName(final NamingResources naming, final String refName) {
         return getAPI().findServiceName(naming, refName);
     }
 
-    public static void removeService(NamingContextListener namingContextListener, String serviceName) {
+    public static void removeService(final NamingContextListener namingContextListener, final String serviceName) {
         getAPI().removeService(namingContextListener, serviceName);
     }
 
@@ -94,39 +94,39 @@ public class BackportUtil {
 
     public static class Tomcat7 extends Tomcat6 implements API {
         @Override
-        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+        public void setConfigFile(final StandardContext standardContext, final File contextXmlFile) {
             try {
                 standardContext.setConfigFile(contextXmlFile.toURI().toURL());
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 throw new TomEERuntimeException(e);
             }
         }
     }
 
     public static class Tomcat6 implements API {
-        public Servlet getServlet(Wrapper wrapper) {
+        public Servlet getServlet(final Wrapper wrapper) {
             return wrapper.getServlet();
         }
 
-        public NamingContextListener getNamingContextListener(StandardContext standardContext) {
+        public NamingContextListener getNamingContextListener(final StandardContext standardContext) {
             return standardContext.getNamingContextListener();
         }
 
-        public String findServiceName(NamingResources naming, String referenceName) {
-            ContextService service = naming.findService(referenceName);
+        public String findServiceName(final NamingResources naming, final String referenceName) {
+            final ContextService service = naming.findService(referenceName);
             return (service != null) ? service.getName() : null;
         }
 
-        public void removeService(NamingContextListener namingContextListener, String serviceName) {
+        public void removeService(final NamingContextListener namingContextListener, final String serviceName) {
             namingContextListener.removeService(serviceName);
         }
 
         @Override
-        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+        public void setConfigFile(final StandardContext standardContext, final File contextXmlFile) {
             try {
-                Method method = StandardContext.class.getMethod("setConfigFile", String.class);
+                final Method method = StandardContext.class.getMethod("setConfigFile", String.class);
                 method.invoke(standardContext, contextXmlFile.getAbsolutePath());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Cannot setConfigFile", e);
             }
         }
@@ -142,35 +142,35 @@ public class BackportUtil {
         }
 
 
-        public Servlet getServlet(Wrapper wrapper) {
+        public Servlet getServlet(final Wrapper wrapper) {
             try {
                 return (Servlet) instance.get(wrapper);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        public NamingContextListener getNamingContextListener(StandardContext standardContext) {
+        public NamingContextListener getNamingContextListener(final StandardContext standardContext) {
             try {
                 return (NamingContextListener) namingContextListener.get(standardContext);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        public String findServiceName(NamingResources naming, String refName) {
+        public String findServiceName(final NamingResources naming, final String refName) {
             return null;
         }
 
-        public void removeService(NamingContextListener namingContextListener, String serviceName) {
+        public void removeService(final NamingContextListener namingContextListener, final String serviceName) {
         }
 
         @Override
-        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+        public void setConfigFile(final StandardContext standardContext, final File contextXmlFile) {
             try {
-                Method method = StandardContext.class.getMethod("setConfigFile", String.class);
+                final Method method = StandardContext.class.getMethod("setConfigFile", String.class);
                 method.invoke(standardContext, contextXmlFile.getAbsolutePath());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Cannot setConfigFile", e);
             }
         }
@@ -179,10 +179,10 @@ public class BackportUtil {
             return AccessController.doPrivileged(new PrivilegedAction<Field>() {
                 public Field run() {
                     try {
-                        Field field = clazz.getDeclaredField(name);
+                        final Field field = clazz.getDeclaredField(name);
                         field.setAccessible(true);
                         return field;
-                    } catch (Exception e2) {
+                    } catch (final Exception e2) {
                         throw (IllegalStateException) new IllegalStateException("Unable to find or access the '" + name + "' field in " + clazz.getName()).initCause(e2);
                     }
                 }

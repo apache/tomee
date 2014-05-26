@@ -23,7 +23,7 @@ public class PrefixFilter implements Filter {
 
     private final String prefix;
 
-    public PrefixFilter(String prefix) {
+    public PrefixFilter(final String prefix) {
         assert prefix != null;
         this.prefix = prefix;
     }
@@ -32,16 +32,16 @@ public class PrefixFilter implements Filter {
         return prefix;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return name.startsWith(prefix);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PrefixFilter that = (PrefixFilter) o;
+        final PrefixFilter that = (PrefixFilter) o;
 
         return prefix.equals(that.prefix);
     }

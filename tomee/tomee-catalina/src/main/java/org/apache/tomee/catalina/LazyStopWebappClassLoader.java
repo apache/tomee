@@ -101,9 +101,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 return super.loadClass(name);
-            } catch (NoClassDefFoundError ncdfe) {
+            } catch (final NoClassDefFoundError ncdfe) {
                 return super.loadClass(name);
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
@@ -175,7 +175,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
 
         // add internal enrichments
-        for (URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this)) {
+        for (final URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this)) {
             super.addURL(url);
         }
     }
@@ -187,7 +187,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    protected boolean validateJarFile(File file) throws IOException {
+    protected boolean validateJarFile(final File file) throws IOException {
         return super.validateJarFile(file) && TomEEClassLoaderEnricher.validateJarFile(file) && jarIsAccepted(file);
     }
 
@@ -201,7 +201,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 LOGGER.warning("jar '" + file.getAbsolutePath() + "' is excluded: " + file.getName() + ". It will be ignored.");
                 return false;
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no-op
         }
         return true;

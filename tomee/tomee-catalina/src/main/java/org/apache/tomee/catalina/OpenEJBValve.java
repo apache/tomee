@@ -35,8 +35,8 @@ public class OpenEJBValve extends ValveBase {
         securityService = getSecurityService();
     }
 
-    public void invoke(Request request, Response response) throws IOException, ServletException {
-        OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
+    public void invoke(final Request request, final Response response) throws IOException, ServletException {
+        final OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
 
         if (!request.isAsync()) {
             listener.enter();
@@ -52,7 +52,7 @@ public class OpenEJBValve extends ValveBase {
     }
 
     private TomcatSecurityService getSecurityService() {
-        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService) {
             return (TomcatSecurityService) securityService;
         }

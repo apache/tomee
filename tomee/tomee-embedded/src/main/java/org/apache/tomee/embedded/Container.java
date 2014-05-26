@@ -203,7 +203,7 @@ public class Container {
 
         // create https connector
         if (configuration.isSsl()) {
-            Connector httpsConnector = new Connector(Http11Protocol.class.getName());
+            final Connector httpsConnector = new Connector(Http11Protocol.class.getName());
             httpsConnector.setPort(configuration.getHttpsPort());
             httpsConnector.setSecure(true);
             httpsConnector.setProperty("SSLEnabled", "true");
@@ -274,7 +274,7 @@ public class Container {
             if (serverBuilt != null) {
                 System.setProperty("tomcat.built", serverBuilt);
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 
@@ -317,7 +317,7 @@ public class Container {
 
             try {
                 file = File.createTempFile("apache-tomee", "-home");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
 
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
@@ -329,7 +329,7 @@ public class Container {
 
             return file.getAbsolutePath();
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new TomEERuntimeException("Failed to get or create base dir: " + file, e);
         }
     }

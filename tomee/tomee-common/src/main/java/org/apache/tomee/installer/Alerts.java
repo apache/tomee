@@ -39,11 +39,11 @@ public class Alerts {
         return errors;
     }
 
-    public void addError(String message) {
+    public void addError(final String message) {
         errors.add(message);
     }
 
-    public void addError(String message, Exception e) {
+    public void addError(final String message, final Exception e) {
         // todo add exception somehow
         System.out.println(message);
     }
@@ -56,7 +56,7 @@ public class Alerts {
         return warnings;
     }
 
-    public void addWarning(String message) {
+    public void addWarning(final String message) {
         System.out.println(message);
     }
 
@@ -68,7 +68,7 @@ public class Alerts {
         return infos;
     }
 
-    public void addInfo(String message) {
+    public void addInfo(final String message) {
         infos.add(message);
     }
 }

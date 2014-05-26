@@ -20,7 +20,7 @@ package org.apache.tomee.catalina;
 * @version $Rev$ $Date$
 */
 public class InjectionFailedException extends IllegalStateException {
-    public InjectionFailedException(Throwable cause) {
+    public InjectionFailedException(final Throwable cause) {
         super(cause);
     }
 }

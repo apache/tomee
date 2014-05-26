@@ -23,8 +23,8 @@ import org.apache.catalina.core.StandardContext;
 
 public class TomcatJavaJndiBinder implements LifecycleListener {
     @Override
-    public void lifecycleEvent(LifecycleEvent event) {
-        Object source = event.getSource();
+    public void lifecycleEvent(final LifecycleEvent event) {
+        final Object source = event.getSource();
         if (source instanceof StandardContext) {
             final StandardContext context = (StandardContext) source;
             if (Lifecycle.CONFIGURE_START_EVENT.equals(event.getType())) {

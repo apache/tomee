@@ -64,7 +64,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             final Field threadNameBindingsField = ContextBindings.class.getDeclaredField("threadNameBindings");
             threadNameBindingsField.setAccessible(true);
             threadNameBindings = (Hashtable<Thread, Object>) threadNameBindingsField.get(null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Expected ContextBinding to have the method getThreadName()");
         }
     }
@@ -72,19 +72,19 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     /**
      * {@inheritDoc}
      */
-    public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         // save off the old context if possible
         try {
-            Data data = new Data(getThreadName());
+            final Data data = new Data(getThreadName());
             newContext.set(Data.class, data);
-        } catch (NamingException ignored) {
+        } catch (final NamingException ignored) {
             // no-op
         }
 
         // set the new context
         try {
             ContextBindings.bindThread(OPENEJB_CONTEXT, null);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             ContextBindings.unbindContext(OPENEJB_CONTEXT, null);
             throw new IllegalArgumentException("Unable to bind OpenEJB enc");
         }
@@ -93,16 +93,16 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     /**
      * {@inheritDoc}
      */
-    public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
+    public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         // unbind the new context
         ContextBindings.unbindThread(OPENEJB_CONTEXT, null);
 
         // attempt to restore the old context
-        Data data = exitedContext.get(Data.class);
+        final Data data = exitedContext.get(Data.class);
         if (data != null && data.oldContextName != null) {
             try {
                 ContextBindings.bindThread(data.oldContextName, null);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 logger.error("Exception in method contextExited", e);
             }
         }
@@ -117,7 +117,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     private Object getThreadName() throws NamingException {
         try {
             return threadNameBindings.get(Thread.currentThread());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op: try the old implementation
         }
 
@@ -125,7 +125,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
         try {
             return method.invoke(null);
 
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             // if it's a naming exception, it should be treated by the caller
             if (e.getCause() != null && e.getCause() instanceof NamingException) {
                 throw (NamingException) e.getCause();
@@ -134,7 +134,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             logger.error("Exception in method getThreadName", e);
             return null;
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Exception in method getThreadName", e);
             return null;
         }
@@ -144,7 +144,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     private static class Data {
         private Object oldContextName;
 
-        public Data(Object oldContextName) {
+        public Data(final Object oldContextName) {
             this.oldContextName = oldContextName;
         }
     }

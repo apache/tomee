@@ -37,10 +37,10 @@ public class Main {
         final Options options = createOptions();
 
         // parse command line
-        CommandLine line;
+        final CommandLine line;
         try {
             line = parser.parse(options, args, true);
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             new HelpFormatter().printHelp("java -jar tomee-embedded-user.jar", options);
             return;
         }
@@ -59,7 +59,7 @@ public class Main {
                     contexts = null;
                 }
                 int i = 0;
-                for (String path : line.getOptionValues(PATH)) {
+                for (final String path : line.getOptionValues(PATH)) {
                     final File file = new File(ProvisioningUtil.realLocation(path));
                     if (!file.exists()) {
                         System.err.println(file.getAbsolutePath() + " does not exist, skipping");
@@ -79,13 +79,13 @@ public class Main {
                 public void run() {
                     try {
                         container.stop();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         e.printStackTrace(); // just log the exception
                     }
                 }
             });
 			container.await();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

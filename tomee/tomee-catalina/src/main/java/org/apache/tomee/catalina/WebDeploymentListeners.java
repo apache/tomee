@@ -28,7 +28,7 @@ import org.apache.tomee.catalina.event.AfterApplicationCreated;
 public class WebDeploymentListeners {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, WebDeploymentListeners.class);
 
-    public boolean add(WebDeploymentListener webDeploymentListener) { // compatibility
+    public boolean add(final WebDeploymentListener webDeploymentListener) { // compatibility
         LOGGER.warning("WebDeploymentListener API is replaced by 'void afterApplicationCreated(@Observes final AfterApplicationCreated event)' API");
         SystemInstance.get().addObserver(new WebDeploymentListenerObserver(webDeploymentListener));
         return true;

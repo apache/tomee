@@ -76,7 +76,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      * @param standardServer  tomcat server instance
      * @param contextListener context listener instance
      */
-    public GlobalListenerSupport(StandardServer standardServer, ContextListener contextListener) {
+    public GlobalListenerSupport(final StandardServer standardServer, final ContextListener contextListener) {
         if (standardServer == null) {
             throw new NullPointerException("standardServer is null");
         }
@@ -90,8 +90,8 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     /**
      * {@inheritDoc}
      */
-    public void lifecycleEvent(LifecycleEvent event) {
-        Object source = event.getSource();
+    public void lifecycleEvent(final LifecycleEvent event) {
+        final Object source = event.getSource();
         if (source instanceof StandardContext) {
             final StandardContext standardContext = (StandardContext) source;
             if (standardContext instanceof IgnoredStandardContext) {
@@ -128,8 +128,8 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.configureStart(standardContext);
             }
         } else if (StandardHost.class.isInstance(source)) {
-            StandardHost standardHost = (StandardHost) source;
-            String type = event.getType();
+            final StandardHost standardHost = (StandardHost) source;
+            final String type = event.getType();
             if (Lifecycle.PERIODIC_EVENT.equals(type)) {
                 contextListener.checkHost(standardHost);
             } else if (Lifecycle.AFTER_START_EVENT.equals(type) && REMOTE_SUPPORT) {
@@ -139,8 +139,8 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 } // else old tomee webapp surely
             }
         } else if (StandardServer.class.isInstance(source)) {
-            StandardServer standardServer = (StandardServer) source;
-            String type = event.getType();
+            final StandardServer standardServer = (StandardServer) source;
+            final String type = event.getType();
 
             if (Lifecycle.START_EVENT.equals(type)) {
                 contextListener.start(standardServer);
@@ -175,7 +175,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         // hook the hosts so we get notified before contexts are started
         standardServer.addPropertyChangeListener(this);
         standardServer.addLifecycleListener(this);
-        for (Service service : standardServer.findServices()) {
+        for (final Service service : standardServer.findServices()) {
             serviceAdded(service);
         }
     }
@@ -192,10 +192,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param service tomcat service
      */
-    private void serviceAdded(Service service) {
-        Container container = service.getContainer();
+    private void serviceAdded(final Service service) {
+        final Container container = service.getContainer();
         if (container instanceof StandardEngine) {
-            StandardEngine engine = (StandardEngine) container;
+            final StandardEngine engine = (StandardEngine) container;
             engineAdded(engine);
         }
     }
@@ -205,10 +205,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param service tomcat service
      */
-    private void serviceRemoved(Service service) {
-        Container container = service.getContainer();
+    private void serviceRemoved(final Service service) {
+        final Container container = service.getContainer();
         if (container instanceof StandardEngine) {
-            StandardEngine engine = (StandardEngine) container;
+            final StandardEngine engine = (StandardEngine) container;
             engineRemoved(engine);
         }
     }
@@ -218,11 +218,11 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param engine tomcat engine
      */
-    private void engineAdded(StandardEngine engine) {
+    private void engineAdded(final StandardEngine engine) {
         addContextListener(engine);
-        for (Container child : engine.findChildren()) {
+        for (final Container child : engine.findChildren()) {
             if (child instanceof StandardHost) {
-                StandardHost host = (StandardHost) child;
+                final StandardHost host = (StandardHost) child;
                 hostAdded(host);
             }
         }
@@ -233,10 +233,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param engine tomcat engine
      */
-    private void engineRemoved(StandardEngine engine) {
-        for (Container child : engine.findChildren()) {
+    private void engineRemoved(final StandardEngine engine) {
+        for (final Container child : engine.findChildren()) {
             if (child instanceof StandardHost) {
-                StandardHost host = (StandardHost) child;
+                final StandardHost host = (StandardHost) child;
                 hostRemoved(host);
             }
         }
@@ -247,12 +247,12 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param host tomcat host.
      */
-    private void hostAdded(StandardHost host) {
+    private void hostAdded(final StandardHost host) {
         addContextListener(host);
         host.addLifecycleListener(this);
-        for (Container child : host.findChildren()) {
+        for (final Container child : host.findChildren()) {
             if (child instanceof StandardContext) {
-                StandardContext context = (StandardContext) child;
+                final StandardContext context = (StandardContext) child;
                 contextAdded(context);
             }
         }
@@ -263,10 +263,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param host tomcat host
      */
-    private void hostRemoved(StandardHost host) {
-        for (Container child : host.findChildren()) {
+    private void hostRemoved(final StandardHost host) {
+        for (final Container child : host.findChildren()) {
             if (child instanceof StandardContext) {
-                StandardContext context = (StandardContext) child;
+                final StandardContext context = (StandardContext) child;
                 contextRemoved(context);
             }
         }
@@ -277,7 +277,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param context tomcat context
      */
-    private void contextAdded(StandardContext context) {
+    private void contextAdded(final StandardContext context) {
         // put this class as the first listener so we can process the application before any classes are loaded
         forceFirstLifecycleListener(context);
     }
@@ -287,8 +287,8 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param context tomcat context.
      */
-    private void forceFirstLifecycleListener(StandardContext context) {
-        LifecycleListener[] listeners = context.findLifecycleListeners();
+    private void forceFirstLifecycleListener(final StandardContext context) {
+        final LifecycleListener[] listeners = context.findLifecycleListeners();
 
         // if we are already first return
         if (listeners.length > 0 && listeners[0] == this) {
@@ -296,7 +296,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         }
 
         // remove all of the current listeners
-        for (LifecycleListener listener : listeners) {
+        for (final LifecycleListener listener : listeners) {
             context.removeLifecycleListener(listener);
         }
 
@@ -304,7 +304,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         context.addLifecycleListener(this);
 
         // add back all listeners
-        for (LifecycleListener listener : listeners) {
+        for (final LifecycleListener listener : listeners) {
             if (listener != this) {
                 context.addLifecycleListener(listener);
             }
@@ -317,17 +317,17 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      * @param context tomcat context
      */
     @SuppressWarnings({"UnusedDeclaration", "PMD.UnusedFormalParameter"})
-    private void contextRemoved(StandardContext context) {
+    private void contextRemoved(final StandardContext context) {
         // TODO what to do?
     }
 
     /**
      * {@inheritDoc}
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         if ("service".equals(event.getPropertyName())) {
-            Object oldValue = event.getOldValue();
-            Object newValue = event.getNewValue();
+            final Object oldValue = event.getOldValue();
+            final Object newValue = event.getNewValue();
             if (oldValue == null && newValue instanceof Service) {
                 serviceAdded((Service) newValue);
             }
@@ -336,9 +336,9 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             }
         }
         if ("children".equals(event.getPropertyName())) {
-            Object source = event.getSource();
-            Object oldValue = event.getOldValue();
-            Object newValue = event.getNewValue();
+            final Object source = event.getSource();
+            final Object oldValue = event.getOldValue();
+            final Object newValue = event.getNewValue();
             if (source instanceof StandardEngine) {
                 if (oldValue == null && newValue instanceof StandardHost) {
                     hostAdded((StandardHost) newValue);
@@ -364,7 +364,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      * @param containerBase host or engine
      */
     @SuppressWarnings("unchecked")
-    private void addContextListener(ContainerBase containerBase) {
+    private void addContextListener(final ContainerBase containerBase) {
         boolean accessible = false;
         Field field = null;
         try {
@@ -377,7 +377,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             }
             children = new GlobalListenerSupport.MoniterableHashMap(children, containerBase, "children", this);
             field.set(containerBase, children);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         } finally {
             if (field != null) {
@@ -397,7 +397,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         private final String propertyName;
         private final PropertyChangeListener listener;
 
-        public MoniterableHashMap(Map<Object, Object> m, Object source, String propertyName, PropertyChangeListener listener) {
+        public MoniterableHashMap(final Map<Object, Object> m, final Object source, final String propertyName, final PropertyChangeListener listener) {
             super(m);
 
             this.source = source;
@@ -405,16 +405,16 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             this.listener = listener;
         }
 
-        public Object put(Object key, Object value) {
-            Object oldValue = super.put(key, value);
-            PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, null, value);
+        public Object put(final Object key, final Object value) {
+            final Object oldValue = super.put(key, value);
+            final PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, null, value);
             listener.propertyChange(event);
             return oldValue;
         }
 
-        public Object remove(Object key) {
-            Object value = super.remove(key);
-            PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, value, null);
+        public Object remove(final Object key) {
+            final Object value = super.remove(key);
+            final PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, value, null);
             listener.propertyChange(event);
             return value;
         }

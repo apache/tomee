@@ -205,7 +205,7 @@ public class TomcatPoolTest {
         assertEquals(0, instance.values().iterator().next().size());
     }
 
-    private static boolean exists(int id) throws SQLException {
+    private static boolean exists(final int id) throws SQLException {
         final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         final Statement statement = connection.createStatement();
         final ResultSet result = statement.executeQuery("SELECT count(*) AS NB FROM " + TABLE + " WHERE ID = " + id);
@@ -218,7 +218,7 @@ public class TomcatPoolTest {
         }
     }
 
-    private static void save(final DataSource ds, int id) throws SQLException {
+    private static void save(final DataSource ds, final int id) throws SQLException {
         execute(ds, "INSERT INTO " + TABLE + "(ID) VALUES(" + id + ")");
     }
 

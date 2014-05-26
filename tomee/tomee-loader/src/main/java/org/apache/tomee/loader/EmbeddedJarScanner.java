@@ -102,7 +102,7 @@ public class EmbeddedJarScanner implements JarScanner {
      * Scan a URL for JARs with the optional extensions to look at all files
      * and all directories.
      */
-    private void process(JarScannerCallback callback, URL url)
+    private void process(final JarScannerCallback callback, final URL url)
             throws IOException {
 
         if (log.isTraceEnabled()) {
@@ -159,9 +159,9 @@ public class EmbeddedJarScanner implements JarScanner {
                                 callback.scan(f);
                             }
                         }
-                    } catch (URISyntaxException e) {
+                    } catch (final URISyntaxException e) {
                         // Wrap the exception and re-throw
-                        IOException ioe = new IOException();
+                        final IOException ioe = new IOException();
                         ioe.initCause(e);
                         throw ioe;
                     }

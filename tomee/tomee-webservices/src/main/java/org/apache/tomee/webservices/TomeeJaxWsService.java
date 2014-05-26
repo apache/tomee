@@ -30,7 +30,7 @@ import org.apache.tomee.catalina.event.AfterApplicationCreated;
 public class TomeeJaxWsService implements Service {
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
         // Install the Tomcat webservice registry
         final SystemInstance system = SystemInstance.get();
 
@@ -49,7 +49,7 @@ public class TomeeJaxWsService implements Service {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
-        WsService component = SystemInstance.get().getComponent(WsService.class);
+        final WsService component = SystemInstance.get().getComponent(WsService.class);
         if (component == null) return;
         component.afterApplicationCreated(event.getApp(), event.getWeb());
     }

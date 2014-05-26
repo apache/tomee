@@ -54,7 +54,7 @@ public /* abstract */ class LogFactory {
         LogFactory.singleton = singleton;
     }
 
-    void setLogConfig( Properties p ) {
+    void setLogConfig( final Properties p ) {
         this.logConfig=p;
     }
 
@@ -62,7 +62,7 @@ public /* abstract */ class LogFactory {
         return names;
     }
 
-    public Log getInstance(String name)
+    public Log getInstance(final String name)
             throws LogConfigurationException {
         synchronized (names) {
             names.add(name);
@@ -74,24 +74,24 @@ public /* abstract */ class LogFactory {
         DirectJDKLog.release();
     }
 
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         return logConfig.get(name);
     }
 
     public String[] getAttributeNames() {
-        String result[] = new String[logConfig.size()];
+        final String[] result = new String[logConfig.size()];
         return logConfig.keySet().toArray(result);
     }
 
-    public void removeAttribute(String name) {
+    public void removeAttribute(final String name) {
         logConfig.remove(name);
     }
 
-    public void setAttribute(String name, Object value) {
+    public void setAttribute(final String name, final Object value) {
         logConfig.put(name, value);
     }
 
-    public Log getInstance(Class<?> clazz)
+    public Log getInstance(final Class<?> clazz)
             throws LogConfigurationException {
         return getInstance( clazz.getName());
     }
@@ -100,19 +100,19 @@ public /* abstract */ class LogFactory {
         return singleton;
     }
 
-    public static Log getLog(Class<?> clazz)
+    public static Log getLog(final Class<?> clazz)
             throws LogConfigurationException {
         return (getFactory().getInstance(clazz));
 
     }
 
-    public static Log getLog(String name)
+    public static Log getLog(final String name)
             throws LogConfigurationException {
         return (getFactory().getInstance(name));
 
     }
 
-    public static void release(ClassLoader classLoader) {
+    public static void release(final ClassLoader classLoader) {
         // JULI's log manager looks at the current classLoader so there is no
         // need to use the passed in classLoader, the default implementation
         // does not so calling reset in that case will break things
@@ -126,7 +126,7 @@ public /* abstract */ class LogFactory {
         singleton.release();
     }
 
-    public static String objectId(Object o) {
+    public static String objectId(final Object o) {
         if (o == null) {
             return "null";
         } else {

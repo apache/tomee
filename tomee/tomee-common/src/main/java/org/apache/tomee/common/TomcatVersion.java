@@ -75,9 +75,9 @@ public enum TomcatVersion {
                 serverNumber = properties.getProperty("server.number");
                 if (serverNumber == null) {
                     // Tomcat 5.0 and earlier only has server.info
-                    String serverInfo = properties.getProperty("server.info");
+                    final String serverInfo = properties.getProperty("server.info");
                     if (serverInfo != null) {
-                        int slash = serverInfo.indexOf('/');
+                        final int slash = serverInfo.indexOf('/');
                         serverNumber = serverInfo.substring(slash + 1);
                     }
                 }
@@ -98,7 +98,7 @@ public enum TomcatVersion {
             version.serverBuilt = serverBuilt;
 
             return version;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return UNKNOWN;
         }
     }

@@ -63,7 +63,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         if (!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP, false)) {
             final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES, "");
             if (additionalEnrichments != null && !additionalEnrichments.isEmpty()) {
-                for (String name : additionalEnrichments.split(",")) {
+                for (final String name : additionalEnrichments.split(",")) {
                     classes.add(name.trim());
                 }
             }
@@ -71,7 +71,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             final String additionalPrefixes = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES, "");
             prefixes.addAll(Arrays.asList(DEFAULT_PREFIXES_TO_ADD));
             if (additionalPrefixes != null && !additionalPrefixes.isEmpty()) {
-                for (String name : additionalPrefixes.split(",")) {
+                for (final String name : additionalPrefixes.split(",")) {
                     prefixes.add(name.trim());
                 }
             }
@@ -106,12 +106,12 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
         // from prefix
         final Paths paths = new Paths(new File(System.getProperty("openejb.home"))); // parameter is useless
-        for (String prefix : PREFIXES_TO_ADD) {
+        for (final String prefix : PREFIXES_TO_ADD) {
             final File file = paths.findTomEELibJar(prefix);
             if (file != null) {
                 try {
                     urls.add(file.toURI().toURL());
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     // ignored
                 }
             }
@@ -165,10 +165,10 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                             parent.loadClass(name[0]);
                             found = true;
                             break;
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // found = false
                         }
-                    } catch (LinkageError le) { // would be a pain to fail here
+                    } catch (final LinkageError le) { // would be a pain to fail here
                         // retry
                     }
                 }
@@ -198,7 +198,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             if (jarFile != null) { // in java 6 JarFile is not Closeable so don't use IO.close()
                 try {
                     jarFile.close();
-                } catch (IOException ioe) {
+                } catch (final IOException ioe) {
                     // Ignored
                 }
             }

@@ -44,28 +44,28 @@ public class OpenEJBNamingResource extends NamingResources {
     public OpenEJBNamingResource(final NamingResources namingResources) {
         if (namingResources != null) {
             isTomcatResource = true;
-            for (ContextResource resource : namingResources.findResources()) {
+            for (final ContextResource resource : namingResources.findResources()) {
                 addResource(resource);
             }
-            for (ContextResourceEnvRef resource : namingResources.findResourceEnvRefs()) {
+            for (final ContextResourceEnvRef resource : namingResources.findResourceEnvRefs()) {
                 addResourceEnvRef(resource);
             }
-            for (ContextEjb ejb : namingResources.findEjbs()) {
+            for (final ContextEjb ejb : namingResources.findEjbs()) {
                 addEjb(ejb);
             }
-            for (ContextLocalEjb ejb : namingResources.findLocalEjbs()) {
+            for (final ContextLocalEjb ejb : namingResources.findLocalEjbs()) {
                 addLocalEjb(ejb);
             }
-            for (ContextResourceLink link : namingResources.findResourceLinks()) {
+            for (final ContextResourceLink link : namingResources.findResourceLinks()) {
                 addResourceLink(link);
             }
-            for (ContextService service : namingResources.findServices()) {
+            for (final ContextService service : namingResources.findServices()) {
                 addService(service);
             }
-            for (MessageDestinationRef ref : namingResources.findMessageDestinationRefs()) {
+            for (final MessageDestinationRef ref : namingResources.findMessageDestinationRefs()) {
                 addMessageDestinationRef(ref);
             }
-            for (ContextEnvironment env : namingResources.findEnvironments()) {
+            for (final ContextEnvironment env : namingResources.findEnvironments()) {
                 addEnvironment(env);
             }
             isTomcatResource = false;
@@ -73,31 +73,31 @@ public class OpenEJBNamingResource extends NamingResources {
     }
 
     @Override
-    public void addEnvironment(ContextEnvironment environment) {
+    public void addEnvironment(final ContextEnvironment environment) {
         normalize(environment);
         super.addEnvironment(environment);
     }
 
     @Override
-    public void addResourceEnvRef(ContextResourceEnvRef ref) {
+    public void addResourceEnvRef(final ContextResourceEnvRef ref) {
         normalize(ref);
         super.addResourceEnvRef(ref);
     }
 
     @Override
-    public void addEjb(ContextEjb ref) {
+    public void addEjb(final ContextEjb ref) {
         normalize(ref);
         super.addEjb(ref);
     }
 
     @Override
-    public void addLocalEjb(ContextLocalEjb ref) {
+    public void addLocalEjb(final ContextLocalEjb ref) {
         normalize(ref);
         super.addLocalEjb(ref);
     }
 
     @Override
-    public void addResource(ContextResource ref) {
+    public void addResource(final ContextResource ref) {
         normalize(ref);
         super.addResource(ref);
         if (isTomcatResource) {
@@ -106,19 +106,19 @@ public class OpenEJBNamingResource extends NamingResources {
     }
 
     @Override
-    public void addMessageDestinationRef(MessageDestinationRef ref) {
+    public void addMessageDestinationRef(final MessageDestinationRef ref) {
         normalize(ref);
         super.addMessageDestinationRef(ref);
     }
 
     @Override
-    public void addService(ContextService ref) {
+    public void addService(final ContextService ref) {
         normalize(ref);
         super.addService(ref);
     }
 
     @Override
-    public void addResourceLink(ContextResourceLink ref) {
+    public void addResourceLink(final ContextResourceLink ref) {
         normalize(ref);
         super.addResourceLink(ref);
     }
@@ -130,7 +130,7 @@ public class OpenEJBNamingResource extends NamingResources {
      *
      * @param ref
      */
-    private void normalize(ResourceBase ref) {
+    private void normalize(final ResourceBase ref) {
         final String name = ref.getName();
         if (name.startsWith(JAVA_PREFIX)) { // tomcat adds mbeans and a ":" in a mbean is not very cool for the objectname
             ref.setName(name.substring(JAVA_PREFIX.length()));

@@ -82,7 +82,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
                     final Class<?> clazz;
                     try {
                         clazz = cl.loadClass(realmClass);
-                    } catch (ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException e) {
                         throw new TomEERuntimeException(e);
                     }
 
@@ -99,7 +99,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
                                 recipe.setAllProperties(props);
                             }
                             instance = recipe.create();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new TomEERuntimeException(e);
                         }
                     } else {

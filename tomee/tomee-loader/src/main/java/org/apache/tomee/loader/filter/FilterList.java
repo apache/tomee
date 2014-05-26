@@ -27,18 +27,18 @@ public class FilterList implements Filter {
 
     private final List<Filter> filters = new ArrayList<Filter>();
 
-    public FilterList(Filter... filters) {
+    public FilterList(final Filter... filters) {
         this(Arrays.asList(filters));
     }
 
-    public FilterList(Iterable<Filter> filters) {
-        for (Filter filter : filters) {
+    public FilterList(final Iterable<Filter> filters) {
+        for (final Filter filter : filters) {
             this.filters.add(filter);
         }
     }
 
-    public boolean accept(String name) {
-        for (Filter filter : filters) {
+    public boolean accept(final String name) {
+        for (final Filter filter : filters) {
             if (filter.accept(name)) return true;
         }
 

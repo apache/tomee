@@ -94,7 +94,7 @@ public class OpenEJBListener implements LifecycleListener {
                 LOGGER.info("tomee webapp not found from the listener, will try from the webapp if exists");
                 logWebappNotFound = false;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
             // e.printStackTrace(System.err);
         }
@@ -146,7 +146,7 @@ public class OpenEJBListener implements LifecycleListener {
             return jarFile.getEntry("lib") != null
                     && (name.startsWith("tomee") || name.startsWith("openejb")
                     && name.endsWith(".war"));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return false;
         }
     }
@@ -182,7 +182,7 @@ public class OpenEJBListener implements LifecycleListener {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.log(Level.WARNING, "OpenEJBListener.findOpenEjbWar: " + e.getMessage());
         }
 
@@ -304,7 +304,7 @@ public class OpenEJBListener implements LifecycleListener {
                     if (output != null) {
                         try {
                             output.close();
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             // Ignore
                         }
                     }
@@ -324,14 +324,14 @@ public class OpenEJBListener implements LifecycleListener {
             if (input != null) {
                 try {
                     input.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     // no-op
                 }
             }
             if (jarFile != null) {
                 try {
                     jarFile.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     // no-op
                 }
             }

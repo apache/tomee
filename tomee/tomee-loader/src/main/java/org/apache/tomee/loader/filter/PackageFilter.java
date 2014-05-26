@@ -33,16 +33,16 @@ public class PackageFilter implements Filter {
         return packageName;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return name.startsWith(packageName);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PackageFilter that = (PackageFilter) o;
+        final PackageFilter that = (PackageFilter) o;
 
         return packageName.equals(that.packageName);
     }

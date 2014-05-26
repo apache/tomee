@@ -97,13 +97,13 @@ public class TomcatJndiBuilder {
     private boolean useCrossClassLoaderRef = true;
     private NamingContextListener namingContextListener;
 
-    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, Collection<Injection> injections) {
+    public TomcatJndiBuilder(final StandardContext standardContext, final WebAppInfo webAppInfo, final Collection<Injection> injections) {
         this.injections = injections;
         this.standardContext = standardContext;
         this.namingContextListener = BackportUtil.getNamingContextListener(standardContext);
         this.webAppInfo = webAppInfo;
 
-        String parameter = standardContext.findParameter("openejb.start.late");
+        final String parameter = standardContext.findParameter("openejb.start.late");
         replaceEntry = Boolean.parseBoolean(parameter);
     }
 
@@ -111,7 +111,7 @@ public class TomcatJndiBuilder {
         return useCrossClassLoaderRef;
     }
 
-    public void setUseCrossClassLoaderRef(boolean useCrossClassLoaderRef) {
+    public void setUseCrossClassLoaderRef(final boolean useCrossClassLoaderRef) {
         this.useCrossClassLoaderRef = useCrossClassLoaderRef;
     }
 
@@ -120,43 +120,43 @@ public class TomcatJndiBuilder {
         final NamingResources naming = standardContext.getNamingResources();
         final URI moduleUri = URLs.uri(webAppInfo.moduleId);
 
-        for (EnvEntryInfo ref : webAppInfo.jndiEnc.envEntries) {
+        for (final EnvEntryInfo ref : webAppInfo.jndiEnc.envEntries) {
             mergeRef(naming, ref);
         }
-        for (EjbReferenceInfo ref : webAppInfo.jndiEnc.ejbReferences) {
+        for (final EjbReferenceInfo ref : webAppInfo.jndiEnc.ejbReferences) {
             mergeRef(naming, ref);
         }
-        for (EjbLocalReferenceInfo ref : webAppInfo.jndiEnc.ejbLocalReferences) {
+        for (final EjbLocalReferenceInfo ref : webAppInfo.jndiEnc.ejbLocalReferences) {
             mergeRef(naming, ref);
         }
-        for (PersistenceContextReferenceInfo ref : webAppInfo.jndiEnc.persistenceContextRefs) {
+        for (final PersistenceContextReferenceInfo ref : webAppInfo.jndiEnc.persistenceContextRefs) {
             mergeRef(naming, ref, moduleUri);
         }
-        for (PersistenceUnitReferenceInfo ref : webAppInfo.jndiEnc.persistenceUnitRefs) {
+        for (final PersistenceUnitReferenceInfo ref : webAppInfo.jndiEnc.persistenceUnitRefs) {
             mergeRef(naming, ref, moduleUri);
         }
-        for (ResourceReferenceInfo ref : webAppInfo.jndiEnc.resourceRefs) {
+        for (final ResourceReferenceInfo ref : webAppInfo.jndiEnc.resourceRefs) {
             mergeRef(naming, ref);
         }
-        for (ResourceEnvReferenceInfo ref : webAppInfo.jndiEnc.resourceEnvRefs) {
+        for (final ResourceEnvReferenceInfo ref : webAppInfo.jndiEnc.resourceEnvRefs) {
             mergeRef(naming, ref);
         }
-        for (ServiceReferenceInfo ref : webAppInfo.jndiEnc.serviceRefs) {
+        for (final ServiceReferenceInfo ref : webAppInfo.jndiEnc.serviceRefs) {
             mergeRef(naming, ref);
         }
 
-        ContextTransaction contextTransaction = new ContextTransaction();
+        final ContextTransaction contextTransaction = new ContextTransaction();
         contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
         naming.setTransaction(contextTransaction);
     }
 
-    public static void mergeJava(StandardContext standardContext) {
-        ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+    public static void mergeJava(final StandardContext standardContext) {
+        final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
         ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
         Context root = null;
         try {
             root = (Context) ContextBindings.getClassLoader().lookup("");
-        } catch (NamingException ignored) { // shouldn't occur
+        } catch (final NamingException ignored) { // shouldn't occur
             // no-op
         }
 
@@ -184,7 +184,7 @@ public class TomcatJndiBuilder {
         if (builder != null) {
             contextInfo = builder.getContextInfo(standardContext);
             if (webContext == null && contextInfo != null && contextInfo.appInfo != null) { // can happen if deployed from apps/
-                for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+                for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     if (webAppInfo.path != null && webAppInfo.path.replace(File.separatorChar, '/').equals(standardContext.getDocBase())) {
                         webContext = cs.getWebContext(webAppInfo.moduleId);
                         if (webContext != null) {
@@ -200,14 +200,14 @@ public class TomcatJndiBuilder {
         }
 
         if (webContext != null && webContext.getBindings() != null && root != null) {
-            for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
+            for (final Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
                 try {
                     final String key = entry.getKey();
                     if (key.startsWith("global/")) { // will be done later
                         continue;
                     }
 
-                    Object value = normalize(entry.getValue());
+                    final Object value = normalize(entry.getValue());
                     if (ignoreNames.contains(removeCompEnv(key))) { // keep tomcat resources
                         try {
                             // tomcat can get the reference but the bound value
@@ -215,14 +215,14 @@ public class TomcatJndiBuilder {
                             // so check the lookup can be resolved before skipping it
                             root.lookup(key);
                             continue;
-                        } catch (NameNotFoundException nnfe) {
+                        } catch (final NameNotFoundException nnfe) {
                             // no-op: let it be rebound or bound
                         }
                     }
 
                     Contexts.createSubcontexts(root, key);
                     root.rebind(key, value);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     e.printStackTrace();
                 }
             }
@@ -235,7 +235,7 @@ public class TomcatJndiBuilder {
             } catch (final NamingException e) {
                 // bind only global bindings
                 if (webContext != null && webContext.getBindings() != null) {
-                    for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
+                    for (final Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
                         try {
                             final String key = entry.getKey();
                             if (!key.startsWith("global/")) {
@@ -245,7 +245,7 @@ public class TomcatJndiBuilder {
                             final Object value = normalize(entry.getValue());
                             Contexts.createSubcontexts(root, key);
                             root.rebind(key, value);
-                        } catch (NamingException ignored) {
+                        } catch (final NamingException ignored) {
                             e.printStackTrace();
                         }
                     }
@@ -255,12 +255,12 @@ public class TomcatJndiBuilder {
 
         // try to force some binding which probably failed earlier (see in TomcatWebappBuilder)
         try {
-            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
-            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            final Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
+            final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
             comp.rebind("TransactionManager", transactionManager);
 
             // bind TransactionSynchronizationRegistry
-            TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+            final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
             comp.rebind("TransactionSynchronizationRegistry", synchronizationRegistry);
 
             comp.rebind("ORB", new SystemComponentReference(ORB.class));
@@ -281,14 +281,14 @@ public class TomcatJndiBuilder {
             final Context app = (Context) ContextBindings.getClassLoader().lookup("app");
             final Context ctx = (Context) ContextBindings.getClassLoader().lookup("comp/env");
             final List<Binding> bindings = Collections.list(ctx.listBindings("app"));
-            for (Binding binding : bindings) {
+            for (final Binding binding : bindings) {
                 try {
                     app.bind(binding.getName(), binding.getObject());
-                } catch (NamingException ne) { // we don't want to rebind
+                } catch (final NamingException ne) { // we don't want to rebind
                     // no-op
                 }
             }
-        } catch (Exception ne) {
+        } catch (final Exception ne) {
             // no-op
         }
 
@@ -331,17 +331,17 @@ public class TomcatJndiBuilder {
                 return new LinkRef("java:" + address);
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
         return value;
     }
 
-    public void mergeRef(NamingResources naming, EnvEntryInfo ref) {
+    public void mergeRef(final NamingResources naming, final EnvEntryInfo ref) {
 //        if (!ref.referenceName.startsWith("comp/")) return;
         if ("java.lang.Class".equals(ref.type)) {
-            ContextResourceEnvRef resourceEnv = new ContextResourceEnvRef();
+            final ContextResourceEnvRef resourceEnv = new ContextResourceEnvRef();
             resourceEnv.setName(ref.referenceName.replaceAll("^comp/env/", ""));
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
             resourceEnv.setType(ref.type);
@@ -368,7 +368,7 @@ public class TomcatJndiBuilder {
 
                 return;
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 
@@ -402,7 +402,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    private boolean isLookupRef(NamingResources naming, InjectableInfo ref) {
+    private boolean isLookupRef(final NamingResources naming, final InjectableInfo ref) {
         if (ref.location == null) {
             return false;
         }
@@ -426,7 +426,7 @@ public class TomcatJndiBuilder {
         return true;
     }
 
-    public void mergeRef(NamingResources naming, EjbReferenceInfo ref) {
+    public void mergeRef(final NamingResources naming, final EjbReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -472,7 +472,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(NamingResources naming, EjbLocalReferenceInfo ref) {
+    public void mergeRef(final NamingResources naming, final EjbLocalReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -518,7 +518,7 @@ public class TomcatJndiBuilder {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public void mergeRef(NamingResources naming, PersistenceContextReferenceInfo ref, URI moduleUri) {
+    public void mergeRef(final NamingResources naming, final PersistenceContextReferenceInfo ref, final URI moduleUri) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -544,15 +544,15 @@ public class TomcatJndiBuilder {
             resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
             resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
-            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            EntityManagerFactory factory;
+            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            final EntityManagerFactory factory;
             try {
                 factory = (EntityManagerFactory) context.lookup("openejb/PersistenceUnit/" + ref.unitId);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new IllegalStateException("PersistenceUnit '" + ref.unitId + "' not found for EXTENDED ref '" + ref.referenceName.replaceAll("^comp/env/", "") + "'");
             }
 
-            JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
+            final JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
             setResource(resource, new JtaEntityManager(ref.persistenceUnitName, jtaEntityManagerRegistry, factory, ref.properties, ref.extended));
         }
 
@@ -571,7 +571,7 @@ public class TomcatJndiBuilder {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public void mergeRef(NamingResources naming, PersistenceUnitReferenceInfo ref, URI moduleUri) {
+    public void mergeRef(final NamingResources naming, final PersistenceUnitReferenceInfo ref, final URI moduleUri) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -597,11 +597,11 @@ public class TomcatJndiBuilder {
             resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
             // TODO: This will not work if webapps don't use AutoConfi
-            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            EntityManagerFactory factory;
+            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            final EntityManagerFactory factory;
             try {
                 factory = (EntityManagerFactory) context.lookup("openejb/PersistenceUnit/" + ref.unitId);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new IllegalStateException("PersistenceUnit '" + ref.unitId + "' not found for EXTENDED ref '" + ref.referenceName.replaceAll("^comp/env/", "") + "'");
             }
             setResource(resource, factory);
@@ -621,7 +621,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(NamingResources naming, ResourceReferenceInfo ref) {
+    public void mergeRef(final NamingResources naming, final ResourceReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -662,7 +662,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
+    public void mergeRef(final NamingResources naming, final ResourceEnvReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -718,7 +718,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(NamingResources naming, ServiceReferenceInfo ref) {
+    public void mergeRef(final NamingResources naming, final ServiceReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -760,16 +760,16 @@ public class TomcatJndiBuilder {
             }
 
             // add the wsdl url
-            URL wsdlURL = getWsdlUrl(ref);
+            final URL wsdlURL = getWsdlUrl(ref);
             if (wsdlURL != null) {
                 resource.setProperty(NamingUtil.WSDL_URL, wsdlURL.toString());
             }
 
             // add port refs
             if (!ref.portRefs.isEmpty()) {
-                List<PortRefData> portRefs = new ArrayList<PortRefData>(ref.portRefs.size());
-                for (PortRefInfo portRefInfo : ref.portRefs) {
-                    PortRefData portRef = new PortRefData();
+                final List<PortRefData> portRefs = new ArrayList<PortRefData>(ref.portRefs.size());
+                for (final PortRefInfo portRefInfo : ref.portRefs) {
+                    final PortRefData portRef = new PortRefData();
                     portRef.setQName(portRefInfo.qname);
                     portRef.setServiceEndpointInterface(portRefInfo.serviceEndpointInterface);
                     portRef.setEnableMtom(portRefInfo.enableMtom);
@@ -782,17 +782,17 @@ public class TomcatJndiBuilder {
             // add the handle chains
             if (!ref.handlerChains.isEmpty()) {
                 try {
-                    List<HandlerChainData> handlerChains = WsBuilder.toHandlerChainData(ref.handlerChains, standardContext.getLoader().getClassLoader());
+                    final List<HandlerChainData> handlerChains = WsBuilder.toHandlerChainData(ref.handlerChains, standardContext.getLoader().getClassLoader());
                     setResource(resource, "handler-chains", handlerChains);
                     setResource(resource, "injections", injections);
-                } catch (OpenEJBException e) {
+                } catch (final OpenEJBException e) {
                     throw new IllegalArgumentException("Error creating handler chain for web service-ref " + ref.referenceName.replaceAll("^comp/env/", ""));
                 }
             }
         }
 
         // if there was a service entry, remove it
-        String serviceName = BackportUtil.findServiceName(naming, ref.referenceName.replaceAll("^comp/env/", ""));
+        final String serviceName = BackportUtil.findServiceName(naming, ref.referenceName.replaceAll("^comp/env/", ""));
         if (serviceName != null) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) {
@@ -817,7 +817,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    private URL getWsdlUrl(ServiceReferenceInfo ref) {
+    private URL getWsdlUrl(final ServiceReferenceInfo ref) {
         if (ref.wsdlFile == null) {
             return null;
         }
@@ -825,7 +825,7 @@ public class TomcatJndiBuilder {
         URL wsdlUrl = null;
         try {
             wsdlUrl = new URL(ref.wsdlFile);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no-op
         }
 
@@ -836,7 +836,7 @@ public class TomcatJndiBuilder {
         if (wsdlUrl == null) {
             try {
                 wsdlUrl = standardContext.getServletContext().getResource("/" + ref.wsdlFile);
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // no-op
             }
         }
@@ -848,18 +848,18 @@ public class TomcatJndiBuilder {
         return wsdlUrl;
     }
 
-    private void setResource(ContextResource resource, String name, Object object) {
+    private void setResource(final ContextResource resource, final String name, final Object object) {
         NamingUtil.setStaticValue(new Resource(resource), name, object);
     }
 
-    private void setResource(ContextResource resource, Object object) {
+    private void setResource(final ContextResource resource, final Object object) {
         NamingUtil.setStaticValue(new Resource(resource), object);
     }
 
     public static void importOpenEJBResourcesInTomcat(final Collection<ResourceInfo> resources, final StandardServer server) {
         final NamingResources naming = server.getGlobalNamingResources();
 
-        for (ResourceInfo info : resources) {
+        for (final ResourceInfo info : resources) {
             final String name = info.id;
             if (name == null || naming.findResource(name) != null) {
                 continue;
@@ -879,11 +879,11 @@ public class TomcatJndiBuilder {
     private static class Resource implements NamingUtil.Resource {
         private final ContextResource contextResource;
 
-        public Resource(ContextResource contextResource) {
+        public Resource(final ContextResource contextResource) {
             this.contextResource = contextResource;
         }
 
-        public void setProperty(String name, Object value) {
+        public void setProperty(final String name, final Object value) {
             contextResource.setProperty(name, value);
         }
     }

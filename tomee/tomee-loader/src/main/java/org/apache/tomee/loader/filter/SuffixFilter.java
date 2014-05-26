@@ -23,7 +23,7 @@ public class SuffixFilter implements Filter {
 
     private final String suffix;
 
-    public SuffixFilter(String suffix) {
+    public SuffixFilter(final String suffix) {
         assert suffix != null;
         this.suffix = suffix;
     }
@@ -32,16 +32,16 @@ public class SuffixFilter implements Filter {
         return suffix;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return name.endsWith(suffix);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SuffixFilter that = (SuffixFilter) o;
+        final SuffixFilter that = (SuffixFilter) o;
 
         return suffix.equals(that.suffix);
     }

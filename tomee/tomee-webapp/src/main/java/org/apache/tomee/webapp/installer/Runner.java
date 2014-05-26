@@ -39,32 +39,32 @@ public class Runner {
     private static List<Map<String, String>> installerResults = null;
     private static org.apache.tomee.installer.Status installerStatus = null;
 
-    public Runner(InstallerInterface installer) {
+    public Runner(final InstallerInterface installer) {
         this.installer = installer;
     }
 
-    public void setCatalinaHome(String catalinaHome) {
+    public void setCatalinaHome(final String catalinaHome) {
         this.catalinaHome = catalinaHome;
     }
 
-    public void setCatalinaBaseDir(String catalinaBase) {
+    public void setCatalinaBaseDir(final String catalinaBase) {
         this.catalinaBase = catalinaBase;
     }
 
-    public void setServerXmlFile(String serverXmlFile) {
+    public void setServerXmlFile(final String serverXmlFile) {
         this.serverXmlFile = serverXmlFile;
     }
 
-    private void setAlerts(String key, List<String> messages) {
+    private void setAlerts(final String key, final List<String> messages) {
         if (messages == null) {
             return;
         }
-        for (String message : messages) {
+        for (final String message : messages) {
             installerResults.add(Common.build(key, message));
         }
     }
 
-    public synchronized List<Map<String, String>> execute(boolean install) {
+    public synchronized List<Map<String, String>> execute(final boolean install) {
         if (org.apache.tomee.installer.Status.INSTALLED.equals(installerStatus) ||
                 org.apache.tomee.installer.Status.REBOOT_REQUIRED.equals(installerStatus)) {
             return installerResults;
@@ -117,20 +117,20 @@ public class Runner {
                 final ClassLoader myLoader = this.getClass().getClassLoader();
                 Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
                 wereTheOpenEJBClassesInstalled = true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // noop
             }
             try {
                 Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
                 wereTheEjbClassesInstalled = true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // noop
             }
             try {
                 final Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
                 final Method isInitialized = openejb.getDeclaredMethod("isInitialized");
                 wasOpenEJBStarted = (Boolean) isInitialized.invoke(openejb);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // noop
             }
             try {
@@ -142,7 +142,7 @@ public class Runner {
                 if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
                     canILookupAnything = true;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // noop
             }
             installerResults.add(Common.build("wereTheOpenEJBClassesInstalled", String.valueOf(wereTheOpenEJBClassesInstalled)));

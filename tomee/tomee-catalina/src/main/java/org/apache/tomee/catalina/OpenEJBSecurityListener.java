@@ -28,28 +28,28 @@ public class OpenEJBSecurityListener implements AsyncListener {
     private Object oldState = null;
     private Request request;
 
-    public OpenEJBSecurityListener(TomcatSecurityService service, Request req) {
+    public OpenEJBSecurityListener(final TomcatSecurityService service, final Request req) {
         securityService = service;
         request = req;
     }
 
     @Override
-    public void onComplete(AsyncEvent asyncEvent) throws IOException {
+    public void onComplete(final AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 
     @Override
-    public void onError(AsyncEvent asyncEvent) throws IOException {
+    public void onError(final AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 
     @Override
-    public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+    public void onStartAsync(final AsyncEvent asyncEvent) throws IOException {
         enter();
     }
 
     @Override
-    public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+    public void onTimeout(final AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 

@@ -41,12 +41,12 @@ public class TomcatHelper {
 		return stopping;
 	}
 
-    public static void setServer(StandardServer server) {
+    public static void setServer(final StandardServer server) {
         TomcatHelper.server = server;
         SystemInstance.get().setComponent(Server.class, server);
     }
 
-    public static void setStopping(boolean stopping) {
+    public static void setStopping(final boolean stopping) {
 		TomcatHelper.stopping = stopping;
 	}
 
@@ -56,9 +56,9 @@ public class TomcatHelper {
         try {
             // server = SystemInstance.get().getComponent(StandardServer.class)
             systemInstanceClass = Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.loader.SystemInstance");
-            Object instance = systemInstanceClass.getDeclaredMethod("get").invoke(null);
+            final Object instance = systemInstanceClass.getDeclaredMethod("get").invoke(null);
             server = (StandardServer) systemInstanceClass.getDeclaredMethod("getComponent", Class.class).invoke(instance, StandardServer.class);
-        } catch (Exception classNotFoundException) {
+        } catch (final Exception classNotFoundException) {
             // ignored
         }
         if (server != null) {
@@ -69,10 +69,10 @@ public class TomcatHelper {
         // first try to use Tomcat's ServerFactory class to give us a reference to the server
 		
 		try {
-			Class<?> tomcatServerFactory = Class.forName("org.apache.catalina.ServerFactory");
-			Method getServerMethod = tomcatServerFactory.getMethod("getServer");
+			final Class<?> tomcatServerFactory = Class.forName("org.apache.catalina.ServerFactory");
+			final Method getServerMethod = tomcatServerFactory.getMethod("getServer");
 			server = (StandardServer) getServerMethod.invoke(null);
-		} catch (Exception e) {
+		} catch (final Exception e) {
             // ignored
 		}
 		if (server != null) {
@@ -86,9 +86,9 @@ public class TomcatHelper {
 		
 		// if this fails, we'll try and get a reference from the platform mbean server
 		try {
-			MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+			final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 			server = (StandardServer) mbeanServer.getAttribute(new ObjectName("Catalina:type=Server"), "managedResource");
-		} catch (Exception e) {
+		} catch (final Exception e) {
             // ignored
 		}
 
@@ -101,12 +101,12 @@ public class TomcatHelper {
 		return TomcatHelper.server;
 	}
 	
-	public static int getContextState(StandardContext standardContext) {
-		int state;
+	public static int getContextState(final StandardContext standardContext) {
+		final int state;
 		
 		try {
-			Method getStateMethod = StandardContext.class.getMethod("getState");
-			Object result = getStateMethod.invoke(standardContext);
+			final Method getStateMethod = StandardContext.class.getMethod("getState");
+			final Object result = getStateMethod.invoke(standardContext);
 			
 			
 			if (Integer.TYPE.equals(result.getClass())) {
@@ -115,7 +115,7 @@ public class TomcatHelper {
 			}
 			
 			if (result.getClass().isEnum()) {
-				Enum<?> e = (Enum<?>) result;
+				final Enum<?> e = (Enum<?>) result;
 				
 				if ("FAILED".equals(e.toString())) {
 					return 4;
@@ -127,7 +127,7 @@ public class TomcatHelper {
 					return 0;
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 		
 		// return STOPPED by default
@@ -141,7 +141,7 @@ public class TomcatHelper {
 	 * @param logicalRole
 	 * @return true the the principle has the specified role
 	 */
-	public static boolean hasRole(Realm realm, Principal tomcatPrincipal, String logicalRole) {
+	public static boolean hasRole(final Realm realm, final Principal tomcatPrincipal, final String logicalRole) {
 		Method method = null;
 		try {
 
@@ -152,7 +152,7 @@ public class TomcatHelper {
 				method = realm.getClass().getMethod("hasRole", new Class<?>[] { Principal.class, String.class });
 				return (Boolean) method.invoke(realm, new Object[] { tomcatPrincipal, logicalRole});
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -170,7 +170,7 @@ public class TomcatHelper {
                     && StandardJarScanner.class.isInstance(standardContext.getJarScanner())) {
                 standardContext.setJarScanner(new TomEEJarScanner());
             }
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// ignore
 		}
 	}
@@ -184,13 +184,13 @@ public class TomcatHelper {
 	 * @return list of jars as string, comma separated
 	 */
 	private static String getJarsToSkip() {
-		File openejbApp = new File(System.getProperty("tomee.war"));
-		File libFolder = new File(openejbApp, "lib");
-		StringBuilder builder = new StringBuilder();
+		final File openejbApp = new File(System.getProperty("tomee.war"));
+		final File libFolder = new File(openejbApp, "lib");
+		final StringBuilder builder = new StringBuilder();
 
         final File[] files = libFolder.listFiles();
         if (files != null) {
-            for (File f : files) {
+            for (final File f : files) {
                 if (f.getName().startsWith("javaee-api-embedded")) continue;
                 if (f.getName().startsWith("myfaces")) continue;
 

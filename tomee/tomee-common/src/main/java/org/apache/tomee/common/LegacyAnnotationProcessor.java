@@ -50,7 +50,7 @@ public class LegacyAnnotationProcessor {
 
     protected javax.naming.Context context = null;
 
-    public LegacyAnnotationProcessor(javax.naming.Context context) {
+    public LegacyAnnotationProcessor(final javax.naming.Context context) {
         this.context = context;
     }
 
@@ -58,12 +58,12 @@ public class LegacyAnnotationProcessor {
     /**
      * Call postConstruct method on the specified instance.
      */
-    public void postConstruct(Object instance) throws IllegalAccessException, InvocationTargetException {
+    public void postConstruct(final Object instance) throws IllegalAccessException, InvocationTargetException {
 
         Class<?> clazz = instance.getClass();
 
         while (clazz != null) {
-            Method[] methods = clazz.getDeclaredMethods();
+            final Method[] methods = clazz.getDeclaredMethods();
             Method postConstruct = null;
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].isAnnotationPresent(PostConstruct.class)) {
@@ -81,7 +81,7 @@ public class LegacyAnnotationProcessor {
             // At the end the postconstruct annotated
             // method is invoked
             if (postConstruct != null) {
-                boolean accessibility = postConstruct.isAccessible();
+                final boolean accessibility = postConstruct.isAccessible();
                 postConstruct.setAccessible(true);
                 postConstruct.invoke(instance);
                 postConstruct.setAccessible(accessibility);
@@ -95,12 +95,12 @@ public class LegacyAnnotationProcessor {
     /**
      * Call preDestroy method on the specified instance.
      */
-    public void preDestroy(Object instance) throws IllegalAccessException, InvocationTargetException {
+    public void preDestroy(final Object instance) throws IllegalAccessException, InvocationTargetException {
 
         Class<?> clazz = instance.getClass();
 
         while (clazz != null) {
-            Method[] methods = clazz.getDeclaredMethods();
+            final Method[] methods = clazz.getDeclaredMethods();
             Method preDestroy = null;
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].isAnnotationPresent(PreDestroy.class)) {
@@ -118,7 +118,7 @@ public class LegacyAnnotationProcessor {
             // At the end the postconstruct annotated
             // method is invoked
             if (preDestroy != null) {
-                boolean accessibility = preDestroy.isAccessible();
+                final boolean accessibility = preDestroy.isAccessible();
                 preDestroy.setAccessible(true);
                 preDestroy.invoke(instance);
                 preDestroy.setAccessible(accessibility);
@@ -132,7 +132,7 @@ public class LegacyAnnotationProcessor {
     /**
      * Inject resources in specified instance.
      */
-    public void processAnnotations(Object instance) throws IllegalAccessException, InvocationTargetException, NamingException {
+    public void processAnnotations(final Object instance) throws IllegalAccessException, InvocationTargetException, NamingException {
 
         if (context == null) {
             // No resource injection
@@ -143,33 +143,33 @@ public class LegacyAnnotationProcessor {
 
         while (clazz != null) {
             // Initialize fields annotations
-            Field[] fields = clazz.getDeclaredFields();
+            final Field[] fields = clazz.getDeclaredFields();
             for (int i = 0; i < fields.length; i++) {
                 if (fields[i].isAnnotationPresent(Resource.class)) {
-                    Resource annotation =
+                    final Resource annotation =
                             fields[i].getAnnotation(Resource.class);
                     lookupFieldResource(context, instance, fields[i],
                             annotation.name(), clazz);
                 }
                 if (fields[i].isAnnotationPresent(EJB.class)) {
-                    EJB annotation = fields[i].getAnnotation(EJB.class);
+                    final EJB annotation = fields[i].getAnnotation(EJB.class);
                     lookupFieldResource(context, instance, fields[i],
                             annotation.name(), clazz);
                 }
                 if (fields[i].isAnnotationPresent(WebServiceRef.class)) {
-                    WebServiceRef annotation =
+                    final WebServiceRef annotation =
                             fields[i].getAnnotation(WebServiceRef.class);
                     lookupFieldResource(context, instance, fields[i],
                             annotation.name(), clazz);
                 }
                 if (fields[i].isAnnotationPresent(PersistenceContext.class)) {
-                    PersistenceContext annotation =
+                    final PersistenceContext annotation =
                             fields[i].getAnnotation(PersistenceContext.class);
                     lookupFieldResource(context, instance, fields[i],
                             annotation.name(), clazz);
                 }
                 if (fields[i].isAnnotationPresent(PersistenceUnit.class)) {
-                    PersistenceUnit annotation =
+                    final PersistenceUnit annotation =
                             fields[i].getAnnotation(PersistenceUnit.class);
                     lookupFieldResource(context, instance, fields[i],
                             annotation.name(), clazz);
@@ -177,33 +177,33 @@ public class LegacyAnnotationProcessor {
             }
 
             // Initialize methods annotations
-            Method[] methods = clazz.getDeclaredMethods();
+            final Method[] methods = clazz.getDeclaredMethods();
 
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].isAnnotationPresent(Resource.class)) {
-                    Resource annotation = methods[i].getAnnotation(Resource.class);
+                    final Resource annotation = methods[i].getAnnotation(Resource.class);
                     lookupMethodResource(context, instance, methods[i],
                             annotation.name(), clazz);
                 }
                 if (methods[i].isAnnotationPresent(EJB.class)) {
-                    EJB annotation = methods[i].getAnnotation(EJB.class);
+                    final EJB annotation = methods[i].getAnnotation(EJB.class);
                     lookupMethodResource(context, instance, methods[i],
                             annotation.name(), clazz);
                 }
                 if (methods[i].isAnnotationPresent(WebServiceRef.class)) {
-                    WebServiceRef annotation =
+                    final WebServiceRef annotation =
                             methods[i].getAnnotation(WebServiceRef.class);
                     lookupMethodResource(context, instance, methods[i],
                             annotation.name(), clazz);
                 }
                 if (methods[i].isAnnotationPresent(PersistenceContext.class)) {
-                    PersistenceContext annotation =
+                    final PersistenceContext annotation =
                             methods[i].getAnnotation(PersistenceContext.class);
                     lookupMethodResource(context, instance, methods[i],
                             annotation.name(), clazz);
                 }
                 if (methods[i].isAnnotationPresent(PersistenceUnit.class)) {
-                    PersistenceUnit annotation =
+                    final PersistenceUnit annotation =
                             methods[i].getAnnotation(PersistenceUnit.class);
                     lookupMethodResource(context, instance, methods[i],
                             annotation.name(), clazz);
@@ -218,8 +218,8 @@ public class LegacyAnnotationProcessor {
     /**
      * Inject resources in specified field.
      */
-    protected static void lookupFieldResource(javax.naming.Context context,
-                                              Object instance, Field field, String name, Class<?> clazz)
+    protected static void lookupFieldResource(final javax.naming.Context context,
+                                              final Object instance, final Field field, final String name, final Class<?> clazz)
             throws NamingException, IllegalAccessException {
 
         Object lookedupResource = null;
@@ -241,8 +241,8 @@ public class LegacyAnnotationProcessor {
     /**
      * Inject resources in specified method.
      */
-    protected static void lookupMethodResource(javax.naming.Context context,
-                                               Object instance, Method method, String name, Class<?> clazz)
+    protected static void lookupMethodResource(final javax.naming.Context context,
+                                               final Object instance, final Method method, final String name, final Class<?> clazz)
             throws NamingException, IllegalAccessException, InvocationTargetException {
 
         if (!method.getName().startsWith("set")

@@ -60,7 +60,7 @@ public class Paths implements PathsInterface {
 
     private File tomcatUsersXml;
 
-    public Paths(File openejbWarDir) {
+    public Paths(final File openejbWarDir) {
         this.openejbWarDir = openejbWarDir;
     }
     /**
@@ -70,7 +70,7 @@ public class Paths implements PathsInterface {
     @Override
     public File getCatalinaHomeDir() {
         if (catalinaHomeDir == null) {
-            String catalinaHome = System.getProperty("catalina.home");
+            final String catalinaHome = System.getProperty("catalina.home");
             if (catalinaHome != null) {
                 catalinaHomeDir = new File(catalinaHome);
             }
@@ -82,7 +82,7 @@ public class Paths implements PathsInterface {
      * @param catalinaHomeDir the absolute path of the catalina home directory
      */
     @Override
-    public void setCatalinaHomeDir(String catalinaHomeDir) {
+    public void setCatalinaHomeDir(final String catalinaHomeDir) {
         this.catalinaHomeDir = createFile(catalinaHomeDir);
     }
     /**
@@ -90,7 +90,7 @@ public class Paths implements PathsInterface {
      * @param catalinaHomeDir the file representing the absolute path of the catalina home directory
      */
     @Override
-    public void setCatalinaHomeDir(File catalinaHomeDir) {
+    public void setCatalinaHomeDir(final File catalinaHomeDir) {
         this.catalinaHomeDir = catalinaHomeDir;
     }
     /**
@@ -100,7 +100,7 @@ public class Paths implements PathsInterface {
     @Override
     public File getCatalinaBaseDir() {
         if (catalinaBaseDir == null) {
-            String catalinaBase = System.getProperty("catalina.base");
+            final String catalinaBase = System.getProperty("catalina.base");
             if (catalinaBase != null) {
                 catalinaBaseDir = new File(catalinaBase);
             }
@@ -112,7 +112,7 @@ public class Paths implements PathsInterface {
      * @param catalinaBaseDir the absolute path of the catalina base directory
      */
     @Override
-    public void setCatalinaBaseDir(String catalinaBaseDir) {
+    public void setCatalinaBaseDir(final String catalinaBaseDir) {
         setCatalinaBaseDir(createFile(catalinaBaseDir));
     }
     /**
@@ -120,7 +120,7 @@ public class Paths implements PathsInterface {
      * @param catalinaBaseDir the file representing the absolute path of the catalina base directory
      */
     @Override
-    public void setCatalinaBaseDir(File catalinaBaseDir) {
+    public void setCatalinaBaseDir(final File catalinaBaseDir) {
         this.catalinaBaseDir = catalinaBaseDir;
     }
     /**
@@ -130,7 +130,7 @@ public class Paths implements PathsInterface {
     @Override
     public File getServerXmlFile() {
         if (serverXmlFile == null) {
-            File confdir = getCatalinaConfDir();
+            final File confdir = getCatalinaConfDir();
 
             if (confdir == null) return null;
 
@@ -149,7 +149,7 @@ public class Paths implements PathsInterface {
      * @param serverXmlFile the absolute path of the server.xml file
      */
     @Override
-    public void setServerXmlFile(String serverXmlFile) {
+    public void setServerXmlFile(final String serverXmlFile) {
         this.serverXmlFile = createFile(serverXmlFile);
     }
     /**
@@ -157,7 +157,7 @@ public class Paths implements PathsInterface {
      * @param serverXmlFile the file representing the absolute path of the server.xml file
      */    
     @Override
-    public void setServerXmlFile(File serverXmlFile) {
+    public void setServerXmlFile(final File serverXmlFile) {
         this.serverXmlFile = serverXmlFile;
     }
     /**
@@ -166,7 +166,7 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getCatalinaLibDir() {
-        File catalinaHomeDir = getCatalinaHomeDir();
+        final File catalinaHomeDir = getCatalinaHomeDir();
 
         if (catalinaHomeDir == null) return null;
 
@@ -182,7 +182,7 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getCatalinaConfDir() {
-        File catalinaBaseDir = getCatalinaBaseDir();
+        final File catalinaBaseDir = getCatalinaBaseDir();
 
         if (catalinaBaseDir == null) return null;
 
@@ -194,7 +194,7 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getCatalinaBinDir() {
-        File catalinaHomeDir = getCatalinaHomeDir();
+        final File catalinaHomeDir = getCatalinaHomeDir();
 
         if (catalinaHomeDir == null) return null;
 
@@ -206,7 +206,7 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getCatalinaShFile() {
-        File binDir = getCatalinaBinDir();
+        final File binDir = getCatalinaBinDir();
 
         if (binDir == null) return null;
 
@@ -218,7 +218,7 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getCatalinaBatFile() {
-        File binDir = getCatalinaBinDir();
+        final File binDir = getCatalinaBinDir();
 
         if (binDir == null) return null;
 
@@ -277,12 +277,12 @@ public class Paths implements PathsInterface {
     }
 
     @Override
-    public File findOpenEJBJar(String namePrefix) {
+    public File findOpenEJBJar(final String namePrefix) {
         return findJar(getOpenEJBLibDir(), namePrefix);
     }
 
     @Override
-    public File findOpenEJBWebJar(String namePrefix) {
+    public File findOpenEJBWebJar(final String namePrefix) {
         return findJar(getOpenEJBWebLibDir(), namePrefix);
     }
 
@@ -365,19 +365,19 @@ public class Paths implements PathsInterface {
 
         verifyDirectory("OpenEJB lib", getOpenEJBLibDir());
 
-        File openejbLoaderJar = getOpenEJBTomcatLoaderJar();
+        final File openejbLoaderJar = getOpenEJBTomcatLoaderJar();
         if (openejbLoaderJar == null) {
             addError("OpenEJB loader jar was not found in the OpenEJB lib dir");
         }
         verifyFile("OpenEJB loader jar", openejbLoaderJar);
 
-        File openejbJavaagentJar = getOpenEJBJavaagentJar();
+        final File openejbJavaagentJar = getOpenEJBJavaagentJar();
         if (openejbJavaagentJar == null) {
             addError("OpenEJB javaagent jar was not found in the OpenEJB lib dir");
         }
         verifyFile("OpenEJB javaagent jar", openejbJavaagentJar);
 
-        File openejbCoreJar = getOpenEJBCoreJar();
+        final File openejbCoreJar = getOpenEJBCoreJar();
         if (openejbCoreJar != null) {
             verifyFile("OpenEJB core jar", openejbCoreJar);
         }
@@ -408,11 +408,11 @@ public class Paths implements PathsInterface {
         return errors;
     }
     
-    private void addError(String message) {
+    private void addError(final String message) {
         errors.add(message);
     }
 
-    private boolean verifyDirectory(String description, File file) {
+    private boolean verifyDirectory(final String description, final File file) {
         if (file == null) {
             // ignore... files are built up based on other files, and probles
             // with the root files will have been logged else where
@@ -433,13 +433,13 @@ public class Paths implements PathsInterface {
         return true;
     }
 
-    private void verifyWritableDirectory(String description, File file) {
+    private void verifyWritableDirectory(final String description, final File file) {
         if (verifyDirectory(description, file)) {
             verifyWritable(description, file);
         }
     }
 
-    private boolean verifyFile(String description, File file) {
+    private boolean verifyFile(final String description, final File file) {
         if (file == null) {
             // ignore... files are built up based on other files, and probles
             // with the root files will have been logged else where
@@ -460,13 +460,13 @@ public class Paths implements PathsInterface {
         return true;
     }
 
-    private void verifyWritableFile(String description, File file) {
+    private void verifyWritableFile(final String description, final File file) {
         if (verifyFile(description, file)) {
             verifyWritable(description, file);
         }
     }
 
-    private void verifyWritable(String description, File file) {
+    private void verifyWritable(final String description, final File file) {
         if (file == null) {
             // ignore... files are built up based on other files, and probles
             // with the root files will have been logged else where
@@ -477,7 +477,7 @@ public class Paths implements PathsInterface {
         }
     }
 
-    private File createFile(String fileName) {
+    private File createFile(final String fileName) {
         if (fileName != null && fileName.trim().length() > 0) {
             return new File(fileName.trim());
         }

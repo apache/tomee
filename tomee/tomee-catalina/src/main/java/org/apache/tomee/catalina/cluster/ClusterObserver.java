@@ -56,7 +56,7 @@ public class ClusterObserver {
     }
 
     private void send(final ClusterMessage message, final AppInfo app) {
-        for (CatalinaCluster cluster : clusters) {
+        for (final CatalinaCluster cluster : clusters) {
             final String path = app.path;
             if (new File(path).exists() && !app.autoDeploy) {
                 cluster.send(message);
