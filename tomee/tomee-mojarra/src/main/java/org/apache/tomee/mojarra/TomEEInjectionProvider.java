@@ -37,7 +37,7 @@ public class TomEEInjectionProvider extends DiscoverableInjectionProvider {
     public void inject(final Object managedBean) throws InjectionProviderException {
         try {
             instanceManager.inject(managedBean);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InjectionProviderException(e);
         }
     }
@@ -46,7 +46,7 @@ public class TomEEInjectionProvider extends DiscoverableInjectionProvider {
     public void invokePreDestroy(final Object managedBean) throws InjectionProviderException {
         try {
             instanceManager.destroyInstance(managedBean);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InjectionProviderException(e);
         }
     }
@@ -55,7 +55,7 @@ public class TomEEInjectionProvider extends DiscoverableInjectionProvider {
     public void invokePostConstruct(final Object managedBean) throws InjectionProviderException {
         try {
             instanceManager.postConstruct(managedBean, managedBean.getClass());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InjectionProviderException(e);
         }
     }

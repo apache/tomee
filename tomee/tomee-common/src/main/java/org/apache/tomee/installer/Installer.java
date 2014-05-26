@@ -60,7 +60,7 @@ public class Installer implements InstallerInterface {
         return agentInstalled;
     }
 
-    public Installer(Paths paths) {
+    public Installer(final Paths paths) {
         this.paths = paths;
 
         if (listenerInstalled && agentInstalled) {
@@ -68,7 +68,7 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    public Installer(Paths paths, boolean force) {
+    public Installer(final Paths paths, final boolean force) {
         this(paths);
         this.force = force;
     }
@@ -122,7 +122,7 @@ public class Installer implements InstallerInterface {
             if (!juli.delete()) { // remove original
                 juli.deleteOnExit();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             alerts.addInfo("Add tomee user to tomcat-users.xml");
         }
     }
@@ -131,9 +131,9 @@ public class Installer implements InstallerInterface {
         addTomEEAdminConfInTomcatUsers(false);
     }
 
-    public void addTomEEAdminConfInTomcatUsers(boolean securityActivated) {
+    public void addTomEEAdminConfInTomcatUsers(final boolean securityActivated) {
         // read server.xml
-        String tomcatUsersXml = Installers.readAll(paths.getTomcatUsersXml(), alerts);
+        final String tomcatUsersXml = Installers.readAll(paths.getTomcatUsersXml(), alerts);
 
         // server xml will be null if we couldn't read the file
         if (tomcatUsersXml == null) {
@@ -237,7 +237,7 @@ public class Installer implements InstallerInterface {
         final File libs = paths.getCatalinaLibDir();
         final File[] files = paths.getOpenEJBLibDir().listFiles();
         if (files != null) {
-            for (File file : files) {
+            for (final File file : files) {
                 if (file.isDirectory()) continue;
                 if (!file.getName().endsWith(".jar")) continue;
 
@@ -247,7 +247,7 @@ public class Installer implements InstallerInterface {
                         file.deleteOnExit();
                     }
                     alerts.addInfo("Copy " + file.getName() + " to lib");
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     alerts.addError("Unable to " + file.getName() + " to Tomcat lib directory.  This will need to be " +
                             "performed manually.", e);
                 }
@@ -256,7 +256,7 @@ public class Installer implements InstallerInterface {
     }
 
     private void addJavaeeInEndorsed() {
-        File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
+        final File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
         if (!endorsed.mkdir()) {
             alerts.addWarning("can't create endorsed directory");
         }
@@ -273,7 +273,7 @@ public class Installer implements InstallerInterface {
         if (!jaxbImpl.exists()) {
             try {
                 Installers.copyFile(paths.getJAXBImpl(), jaxbImpl);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 alerts.addError("can't copy " + paths.getJAXBImpl().getPath() + " to " + endorsed.getPath() + "/jaxb-impl.jar");
             }
         }
@@ -316,12 +316,12 @@ public class Installer implements InstallerInterface {
             IO.close(source2);
             IO.close(destination);
             IO.copy(destinationBuffer.toByteArray(), destinationJar);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             alerts.addError(e.getMessage());
         }
     }
 
-    private void copyClasses(File sourceJar, File destinationJar, String pattern) {
+    private void copyClasses(final File sourceJar, final File destinationJar, final String pattern) {
         if (sourceJar == null) throw new NullPointerException("sourceJar");
         if (destinationJar == null) throw new NullPointerException("destinationJar");
         if (pattern == null) throw new NullPointerException("pattern");
@@ -333,7 +333,7 @@ public class Installer implements InstallerInterface {
             final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
             final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
             for (ZipEntry entry; (entry = source.getNextEntry()) != null; ) {
-                String entryName = entry.getName();
+                final String entryName = entry.getName();
                 if (!entryName.matches(pattern)) continue;
                 destination.putNextEntry(new ZipEntry(entryName));
                 IO.copy(source, destination);
@@ -341,7 +341,7 @@ public class Installer implements InstallerInterface {
             IO.close(source);
             IO.close(destination);
             IO.copy(destinationBuffer.toByteArray(), destinationJar);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             alerts.addError(e.getMessage());
         }
     }
@@ -355,7 +355,7 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    private void removeTomcatLibJar(String name) {
+    private void removeTomcatLibJar(final String name) {
         final File jar = new File(paths.getCatalinaLibDir(), name);
         removeJar(jar);
     }
@@ -372,7 +372,7 @@ public class Installer implements InstallerInterface {
         boolean copyOpenEJBLoader = true;
 
         // copy loader jar to lib
-        File destination = new File(paths.getCatalinaLibDir(), paths.getOpenEJBTomcatLoaderJar().getName());
+        final File destination = new File(paths.getCatalinaLibDir(), paths.getOpenEJBTomcatLoaderJar().getName());
         if (destination.exists()) {
             if (paths.getOpenEJBTomcatLoaderJar().length() == destination.length()) {
                 copyOpenEJBLoader = false;
@@ -382,13 +382,13 @@ public class Installer implements InstallerInterface {
             try {
                 Installers.copyFile(paths.getOpenEJBTomcatLoaderJar(), destination);
                 alerts.addInfo("Copy " + paths.getOpenEJBTomcatLoaderJar().getName() + " to lib");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 alerts.addError("Unable to copy OpenEJB Tomcat loader jar to Tomcat lib directory.  This will need to be performed manually.", e);
             }
         }
 
         // read server.xml
-        String serverXmlOriginal = Installers.readAll(paths.getServerXmlFile(), alerts);
+        final String serverXmlOriginal = Installers.readAll(paths.getServerXmlFile(), alerts);
 
         // server xml will be null if we couldn't read the file
         if (serverXmlOriginal == null) {
@@ -416,7 +416,7 @@ public class Installer implements InstallerInterface {
                     ">\r\n" +
                             "  <!-- TomEE plugin for Tomcat -->\r\n" +
                             "  <Listener className=\"" + listener + "\" />");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             alerts.addError("Error while adding listener to server.xml file", e);
         }
 
@@ -440,7 +440,7 @@ public class Installer implements InstallerInterface {
         // Copy openejb-javaagent.jar to lib
         //
         boolean copyJavaagentJar = true;
-        File javaagentJar = new File(paths.getCatalinaLibDir(), "openejb-javaagent.jar");
+        final File javaagentJar = new File(paths.getCatalinaLibDir(), "openejb-javaagent.jar");
         if (javaagentJar.exists()) {
             if (paths.getOpenEJBJavaagentJar().length() == javaagentJar.length()) {
                 copyJavaagentJar = false;
@@ -451,7 +451,7 @@ public class Installer implements InstallerInterface {
             try {
                 Installers.copyFile(paths.getOpenEJBJavaagentJar(), javaagentJar);
                 alerts.addInfo("Copy " + paths.getOpenEJBJavaagentJar().getName() + " to lib");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 alerts.addError("Unable to copy OpenEJB javaagent jar to Tomcat lib directory.  This will need to be performed manually.", e);
             }
         }
@@ -462,7 +462,7 @@ public class Installer implements InstallerInterface {
         //
 
         // read the catalina sh file
-        String catalinaShOriginal = Installers.readAll(paths.getCatalinaShFile(), alerts);
+        final String catalinaShOriginal = Installers.readAll(paths.getCatalinaShFile(), alerts);
 
         // catalina sh will be null if we couldn't read the file
         if (catalinaShOriginal == null) {
@@ -482,7 +482,7 @@ public class Installer implements InstallerInterface {
 
         // add our magic bits to the catalina sh file
         String openejbJavaagentPath = paths.getCatalinaHomeDir().toURI().relativize(javaagentJar.toURI()).getPath();
-        String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
+        final String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
                 "# Add OpenEJB javaagent\n" +
                         "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
                         "  JAVA_OPTS=\"\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
@@ -499,7 +499,7 @@ public class Installer implements InstallerInterface {
         if(!isCatalinaShExecutable) {
             try {
                 isCatalinaShExecutable = paths.getCatalinaShFile().setExecutable(true);
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 alerts.addWarning("Cannot change CatalinaSh executable attribute.");
             }
         }
@@ -512,7 +512,7 @@ public class Installer implements InstallerInterface {
         //
 
         // read the catalina bat file
-        String catalinaBatOriginal = Installers.readAll(paths.getCatalinaBatFile(), alerts);
+        final String catalinaBatOriginal = Installers.readAll(paths.getCatalinaBatFile(), alerts);
 
         // catalina bat will be null if we couldn't read the file
         if (catalinaBatOriginal == null) {
@@ -532,7 +532,7 @@ public class Installer implements InstallerInterface {
 
         // add our magic bits to the catalina bat file
         openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
-        String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
+        final String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
                 "rem Add OpenEJB javaagent\r\n" +
                         "if not exist \"%CATALINA_HOME%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
                         "set JAVA_OPTS=\"-javaagent:%CATALINA_HOME%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
@@ -568,20 +568,20 @@ public class Installer implements InstallerInterface {
             // the core jar contains the config files
             return;
         }
-        JarFile coreJar;
+        final JarFile coreJar;
         try {
             coreJar = new JarFile(openejbCoreJar);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return;
         }
 
         //
         // conf/tomee.xml
         //
-        File openEjbXmlFile = new File(confDir, "tomee.xml");
+        final File openEjbXmlFile = new File(confDir, "tomee.xml");
         if (!openEjbXmlFile.exists()) {
             // read in the openejb.xml file from the openejb core jar
-            String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
+            final String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
             if (openEjbXml != null) {
                 if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
                     alerts.addInfo("Copy tomee.xml to conf");
@@ -648,12 +648,12 @@ public class Installer implements InstallerInterface {
                 "# 5tomee.org.apache.juli.FileHandler.level = FINEST\r\n" +
                 "# 5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs\r\n" +
                 "# 5tomee.org.apache.juli.FileHandler.prefix = tomee.\r\n";
-        File loggingPropsFile = new File(confDir, "logging.properties");
+        final File loggingPropsFile = new File(confDir, "logging.properties");
         String newLoggingProps = null;
         if (!loggingPropsFile.exists()) {
             newLoggingProps = openejbLoggingProps;
         } else {
-            String loggingPropsOriginal = Installers.readAll(loggingPropsFile, alerts);
+            final String loggingPropsOriginal = Installers.readAll(loggingPropsFile, alerts);
             if (!loggingPropsOriginal.toLowerCase().contains("openejb")) {
                 // append our properties
                 newLoggingProps = loggingPropsOriginal +
@@ -742,13 +742,13 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // ignored, this file is far to be mandatory
             } finally {
                 if (systemPropertiesWriter != null) {
                     try {
                         systemPropertiesWriter.close();
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         // no-op
                     }
                 }
@@ -758,14 +758,14 @@ public class Installer implements InstallerInterface {
         //
         // conf/web.xml
         //
-        JarFile openejbTomcatCommonJar;
+        final JarFile openejbTomcatCommonJar;
         try {
             openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return;
         }
-        File webXmlFile = new File(confDir, "web.xml");
-        String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
+        final File webXmlFile = new File(confDir, "web.xml");
+        final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
         if (Installers.writeAll(webXmlFile, webXml, alerts)) {
             alerts.addInfo("Set jasper in production mode in TomEE web.xml");
         }

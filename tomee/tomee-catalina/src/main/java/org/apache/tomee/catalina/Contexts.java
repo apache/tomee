@@ -61,7 +61,7 @@ public class Contexts {
             return null;
         }
 
-        File docBase;
+        final File docBase;
         Container container = standardContext;
         while (container != null) {
             if (container instanceof Host) {

@@ -23,7 +23,7 @@ public class ClassFilter implements Filter {
 
     private final String name;
 
-    public ClassFilter(String name) {
+    public ClassFilter(final String name) {
         assert name != null;
         this.name = name;
     }
@@ -32,16 +32,16 @@ public class ClassFilter implements Filter {
         return name;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return this.name.equals(name);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassFilter that = (ClassFilter) o;
+        final ClassFilter that = (ClassFilter) o;
 
         return name.equals(that.name);
     }

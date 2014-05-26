@@ -41,12 +41,12 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
     private Object[] applicationLifecycleListeners;
     private Set<Object> destroyed;
 
-    public ProcessAnnotatedListenersListener(LegacyAnnotationProcessor annotationProcessor) {
+    public ProcessAnnotatedListenersListener(final LegacyAnnotationProcessor annotationProcessor) {
         super(annotationProcessor);
     }
 
-    public void containerEvent(ContainerEvent event) {
-        String type = event.getType();
+    public void containerEvent(final ContainerEvent event) {
+        final String type = event.getType();
         if ("beforeContextInitialized".equals(type)) {
             listenerStart(event);
         } else if ("afterContextDestroyed".equals(type)) {
@@ -59,25 +59,25 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
      *
      * @param event
      */
-    private void listenerStart(ContainerEvent event) {
+    private void listenerStart(final ContainerEvent event) {
         if (!isFirstBeforeContextInitializedEvent(event)) {
             return;
         }
 
-        StandardContext standardContext = (StandardContext) event.getContainer();
+        final StandardContext standardContext = (StandardContext) event.getContainer();
 
-        for (Object listener : getListeners(standardContext)) {
+        for (final Object listener : getListeners(standardContext)) {
             processAnnotations(listener);
             postConstruct(listener);
         }
     }
 
-    private boolean isFirstBeforeContextInitializedEvent(ContainerEvent event) {
+    private boolean isFirstBeforeContextInitializedEvent(final ContainerEvent event) {
         if (applicationLifecycleListeners != null) {
             return false;
         }
 
-        StandardContext standardContext = (StandardContext) event.getContainer();
+        final StandardContext standardContext = (StandardContext) event.getContainer();
         applicationLifecycleListeners = standardContext.getApplicationLifecycleListeners();
         destroyed = new HashSet<Object>();
         return true;
@@ -92,19 +92,19 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
      *
      * @param event
      */
-    private void listenerStop(ContainerEvent event) {
+    private void listenerStop(final ContainerEvent event) {
         if (!isLastAfterContextDestroyedEvent(event)) {
             return;
         }
 
-        StandardContext standardContext = (StandardContext) event.getContainer();
+        final StandardContext standardContext = (StandardContext) event.getContainer();
 
-        for (Object listener : getListeners(standardContext)) {
+        for (final Object listener : getListeners(standardContext)) {
             preDestroy(listener);
         }
     }
 
-    private boolean isLastAfterContextDestroyedEvent(ContainerEvent event) {
+    private boolean isLastAfterContextDestroyedEvent(final ContainerEvent event) {
         // Something very strange is going on if either of these are null at this stage
         if (destroyed == null || applicationLifecycleListeners == null) {
             return false;
@@ -115,14 +115,14 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
             return false;
         }
 
-        Object listener = event.getData();
+        final Object listener = event.getData();
         destroyed.add(listener);
 
         return (destroyed.size() == applicationLifecycleListeners.length);
     }
 
-    private List<Object> getListeners(StandardContext standardContext) {
-        ArrayList<Object> listeners = new ArrayList<Object>();
+    private List<Object> getListeners(final StandardContext standardContext) {
+        final ArrayList<Object> listeners = new ArrayList<Object>();
         listeners.addAll(Arrays.asList(standardContext.getApplicationEventListeners()));
         listeners.addAll(Arrays.asList(standardContext.getApplicationLifecycleListeners()));
         return listeners;

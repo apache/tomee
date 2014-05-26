@@ -53,7 +53,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);
 
     @Override
-    public DataSource pool(final String name, final DataSource ds, Properties properties) {
+    public DataSource pool(final String name, final DataSource ds, final Properties properties) {
         final Properties converted = new Properties();
         final SuperProperties prop = new SuperProperties().caseInsensitive(true);
         prop.putAll(properties);
@@ -64,7 +64,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         final ConnectionPool pool;
         try {
             pool = new ConnectionPool(config);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
         return build(TomEEDataSource.class, new TomEEDataSource(config, pool, name), converted);
@@ -127,7 +127,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         if (passwordCipher != null && "PlainText".equals(passwordCipher)) { // no need to warn about it
             properties.remove("PasswordCipher");
         } else {
-            String password = properties.getProperty("Password");
+            final String password = properties.getProperty("Password");
             if (passwordCipher != null) {
                 final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
                 final String plainPwd = cipher.decrypt(password.toCharArray());
@@ -139,7 +139,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
         }
 
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString().trim();
             if (!converted.containsKey(key)) {
@@ -150,7 +150,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                             continue;
                         }
 
-                        String interceptors = properties.getProperty("jdbcInterceptors");
+                        final String interceptors = properties.getProperty("jdbcInterceptors");
                         if (interceptors == null) {
                             converted.setProperty("jdbcInterceptors",
                                     "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
@@ -184,7 +184,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                         properties.setProperty("url", newUrl);
                     }
                 }
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 // no-op
             }
         }
@@ -198,8 +198,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    protected void doDestroy(CommonDataSource dataSource) throws Throwable {
-        org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
+    protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
+        final org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
         if (ds instanceof TomEEDataSource) {
             ((TomEEDataSource) ds).internalJMXUnregister();
         }
@@ -223,7 +223,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             try { // just to force the pool to be created and be able to register the mbean
                 createPool();
                 initJmx(name);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 LOGGER.error("Can't create DataSource", e);
             }
         }
@@ -287,7 +287,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 } catch (final Exception e) {
                     LOGGER.error("Unable to register JDBC pool with JMX", e);
                 }
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
         }
@@ -329,7 +329,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         @Override
-        protected PooledConnection create(boolean incrementCounter) {
+        protected PooledConnection create(final boolean incrementCounter) {
             final PooledConnection con = super.create(incrementCounter);
             if (getPoolProperties().getDataSource() == null) { // using driver
                 // init driver with TCCL
@@ -339,7 +339,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
                 try {
                     Reflections.set(con, "driver", Class.forName(getPoolProperties().getDriverClassName(), true, cl).newInstance());
-                } catch (java.lang.Exception cn) {
+                } catch (final java.lang.Exception cn) {
                     // will fail later, no worry
                 }
             }

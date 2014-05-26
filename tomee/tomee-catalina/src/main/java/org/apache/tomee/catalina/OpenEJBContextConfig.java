@@ -100,7 +100,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
     private boolean webInfClassesAnnotationsProcessed = false;
 
-    public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
+    public OpenEJBContextConfig(final TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
         info = standardContextInfo;
     }
@@ -166,18 +166,18 @@ public class OpenEJBContextConfig extends ContextConfig {
         final Map<String, Container> mappedChildren = new HashMap<String, Container>();
         if (children != null) {
             // index potential rest containers by class to cleanup applications defined as servlet
-            for (Container c : children) {
+            for (final Container c : children) {
                 if (!(c instanceof StandardWrapper)) {
                     continue;
                 }
 
                 final StandardWrapper wrapper = (StandardWrapper) c;
 
-                String appSpec = wrapper.getInitParameter("javax.ws.rs.Application");
+                final String appSpec = wrapper.getInitParameter("javax.ws.rs.Application");
                 if (appSpec != null) {
                     mappedChildren.put(appSpec, c);
                 } else {
-                    String app = wrapper.getInitParameter(Application.class.getName());
+                    final String app = wrapper.getInitParameter(Application.class.getName());
                     if (app != null) {
                         mappedChildren.put(app, c);
                     } else if (wrapper.getServletClass() == null) {
@@ -186,7 +186,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                                     context.getLoader().getClassLoader().loadClass(wrapper.getServletName()))) {
                                 context.removeChild(c); // remove directly since it is not in restApplications
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // no-op
                         }
                     }
@@ -308,7 +308,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                     }
 
                     String mostMatchingId = null;
-                    for (String id : ids) {
+                    for (final String id : ids) {
                         if (id.equals(jndiName)) {
                             mostMatchingId = jndiName;
                             break;
@@ -333,7 +333,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     protected WebXml createWebXml() {
         String prefix = "";
         if (context instanceof StandardContext) {
-            StandardContext standardContext = (StandardContext) context;
+            final StandardContext standardContext = (StandardContext) context;
             prefix = standardContext.getEncodedPath();
             if (prefix.startsWith("/")) {
                 prefix = prefix.substring(1);
@@ -347,7 +347,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         private String prefix;
 
-        public OpenEJBWebXml(String prefix) {
+        public OpenEJBWebXml(final String prefix) {
             this.prefix = prefix;
         }
 
@@ -400,11 +400,11 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         final Set<Class<?>> classes = new HashSet<Class<?>>();
-        for (Set<String> entry : scanned.values()) {
-            for (String name : entry) {
+        for (final Set<String> entry : scanned.values()) {
+            for (final String name : entry) {
                 try {
                     classes.add(cl.loadClass(name));
-                } catch (ClassNotFoundException ignored) {
+                } catch (final ClassNotFoundException ignored) {
                     logger.warning("class '" + name + "' was found but can't be loaded as a JSF class");
                 }
             }
@@ -488,7 +488,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             // done
             finder = null;
             tempLoader = null;
-        } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
+        } catch (final RuntimeException e) { // if exception occurs we have to clear the threadlocal
             webInfClassesAnnotationsProcessed = false;
             throw e;
         }
@@ -501,12 +501,12 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
+    protected void processAnnotationsFile(final File file, final WebXml fragment, final boolean handlesTypesOnly) {
         try {
             if (NewLoaderLogic.skip(file.toURI().toURL())) {
                 return;
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no-op: let it be
         }
 
@@ -520,7 +520,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsUrl(URL currentUrl, WebXml fragment, boolean handlesTypeOnly) {
+    protected void processAnnotationsUrl(final URL currentUrl, final WebXml fragment, final boolean handlesTypeOnly) {
         if (NewLoaderLogic.skip(currentUrl)) { // we potentially see all common loader urls
             return;
         }
@@ -534,7 +534,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         File currentUrlAsFile;
         try {
             currentUrlAsFile = URLs.toFile(currentUrl);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             if ("jndi".equals(currentUrl.getProtocol())) {
                 String file = currentUrl.getFile();
                 try {
@@ -594,9 +594,9 @@ public class OpenEJBContextConfig extends ContextConfig {
             try {
                 is = new URL(url).openStream();
                 processAnnotationsStream(is, fragment, handlesTypeOnly);
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException(e);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalArgumentException(e);
             } finally {
                 IO.close(is);
@@ -608,12 +608,12 @@ public class OpenEJBContextConfig extends ContextConfig {
     protected void processAnnotationWebServlet(final String className, final AnnotationEntry ae, final WebXml fragment) {
         try {
             super.processAnnotationWebServlet(className, ae, fragment);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             // otherwise TCKs are not passing, hope to be able to let it with next TCK versions
 
             String[] urlPatterns = null;
-            for (ElementValuePair evp : ae.getElementValuePairs()) {
-                String name = evp.getNameString();
+            for (final ElementValuePair evp : ae.getElementValuePairs()) {
+                final String name = evp.getNameString();
                 if ("value".equals(name) || "urlPatterns".equals(name)) {
                     urlPatterns = processAnnotationsStringArray(evp.getValue());
                     break;
@@ -621,7 +621,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
 
             if (urlPatterns != null) {
-                for (String pattern : urlPatterns) {
+                for (final String pattern : urlPatterns) {
                     if (fragment.getServletMappings().containsKey(pattern)) {
                         logger.warning(iae.getMessage(), iae);
                         return;

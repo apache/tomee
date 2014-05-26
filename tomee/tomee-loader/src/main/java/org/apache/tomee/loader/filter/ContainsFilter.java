@@ -23,7 +23,7 @@ public class ContainsFilter implements Filter {
 
     private final String token;
 
-    public ContainsFilter(String token) {
+    public ContainsFilter(final String token) {
         assert token != null;
         this.token = token;
     }
@@ -32,16 +32,16 @@ public class ContainsFilter implements Filter {
         return token;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return name.contains(token);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ContainsFilter that = (ContainsFilter) o;
+        final ContainsFilter that = (ContainsFilter) o;
 
         return token.equals(that.token);
     }

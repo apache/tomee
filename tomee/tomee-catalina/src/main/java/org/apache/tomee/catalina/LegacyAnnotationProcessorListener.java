@@ -24,30 +24,30 @@ import org.apache.tomee.common.LegacyAnnotationProcessor;
 public class LegacyAnnotationProcessorListener {
     protected final LegacyAnnotationProcessor annotationProcessor;
 
-    public LegacyAnnotationProcessorListener(LegacyAnnotationProcessor annotationProcessor) {
+    public LegacyAnnotationProcessorListener(final LegacyAnnotationProcessor annotationProcessor) {
         this.annotationProcessor = annotationProcessor;
     }
 
-    protected void postConstruct(Object object) {
+    protected void postConstruct(final Object object) {
         try {
             annotationProcessor.postConstruct(object);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("PostConstruct Failed " + object.getClass(), e);
         }
     }
 
-    protected void processAnnotations(Object object) {
+    protected void processAnnotations(final Object object) {
         try {
             annotationProcessor.processAnnotations(object);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Dependency Injection Failed " + object.getClass(), e);
         }
     }
 
-    protected void preDestroy(Object object) {
+    protected void preDestroy(final Object object) {
         try {
             annotationProcessor.preDestroy(object);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("PreDestroy Failed " + object.getClass(), e);
         }
     }

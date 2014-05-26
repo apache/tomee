@@ -82,7 +82,7 @@ public class LowTypedRealm implements Realm {
     }
 
     private Method findMethod(final Class<?> clazz, final Class<?>[] argTypes) {
-        for (Method mtd : clazz.getMethods()) {
+        for (final Method mtd : clazz.getMethods()) {
             if (Modifier.isAbstract(mtd.getModifiers())) {
                 continue;
             }
@@ -174,7 +174,7 @@ public class LowTypedRealm implements Realm {
     public SecurityConstraint[] findSecurityConstraints(final Request request, final Context context) {
         final Map<String, ServletSecurityElement> map = (Map<String, ServletSecurityElement>) invoke(findSecurityConstraintsMethod, request.getRequest(), context.getPath());
         final List<SecurityConstraint> constraints = new ArrayList<SecurityConstraint>();
-        for (Map.Entry<String, ServletSecurityElement> entry : map.entrySet()) {
+        for (final Map.Entry<String, ServletSecurityElement> entry : map.entrySet()) {
             constraints.addAll(Arrays.asList(SecurityConstraint.createConstraints(entry.getValue(), entry.getKey())));
         }
         return constraints.toArray(new SecurityConstraint[constraints.size()]);
@@ -198,12 +198,12 @@ public class LowTypedRealm implements Realm {
 
         try {
             return method.invoke(delegate, args);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException) {
                 throw (RuntimeException) e.getCause();
             }
             throw new TomEERuntimeException(e.getCause());
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new TomEERuntimeException(e);
         }
     }

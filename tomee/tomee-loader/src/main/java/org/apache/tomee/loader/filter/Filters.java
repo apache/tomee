@@ -28,59 +28,59 @@ import java.util.Set;
  */
 public class Filters {
     private static final Filter NONE = new Filter() {
-        public boolean accept(String name) {
+        public boolean accept(final String name) {
             return false;
         }
     };
 
-    public static Filter packages(String... packages) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : packages) {
+    public static Filter packages(final String... packages) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : packages) {
             filters.add(new PackageFilter(s));
         }
 
         return optimize(filters);
     }
 
-    public static Filter classes(String... classes) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : classes) {
+    public static Filter classes(final String... classes) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : classes) {
             filters.add(new ClassFilter(s));
         }
 
         return optimize(filters);
     }
 
-    public static Filter prefixes(String... prefixes) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : prefixes) {
+    public static Filter prefixes(final String... prefixes) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : prefixes) {
             filters.add(new PrefixFilter(s));
         }
 
         return optimize(filters);
     }
 
-    public static Filter tokens(String... tokens) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : tokens) {
+    public static Filter tokens(final String... tokens) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : tokens) {
             filters.add(new ContainsFilter(s));
         }
 
         return optimize(filters);
     }
 
-    public static Filter suffixes(String... suffixes) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : suffixes) {
+    public static Filter suffixes(final String... suffixes) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : suffixes) {
             filters.add(new SuffixFilter(s));
         }
 
         return optimize(filters);
     }
 
-    public static Filter patterns(String... patterns) {
-        List<Filter> filters = new ArrayList<Filter>();
-        for (String s : patterns) {
+    public static Filter patterns(final String... patterns) {
+        final List<Filter> filters = new ArrayList<Filter>();
+        for (final String s : patterns) {
             filters.add(new PatternFilter(s));
         }
 
@@ -88,21 +88,21 @@ public class Filters {
     }
 
 
-    public static Filter optimize(Filter... filters) {
+    public static Filter optimize(final Filter... filters) {
         return optimize(Arrays.asList(filters));
     }
 
-    public static Filter optimize(List<Filter>... filterss) {
-        Set<Filter> unwrapped = new LinkedHashSet<Filter>();
+    public static Filter optimize(final List<Filter>... filterss) {
+        final Set<Filter> unwrapped = new LinkedHashSet<Filter>();
 
-        for (List<Filter> filters : filterss) {
+        for (final List<Filter> filters : filterss) {
             unwrap(filters, unwrapped);
         }
 
         if (unwrapped.size() > 1) {
-            Iterator<Filter> iterator = unwrapped.iterator();
+            final Iterator<Filter> iterator = unwrapped.iterator();
             while (iterator.hasNext()) {
-                Filter filter = iterator.next();
+                final Filter filter = iterator.next();
                 if (filter == NONE) iterator.remove();
             }
         }
@@ -123,19 +123,19 @@ public class Filters {
      * @param filter
      * @return
      */
-    public static Filter invert(Filter filter) {
+    public static Filter invert(final Filter filter) {
         if (filter instanceof NegativeFilter) {
-            NegativeFilter negativeFilter = (NegativeFilter) filter;
+            final NegativeFilter negativeFilter = (NegativeFilter) filter;
             return negativeFilter.getFilter();
         }
 
         return new NegativeFilter(filter);
     }
 
-    private static void unwrap(List<Filter> filters, Set<Filter> unwrapped) {
-        for (Filter filter : filters) {
+    private static void unwrap(final List<Filter> filters, final Set<Filter> unwrapped) {
+        for (final Filter filter : filters) {
             if (filter instanceof FilterList) {
-                FilterList filterList = (FilterList) filter;
+                final FilterList filterList = (FilterList) filter;
                 unwrap(filterList.getFilters(), unwrapped);
             } else {
                 unwrapped.add(filter);
@@ -146,11 +146,11 @@ public class Filters {
     private static final class NegativeFilter implements Filter {
         private final Filter filter;
 
-        public NegativeFilter(Filter filter) {
+        public NegativeFilter(final Filter filter) {
             this.filter = filter;
         }
 
-        public boolean accept(String name) {
+        public boolean accept(final String name) {
             return !filter.accept(name);
         }
 

@@ -32,7 +32,7 @@ public class TomEEListener implements LifecycleListener {
         Method mtd = null;
         try {
             mtd = LifecycleListener.class.getMethod("lifecycleEvent", LifecycleEvent.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.severe("can't get lifecycleEvent method from LifecycleListener");
         }
         delegateMethod = mtd;
@@ -48,7 +48,7 @@ public class TomEEListener implements LifecycleListener {
                 instance = TomEEListener.class.getClassLoader()
                                 .loadClass("org.apache.tomee.catalina.ServerListener")
                                 .newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.severe("can't instantiate ServerListener");
             }
         }
@@ -80,7 +80,7 @@ public class TomEEListener implements LifecycleListener {
     public void lifecycleEvent(final LifecycleEvent lifecycleEvent) {
         try {
             delegateMethod.invoke(delegate, lifecycleEvent);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.severe("error invoking " + delegateMethod.getName() + " for " + lifecycleEvent);
         }
     }

@@ -41,7 +41,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
 
         try {
             tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null); // classloader == null -> standalone war
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
 

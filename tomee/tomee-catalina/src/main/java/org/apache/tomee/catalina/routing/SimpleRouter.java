@@ -69,7 +69,7 @@ public class SimpleRouter {
                    parseRoute(line);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RouterException("can't read " + url.toExternalForm());
         }
         return this;
@@ -95,7 +95,7 @@ public class SimpleRouter {
             return cachedRoute.cleanDestination(prefix);
         }
 
-        for (Route route : routes) {
+        for (final Route route : routes) {
             if (route.matches(uri)) {
                 if (route.getOrigin().equals(uri)) {
                     cache.put(uri, route);
@@ -144,7 +144,7 @@ public class SimpleRouter {
         objectName = jmxName.build();
         try {
             LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(this), objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             objectName = null;
         }
     }
@@ -153,7 +153,7 @@ public class SimpleRouter {
         if (objectName != null) {
             try {
                 LocalMBeanServer.get().unregisterMBean(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
@@ -178,12 +178,12 @@ public class SimpleRouter {
         try {
             final CompositeType ct = new CompositeType("routes", "routes", keys, keys, types);
             final TabularType type = new TabularType("router", "routes", ct, keys);
-            TabularDataSupport data = new TabularDataSupport(type);
+            final TabularDataSupport data = new TabularDataSupport(type);
 
-            CompositeData line = new CompositeDataSupport(ct, keys, values);
+            final CompositeData line = new CompositeDataSupport(ct, keys, values);
             data.put(line);
             return data;
-        } catch (OpenDataException e) {
+        } catch (final OpenDataException e) {
             return null;
         }
     }

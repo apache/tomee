@@ -31,7 +31,7 @@ public class MinimumErrorReportValve extends ErrorReportValve {
     @Override
     protected void report(final Request request, final Response response,
                           final Throwable throwable) {
-        int statusCode = response.getStatus();
+        final int statusCode = response.getStatus();
         if (statusCode < 400 || response.getContentWritten() > 0 ||
                 !response.isError()) {
             return;
@@ -41,7 +41,7 @@ public class MinimumErrorReportValve extends ErrorReportValve {
             try {
                 response.setContentType("text/html");
                 response.setCharacterEncoding("utf-8");
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 ExceptionUtils.handleThrowable(t);
                 if (container.getLogger().isDebugEnabled()) {
                     container.getLogger().debug("status.setContentType", t);
@@ -58,9 +58,9 @@ public class MinimumErrorReportValve extends ErrorReportValve {
                         "</body>\n" +
                         "</html>\n");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Ignore
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             // Ignore
         }
     }

@@ -71,7 +71,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
         final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
 
         // Scan files inside META-INF ending with .faces-config.xml
-        for (URL url : urls) {
+        for (final URL url : urls) {
             final File file = URLs.toFile(url);
             if (!file.exists()) {
                 continue;
@@ -93,14 +93,14 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
                                         currentSet.add(e2.nextElement());
                                     }
                                 }
-                            } catch (Throwable ignored) {
+                            } catch (final Throwable ignored) {
                                 // no-op
                             }
                         }
                     } else {
                         final File metaInf = new File(file, META_INF_PREFIX);
                         if (metaInf.exists() && metaInf.isDirectory()) {
-                            for (File f : Files.collect(metaInf, FacesConfigSuffixFilter.INSTANCE)) {
+                            for (final File f : Files.collect(metaInf, FacesConfigSuffixFilter.INSTANCE)) {
                                 if (!f.isDirectory()) {
                                     currentSet.add(f.toURI().toURL());
                                 }
@@ -115,10 +115,10 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
 
         es.shutdown();
 
-        for (Future<Set<URL>> set : futures) {
+        for (final Future<Set<URL>> set : futures) {
             try {
                 urlSet.addAll(set.get());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }

@@ -37,23 +37,23 @@ import static org.junit.Assert.assertNotNull;
 public class EmbeddedTomEEContainerTest {
     @Test
     public void containerTest() throws Exception {
-        File war = createWar();
-        Properties p = new Properties();
+        final File war = createWar();
+        final Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "test");
         p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
         p.put(EJBContainer.MODULES, war.getAbsolutePath());
         p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1");
         try {
-            EJBContainer container = EJBContainer.createEJBContainer(p);
+            final EJBContainer container = EJBContainer.createEJBContainer(p);
             assertNotNull(container);
             assertNotNull(container.getContext());
-            URL url = new URL("http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/test/index.html");
+            final URL url = new URL("http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/test/index.html");
             assertEquals("true", IO.readProperties(url).getProperty("ok"));
             container.close();
         } finally {
             try {
                 FileUtils.forceDelete(war);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 FileUtils.deleteQuietly(war);
             }
         }
@@ -74,7 +74,7 @@ public class EmbeddedTomEEContainerTest {
     }
 
     private File createWar() throws IOException {
-        File file = new File(System.getProperty("java.io.tmpdir") + "/tomee-" + Math.random());
+        final File file = new File(System.getProperty("java.io.tmpdir") + "/tomee-" + Math.random());
         if (!file.mkdirs() && !file.exists()) {
             throw new RuntimeException("can't create " + file.getAbsolutePath());
         }
@@ -84,12 +84,12 @@ public class EmbeddedTomEEContainerTest {
         return file;
     }
 
-    private static void write(String content, File file) throws IOException {
+    private static void write(final String content, final File file) throws IOException {
         if (!file.getParentFile().mkdirs() && !file.getParentFile().exists()) {
             throw new RuntimeException("can't create " + file.getParent());
         }
 
-        FileWriter index = new FileWriter(file);
+        final FileWriter index = new FileWriter(file);
         index.write(content);
         index.close();
     }

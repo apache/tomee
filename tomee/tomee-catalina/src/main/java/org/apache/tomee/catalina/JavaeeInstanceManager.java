@@ -36,7 +36,7 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     private final WebContext webContext;
 
-    public JavaeeInstanceManager(WebContext webContext) {
+    public JavaeeInstanceManager(final WebContext webContext) {
         this.webContext = webContext;
     }
 
@@ -56,28 +56,28 @@ public class JavaeeInstanceManager implements InstanceManager {
     }
 
     @Override
-    public Object newInstance(String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+    public Object newInstance(final String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
         final ClassLoader classLoader = webContext.getClassLoader();
         return newInstance(className, classLoader);
     }
 
     @Override
-    public Object newInstance(String className, ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+    public Object newInstance(final String className, final ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
         return newInstance(classLoader.loadClass(className));
     }
 
     @Override
-    public void newInstance(Object o) throws IllegalAccessException, InvocationTargetException, NamingException {
+    public void newInstance(final Object o) throws IllegalAccessException, InvocationTargetException, NamingException {
         try {
             webContext.inject(o);
             postConstruct(o, o.getClass());
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new InjectionFailedException(e);
         }
     }
 
     @Override
-    public void destroyInstance(Object o) throws IllegalAccessException, InvocationTargetException {
+    public void destroyInstance(final Object o) throws IllegalAccessException, InvocationTargetException {
         if (o == null) {
             return;
         }
@@ -88,7 +88,7 @@ public class JavaeeInstanceManager implements InstanceManager {
     public void inject(final Object o) {
         try {
             webContext.inject(o);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new InjectionFailedException(e);
         }
     }
@@ -102,17 +102,17 @@ public class JavaeeInstanceManager implements InstanceManager {
      * @throws java.lang.reflect.InvocationTargetException
      *                                if call fails
      */
-    public void postConstruct(Object instance, final Class<?> clazz)
+    public void postConstruct(final Object instance, final Class<?> clazz)
             throws IllegalAccessException, InvocationTargetException {
-        Class<?> superClass = clazz.getSuperclass();
+        final Class<?> superClass = clazz.getSuperclass();
         if (superClass != Object.class) {
             postConstruct(instance, superClass);
         }
 
-        Method[] methods = clazz.getDeclaredMethods();
+        final Method[] methods = clazz.getDeclaredMethods();
 
         Method postConstruct = null;
-        for (Method method : methods) {
+        for (final Method method : methods) {
             if (method.isAnnotationPresent(PostConstruct.class)) {
                 if ((postConstruct != null)
                         || (method.getParameterTypes().length != 0)
@@ -133,7 +133,7 @@ public class JavaeeInstanceManager implements InstanceManager {
         // At the end the postconstruct annotated
         // method is invoked
         if (postConstruct != null) {
-            boolean accessibility = postConstruct.isAccessible();
+            final boolean accessibility = postConstruct.isAccessible();
             postConstruct.setAccessible(true);
             postConstruct.invoke(instance);
             postConstruct.setAccessible(accessibility);
@@ -151,16 +151,16 @@ public class JavaeeInstanceManager implements InstanceManager {
      * @throws java.lang.reflect.InvocationTargetException
      *                                if call fails
      */
-    protected void preDestroy(Object instance, final Class<?> clazz)
+    protected void preDestroy(final Object instance, final Class<?> clazz)
             throws IllegalAccessException, InvocationTargetException {
-        Class<?> superClass = clazz.getSuperclass();
+        final Class<?> superClass = clazz.getSuperclass();
         if (superClass != Object.class) {
             preDestroy(instance, superClass);
         }
 
-        Method[] methods = clazz.getDeclaredMethods();
+        final Method[] methods = clazz.getDeclaredMethods();
         Method preDestroy = null;
-        for (Method method : methods) {
+        for (final Method method : methods) {
             if (method.isAnnotationPresent(PreDestroy.class)) {
                 if ((method.getParameterTypes().length != 0)
                         || (Modifier.isStatic(method.getModifiers()))
@@ -176,7 +176,7 @@ public class JavaeeInstanceManager implements InstanceManager {
         // At the end the postconstruct annotated
         // method is invoked
         if (preDestroy != null) {
-            boolean accessibility = preDestroy.isAccessible();
+            final boolean accessibility = preDestroy.isAccessible();
             preDestroy.setAccessible(true);
             preDestroy.invoke(instance);
             preDestroy.setAccessible(accessibility);

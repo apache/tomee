@@ -32,16 +32,16 @@ import java.util.Map;
 
 public class InstallerServlet extends HttpServlet {
 
-    private String escape(String str) {
+    private String escape(final String str) {
         if (str == null) {
             return "";
         }
         return str.replaceAll("\"", "\\\\\"").replaceAll("\\\\", "\\\\\\\\");
     }
 
-    private String getJsonList(List<Map<String, String>> list) {
+    private String getJsonList(final List<Map<String, String>> list) {
         final StringBuffer sb = new StringBuffer();
-        for (Map<String, String> entry : list) {
+        for (final Map<String, String> entry : list) {
             sb.append(String.format("{\"key\": \"%s\", \"value\": \"%s\"},",
                     entry.get("key"), escape(entry.get("value"))
             ));
@@ -53,7 +53,7 @@ public class InstallerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         final ServletContext ctx = req.getServletContext();
         final String rootPath = ctx.getRealPath("/");
         final Runner installer = new Runner(new Installer(new Paths(new File(rootPath))));
@@ -62,7 +62,7 @@ public class InstallerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         final ServletContext ctx = req.getServletContext();
         final String rootPath = ctx.getRealPath("/");
         final Runner installer = new Runner(new Installer(new Paths(new File(rootPath))));

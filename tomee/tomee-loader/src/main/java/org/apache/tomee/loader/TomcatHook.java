@@ -73,7 +73,7 @@ class TomcatHook {
      * </p>
      * @param properties properties file
      */
-    static void hook(Properties properties) {
+    static void hook(final Properties properties) {
         
         // verify properties and make sure it contains the tomee.war property
         if (properties == null) throw new NullPointerException("properties is null");
@@ -86,7 +86,7 @@ class TomcatHook {
 
         
         //Get the openejb directory (under webapps) using the tomee.war property
-        File openejbWar = new File(properties.getProperty("tomee.war"));
+        final File openejbWar = new File(properties.getProperty("tomee.war"));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("tomee.war is not a directory: " + openejbWar);
         }
@@ -100,14 +100,14 @@ class TomcatHook {
         properties.setProperty("openejb.loader", "tomcat-system");
 
         // Get the value of catalina.home and set it to openejb.home
-        String catalinaHome = System.getProperty("catalina.home");
+        final String catalinaHome = System.getProperty("catalina.home");
         properties.setProperty("openejb.home", catalinaHome);
         
         //Sets system property for openejb.home
         System.setProperty("openejb.home", catalinaHome);
 
         //get the value of catalina.base and set it to openejb.base
-        String catalinaBase = System.getProperty("catalina.base");
+        final String catalinaBase = System.getProperty("catalina.base");
         properties.setProperty("openejb.base", catalinaBase);
         
         //Sets system property for openejb.base
@@ -117,8 +117,8 @@ class TomcatHook {
         System.setProperty("tomee.war", openejbWar.getAbsolutePath());
         
         // set the property openejb.libs to contain the absolute path of the lib directory of openejb webapp
-        File libDir = new File(openejbWar, "lib");
-        String libPath = libDir.getAbsolutePath();
+        final File libDir = new File(openejbWar, "lib");
+        final String libPath = libDir.getAbsolutePath();
         
         //Sets openejb.libs to tomee.war/lib folder
         properties.setProperty("openejb.libs", libPath);
@@ -126,16 +126,16 @@ class TomcatHook {
         // System.setProperty("tomcat.version", "x.y.z.w");
         // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
         // set the System properties, tomcat.version, tomcat.built
-        ClassLoader classLoader = TomcatHook.class.getClassLoader();
+        final ClassLoader classLoader = TomcatHook.class.getClassLoader();
         try {
-            Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
+            final Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
             String serverNumber = tomcatServerInfo.getProperty("server.number");
             if (serverNumber == null) {
                 // Tomcat5 only has server.info
-                String serverInfo = tomcatServerInfo.getProperty("server.info");
+                final String serverInfo = tomcatServerInfo.getProperty("server.info");
                 if (serverInfo != null) {
-                    int slash = serverInfo.indexOf('/');
+                    final int slash = serverInfo.indexOf('/');
                     serverNumber = serverInfo.substring(slash + 1);
                 }
             }
@@ -143,11 +143,11 @@ class TomcatHook {
                 System.setProperty("tomcat.version", serverNumber);
             }
 
-            String serverBuilt = tomcatServerInfo.getProperty("server.built");
+            final String serverBuilt = tomcatServerInfo.getProperty("server.built");
             if (serverBuilt != null) {
                 System.setProperty("tomcat.built", serverBuilt);
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 
@@ -185,7 +185,7 @@ class TomcatHook {
             // This guy does the magic of squishing the openejb libraries into the parent classloader
             // and kicking off the reall integration.
             embedder.init(properties);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }

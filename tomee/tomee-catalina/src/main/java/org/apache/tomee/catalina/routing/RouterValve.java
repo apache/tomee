@@ -52,7 +52,7 @@ public class RouterValve extends ValveBase {
         }
     }
 
-    public void setConfigurationPath(URL configurationPath) {
+    public void setConfigurationPath(final URL configurationPath) {
         router.readConfiguration(configurationPath);
     }
 
@@ -71,7 +71,7 @@ public class RouterValve extends ValveBase {
     public static URL configurationURL(final ServletContext ctx) {
         try {
             return ctx.getResource(WEB_INF + routerConfigurationName());
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // let return null
         }
 
@@ -94,7 +94,7 @@ public class RouterValve extends ValveBase {
         if (configFile.exists()) {
             try {
                 return configFile.toURI().toURL();
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // let return null
             }
         }

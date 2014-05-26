@@ -31,12 +31,12 @@ public class FastNonSecureRandom extends SecureRandom {
     }
 
     @Override
-    public synchronized void setSeed(byte[] seed) {
+    public synchronized void setSeed(final byte[] seed) {
         // Not implemented
     }
 
     @Override
-    public synchronized void setSeed(long seed) {
+    public synchronized void setSeed(final long seed) {
         // The super class constructor calls this method earlier than our
         // fields are initialized. Ignore the call.
         if (random == null) {
@@ -46,13 +46,13 @@ public class FastNonSecureRandom extends SecureRandom {
     }
 
     @Override
-    public synchronized void nextBytes(byte[] bytes) {
+    public synchronized void nextBytes(final byte[] bytes) {
         random.nextBytes(bytes);
     }
 
     @Override
-    public byte[] generateSeed(int numBytes) {
-        byte[] value = new byte[numBytes];
+    public byte[] generateSeed(final int numBytes) {
+        final byte[] value = new byte[numBytes];
         nextBytes(value);
         return value;
     }

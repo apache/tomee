@@ -43,7 +43,7 @@ public class LoaderServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
-    public void init(ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         // only install once
         if (embedded) return;
         embedded = true;
@@ -51,10 +51,10 @@ public class LoaderServlet extends HttpServlet {
         if (System.getProperties().containsKey("openejb.embedder.source")) return;
 
         //Gets parameters from servlet initialization parameter
-        Properties properties = initParamsToProperties(config);
+        final Properties properties = initParamsToProperties(config);
         
         //Web application directory
-        File webappDir = new File(getWebappPath(config));
+        final File webappDir = new File(getWebappPath(config));
         
         //Sets tomee.war property
         properties.setProperty("tomee.war", webappDir.getAbsolutePath());
@@ -71,23 +71,23 @@ public class LoaderServlet extends HttpServlet {
      * @param config javax.servlet.ServletConfig
      * @return java.util.Properties
      */
-    private Properties initParamsToProperties(ServletConfig config) {
-        Properties properties = new Properties();
+    private Properties initParamsToProperties(final ServletConfig config) {
+        final Properties properties = new Properties();
 
         //@Tomcat
         // Set some defaults
         properties.setProperty("openejb.loader", "tomcat");
 
         // Load in each init-param as a property
-        Enumeration<?> enumeration = config.getInitParameterNames();
+        final Enumeration<?> enumeration = config.getInitParameterNames();
         System.out.println("OpenEJB Loader init-params:");
         if(!enumeration.hasMoreElements()) {
             System.out.println("\tThere are no initialization parameters.");
         }
         
         while (enumeration.hasMoreElements()) {
-            String name = (String) enumeration.nextElement();
-            String value = config.getInitParameter(name);
+            final String name = (String) enumeration.nextElement();
+            final String value = config.getInitParameter(name);
             properties.put(name, value);
             System.out.println("\tparam-name: " + name + ", param-value: " + value);
         }
@@ -100,11 +100,11 @@ public class LoaderServlet extends HttpServlet {
      * @param config
      * @return absolute path of this webapp directory
      */
-    private String getWebappPath(ServletConfig config) {
-        ServletContext ctx = config.getServletContext();
-        File webInf = new File(ctx.getRealPath("WEB-INF"));
-        File webapp = webInf.getParentFile();
-        String webappPath = webapp.getAbsolutePath();
+    private String getWebappPath(final ServletConfig config) {
+        final ServletContext ctx = config.getServletContext();
+        final File webInf = new File(ctx.getRealPath("WEB-INF"));
+        final File webapp = webInf.getParentFile();
+        final String webappPath = webapp.getAbsolutePath();
         return webappPath;
     }
 }

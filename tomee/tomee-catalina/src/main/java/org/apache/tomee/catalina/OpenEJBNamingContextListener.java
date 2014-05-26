@@ -60,12 +60,12 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
      */
     private final NamingResources namingResources;
 
-    public OpenEJBNamingContextListener(StandardServer standardServer) {
+    public OpenEJBNamingContextListener(final StandardServer standardServer) {
         this.standardServer = standardServer;
         namingResources = standardServer.getGlobalNamingResources();
     }
 
-    public void lifecycleEvent(LifecycleEvent event) {
+    public void lifecycleEvent(final LifecycleEvent event) {
         if (event.getLifecycle() != standardServer) {
             return;
         }
@@ -104,12 +104,12 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         running = false;
     }
 
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         if (!running) {
             return;
         }
 
-        Object source = event.getSource();
+        final Object source = event.getSource();
         if (source == namingResources) {
             processGlobalResourcesChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
         }
@@ -123,85 +123,85 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
      * @param oldValue The old value (or <code>null</code> if adding)
      * @param newValue The new value (or <code>null</code> if removing)
      */
-    private void processGlobalResourcesChange(String name, Object oldValue, Object newValue) {
+    private void processGlobalResourcesChange(final String name, final Object oldValue, final Object newValue) {
 
         // NOTE - It seems that the Context for global JNDI resources
         // is left in read-write mode, so we do not have to change it here
 
         if (name.equals("ejb")) {
             if (oldValue != null) {
-                ContextEjb ejb = (ContextEjb) oldValue;
+                final ContextEjb ejb = (ContextEjb) oldValue;
                 if (ejb.getName() != null) {
                     removeEjb(ejb.getName());
                 }
             }
             if (newValue != null) {
-                ContextEjb ejb = (ContextEjb) newValue;
+                final ContextEjb ejb = (ContextEjb) newValue;
                 if (ejb.getName() != null) {
                     addEjb(ejb);
                 }
             }
         } else if (name.equals("environment")) {
             if (oldValue != null) {
-                ContextEnvironment env = (ContextEnvironment) oldValue;
+                final ContextEnvironment env = (ContextEnvironment) oldValue;
                 if (env.getName() != null) {
                     removeEnvironment(env.getName());
                 }
             }
             if (newValue != null) {
-                ContextEnvironment env = (ContextEnvironment) newValue;
+                final ContextEnvironment env = (ContextEnvironment) newValue;
                 if (env.getName() != null) {
                     addEnvironment(env);
                 }
             }
         } else if (name.equals("localEjb")) {
             if (oldValue != null) {
-                ContextLocalEjb ejb = (ContextLocalEjb) oldValue;
+                final ContextLocalEjb ejb = (ContextLocalEjb) oldValue;
                 if (ejb.getName() != null) {
                     removeLocalEjb(ejb.getName());
                 }
             }
             if (newValue != null) {
-                ContextLocalEjb ejb = (ContextLocalEjb) newValue;
+                final ContextLocalEjb ejb = (ContextLocalEjb) newValue;
                 if (ejb.getName() != null) {
                     addLocalEjb(ejb);
                 }
             }
         } else if (name.equals("resource")) {
             if (oldValue != null) {
-                ContextResource resource = (ContextResource) oldValue;
+                final ContextResource resource = (ContextResource) oldValue;
                 if (resource.getName() != null) {
                     removeResource(resource.getName());
                 }
             }
             if (newValue != null) {
-                ContextResource resource = (ContextResource) newValue;
+                final ContextResource resource = (ContextResource) newValue;
                 if (resource.getName() != null) {
                     addResource(resource);
                 }
             }
         } else if (name.equals("resourceEnvRef")) {
             if (oldValue != null) {
-                ContextResourceEnvRef resourceEnvRef = (ContextResourceEnvRef) oldValue;
+                final ContextResourceEnvRef resourceEnvRef = (ContextResourceEnvRef) oldValue;
                 if (resourceEnvRef.getName() != null) {
                     removeResourceEnvRef(resourceEnvRef.getName());
                 }
             }
             if (newValue != null) {
-                ContextResourceEnvRef resourceEnvRef = (ContextResourceEnvRef) newValue;
+                final ContextResourceEnvRef resourceEnvRef = (ContextResourceEnvRef) newValue;
                 if (resourceEnvRef.getName() != null) {
                     addResourceEnvRef(resourceEnvRef);
                 }
             }
         } else if (name.equals("resourceLink")) {
             if (oldValue != null) {
-                ContextResourceLink rl = (ContextResourceLink) oldValue;
+                final ContextResourceLink rl = (ContextResourceLink) oldValue;
                 if (rl.getName() != null) {
                     removeResourceLink(rl.getName());
                 }
             }
             if (newValue != null) {
-                ContextResourceLink rl = (ContextResourceLink) newValue;
+                final ContextResourceLink rl = (ContextResourceLink) newValue;
                 if (rl.getName() != null) {
                     addResourceLink(rl);
                 }
@@ -212,71 +212,71 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
 
     private void processInitialNamingResources() {
         // Resource links
-        ContextResourceLink[] resourceLinks = namingResources.findResourceLinks();
-        for (ContextResourceLink resourceLink : resourceLinks) {
+        final ContextResourceLink[] resourceLinks = namingResources.findResourceLinks();
+        for (final ContextResourceLink resourceLink : resourceLinks) {
             addResourceLink(resourceLink);
         }
 
         // Resources
-        ContextResource[] resources = namingResources.findResources();
-        for (ContextResource resource : resources) {
+        final ContextResource[] resources = namingResources.findResources();
+        for (final ContextResource resource : resources) {
             addResource(resource);
         }
 
         // Resources Env
-        ContextResourceEnvRef[] resourceEnvRefs = namingResources.findResourceEnvRefs();
-        for (ContextResourceEnvRef resourceEnvRef : resourceEnvRefs) {
+        final ContextResourceEnvRef[] resourceEnvRefs = namingResources.findResourceEnvRefs();
+        for (final ContextResourceEnvRef resourceEnvRef : resourceEnvRefs) {
             addResourceEnvRef(resourceEnvRef);
         }
 
         // Environment entries
-        ContextEnvironment[] contextEnvironments = namingResources.findEnvironments();
-        for (ContextEnvironment contextEnvironment : contextEnvironments) {
+        final ContextEnvironment[] contextEnvironments = namingResources.findEnvironments();
+        for (final ContextEnvironment contextEnvironment : contextEnvironments) {
             addEnvironment(contextEnvironment);
         }
 
         // EJB references
-        ContextEjb[] ejbs = namingResources.findEjbs();
-        for (ContextEjb ejb : ejbs) {
+        final ContextEjb[] ejbs = namingResources.findEjbs();
+        for (final ContextEjb ejb : ejbs) {
             addEjb(ejb);
         }
     }
 
-    public void addEjb(ContextEjb ejb) {
+    public void addEjb(final ContextEjb ejb) {
     }
 
-    public void addEnvironment(ContextEnvironment env) {
+    public void addEnvironment(final ContextEnvironment env) {
         bindResource(env);
     }
 
-    public void addLocalEjb(ContextLocalEjb localEjb) {
+    public void addLocalEjb(final ContextLocalEjb localEjb) {
     }
 
-    public void addResource(ContextResource resource) {
+    public void addResource(final ContextResource resource) {
         bindResource(resource);
     }
 
-    public void addResourceEnvRef(ContextResourceEnvRef resourceEnvRef) {
+    public void addResourceEnvRef(final ContextResourceEnvRef resourceEnvRef) {
         bindResource(resourceEnvRef);
     }
 
-    private void bindResource(ResourceBase res) {
+    private void bindResource(final ResourceBase res) {
         try {
-            Context globalNamingContext = standardServer.getGlobalNamingContext();
-            Object value = globalNamingContext.lookup(res.getName());
-            String type = res.getType();
+            final Context globalNamingContext = standardServer.getGlobalNamingContext();
+            final Object value = globalNamingContext.lookup(res.getName());
+            final String type = res.getType();
             bindResource(res.getName(), value, type);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             logger.error("Unable to lookup Global Tomcat resource " + res.getName(), e);
         }
     }
 
     private void bindResource(final String name, final Object value, final String type) {
-        Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
+        final Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         try {
             assembler.getContainerSystem().getJNDIContext().lookup(Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name);
             return;
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // no-op: OK
         }
 
@@ -289,31 +289,31 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         logger.info("Importing a Tomcat Resource with id '" + resourceInfo.id + "' of type '" + type + "'.");
         try {
             assembler.createResource(resourceInfo);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             logger.error("Unable to bind Global Tomcat resource " + name + " into OpenEJB", e);
         }
     }
 
-    public void addResourceLink(ContextResourceLink resourceLink) {
+    public void addResourceLink(final ContextResourceLink resourceLink) {
     }
 
-    public void removeEjb(String name) {
+    public void removeEjb(final String name) {
     }
 
-    public void removeEnvironment(String name) {
+    public void removeEnvironment(final String name) {
     }
 
-    public void removeLocalEjb(String name) {
+    public void removeLocalEjb(final String name) {
     }
 
-    public void removeResource(String name) {
+    public void removeResource(final String name) {
         // there isn't any way to remove a resource yet
     }
 
-    public void removeResourceEnvRef(String name) {
+    public void removeResourceEnvRef(final String name) {
         // there isn't any way to remove a resource yet
     }
 
-    public void removeResourceLink(String name) {
+    public void removeResourceLink(final String name) {
     }
 }

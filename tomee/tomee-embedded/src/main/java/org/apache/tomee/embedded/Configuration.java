@@ -46,7 +46,7 @@ public class Configuration {
         return httpPort;
     }
 
-    public void setHttpPort(int httpPort) {
+    public void setHttpPort(final int httpPort) {
         this.httpPort = httpPort;
     }
 
@@ -54,7 +54,7 @@ public class Configuration {
         return stopPort;
     }
 
-    public void setStopPort(int stopPort) {
+    public void setStopPort(final int stopPort) {
         this.stopPort = stopPort;
     }
 
@@ -62,7 +62,7 @@ public class Configuration {
         return dir;
     }
 
-    public void setDir(String dir) {
+    public void setDir(final String dir) {
         this.dir = dir;
     }
 
@@ -74,11 +74,11 @@ public class Configuration {
         return httpsPort;
     }
 
-    public void setHttpsPort(int httpsPort) {
+    public void setHttpsPort(final int httpsPort) {
         this.httpsPort = httpsPort;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -122,7 +122,7 @@ public class Configuration {
         this.keyAlias = keyAlias;
     }
 
-    public void setServerXml(String file) {
+    public void setServerXml(final String file) {
         if (file == null) {
             serverXml = null;
         } else {
@@ -169,7 +169,7 @@ public class Configuration {
         this.skipHttp = skipHttp;
     }
 
-    public void setQuickSession(boolean quickSession) {
+    public void setQuickSession(final boolean quickSession) {
         this.quickSession = quickSession;
     }
 

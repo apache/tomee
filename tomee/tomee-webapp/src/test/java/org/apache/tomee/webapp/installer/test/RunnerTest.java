@@ -30,8 +30,8 @@ import java.util.Map;
 
 public class RunnerTest {
 
-    private Object getValue(String key, List<Map<String, String>> runnerResults) {
-        for (Map<String, String> result : runnerResults) {
+    private Object getValue(final String key, final List<Map<String, String>> runnerResults) {
+        for (final Map<String, String> result : runnerResults) {
             if (key.equals(result.get("key"))) {
                 return result.get("value");
             }
@@ -42,13 +42,13 @@ public class RunnerTest {
     @Test
     public void testInstaller() {
         {
-            PathsInterface paths = EasyMock.createNiceMock(PathsInterface.class);
+            final PathsInterface paths = EasyMock.createNiceMock(PathsInterface.class);
             paths.reset();
             EasyMock.expectLastCall();
             paths.verify();
             EasyMock.expectLastCall().andReturn(Boolean.TRUE).anyTimes();
 
-            InstallerInterface installer = EasyMock.createNiceMock(InstallerInterface.class);
+            final InstallerInterface installer = EasyMock.createNiceMock(InstallerInterface.class);
             installer.getPaths();
             EasyMock.expectLastCall().andReturn(paths).anyTimes();
             installer.reset();
@@ -63,7 +63,7 @@ public class RunnerTest {
             EasyMock.expectLastCall().andReturn(new Alerts()).anyTimes();
 
 
-            Runner runner = new Runner(installer);
+            final Runner runner = new Runner(installer);
             EasyMock.replay(paths, installer);
             Assert.assertEquals("NONE", getValue("status", runner.execute(false)));
             Assert.assertEquals("NONE", getValue("status", runner.execute(false)));
@@ -73,8 +73,8 @@ public class RunnerTest {
             EasyMock.verify(paths, installer);
         }
         {
-            InstallerInterface installer = EasyMock.createStrictMock(InstallerInterface.class);
-            Runner runner = new Runner(installer);
+            final InstallerInterface installer = EasyMock.createStrictMock(InstallerInterface.class);
+            final Runner runner = new Runner(installer);
             EasyMock.replay(installer);
             Assert.assertEquals("REBOOT_REQUIRED", getValue("status", runner.execute(false)));
             Assert.assertEquals("REBOOT_REQUIRED", getValue("status", runner.execute(true)));

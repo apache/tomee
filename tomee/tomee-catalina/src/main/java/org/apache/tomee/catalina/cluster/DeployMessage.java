@@ -39,7 +39,7 @@ public class DeployMessage extends ClusterMessageBase {
                 fis = new FileInputStream(path);
                 IO.copy(fis, baos);
                 archive = baos.toByteArray();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new TomEERuntimeException(e);
             } finally {
                 IO.close(fis);

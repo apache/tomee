@@ -54,7 +54,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         if (session instanceof StandardSessionFacade) {
             try {
                 session = (HttpSession) Reflections.get(session, "session");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
@@ -67,7 +67,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
                 } else  {
                     componentInstanceMap = new HttpSessionMap(session);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 componentInstanceMap = new HttpSessionMap(session);
             }
         } else {
@@ -150,7 +150,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
 
         @Override
         public void putAll(final Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
-            for (Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
+            for (final Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
                 put(e.getKey(), e.getValue());
             }
         }
@@ -176,7 +176,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public boolean replace(Contextual<?> key, BeanInstanceBag<?> oldValue, BeanInstanceBag<?> newValue) {
+        public boolean replace(final Contextual<?> key, final BeanInstanceBag<?> oldValue, final BeanInstanceBag<?> newValue) {
             return delegate.replace(key(key), oldValue, newValue);
         }
 
@@ -204,12 +204,12 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public boolean containsKey(Object key) {
+        public boolean containsKey(final Object key) {
             return session.getAttribute(key(key)) != null;
         }
 
         @Override
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             throw new UnsupportedOperationException();
         }
 
@@ -224,12 +224,12 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public boolean replace(Contextual<?> key, BeanInstanceBag<?> oldValue, BeanInstanceBag<?> newValue) {
+        public boolean replace(final Contextual<?> key, final BeanInstanceBag<?> oldValue, final BeanInstanceBag<?> newValue) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public BeanInstanceBag<?> replace(Contextual<?> key, BeanInstanceBag<?> value) {
+        public BeanInstanceBag<?> replace(final Contextual<?> key, final BeanInstanceBag<?> value) {
             throw new UnsupportedOperationException();
         }
 
@@ -249,7 +249,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> put(Contextual<?> key, BeanInstanceBag<?> value) {
+        public BeanInstanceBag<?> put(final Contextual<?> key, final BeanInstanceBag<?> value) {
             final BeanInstanceBag<?> bag = get(key);
             session.setAttribute(key(key), value);
             return bag;
@@ -264,7 +264,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
 
         @Override
         public void putAll(final Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
-            for (Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
+            for (final Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
                 put(e.getKey(), e.getValue());
             }
         }

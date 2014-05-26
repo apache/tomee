@@ -29,12 +29,12 @@ public class LazyStopLoader implements Loader, Lifecycle {
     private final Loader delegate;
     private ClassLoader classLoader;
 
-    public LazyStopLoader(Loader loader) {
+    public LazyStopLoader(final Loader loader) {
         delegate = loader;
     }
 
     @Override
-    public void addLifecycleListener(LifecycleListener listener) {
+    public void addLifecycleListener(final LifecycleListener listener) {
         if (delegate instanceof Lifecycle) {
             ((Lifecycle) delegate).addLifecycleListener(listener);
         }
@@ -49,7 +49,7 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public void removeLifecycleListener(LifecycleListener listener) {
+    public void removeLifecycleListener(final LifecycleListener listener) {
         if (delegate instanceof Lifecycle) {
             ((Lifecycle) delegate).removeLifecycleListener(listener);
         }
@@ -116,7 +116,7 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public void setContainer(Container container) {
+    public void setContainer(final Container container) {
         delegate.setContainer(container);
     }
 
@@ -126,7 +126,7 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public void setDelegate(boolean delegate) {
+    public void setDelegate(final boolean delegate) {
         this.delegate.setDelegate(delegate);
     }
 
@@ -141,17 +141,17 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public void setReloadable(boolean reloadable) {
+    public void setReloadable(final boolean reloadable) {
         delegate.setReloadable(reloadable);
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         delegate.addPropertyChangeListener(listener);
     }
 
     @Override
-    public void addRepository(String repository) {
+    public void addRepository(final String repository) {
         delegate.addRepository(repository);
     }
 
@@ -166,7 +166,7 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         delegate.removePropertyChangeListener(listener);
     }
 

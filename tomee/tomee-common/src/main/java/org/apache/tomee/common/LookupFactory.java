@@ -30,18 +30,18 @@ import java.util.Hashtable;
  */
 public class LookupFactory implements ObjectFactory {
 
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         if (!(object instanceof Reference)) return null;
 
         final Reference reference = ((Reference) object);
 
-        String jndiName = NamingUtil.getProperty(reference, NamingUtil.JNDI_NAME);
+        final String jndiName = NamingUtil.getProperty(reference, NamingUtil.JNDI_NAME);
 
         if (jndiName == null) return null;
 
         try {
             return context.lookup(jndiName.replaceFirst("^java:", ""));
-        } catch (NameNotFoundException e) {
+        } catch (final NameNotFoundException e) {
             return new InitialContext().lookup(jndiName);
         }
     }

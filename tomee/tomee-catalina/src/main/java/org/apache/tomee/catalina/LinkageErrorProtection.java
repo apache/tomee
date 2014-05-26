@@ -25,9 +25,9 @@ import org.apache.openejb.util.doc.Revisit;
 @Revisit("this is here to work around LinkageErrors that can occur - seems most often in mac")
 public class LinkageErrorProtection {
 
-    public static void preload(StandardContext standardContext) {
+    public static void preload(final StandardContext standardContext) {
         try {
-            String[] classNames = {
+            final String[] classNames = {
                     "javax.servlet.jsp.ErrorData",
                     "javax.servlet.jsp.HttpJspPage",
                     "javax.servlet.jsp.JspApplicationContext",
@@ -90,28 +90,28 @@ public class LinkageErrorProtection {
                     "javax.servlet.jsp.tagext.VariableInfo",
             };
 
-            for (String className : classNames) {
+            for (final String className : classNames) {
                 try {
                     load(className, standardContext);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     // no-op
                 }
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // not critical, this is only to avoid possible jsp LinkageError in Oracle JDK 1.6
         }
     }
 
-    private static void load(String className, StandardContext standardContext) {
+    private static void load(final String className, final StandardContext standardContext) {
         final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         try {
             classLoader.loadClass(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // no-op
-        } catch (LinkageError e) {
+        } catch (final LinkageError e) {
             try {
                 classLoader.loadClass(className);
-            } catch (ClassNotFoundException e2) {
+            } catch (final ClassNotFoundException e2) {
                 // no-op
             }
         }

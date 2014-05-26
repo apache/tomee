@@ -29,9 +29,9 @@ import javax.transaction.UserTransaction;
 import java.util.Hashtable;
 
 public class UserTransactionFactory implements ObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // get the transaction manager
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         if (transactionManager == null) {
             throw new NamingException("transaction manager not found");
         }

@@ -29,16 +29,16 @@ import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 
 public class SystemComponentFactory implements ObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
-        Reference ref = (Reference) object;
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
+        final Reference ref = (Reference) object;
 
         // load the component type class
-        String className = getProperty(ref, COMPONENT_TYPE);
-        Class<?> clazz = loadClass(className);
+        final String className = getProperty(ref, COMPONENT_TYPE);
+        final Class<?> clazz = loadClass(className);
         if (clazz == null) return null;
 
         // lookup the value
-        Object value = SystemInstance.get().getComponent(clazz);
+        final Object value = SystemInstance.get().getComponent(clazz);
         return value;
     }
 }

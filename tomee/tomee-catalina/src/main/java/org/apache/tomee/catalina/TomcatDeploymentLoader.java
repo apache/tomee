@@ -26,7 +26,7 @@ public class TomcatDeploymentLoader extends DeploymentLoader {
     private StandardContext standardContext = null;
     private String moduleId = null;
 
-    public TomcatDeploymentLoader(StandardContext standardContext, String moduleId) {
+    public TomcatDeploymentLoader(final StandardContext standardContext, final String moduleId) {
         this.standardContext = standardContext;
         this.moduleId = moduleId;
     }

@@ -28,7 +28,7 @@ public class ContextValue extends LinkRef {
 
     private final Collection<String> links = new TreeSet<String>();
 
-    public ContextValue(String linkName) {
+    public ContextValue(final String linkName) {
         super(linkName);
     }
 
@@ -38,7 +38,7 @@ public class ContextValue extends LinkRef {
         }
 
         // else try to get BeanContext to get linkname
-        ThreadContext tc = ThreadContext.getThreadContext();
+        final ThreadContext tc = ThreadContext.getThreadContext();
         if (tc != null && tc.getBeanContext() != null) {
             return "java:" + linkName(tc.getBeanContext().getModuleID(), super.getLinkName());
         }
@@ -47,15 +47,15 @@ public class ContextValue extends LinkRef {
         throw new NamingException("more than one module binding match this name " + super.getLinkName());
     }
 
-    public void addValue(String link) {
+    public void addValue(final String link) {
         links.add(link);
     }
 
-    public boolean hasLink(String link) {
+    public boolean hasLink(final String link) {
         return links.contains(link);
     }
 
-    public static String linkName(String moduleId, String name) {
+    public static String linkName(final String moduleId, final String name) {
         return MODULES_PREFIX + moduleId + "/" + name;
     }
 }

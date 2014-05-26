@@ -52,7 +52,7 @@ public class TomcatEmbedder {
 	 * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
 	 * @param catalinaCl The ClassLoader which loaded the ServletConfig class
 	 */
-    public static void embed(Properties properties, ClassLoader catalinaCl) {
+    public static void embed(final Properties properties, final ClassLoader catalinaCl) {
         if (catalinaCl == null) throw new NullPointerException("catalinaCl is null");
         if (properties == null) throw new NullPointerException("properties is null");
 
@@ -60,32 +60,32 @@ public class TomcatEmbedder {
             throw new IllegalArgumentException("properties must contain the tomee.war property");
         }
         // openejbWar represents the absolute path of the openejb webapp i.e. the openejb directory
-        File openejbWar = new File(properties.getProperty(TOMEE_WAR_NAME));
+        final File openejbWar = new File(properties.getProperty(TOMEE_WAR_NAME));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("tomee.war is not a directory: " + openejbWar);
         }
         // retrieve the current ClassLoader
-        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
         try {
             // WebappClassLoader childCl = new WebappClassLoader(catalinaCl)
-            Class<?> webappClClass = catalinaCl.loadClass("org.apache.catalina.loader.WebappClassLoader");
-            ClassLoader childCl = (ClassLoader) webappClClass.getConstructor(ClassLoader.class).newInstance(catalinaCl);
+            final Class<?> webappClClass = catalinaCl.loadClass("org.apache.catalina.loader.WebappClassLoader");
+            final ClassLoader childCl = (ClassLoader) webappClClass.getConstructor(ClassLoader.class).newInstance(catalinaCl);
 
             // childCl.addRepository(tomee-loader.jar)
             // Use reflection to add the tomee-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
-            File thisJar = getThisJar();
-            String thisJarUrl = thisJar.toURI().toString();
+            final File thisJar = getThisJar();
+            final String thisJarUrl = thisJar.toURI().toString();
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJarUrl);
 
             // childCl.addRepository(openejb-loader.jar)
             // Use reflection to add the openejb-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
 
-            File jarFile = findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX);
-            String openejbLoaderUrl = jarFile.toURI().toString();
+            final File jarFile = findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX);
+            final String openejbLoaderUrl = jarFile.toURI().toString();
 
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, openejbLoaderUrl);
 
@@ -94,11 +94,11 @@ public class TomcatEmbedder {
 
             // TomcatHook.hook()
             //This is loaded by childCl and is defined in the tomee-loader
-            Class<?> tomcatUtilClass = childCl.loadClass("org.apache.tomee.loader.TomcatHook");
-            Method hookMethod = tomcatUtilClass.getDeclaredMethod("hook", Properties.class);
+            final Class<?> tomcatUtilClass = childCl.loadClass("org.apache.tomee.loader.TomcatHook");
+            final Method hookMethod = tomcatUtilClass.getDeclaredMethod("hook", Properties.class);
             hookMethod.setAccessible(true);
             hookMethod.invoke(null, properties);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
@@ -121,11 +121,11 @@ public class TomcatEmbedder {
      * @param clazz class file
      * @return location of the jar file that contains given class
      */
-    private static File jarLocation(Class<?> clazz) {
+    private static File jarLocation(final Class<?> clazz) {
         try {
-            String classFileName = clazz.getName().replace(".", "/") + ".class";
+            final String classFileName = clazz.getName().replace(".", "/") + ".class";
 
-            URL classURL = clazz.getClassLoader().getResource(classFileName);
+            final URL classURL = clazz.getClassLoader().getResource(classFileName);
 
             URI uri = null;
             String url = classURL.toExternalForm();
@@ -156,7 +156,7 @@ public class TomcatEmbedder {
 
             path = path.replaceAll("\\+", "%2B");
             return new File(URLDecoder.decode(path));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -168,14 +168,14 @@ public class TomcatEmbedder {
      * @param namePrefix prefix of the jar file
      * @return path to file
      */
-    private static File findOpenEJBJar(File tomeeWar, String namePrefix) {
-        File openEJBLibDir = new File(tomeeWar, "lib");
+    private static File findOpenEJBJar(final File tomeeWar, final String namePrefix) {
+        final File openEJBLibDir = new File(tomeeWar, "lib");
         if (openEJBLibDir == null) return null;
 
-        File openejbLoaderJar = null;
+        final File openejbLoaderJar = null;
         final File[] files = openEJBLibDir.listFiles();
         if (files != null) {
-            for (File file : files) {
+            for (final File file : files) {
                 if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
                     return file;
                 }

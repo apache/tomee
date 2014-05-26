@@ -26,12 +26,12 @@ public class IncludeExcludeFilter implements Filter {
     private Filter include;
     private Filter exclude;
 
-    public IncludeExcludeFilter(Filter include, Filter exclude) {
+    public IncludeExcludeFilter(final Filter include, final Filter exclude) {
         this.include = include;
         this.exclude = exclude;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         if (include.accept(name)) return !exclude.accept(name);
         return false;
     }

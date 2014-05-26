@@ -21,25 +21,25 @@ import java.util.LinkedList;
 
 public class InstallerTools {
 
-    public static Object invokeStaticNoArgMethod(String className, String propertyName) {
+    public static Object invokeStaticNoArgMethod(final String className, final String propertyName) {
         try {
-            Class<?> clazz = loadClass(className, Installer.class.getClassLoader());
-            Method method = clazz.getMethod(propertyName);
+            final Class<?> clazz = loadClass(className, Installer.class.getClassLoader());
+            final Method method = clazz.getMethod(propertyName);
             return method.invoke(null, (Object[]) null);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return null;
         }
     }
 
-    public static Class<?> loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
-        LinkedList<ClassLoader> loaders = new LinkedList<ClassLoader>();
+    public static Class<?> loadClass(final String className, final ClassLoader classLoader) throws ClassNotFoundException {
+        final LinkedList<ClassLoader> loaders = new LinkedList<ClassLoader>();
         for (ClassLoader loader = classLoader; loader != null; loader = loader.getParent()) {
             loaders.addFirst(loader);
         }
-        for (ClassLoader loader : loaders) {
+        for (final ClassLoader loader : loaders) {
             try {
                 return Class.forName(className, true, loader);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // no-op
             }
         }

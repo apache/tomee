@@ -90,12 +90,12 @@ public class EmbeddedTomEEContainer extends EJBContainer {
 
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
         @Override
-        public EJBContainer createEJBContainer(Map<?, ?> properties) {
-            Object provider = properties.get(EJBContainer.PROVIDER);
+        public EJBContainer createEJBContainer(final Map<?, ?> properties) {
+            final Object provider = properties.get(EJBContainer.PROVIDER);
             int ejbContainerProviders = 1;
             try {
                 ejbContainerProviders = ProviderLocator.getServices(EJBContainerProvider.class.getName(), EJBContainer.class, Thread.currentThread().getContextClassLoader()).size();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
 
@@ -113,10 +113,10 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             final Object modules = properties.get(EJBContainer.MODULES);
 
             tomEEContainer = new EmbeddedTomEEContainer();
-            Configuration configuration = new Configuration();
+            final Configuration configuration = new Configuration();
             if (properties.containsKey(TOMEE_EJBCONTAINER_HTTP_PORT)) {
                 int port;
-                Object portValue = properties.get(TOMEE_EJBCONTAINER_HTTP_PORT);
+                final Object portValue = properties.get(TOMEE_EJBCONTAINER_HTTP_PORT);
                 if (portValue instanceof Integer) {
                     port = (Integer) portValue;
                 } else if (portValue instanceof String) {
@@ -152,7 +152,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                     if (files.size() == 0) {
                         try {
                             tomEEContainer.close();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // no-op
                         }
                         tomEEContainer = null;
@@ -164,13 +164,13 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 }
 
                 return tomEEContainer;
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 throw new EJBException(e);
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 throw new EJBException(e);
-            } catch (ValidationException ve) {
+            } catch (final ValidationException ve) {
                 throw ve;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (e instanceof EJBException) {
                     throw (EJBException) e;
                 }
@@ -179,7 +179,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 if (tomEEContainer == null) {
                     try {
                         tomEEContainer.close();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // no-op
                     }
                 }

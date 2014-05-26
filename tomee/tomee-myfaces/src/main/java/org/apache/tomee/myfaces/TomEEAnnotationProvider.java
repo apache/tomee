@@ -52,20 +52,20 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
             return Collections.emptyMap();
         }
 
-        for (Map.Entry<String, Set<String>> entry : scanned.entrySet()) {
+        for (final Map.Entry<String, Set<String>> entry : scanned.entrySet()) {
             final Class<? extends Annotation> annotation;
             try {
                 annotation = (Class<? extends Annotation>) cl.loadClass(entry.getKey());
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 continue;
             }
 
             final Set<String> list = entry.getValue();
             final Set<Class<?>> annotated = new HashSet<Class<?>>(list.size());
-            for (String name : list) {
+            for (final String name : list) {
                 try {
                     annotated.add(cl.loadClass(name));
-                } catch (ClassNotFoundException ignored) {
+                } catch (final ClassNotFoundException ignored) {
                     LOGGER.warning("class '" + name + "' was found but can't be loaded as a JSF class");
                 }
             }

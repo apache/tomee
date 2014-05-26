@@ -40,20 +40,20 @@ public class UrlSet implements Iterable<URL> {
 
     private final Map<String,URL> urls;
 
-    public UrlSet(ClassLoader classLoader) throws IOException {
+    public UrlSet(final ClassLoader classLoader) throws IOException {
         this(getUrls(classLoader));
     }
 
-    public UrlSet(URL... urls){
+    public UrlSet(final URL... urls){
         this(Arrays.asList(urls));
     }
     /**
      * Ignores all URLs that are not "jar" or "file"
      * @param urls
      */
-    public UrlSet(Collection<URL> urls){
+    public UrlSet(final Collection<URL> urls){
         this.urls = new HashMap<String,URL>();
-        for (URL location : urls) {
+        for (final URL location : urls) {
             try {
 //                if (location.getProtocol().equals("file")) {
 //                    try {
@@ -67,53 +67,53 @@ public class UrlSet implements Iterable<URL> {
 //                    this.urls.put(location.toExternalForm(), location);
 //                }
                 this.urls.put(location.toExternalForm(), location);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private UrlSet(Map<String, URL> urls) {
+    private UrlSet(final Map<String, URL> urls) {
         this.urls = urls;
     }
 
-    public UrlSet include(UrlSet urlSet){
-        Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+    public UrlSet include(final UrlSet urlSet){
+        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
         urls.putAll(urlSet.urls);
         return new UrlSet(urls);
     }
 
 
-    public UrlSet include(URL url){
-        Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+    public UrlSet include(final URL url){
+        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
         urls.put(url.toExternalForm(), url);
         return new UrlSet(urls);
     }
 
-    public UrlSet exclude(UrlSet urlSet) {
-        Map<String, URL> urls = new HashMap<String, URL>(this.urls);
-        Map<String, URL> parentUrls = urlSet.urls;
-        for (String url : parentUrls.keySet()) {
+    public UrlSet exclude(final UrlSet urlSet) {
+        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+        final Map<String, URL> parentUrls = urlSet.urls;
+        for (final String url : parentUrls.keySet()) {
             urls.remove(url);
         }
         return new UrlSet(urls);
     }
 
-    public UrlSet exclude(URL url) {
-        Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+    public UrlSet exclude(final URL url) {
+        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
         urls.remove(url.toExternalForm());
         return new UrlSet(urls);
     }
 
-    public UrlSet exclude(ClassLoader parent) throws IOException {
+    public UrlSet exclude(final ClassLoader parent) throws IOException {
         return exclude(new UrlSet(parent));
     }
 
-    public UrlSet exclude(File file) throws MalformedURLException {
+    public UrlSet exclude(final File file) throws MalformedURLException {
         return exclude(relative(file));
     }
 
-    public UrlSet exclude(String pattern) throws MalformedURLException {
+    public UrlSet exclude(final String pattern) throws MalformedURLException {
         return filter(invert(patterns(pattern)));
     }
 
@@ -123,7 +123,7 @@ public class UrlSet implements Iterable<URL> {
      * @throws MalformedURLException
      */
     public UrlSet excludeJavaExtDirs() throws MalformedURLException {
-        String extDirs = System.getProperty("java.ext.dirs");
+        final String extDirs = System.getProperty("java.ext.dirs");
         return extDirs == null ? this : excludePaths(extDirs);
     }
 
@@ -134,12 +134,12 @@ public class UrlSet implements Iterable<URL> {
      * @throws MalformedURLException
      */
     public UrlSet excludeJavaEndorsedDirs() throws MalformedURLException {
-        String endorsedDirs = System.getProperty("java.endorsed.dirs");
+        final String endorsedDirs = System.getProperty("java.endorsed.dirs");
         return endorsedDirs == null ? this : excludePaths(endorsedDirs);
     }
 
     public UrlSet excludeJavaHome() throws MalformedURLException {
-        String path = System.getProperty("java.home");
+        final String path = System.getProperty("java.home");
 
         File java = new File(path);
 
@@ -150,20 +150,20 @@ public class UrlSet implements Iterable<URL> {
         return exclude(java);
     }
 
-    public UrlSet excludePaths(String pathString) throws MalformedURLException {
-        String[] paths = pathString.split(File.pathSeparator);
+    public UrlSet excludePaths(final String pathString) throws MalformedURLException {
+        final String[] paths = pathString.split(File.pathSeparator);
         UrlSet urlSet = this;
-        for (String path : paths) {
-            File file = new File(path);
+        for (final String path : paths) {
+            final File file = new File(path);
             urlSet = urlSet.exclude(file);
         }
         return urlSet;
     }
 
-    public UrlSet filter(Filter filter) {
-        Map<String, URL> urls = new HashMap<String, URL>();
-        for (Map.Entry<String, URL> entry : this.urls.entrySet()) {
-            String url = entry.getKey();
+    public UrlSet filter(final Filter filter) {
+        final Map<String, URL> urls = new HashMap<String, URL>();
+        for (final Map.Entry<String, URL> entry : this.urls.entrySet()) {
+            final String url = entry.getKey();
             if (filter.accept(url)){
                 urls.put(url, entry.getValue());
             }
@@ -171,15 +171,15 @@ public class UrlSet implements Iterable<URL> {
         return new UrlSet(urls);
     }
 
-    public UrlSet matching(String pattern) {
+    public UrlSet matching(final String pattern) {
         return filter(patterns(pattern));
     }
 
-    public UrlSet relative(File file) throws MalformedURLException {
-        String urlPath = file.toURI().toURL().toExternalForm();
-        Map<String, URL> urls = new HashMap<String, URL>();
-        for (Map.Entry<String, URL> entry : this.urls.entrySet()) {
-            String url = entry.getKey();
+    public UrlSet relative(final File file) throws MalformedURLException {
+        final String urlPath = file.toURI().toURL().toExternalForm();
+        final Map<String, URL> urls = new HashMap<String, URL>();
+        for (final Map.Entry<String, URL> entry : this.urls.entrySet()) {
+            final String url = entry.getKey();
             if (url.startsWith(urlPath) || url.startsWith("jar:"+urlPath)){
                 urls.put(url, entry.getValue());
             }
@@ -199,12 +199,12 @@ public class UrlSet implements Iterable<URL> {
         return getUrls().iterator();
     }
 
-    private static List<URL> getUrls(ClassLoader classLoader) throws IOException {
-        List<URL> list = new ArrayList<URL>();
-        ArrayList<URL> urls = Collections.list(classLoader.getResources("META-INF"));
+    private static List<URL> getUrls(final ClassLoader classLoader) throws IOException {
+        final List<URL> list = new ArrayList<URL>();
+        final ArrayList<URL> urls = Collections.list(classLoader.getResources("META-INF"));
         for (URL url : urls) {
             String externalForm = url.toExternalForm();
-            int i = externalForm.lastIndexOf("META-INF");
+            final int i = externalForm.lastIndexOf("META-INF");
             externalForm = externalForm.substring(0, i);
             url = new URL(externalForm);
             list.add(url);

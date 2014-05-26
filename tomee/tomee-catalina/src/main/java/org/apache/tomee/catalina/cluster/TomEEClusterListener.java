@@ -77,7 +77,7 @@ public class TomEEClusterListener extends ClusterListener {
                         ioFile = new File(file);
 
                         LOGGER.info("dumped archive: " + msg.getFile() + " to " + file);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOGGER.error("can't dump archive: "+ file, e);
                     }
                 }
@@ -129,7 +129,7 @@ public class TomEEClusterListener extends ClusterListener {
         SERVICE.shutdown();
         try {
             SERVICE.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             SERVICE.shutdownNow();
         }
     }
@@ -150,9 +150,9 @@ public class TomEEClusterListener extends ClusterListener {
             if (!isDeployed(app)) {
                 try {
                     deployer().deploy(app, REMOTE_DEPLOY_PROPERTIES);
-                } catch (OpenEJBException e) {
+                } catch (final OpenEJBException e) {
                     LOGGER.warning("can't deploy: " + app, e);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     LOGGER.warning("can't find deployer", e);
                 }
             }
@@ -171,11 +171,11 @@ public class TomEEClusterListener extends ClusterListener {
             if (isDeployed(app)) {
                 try {
                     deployer().undeploy(app);
-                } catch (UndeployException e) {
+                } catch (final UndeployException e) {
                     LOGGER.error("can't undeploy app", e);
-                } catch (NoSuchApplicationException e) {
+                } catch (final NoSuchApplicationException e) {
                     LOGGER.warning("no app toi deploy", e);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     LOGGER.warning("can't find deployer", e);
                 }
             }

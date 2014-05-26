@@ -39,24 +39,24 @@ public class TomEERealm extends CombinedRealm {
     }
 
     @Override
-    public Principal authenticate(String username, String password) {
+    public Principal authenticate(final String username, final String password) {
         return logInTomEE(super.authenticate(username, password));
     }
 
     @Override
-    public Principal authenticate(X509Certificate[] certs) {
+    public Principal authenticate(final X509Certificate[] certs) {
         return logInTomEE(super.authenticate(certs));
     }
 
     @Override
-    public Principal authenticate(String username, String clientDigest,
-                                  String nonce, String nc, String cnonce, String qop,
-                                  String realmName, String md5a2) {
+    public Principal authenticate(final String username, final String clientDigest,
+                                  final String nonce, final String nc, final String cnonce, final String qop,
+                                  final String realmName, final String md5a2) {
         return logInTomEE(super.authenticate(username, clientDigest, nonce, nc, cnonce, qop, realmName, md5a2));
     }
 
     @Override
-    public Principal authenticate(GSSContext gssContext, boolean storeCreds) {
+    public Principal authenticate(final GSSContext gssContext, final boolean storeCreds) {
         return logInTomEE(super.authenticate(gssContext, storeCreds));
     }
 
@@ -80,7 +80,7 @@ public class TomEERealm extends CombinedRealm {
             return ((GenericPrincipal) principal).hasRole(role);
         }
 
-        for (Realm realm : realms) { // when used implicitely (always?) realms.size == 1 so no need of a strategy
+        for (final Realm realm : realms) { // when used implicitely (always?) realms.size == 1 so no need of a strategy
             if (realm.hasRole(wrapper, principal, rawRole)) {
                 return true;
             }

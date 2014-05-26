@@ -34,11 +34,11 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 public abstract class AbstractObjectFactory implements ObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
-        Reference ref = (Reference) object;
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
+        final Reference ref = (Reference) object;
 
         // the jndi context to use for the lookup (usually null which is the default context)
-        String jndiProviderId = NamingUtil.getProperty(ref, NamingUtil.JNDI_PROVIDER_ID);
+        final String jndiProviderId = NamingUtil.getProperty(ref, NamingUtil.JNDI_PROVIDER_ID);
 
         // the jndi name
         String jndiName = NamingUtil.getProperty(ref, NamingUtil.JNDI_NAME);
@@ -49,7 +49,7 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
         // look up the reference
         try {
             return lookup(jndiProviderId, jndiName);
-        } catch (NameNotFoundException nnfe) { // EE.5.18: try using java:module/<shortName> prefix
+        } catch (final NameNotFoundException nnfe) { // EE.5.18: try using java:module/<shortName> prefix
 
             // 2nd try
             if (jndiName.startsWith("java:")) {
@@ -62,7 +62,7 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
                     props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
                     try {
                         return new InitialContext(props).lookup(jndiName);
-                    } catch (NameNotFoundException ignored) {
+                    } catch (final NameNotFoundException ignored) {
                         // no-op
                     }
                 }
@@ -73,14 +73,14 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
                 final String moduleName = "java:module/" + Strings.lastPart(ref.getClassName(), '.');
                 try {
                     return new InitialContext().lookup(moduleName);
-                } catch (NameNotFoundException ignored) {
+                } catch (final NameNotFoundException ignored) {
                     // no-op
-                } catch (NoInitialContextException nice) {
+                } catch (final NoInitialContextException nice) {
                     final Properties props = new Properties();
                     props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
                     try {
                         return new InitialContext(props).lookup(moduleName);
-                    } catch (NameNotFoundException ignored) {
+                    } catch (final NameNotFoundException ignored) {
                         // no-op
                     }
                 }
@@ -92,8 +92,8 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
 
     protected abstract String buildJndiName(Reference reference) throws NamingException;
 
-    protected Object lookup(String jndiProviderId, String jndiName) throws NamingException {
-        Context externalContext = getContext(jndiProviderId);
+    protected Object lookup(final String jndiProviderId, final String jndiName) throws NamingException {
+        final Context externalContext = getContext(jndiProviderId);
         synchronized (externalContext) {
             /* According to the JNDI SPI specification multiple threads may not access the same JNDI
             Context *instance* concurrently. Since we don't know the origines of the federated context we must
@@ -103,15 +103,15 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
         }
     }
 
-    protected Context getContext(String jndiProviderId) throws NamingException {
+    protected Context getContext(final String jndiProviderId) throws NamingException {
         if (jndiProviderId != null) {
-            String contextJndiName = "java:openejb/remote_jndi_contexts/" + jndiProviderId;
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            Context context = (Context) containerSystem.getJNDIContext().lookup(contextJndiName);
+            final String contextJndiName = "java:openejb/remote_jndi_contexts/" + jndiProviderId;
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final Context context = (Context) containerSystem.getJNDIContext().lookup(contextJndiName);
             return context;
         } else {
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            Context context = containerSystem.getJNDIContext();
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final Context context = containerSystem.getJNDIContext();
             return context;
         }
     }

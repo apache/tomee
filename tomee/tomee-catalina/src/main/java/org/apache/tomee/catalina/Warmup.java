@@ -161,7 +161,7 @@ public class Warmup {
 
         try { // see org.apache.openejb.Core
             Class.forName("org.apache.openejb.util.Logger", true, loader);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 
@@ -174,7 +174,7 @@ public class Warmup {
             public void run() {
                 try {
                     TldScanner.scan(loader);
-                } catch (Throwable throwable) {
+                } catch (final Throwable throwable) {
                     // no-op
                 }
             }
@@ -196,7 +196,7 @@ public class Warmup {
                     for (int c = offset; c < max; c++) {
                         try {
                             Class.forName(classes[c], true, loader);
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             // no-op
                         }
                     }
@@ -211,7 +211,7 @@ public class Warmup {
             semaphore.acquire(permits);
             tld.join();
 //            jaxb.join();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
     }

@@ -30,7 +30,7 @@ import org.apache.tomee.catalina.event.AfterApplicationCreated;
 public class TomeeJaxRsService implements Service {
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
         final SystemInstance system = SystemInstance.get();
 
         TomcatRsRegistry tomcatRestHandler = (TomcatRsRegistry) system.getComponent(RsRegistry.class);
@@ -46,7 +46,7 @@ public class TomeeJaxRsService implements Service {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
-        RESTService component = SystemInstance.get().getComponent(RESTService.class);
+        final RESTService component = SystemInstance.get().getComponent(RESTService.class);
         if (component == null) return;
         component.afterApplicationCreated(event.getApp(), event.getWeb());
     }

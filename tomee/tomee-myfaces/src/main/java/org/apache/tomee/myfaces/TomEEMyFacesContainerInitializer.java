@@ -101,7 +101,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                     if (!Arrays.asList(tomcatCtx.findApplicationListeners()).contains(StartupServletContextListener.class.getName())) {
                         addListener(ctx);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // add it, not important we'll simply get a warning saying it is already here
                     addListener(ctx);
                 }
@@ -120,7 +120,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 if (tomcatCtx instanceof StandardContext) {
                     final Container[] servlets = tomcatCtx.findChildren();
                     if (servlets != null) {
-                        for (Container s : servlets) {
+                        for (final Container s : servlets) {
                             if (s instanceof Wrapper) {
                                 if ("javax.faces.webapp.FacesServlet".equals(((Wrapper) s).getServletClass())
                                         || "Faces Servlet".equals(s.getName())) {
@@ -130,7 +130,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
@@ -153,8 +153,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
 
             final String configFilesAttrValue = servletContext.getInitParameter(FacesServlet.CONFIG_FILES_ATTR);
             if (configFilesAttrValue != null) {
-                String[] configFiles = configFilesAttrValue.split(",");
-                for (String file : configFiles) {
+                final String[] configFiles = configFilesAttrValue.split(",");
+                for (final String file : configFiles) {
                     if (servletContext.getResource(file.trim()) != null) {
                         return true;
                     }
@@ -183,7 +183,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
 
     private static Object get(final Class<?> clazz, final Object facade) throws Exception {
         final Field field = clazz.getDeclaredField("context");
-        boolean acc = field.isAccessible();
+        final boolean acc = field.isAccessible();
         field.setAccessible(true);
         try {
             return field.get(facade);

@@ -25,11 +25,11 @@ public class PatternFilter implements Filter {
 
     private final Pattern pattern;
 
-    public PatternFilter(String expression) {
+    public PatternFilter(final String expression) {
         this(Pattern.compile(expression));
     }
 
-    public PatternFilter(Pattern pattern) {
+    public PatternFilter(final Pattern pattern) {
         assert pattern != null;
         this.pattern = pattern;
     }
@@ -38,16 +38,16 @@ public class PatternFilter implements Filter {
         return pattern;
     }
 
-    public boolean accept(String name) {
+    public boolean accept(final String name) {
         return pattern.matcher(name).matches();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PatternFilter that = (PatternFilter) o;
+        final PatternFilter that = (PatternFilter) o;
 
         return pattern.pattern().equals(that.pattern.pattern());
     }

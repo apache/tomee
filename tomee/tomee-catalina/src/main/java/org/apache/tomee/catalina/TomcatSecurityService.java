@@ -49,10 +49,10 @@ public class TomcatSecurityService extends AbstractSecurityService {
     private Realm defaultRealm;
 
     public TomcatSecurityService() {
-        Server server = TomcatHelper.getServer();
-        for (Service service : server.findServices()) {
+        final Server server = TomcatHelper.getServer();
+        for (final Service service : server.findServices()) {
             if (service.getContainer() instanceof Engine) {
-                Engine engine = (Engine) service.getContainer();
+                final Engine engine = (Engine) service.getContainer();
                 if (engine.getRealm() != null) {
                     defaultRealm = engine.getRealm();
                     break;
@@ -69,7 +69,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             final GenericPrincipal genericPrincipal = (GenericPrincipal) tomcatUser.getTomcatPrincipal();
             final String[] roles = genericPrincipal.getRoles();
             if (roles != null) {
-                for (String userRole : roles) {
+                for (final String userRole : roles) {
                     if (userRole.equals(role)) {
                         return true;
                     }
@@ -80,7 +80,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return super.isCallerInRole(role);
     }
 
-    public UUID login(String realmName, String username, String password) throws LoginException {
+    public UUID login(final String realmName, final String username, final String password) throws LoginException {
         final Realm realm = findRealm(realmName);
         if (realm == null) {
             throw new LoginException("No Tomcat realm available");
@@ -111,24 +111,24 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return defaultRealm;
     }
 
-    private Subject createSubject(Realm realm, Principal principal) {
+    private Subject createSubject(final Realm realm, final Principal principal) {
         final Set<Principal> principals = new HashSet<Principal>();
         principals.add(new TomcatUser(realm, principal));
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
-    public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles) {
+    public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
         final Set<String> roles = new LinkedHashSet<String>(logicalRoles.size());
-        for (String logicalRole : logicalRoles) {
-            for (Principal principal : principals) {
+        for (final String logicalRole : logicalRoles) {
+            for (final Principal principal : principals) {
                 if (principal instanceof TomcatUser) {
-                    TomcatUser user = (TomcatUser) principal;
+                    final TomcatUser user = (TomcatUser) principal;
                     if (TomcatHelper.hasRole(user.getRealm(), user.getTomcatPrincipal(), logicalRole)) {
                         roles.add(logicalRole);
                         break;
                     }
                 } else if (principal != null) {
-                    String name = principal.getName();
+                    final String name = principal.getName();
                     if (logicalRole.equals(name)) {
                         roles.add(logicalRole);
                     }
@@ -155,26 +155,26 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return super.getCallerPrincipal();
     }
 
-    public Object enterWebApp(Realm realm, Principal principal, String runAs) {
+    public Object enterWebApp(final Realm realm, final Principal principal, final String runAs) {
         Identity newIdentity = null;
         if (principal != null) {
-            Subject newSubject = createSubject(realm, principal);
+            final Subject newSubject = createSubject(realm, principal);
             newIdentity = new Identity(newSubject, null);
         }
 
-        Identity oldIdentity = clientIdentity.get();
-        WebAppState webAppState = new WebAppState(oldIdentity, runAs != null);
+        final Identity oldIdentity = clientIdentity.get();
+        final WebAppState webAppState = new WebAppState(oldIdentity, runAs != null);
         clientIdentity.set(newIdentity);
 
         if (runAs != null) {
-            Subject runAsSubject = createRunAsSubject(runAs);
+            final Subject runAsSubject = createRunAsSubject(runAs);
             runAsStack.get().addFirst(runAsSubject);
         }
 
         return webAppState;
     }
 
-    public void exitWebApp(Object state) {
+    public void exitWebApp(final Object state) {
         if (state instanceof WebAppState) {
             final WebAppState webAppState = (WebAppState) state;
             if (webAppState.oldIdentity == null) {
@@ -203,7 +203,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
 
-    protected Subject createRunAsSubject(String role) {
+    protected Subject createRunAsSubject(final String role) {
         if (role == null) {
             return null;
         }
@@ -219,7 +219,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         private final Principal tomcatPrincipal;
 
 
-        public TomcatUser(Realm realm, Principal tomcatPrincipal) {
+        public TomcatUser(final Realm realm, final Principal tomcatPrincipal) {
             if (realm == null) {
                 throw new NullPointerException("realm is null");
             }
@@ -246,7 +246,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return "[TomcatUser: " + tomcatPrincipal + "]";
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }
@@ -254,7 +254,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
                 return false;
             }
 
-            TomcatUser that = (TomcatUser) o;
+            final TomcatUser that = (TomcatUser) o;
 
             return realm.equals(that.realm) && tomcatPrincipal.equals(that.tomcatPrincipal);
         }
@@ -270,7 +270,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     protected static class RunAsRole implements Principal {
         private final String name;
 
-        public RunAsRole(String name) {
+        public RunAsRole(final String name) {
             if (name == null) {
                 throw new NullPointerException("name is null");
             }
@@ -285,7 +285,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return "[RunAsRole: " + name + "]";
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }
@@ -293,7 +293,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
                 return false;
             }
 
-            RunAsRole runAsRole = (RunAsRole) o;
+            final RunAsRole runAsRole = (RunAsRole) o;
 
             return name.equals(runAsRole.name);
         }
@@ -308,7 +308,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         private final boolean hadRunAs;
 
 
-        public WebAppState(Identity oldIdentity, boolean hadRunAs) {
+        public WebAppState(final Identity oldIdentity, final boolean hadRunAs) {
             this.oldIdentity = oldIdentity;
             this.hadRunAs = hadRunAs;
         }

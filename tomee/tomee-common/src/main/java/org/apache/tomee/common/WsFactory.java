@@ -44,21 +44,21 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class WsFactory extends AbstractObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non resource-refs
         if (!(object instanceof ResourceRef)) {
             return null;
         }
 
-        Reference ref = (Reference) object;
+        final Reference ref = (Reference) object;
 
-        Object value;
+        final Object value;
         if (getProperty(ref, JNDI_NAME) != null) {
             // lookup the value in JNDI
             value = super.getObjectInstance(object, name, context, environment);
         } else {
             // load service class which is used to construct the port
-            String serviceClassName = getProperty(ref, WS_CLASS);
+            final String serviceClassName = getProperty(ref, WS_CLASS);
             Class<? extends Service> serviceClass = Service.class;
             if (serviceClassName != null) {
                 serviceClass = loadClass(serviceClassName).asSubclass(Service.class);
@@ -68,7 +68,7 @@ public class WsFactory extends AbstractObjectFactory {
             }
 
             // load the reference class which is the ultimate type of the port
-            Class<?> referenceClass = loadClass(ref.getClassName());
+            final Class<?> referenceClass = loadClass(ref.getClassName());
 
             // if ref class is a subclass of Service, use it for the service class
             if (referenceClass != null && Service.class.isAssignableFrom(referenceClass)) {
@@ -76,7 +76,7 @@ public class WsFactory extends AbstractObjectFactory {
             }
 
             // PORT ID
-            String serviceId = getProperty(ref, WS_ID);
+            final String serviceId = getProperty(ref, WS_ID);
 
             // Service QName
             QName serviceQName = null;
@@ -106,7 +106,7 @@ public class WsFactory extends AbstractObjectFactory {
             List<Injection> injections = getStaticValue(ref, "injections");
             if (injections == null) injections = Collections.emptyList();
 
-            JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceId,
+            final JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceId,
                     serviceQName,
                     serviceClass, portQName,
                     referenceClass,
@@ -120,7 +120,7 @@ public class WsFactory extends AbstractObjectFactory {
         return value;
     }
 
-    protected String buildJndiName(Reference reference) throws NamingException {
+    protected String buildJndiName(final Reference reference) throws NamingException {
         throw new UnsupportedOperationException();
     }
 }

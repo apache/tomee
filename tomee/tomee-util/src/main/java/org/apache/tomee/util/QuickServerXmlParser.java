@@ -101,7 +101,7 @@ public class QuickServerXmlParser extends DefaultHandler {
         try {
             final SAXParser parser = FACTORY.newSAXParser();
             parser.parse(serverXml, handler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op: using defaults
         }
         return handler;
@@ -112,7 +112,7 @@ public class QuickServerXmlParser extends DefaultHandler {
         try {
             final SAXParser parser = FACTORY.newSAXParser();
             parser.parse(new ByteArrayInputStream(serverXmlContents.getBytes()), handler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op: using defaults
         }
         return handler;

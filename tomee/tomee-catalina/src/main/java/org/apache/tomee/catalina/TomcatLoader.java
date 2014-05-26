@@ -113,7 +113,7 @@ public class TomcatLoader implements Loader {
      * ie use configuration before effective boot
      */
     @Deprecated
-    public void init(Properties properties) throws Exception {
+    public void init(final Properties properties) throws Exception {
         initSystemInstance(properties);
         initialize(properties);
     }
@@ -127,7 +127,7 @@ public class TomcatLoader implements Loader {
         SystemInstance.init(properties);
     }
 
-    public void initDefaults(Properties properties) {
+    public void initDefaults(final Properties properties) {
         setIfNull(properties, "openejb.system.apps", "true");
         setIfNull(properties, "openejb.deployments.classpath", "false");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
@@ -136,19 +136,19 @@ public class TomcatLoader implements Loader {
         setIfNull(properties, "openejb.provider.default", "org.apache.tomee");
     }
 
-    public void initialize(Properties properties) throws Exception {
+    public void initialize(final Properties properties) throws Exception {
         Warmup.warmup(); // better than static (we are sure we don't hit it too eagerly) and doesn't cost more since uses static block
 
         //Install Log
         OptionsLog.install();
 
         // install conf/openejb.xml and conf/logging.properties files
-        String openejbWarDir = properties.getProperty("tomee.war");
+        final String openejbWarDir = properties.getProperty("tomee.war");
         if (openejbWarDir != null) {
 
-            Paths paths = new Paths(new File(openejbWarDir));
+            final Paths paths = new Paths(new File(openejbWarDir));
             if (paths.verify()) {
-                Installer installer = new Installer(paths);
+                final Installer installer = new Installer(paths);
                 if (installer.getStatus() != Status.INSTALLED) {
                     installer.installConfigFiles();
                 }
@@ -174,7 +174,7 @@ public class TomcatLoader implements Loader {
         try {// in embedded mode we can easily remove it so check we can use it before setting it
             final Class<?> creatorClass = TomcatLoader.class.getClassLoader().loadClass("org.apache.tomee.jdbc.TomEEDataSourceCreator");
             SystemInstance.get().setProperty(ConfigurationFactory.OPENEJB_JDBC_DATASOURCE_CREATOR, creatorClass.getName());
-        } catch (Throwable ignored) {
+        } catch (final Throwable ignored) {
             // will use the defaul tone
         }
 
@@ -265,8 +265,8 @@ public class TomcatLoader implements Loader {
         ejbServer.init(ejbServerProps);
 
         // Add our naming context listener to the server which registers all Tomcat resources with OpenEJB
-        StandardServer standardServer = TomcatHelper.getServer();
-        OpenEJBNamingContextListener namingContextListener = new OpenEJBNamingContextListener(standardServer);
+        final StandardServer standardServer = TomcatHelper.getServer();
+        final OpenEJBNamingContextListener namingContextListener = new OpenEJBNamingContextListener(standardServer);
         // Standard server has no state property, so we check global naming context to determine if server is started yet
         if (standardServer.getGlobalNamingContext() != null) {
             namingContextListener.start();
@@ -282,7 +282,7 @@ public class TomcatLoader implements Loader {
             final String clazz = SystemInstance.get().getOptions().get("openejb.service.manager.class", "org.apache.tomee.catalina.TomEEServiceManager");
             try {
                 manager = (ServiceManager) cl.loadClass(clazz).newInstance();
-            } catch (ClassNotFoundException cnfe) {
+            } catch (final ClassNotFoundException cnfe) {
                 logger.severe("can't find the service manager " + clazz + ", the TomEE one will be used");
                 manager = new TomEEServiceManager();
             }
@@ -291,25 +291,25 @@ public class TomcatLoader implements Loader {
         } else {
             // WS
             try {
-                ServerService cxfService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.CxfService").newInstance();
+                final ServerService cxfService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.CxfService").newInstance();
                 cxfService.init(properties);
                 cxfService.start();
                 services.add(cxfService);
-            } catch (ClassNotFoundException ignored) {
+            } catch (final ClassNotFoundException ignored) {
                 // no-op
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.log(Level.SEVERE, "Webservices failed to start", e);
             }
 
             // REST
             try {
-                ServerService restService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
+                final ServerService restService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
                 restService.init(properties);
                 restService.start();
                 services.add(restService);
-            } catch (ClassNotFoundException ignored) {
+            } catch (final ClassNotFoundException ignored) {
                 // no-op
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.log(Level.SEVERE, "REST failed to start", e);
             }
         }
@@ -336,9 +336,9 @@ public class TomcatLoader implements Loader {
         }
     }
 
-    private boolean optionalService(Properties properties, String className) {
+    private boolean optionalService(final Properties properties, final String className) {
         try {
-            Service service = (Service) getClass().getClassLoader().loadClass(className).newInstance();
+            final Service service = (Service) getClass().getClassLoader().loadClass(className).newInstance();
             service.init(properties);
             return true;
         } catch (final ClassNotFoundException e) {
@@ -349,7 +349,7 @@ public class TomcatLoader implements Loader {
         return false;
     }
 
-    private void setIfNull(Properties properties, String key, String value) {
+    private void setIfNull(final Properties properties, final String key, final String value) {
         if (!properties.containsKey(key) && !System.getProperties().containsKey(key)) {
             properties.setProperty(key, value);
         }
@@ -359,10 +359,10 @@ public class TomcatLoader implements Loader {
      * Destroy system.
      */
     public static void destroy() {
-        for (ServerService s : services) {
+        for (final ServerService s : services) {
             try {
                 s.stop();
-            } catch (ServiceException ignored) {
+            } catch (final ServiceException ignored) {
                 // no-op
             }
         }
@@ -371,7 +371,7 @@ public class TomcatLoader implements Loader {
         if (manager != null) {
             try {
                 manager.stop();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 // no-op
             }
             manager = null;
@@ -381,17 +381,17 @@ public class TomcatLoader implements Loader {
         if (ejbServer != null) {
             try {
                 ejbServer.stop();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 // no-op
             }
             ejbServer = null;
         }
 
-        TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+        final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
         if (tomcatWebAppBuilder != null) {
             try {
                 tomcatWebAppBuilder.stop();
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
         }
@@ -406,24 +406,24 @@ public class TomcatLoader implements Loader {
      * @param tomcatWebAppBuilder tomcat web app builder instance
      * @param standardServer      tomcat server instance
      */
-    private void processRunningApplications(TomcatWebAppBuilder tomcatWebAppBuilder, StandardServer standardServer) {
-        for (org.apache.catalina.Service service : standardServer.findServices()) {
+    private void processRunningApplications(final TomcatWebAppBuilder tomcatWebAppBuilder, final StandardServer standardServer) {
+        for (final org.apache.catalina.Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
-                Engine engine = (Engine) service.getContainer();
-                for (Container engineChild : engine.findChildren()) {
+                final Engine engine = (Engine) service.getContainer();
+                for (final Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof Host) {
-                        Host host = (Host) engineChild;
-                        for (Container hostChild : host.findChildren()) {
+                        final Host host = (Host) engineChild;
+                        for (final Container hostChild : host.findChildren()) {
                             if (hostChild instanceof StandardContext) {
-                                StandardContext standardContext = (StandardContext) hostChild;
-                                int state = TomcatHelper.getContextState(standardContext);
+                                final StandardContext standardContext = (StandardContext) hostChild;
+                                final int state = TomcatHelper.getContextState(standardContext);
                                 if (state == 0) {
                                     // context only initialized
                                     tomcatWebAppBuilder.init(standardContext);
                                 } else if (state == 1) {
                                     // context already started
                                     standardContext.addParameter("openejb.start.late", "true");
-                                    ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+                                    final ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
                                     Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
                                     try {
                                         tomcatWebAppBuilder.init(standardContext);

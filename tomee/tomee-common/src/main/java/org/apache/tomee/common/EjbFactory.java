@@ -34,7 +34,7 @@ import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 
 public class EjbFactory extends AbstractObjectFactory {
-    public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non ejb-refs
         if (!(object instanceof EjbRef)) {
             return null;
@@ -52,9 +52,9 @@ public class EjbFactory extends AbstractObjectFactory {
         return value;
     }
 
-    protected String buildJndiName(Reference reference) throws NamingException {
-        String jndiName;// get and verify deploymentId
-        String deploymentId = NamingUtil.getProperty(reference, NamingUtil.DEPLOYMENT_ID);
+    protected String buildJndiName(final Reference reference) throws NamingException {
+        final String jndiName;// get and verify deploymentId
+        final String deploymentId = NamingUtil.getProperty(reference, NamingUtil.DEPLOYMENT_ID);
         if (deploymentId == null) throw new NamingException("ejb-ref deploymentId is null");
 
         // get and verify interface type
@@ -77,17 +77,17 @@ public class EjbFactory extends AbstractObjectFactory {
         return jndiName;
     }
 
-    private static Object copy(Object source) throws Exception {
+    private static Object copy(final Object source) throws Exception {
         IntraVmCopyMonitor.preCrossClassLoaderOperation();
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            ObjectOutputStream out = new ObjectOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+            final ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(source);
             out.close();
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream in = new EjbObjectInputStream(bais);
-            Object copy = in.readObject();
+            final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            final ObjectInputStream in = new EjbObjectInputStream(bais);
+            final Object copy = in.readObject();
             return copy;
         } finally {
             IntraVmCopyMonitor.postCrossClassLoaderOperation();
