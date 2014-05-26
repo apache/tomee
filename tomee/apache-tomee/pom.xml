@@ -29,7 +29,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-tomee</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Apache TomEE</name>
 
   <properties>
@@ -105,6 +105,18 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+
+    <!-- needed for EJBContainer impl so scope compile -->
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-client</artifactId>
+      <version>4.7.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -126,6 +138,30 @@
     </resources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <includes>
+            <include>**/RemoteTomEEEJBContainer*.class</include>
+            <include>**/META-INF/services/javax.ejb.spi.EJBContainerProvider</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.17</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
