@@ -100,8 +100,8 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             }
 
             if ((provider == null && ejbContainerProviders > 1)
-                    || (!provider.equals(EmbeddedTomEEContainer.class)
-                    && !CONTAINER_NAMES.contains(provider.toString()))) {
+                    || (!EmbeddedTomEEContainer.class.equals(provider)
+                        && !CONTAINER_NAMES.contains(provider))) {
                 return null;
             }
 
@@ -165,24 +165,24 @@ public class EmbeddedTomEEContainer extends EJBContainer {
 
                 return tomEEContainer;
             } catch (final OpenEJBException e) {
+                tomEEContainer.close();
                 throw new EJBException(e);
             } catch (final MalformedURLException e) {
+                tomEEContainer.close();
                 throw new EJBException(e);
             } catch (final ValidationException ve) {
+                if (tomEEContainer != null) {
+                    tomEEContainer.close();
+                }
                 throw ve;
             } catch (final Exception e) {
+                if (tomEEContainer != null) {
+                    tomEEContainer.close();
+                }
                 if (e instanceof EJBException) {
                     throw (EJBException) e;
                 }
                 throw new TomEERuntimeException("initialization exception", e);
-            } finally {
-                if (tomEEContainer == null) {
-                    try {
-                        tomEEContainer.close();
-                    } catch (final Exception e) {
-                        // no-op
-                    }
-                }
             }
         }
     }
