@@ -446,7 +446,7 @@ public class TomcatJndiBuilder {
         ejb.setLink(null);
         ejb.setType(ref.interfaceClassName);
         if (useCrossClassLoaderRef) {
-            ejb.setProperty(NamingUtil.EXTERNAL, "" + ref.externalReference);
+            ejb.setProperty(NamingUtil.EXTERNAL, Boolean.toString(ref.externalReference));
         }
 
         if (ref.ejbDeploymentId != null) {
@@ -538,7 +538,7 @@ public class TomcatJndiBuilder {
         if (ref.persistenceUnitName != null) {
             resource.setProperty(NamingUtil.UNIT, ref.persistenceUnitName);
         }
-        resource.setProperty(NamingUtil.EXTENDED, "" + ref.extended);
+        resource.setProperty(NamingUtil.EXTENDED, Boolean.toString(ref.extended));
 
         if (ref.location != null) {
             resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);

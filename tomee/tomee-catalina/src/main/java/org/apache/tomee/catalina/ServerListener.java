@@ -200,7 +200,7 @@ public class ServerListener implements LifecycleListener {
             final int slash = value.indexOf('/');
             field.setAccessible(true);
             final String version = OpenEjbVersion.get().getVersion();
-            final String tomeeVersion = (Integer.parseInt("" + version.charAt(0)) - 3) + version.substring(1, version.length());
+            final String tomeeVersion = (Integer.parseInt(Integer.toString(version.charAt(0))) - 3) + version.substring(1, version.length());
             field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash) + " (" + tomeeVersion + ")");
         } catch (final Exception e) {
             // no-op
