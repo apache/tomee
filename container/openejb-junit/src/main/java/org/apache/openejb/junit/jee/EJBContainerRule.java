@@ -52,7 +52,8 @@ public class EJBContainerRule implements TestRule {
         } else {
             startingStatement = new StartingStatement(new Statement() {
                 @Override // this class avoids a dependency loop issue, we have it actually but that's just to make a nicer API
-                public void evaluate() throws Throwable {
+                public void evaluate() throws Throwable
+                {
                     // don't use testClass since it can be another instance that the test one
                     new InjectStatement(base, test.getClass(), test, startingStatement).evaluate();
                 }
@@ -75,7 +76,8 @@ public class EJBContainerRule implements TestRule {
         try {
             return type.cast(
                     SystemInstance.get().getComponent(ContainerSystem.class)
-                            .getJNDIContext().lookup("java:" + Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name));
+                            .getJNDIContext().lookup("java:" + Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name)
+            );
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException(e);
         }
