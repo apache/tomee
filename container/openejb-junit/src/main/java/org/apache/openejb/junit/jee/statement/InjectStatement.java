@@ -18,7 +18,10 @@ package org.apache.openejb.junit.jee.statement;
 
 import org.apache.openejb.Injector;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.junit.jee.resources.TestResource;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.testing.TestInstance;
 import org.junit.runners.model.Statement;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -66,6 +69,8 @@ public class InjectStatement extends Statement {
             }
         }
         if (test != null) {
+            SystemInstance.get().setComponent(TestInstance.class, new TestInstance(test.getClass(), test));
+            SystemInstance.get().getComponent(FallbackPropertyInjector.class); // force eager init (MockitoInjector initialize eveything in its constructor)
             Injector.inject(test);
         }
         if (statement != null) {
