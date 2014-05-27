@@ -28,7 +28,7 @@ public class DeployMessage extends ClusterMessageBase {
     public static final String TOMEE_CLUSTER_DEPLOY_SEND_ARCHIVE = "tomee.cluster.deploy.send-archive";
 
     private String file;
-    private byte[] archive = null;
+    private byte[] archive;
 
     public DeployMessage(final String path) {
         file = path;

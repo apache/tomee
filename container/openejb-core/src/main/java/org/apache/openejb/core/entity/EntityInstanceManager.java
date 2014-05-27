@@ -47,13 +47,13 @@ public class EntityInstanceManager {
     /**
      *  The default size of the bean pools. Every bean class gets its own pool of this size
      */
-    private int poolsize = 0;
+    private int poolsize;
 
     /**
      * contains a collection of LinkListStacks indexed by deployment id. Each indexed stack
      * represents the method ready pool of for that class.
      */
-    private Map<Object,LinkedListStack> poolMap = null;
+    private Map<Object,LinkedListStack> poolMap;
 
 
     private SecurityService securityService;

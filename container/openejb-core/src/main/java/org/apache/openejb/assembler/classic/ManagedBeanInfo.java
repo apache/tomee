@@ -30,5 +30,5 @@ public class ManagedBeanInfo extends EnterpriseBeanInfo {
 
     public final List<RemoveMethodInfo> removeMethods = new ArrayList<RemoveMethodInfo>();
 
-    public boolean hidden = false;
+    public boolean hidden;
 }

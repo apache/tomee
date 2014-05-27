@@ -38,7 +38,7 @@ public class MovieController implements Serializable {
 
 
     private Movie current;
-    private DataModel items = null;
+    private DataModel items;
     @EJB
     private Movies ejbFacade;
     private PaginationHelper pagination;

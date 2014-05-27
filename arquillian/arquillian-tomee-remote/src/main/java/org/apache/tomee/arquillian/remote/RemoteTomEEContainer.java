@@ -49,7 +49,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private static final String ARQUILLIAN_FILTER = "-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING;
 
     private RemoteServer container;
-    private boolean shutdown = false;
+    private boolean shutdown;
     private File tomeeHome;
     private Collection<Archive<?>> containerArchives;
     private final Properties deployerProperties = new Properties();

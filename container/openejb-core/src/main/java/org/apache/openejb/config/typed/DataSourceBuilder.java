@@ -36,9 +36,9 @@ import java.util.concurrent.TimeUnit;
 public class DataSourceBuilder extends Resource {
 
     @XmlAttribute
-    private String serviceId = null;
+    private String serviceId;
     @XmlAttribute
-    private String definition = null;
+    private String definition;
     @XmlAttribute
     private boolean jtaManaged = true;
     @XmlAttribute
@@ -48,34 +48,34 @@ public class DataSourceBuilder extends Resource {
     @XmlAttribute
     private String userName = "sa";
     @XmlAttribute
-    private String password = null;
+    private String password;
     @XmlAttribute
     private String passwordCipher = "PlainText";
     @XmlAttribute
-    private String connectionProperties = null;
+    private String connectionProperties;
     @XmlAttribute
     private boolean defaultAutoCommit = true;
     @XmlAttribute
-    private String defaultReadOnly = null;
+    private String defaultReadOnly;
     @XmlAttribute
-    private int initialSize = 0;
+    private int initialSize;
     @XmlAttribute
     private int maxActive = 20;
     @XmlAttribute
     private int maxIdle = 20;
     @XmlAttribute
-    private int minIdle = 0;
+    private int minIdle;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
     private Duration maxWaitTime = Duration.parse("-1 millisecond");
     @XmlAttribute
-    private String validationQuery = null;
+    private String validationQuery;
     @XmlAttribute
     private boolean testOnBorrow = true;
     @XmlAttribute
-    private boolean testOnReturn = false;
+    private boolean testOnReturn;
     @XmlAttribute
-    private boolean testWhileIdle = false;
+    private boolean testWhileIdle;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
     private Duration timeBetweenEvictionRuns = Duration.parse("-1 millisecond");
@@ -85,13 +85,13 @@ public class DataSourceBuilder extends Resource {
     @XmlAttribute
     private Duration minEvictableIdleTime = Duration.parse("30 minutes");
     @XmlAttribute
-    private boolean poolPreparedStatements = false;
+    private boolean poolPreparedStatements;
     @XmlAttribute
-    private int maxOpenPreparedStatements = 0;
+    private int maxOpenPreparedStatements;
     @XmlAttribute
-    private boolean accessToUnderlyingConnectionAllowed = false;
+    private boolean accessToUnderlyingConnectionAllowed;
     @XmlAttribute
-    private boolean ignoreDefaultValues = false;
+    private boolean ignoreDefaultValues;
 
     public DataSourceBuilder() {
         setClassName("org.apache.openejb.resource.jdbc.DataSourceFactory");

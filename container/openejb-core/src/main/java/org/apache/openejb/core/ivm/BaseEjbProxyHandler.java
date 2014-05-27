@@ -76,9 +76,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     public final Object primaryKey;
     protected final InterfaceType interfaceType;
     private final ReentrantLock lock = new ReentrantLock();
-    public boolean inProxyMap = false;
+    public boolean inProxyMap;
     public transient RpcContainer container;
-    protected boolean isInvalidReference = false;
+    protected boolean isInvalidReference;
     protected Object clientIdentity;
     private IntraVmCopyMonitor.State strategy = NONE;
     private transient WeakReference<BeanContext> beanContextRef;

@@ -73,7 +73,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
 
     /** Determines what percentile is computed when evaluate() is activated
      * with no quantile argument */
-    private double quantile = 0.0;
+    private double quantile;
 
     /**
      * Constructs a Percentile with a default quantile

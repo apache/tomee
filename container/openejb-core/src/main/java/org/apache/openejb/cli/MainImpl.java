@@ -53,7 +53,7 @@ public class MainImpl implements Main {
     private static final String BASE_PATH = "META-INF/org.apache.openejb.cli/";
     private static final String MAIN_CLASS_PROPERTY_NAME = "main.class";
 
-    private static ResourceFinder finder = null;
+    private static ResourceFinder finder;
     private static String locale = "";
     private static String descriptionBase = "description";
     private static String descriptionI18n;

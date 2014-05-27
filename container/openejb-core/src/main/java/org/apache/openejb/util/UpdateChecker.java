@@ -45,7 +45,7 @@ public class UpdateChecker {
     private String latest = "undefined";
 
     // internal
-    private String current = null;
+    private String current;
 
     public void check(@Observes final ObserverAdded event) {
         if (event.getObserver() != this) {

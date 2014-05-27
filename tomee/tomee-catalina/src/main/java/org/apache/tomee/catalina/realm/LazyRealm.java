@@ -49,12 +49,12 @@ import java.util.Set;
 public class LazyRealm extends LifecycleBase implements Realm {
     private String realmClass;
     private String properties;
-    private boolean cdi = false;
+    private boolean cdi;
 
-    private volatile Realm delegate = null;
-    private Container container = null;
+    private volatile Realm delegate;
+    private Container container;
 
-    private CreationalContext<Object> creationalContext = null;
+    private CreationalContext<Object> creationalContext;
 
     public void setRealmClass(final String realmClass) {
         this.realmClass = realmClass;

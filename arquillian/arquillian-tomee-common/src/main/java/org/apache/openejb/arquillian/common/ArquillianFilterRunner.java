@@ -38,7 +38,7 @@ import java.io.IOException;
 public class ArquillianFilterRunner implements Filter {
     private static final String ARQUILLIAN_SERVLET_RUNNER = "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner";
 
-    private HttpServlet deletage = null;
+    private HttpServlet deletage;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {

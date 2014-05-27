@@ -77,21 +77,21 @@ public abstract class TimerData implements Serializable {
      * Is this a new timer?  A new timer must be scheduled with the java.util.Timer
      * when the transaction commits.
      */
-    private boolean newTimer = false;
+    private boolean newTimer;
 
     /**
      * Has this timer been cancelled? A canceled timer must be rescheduled with the
      * java.util.Timer if the transaction is rolled back
      */
-    private boolean cancelled = false;
+    private boolean cancelled;
 
-    private boolean stopped = false;
+    private boolean stopped;
 
     /**
      * Has this timer been registered with the transaction for callbacks?  We remember
      * when we are registered to avoid multiple registrations.
      */
-    private boolean synchronizationRegistered = false;
+    private boolean synchronizationRegistered;
 
     /**
      * Used to set timer to expired state after the timeout callback method has been successfully invoked.

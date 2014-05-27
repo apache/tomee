@@ -35,8 +35,8 @@ import java.util.Map;
 
 public class WebappAggregatedArchive implements Archive, ScanConstants {
     private final Map<URL, List<String>> map = new HashMap<URL, List<String>>();
-    private ScanUtil.ScanHandler handler = null;
-    private boolean scanXmlExists = false; // faster than using an empty handler
+    private ScanUtil.ScanHandler handler;
+    private boolean scanXmlExists; // faster than using an empty handler
     private Archive archive;
 
     public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {

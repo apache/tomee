@@ -27,7 +27,7 @@ public class LazyValidator implements InvocationHandler {
 
     private final ReentrantLock lock = new ReentrantLock();
     private final ValidatorFactory factory;
-    private Validator validator = null;
+    private Validator validator;
 
     public LazyValidator(final ValidatorFactory factory) {
         this.factory = factory;

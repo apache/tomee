@@ -76,7 +76,7 @@ public class GeronimoConnectionManagerFactory   {
     private boolean pooling = true;
     private String partitionStrategy; //: none, by-subject, by-connector-properties
     private int poolMaxSize = 10;
-    private int poolMinSize = 0;
+    private int poolMinSize;
     private boolean allConnectionsEqual = true;
     private int connectionMaxWaitMilliseconds = 5000;
     private int connectionMaxIdleMinutes = 15;

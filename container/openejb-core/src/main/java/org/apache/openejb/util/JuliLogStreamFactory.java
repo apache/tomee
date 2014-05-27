@@ -39,7 +39,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static final String OPENEJB_LOG_COLOR_PROP = "openejb.log.color";
 
     private static String consoleHandlerClazz;
-    private static boolean useOpenEJBHandler = false;
+    private static boolean useOpenEJBHandler;
 
     public LogStream createLogStream(final LogCategory logCategory) {
         return new JuliLogStream(logCategory);

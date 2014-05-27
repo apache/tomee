@@ -40,7 +40,7 @@ public class StatelessContainerBuilder extends Container {
     @XmlAttribute
     private int maxSize = 10;
     @XmlAttribute
-    private int minSize = 0;
+    private int minSize;
     @XmlAttribute
     private boolean strictPooling = true;
     @XmlJavaTypeAdapter(DurationAdapter.class)
@@ -49,14 +49,14 @@ public class StatelessContainerBuilder extends Container {
     @XmlAttribute
     private boolean replaceAged = true;
     @XmlAttribute
-    private boolean replaceFlushed = false;
+    private boolean replaceFlushed;
     @XmlAttribute
     private int maxAgeOffset = -1;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
     private Duration idleTimeout = Duration.parse("0 minutes");
     @XmlAttribute
-    private boolean garbageCollection = false;
+    private boolean garbageCollection;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
     private Duration sweepInterval = Duration.parse("5 minutes");

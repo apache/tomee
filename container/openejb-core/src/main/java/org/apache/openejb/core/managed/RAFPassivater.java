@@ -31,7 +31,7 @@ import java.util.Properties;
 
 public class RAFPassivater implements PassivationStrategy {
 
-    int fileID = 0;
+    int fileID;
     Hashtable masterTable = new Hashtable();
 
     static class Pointer {

@@ -218,7 +218,7 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     public static class IsAnnotationVisitor extends EmptyVisitor {
-        public boolean isAnnotation = false;
+        public boolean isAnnotation;
 
         @Override
         public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
@@ -228,7 +228,7 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     public static class IsEnumVisitor extends EmptyVisitor {
-        public boolean isEnum = false;
+        public boolean isEnum;
 
         @Override
         public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {

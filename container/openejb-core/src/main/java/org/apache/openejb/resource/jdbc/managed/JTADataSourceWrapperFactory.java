@@ -33,7 +33,7 @@ import javax.transaction.TransactionManager;
 
 public class JTADataSourceWrapperFactory {
     private String delegate = "datasource";
-    private boolean logSql = false;
+    private boolean logSql;
 
     public CommonDataSource create() {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();

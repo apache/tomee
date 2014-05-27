@@ -44,9 +44,9 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private int debugPort = 5005;
 
     @SuppressWarnings("checkstyle:membername")
-    private String catalina_opts = null; // using this format to match the script one
+    private String catalina_opts; // using this format to match the script one
 
-    private boolean simpleLog = false;
+    private boolean simpleLog;
     private String deployerProperties = "";
 
     public String getGroupId() {

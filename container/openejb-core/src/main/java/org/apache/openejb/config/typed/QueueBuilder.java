@@ -31,7 +31,7 @@ import java.util.Properties;
 public class QueueBuilder extends Resource {
 
     @XmlAttribute
-    private String destination = null;
+    private String destination;
 
     public QueueBuilder() {
         setClassName("org.apache.activemq.command.ActiveMQQueue");

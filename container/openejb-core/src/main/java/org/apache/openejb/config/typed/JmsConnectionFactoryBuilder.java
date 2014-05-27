@@ -41,7 +41,7 @@ public class JmsConnectionFactoryBuilder extends Resource {
     @XmlAttribute
     private int poolMaxSize = 10;
     @XmlAttribute
-    private int poolMinSize = 0;
+    private int poolMinSize;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
     private Duration connectionMaxWaitTime = Duration.parse("5 seconds");

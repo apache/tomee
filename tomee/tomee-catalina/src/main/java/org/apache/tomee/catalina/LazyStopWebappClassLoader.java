@@ -45,9 +45,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
-    private boolean restarting = false;
+    private boolean restarting;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
-    private ClassLoaderConfigurer configurer = null;
+    private ClassLoaderConfigurer configurer;
     private final int hashCode;
 
     public LazyStopWebappClassLoader() {

@@ -114,7 +114,7 @@ public class JndiEncBuilder {
     private final ClassLoader classLoader;
 
     private boolean useCrossClassLoaderRef = true;
-    private boolean client = false;
+    private boolean client;
 
     public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader) throws OpenEJBException {
         this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader);

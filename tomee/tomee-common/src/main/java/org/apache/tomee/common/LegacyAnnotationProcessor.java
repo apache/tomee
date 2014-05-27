@@ -48,7 +48,7 @@ import java.lang.reflect.Modifier;
 
 public class LegacyAnnotationProcessor {
 
-    protected javax.naming.Context context = null;
+    protected javax.naming.Context context;
 
     public LegacyAnnotationProcessor(final javax.naming.Context context) {
         this.context = context;

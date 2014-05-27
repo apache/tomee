@@ -276,7 +276,7 @@ public class DeployTimeEnhancer {
 
     private static class JarFileParser extends DefaultHandler {
         private final List<String> paths = new ArrayList<String>();
-        private boolean getIt = false;
+        private boolean getIt;
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {

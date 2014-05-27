@@ -53,7 +53,7 @@ public class NamingUtil {
     private static final Map<String,Object> registry = new ConcurrentHashMap<String, Object>();
 
     // these two attributes are used to be able to cleanup quickly the registry (otherwise we need to duplicate a lot of logic)
-    private static StandardContext currentContext = null;
+    private static StandardContext currentContext;
     private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
 
     public static String getProperty(final Reference ref, final String name) {

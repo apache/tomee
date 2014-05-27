@@ -123,12 +123,12 @@ public class SuperProperties extends Properties {
     /**
      * Should there be a blank line between a comment and the property.
      */
-    protected boolean spaceAfterComment = false;
+    protected boolean spaceAfterComment;
 
     /**
      * Used for loadFromXML.
      */
-    private DocumentBuilder builder = null;
+    private DocumentBuilder builder;
 
     /**
      * Constructs a new Properties object.

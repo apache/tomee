@@ -43,11 +43,11 @@ import java.util.Map;
 
 public final class Mvn {
     public static class Builder {
-        private File basedir = null;
-        private File resources = null;
-        private File webapp = null;
-        private File classes = null;
-        private String basePackage = null;
+        private File basedir;
+        private File resources;
+        private File webapp;
+        private File classes;
+        private String basePackage;
         private String name = "test.war";
         private Map<File, String> additionalResources = new HashMap<File, String>();
         private ScopeType[] scopes = { ScopeType.COMPILE, ScopeType.RUNTIME };

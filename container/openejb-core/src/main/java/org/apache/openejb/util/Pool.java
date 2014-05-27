@@ -1050,7 +1050,7 @@ public class Pool<T> {
     public static class Builder<T> {
 
         private int max = 10;
-        private int min = 0;
+        private int min;
         private boolean strict = true;
         private Duration maxAge = new Duration(0, MILLISECONDS);
         private double maxAgeOffset = -1;

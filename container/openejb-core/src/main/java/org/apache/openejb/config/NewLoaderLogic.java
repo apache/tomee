@@ -65,7 +65,7 @@ public class NewLoaderLogic {
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
     public static final String EXCLUSION_FILE = "exclusions.list";
 
-    private static String[] exclusions = null;
+    private static String[] exclusions;
     private static Filter filter;
 
     public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {

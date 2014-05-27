@@ -69,7 +69,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IvmContext implements Context, Serializable {
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
-    boolean readOnly = false;
+    boolean readOnly;
     Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
     public NameNode mynode;
 
@@ -199,7 +199,7 @@ public class IvmContext implements Context, Serializable {
         throw new NameNotFoundException("Name \"" + compositName + "\" not found.");
     }
 
-    static ObjectFactory [] federatedFactories = null;
+    static ObjectFactory [] federatedFactories;
 
     public static ObjectFactory [] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {

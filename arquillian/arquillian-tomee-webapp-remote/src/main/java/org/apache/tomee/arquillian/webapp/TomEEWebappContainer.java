@@ -47,7 +47,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     private static final Logger logger = Logger.getLogger(TomEEWebappContainer.class.getName());
 
     private RemoteServer container;
-    private boolean shutdown = false;
+    private boolean shutdown;
     private File openejbHome;
     private boolean wereOpenejbHomeSet = true;
 

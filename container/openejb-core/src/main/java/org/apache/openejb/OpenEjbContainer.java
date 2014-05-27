@@ -112,7 +112,7 @@ public final class OpenEjbContainer extends EJBContainer {
     public static final String OPENEJB_EJBCONTAINER_CLOSE_SINGLE = "single-jvm";
 
     private static OpenEjbContainer instance;
-    private static Logger logger = null; // initialized lazily to get the logging config from properties
+    private static Logger logger; // initialized lazily to get the logging config from properties
 
     private ServiceManagerProxy serviceManager;
     private Options options;

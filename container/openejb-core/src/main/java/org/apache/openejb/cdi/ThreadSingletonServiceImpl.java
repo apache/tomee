@@ -58,7 +58,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
-    private String sessionContextClass = null;
+    private String sessionContextClass;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();

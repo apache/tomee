@@ -50,8 +50,8 @@ import java.util.Set;
  * Note 3: delegate and cdiName can be used alone
  */
 public class CDILoginModule implements LoginModule {
-    private CreationalContextImpl<?> cc = null;
-    private LoginModule loginModule = null;
+    private CreationalContextImpl<?> cc;
+    private LoginModule loginModule;
 
     @Override
     public void initialize(final Subject subject, final CallbackHandler callbackHandler,

@@ -226,7 +226,7 @@ class SaxOpenejb extends StackHandler {
     }
 
     private class ImportElement extends DefaultHandler {
-        private String path = null;
+        private String path;
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {

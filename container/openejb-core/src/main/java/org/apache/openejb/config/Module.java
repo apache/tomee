@@ -34,11 +34,11 @@ public class Module {
 
     private ClassLoader classLoader;
 
-    private ValidationConfigType validationConfig = null;
+    private ValidationConfigType validationConfig;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
-    private String uniqueId = null;
-    private AppModule appModule = null;
-    private Resources resources = null;
+    private String uniqueId;
+    private AppModule appModule;
+    private Resources resources;
     private final Set<String> mbeans = new HashSet<String>();
     private final Properties properties = new SuperProperties().caseInsensitive(true);
 

@@ -85,7 +85,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private final BeanManagerImpl beanManager;
     private final WebBeansContext webBeansContext;
     /**Manages unused conversations*/
-    private ScheduledExecutorService service = null;
+    private ScheduledExecutorService service;
 
     public OpenEJBLifecycle(final WebBeansContext webBeansContext)
     {

@@ -104,7 +104,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * Determines whether array expansion by <code>expansionFactor</code>
      * is additive or multiplicative.
      */
-    protected int expansionMode = MULTIPLICATIVE_MODE;
+    protected int expansionMode;
 
     /**
      * The initial capacity of the array.  Initial capacity is not exposed as a
@@ -121,7 +121,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * The number of addressable elements in the array.  Note that this
      * has nothing to do with the length of the internal storage array.
      */
-    protected int numElements = 0;
+    protected int numElements;
 
     /**
      * The position of the first addressable element in the internal storage
@@ -129,7 +129,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * internalArray[startIndex],...,internalArray[startIndex + numElements -1]
      * </code>
      */
-    protected int startIndex = 0;
+    protected int startIndex;
 
     /**
      * Create a ResizableArray with default properties.

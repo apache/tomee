@@ -55,7 +55,7 @@ public class RemoteServer {
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
-    private String additionalClasspath = null;
+    private String additionalClasspath;
 
     /**
      * Has the remote server's instance been already running ?
@@ -69,7 +69,7 @@ public class RemoteServer {
     private final int shutdownPort;
     private final String host;
     private final String command;
-    private File home = null;
+    private File home;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));

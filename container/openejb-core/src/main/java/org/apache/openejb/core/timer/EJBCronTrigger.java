@@ -665,16 +665,16 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         private String endWeekDay;
         
         
-        private WeekdayExpression startWeekdayExpr = null;
-        private WeekdayExpression endWeekdayExpr = null;
+        private WeekdayExpression startWeekdayExpr;
+        private WeekdayExpression endWeekdayExpr;
         
-        private DaysFromLastDayExpression startDaysFromLastDayExpr = null;
-        private DaysFromLastDayExpression endDaysFromLastDayExpr = null;
+        private DaysFromLastDayExpression startDaysFromLastDayExpr;
+        private DaysFromLastDayExpression endDaysFromLastDayExpr;
         
         
         
         //Indicate if the range expression is for "1st mon - 2nd fri" style range of days of month.
-        private boolean isDynamicRangeExpression = false;
+        private boolean isDynamicRangeExpression;
 
 
         public boolean isDynamicRangeExpression() {

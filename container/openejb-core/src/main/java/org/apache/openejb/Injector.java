@@ -31,7 +31,7 @@ import org.apache.webbeans.inject.OWBInjector;
  */
 public class Injector {
 
-    private static Logger logger = null; // initialized lazily to get the logging config from properties
+    private static Logger logger; // initialized lazily to get the logging config from properties
 
     public static <T> T inject(final T object) {
 

@@ -36,7 +36,7 @@ public class DeploymentExceptionManager {
             return size() > MAX_SIZE;
         }
     };
-    private Exception lastException = null;
+    private Exception lastException;
 
     public synchronized boolean hasDeploymentFailed() {
         return lastException != null;

@@ -78,7 +78,7 @@ public final class Files {
     // Shutdown hook for recursive delete on tmp directories
     static final List<String> delete = new ArrayList<String>();
 
-    private static volatile boolean shutdown = false;
+    private static volatile boolean shutdown;
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {
