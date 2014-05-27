@@ -55,7 +55,9 @@ public class EjbFactory extends AbstractObjectFactory {
     protected String buildJndiName(final Reference reference) throws NamingException {
         final String jndiName;// get and verify deploymentId
         final String deploymentId = NamingUtil.getProperty(reference, NamingUtil.DEPLOYMENT_ID);
-        if (deploymentId == null) throw new NamingException("ejb-ref deploymentId is null");
+        if (deploymentId == null) {
+            throw new NamingException("ejb-ref deploymentId is null");
+        }
 
         // get and verify interface type
         InterfaceType type = InterfaceType.BUSINESS_REMOTE;
@@ -70,7 +72,9 @@ public class EjbFactory extends AbstractObjectFactory {
             type = InterfaceType.BUSINESS_LOCAL;
             interfaceType = NamingUtil.getProperty(reference, NamingUtil.LOCAL);
         }
-        if (interfaceType == null) throw new NamingException("ejb-ref interface type is null");
+        if (interfaceType == null) {
+            throw new NamingException("ejb-ref interface type is null");
+        }
 
         // build jndi name using the deploymentId and interface type
         jndiName = "java:openejb/Deployment/" + JndiBuilder.format(deploymentId, interfaceType, type);

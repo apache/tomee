@@ -58,27 +58,30 @@ public class NamingUtil {
 
     public static String getProperty(final Reference ref, final String name) {
         final RefAddr addr = ref.get(name);
-        if (addr == null) return null;
+        if (addr == null) {
+            return null;
+        }
         final Object value = addr.getContent();
         return (String) value;
     }
 
     public static boolean isPropertyTrue(final Reference ref, final String name) {
         final RefAddr addr = ref.get(name);
-        if (addr == null) return false;
+        if (addr == null) {
+            return false;
+        }
         final Object value = addr.getContent();
-        return Boolean.parseBoolean("" + value);
+        return Boolean.parseBoolean(String.valueOf(value));
     }
 
     public static void setStaticValue(final Resource resource, final Object value) {
         setStaticValue(resource, null, value);
     }
 
-    public static void setStaticValue(final Resource resource, String name, final Object value) {
-        name = name != null ? "-" + name : "";
-        final String token = "" + id.incrementAndGet();
+    public static void setStaticValue(final Resource resource, final String name, final Object value) {
+        final String token = String.valueOf(id.incrementAndGet());
         registry.put(token, value);
-        resource.setProperty("static-token" + name, token);
+        resource.setProperty("static-token" + (name != null ? "-" + name : ""), token);
         if (currentContext != null) {
             Collection<String> ids = ID_BY_CONTEXT.get(currentContext);
             if (ids == null) {
@@ -106,7 +109,9 @@ public class NamingUtil {
     }
 
     public static Class<?> loadClass(final String className) {
-        if (className == null) return null;
+        if (className == null) {
+            return null;
+        }
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader != null) {
@@ -114,6 +119,7 @@ public class NamingUtil {
                     final Class clazz = classLoader.loadClass(className);
                     return clazz;
                 } catch(final ClassNotFoundException e) {
+                    // no-op
                 }
             }
             return Class.forName(className);

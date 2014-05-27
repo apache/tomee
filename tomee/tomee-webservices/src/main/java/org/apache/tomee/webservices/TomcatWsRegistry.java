@@ -95,7 +95,9 @@ public class TomcatWsRegistry implements WsRegistry {
                                        String contextRoot, String virtualHost, final ServletInfo servletInfo,
                                        final String realmName, final String transportGuarantee, final String authMethod) throws Exception {
 
-        if (virtualHost == null) virtualHost = engine.getDefaultHost();
+        if (virtualHost == null) {
+            virtualHost = engine.getDefaultHost();
+        }
 
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
@@ -140,7 +142,9 @@ public class TomcatWsRegistry implements WsRegistry {
 
     @Override
     public void clearWsContainer(final String contextRoot, String virtualHost, final ServletInfo servletInfo) {
-        if (virtualHost == null) virtualHost = engine.getDefaultHost();
+        if (virtualHost == null) {
+            virtualHost = engine.getDefaultHost();
+        }
 
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
@@ -173,14 +177,22 @@ public class TomcatWsRegistry implements WsRegistry {
                                        final ClassLoader classLoader,
                                        final String context, String virtualHost, String path,
                                        final String realmName, final String transportGuarantee, final String authMethod) throws Exception {
-        if (path == null) throw new NullPointerException("contextRoot is null");
-        if (httpListener == null) throw new NullPointerException("httpListener is null");
+        if (path == null) {
+            throw new NullPointerException("contextRoot is null");
+        }
+        if (httpListener == null) {
+            throw new NullPointerException("httpListener is null");
+        }
 
         // assure context root with a leading slash
-        if (!path.startsWith("/")) path = "/" + path;
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
 
         // find the existing host (we do not auto-create hosts)
-        if (virtualHost == null) virtualHost = engine.getDefaultHost();
+        if (virtualHost == null) {
+            virtualHost = engine.getDefaultHost();
+        }
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
             throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
@@ -267,7 +279,7 @@ public class TomcatWsRegistry implements WsRegistry {
         if (transportGuarantee != null) {
             transportGuarantee = transportGuarantee.toUpperCase();
         }
-        if (authMethod == null || "NONE".equals(authMethod)) {
+        if (authMethod == null || "NONE".equals(authMethod)) { //NOPMD
             // ignore none for now as the  NonLoginAuthenticator seems to be completely hosed
         } else if ("BASIC".equals(authMethod) || "DIGEST".equals(authMethod) || "CLIENT-CERT".equals(authMethod)) {
 
@@ -363,10 +375,14 @@ public class TomcatWsRegistry implements WsRegistry {
     }
 
     public void removeWsContainer(String path) {
-        if (path == null) return;
+        if (path == null) {
+            return;
+        }
 
         // assure context root with a leading slash
-        if (!path.startsWith("/")) path = "/" + path;
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
 
         if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
             return;

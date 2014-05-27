@@ -133,7 +133,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
         }
     }
 
-    private static void deployFile(Deployer deployer, File file) throws IOException, OpenEJBException {
+    private static void deployFile(final Deployer deployer, final File file) throws IOException, OpenEJBException {
         if ("true".equalsIgnoreCase(System.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
             final Properties props = new Properties();
             final byte[] slurpBinaries = IO.slurp(file).getBytes();

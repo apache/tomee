@@ -102,13 +102,13 @@ public /* abstract */ class LogFactory {
 
     public static Log getLog(final Class<?> clazz)
             throws LogConfigurationException {
-        return (getFactory().getInstance(clazz));
+        return getFactory().getInstance(clazz);
 
     }
 
     public static Log getLog(final String name)
             throws LogConfigurationException {
-        return (getFactory().getInstance(name));
+        return getFactory().getInstance(name);
 
     }
 

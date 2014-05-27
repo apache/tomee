@@ -34,7 +34,9 @@ import java.io.OutputStream;
 public class Installers {
     public static String readEntry(final JarFile jarFile, final String name, final Alerts alerts) {
         final ZipEntry entry = jarFile.getEntry(name);
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
         try {
             final String text = IO.slurp(jarFile.getInputStream(entry));
             return text;
@@ -85,22 +87,23 @@ public class Installers {
     }
 
     public static boolean writeAll(final File file, final String text, final Alerts alerts) {
-    	// compare text with existing file content - to stop the file being touched
-    	
-    	if (file.exists()) {
-    		try {
-				final String oldText = IO.slurp(file);
-				if (oldText.equals(text)) {
-					return true;
-				}
-			} catch (final Exception e) {
-			}
-    		
+        // compare text with existing file content - to stop the file being touched
+
+        if (file.exists()) {
+            try {
+                final String oldText = IO.slurp(file);
+                if (oldText.equals(text)) {
+                    return true;
+                }
+            } catch (final Exception e) {
+                // no-op
+            }
+
             if (! file.delete()) {
                     alerts.addError("can't replace " + file.getName());
             }
-    	}
-    	
+        }
+
         try {
             IO.copy(IO.read(text), file);
             return true;

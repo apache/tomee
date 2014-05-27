@@ -17,18 +17,16 @@
  */
 package org.apache.tomee.loader;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Properties;
-import java.util.logging.Level;
-
 import org.apache.openejb.loader.Embedder;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Properties;
 
 /**
  * This class should only be loadded and used via reflection from TomcatEmbedder.
@@ -76,13 +74,17 @@ class TomcatHook {
     static void hook(final Properties properties) {
         
         // verify properties and make sure it contains the tomee.war property
-        if (properties == null) throw new NullPointerException("properties is null");
+        if (properties == null) {
+            throw new NullPointerException("properties is null");
+        }
         
         //Check tomee.war property
         //This property is set by the LoaderServlet or OpenEJBListener
         //When you deploy tomee.war into webapps/ directory of the tomcat
         //Loader servlet automatically starts and initialize this property
-        if (!properties.containsKey("tomee.war")) throw new IllegalArgumentException("properties must contain the tomee.war property");
+        if (!properties.containsKey("tomee.war")) {
+            throw new IllegalArgumentException("properties must contain the tomee.war property");
+        }
 
         
         //Get the openejb directory (under webapps) using the tomee.war property

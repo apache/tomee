@@ -31,13 +31,17 @@ import java.util.Hashtable;
 public class LookupFactory implements ObjectFactory {
 
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
-        if (!(object instanceof Reference)) return null;
+        if (!(object instanceof Reference)) {
+            return null;
+        }
 
         final Reference reference = ((Reference) object);
 
         final String jndiName = NamingUtil.getProperty(reference, NamingUtil.JNDI_NAME);
 
-        if (jndiName == null) return null;
+        if (jndiName == null) {
+            return null;
+        }
 
         try {
             return context.lookup(jndiName.replaceFirst("^java:", ""));

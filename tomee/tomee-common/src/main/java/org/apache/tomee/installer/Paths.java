@@ -34,9 +34,9 @@ import java.util.List;
  */
 public class Paths implements PathsInterface {
 
-	/**
-	 * The openejb webapp directory under <<tomcat-install>>/webapps
-	 */
+    /**
+     * The openejb webapp directory under <<tomcat-install>>/webapps
+     */
     private final File openejbWarDir;
     /**
      * Used to store errors which represent verification failures
@@ -132,7 +132,9 @@ public class Paths implements PathsInterface {
         if (serverXmlFile == null) {
             final File confdir = getCatalinaConfDir();
 
-            if (confdir == null) return null;
+            if (confdir == null) {
+                return null;
+            }
 
             serverXmlFile = new File(confdir, "server.xml");
         }
@@ -168,7 +170,9 @@ public class Paths implements PathsInterface {
     public File getCatalinaLibDir() {
         final File catalinaHomeDir = getCatalinaHomeDir();
 
-        if (catalinaHomeDir == null) return null;
+        if (catalinaHomeDir == null) {
+            return null;
+        }
 
         if (TomcatVersion.v6.isTheVersion() || TomcatVersion.v7.isTheVersion()) {
             return new File(catalinaHomeDir, "lib");
@@ -184,7 +188,9 @@ public class Paths implements PathsInterface {
     public File getCatalinaConfDir() {
         final File catalinaBaseDir = getCatalinaBaseDir();
 
-        if (catalinaBaseDir == null) return null;
+        if (catalinaBaseDir == null) {
+            return null;
+        }
 
         return new File(catalinaBaseDir, "conf");
     }
@@ -196,7 +202,9 @@ public class Paths implements PathsInterface {
     public File getCatalinaBinDir() {
         final File catalinaHomeDir = getCatalinaHomeDir();
 
-        if (catalinaHomeDir == null) return null;
+        if (catalinaHomeDir == null) {
+            return null;
+        }
 
         return new File(catalinaHomeDir, "bin");
     }
@@ -208,7 +216,9 @@ public class Paths implements PathsInterface {
     public File getCatalinaShFile() {
         final File binDir = getCatalinaBinDir();
 
-        if (binDir == null) return null;
+        if (binDir == null) {
+            return null;
+        }
 
         return new File(binDir, "catalina.sh");
     }
@@ -220,7 +230,9 @@ public class Paths implements PathsInterface {
     public File getCatalinaBatFile() {
         final File binDir = getCatalinaBinDir();
 
-        if (binDir == null) return null;
+        if (binDir == null) {
+            return null;
+        }
 
         return new File(binDir, "catalina.bat");
     }
@@ -231,7 +243,9 @@ public class Paths implements PathsInterface {
      */
     @Override
     public File getOpenEJBLibDir() {
-        if (openejbWarDir == null) return null;
+        if (openejbWarDir == null) {
+            return null;
+        }
 
         return new File(openejbWarDir, "lib");
     }
@@ -302,7 +316,9 @@ public class Paths implements PathsInterface {
     }
 
     private File findJar(final File dir, final String namePrefix) {
-        if (dir == null) return null;
+        if (dir == null) {
+            return null;
+        }
 
         final File[] files = dir.listFiles(new FilenameFilter() {
             @Override
@@ -316,7 +332,7 @@ public class Paths implements PathsInterface {
 
     /**Verifies the following:
      * <ul>
-     * 	<li>{@link #openejbWarDir} is unpacked</li>
+     *     <li>{@link #openejbWarDir} is unpacked</li>
      *  <li>{@link #catalinaHomeDir} is defined </li>
      *  <li>{@link #catalinaBaseDir} is defined </li>
      *  <li>{@link #catalinaHomeDir} exists, is a directory and is readable </li>

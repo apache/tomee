@@ -22,15 +22,6 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
-import static org.apache.tomee.common.NamingUtil.JNDI_NAME;
-import static org.apache.tomee.common.NamingUtil.WSDL_URL;
-import static org.apache.tomee.common.NamingUtil.WS_CLASS;
-import static org.apache.tomee.common.NamingUtil.WS_ID;
-import static org.apache.tomee.common.NamingUtil.WS_PORT_QNAME;
-import static org.apache.tomee.common.NamingUtil.WS_QNAME;
-import static org.apache.tomee.common.NamingUtil.getProperty;
-import static org.apache.tomee.common.NamingUtil.getStaticValue;
-import static org.apache.tomee.common.NamingUtil.loadClass;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -53,22 +44,22 @@ public class WsFactory extends AbstractObjectFactory {
         final Reference ref = (Reference) object;
 
         final Object value;
-        if (getProperty(ref, JNDI_NAME) != null) {
+        if (NamingUtil.getProperty(ref, NamingUtil.JNDI_NAME) != null) {
             // lookup the value in JNDI
             value = super.getObjectInstance(object, name, context, environment);
         } else {
             // load service class which is used to construct the port
-            final String serviceClassName = getProperty(ref, WS_CLASS);
+            final String serviceClassName = NamingUtil.getProperty(ref, NamingUtil.WS_CLASS);
             Class<? extends Service> serviceClass = Service.class;
             if (serviceClassName != null) {
-                serviceClass = loadClass(serviceClassName).asSubclass(Service.class);
+                serviceClass = NamingUtil.loadClass(serviceClassName).asSubclass(Service.class);
                 if (serviceClass == null) {
                     throw new NamingException("Could not load service type class "+ serviceClassName);
                 }
             }
 
             // load the reference class which is the ultimate type of the port
-            final Class<?> referenceClass = loadClass(ref.getClassName());
+            final Class<?> referenceClass = NamingUtil.loadClass(ref.getClassName());
 
             // if ref class is a subclass of Service, use it for the service class
             if (referenceClass != null && Service.class.isAssignableFrom(referenceClass)) {
@@ -76,35 +67,41 @@ public class WsFactory extends AbstractObjectFactory {
             }
 
             // PORT ID
-            final String serviceId = getProperty(ref, WS_ID);
+            final String serviceId = NamingUtil.getProperty(ref, NamingUtil.WS_ID);
 
             // Service QName
             QName serviceQName = null;
-            if (getProperty(ref, WS_QNAME) != null) {
-                serviceQName = QName.valueOf(getProperty(ref, WS_QNAME));
+            if (NamingUtil.getProperty(ref, NamingUtil.WS_QNAME) != null) {
+                serviceQName = QName.valueOf(NamingUtil.getProperty(ref, NamingUtil.WS_QNAME));
             }
 
             // WSDL URL
             URL wsdlUrl = null;
-            if (getProperty(ref, WSDL_URL) != null) {
-                wsdlUrl = new URL(getProperty(ref, WSDL_URL));
+            if (NamingUtil.getProperty(ref, NamingUtil.WSDL_URL) != null) {
+                wsdlUrl = new URL(NamingUtil.getProperty(ref, NamingUtil.WSDL_URL));
             }
 
             // Port QName
             QName portQName = null;
-            if (getProperty(ref, WS_PORT_QNAME) != null) {
-                portQName = QName.valueOf(getProperty(ref, WS_PORT_QNAME));
+            if (NamingUtil.getProperty(ref, NamingUtil.WS_PORT_QNAME) != null) {
+                portQName = QName.valueOf(NamingUtil.getProperty(ref, NamingUtil.WS_PORT_QNAME));
             }
 
             // port refs
-            List<PortRefData> portRefs = getStaticValue(ref, "port-refs");
-            if (portRefs == null) portRefs = Collections.emptyList();
+            List<PortRefData> portRefs = NamingUtil.getStaticValue(ref, "port-refs");
+            if (portRefs == null) {
+                portRefs = Collections.emptyList();
+            }
 
             // HandlerChain
-            List<HandlerChainData> handlerChains = getStaticValue(ref, "handler-chains");
-            if (handlerChains == null) handlerChains = Collections.emptyList();
-            List<Injection> injections = getStaticValue(ref, "injections");
-            if (injections == null) injections = Collections.emptyList();
+            List<HandlerChainData> handlerChains = NamingUtil.getStaticValue(ref, "handler-chains");
+            if (handlerChains == null) {
+                handlerChains = Collections.emptyList();
+            }
+            List<Injection> injections = NamingUtil.getStaticValue(ref, "injections");
+            if (injections == null) {
+                injections = Collections.emptyList();
+            }
 
             final JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceId,
                     serviceQName,

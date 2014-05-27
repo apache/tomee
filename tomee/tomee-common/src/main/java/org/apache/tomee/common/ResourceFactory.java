@@ -55,7 +55,9 @@ public class ResourceFactory extends AbstractObjectFactory {
         if (resourceId == null) {
             resourceId = getProperty(reference, NAME);
         }
-        if (resourceId == null) throw new NamingException("Resource reference id is null");
+        if (resourceId == null) {
+            throw new NamingException("Resource reference id is null");
+        }
 
         // build jndi name using the deploymentId and interface type
         if (resourceId.startsWith("java:")) {

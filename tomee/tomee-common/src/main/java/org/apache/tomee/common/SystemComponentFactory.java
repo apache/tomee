@@ -35,7 +35,9 @@ public class SystemComponentFactory implements ObjectFactory {
         // load the component type class
         final String className = getProperty(ref, COMPONENT_TYPE);
         final Class<?> clazz = loadClass(className);
-        if (clazz == null) return null;
+        if (clazz == null) {
+            return null;
+        }
 
         // lookup the value
         final Object value = SystemInstance.get().getComponent(clazz);
