@@ -44,6 +44,8 @@
             </goals>
             <configuration>
               <createSourcesJar>true</createSourcesJar>
+              <useBaseVersion>true</useBaseVersion>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <artifactSet>
                 <excludes>
                   <exclude>*:*:sources</exclude>
