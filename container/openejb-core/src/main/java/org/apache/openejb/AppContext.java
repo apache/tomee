@@ -41,7 +41,7 @@ public class AppContext extends DeploymentContext {
     private final Context globalJndiContext;
     private final Context appJndiContext;
     private final boolean standaloneModule;
-    private boolean cdiEnabled = false;
+    private boolean cdiEnabled;
     private WebBeansContext webBeansContext;
     private final Collection<Injection> injections = new HashSet<Injection>();
     private final Map<String, Object> bindings = new HashMap<String, Object>();

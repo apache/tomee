@@ -58,9 +58,9 @@ public class AppValidator {
     protected static final Messages _messages = new Messages("org.apache.openejb.config.rules");
 
     private int level = 2;
-    private boolean printXml = false;
+    private boolean printXml;
     private boolean printWarnings = true;
-    private boolean printCount = false;
+    private boolean printCount;
 
     private List<ValidationResults> sets = new ArrayList<ValidationResults>();
     private ValidationBase[] additionalValidators;

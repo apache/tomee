@@ -51,7 +51,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
     private static Properties properties;
     private static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
-    private static Throwable throwable = null;
+    private static Throwable throwable;
     private static final AtomicBoolean started = new AtomicBoolean(false);
 
     public static void setThreadProperties(final Properties p) {

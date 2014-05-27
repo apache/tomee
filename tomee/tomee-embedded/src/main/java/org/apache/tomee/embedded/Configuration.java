@@ -28,13 +28,13 @@ public class Configuration {
     private int stopPort = 8005;
     private String host = "localhost";
     protected String dir;
-    private File serverXml = null;
+    private File serverXml;
     private Properties properties;
     private boolean quickSession = true;
-    private boolean skipHttp = false;
+    private boolean skipHttp;
 
     private int httpsPort = 8443;
-    private boolean ssl = false;
+    private boolean ssl;
     private String keystoreFile;
     private String keystorePass;
     private String keystoreType = "JKS";

@@ -85,7 +85,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
     private EntityManagerFactoryCallable entityManagerFactoryCallable;
-    private ObjectName objectName = null;
+    private ObjectName objectName;
 
     private boolean logCriteriaJpql;
     private String logCriteriaJpqlLevel;

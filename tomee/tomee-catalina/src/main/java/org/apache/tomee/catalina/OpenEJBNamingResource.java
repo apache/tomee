@@ -34,7 +34,7 @@ import java.util.Collection;
 public class OpenEJBNamingResource extends NamingResources {
     private static final String JAVA_PREFIX = "java:";
 
-    private boolean isTomcatResource = false;
+    private boolean isTomcatResource;
     private final Collection<ResourceBase> tomcatResources = new ArrayList<ResourceBase>();
 
     public OpenEJBNamingResource() {

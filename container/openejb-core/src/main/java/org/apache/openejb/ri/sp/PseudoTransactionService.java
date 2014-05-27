@@ -188,7 +188,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
         private final List<Synchronization> registeredSynchronizations = Collections.synchronizedList(new ArrayList<Synchronization>());
         private final List<XAResource> xaResources =  Collections.synchronizedList(new ArrayList<XAResource>());
         private final Map<Object, Object> resources = new HashMap<Object,Object>();
-        private int status = Status.STATUS_ACTIVE;
+        private int status;
 
         public boolean delistResource(final XAResource xaRes, final int flag) {
             xaResources.remove(xaRes);

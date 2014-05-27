@@ -31,13 +31,13 @@ import java.lang.management.ManagementFactory;
 public class JMXServerListener implements LifecycleListener {
     private static final Log LOGGER = LogFactory.getLog(JMXServerListener.class);
 
-    private String protocol = null; // default if null is jmxmp
-    private String host = null; // if null localhost
+    private String protocol; // default if null is jmxmp
+    private String host; // if null localhost
     private int port = -1;
-    private String urlPath = null; // if null empty
+    private String urlPath; // if null empty
 
-    private JMXConnectorServer server = null;
-    private JMXServiceURL serviceURL = null;
+    private JMXConnectorServer server;
+    private JMXServiceURL serviceURL;
 
     @Override
     public synchronized void lifecycleEvent(final LifecycleEvent event) {

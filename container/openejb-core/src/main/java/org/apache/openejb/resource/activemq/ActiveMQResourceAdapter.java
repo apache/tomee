@@ -39,7 +39,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String dataSource;
     private String useDatabaseLock;
     private String startupTimeout = "60000";
-    private BootstrapContext bootstrapContext = null;
+    private BootstrapContext bootstrapContext;
 
     public String getDataSource() {
         return dataSource;

@@ -55,8 +55,8 @@ public class RemoteResourceMonitor implements DynamicMBean {
                                                             }, String.class.getName(), MBeanOperationInfo.INFO);
 
     private final Collection<String> hosts = new CopyOnWriteArraySet<String>();
-    private ObjectName objectName = null;
-    private MBeanInfo info = null;
+    private ObjectName objectName;
+    private MBeanInfo info;
 
     public synchronized void addHost(final String host) {
         hosts.add(host);

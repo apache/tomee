@@ -381,10 +381,10 @@ public final class ProvisioningUtil {
     }
 
     private static class QuickMvnMetadataParser extends DefaultHandler {
-        private boolean readTs = false;
-        private boolean readBn = false;
-        private StringBuilder timestamp = null;
-        private StringBuilder buildNumber = null;
+        private boolean readTs;
+        private boolean readBn;
+        private StringBuilder timestamp;
+        private StringBuilder buildNumber;
 
         @Override
         public void startElement(final String uri, final String localName,

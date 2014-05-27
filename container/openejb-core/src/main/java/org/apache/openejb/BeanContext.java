@@ -102,7 +102,7 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     private boolean isPassivatingScope = true;
-    private ConstructorInjectionBean<Object> constructorInjectionBean = null;
+    private ConstructorInjectionBean<Object> constructorInjectionBean;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
@@ -217,7 +217,7 @@ public class BeanContext extends DeploymentContext {
 
     private final BeanType componentType;
 
-    private boolean hidden = false;
+    private boolean hidden;
 
     //private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();

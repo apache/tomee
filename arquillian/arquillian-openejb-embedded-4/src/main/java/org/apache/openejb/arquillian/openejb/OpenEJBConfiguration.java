@@ -22,7 +22,7 @@ import org.jboss.arquillian.container.spi.client.container.ContainerConfiguratio
 
 public class OpenEJBConfiguration implements ContainerConfiguration {
     private String properties = "";
-    private String preloadClasses = null;
+    private String preloadClasses;
 
     @Override
     public void validate() throws ConfigurationException {

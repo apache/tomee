@@ -295,7 +295,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
 
     public static class JobEndpoint implements Job {
 
-        private static Method method = null;
+        private static Method method;
 
         @Override
         public void execute(final JobExecutionContext execution) throws JobExecutionException {

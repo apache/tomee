@@ -70,10 +70,10 @@ public class AppModule implements DeploymentModule {
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
     private final Collection<String> jaxRsProviders = new TreeSet<String>();
     private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<String, PojoConfiguration>();
-    private IAnnotationFinder earLibFinder = null;
+    private IAnnotationFinder earLibFinder;
 
     private ID id;
-    private boolean webapp = false;
+    private boolean webapp;
 
     public AppModule(final ClassLoader classLoader, final String jarLocation) {
         this(classLoader, jarLocation, null, false);

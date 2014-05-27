@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class LoggerCreator implements Callable<Logger> {
     private final String name;
     private Logger logger;
-    private volatile boolean init = false;
+    private volatile boolean init;
 
     public LoggerCreator(final String channel) {
         name = channel;

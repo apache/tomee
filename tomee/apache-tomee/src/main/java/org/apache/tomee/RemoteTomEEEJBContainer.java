@@ -40,9 +40,9 @@ import java.util.Map;
 import java.util.Properties;
 
 public class RemoteTomEEEJBContainer extends EJBContainer {
-    private static RemoteTomEEEJBContainer instance = null;
-    private RemoteServer container = null;
-    private InitialContext context = null;
+    private static RemoteTomEEEJBContainer instance;
+    private RemoteServer container;
+    private InitialContext context;
 
     @Override
     public void close() {

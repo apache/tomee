@@ -38,7 +38,7 @@ public class TransactionManagerBuilder extends TransactionManager {
     @XmlAttribute
     private Duration defaultTransactionTimeout = Duration.parse("10 minutes");
     @XmlAttribute
-    private boolean txRecovery = false;
+    private boolean txRecovery;
     @XmlAttribute
     private int bufferSizeKb = 32;
     @XmlAttribute
@@ -57,7 +57,7 @@ public class TransactionManagerBuilder extends TransactionManager {
     @XmlAttribute
     private int maxBlocksPerFile = -1;
     @XmlAttribute
-    private int maxBuffers = 0;
+    private int maxBuffers;
     @XmlAttribute
     private int maxLogFiles = 2;
     @XmlAttribute

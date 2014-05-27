@@ -284,7 +284,7 @@ public class Logger {
         return name.substring(0, name.lastIndexOf("."));
     }
 
-    private static Boolean isLog4j = null;
+    private static Boolean isLog4j;
 
     public static boolean isLog4jImplied() {
 

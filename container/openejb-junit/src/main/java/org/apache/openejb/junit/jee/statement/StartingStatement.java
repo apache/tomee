@@ -34,7 +34,7 @@ import java.io.InputStream;
 public class StartingStatement extends DecoratingStatement {
     private final Class<?> clazz;
     private java.util.Properties properties;
-    private EJBContainer container = null;
+    private EJBContainer container;
 
     public StartingStatement(final Statement statement, final Class<?> clazz) {
         super(statement);

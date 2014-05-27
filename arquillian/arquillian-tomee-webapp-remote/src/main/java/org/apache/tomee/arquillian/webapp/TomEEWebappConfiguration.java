@@ -33,7 +33,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     private String version; // let the version be set from properties file otherwise latest will be 4.0.0
     private String type;
     private boolean removeUnusedWebapps = true;
-    private boolean useInstallerServlet = false;
+    private boolean useInstallerServlet;
     private int ajpPort = 8009;
 
     public String getGroupId() {

@@ -93,12 +93,12 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final File BASE = SystemInstance.get().getBase().getDirectory();
 
     private TomcatWebAppBuilder.StandardContextInfo info;
-    private IAnnotationFinder finder = null;
-    private ClassLoader tempLoader = null;
+    private IAnnotationFinder finder;
+    private ClassLoader tempLoader;
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
-    private boolean webInfClassesAnnotationsProcessed = false;
+    private boolean webInfClassesAnnotationsProcessed;
 
     public OpenEJBContextConfig(final TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());

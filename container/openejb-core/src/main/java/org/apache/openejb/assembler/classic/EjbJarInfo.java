@@ -33,7 +33,7 @@ public class EjbJarInfo extends CommonInfoObject {
     public String moduleId;
     public URI moduleUri;
     public String path;
-    public boolean webapp = false;
+    public boolean webapp;
 
     @XmlElements({ // needed for unmarshalling
             @XmlElement(name = "stateless", type = StatelessBeanInfo.class),

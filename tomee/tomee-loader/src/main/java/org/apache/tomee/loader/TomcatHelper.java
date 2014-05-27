@@ -33,8 +33,8 @@ import java.lang.reflect.Method;
 import java.security.Principal;
 
 public class TomcatHelper {
-    private static StandardServer server = null;
-    private static boolean stopping = false;
+    private static StandardServer server;
+    private static boolean stopping;
 
     public static boolean isStopping() {
         return stopping;

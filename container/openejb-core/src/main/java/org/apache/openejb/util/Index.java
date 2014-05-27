@@ -212,7 +212,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
     private class IndexEntrySet extends AbstractSet {
         public Iterator iterator() {
             return new Iterator() {
-                private int index = 0;
+                private int index;
                 public boolean hasNext() {
                     return index < entries.length;
                 }

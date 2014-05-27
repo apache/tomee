@@ -25,7 +25,7 @@ import java.util.Properties;
 
 public class MailSessionFactory {
     private final Properties properties = new Properties();
-    private boolean useDefault = false;
+    private boolean useDefault;
 
     public Session create() {
         final String password = properties.getProperty("password");

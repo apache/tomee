@@ -36,8 +36,8 @@ public class Runner {
     private String catalinaBase = System.getProperty("catalina.base");
     private String serverXmlFile = System.getProperty("catalina.base") + "/conf/server.xml";
 
-    private static List<Map<String, String>> installerResults = null;
-    private static org.apache.tomee.installer.Status installerStatus = null;
+    private static List<Map<String, String>> installerResults;
+    private static org.apache.tomee.installer.Status installerStatus;
 
     public Runner(final InstallerInterface installer) {
         this.installer = installer;

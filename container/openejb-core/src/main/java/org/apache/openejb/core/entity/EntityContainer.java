@@ -71,7 +71,7 @@ public class EntityContainer implements RpcContainer {
 
     private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
 
-    private Object containerID = null;
+    private Object containerID;
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private final SecurityService securityService;

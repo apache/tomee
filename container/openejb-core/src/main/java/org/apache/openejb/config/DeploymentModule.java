@@ -64,7 +64,7 @@ public interface DeploymentModule {
         private final String name;
         private final File location;
         private final URI uri;
-        private boolean overriden = false;
+        private boolean overriden;
 
         /**
          * The intention of this is to hold the extracted and archived versions

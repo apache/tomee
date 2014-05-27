@@ -37,7 +37,7 @@ public class Installer implements InstallerInterface {
 
     private final Paths paths;
     private Status status = Status.NONE;
-    private boolean force = false;
+    private boolean force;
 
     private static final boolean listenerInstalled;
     private static final boolean agentInstalled;

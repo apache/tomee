@@ -40,7 +40,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     private static final ReentrantLock lock = new ReentrantLock();
 
-    private Logger logger = null;
+    private Logger logger;
 
     /**
      * The password codec to be used to retrieve the plain text password from a
@@ -49,8 +49,8 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * <em>The default is no codec.</em>. In other words, it means password is
      * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
-    private String passwordCipher = null;
-    private JMXBasicDataSource jmxDs = null;
+    private String passwordCipher;
+    private JMXBasicDataSource jmxDs;
 
     public BasicManagedDataSource(final String name) {
         registerAsMbean(name);

@@ -31,7 +31,7 @@ import java.util.Properties;
 public class TopicBuilder extends Resource {
 
     @XmlAttribute
-    private String destination = null;
+    private String destination;
 
     public TopicBuilder() {
         setClassName("org.apache.activemq.command.ActiveMQTopic");

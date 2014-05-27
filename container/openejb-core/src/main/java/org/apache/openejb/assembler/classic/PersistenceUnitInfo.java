@@ -40,5 +40,5 @@ public class PersistenceUnitInfo extends InfoObject {
     public String persistenceXMLSchemaVersion;
     public String sharedCacheMode;
     public String validationMode;
-    public String webappName = null; // used in ear to start webapp emf
+    public String webappName; // used in ear to start webapp emf
 }

@@ -37,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LocalInitialContextFactory implements InitialContextFactory {
 
     private static final ReentrantLock lock = new ReentrantLock();
-    private static OpenEJBInstance openejb = null;
+    private static OpenEJBInstance openejb;
 
     private boolean bootedOpenEJB;
 

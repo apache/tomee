@@ -34,7 +34,7 @@ import java.util.Properties;
 public class TomEEDataSourceRealm extends DataSourceRealm {
     private static final String OPENEJB_RESOURCE_PREFIX = "java:openejb/Resource/";
 
-    private String fullName = null;
+    private String fullName;
 
     @Override
     protected Connection open() {

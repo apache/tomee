@@ -38,7 +38,7 @@ public class LoaderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     /**Flag for starting embedded*/
-    private static boolean embedded = false;
+    private static boolean embedded;
 
     /**
      * {@inheritDoc}

@@ -33,7 +33,7 @@ import java.util.Properties;
 @Prefixes({"tomee", "tomee.embedded"})
 public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private int httpsPort = 8443;
-    private boolean ssl = false;
+    private boolean ssl;
     private String keystoreFile;
     private String keystorePass;
     private String keystoreType = "JKS";

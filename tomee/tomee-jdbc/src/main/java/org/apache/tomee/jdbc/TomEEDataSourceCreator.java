@@ -210,7 +210,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         private static final Log LOGGER = LogFactory.getLog(TomEEDataSource.class);
         private static final Class<?>[] CONNECTION_POOL_CLASS = new Class<?>[]{ PoolConfiguration.class };
 
-        private ObjectName internalOn = null;
+        private ObjectName internalOn;
 
         public TomEEDataSource(final PoolConfiguration properties, final ConnectionPool pool, final String name) {
             super(readOnly(properties));

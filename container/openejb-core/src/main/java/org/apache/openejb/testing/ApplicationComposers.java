@@ -123,15 +123,15 @@ public final class ApplicationComposers {
 
     private final Map<Object, ClassFinder> testClassFinders;
     private final Class<?> testClass;
-    private ServiceManagerProxy serviceManager = null;
+    private ServiceManagerProxy serviceManager;
 
     // invocation context
-    private AppInfo appInfo = null;
-    private Assembler assembler = null;
-    private AppContext appContext = null;
-    private ThreadContext previous = null;
-    private MockHttpSession session = null;
-    private MockServletContext servletContext = null;
+    private AppInfo appInfo;
+    private Assembler assembler;
+    private AppContext appContext;
+    private ThreadContext previous;
+    private MockHttpSession session;
+    private MockServletContext servletContext;
     private Collection<String> globalJndiEntries = new ArrayList<String>();
 
     public ApplicationComposers(final Class<?> klass, final Object... additionalModules) {

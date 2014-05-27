@@ -113,19 +113,19 @@ public class FileHandler
     /**
      * The directory in which log files are created.
      */
-    private String directory = null;
+    private String directory;
 
 
     /**
      * The prefix that is added to log file filenames.
      */
-    private String prefix = null;
+    private String prefix;
 
 
     /**
      * The suffix that is added to log file filenames.
      */
-    private String suffix = null;
+    private String suffix;
 
 
     /**
@@ -137,7 +137,7 @@ public class FileHandler
     /**
      * The PrintWriter to which we are currently logging, if any.
      */
-    private volatile PrintWriter writer = null;
+    private volatile PrintWriter writer;
 
 
     /**

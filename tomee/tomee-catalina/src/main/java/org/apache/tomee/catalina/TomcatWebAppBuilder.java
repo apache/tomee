@@ -197,7 +197,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
     private static final boolean SKIP_TLD = SystemInstance.get().getOptions().get("tomee.skip-tld", false);
 
-    private static Method getNamingContextName = null; // it just sucks but that's private
+    private static Method getNamingContextName; // it just sucks but that's private
 
     static {
         try {
@@ -252,7 +252,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
 
-    private Class<?> sessionManagerClass = null;
+    private Class<?> sessionManagerClass;
 
     private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
@@ -671,7 +671,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     // TODO: find something more sexy
-    private static Field HOST_CONFIG_HOST = null;
+    private static Field HOST_CONFIG_HOST;
 
     static {
         try { // do it only once

@@ -70,7 +70,7 @@ public class SingletonContainer implements RpcContainer {
 
     private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
 
-    private Object containerID = null;
+    private Object containerID;
     private final SecurityService securityService;
     private Duration accessTimeout;
 

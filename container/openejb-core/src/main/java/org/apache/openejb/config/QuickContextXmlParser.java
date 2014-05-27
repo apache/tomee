@@ -42,7 +42,7 @@ public class QuickContextXmlParser extends DefaultHandler {
     }
 
     private String virtualClasspath = "";
-    private Collection<URL> urls = null;
+    private Collection<URL> urls;
 
     @Override
     public void startElement(final String uri, final String localName,

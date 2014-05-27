@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TomEEConfiguration implements ContainerConfiguration {
 
-    protected boolean exportConfAsSystemProperty = false;
+    protected boolean exportConfAsSystemProperty;
     protected int httpPort = 8080;
     protected int stopPort = 8005;
     protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
@@ -34,14 +34,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String host = "localhost";
     protected String stopHost = "localhost"; // generally localhost but host (http) can be different
     protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
-    protected String serverXml = null;
+    protected String serverXml;
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
-    protected String preloadClasses = null; // just a client classloader.loadClass(), value is comma separated qualified names. Useful with maven resolver for instance
+    protected String preloadClasses; // just a client classloader.loadClass(), value is comma separated qualified names. Useful with maven resolver for instance
     protected boolean quickSession = true;
     protected boolean unpackWars = true;
 
     protected String properties = "";
-    protected String webContextToUseWithEars = null;
+    protected String webContextToUseWithEars;
     protected boolean keepServerXmlAsThis;
 
     public boolean isUnpackWars() {

@@ -26,7 +26,7 @@ public class ParsedName implements Serializable {
     static final int IS_GREATER = 1;
 
     String [] components;
-    int pos = 0;
+    int pos;
     int hashcode;
 
     public ParsedName(String path) {

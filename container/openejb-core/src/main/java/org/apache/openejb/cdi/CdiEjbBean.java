@@ -67,8 +67,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
     private final boolean isDependentAndStateful;
 
     // initialized a bit later in the lifecycle but could be final otherwise
-    private BeanContext.BusinessLocalBeanHome homeLocalBean = null;
-    private BeanContext.BusinessLocalHome home = null;
+    private BeanContext.BusinessLocalBeanHome homeLocalBean;
+    private BeanContext.BusinessLocalHome home;
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at) {
         this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
@@ -342,7 +342,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     public static class EjbInjectionTargetImpl<T> extends InjectionTargetImpl<T> {
         private CdiEjbBean<T> bean;
-        private InjectionTarget<T> delegate = null;
+        private InjectionTarget<T> delegate;
 
         public EjbInjectionTargetImpl(final AnnotatedType<T> annotatedType, final Set<InjectionPoint> points, final WebBeansContext webBeansContext) {
             super(annotatedType, points, webBeansContext,

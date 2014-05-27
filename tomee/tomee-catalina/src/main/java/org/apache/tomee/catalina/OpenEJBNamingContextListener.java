@@ -53,7 +53,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
     /**
      * Has the listener been started?
      */
-    private boolean running = false;
+    private boolean running;
 
     /**
      * Associated naming resources.

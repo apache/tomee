@@ -76,10 +76,10 @@ import java.util.TreeMap;
 public class LightweightWebAppBuilder implements WebAppBuilder {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
 
-    private static Method addServletMethod = null;
-    private static Method removeServletMethod = null;
-    private static Method addFilterMethod = null;
-    private static Method removeFilterMethod = null;
+    private static Method addServletMethod;
+    private static Method removeServletMethod;
+    private static Method addFilterMethod;
+    private static Method removeFilterMethod;
 
     static {
         try {

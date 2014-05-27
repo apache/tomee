@@ -48,7 +48,7 @@ public final class ScanUtil {
     public static final class ScanHandler extends DefaultHandler {
         private final Set<String> classes = new HashSet<String>();
         private final Set<String> packages = new HashSet<String>();
-        private Set<String> current = null;
+        private Set<String> current;
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {

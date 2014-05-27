@@ -49,7 +49,7 @@ public class SimpleRouter {
     private static final Pattern PATTERN = Pattern.compile("(.*)->(.*)");
 
     private String prefix = "";
-    private ObjectName objectName = null;
+    private ObjectName objectName;
     private Route[] routes = new Route[0];
     private final Map<String, Route> cache = new ConcurrentHashMap<String, Route>();
 

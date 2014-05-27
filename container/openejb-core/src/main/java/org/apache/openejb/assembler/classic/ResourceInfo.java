@@ -22,6 +22,6 @@ import java.util.List;
 
 public class ResourceInfo extends ServiceInfo {
     public String jndiName = "";
-    public String originAppName = null; // if define by an app
+    public String originAppName; // if define by an app
     public List<String> aliases = new ArrayList<String>();
 }

@@ -41,7 +41,7 @@ public class Agent {
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
     private static String agentArgs;
     private static Instrumentation instrumentation;
-    private static boolean initialized = false;
+    private static boolean initialized;
 
     public static void premain(final String agentArgs, final Instrumentation instrumentation) {
         if (Agent.instrumentation != null) {

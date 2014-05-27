@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class OpenEJBSecurityListener implements AsyncListener {
     private TomcatSecurityService securityService;
-    private Object oldState = null;
+    private Object oldState;
     private Request request;
 
     public OpenEJBSecurityListener(final TomcatSecurityService service, final Request req) {
