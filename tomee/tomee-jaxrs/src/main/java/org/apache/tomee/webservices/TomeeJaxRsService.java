@@ -47,7 +47,9 @@ public class TomeeJaxRsService implements Service {
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         final RESTService component = SystemInstance.get().getComponent(RESTService.class);
-        if (component == null) return;
+        if (component == null) {
+            return;
+        }
         component.afterApplicationCreated(event.getApp(), event.getWeb());
     }
 

@@ -22,16 +22,12 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.core.ApplicationContextFacade;
 import org.apache.catalina.core.StandardContext;
-import org.apache.myfaces.context.servlet.StartupServletExternalContextImpl;
 import org.apache.myfaces.ee6.MyFacesContainerInitializer;
-import org.apache.myfaces.spi.FacesConfigResourceProvider;
-import org.apache.myfaces.spi.FacesConfigResourceProviderFactory;
 import org.apache.myfaces.webapp.AbstractFacesInitializer;
 import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.log.RemoveLogMessage;
 
-import javax.faces.context.ExternalContext;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;

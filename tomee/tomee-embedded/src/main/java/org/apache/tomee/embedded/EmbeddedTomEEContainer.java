@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class EmbeddedTomEEContainer extends EJBContainer {
+public final class EmbeddedTomEEContainer extends EJBContainer {
     public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
     private static EmbeddedTomEEContainer tomEEContainer;
     private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");

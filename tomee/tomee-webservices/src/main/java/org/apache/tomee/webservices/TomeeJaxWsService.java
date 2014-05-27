@@ -50,7 +50,9 @@ public class TomeeJaxWsService implements Service {
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         final WsService component = SystemInstance.get().getComponent(WsService.class);
-        if (component == null) return;
+        if (component == null) {
+            return;
+        }
         component.afterApplicationCreated(event.getApp(), event.getWeb());
     }
 }

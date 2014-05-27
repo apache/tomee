@@ -455,7 +455,7 @@
         <module>container/openejb-javaagent</module>
         <module>container/openejb-api</module>
         <module>arquillian</module>
-        <module>tomee/tomee-catalina</module>
+        <module>tomee</module>
       </modules>
       <properties>
         <style.config.dir>${user.dir}/src/main/style</style.config.dir>

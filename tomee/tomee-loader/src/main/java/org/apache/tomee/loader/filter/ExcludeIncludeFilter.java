@@ -31,7 +31,9 @@ public class ExcludeIncludeFilter implements Filter {
     }
 
     public boolean accept(final String name) {
-        if (exclude.accept(name)) return include.accept(name);
+        if (exclude.accept(name)) {
+            return include.accept(name);
+        }
         return true;
     }
 

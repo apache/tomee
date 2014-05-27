@@ -46,10 +46,10 @@ public class Main {
         }
 
         // run TomEE
-		try {
-			final Container container = new Container();
+        try {
+            final Container container = new Container();
             container.setup(createConfiguration(line));
-			container.start();
+            container.start();
 
             if (line.hasOption(PATH)) {
                 final String[] contexts;
@@ -84,11 +84,11 @@ public class Main {
                     }
                 }
             });
-			container.await();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
+            container.await();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private static Options createOptions() {
         final Options options = new Options();

@@ -421,10 +421,12 @@ public class Container {
     }
 
     private void deleteTree(final File file) {
-        if (file == null)
+        if (file == null) {
             return;
-        if (!file.exists())
+        }
+        if (!file.exists()) {
             return;
+        }
 
         if (file.isFile()) {
             if (!file.delete()) {
@@ -434,10 +436,12 @@ public class Container {
         }
 
         if (file.isDirectory()) {
-            if ("".equals(file.getName()))
+            if ("".equals(file.getName())) {
                 return;
-            if ("src/main".equals(file.getName()))
+            }
+            if ("src/main".equals(file.getName())) {
                 return;
+            }
 
             final File[] children = file.listFiles();
 

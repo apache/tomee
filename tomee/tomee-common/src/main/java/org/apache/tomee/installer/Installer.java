@@ -238,8 +238,12 @@ public class Installer implements InstallerInterface {
         final File[] files = paths.getOpenEJBLibDir().listFiles();
         if (files != null) {
             for (final File file : files) {
-                if (file.isDirectory()) continue;
-                if (!file.getName().endsWith(".jar")) continue;
+                if (file.isDirectory()) {
+                    continue;
+                }
+                if (!file.getName().endsWith(".jar")) {
+                    continue;
+                }
 
                 try {
                     Installers.copyFile(file, new File(libs, file.getName()));
@@ -281,13 +285,25 @@ public class Installer implements InstallerInterface {
 
     private void copyClasses(final File javaEEAPIJar, final File sourceJar, final File destinationJar,
                              final String pattern, final List<String> exceptions) {
-        if (javaEEAPIJar == null) throw new NullPointerException("javaEEAPIJar");
-        if (sourceJar == null) throw new NullPointerException("sourceJar");
-        if (destinationJar == null) throw new NullPointerException("destinationJar");
-        if (pattern == null) throw new NullPointerException("pattern");
-        if (exceptions == null) throw new NullPointerException("exceptions");
+        if (javaEEAPIJar == null) {
+            throw new NullPointerException("javaEEAPIJar");
+        }
+        if (sourceJar == null) {
+            throw new NullPointerException("sourceJar");
+        }
+        if (destinationJar == null) {
+            throw new NullPointerException("destinationJar");
+        }
+        if (pattern == null) {
+            throw new NullPointerException("pattern");
+        }
+        if (exceptions == null) {
+            throw new NullPointerException("exceptions");
+        }
 
-        if (destinationJar.exists()) return;
+        if (destinationJar.exists()) {
+            return;
+        }
 
         try {
             final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
@@ -322,11 +338,19 @@ public class Installer implements InstallerInterface {
     }
 
     private void copyClasses(final File sourceJar, final File destinationJar, final String pattern) {
-        if (sourceJar == null) throw new NullPointerException("sourceJar");
-        if (destinationJar == null) throw new NullPointerException("destinationJar");
-        if (pattern == null) throw new NullPointerException("pattern");
+        if (sourceJar == null) {
+            throw new NullPointerException("sourceJar");
+        }
+        if (destinationJar == null) {
+            throw new NullPointerException("destinationJar");
+        }
+        if (pattern == null) {
+            throw new NullPointerException("pattern");
+        }
 
-        if (destinationJar.exists()) return;
+        if (destinationJar.exists()) {
+            return;
+        }
 
         try {
             final ZipInputStream source = new ZipInputStream(IO.read(sourceJar));
@@ -334,7 +358,9 @@ public class Installer implements InstallerInterface {
             final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
             for (ZipEntry entry; (entry = source.getNextEntry()) != null; ) {
                 final String entryName = entry.getName();
-                if (!entryName.matches(pattern)) continue;
+                if (!entryName.matches(pattern)) {
+                    continue;
+                }
                 destination.putNextEntry(new ZipEntry(entryName));
                 IO.copy(source, destination);
             }

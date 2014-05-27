@@ -28,18 +28,17 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.security.Principal;
 
 public class TomcatHelper {
     private static StandardServer server = null;
-	private static boolean stopping = false;
-	
-	public static boolean isStopping() {
-		return stopping;
-	}
+    private static boolean stopping = false;
+
+    public static boolean isStopping() {
+        return stopping;
+    }
 
     public static void setServer(final StandardServer server) {
         TomcatHelper.server = server;
@@ -47,15 +46,13 @@ public class TomcatHelper {
     }
 
     public static void setStopping(final boolean stopping) {
-		TomcatHelper.stopping = stopping;
-	}
+        TomcatHelper.stopping = stopping;
+    }
 
-	public static StandardServer getServer() {
+    public static StandardServer getServer() {
         StandardServer server = null;
-        Class<?> systemInstanceClass = null;
         try {
-            // server = SystemInstance.get().getComponent(StandardServer.class)
-            systemInstanceClass = Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.loader.SystemInstance");
+            final Class<?> systemInstanceClass = Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.loader.SystemInstance");
             final Object instance = systemInstanceClass.getDeclaredMethod("get").invoke(null);
             server = (StandardServer) systemInstanceClass.getDeclaredMethod("getComponent", Class.class).invoke(instance, StandardServer.class);
         } catch (final Exception classNotFoundException) {
@@ -67,30 +64,30 @@ public class TomcatHelper {
         }
 
         // first try to use Tomcat's ServerFactory class to give us a reference to the server
-		
-		try {
-			final Class<?> tomcatServerFactory = Class.forName("org.apache.catalina.ServerFactory");
-			final Method getServerMethod = tomcatServerFactory.getMethod("getServer");
-			server = (StandardServer) getServerMethod.invoke(null);
-		} catch (final Exception e) {
+
+        try {
+            final Class<?> tomcatServerFactory = Class.forName("org.apache.catalina.ServerFactory");
+            final Method getServerMethod = tomcatServerFactory.getMethod("getServer");
+            server = (StandardServer) getServerMethod.invoke(null);
+        } catch (final Exception e) {
             // ignored
-		}
-		if (server != null) {
+        }
+        if (server != null) {
             TomcatHelper.server = server;
-			return server;
-		}
+            return server;
+        }
 
         if (TomcatHelper.server != null) { // try it before next one otherwise we depend on "Catalina" name which can change
             return TomcatHelper.server;
         }
-		
-		// if this fails, we'll try and get a reference from the platform mbean server
-		try {
-			final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-			server = (StandardServer) mbeanServer.getAttribute(new ObjectName("Catalina:type=Server"), "managedResource");
-		} catch (final Exception e) {
+
+        // if this fails, we'll try and get a reference from the platform mbean server
+        try {
+            final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+            server = (StandardServer) mbeanServer.getAttribute(new ObjectName("Catalina:type=Server"), "managedResource");
+        } catch (final Exception e) {
             // ignored
-		}
+        }
 
         if (server != null) {
             TomcatHelper.server = server;
@@ -98,114 +95,79 @@ public class TomcatHelper {
         }
 
         // if this still fails, that's too bad.
-		return TomcatHelper.server;
-	}
-	
-	public static int getContextState(final StandardContext standardContext) {
-		final int state;
-		
-		try {
-			final Method getStateMethod = StandardContext.class.getMethod("getState");
-			final Object result = getStateMethod.invoke(standardContext);
-			
-			
-			if (Integer.TYPE.equals(result.getClass())) {
-				state = (Integer) result;
-				return state;
-			}
-			
-			if (result.getClass().isEnum()) {
-				final Enum<?> e = (Enum<?>) result;
-				
-				if ("FAILED".equals(e.toString())) {
-					return 4;
-				} else if ("STOPPING".equals(e.toString()) || "STOPPING_PREP".equals(e.toString()) || "MUST_STOP".equals(e.toString()) || "MUST_DESTROY".equals(e.toString())) {
-					return 2;
-				} else if ("RUNNING".equals(e.toString()) || "STARTED".equals(e.toString())) {
-					return 1;
-				} else if ("INITIALIZED".equals(e.toString())) {
-					return 0;
-				}
-			}
-		} catch (final Exception e) {
-		}
-		
-		// return STOPPED by default
-		return 3;
-	}
+        return TomcatHelper.server;
+    }
 
-	/**
-	 * Helper method to call the correct org.apache.catalina.Realm.hasRole method based on the Tomcat version
-	 * @param realm
-	 * @param tomcatPrincipal
-	 * @param logicalRole
-	 * @return true the the principle has the specified role
-	 */
-	public static boolean hasRole(final Realm realm, final Principal tomcatPrincipal, final String logicalRole) {
-		Method method = null;
-		try {
+    public static int getContextState(final StandardContext standardContext) {
+        final int state;
 
-			if (isTomcat7()) {
-				method = realm.getClass().getMethod("hasRole", new Class<?>[] { Wrapper.class, Principal.class, String.class });
-				return (Boolean) method.invoke(realm, new Object[] { null, tomcatPrincipal, logicalRole});
-			} else {
-				method = realm.getClass().getMethod("hasRole", new Class<?>[] { Principal.class, String.class });
-				return (Boolean) method.invoke(realm, new Object[] { tomcatPrincipal, logicalRole});
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            final Method getStateMethod = StandardContext.class.getMethod("getState");
+            final Object result = getStateMethod.invoke(standardContext);
 
-		return false;
-	}
 
-	public static boolean isTomcat7() {
-		return System.getProperty("tomcat.version", "7.").startsWith("7.");
-	}
+            if (Integer.TYPE.equals(result.getClass())) {
+                state = (Integer) result;
+                return state;
+            }
 
-	public static void configureJarScanner(final Context standardContext) {
-		try { // override only if default
+            if (result.getClass().isEnum()) {
+                final Enum<?> e = (Enum<?>) result;
+
+                if ("FAILED".equals(e.toString())) {
+                    return 4;
+                } else if ("STOPPING".equals(e.toString()) || "STOPPING_PREP".equals(e.toString()) || "MUST_STOP".equals(e.toString()) || "MUST_DESTROY".equals(e.toString())) {
+                    return 2;
+                } else if ("RUNNING".equals(e.toString()) || "STARTED".equals(e.toString())) {
+                    return 1;
+                } else if ("INITIALIZED".equals(e.toString())) {
+                    return 0;
+                }
+            }
+        } catch (final Exception e) {
+            // no-op
+        }
+
+        // return STOPPED by default
+        return 3;
+    }
+
+    /**
+     * Helper method to call the correct org.apache.catalina.Realm.hasRole method based on the Tomcat version
+     * @param realm
+     * @param tomcatPrincipal
+     * @param logicalRole
+     * @return true the the principle has the specified role
+     */
+    public static boolean hasRole(final Realm realm, final Principal tomcatPrincipal, final String logicalRole) {
+        try {
+            if (isTomcat7()) {
+                final Method method = realm.getClass().getMethod("hasRole", Wrapper.class, Principal.class, String.class);
+                return (Boolean) method.invoke(realm, null, tomcatPrincipal, logicalRole);
+            } else {
+                final Method method = realm.getClass().getMethod("hasRole", Principal.class, String.class);
+                return (Boolean) method.invoke(realm, tomcatPrincipal, logicalRole);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isTomcat7() {
+        return System.getProperty("tomcat.version", "7.").startsWith("7.");
+    }
+
+    public static void configureJarScanner(final Context standardContext) {
+        try { // override only if default
             if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.override.jar-scanner", "true"))
                     && !TomEEJarScanner.class.isInstance(standardContext.getJarScanner())
                     && StandardJarScanner.class.isInstance(standardContext.getJarScanner())) {
                 standardContext.setJarScanner(new TomEEJarScanner());
             }
-		} catch (final Exception e) {
-			// ignore
-		}
-	}
-
-	/**
-	 * Get a comma separated list of all jars under $CATALINA_BASE/webapps/tomee/lib
-	 * The idea is that all of these jars should be excluded from Tomcat's scanning for web fragments
-	 * because these jar don't have any fragments in, and the scanning process is expensive in terms
-	 * of PermGen space.
-	 * 
-	 * @return list of jars as string, comma separated
-	 */
-	private static String getJarsToSkip() {
-		final File openejbApp = new File(System.getProperty("tomee.war"));
-		final File libFolder = new File(openejbApp, "lib");
-		final StringBuilder builder = new StringBuilder();
-
-        final File[] files = libFolder.listFiles();
-        if (files != null) {
-            for (final File f : files) {
-                if (f.getName().startsWith("javaee-api-embedded")) continue;
-                if (f.getName().startsWith("myfaces")) continue;
-
-
-
-                if (f.getName().toLowerCase().endsWith(".jar")) {
-                    if (builder.length() > 0) {
-                        builder.append(",");
-                    }
-
-                    builder.append(f.getName());
-                }
-            }
+        } catch (final Exception e) {
+            // ignore
         }
+    }
 
-        return builder.toString();
-	}
 }

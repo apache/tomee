@@ -30,7 +30,9 @@ public class EnumFactory implements ObjectFactory {
     public static final String ENUM_VALUE = "enumValue";
 
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
-        if (!(object instanceof Reference)) return null;
+        if (!(object instanceof Reference)) {
+            return null;
+        }
 
         final Reference reference = ((Reference) object);
 

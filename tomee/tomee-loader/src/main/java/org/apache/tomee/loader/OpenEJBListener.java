@@ -56,8 +56,8 @@ import java.util.logging.Logger;
 public class OpenEJBListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBListener.class.getName());
 
-    static private boolean listenerInstalled;
-    static private boolean logWebappNotFound = true;
+    private static boolean listenerInstalled;
+    private static boolean logWebappNotFound = true;
 
     public static boolean isListenerInstalled() {
         return listenerInstalled;
@@ -66,7 +66,9 @@ public class OpenEJBListener implements LifecycleListener {
     @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         // only install once
-        if (listenerInstalled || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
+        if (listenerInstalled || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) {
+            return;
+        }
 
         try {
             File webappDir = findOpenEjbWar();
@@ -224,10 +226,12 @@ public class OpenEJBListener implements LifecycleListener {
 
         // iterate over the contexts
         final File[] files = hostDir.listFiles();
-        if (null != files) for (final File contextDir : files) {
-            final File foundContextDir = findOpenEjbWarInContext(contextDir);
-            if (foundContextDir != null) {
-                return foundContextDir;
+        if (null != files) {
+            for (final File contextDir : files) {
+                final File foundContextDir = findOpenEjbWarInContext(contextDir);
+                if (foundContextDir != null) {
+                    return foundContextDir;
+                }
             }
         }
         return null;
@@ -296,8 +300,9 @@ public class OpenEJBListener implements LifecycleListener {
                     final byte[] buffer = new byte[2048];
                     while (true) {
                         final int n = input.read(buffer);
-                        if (n <= 0)
+                        if (n <= 0) {
                             break;
+                        }
                         output.write(buffer, 0, n);
                     }
                 } finally {

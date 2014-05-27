@@ -103,12 +103,18 @@ public class Filters {
             final Iterator<Filter> iterator = unwrapped.iterator();
             while (iterator.hasNext()) {
                 final Filter filter = iterator.next();
-                if (filter == NONE) iterator.remove();
+                if (filter == NONE) {
+                    iterator.remove();
+                }
             }
         }
 
-        if (unwrapped.size() == 0) return NONE;
-        if (unwrapped.size() == 1) return unwrapped.iterator().next();
+        if (unwrapped.size() == 0) {
+            return NONE;
+        }
+        if (unwrapped.size() == 1) {
+            return unwrapped.iterator().next();
+        }
         return new FilterList(unwrapped);
     }
 

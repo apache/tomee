@@ -39,7 +39,9 @@ public class FilterList implements Filter {
 
     public boolean accept(final String name) {
         for (final Filter filter : filters) {
-            if (filter.accept(name)) return true;
+            if (filter.accept(name)) {
+                return true;
+            }
         }
 
         return false;

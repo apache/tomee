@@ -57,7 +57,9 @@ public enum TomcatVersion {
     }
     
     public static TomcatVersion get(){
-        if (version != null) return version;
+        if (version != null) {
+            return version;
+        }
 
         try {
             // tomcat.version and tomcat.built properties should be added
@@ -85,14 +87,23 @@ public enum TomcatVersion {
                 serverBuilt = properties.getProperty("server.built");
             }
 
-            if (serverNumber.startsWith("3")) version = v3;
-            else if (serverNumber.startsWith("4.0")) version = v40;
-            else if (serverNumber.startsWith("4.1")) version = v41;
-            else if (serverNumber.startsWith("5.0")) version = v50;
-            else if (serverNumber.startsWith("5.5")) version = v55;
-            else if (serverNumber.startsWith("6.")) version = v6;
-            else if (serverNumber.startsWith("7.")) version = v7;
-            else version = UNKNOWN;
+            if (serverNumber.startsWith("3")) {
+                version = v3;
+            } else if (serverNumber.startsWith("4.0")) {
+                version = v40;
+            } else if (serverNumber.startsWith("4.1")) {
+                version = v41;
+            } else if (serverNumber.startsWith("5.0")) {
+                version = v50;
+            } else if (serverNumber.startsWith("5.5")) {
+                version = v55;
+            } else if (serverNumber.startsWith("6.")) {
+                version = v6;
+            } else if (serverNumber.startsWith("7.")) {
+                version = v7;
+            } else {
+                version = UNKNOWN;
+            }
 
             version.serverNumber = serverNumber;
             version.serverBuilt = serverBuilt;

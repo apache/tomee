@@ -40,7 +40,7 @@ import java.util.Properties;
  * and keeps that very complex code just a little simpler.
  */
 public class TomcatEmbedder {
-	
+
     /**Prefix for jar openejb-loader*/
     private static final String OPENEJB_LOADER_PREFIX = "openejb-loader";
     
@@ -48,13 +48,17 @@ public class TomcatEmbedder {
     private static final String TOMEE_WAR_NAME = "tomee.war";
     
     /**
-	 * Starts to embed process. 
-	 * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
-	 * @param catalinaCl The ClassLoader which loaded the ServletConfig class
-	 */
+     * Starts to embed process.
+     * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
+     * @param catalinaCl The ClassLoader which loaded the ServletConfig class
+     */
     public static void embed(final Properties properties, final ClassLoader catalinaCl) {
-        if (catalinaCl == null) throw new NullPointerException("catalinaCl is null");
-        if (properties == null) throw new NullPointerException("properties is null");
+        if (catalinaCl == null) {
+            throw new NullPointerException("catalinaCl is null");
+        }
+        if (properties == null) {
+            throw new NullPointerException("properties is null");
+        }
 
         if (!properties.containsKey(TOMEE_WAR_NAME)) {
             throw new IllegalArgumentException("properties must contain the tomee.war property");
@@ -170,7 +174,9 @@ public class TomcatEmbedder {
      */
     private static File findOpenEJBJar(final File tomeeWar, final String namePrefix) {
         final File openEJBLibDir = new File(tomeeWar, "lib");
-        if (openEJBLibDir == null) return null;
+        if (openEJBLibDir == null) {
+            return null;
+        }
 
         final File openejbLoaderJar = null;
         final File[] files = openEJBLibDir.listFiles();

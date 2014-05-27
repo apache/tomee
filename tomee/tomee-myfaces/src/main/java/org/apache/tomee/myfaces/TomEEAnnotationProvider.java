@@ -16,19 +16,20 @@
  */
 package org.apache.tomee.myfaces;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.faces.context.ExternalContext;
 import org.apache.myfaces.config.annotation.DefaultAnnotationProvider;
 import org.apache.myfaces.shared.util.ClassUtils;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+
+import javax.faces.context.ExternalContext;
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEAnnotationProvider.class);
@@ -38,14 +39,18 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
         final ClassLoader cl = getClassLoader();
 
         final WebAppBuilder builder = SystemInstance.get().getComponent(WebAppBuilder.class);
-        if (builder == null) throw new IllegalStateException("WebAppBuilder not found in SystemInstance. "
-                + "Ensure the following entry exists in the Tomcat server.xml file: <Listener className=\"org.apache.tomee.catalina.ServerListener\"/>"
-        );
+        if (builder == null) {
+            throw new IllegalStateException("WebAppBuilder not found in SystemInstance. "
+                    + "Ensure the following entry exists in the Tomcat server.xml file: <Listener className=\"org.apache.tomee.catalina.ServerListener\"/>"
+            );
+        }
 
         final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
 
         final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = builder.getJsfClasses();
-        if (builder == null) throw new IllegalStateException("JsfClasses not found in WebAppBuilder");
+        if (builder == null) {
+            throw new IllegalStateException("JsfClasses not found in WebAppBuilder");
+        }
 
         final Map<String, Set<String>> scanned = jsfClasses.get(cl);
         if (scanned == null) {
