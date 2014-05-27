@@ -140,7 +140,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <includes>
             <include>**/RemoteTomEEEJBContainer*.class</include>
@@ -151,7 +150,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.17</version>
         <executions>
           <execution>
             <goals>
@@ -260,7 +258,6 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>groovy-maven-plugin</artifactId>
-        <version>2.0</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.openejb</groupId>
