@@ -104,7 +104,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * Determines whether array expansion by <code>expansionFactor</code>
      * is additive or multiplicative.
      */
-    protected int expansionMode;
+    protected int expansionMode = MULTIPLICATIVE_MODE;
 
     /**
      * The initial capacity of the array.  Initial capacity is not exposed as a
