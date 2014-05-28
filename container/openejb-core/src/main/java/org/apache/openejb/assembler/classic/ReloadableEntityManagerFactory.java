@@ -279,12 +279,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
     public synchronized void setSharedCacheMode(final SharedCacheMode mode) {
         final PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
-        info.setSharedCacheMode(mode);
+        info.setSharedCacheMode(null != mode ? mode : SharedCacheMode.UNSPECIFIED);
 
         final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
-        if (properties.containsKey(JAVAX_PERSISTENCE_SHARED_CACHE_MODE)) {
-            properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
-        }
+        properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, null != mode ? mode.name() : "UNSPECIFIED");
     }
 
     public synchronized void setValidationMode(final ValidationMode mode) {
