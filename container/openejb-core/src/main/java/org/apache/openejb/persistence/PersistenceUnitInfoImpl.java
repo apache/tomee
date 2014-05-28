@@ -127,7 +127,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * Second-level cache mode for the persistence unit
      */
-    private SharedCacheMode sharedCacheMode;
+    private SharedCacheMode sharedCacheMode = SharedCacheMode.UNSPECIFIED;
 
     /**
      * The validation mode to be used for the persistence unit
@@ -568,14 +568,14 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
      * @see javax.persistence.spi.PersistenceUnitInfo#getSharedCacheMode()
      */
     public SharedCacheMode getSharedCacheMode() {
-        return null != this.sharedCacheMode ? this.sharedCacheMode : SharedCacheMode.UNSPECIFIED;
+        return this.sharedCacheMode;
     }
 
     /**
      * @param sharedCacheMode the sharedCacheMode to set
      */
     public void setSharedCacheMode(final SharedCacheMode sharedCacheMode) {
-        this.sharedCacheMode = sharedCacheMode;
+        this.sharedCacheMode = (null != sharedCacheMode ? sharedCacheMode : SharedCacheMode.UNSPECIFIED);
     }
 
     /* (non-Javadoc)
