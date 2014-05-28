@@ -69,7 +69,7 @@ public class TomcatRsRegistry implements RsRegistry {
         }
 
         // find the existing host (we do not auto-create hosts)
-        Container host = null;
+        Container host;
         Context context = null;
         if (virtualHost == null) {
             host = hosts.getDefault();
@@ -160,18 +160,17 @@ public class TomcatRsRegistry implements RsRegistry {
 
     @Override
     public HttpListener removeListener(final String completePath) {
-        String path = completePath;
-        if (path == null) {
-            return listeners.get(path);
-        }
-
-        // assure context root with a leading slash
-        if (!path.startsWith("/") && !path.startsWith("http://") && !path.startsWith("https://")) {
-            path = "/" + path;
-        }
-
-        if (listeners.containsKey(path)) {
-            return listeners.remove(path);
+        if(completePath != null) {
+            String path = completePath;
+            // assure context root with a leading slash
+            if (!path.startsWith("/") && !path.startsWith("http://") && !path.startsWith("https://")) {
+                path = "/" + path;
+            } else {
+                path = completePath;
+            }
+            if (listeners.containsKey(path)) {
+                return listeners.remove(path);
+            }
         }
         return null;
     }
