@@ -99,7 +99,7 @@
 
     <!--openjpa.version>2.3.0</openjpa.version-->
     <openjpa.version>2.4.0-nonfinal-1591689</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.5</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.4</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
