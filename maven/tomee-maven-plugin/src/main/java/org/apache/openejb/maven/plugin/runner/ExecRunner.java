@@ -72,7 +72,7 @@ public class ExecRunner {
             }
             System.out.println("Extracting tomee to " + distribOutput.getAbsolutePath());
             Zips.unzip(distribIs, distribOutput, false);
-            IO.writeString(timestampFile, config.getProperty("timestamp"));
+            IO.writeString(timestampFile, config.getProperty("timestamp", Long.toString(System.currentTimeMillis())));
         }
 
         final File[] extracted = distribOutput.listFiles();
