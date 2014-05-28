@@ -62,9 +62,11 @@ public class ExecRunner {
         final InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
         File distribOutput = new File(workingDir);
         final File timestampFile = new File(distribOutput, "timestamp.txt");
-        if (!timestampFile.exists()
+        final boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
+        if (forceDelete
+                || !timestampFile.exists()
                 || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
-            if (timestampFile.exists()) {
+            if (forceDelete || timestampFile.exists()) {
                 System.out.println("Deleting " + distribOutput.getAbsolutePath());
                 Files.delete(distribOutput);
             }
