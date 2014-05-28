@@ -66,8 +66,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     private String persistenceProviderClassName;
 
     /**
-     * Does this persistence unti participate in JTA transactions or does it manage
-     * resource local tranactions using the JDBC APIs.
+     * Does this persistence unit participate in JTA transactions or does it manage
+     * resource local transactions using the JDBC APIs.
      */
     private PersistenceUnitTransactionType transactionType = PersistenceUnitTransactionType.JTA;
 
@@ -119,21 +119,33 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     private ClassLoader classLoader;
 
     // JPA 2.0
-    /** Schema version of the persistence.xml file */
+    /**
+     * Schema version of the persistence.xml file
+     */
     private String persistenceXMLSchemaVersion;
 
-    /** Second-level cache mode for the persistence unit */
+    /**
+     * Second-level cache mode for the persistence unit
+     */
     private SharedCacheMode sharedCacheMode;
 
-    /** The validation mode to be used for the persistence unit */
+    /**
+     * The validation mode to be used for the persistence unit
+     */
     private ValidationMode validationMode;
 
-    /** just to be able to dump this PU at runtime */
+    /**
+     * just to be able to dump this PU at runtime
+     */
     private String jtaDataSourceName;
-    /** just to be able to dump this PU at runtime */
+    /**
+     * just to be able to dump this PU at runtime
+     */
     private String nonJtaDataSourceName;
 
-    /** does it need to be created lazily (not in constructor) */
+    /**
+     * does it need to be created lazily (not in constructor)
+     */
     private boolean lazilyInitialized;
 
     public PersistenceUnitInfoImpl() {
@@ -229,7 +241,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public void setRootUrlAndJarUrls(final String persistenceUnitRootUrl, final List<String> jarFiles) throws MalformedURLException {
         File root;
-        try{
+        try {
             final URI rootUri = URLs.uri(persistenceUnitRootUrl);
             root = new File(rootUri);
         } catch (final IllegalArgumentException e) {
@@ -347,6 +359,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     // not the shouldSkip() method from UrlClassLoaderFirst since we skip more here
     // we just need JPA stuff so all the tricks we have for the server part are useless
+    @SuppressWarnings("RedundantIfStatement")
     public static boolean isServerClass(final String name) {
         if (name == null) {
             return false;
@@ -555,7 +568,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
      * @see javax.persistence.spi.PersistenceUnitInfo#getSharedCacheMode()
      */
     public SharedCacheMode getSharedCacheMode() {
-        return this.sharedCacheMode;
+        return null != this.sharedCacheMode ? this.sharedCacheMode : SharedCacheMode.UNSPECIFIED;
     }
 
     /**
