@@ -20,8 +20,10 @@ import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
@@ -367,7 +369,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (realm != null && !(realm instanceof TomEERealm)
                 && (engine.getParent() == null
                 || (engine.getParent() != null && !realm.equals(engine.getParent().getRealm())))) {
-            engine.setRealm(tomeeRealm(realm));
+            final Realm tomeeRealm = tomeeRealm(realm);
+            engine.setRealm(tomeeRealm);
+            if (LifecycleState.STARTING_PREP.equals(engine.getState())) {
+                try {
+                    Lifecycle.class.cast(tomeeRealm).start();
+                } catch (final LifecycleException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
         }
     }
 
