@@ -55,6 +55,7 @@
     <module>apache-tomee</module>
     <module>tomee-util</module>
     <module>tomee-juli</module>
+    <module>tomee-overlay-runner</module>
     <!--<module>tomee-deb</module>-->
   </modules>
 

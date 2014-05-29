@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
  *
  * This method of bootstrapping is mutually exclussive to the {@link OpenEJBListener} approach
  */
+@Deprecated // use tomee-overlay-runner or another way to ensure you deterministicly work
 public class LoaderServlet extends HttpServlet {
     
     //Default serial version id
@@ -75,7 +76,7 @@ public class LoaderServlet extends HttpServlet {
      * @param config javax.servlet.ServletConfig
      * @return java.util.Properties
      */
-    private Properties initParamsToProperties(final ServletConfig config) {
+    protected Properties initParamsToProperties(final ServletConfig config) {
         final Properties properties = new Properties();
 
         //@Tomcat
