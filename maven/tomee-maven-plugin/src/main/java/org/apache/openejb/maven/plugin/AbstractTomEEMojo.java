@@ -1025,7 +1025,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private void ensureAppsFolderExistAndIsConfiguredByDefault(final File file) throws IOException {
         if ("openejb".equals(container.toLowerCase(Locale.ENGLISH))
-                || (file.exists() && apps != null && !apps.isEmpty())) { // webapps doesn't need apps folder in tomee
+                || (file.exists()
+                    && (
+                        (apps != null && !apps.isEmpty())
+                            || (!"pom".equals(packaging) && !"war".equals(packaging))))) { // webapps doesn't need apps folder in tomee
             final FileWriter writer = new FileWriter(file);
             final String rootTag = container.toLowerCase(Locale.ENGLISH);
             writer.write("<?xml version=\"1.0\"?>\n" +
