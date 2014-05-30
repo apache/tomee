@@ -117,7 +117,7 @@ public class RemoteServer {
         return this.portStartup;
     }
 
-    public void setPortStartup(int portStartup) {
+    public void setPortStartup(final int portStartup) {
         this.portStartup = portStartup;
     }
 
