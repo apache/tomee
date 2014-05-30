@@ -24,7 +24,7 @@ import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import javax.servlet.ServletContext;
 
 // mainly to avoid classloading issue since TomcatWebAppBuilder is added on the fly to tomcat classloader
-public class Deployer {
+public final class Deployer {
     public static void deploy(final ServletContext ctx) {
         final TomcatWebAppBuilder builder = SystemInstance.get().getComponent(TomcatWebAppBuilder.class);
         builder.configureStart(StandardContext.class.cast(Reflections.get(Reflections.get(ctx, "context"), "context")));
