@@ -54,7 +54,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
-        int httpPort = configuration.getHttpPort();
+        final int httpPort = configuration.getHttpPort();
         if (Setup.isRunning(configuration.getHost(), httpPort)) {
 
             logger.info(String.format("Tomcat found running on port %s", httpPort));
