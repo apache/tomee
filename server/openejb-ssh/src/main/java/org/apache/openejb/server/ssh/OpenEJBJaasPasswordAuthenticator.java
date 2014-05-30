@@ -18,7 +18,9 @@ package org.apache.openejb.server.ssh;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.sshd.common.Session;
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
+import org.apache.sshd.server.session.ServerSession;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -32,32 +34,30 @@ import java.io.IOException;
 public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, OpenEJBJaasPasswordAuthenticator.class);
 
-    private OpenEJBShellFactory shellFactory;
-
-    public OpenEJBJaasPasswordAuthenticator(OpenEJBShellFactory sf) {
-        this.shellFactory = sf;
-    }
+    public static final Session.AttributeKey<String> USERNAME_KEY = new Session.AttributeKey<String>();
+    public static final Session.AttributeKey<LoginContext> LOGIN_CONTEXT_KEY = new Session.AttributeKey<LoginContext>();
 
     @Override
-    public boolean authenticate(final String username, final String password) {
+    public boolean authenticate(final String username, final String password, final ServerSession session) {
         try {
             final Subject subject = new Subject();
             final LoginContext loginContext = new LoginContext(getDomain(), subject, new CallbackHandler() {
                 public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                    for (int i = 0; i < callbacks.length; i++) {
-                        if (callbacks[i] instanceof NameCallback) {
-                            ((NameCallback) callbacks[i]).setName(username);
-                        } else if (callbacks[i] instanceof PasswordCallback) {
-                            ((PasswordCallback) callbacks[i]).setPassword(password.toCharArray());
+                    for (final Callback callback : callbacks) {
+                        if (callback instanceof NameCallback) {
+                            ((NameCallback) callback).setName(username);
+                        } else if (callback instanceof PasswordCallback) {
+                            ((PasswordCallback) callback).setPassword(password.toCharArray());
                         } else {
-                            throw new UnsupportedCallbackException(callbacks[i]);
+                            throw new UnsupportedCallbackException(callback);
                         }
                     }
                 }
             });
             loginContext.login();
-            shellFactory.setUsername(username);
-            shellFactory.setLoginContext(loginContext);
+
+            session.setAttribute(USERNAME_KEY, username);
+            session.setAttribute(LOGIN_CONTEXT_KEY, loginContext);
             return true;
         } catch (Exception e) {
             LOGGER.debug("can't log using username '" + username + "'", e);

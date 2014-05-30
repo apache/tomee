@@ -20,6 +20,8 @@ import org.apache.openejb.server.cli.CliRunnable;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
+import org.apache.sshd.server.session.ServerSession;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -29,13 +31,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.PrivilegedAction;
 
-public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
+public class OpenEJBCommands extends CliRunnable implements Command, Runnable, SessionAware {
     private ExitCallback cbk;
-    private final LoginContext loginContext;
+    private LoginContext loginContext;
 
-    public OpenEJBCommands(String bind, int port, String username, LoginContext lc) {
-        super(bind, port, username, "\r\n");
-        loginContext = lc;
+    public OpenEJBCommands(String bind, int port) {
+        super(bind, port, null, "\r\n");
     }
 
     @Override
@@ -70,6 +71,9 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
 
     @Override
     public void run() {
+        if (loginContext == null) {
+            throw new IllegalStateException("No user logged");
+        }
         try {
             Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Object>() {
                 @Override
@@ -87,4 +91,16 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
             cbk.onExit(0);
         }
     }
+
+    @Override
+    public void setSession(final ServerSession session) {
+        final String username = session.getAttribute(OpenEJBJaasPasswordAuthenticator.USERNAME_KEY);
+        if (username == null) {
+            throw new IllegalStateException("No username in the session");
+        }
+
+        setUsername(username);
+        loginContext = session.getAttribute(OpenEJBJaasPasswordAuthenticator.LOGIN_CONTEXT_KEY);
+    }
 }
+
