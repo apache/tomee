@@ -28,7 +28,9 @@
   <artifactId>assembly</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Assembly</name>
-
+  <properties>
+    <test.coverage.skip>true</test.coverage.skip>
+  </properties>
   <modules>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>

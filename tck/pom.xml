@@ -26,6 +26,9 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: TCK</name>
 
+  <properties>
+    <test.coverage.skip>true</test.coverage.skip>
+  </properties>
 
   <modules>
     <module>cdi-embedded</module>
