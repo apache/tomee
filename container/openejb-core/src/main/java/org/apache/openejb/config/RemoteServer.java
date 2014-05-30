@@ -50,6 +50,8 @@ public class RemoteServer {
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
     public static final String SERVER_SHUTDOWN_COMMAND = "server.shutdown.command";
     public static final String OPENEJB_SERVER_DEBUG = "openejb.server.debug";
+    public static final String START = "start";
+    public static final String STOP = "stop";
 
     private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
@@ -66,10 +68,11 @@ public class RemoteServer {
     private Process server;
     private final int tries;
     private final boolean verbose;
-    private final int shutdownPort;
+    private final int portShutdown;
     private final String host;
     private final String command;
     private File home;
+    private int portStartup;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));
@@ -81,7 +84,8 @@ public class RemoteServer {
         home = getHome();
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
-        shutdownPort = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
+        portShutdown = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
+        portStartup = portShutdown;
         command = options.get(SERVER_SHUTDOWN_COMMAND, "SHUTDOWN");
         host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
     }
@@ -97,10 +101,10 @@ public class RemoteServer {
     }
 
     public static void main(final String[] args) {
-        assert args.length > 0 : "no arguments supplied: valid argumen -efts are 'start' or 'stop'";
-        if (args[0].equalsIgnoreCase("start")) {
+        assert args.length > 0 : "no arguments supplied: valid arguments are 'start' or 'stop'";
+        if (args[0].equalsIgnoreCase(START)) {
             new RemoteServer().start();
-        } else if (args[0].equalsIgnoreCase("stop")) {
+        } else if (args[0].equalsIgnoreCase(STOP)) {
             final RemoteServer remoteServer = new RemoteServer();
             remoteServer.serverHasAlreadyBeenStarted = false;
             remoteServer.stop();
@@ -109,8 +113,16 @@ public class RemoteServer {
         }
     }
 
+    public int getPortStartup() {
+        return this.portStartup;
+    }
+
+    public void setPortStartup(int portStartup) {
+        this.portStartup = portStartup;
+    }
+
     public Properties getProperties() {
-        return properties;
+        return this.properties;
     }
 
     public void destroy() {
@@ -125,7 +137,7 @@ public class RemoteServer {
     }
 
     public void start() {
-        start(Collections.<String>emptyList(), "start", true);
+        start(Collections.<String>emptyList(), START, true);
     }
 
     public void start(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
@@ -134,9 +146,12 @@ public class RemoteServer {
 
     private void cmd(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
         boolean ok = true;
+        final int port = START.equals(cmd) ? portStartup : portShutdown;
+
         if (checkPortAvailable) {
-            ok = !connect();
+            ok = !connect(port, 1);
         }
+
         if (ok) {
             try {
                 if (verbose) {
@@ -170,7 +185,7 @@ public class RemoteServer {
 
                 final String java;
                 final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-                if (isWindows && "start".equals(cmd) && options.get("server.windows.fork", false)) {
+                if (isWindows && START.equals(cmd) && options.get("server.windows.fork", false)) {
                     // run and forget
                     java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
                 } else {
@@ -298,7 +313,7 @@ public class RemoteServer {
                 }
 
                 if (cmd == null) {
-                    argsList.add("start");
+                    argsList.add(START);
                 } else {
                     argsList.add(cmd);
                 }
@@ -313,9 +328,9 @@ public class RemoteServer {
                 final Process process = Runtime.getRuntime().exec(args);
                 Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
 
-                if ("start".equals(cmd)) {
+                if (START.equals(cmd)) {
                     server = process;
-                } else if ("stop".equals(cmd) && server != null) {
+                } else if (STOP.equals(cmd) && server != null) {
                     server.waitFor();
                 }
 
@@ -324,11 +339,12 @@ public class RemoteServer {
             }
             if (checkPortAvailable) {
                 if (debug) {
-                    if (!connect(Integer.MAX_VALUE)) {
+
+                    if (!connect(port, Integer.MAX_VALUE)) {
                         throw new OpenEJBRuntimeException("Could not connect to server");
                     }
                 } else {
-                    if (!connect(tries)) {
+                    if (!connect(port, tries)) {
                         throw new OpenEJBRuntimeException("Could not connect to server");
                     }
                 }
@@ -443,7 +459,7 @@ public class RemoteServer {
         if (verbose) {
             System.out.print("Waiting for TomEE shutdown.");
         }
-        while (connect()) {
+        while (connect(portShutdown, tries)) {
             Thread.sleep(1000);
             if (verbose) {
                 System.out.print(".");
@@ -459,7 +475,7 @@ public class RemoteServer {
         Socket socket = null;
         OutputStream stream = null;
         try {
-            socket = new Socket(host, shutdownPort);
+            socket = new Socket(host, portShutdown);
             stream = socket.getOutputStream();
             final String shutdown = command + Character.toString((char) 0);
             for (int i = 0; i < shutdown.length(); i++) {
@@ -478,11 +494,7 @@ public class RemoteServer {
         }
     }
 
-    private boolean connect() {
-        return connect(1);
-    }
-
-    private boolean connect(int tries) {
+    private boolean connect(final int port, int tries) {
         if (verbose) {
             System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
         }
@@ -490,7 +502,7 @@ public class RemoteServer {
         Socket s = null;
         try {
             s = new Socket();
-            s.connect(new InetSocketAddress(host, shutdownPort), 1000);
+            s.connect(new InetSocketAddress(this.host, port), 1000);
             s.getOutputStream().close();
             if (verbose) {
                 System.out.println("[] CONNECTED IN " + (this.tries - tries));
@@ -507,7 +519,7 @@ public class RemoteServer {
                 } catch (final Exception e2) {
                     e.printStackTrace();
                 }
-                return connect(--tries);
+                return connect(port, --tries);
             }
         } finally {
             if (s != null) {

@@ -81,6 +81,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private static final String REMOVE_PREFIX = "remove:";
     public static final String QUIT_CMD = "quit";
     public static final String EXIT_CMD = "exit";
+    public static final String TOM_EE = "TomEE";
 
     @Component
     protected ArtifactFactory factory;
@@ -258,7 +259,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
-    protected String container = "TomEE";
+    protected String container = TOM_EE;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -711,7 +712,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
-        if ("TomEE".equals(container)) {
+        if (TOM_EE.equals(container)) {
+
+            server.setPortStartup(tomeeHttpPort);
+
             getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                 + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
                 + " (plugin shutdown port is " + tomeeShutdownPort + ")");
@@ -998,7 +1002,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
             File file = new File(catalinaBase, "conf/tomee.xml");
             if (file.exists()) {
-                container = "TomEE";
+                container = TOM_EE;
             } else {
                 container = "OpenEJB";
                 file = new File(catalinaBase, "conf/openejb.xml");

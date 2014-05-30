@@ -54,9 +54,10 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
-        if (Setup.isRunning(configuration.getHost(), configuration.getHttpPort())) {
+        int httpPort = configuration.getHttpPort();
+        if (Setup.isRunning(configuration.getHost(), httpPort)) {
 
-            logger.info(String.format("Tomcat found running on port %s", configuration.getHttpPort()));
+            logger.info(String.format("Tomcat found running on port %s", httpPort));
 
             return;
         }
@@ -141,12 +142,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             if (!wereOpenejbHomeSet && configuration.isUseInstallerServlet()) {
                 // instead of calling the Installer, let's just do like users do
                 // call the servlet installer instead
-                final String baseUrl = "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/installer";
+                final String baseUrl = "http://" + configuration.getHost() + ":" + httpPort + "/tomee/installer";
 
                 assert installer != null;
                 installer.addTomEEAdminConfInTomcatUsers(true);
 
                 final RemoteServer tmpContainer = new RemoteServer();
+                tmpContainer.setPortStartup(httpPort);
                 tmpContainer.start();
 
                 final URL url = new URL(baseUrl);
@@ -156,7 +158,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                     final URLConnection uc = url.openConnection();
                     // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
                     final String authorizationString = "Basic dG9tZWU6dG9tZWU=";
-                    uc.setRequestProperty ("Authorization", authorizationString);
+                    uc.setRequestProperty("Authorization", authorizationString);
                     try {
                         final InputStream is = uc.getInputStream();
                         org.apache.openejb.loader.IO.slurp(is);
@@ -173,6 +175,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             container = new RemoteServer();
+            container.setPortStartup(httpPort);
             container.start(Arrays.asList("-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
             container.killOnExit();
         } catch (final Exception e) {

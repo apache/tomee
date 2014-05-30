@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -83,7 +84,9 @@ public class ExecRunner {
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
                 if (f.getName().endsWith(".sh") && !f.canExecute()) {
-                    f.setExecutable(true, true);
+                    if(!f.setExecutable(true, true)){
+                        System.err.println("Failed make file executable: " + f);
+                    }
                 }
             }
         }
@@ -101,7 +104,9 @@ public class ExecRunner {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
                 if (cmd.endsWith(".sh")) {
-                    scriptFile.setExecutable(true);
+                    if(!scriptFile.setExecutable(true)){
+                        System.err.println("Failed make script file executable: " + scriptFile);
+                    }
                 }
             }
         }
@@ -117,15 +122,15 @@ public class ExecRunner {
             System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
 
             final RemoteServer server = new RemoteServer();
+            server.setPortStartup(Integer.parseInt(parser.http()));
+
             if (config.containsKey("additionalClasspath")) {
                 server.setAdditionalClasspath(config.getProperty("additionalClasspath"));
             }
 
             final List<String> jvmArgs = new LinkedList<String>();
             if (additionalArgs != null) {
-                for (final String kv : additionalArgs.split(" ")) {
-                    jvmArgs.add(kv);
-                }
+                Collections.addAll(jvmArgs, additionalArgs.split(" "));
             }
             for (final String k : config.stringPropertyNames()) {
                 if (k.startsWith("jvmArg.")) {

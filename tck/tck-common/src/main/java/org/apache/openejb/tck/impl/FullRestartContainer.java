@@ -71,7 +71,14 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         System.out.println(currentFile);
         writeToFile(currentFile, archive);
 
-        server = new RemoteServer(100, true);
+        String port = System.getProperty("server.http.port");
+        if (port != null) {
+            server = new RemoteServer(100, true);
+            server.setPortStartup(Integer.parseInt(port));
+        } else {
+            throw new OpenEJBTCKRuntimeException("Please set the tomee port using the system property 'server.http.port'");
+        }
+
         try {
             server.start();
         } catch (RuntimeException e) {
@@ -84,7 +91,11 @@ public class FullRestartContainer extends AbstractContainers implements Containe
 
     @Override
     public void undeploy(String name) throws IOException {
-        server.destroy();
+
+        if (null != server) {
+            server.destroy();
+        }
+
         File folder = new File(currentFile.getParentFile(), currentFile.getName().substring(0, currentFile.getName().length() - 4));
         if (folder.exists()) {
             delete(folder);
@@ -109,9 +120,9 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         String port = System.getProperty("server.http.port");
         if (port != null) {
             System.out.println("provider url = " + "http://localhost:" + port + "/tomee/ejb");
-            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
+            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL, "http://localhost:" + port + "/tomee/ejb"));
         } else {
-            throw new OpenEJBTCKRuntimeException("Please set the tomee port as a system property");
+            throw new OpenEJBTCKRuntimeException("Please set the tomee port using the system property 'server.http.port'");
         }
 
         try {
