@@ -93,7 +93,9 @@
   </scm>
 
   <properties>
-
+    <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
+    <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
+    <test.coverage.skip>false</test.coverage.skip>
     <openejb.version>4.7.0-SNAPSHOT</openejb.version>
     <tomee.version>1.7.0-SNAPSHOT</tomee.version>
 
@@ -422,6 +424,59 @@
         <module>utils</module>
         <module>tomee</module>
       </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.1.201405082137</version>
+            <executions>
+              <execution>
+                <id>default-prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <skip>${test.coverage.skip}</skip>
+                </configuration>
+              </execution>
+              <execution>
+                <id>default-report</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <limits>
+                        <limit>
+                          <counter>COMPLEXITY</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>${test.complexity.coverage.minimun}</minimum>
+                        </limit>
+                        <limit>
+                          <counter>BRANCH</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>${test.branch.coverage.minimun}</minimum>
+                        </limit>
+
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>quick</id>

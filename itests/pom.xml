@@ -32,6 +32,10 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: iTests</name>
 
+  <properties>
+    <test.coverage.skip>true</test.coverage.skip>
+  </properties>
+
   <modules>
     <module>failover</module>
     <module>failover-ejb</module>
