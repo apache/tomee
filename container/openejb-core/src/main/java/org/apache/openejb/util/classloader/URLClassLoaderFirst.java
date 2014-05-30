@@ -299,7 +299,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
                     // don't stop on commons package since we don't bring all commons
                     if (commons.startsWith("beanutils.")) {
-                        return true;
+                        return isInServer(name);
                     }
                     if (commons.startsWith("cli.")) {
                         return true;
