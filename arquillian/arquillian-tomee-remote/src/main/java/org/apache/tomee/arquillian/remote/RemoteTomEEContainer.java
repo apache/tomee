@@ -92,7 +92,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             configure();
 
-            int stopPort = configuration.getStopPort();
+            final int stopPort = configuration.getStopPort();
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, Integer.toString(stopPort));
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_COMMAND, configuration.getStopCommand());
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_HOST, configuration.getStopHost());
