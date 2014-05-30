@@ -57,7 +57,7 @@ public class SSHServer implements ServerService, SelfManaging {
         final OpenEJBShellFactory sf = new OpenEJBShellFactory(bind, port);
         sshServer.setShellFactory(sf);
 
-        final JaasPasswordAuthenticator authenticator = new OpenEJBJaasPasswordAuthenticator(sf);
+        final JaasPasswordAuthenticator authenticator = new OpenEJBJaasPasswordAuthenticator();
         authenticator.setDomain(domain);
         sshServer.setPasswordAuthenticator(authenticator);
 
