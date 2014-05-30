@@ -71,9 +71,11 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
-        if (Setup.isRunning(configuration.getHost(), configuration.getHttpPort())) {
+        final int httpPort = configuration.getHttpPort();
 
-            logger.info(String.format("TomEE found running on port %s", configuration.getHttpPort()));
+        if (Setup.isRunning(configuration.getHost(), httpPort)) {
+
+            logger.info(String.format("TomEE found running on port %s", httpPort));
 
             return;
         }
@@ -90,15 +92,18 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             configure();
 
-            System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, Integer.toString(configuration.getStopPort()));
+            int stopPort = configuration.getStopPort();
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, Integer.toString(stopPort));
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_COMMAND, configuration.getStopCommand());
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_HOST, configuration.getStopHost());
+
             if (configuration.isDebug()) {
                 System.setProperty(RemoteServer.OPENEJB_SERVER_DEBUG, "true");
                 System.setProperty(RemoteServer.SERVER_DEBUG_PORT, Integer.toString(configuration.getDebugPort()));
             }
-            container = new RemoteServer();
 
+            container = new RemoteServer();
+            container.setPortStartup(httpPort);
             container.start(args(), "start", true);
             container.killOnExit();
 

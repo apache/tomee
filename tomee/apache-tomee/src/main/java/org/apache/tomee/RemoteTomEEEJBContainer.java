@@ -92,6 +92,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
             try {
                 instance = new RemoteTomEEEJBContainer();
                 instance.container = new RemoteServer();
+                instance.container.setPortStartup(Integer.parseInt(parser.http()));
                 instance.container.start();
                 instance.context = new InitialContext(new Properties() {{
                     setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());

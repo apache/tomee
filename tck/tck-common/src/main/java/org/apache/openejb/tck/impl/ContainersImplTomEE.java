@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -45,6 +44,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     private Exception exception;
     private AppInfo appInfo;
     private File currentFile = null;
+    private int port = 8080;
 
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
@@ -53,8 +53,9 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         String port = System.getProperty("server.http.port");
         if (port != null) {
             props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
+            this.port = Integer.parseInt(port);
         } else {
-            throw new OpenEJBTCKRuntimeException("Please set the tomee port as a system property");
+            throw new OpenEJBTCKRuntimeException("Please set the tomee port using the system property 'server.http.port'");
         }
 
         final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
@@ -70,6 +71,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         System.out.println("ContainersImpl=" + ContainersImplTomEE.class.getName());
         System.out.println("Initialized ContainersImplTomEE " + (++count));
         server = new RemoteServer();
+        server.setPortStartup(this.port);
     }
     @Override
     public boolean deploy(InputStream archive, String name) throws IOException {
@@ -143,8 +145,10 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     }
 
     protected File getFile(String name) {
-        final File dir = new File(tmpDir, Math.random()+"");
-        dir.mkdir();
+        final File dir = new File(tmpDir, Math.random() + "");
+        if (!dir.exists() && !dir.mkdir()) {
+            throw new RuntimeException("Failed to create directory: " + dir);
+        }
         dir.deleteOnExit();
         return new File(dir, name);
     }
