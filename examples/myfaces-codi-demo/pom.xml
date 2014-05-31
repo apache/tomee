@@ -22,7 +22,7 @@
   <properties>
     <myfaces2.version>2.1.11</myfaces2.version>
     <myfaces.codi.version>1.0.5</myfaces.codi.version>
-    <extval.version>2.0.7</extval.version>
+    <extval.version>2.0.8</extval.version>
   </properties>
 
   <build>

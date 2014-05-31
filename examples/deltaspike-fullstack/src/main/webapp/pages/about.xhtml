@@ -30,7 +30,7 @@
     <ui:define name="content">
         <h:panelGrid columns="2">
             <h:outputLabel value="Current Window-ID:" for="wid"/>
-            <h:outputText id="wid" value="#{currentWindowContext.id}"/>
+            <h:outputText id="wid" value="#{infoBean.windowId}"/>
 
             <h:outputLabel value="Apache MyFaces-Core:" for="jsfVersion"/>
             <h:outputText id="jsfVersion" value="#{infoBean.jsfVersion}"/>

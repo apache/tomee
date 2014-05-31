@@ -22,13 +22,4 @@
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
               version="2.0">
 
-    <!-- only works for configs located in META-INF -->
-    <ordering>
-        <before><others/></before>
-    </ordering>
-
-    <lifecycle>
-        <phase-listener>org.superbiz.deltaspike.startup.ExtValStartupListener</phase-listener>
-    </lifecycle>
-
 </faces-config>
