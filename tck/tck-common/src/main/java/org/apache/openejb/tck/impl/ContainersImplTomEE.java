@@ -44,19 +44,13 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     private Exception exception;
     private AppInfo appInfo;
     private File currentFile = null;
-    private int port = 8080;
+    private int port = Integer.getInteger("server.http.port", 8080);
 
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        String port = System.getProperty("server.http.port");
-        if (port != null) {
-            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
-            this.port = Integer.parseInt(port);
-        } else {
-            throw new OpenEJBTCKRuntimeException("Please set the tomee port using the system property 'server.http.port'");
-        }
+        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
 
         final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
 
