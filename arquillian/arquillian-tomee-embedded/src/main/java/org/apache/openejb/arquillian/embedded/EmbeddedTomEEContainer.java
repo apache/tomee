@@ -23,6 +23,7 @@ import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.config.AdditionalBeanDiscoverer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 import org.apache.webbeans.config.WebBeansContext;
@@ -33,6 +34,10 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.shrinkwrap.api.Archive;
 
 import javax.enterprise.context.ConversationScoped;
@@ -50,6 +55,10 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     private static final Map<String, MockHttpSession> SESSIONS = new ConcurrentHashMap<String, MockHttpSession>();
 
     private Container container;
+
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<ClassLoader> classLoader;
 
     @Override
     public Class<EmbeddedTomEEConfiguration> getConfigurationClass() {
@@ -138,6 +147,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             this.addServlets(httpContext, info);
 
             startCdiContexts(name); // ensure tests can use request/session scopes even if we don't have a request
+
+            classLoader.set(SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(info.appId).getClassLoader());
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
