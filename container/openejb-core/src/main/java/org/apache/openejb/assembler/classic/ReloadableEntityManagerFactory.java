@@ -279,10 +279,12 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
     public synchronized void setSharedCacheMode(final SharedCacheMode mode) {
         final PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
-        info.setSharedCacheMode(null != mode ? mode : SharedCacheMode.UNSPECIFIED);
+        info.setSharedCacheMode(mode);
 
         final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
-        properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, null != mode ? mode.name() : "UNSPECIFIED");
+        if (properties.containsKey(JAVAX_PERSISTENCE_SHARED_CACHE_MODE)) {
+            properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
+        }
     }
 
     public synchronized void setValidationMode(final ValidationMode mode) {
@@ -504,7 +506,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @Description("change the shared cache mode if possible (value is ok)")
         public void setSharedCacheMode(final String value) {
             try {
-                final SharedCacheMode mode = SharedCacheMode.valueOf(value.trim().toUpperCase());
+                final String v = value.trim().toUpperCase();
+                final SharedCacheMode mode = v.isEmpty() ? SharedCacheMode.UNSPECIFIED : SharedCacheMode.valueOf(v);
                 reloadableEntityManagerFactory.setSharedCacheMode(mode);
             } catch (final Exception iae) {
                 // ignored
