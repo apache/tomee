@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.openejb;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.TestObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;

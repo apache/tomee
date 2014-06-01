@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.openejb;
+package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -81,7 +82,14 @@ public class TestObserver {
     }
 
     private BeanContext beanContext() {
-        return SystemInstance.get().getComponent(ContainerSystem.class)
-                .getBeanContext(testClass.get().getName());
+        final String className = testClass.get().getName();
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        for (final AppContext app : containerSystem.getAppContexts()) {
+            final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
+            if (context != null) {
+                return context;
+            }
+        }
+        return null;
     }
 }
