@@ -28,7 +28,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <openejb.version>4.7.0-SNAPSHOT</openejb.version>
     <tomee.version>1.7.0-SNAPSHOT</tomee.version>
-    <version.openjpa>2.4.0-nonfinal-1591689</version.openjpa>
+    <version.openjpa>2.4.0-nonfinal-1598334</version.openjpa>
   </properties>
   
   <repositories>
@@ -44,7 +44,7 @@
     </repository>
 	<repository>
       <id>patch-openjpa</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
 	  <releases>
         <enabled>true</enabled>
       </releases>
@@ -59,7 +59,7 @@
     </pluginRepository>
 	<pluginRepository>
       <id>patch-openjpa-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
 	  <releases>
         <enabled>true</enabled>
       </releases>

@@ -108,7 +108,7 @@
       <plugin>
             <groupId>org.apache.openejb.patch</groupId>
             <artifactId>openjpa-maven-plugin</artifactId>
-            <version>2.4.0-nonfinal-1591689</version>
+            <version>2.4.0-nonfinal-1598334</version>
             <configuration>
                 <includes>**/entities/*.class</includes>
                 <excludes>**/entities/XML*.class</excludes>
@@ -129,7 +129,7 @@
                     <groupId>org.apache.openejb.patch</groupId>
                     <artifactId>openjpa</artifactId>
                     <!-- set the version to be the same as the level in your runtime -->
-                    <version>2.4.0-nonfinal-1591689</version>
+                    <version>2.4.0-nonfinal-1598334</version>
                 </dependency>
             </dependencies>
         </plugin>
@@ -144,7 +144,7 @@
     </repository>
 	<repository>
       <id>patch-openjpa</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
 	  <releases>
         <enabled>true</enabled>
       </releases>

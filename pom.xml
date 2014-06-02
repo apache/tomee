@@ -99,7 +99,7 @@
     <openejb.version>4.7.0-SNAPSHOT</openejb.version>
     <tomee.version>1.7.0-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0-nonfinal-1591689</openjpa.version>
+    <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
     <org.apache.openwebbeans.version>1.2.5</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
@@ -559,7 +559,7 @@
       <repositories>
         <repository>
           <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -575,7 +575,7 @@
       <pluginRepositories>
         <pluginRepository>
           <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -676,7 +676,7 @@
     <!-- Apache snapshots -->
     <repository>
       <id>patch-openjpa</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -750,7 +750,7 @@
   <pluginRepositories>
     <pluginRepository>
       <id>patch-openjpa-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1022/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
