@@ -24,9 +24,10 @@ http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
 
   <persistence-unit name="demoApplicationPU" transaction-type="RESOURCE_LOCAL">
+    <!-- needed by tomee 1.6.0+-->
+    <non-jta-data-source>demoDS</non-jta-data-source>
 
     <!-- config of (non-)jta-data-source isn't needed if there is just one -->
-
     <!-- @MappedSuperclass classes - see OPENJPA-1926 -->
     <class>org.superbiz.myfaces.domain.AbstractDomainObject</class>
 
