@@ -159,9 +159,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
+      <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa-maven-plugin</artifactId>
-      <version>${openjpa.version}</version>
+      <version>2.3.0</version>
     </dependency>
   </dependencies>
 
