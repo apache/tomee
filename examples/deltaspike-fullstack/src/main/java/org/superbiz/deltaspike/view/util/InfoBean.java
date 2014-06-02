@@ -22,6 +22,7 @@ import org.apache.deltaspike.core.api.config.view.metadata.ViewConfigDescriptor;
 import org.apache.deltaspike.core.api.config.view.metadata.ViewConfigResolver;
 import org.apache.deltaspike.core.api.projectstage.ProjectStage;
 import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
+import org.apache.deltaspike.core.spi.scope.window.WindowContext;
 import org.apache.deltaspike.jsf.api.message.JsfMessage;
 import org.apache.myfaces.extensions.validator.ExtValInformation;
 import org.apache.myfaces.extensions.validator.util.ClassUtils;
@@ -43,6 +44,9 @@ import java.io.Serializable;
 public class InfoBean implements Serializable
 {
     private static final long serialVersionUID = -1748909261695527800L;
+
+    @Inject
+    private WindowContext windowContext;
 
     @Inject
     private JsfMessage<WebappMessageBundle> webappMessages;
@@ -132,5 +136,10 @@ public class InfoBean implements Serializable
     public String getJpaVersion()
     {
         return this.jpaVersion;
+    }
+
+    public String getWindowId()
+    {
+        return this.windowContext.getCurrentWindowId();
     }
 }
