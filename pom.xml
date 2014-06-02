@@ -203,6 +203,11 @@
           <version>2.3</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>rat-maven-plugin</artifactId>
           <version>1.0-alpha-3</version>
@@ -559,7 +564,7 @@
       <repositories>
         <repository>
           <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -575,7 +580,7 @@
       <pluginRepositories>
         <pluginRepository>
           <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -676,7 +681,7 @@
     <!-- Apache snapshots -->
     <repository>
       <id>patch-openjpa</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -750,7 +755,7 @@
   <pluginRepositories>
     <pluginRepository>
       <id>patch-openjpa-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1024/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
