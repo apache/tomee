@@ -27,7 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 import javax.enterprise.context.spi.CreationalContext;
 
@@ -38,7 +38,7 @@ public class TestObserver {
     @Inject
     private Instance<TestClass> testClass;
 
-    public void observes(@Observes final EventContext<ClassEvent> event) {
+    public void observes(@Observes final EventContext<TestEvent> event) {
         final BeanContext context = beanContext();
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
