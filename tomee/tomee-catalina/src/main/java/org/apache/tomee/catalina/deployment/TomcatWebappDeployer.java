@@ -34,13 +34,13 @@ public class TomcatWebappDeployer implements WebAppDeployer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomcatWebappDeployer.class);
 
     @Override
-    public AppInfo deploy(final String context, final File file) {
+    public AppInfo deploy(final String host, final String context, final File file) {
         final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
 
         final Collection<String> alreadyDeployed = tomcatWebAppBuilder.availableApps();
 
         try {
-            tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null); // classloader == null -> standalone war
+            tomcatWebAppBuilder.deployWebApps(fakeInfo(file, host, context), null); // classloader == null -> standalone war
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -90,7 +90,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
     }
 
     // simply create a fake AppInfo to be able to deploy reusing the logic we already have
-    private static AppInfo fakeInfo(final File file, final String context) {
+    private static AppInfo fakeInfo(final File file, final String host, final String context) {
         final AppInfo info = new AppInfo();
         info.path = file.getAbsolutePath();
         info.webAppAlone = true;
@@ -104,6 +104,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
             webAppInfo.contextRoot = context;
         }
 
+        webAppInfo.host = host; // we don't care if it's null, the default host gonna be used by TomcatWebAppBuilder
         webAppInfo.moduleId = webAppInfo.contextRoot;
         info.webApps.add(webAppInfo);
 

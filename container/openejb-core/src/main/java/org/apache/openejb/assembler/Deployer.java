@@ -25,6 +25,8 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import java.util.Collection;
 import java.util.Properties;
 
+// The signature of this intf must never change without caution
+// it is used in many tools either internal or external (intellij idea)
 public interface Deployer {
     String FILENAME = "filename";
     String ALT_DD = "altDD";

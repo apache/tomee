@@ -23,7 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 
 public interface WebAppDeployer {
-    AppInfo deploy(String contextRoot, File file);
+    AppInfo deploy(String host, String contextRoot, File file);
     void reload(String appId);
 
     final class Helper {
