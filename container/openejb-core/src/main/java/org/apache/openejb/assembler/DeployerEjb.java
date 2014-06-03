@@ -70,10 +70,13 @@ public class DeployerEjb implements Deployer {
 
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
 
+    public static final String OPENEJB_DEPLOYER_HOST = "openejb.deployer.host";
+
     public static final String OPENEJB_USE_BINARIES = "openejb.deployer.binaries.use";
     public static final String OPENEJB_PATH_BINARIES = "openejb.deployer.binaries.path";
     public static final String OPENEJB_VALUE_BINARIES = "openejb.deployer.binaries.value";
 
+    public static final String OPENEJB_APP_AUTODEPLOY = "openejb.app.autodeploy";
     public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
 
     private static final File uniqueFile;
@@ -109,6 +112,7 @@ public class DeployerEjb implements Deployer {
         uniqueFile = unique;
         uniqueFile.deleteOnExit();
     }
+
 
     private final DeploymentLoader deploymentLoader;
     private final ConfigurationFactory configurationFactory;
@@ -162,13 +166,14 @@ public class DeployerEjb implements Deployer {
             file = new File(realLocation(rawLocation));
         }
 
-        final boolean autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
+        final boolean autoDeploy = Boolean.parseBoolean(properties.getProperty(OPENEJB_APP_AUTODEPLOY, "false"));
+        final String host = properties.getProperty(OPENEJB_DEPLOYER_HOST, null);
 
         if (WebAppDeployer.Helper.isWebApp(file) && !oldWarDeployer) {
             AUTO_DEPLOY.set(autoDeploy);
             try {
                 return SystemInstance.get().getComponent(WebAppDeployer.class)
-                                     .deploy(contextRoot(properties, file.getAbsolutePath()), file);
+                                     .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
             } finally {
                 AUTO_DEPLOY.remove();
             }

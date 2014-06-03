@@ -358,7 +358,7 @@ public class Container {
                 contextRoot = name;
             }
 
-            appInfo = SystemInstance.get().getComponent(WebAppDeployer.class).deploy(contextRoot, file);
+            appInfo = SystemInstance.get().getComponent(WebAppDeployer.class).deploy(null, contextRoot, file);
 
             if (appInfo != null) {
                 context = SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId);
