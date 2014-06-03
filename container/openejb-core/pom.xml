@@ -32,6 +32,8 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Core</name>
   <properties>
+    <!-- jacoco doesn't play well with the core tests -->
+    <test.coverage.skip>true</test.coverage.skip>
     <openejb.osgi.import.pkg>
       javax.annotation;version="[1.1.0,2.0.0)",
       javax.annotation.security;version="[1.1.0,2.0.0)",
