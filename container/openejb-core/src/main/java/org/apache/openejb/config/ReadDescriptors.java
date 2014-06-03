@@ -165,6 +165,9 @@ public class ReadDescriptors implements DynamicDeployer {
                     if (tmpRootUrl.endsWith(".war")) {
                         tmpRootUrl = tmpRootUrl.substring(0, tmpRootUrl.length() - ".war".length());
                     }
+                    if (tmpRootUrl.startsWith("file:")) {
+                        tmpRootUrl = tmpRootUrl.substring("file:".length());
+                    }
                     rootUrl = tmpRootUrl;
                 } else {
                     moduleName = "";
