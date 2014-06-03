@@ -259,7 +259,7 @@ public class OpenEJBContext implements Context {
         // we use it to deploy so if any lookup is done during the deployment
         // we don't want to get the DeployerEjb JNDI tree
         // since this method is pretty quick that's not an issue to do the test
-        return DeployerEjb.class.equals(threadContext.getBeanContext().getBeanClass());
+        return threadContext == null || DeployerEjb.class.equals(threadContext.getBeanContext().getBeanClass());
     }
 
 }
