@@ -196,6 +196,7 @@ public class DeployerEjb implements Deployer {
                 final String contextRoot = contextRoot(properties, module.getJarLocation());
                 if (contextRoot != null) {
                     module.setContextRoot(contextRoot);
+                    module.setHost(host);
                 }
                 modules.put(module.getModuleId(), module);
             }
