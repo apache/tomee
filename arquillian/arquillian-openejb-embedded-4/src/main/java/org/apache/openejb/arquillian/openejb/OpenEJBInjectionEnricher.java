@@ -42,6 +42,10 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
 
     @Override
     public void enrich(final Object testInstance) {
+        if (!SystemInstance.isInitialized()) {
+            return;
+        }
+
         new MockitoEnricher().enrich(testInstance);
 
         final AppContext context = appContext.get();
