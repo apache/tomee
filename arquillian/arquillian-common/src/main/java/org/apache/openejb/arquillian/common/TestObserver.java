@@ -39,6 +39,10 @@ public class TestObserver {
     private Instance<TestClass> testClass;
 
     public void observes(@Observes final EventContext<TestEvent> event) {
+        if (!SystemInstance.isInitialized()) {
+            event.proceed();
+        }
+
         final BeanContext context = beanContext();
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
