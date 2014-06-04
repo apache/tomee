@@ -72,6 +72,10 @@ public class TestObserver {
     }
 
     public void release(@Observes final EventContext<BeforeUnDeploy> event) {
+        if (!SystemInstance.isInitialized()) {
+            event.proceed();
+        }
+
         try {
             event.proceed();
         } finally {
