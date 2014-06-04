@@ -29,10 +29,10 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.concurrent.Trigger;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -52,38 +52,36 @@ public class ManagedScheduledExecutorServiceTest {
     @Test
     public void triggerCallableSchedule() throws Exception {
         final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create();
-        final AtomicInteger counter = new AtomicInteger(0);
+        final CountDownLatch counter = new CountDownLatch(5);
         final FutureAwareCallable callable = new FutureAwareCallable(counter);
 
-        final Future<Integer> future = es.schedule((Callable<Integer>) callable,
-                new Trigger() {
-                    @Override
-                    public Date getNextRunTime(LastExecution lastExecutionInfo, Date taskScheduledTime) {
-                        if (lastExecutionInfo == null) {
-                            return new Date();
-                        }
-                        return new Date(lastExecutionInfo.getRunEnd().getTime() + 1000);
+        final Future<Long> future = es.schedule((Callable<Long>) callable,
+            new Trigger() {
+                @Override
+                public Date getNextRunTime(final LastExecution lastExecutionInfo, final Date taskScheduledTime) {
+                    if (lastExecutionInfo == null) {
+                        return new Date();
                     }
-
-                    @Override
-                    public boolean skipRun(LastExecution lastExecutionInfo, Date scheduledRunTime) {
-                        return false;
-                    }
+                    return new Date(lastExecutionInfo.getRunEnd().getTime() + 100);
                 }
+
+                @Override
+                public boolean skipRun(final LastExecution lastExecutionInfo, final Date scheduledRunTime) {
+                    return false;
+                }
+            }
         );
 
 
         assertFalse(future.isDone());
         assertFalse(future.isCancelled());
 
-        Thread.sleep(5000);
+        counter.await(1, TimeUnit.SECONDS);
 
-        assertEquals(6, future.get().intValue());
+        assertEquals("Future was not called", 0L, future.get().longValue());
 
         future.cancel(true);
-        assertEquals(6, counter.getAndIncrement(), 1);
-
-        Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends up
+        assertEquals("Counter did not count down in time", 0L, counter.getCount());
 
         assertTrue(future.isDone());
         assertTrue(future.isCancelled());
@@ -92,35 +90,34 @@ public class ManagedScheduledExecutorServiceTest {
     @Test
     public void triggerRunnableSchedule() throws Exception {
         final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create();
-        final AtomicInteger counter = new AtomicInteger(0);
+        final CountDownLatch counter = new CountDownLatch(5);
         final FutureAwareCallable callable = new FutureAwareCallable(counter);
 
         final ScheduledFuture<?> future = es.schedule(Runnable.class.cast(callable),
-                new Trigger() {
-                    @Override
-                    public Date getNextRunTime(LastExecution lastExecutionInfo, Date taskScheduledTime) {
-                        if (lastExecutionInfo == null) {
-                            return new Date();
-                        }
-                        return new Date(lastExecutionInfo.getRunEnd().getTime() + 1000);
+            new Trigger() {
+                @Override
+                public Date getNextRunTime(final LastExecution lastExecutionInfo, final Date taskScheduledTime) {
+                    if (lastExecutionInfo == null) {
+                        return new Date();
                     }
-
-                    @Override
-                    public boolean skipRun(LastExecution lastExecutionInfo, Date scheduledRunTime) {
-                        return false;
-                    }
+                    return new Date(lastExecutionInfo.getRunEnd().getTime() + 100);
                 }
+
+                @Override
+                public boolean skipRun(final LastExecution lastExecutionInfo, final Date scheduledRunTime) {
+                    return false;
+                }
+            }
         );
 
         assertFalse(future.isDone());
         assertFalse(future.isCancelled());
 
-        Thread.sleep(5000);
+        //Should easily get 5 invocations within 1 second
+        counter.await(1, TimeUnit.SECONDS);
 
         future.cancel(true);
-        assertEquals(6, counter.getAndIncrement(), 1);
-
-        Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends
+        assertEquals("Counter did not count down in time", 0L, counter.getCount());
 
         assertTrue(future.isDone());
         assertTrue(future.isCancelled());
@@ -140,21 +137,22 @@ public class ManagedScheduledExecutorServiceTest {
         assertEquals(6, TimeUnit.MILLISECONDS.toSeconds(future.get() - start), 1);
     }
 
-    protected static class FutureAwareCallable implements Callable<Integer>, Runnable {
-        private final AtomicInteger counter;
+    protected static class FutureAwareCallable implements Callable<Long>, Runnable {
+        private final CountDownLatch counter;
 
-        public FutureAwareCallable(final AtomicInteger counter) {
+        public FutureAwareCallable(final CountDownLatch counter) {
             this.counter = counter;
         }
 
         @Override
-        public Integer call() throws Exception {
-            return counter.incrementAndGet();
+        public Long call() throws Exception {
+            this.run();
+            return counter.getCount();
         }
 
         @Override
         public void run() {
-            counter.incrementAndGet();
+            counter.countDown();
         }
     }
 }
