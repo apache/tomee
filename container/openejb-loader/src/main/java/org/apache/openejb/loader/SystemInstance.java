@@ -273,6 +273,7 @@ public final class SystemInstance {
 
     public static synchronized void reset() {
         try {
+            System.clearProperty("openejb.loader");
             system = new SystemInstance(new Properties()); // don't put system properties here, it is already done
             initialized = false;
         } catch (final Exception e) {
