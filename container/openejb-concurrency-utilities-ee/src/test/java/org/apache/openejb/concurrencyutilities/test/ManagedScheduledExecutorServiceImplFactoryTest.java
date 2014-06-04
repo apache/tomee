@@ -38,7 +38,7 @@ public class ManagedScheduledExecutorServiceImplFactoryTest {
 
     public static class MyThreadFactory {
         public MyThreadFactory() {
-            throw new RuntimeException("Ooops!");
+            throw new RuntimeException("Throwing test exception in MyThreadFactory - I expect to see this logged as a warning!");
         }
     }
 

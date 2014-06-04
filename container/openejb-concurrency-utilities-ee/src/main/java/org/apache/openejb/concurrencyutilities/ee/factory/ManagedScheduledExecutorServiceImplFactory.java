@@ -19,7 +19,6 @@ package org.apache.openejb.concurrencyutilities.ee.factory;
 import org.apache.openejb.concurrencyutilities.ee.impl.ManagedScheduledExecutorServiceImpl;
 import org.apache.openejb.concurrencyutilities.ee.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.concurrencyutilities.ee.reject.CURejectHandler;
-import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -40,7 +39,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
         try {
             managedThreadFactory = ManagedThreadFactory.class.cast(Thread.currentThread().getContextClassLoader().loadClass(threadFactory).newInstance());
         } catch (final Exception e) {
-            Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class).warning("Can't create configured thread factory: " + threadFactory, e);
+            Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class).warning("Unable to create configured thread factory: " + threadFactory, e);
             managedThreadFactory = new ManagedThreadFactoryImpl();
         }
 
