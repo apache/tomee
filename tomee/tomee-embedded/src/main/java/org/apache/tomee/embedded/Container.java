@@ -338,6 +338,7 @@ public class Container {
         tomcat.stop();
         tomcat.destroy();
         deleteTree(base);
+        base = null;
         OpenEJB.destroy();
         // don't set base = null here to be able to use base after to clean up from outside of this class
     }
