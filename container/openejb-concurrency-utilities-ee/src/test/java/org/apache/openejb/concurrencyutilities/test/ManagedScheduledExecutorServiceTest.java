@@ -81,7 +81,7 @@ public class ManagedScheduledExecutorServiceTest {
         assertEquals(6, future.get().intValue());
 
         future.cancel(true);
-        assertEquals(6, counter.get(), 1);
+        assertEquals(6, counter.getAndIncrement(), 1);
 
         Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends up
 
@@ -118,7 +118,7 @@ public class ManagedScheduledExecutorServiceTest {
         Thread.sleep(5000);
 
         future.cancel(true);
-        assertEquals(6, counter.get(), 1);
+        assertEquals(6, counter.getAndIncrement(), 1);
 
         Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends
 
