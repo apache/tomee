@@ -18,7 +18,6 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.JarExtractor;
 import org.apache.tomee.util.QuickServerXmlParser;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -225,7 +224,7 @@ public class Setup {
                         }
                     }
                     if (delete) {
-                        JarExtractor.delete(webapp);
+                        org.apache.openejb.loader.Files.delete(webapp);
                     }
                 }
             }
