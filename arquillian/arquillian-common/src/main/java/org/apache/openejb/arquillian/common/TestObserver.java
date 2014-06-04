@@ -41,6 +41,7 @@ public class TestObserver {
     public void observes(@Observes final EventContext<TestEvent> event) {
         if (!SystemInstance.isInitialized()) {
             event.proceed();
+            return;
         }
 
         final BeanContext context = beanContext();
@@ -74,6 +75,7 @@ public class TestObserver {
     public void release(@Observes final EventContext<BeforeUnDeploy> event) {
         if (!SystemInstance.isInitialized()) {
             event.proceed();
+            return;
         }
 
         try {
