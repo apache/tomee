@@ -35,6 +35,9 @@ public class TomEEInjectionEnricher implements TestEnricher {
 
     @Override
     public void enrich(final Object o) {
+        if (!SystemInstance.isInitialized()) {
+            return;
+        }
         OpenEJBEnricher.enrich(o, getAppContext(o.getClass().getName()));
     }
 
