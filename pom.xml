@@ -39,7 +39,7 @@
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
     Server.
   </description>
-  <url>http://openejb.apache.org/</url>
+  <url>http://tomee.apache.org</url>
   <inceptionYear>1999</inceptionYear>
 
   <prerequisites>
@@ -48,7 +48,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>http://issues.apache.org/jira/browse/OPENEJB</url>
+    <url>http://issues.apache.org/jira/browse/TOMEE</url>
   </issueManagement>
 
   <mailingLists>
@@ -87,9 +87,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb</developerConnection>
-    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</developerConnection>
+    <url>https://svn.apache.org/repos/asf/tomee/tomee/trunk</url>
   </scm>
 
   <properties>
@@ -302,6 +302,11 @@
           <artifactId>groovy-maven-plugin</artifactId>
           <version>2.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-doap-plugin</artifactId>
+          <version>1.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -405,6 +410,59 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-doap-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <doapFile>doap_tomee.rdf</doapFile>
+          <outputDirectory>${project.basedir}</outputDirectory>
+          <artifact>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tomee</artifactId>
+            <version>${tomee.version}</version>
+          </artifact>
+          <doapOptions>
+            <programmingLanguage>Java</programmingLanguage>
+            <platform>Java</platform>
+            <category>network-server</category>
+            <bugDatabase>${project.issueManagement.url}</bugDatabase>
+            <created>${project.inceptionYear}-01-01</created>
+            <description>Apache TomEE Web Profile delivers Servlets, JSP, JSF, JTA, JPA, CDI, Bean Validation and EJB
+              Lite. Apache TomEE Plus has all the features of TomEE with the addition of JAX-RS (RESTfull Services),
+              JAX-WS (Web Services), JMS (Java Message Service) and JCA (the Java Connector Architecture). The
+              additional functionality is delivered via Apache CXF, Apache ActiveMQ and the Geronimo Connector library
+            </description>
+            <downloadPage>http://tomee.apache.org/downloads.html</downloadPage>
+            <homepage>${project.url}</homepage>
+            <license>https://svn.apache.org/repos/asf/tomee/tomee/trunk/LICENSE</license>
+            <mailingList>http://tomee.apache.org/support.html</mailingList>
+            <name>Apache TomEE</name>
+            <scmAnonymous>http://svn.apache.org/viewvc/tomee/tomee/trunk/</scmAnonymous>
+            <scmDeveloper>https://svn.apache.org/repos/asf/tomee/tomee/trunk</scmDeveloper>
+            <shortdesc>Apache TomEE is an all-Apache Java EE 6 Web Profile stack for Apache Tomcat</shortdesc>
+            <vendor>${project.organization.name}</vendor>
+          </doapOptions>
+
+          <asfExtOptions>
+            <chair>David Blevins</chair>
+            <charter>Apache TomEE provides an all-Apache Java EE 6 Web Profile stack for Apache Tomcat</charter>
+            <pmc>TomEE</pmc>
+            <name>Apache TomEE</name>
+
+            <!-- If this Apache project implements a standard -->
+            <standards>
+              <standard>
+                <title>Java EE 6 Web Profile</title>
+                <body>Java Community Process</body>
+                <id>JSR 316</id>
+                <url>https://jcp.org/en/jsr/detail?id=316</url>
+              </standard>
+            </standards>
+          </asfExtOptions>
+
         </configuration>
       </plugin>
     </plugins>
