@@ -119,8 +119,10 @@ public class ManagedScheduledExecutorServiceTest {
         future.cancel(true);
         assertEquals("Counter did not count down in time", 0L, counter.getCount());
 
-        assertTrue(future.isDone());
-        assertTrue(future.isCancelled());
+        final boolean done = future.isDone();
+        assertTrue(done);
+        final boolean cancelled = future.isCancelled();
+        assertTrue(cancelled);
     }
 
     @Test
