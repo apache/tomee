@@ -133,7 +133,7 @@
     <!-- ASF extension.                                                         -->
     <!-- ====================================================================== -->
 
-    <asfext:pmc rdf:resource="TomEE"/>
+    <asfext:pmc rdf:resource="http://tomee.apache.org"/>
     <asfext:name>Apache TomEE</asfext:name>
     <foaf:homepage rdf:resource="http://tomee.apache.org"/>
     <asfext:charter>Apache TomEE provides an all-Apache Java EE 6 Web Profile stack for Apache Tomcat</asfext:charter>
