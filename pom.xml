@@ -449,7 +449,7 @@
           <asfExtOptions>
             <chair>David Blevins</chair>
             <charter>Apache TomEE provides an all-Apache Java EE 6 Web Profile stack for Apache Tomcat</charter>
-            <pmc>TomEE</pmc>
+            <pmc>http://tomee.apache.org</pmc>
             <name>Apache TomEE</name>
 
             <!-- If this Apache project implements a standard -->
