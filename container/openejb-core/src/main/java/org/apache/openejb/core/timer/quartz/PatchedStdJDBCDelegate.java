@@ -17,10 +17,7 @@
 
 package org.apache.openejb.core.timer.quartz;
 
-import org.apache.openejb.quartz.impl.jdbcjobstore.NoSuchDelegateException;
 import org.apache.openejb.quartz.impl.jdbcjobstore.StdJDBCDelegate;
-import org.apache.openejb.quartz.spi.ClassLoadHelper;
-import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,34 +28,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PatchedStdJDBCDelegate extends StdJDBCDelegate {
-
-    public PatchedStdJDBCDelegate(final Logger logger,
-                                  final String tablePrefix,
-                                  final String schedName,
-                                  final String instanceId,
-                                  final ClassLoadHelper classLoadHelper) throws NoSuchDelegateException {
-        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, false, null);
-    }
-
-    public PatchedStdJDBCDelegate(final Logger logger,
-                                  final String tablePrefix,
-                                  final String schedName,
-                                  final String instanceId,
-                                  final ClassLoadHelper classLoadHelper,
-                                  final Boolean useProperties) throws NoSuchDelegateException {
-        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, useProperties, null);
-    }
-
-    public PatchedStdJDBCDelegate(final Logger logger,
-                                  final String tablePrefix,
-                                  final String schedName,
-                                  final String instanceId,
-                                  final ClassLoadHelper classLoadHelper,
-                                  final Boolean useProperties,
-                                  final String initString) throws NoSuchDelegateException {
-        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, useProperties, initString);
-    }
-
     @Override
     protected Object getObjectFromBlob(final ResultSet rs, final String colName)
         throws ClassNotFoundException, IOException, SQLException {
