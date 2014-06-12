@@ -74,6 +74,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -283,12 +284,7 @@ public class StatefulContainer implements RpcContainer {
         beanContext.setContainerData(null);
 
         if (!containsExtendedPersistenceContext(beanContext)) {
-            cache.removeAll(new CacheFilter<Instance>() {
-                @Override
-                public boolean matches(final Instance instance) {
-                    return beanContext == instance.beanContext;
-                }
-            });
+            cache.removeAll(new BeanContextFilter(beanContext.getId()));
         }
     }
 
@@ -1233,5 +1229,18 @@ public class StatefulContainer implements RpcContainer {
             return methodIndex;
         }
 
+    }
+
+    public static class BeanContextFilter implements CacheFilter<Instance>, Serializable {
+        private final String id;
+
+        public BeanContextFilter(final String id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean matches(final Instance instance) {
+            return instance.beanContext.getId().equals(id);
+        }
     }
 }
