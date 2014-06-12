@@ -77,7 +77,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean skipLib(final String includedClass) {
         try {
             URLClassLoaderFirst.class.getClassLoader().loadClass(includedClass);
-            return true;
+            return "true".equalsIgnoreCase(System.getProperty(includedClass + ".skip", "true"));
         } catch (final ClassNotFoundException e) {
             return false;
         }
@@ -448,8 +448,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     return false;
                 }
 
-                if (apache.startsWith("activemq.broker.")) {
-                    return SKIP_JMS;
+                if (apache.startsWith("activemq.")) {
+                    return SKIP_JMS && isInServer(name);
                 }
 
                 return false;
