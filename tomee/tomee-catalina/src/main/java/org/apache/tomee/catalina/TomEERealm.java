@@ -100,8 +100,6 @@ public class TomEERealm extends CombinedRealm {
             // so no need to clean twice here
             if (requests.get() != null) {
                 ss.enterWebApp(this, pcp, requests.get().getWrapper().getRunAs());
-            } else {
-                ss.enterWebApp(this, pcp, null);
             }
         }
         return pcp;
