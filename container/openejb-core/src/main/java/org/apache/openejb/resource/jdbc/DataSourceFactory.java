@@ -30,12 +30,15 @@ import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
+import java.io.Flushable;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -55,7 +58,9 @@ public class DataSourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
     public static final String LOG_SQL_PROPERTY = "LogSql";
+    public static final String FLUSHABLE_PROPERTY = "Flushable";
     public static final String GLOBAL_LOG_SQL_PROPERTY = "openejb.jdbc.log";
+    public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
@@ -76,6 +81,20 @@ public class DataSourceFactory {
                                           final Duration timeBetweenEvictionRuns,
                                           final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
+
+        final boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
+                "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
+        final FlushableDataSourceHandler.FlushConfig flushConfig;
+        if (flushable) {
+            properties.remove("flushable"); // don't let it wrap the delegate again
+
+            flushConfig = new FlushableDataSourceHandler.FlushConfig(
+                    name, configuredManaged,
+                    impl, PropertiesHelper.propertiesToString(properties),
+                    maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
+        } else {
+            flushConfig = null;
+        }
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
         convert(properties, timeBetweenEvictionRuns, "timeBetweenEvictionRuns", "timeBetweenEvictionRunsMillis");
@@ -163,6 +182,9 @@ public class DataSourceFactory {
             if (logSql) {
                 ds = makeItLogging(ds);
             }
+            if (flushable) {
+                ds = makeFlushable(ds, flushConfig);
+            }
 
             return ds;
         } finally {
@@ -170,6 +192,13 @@ public class DataSourceFactory {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
         }
+    }
+
+    private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
+        return (CommonDataSource) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class},
+                new FlushableDataSourceHandler(ds, flushConfig));
     }
 
     public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
