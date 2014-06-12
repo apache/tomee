@@ -84,6 +84,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -105,20 +106,23 @@ public class StatefulContainer implements RpcContainer {
     protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
 
     protected final Cache<Object, Instance> cache;
-    private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
+    private final ConcurrentMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
     private final SessionContext sessionContext;
+    private final boolean preventExtendedEntityManagerSerialization;
 
     public StatefulContainer(final Object id, final SecurityService securityService, final Cache<Object, Instance> cache) {
-        this(id, securityService, cache, new Duration(-1, TimeUnit.MILLISECONDS));
+        this(id, securityService, cache, new Duration(-1, TimeUnit.MILLISECONDS), true);
     }
 
-    public StatefulContainer(final Object id, final SecurityService securityService, final Cache<Object, Instance> cache, final Duration accessTimeout) {
+    public StatefulContainer(final Object id, final SecurityService securityService, final Cache<Object, Instance> cache,
+                             final Duration accessTimeout, final boolean preventExtendedEntityManagerSerialization) {
         this.containerID = id;
         this.securityService = securityService;
         this.cache = cache;
         cache.setListener(new StatefulCacheListener());
         this.accessTimeout = accessTimeout;
         sessionContext = new StatefulContext(this.securityService, new StatefulUserTransaction(new EjbUserTransaction(), entityManagerRegistry));
+        this.preventExtendedEntityManagerSerialization = preventExtendedEntityManagerSerialization;
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(final BeanContext beanContext) {
@@ -362,7 +366,10 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private static boolean containsExtendedPersistenceContext(final BeanContext beanContext) {
+    private boolean containsExtendedPersistenceContext(final BeanContext beanContext) {
+        if (preventExtendedEntityManagerSerialization) {
+            return false;
+        }
         final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
         return factories != null && factories.size() > 0;
     }
