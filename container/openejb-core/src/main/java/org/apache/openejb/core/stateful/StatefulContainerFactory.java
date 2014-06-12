@@ -88,7 +88,11 @@ public class StatefulContainerFactory {
     public void setFrequency(final String s) {
         properties.put("Frequency", s);
     }
-    
+
+    public void setPreventExtendedEntityManagerSerialization(final boolean preventExtendedEntityManagerSerialization) {
+        properties.put("PreventExtendedEntityManagerSerialization", Boolean.toString(preventExtendedEntityManagerSerialization));
+    }
+
     public Properties getProperties() {
         return properties;
     }
@@ -103,7 +107,7 @@ public class StatefulContainerFactory {
             buildCache();
         }
         cache.init();
-        return new StatefulContainer(id, securityService, cache, accessTimeout);
+        return new StatefulContainer(id, securityService, cache, accessTimeout, properties.containsKey("PreventExtendedEntityManagerSerialization"));
     }
 
     private void buildCache() throws Exception {
