@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -30,7 +31,7 @@ public class StatefulContainerFactory {
     private Object id;
     private SecurityService securityService;
     private Cache<Object, Instance> cache;
-    private Properties properties = new Properties();
+    private Properties properties = new SuperProperties().caseInsensitive(false);
     private Duration accessTimeout = new Duration(0, TimeUnit.MILLISECONDS);
 
     public Object getId() {
@@ -107,7 +108,23 @@ public class StatefulContainerFactory {
             buildCache();
         }
         cache.init();
-        return new StatefulContainer(id, securityService, cache, accessTimeout, properties.containsKey("PreventExtendedEntityManagerSerialization"));
+        return new StatefulContainer(
+                id, securityService,
+                cache, accessTimeout,
+                "true".equalsIgnoreCase(properties.getProperty("PreventExtendedEntityManagerSerialization", "false").trim()),
+                createLockFactory());
+    }
+
+    private LockFactory createLockFactory() {
+        final Object lockFactory = properties.remove("LockFactory");
+        if (lockFactory != null) {
+            try {
+                return LockFactory.class.cast(StatefulContainerFactory.class.getClassLoader().loadClass(lockFactory.toString().trim()).newInstance());
+            } catch (final Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+        return new DefaultLockFactory();
     }
 
     private void buildCache() throws Exception {
