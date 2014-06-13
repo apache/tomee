@@ -175,4 +175,8 @@ public class StatefulContainerFactory {
         }
         return null;
     }
+
+    public void setLockFactory(final String lockFactory) {
+        properties.setProperty("LockFactory", lockFactory);
+    }
 }
