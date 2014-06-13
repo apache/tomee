@@ -34,8 +34,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Instance implements Serializable, Cache.TimeOut {
     private static final long serialVersionUID = 2862563626506556542L;

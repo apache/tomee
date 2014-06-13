@@ -17,7 +17,6 @@
 package org.apache.openejb.core.stateful;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 
 public interface LockFactory {
     StatefulLock newLock(String beanId);
