@@ -106,16 +106,18 @@ public class StatefulContainer implements RpcContainer {
     protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
 
     protected final Cache<Object, Instance> cache;
+    protected final LockFactory lockFactory;
     private final ConcurrentMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
     private final SessionContext sessionContext;
     private final boolean preventExtendedEntityManagerSerialization;
 
     public StatefulContainer(final Object id, final SecurityService securityService, final Cache<Object, Instance> cache) {
-        this(id, securityService, cache, new Duration(-1, TimeUnit.MILLISECONDS), true);
+        this(id, securityService, cache, new Duration(-1, TimeUnit.MILLISECONDS), true, new DefaultLockFactory());
     }
 
     public StatefulContainer(final Object id, final SecurityService securityService, final Cache<Object, Instance> cache,
-                             final Duration accessTimeout, final boolean preventExtendedEntityManagerSerialization) {
+                             final Duration accessTimeout, final boolean preventExtendedEntityManagerSerialization,
+                             final LockFactory lockFactory) {
         this.containerID = id;
         this.securityService = securityService;
         this.cache = cache;
@@ -123,6 +125,8 @@ public class StatefulContainer implements RpcContainer {
         this.accessTimeout = accessTimeout;
         sessionContext = new StatefulContext(this.securityService, new StatefulUserTransaction(new EjbUserTransaction(), entityManagerRegistry));
         this.preventExtendedEntityManagerSerialization = preventExtendedEntityManagerSerialization;
+        this.lockFactory = lockFactory;
+        this.lockFactory.setContainer(this);
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(final BeanContext beanContext) {
@@ -232,6 +236,14 @@ public class StatefulContainer implements RpcContainer {
             }
         }
         return methods;
+    }
+
+    public LockFactory getLockFactory() {
+        return lockFactory;
+    }
+
+    public Cache<Object, Instance> getCache() {
+        return cache;
     }
 
     public static enum MethodType {
@@ -410,7 +422,7 @@ public class StatefulContainer implements RpcContainer {
                     final InstanceContext context = beanContext.newInstance();
 
                     // Wrap-up everthing into a object
-                    instance = new Instance(beanContext, primaryKey, context.getBean(), context.getCreationalContext(), context.getInterceptors(), entityManagers);
+                    instance = new Instance(beanContext, primaryKey, containerID, context.getBean(), context.getCreationalContext(), context.getInterceptors(), entityManagers, lockFactory.newLock(primaryKey.toString()));
 
                 } catch (final Throwable throwable) {
                     final ThreadContext callContext = ThreadContext.getThreadContext();
@@ -727,7 +739,7 @@ public class StatefulContainer implements RpcContainer {
 
         final Duration accessTimeout = getAccessTimeout(instance.beanContext, callMethod);
 
-        final Lock currLock = instance.getLock();
+        final LockFactory.StatefulLock currLock = instance.getLock();
         final boolean lockAcquired;
         if (accessTimeout == null || accessTimeout.getTime() < 0) {
             // wait indefinitely for a lock

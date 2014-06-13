@@ -61,8 +61,8 @@ public class StatefulDecoratorInjectionTest {
             orange.someBusinessMethod();
 
             fail("call should not be allowed");
-        } catch (EJBException e) {
-            assertTrue(AccessDeniedException.class.isInstance(e.getCause()));
+        } catch (AccessDeniedException e) {
+            // ok
         }
     }
 

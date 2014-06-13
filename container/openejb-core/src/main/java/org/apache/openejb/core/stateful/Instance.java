@@ -42,13 +42,14 @@ public class Instance implements Serializable, Cache.TimeOut {
     public final BeanContext beanContext;
     public final Object primaryKey;
     public final Object bean;
+    public final Object containerId;
     public CreationalContext creationalContext;
     public final Map<String, Object> interceptors;
 
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
     private final Stack<Transaction> transaction = new Stack<Transaction>();
-    private final ReentrantLock lock = new ReentrantLock();
+    private final LockFactory.StatefulLock lock;
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
@@ -56,17 +57,24 @@ public class Instance implements Serializable, Cache.TimeOut {
     private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers;
     private final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
-    public Instance(final BeanContext beanContext, final Object primaryKey, final Object bean, final CreationalContext creationalContext, final Map<String, Object> interceptors, final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
+    public Instance(final BeanContext beanContext, final Object primaryKey, final Object containerId,
+                    final Object bean, final CreationalContext creationalContext,
+                    final Map<String, Object> interceptors,
+                    final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers,
+                    final LockFactory.StatefulLock lock) {
         this.beanContext = beanContext;
         this.primaryKey = primaryKey;
+        this.containerId = containerId;
         this.bean = bean;
         this.interceptors = interceptors;
         this.creationalContext = creationalContext;
         this.entityManagers = entityManagers;
         this.entityManagerArray = null;
+        this.lock = lock;
     }
 
-    public Instance(final Object deploymentId, final Object primaryKey, final Object bean, final CreationalContext creationalContext, final Map<String, Object> interceptors, final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
+    public Instance(final Object deploymentId, final Object primaryKey, final Object containerId, final Object bean, final CreationalContext creationalContext, final Map<String, Object> interceptors, final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray,
+                    final LockFactory.StatefulLock lock) {
         this.beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         if (beanContext == null) {
             throw new IllegalArgumentException("Unknown deployment " + deploymentId);
@@ -76,6 +84,8 @@ public class Instance implements Serializable, Cache.TimeOut {
         this.creationalContext = creationalContext;
         this.interceptors = interceptors;
         this.entityManagerArray = entityManagerArray;
+        this.lock = lock;
+        this.containerId = containerId;
     }
 
     @Override
@@ -103,7 +113,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         return transaction.size() > 0 ? transaction.peek(): null;
     }
 
-    public Lock getLock() {
+    public LockFactory.StatefulLock getLock() {
         return lock;
     }
 
@@ -151,6 +161,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         private static final long serialVersionUID = 6002078080752564395L;
         public final Object deploymentId;
         public final Object primaryKey;
+        public final Object containerId;
         public final Object bean;
         public final CreationalContext creationalContext;
         public final Map<String, Object> interceptors;
@@ -179,6 +190,8 @@ public class Instance implements Serializable, Cache.TimeOut {
             } else {
                 entityManagerArray = null;
             }
+
+            this.containerId = toSerializable(i.containerId);
         }
 
         private static Object toSerializable(final Object obj) {
@@ -193,7 +206,12 @@ public class Instance implements Serializable, Cache.TimeOut {
             // Anything wrapped with PojoSerialization will have been automatically
             // unwrapped via it's own readResolve so passing in the raw bean
             // and interceptors variables is totally fine.
-            return new Instance(deploymentId, primaryKey, bean, creationalContext, interceptors, entityManagerArray);
+            final StatefulContainer statefulContainer = StatefulContainer.class.cast(SystemInstance.get().getComponent(ContainerSystem.class).getContainer(containerId));
+            return new Instance(
+                    deploymentId, primaryKey, containerId,
+                    bean, creationalContext,
+                    interceptors, entityManagerArray,
+                    statefulContainer.getLockFactory().newLock(deploymentId.toString()));
         }
     }
 }
