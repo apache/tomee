@@ -22,7 +22,7 @@ public interface LockFactory {
     StatefulLock newLock(String beanId);
     void setContainer(StatefulContainer statefulContainer);
 
-    public static interface StatefulLock {
+    interface StatefulLock {
         void lock();
         void unlock();
         boolean isHeldByCurrentThread();
