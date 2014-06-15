@@ -17,16 +17,22 @@
 
 package org.apache.openejb.assembler.classic.util;
 
+import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -140,11 +146,29 @@ public final class ServiceInfos {
             serviceRecipe.setProperty("prop", info.properties);
         } else {
             for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
+                final String key = entry.getKey().toString();
                 final Object value = entry.getValue();
-                if (value instanceof String && value.toString().startsWith("$")) {
-                    serviceRecipe.setProperty(entry.getKey().toString(), resolve(services, value.toString().substring(1)));
+                if (value instanceof String) {
+                    final String valueStr = value.toString();
+                    if (valueStr.startsWith("$")){
+                        serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
+                    } else if (valueStr.startsWith("@")){
+                        final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                        try {
+                            serviceRecipe.setProperty(key, jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + valueStr.substring(1)));
+                        } catch (final NamingException e) {
+                            try {
+                                serviceRecipe.setProperty(key, jndiContext.lookup(valueStr.substring(1)));
+                            } catch (final NamingException e1) {
+                                Logger.getInstance(LogCategory.OPENEJB, ServiceInfos.class).warning("Value " + valueStr + " starting with @ but doesn't point to an existing resource, using raw value");
+                                serviceRecipe.setProperty(key, value);
+                            }
+                        }
+                    } else {
+                        serviceRecipe.setProperty(key, value);
+                    }
                 } else {
-                    serviceRecipe.setProperty(entry.getKey().toString(), entry.getValue());
+                    serviceRecipe.setProperty(key, entry.getValue());
                 }
             }
         }
