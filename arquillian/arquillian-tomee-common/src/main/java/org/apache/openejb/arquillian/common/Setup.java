@@ -78,6 +78,7 @@ public class Setup {
 
         final Map<String, String> replacements = new HashMap<String, String>();
         replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
+        replacements.put(ports.https(), String.valueOf(configuration.getHttpsPort()));
         replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
         replacements.put(ports.ajp(), String.valueOf(ajpPort(configuration)));
 
