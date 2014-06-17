@@ -27,11 +27,6 @@ import org.apache.openejb.core.timer.quartz.PatchedStdJDBCDelegate;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.SetAccessible;
 import org.apache.openejb.quartz.JobBuilder;
 import org.apache.openejb.quartz.JobDataMap;
 import org.apache.openejb.quartz.JobDetail;
@@ -45,6 +40,11 @@ import org.apache.openejb.quartz.impl.jdbcjobstore.StdJDBCDelegate;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 import org.apache.openejb.quartz.listeners.SchedulerListenerSupport;
 import org.apache.openejb.quartz.simpl.RAMJobStore;
+import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SetAccessible;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
@@ -189,10 +189,10 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     //durability is configured with true, which means that the job will be kept in the store even if no trigger is attached to it.
                     //Currently, all the EJB beans share with the same job instance
                     final JobDetail job = JobBuilder.newJob(EjbTimeoutJob.class)
-                                                    .withIdentity(OPENEJB_TIMEOUT_JOB_NAME, OPENEJB_TIMEOUT_JOB_GROUP_NAME)
-                                                    .storeDurably(true)
-                                                    .requestRecovery(false)
-                                                    .build();
+                        .withIdentity(OPENEJB_TIMEOUT_JOB_NAME, OPENEJB_TIMEOUT_JOB_GROUP_NAME)
+                        .storeDurably(true)
+                        .requestRecovery(false)
+                        .build();
                     thisScheduler.addJob(job, true);
                 } catch (final SchedulerException e) {
                     throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
@@ -267,11 +267,19 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
         }
 
-        if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
-            && properties.containsKey("org.apache.openejb.quartz.threadPool.threadCount")
-            && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
-            log.info("Found property 'org.apache.openejb.quartz.threadPool.threadCount' for default thread pool, please use '"
-                     + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
+        if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))) {
+            if (properties.containsKey("org.apache.openejb.quartz.threadPool.threadCount")
+                && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
+                log.info("Found property 'org.apache.openejb.quartz.threadPool.threadCount' for default thread pool, please use '"
+                    + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
+                properties.put(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE, properties.getProperty("org.apache.openejb.quartz.threadPool.threadCount"));
+            }
+            if (properties.containsKey("org.quartz.threadPool.threadCount")
+                && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
+                log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
+                    + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
+                properties.put(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE, properties.getProperty("org.quartz.threadPool.threadCount"));
+            }
         }
 
         // to ensure we can shutdown correctly, default doesn't support such a configuration
@@ -454,8 +462,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     ex.set(e);
                 }
 
-                if (null != ex.get()) {
-                    throw new OpenEJBRuntimeException("Unable to shutdown " + name + " scheduler", ex.get());
+                final Throwable t = ex.get();
+                if (null != t) {
+                    throw new OpenEJBRuntimeException("Unable to shutdown " + name + " scheduler", t);
                 }
             }
         } catch (final SchedulerException e) {
@@ -623,12 +632,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         final Date initialExpiration = new Date(System.currentTimeMillis() + initialDuration);
         try {
             final TimerData timerData = timerStore.createIntervalTimer(this,
-                                                                       (String) deployment.getDeploymentID(),
-                                                                       primaryKey,
-                                                                       timeoutMethod,
-                                                                       initialExpiration,
-                                                                       intervalDuration,
-                                                                       timerConfig);
+                (String) deployment.getDeploymentID(),
+                primaryKey,
+                timeoutMethod,
+                initialExpiration,
+                intervalDuration,
+                timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (final TimerStoreException e) {
@@ -677,12 +686,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         try {
             final TimerData timerData = timerStore.createIntervalTimer(this,
-                                                                       (String) deployment.getDeploymentID(),
-                                                                       primaryKey,
-                                                                       timeoutMethod,
-                                                                       initialExpiration,
-                                                                       intervalDuration,
-                                                                       timerConfig);
+                (String) deployment.getDeploymentID(),
+                primaryKey,
+                timeoutMethod,
+                initialExpiration,
+                intervalDuration,
+                timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (final TimerStoreException e) {
@@ -699,12 +708,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         checkState();
         try {
             final TimerData timerData = timerStore.createCalendarTimer(this,
-                                                                       (String) deployment.getDeploymentID(),
-                                                                       primaryKey,
-                                                                       timeoutMethod,
-                                                                       scheduleExpression,
-                                                                       timerConfig,
-                                                                       false);
+                (String) deployment.getDeploymentID(),
+                primaryKey,
+                timeoutMethod,
+                scheduleExpression,
+                timerConfig,
+                false);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (final TimerStoreException e) {
@@ -785,11 +794,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
                     SetAccessible.on(ejbTimeout);
                     container.invoke(deployment.getDeploymentID(),
-                                     InterfaceType.TIMEOUT,
-                                     ejbTimeout.getDeclaringClass(),
-                                     ejbTimeout,
-                                     new Object[]{timer},
-                                     timerData.getPrimaryKey());
+                        InterfaceType.TIMEOUT,
+                        ejbTimeout.getDeclaringClass(),
+                        ejbTimeout,
+                        new Object[]{timer},
+                        timerData.getPrimaryKey());
                 } catch (final RuntimeException e) {
                     retry = true;
                     // exception from a timer does not necessairly mean failure
