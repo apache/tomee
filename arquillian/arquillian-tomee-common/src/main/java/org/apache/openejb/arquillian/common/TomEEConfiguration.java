@@ -57,7 +57,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return httpsPort;
     }
 
-    public void setHttpsPort(int httpsPort) {
+    public void setHttpsPort(final int httpsPort) {
         this.httpsPort = httpsPort;
     }
 
