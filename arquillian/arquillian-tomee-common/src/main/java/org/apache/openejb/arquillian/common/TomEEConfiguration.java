@@ -27,6 +27,7 @@ import java.util.List;
 public class TomEEConfiguration implements ContainerConfiguration {
 
     protected boolean exportConfAsSystemProperty;
+    protected int httpsPort = 8443;
     protected int httpPort = 8080;
     protected int stopPort = 8005;
     protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
@@ -50,6 +51,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setUnpackWars(final boolean unpackWars) {
         this.unpackWars = unpackWars;
+    }
+
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public void setHttpsPort(int httpsPort) {
+        this.httpsPort = httpsPort;
     }
 
     public int getHttpPort() {
@@ -147,6 +156,9 @@ public class TomEEConfiguration implements ContainerConfiguration {
         }
         if (httpPort > 0) {
             value.add(httpPort);
+        }
+        if (httpsPort > 0) {
+            value.add(httpsPort);
         }
         return toInts(value);
     }

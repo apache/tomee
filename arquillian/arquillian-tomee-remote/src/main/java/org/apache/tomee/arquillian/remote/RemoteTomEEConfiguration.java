@@ -158,6 +158,9 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         if (getHttpPort() > 0) {
             value.add(getHttpPort());
         }
+        if (getHttpsPort() > 0) {
+            value.add(getHttpsPort());
+        }
         if (getAjpPort() > 0) {
             value.add(getAjpPort());
         }
