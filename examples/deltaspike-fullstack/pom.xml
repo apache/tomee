@@ -21,7 +21,7 @@
 
   <properties>
     <myfaces2.version>2.1.15</myfaces2.version>
-    <ds.version>0.6</ds.version>
+    <ds.version>1.0.0</ds.version>
     <extval.version>2.0.8</extval.version>
   </properties>
 
