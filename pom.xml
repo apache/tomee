@@ -123,7 +123,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-6-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>6.0-6</javaee-api.version>
 
     <jaxb.version>2.2.7</jaxb.version>
 
@@ -619,10 +619,18 @@
           </plugin>
         </plugins>
       </build>
+	  
       <repositories>
         <repository>
           <id>patch-openjpa</id>
           <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+        <repository>
+          <id>staging-javaee</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1026/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -635,6 +643,7 @@
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
       </repositories>
+	  
       <pluginRepositories>
         <pluginRepository>
           <id>patch-openjpa</id>
@@ -652,6 +661,7 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
+	
     <profile>
       <id>rat</id>
       <modules>
@@ -740,6 +750,13 @@
     <repository>
       <id>patch-openjpa</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>staging-javaee</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1026/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
