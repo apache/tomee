@@ -20,8 +20,8 @@
   <packaging>war</packaging>
 
   <properties>
-    <myfaces2.version>2.1.15</myfaces2.version>
-    <ds.version>0.6</ds.version>
+    <myfaces2.version>2.2.3</myfaces2.version>
+    <ds.version>1.0.0</ds.version>
     <extval.version>2.0.8</extval.version>
   </properties>
 
@@ -151,6 +151,47 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-impl</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>4.6.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-openejb</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- only needed for mocked cdi-beans -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for full page-bean tests -->
+    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>${myfaces2.version}</version>
@@ -160,7 +201,19 @@
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>${myfaces2.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-impl-test</artifactId>
+      <version>${myfaces2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.test</groupId>
+      <artifactId>myfaces-test20</artifactId>
+      <version>1.0.6</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- 3rd party libs -->
