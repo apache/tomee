@@ -195,6 +195,54 @@
 
     <!-- for full page-bean tests -->
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-impl</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>4.6.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-openejb</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- only needed for mocked cdi-beans -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for full page-bean tests -->
+    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>${myfaces2.version}</version>
