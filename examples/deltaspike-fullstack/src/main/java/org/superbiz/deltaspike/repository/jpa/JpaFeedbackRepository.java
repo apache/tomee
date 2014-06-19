@@ -18,10 +18,12 @@
  */
 package org.superbiz.deltaspike.repository.jpa;
 
+import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.superbiz.deltaspike.domain.Feedback;
 import org.superbiz.deltaspike.repository.FeedbackRepository;
 import org.superbiz.deltaspike.repository.Repository;
 
+@Transactional
 @Repository
 public class JpaFeedbackRepository extends AbstractGenericJpaRepository<Feedback> implements FeedbackRepository
 {
