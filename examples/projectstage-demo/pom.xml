@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
-      <version>0.5</version>
+      <version>1.0.0</version>
     </dependency>
 
     <dependency>
@@ -88,7 +88,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <skipTests>true</skipTests>
+          <skipTests>false</skipTests>
           <!--
 TODO: remove the skipTests flag. I needed to do it because it was throwing this exception.
 Test set: org.superbiz.projectstage.TestingProjectStageTest
