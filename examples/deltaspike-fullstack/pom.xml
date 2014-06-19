@@ -20,10 +20,11 @@
   <packaging>war</packaging>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <myfaces2.version>2.2.3</myfaces2.version>
-    <ds.version>1.0.0</ds.version>
-    <extval.version>2.0.8</extval.version>
+    <version.myfaces2>2.2.3</version.myfaces2>
+    <version.deltaspike>1.0.0</version.deltaspike>
+    <version.extval>2.0.8</version.extval>
+    <version.openejb>4.7.0-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.0-SNAPSHOT</version.tomee>
   </properties>
 
   <build>
@@ -41,7 +42,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>${version.tomee}</version>
         <configuration>
           <context>ROOT</context>
           <simpleLog>true</simpleLog>
@@ -69,74 +70,74 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.0-SNAPSHOT</version>
+      <version>${version.openejb}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jsf-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jsf-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jpa-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jpa-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-security-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-security-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-bean-validation-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-bean-validation-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator</groupId>
       <artifactId>myfaces-extval-core</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-property-validation</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.persistence</groupId>
@@ -147,7 +148,7 @@
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-bean-validation</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.validation</groupId>
@@ -164,25 +165,25 @@
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-test-control-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-test-control-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-openejb</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>test</scope>
     </dependency>
 
@@ -198,19 +199,19 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces2.version}</version>
+      <version>${version.myfaces2}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces2.version}</version>
+      <version>${version.myfaces2}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl-test</artifactId>
-      <version>${myfaces2.version}</version>
+      <version>${version.myfaces2}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

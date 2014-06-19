@@ -30,12 +30,12 @@ http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
         <!-- config of (non-)jta-data-source isn't needed if there is just one -->
 
         <!-- @MappedSuperclass classes - see OPENJPA-1926 -->
-        <class>org.superbiz.deltaspike.service.domain.AbstractDomainObject</class>
+        <class>org.superbiz.deltaspike.domain.AbstractDomainObject</class>
 
         <!-- entities -->
-        <class>org.superbiz.deltaspike.service.domain.User</class>
-        <class>org.superbiz.deltaspike.service.domain.Feedback</class>
-        <class>org.superbiz.deltaspike.service.domain.Comment</class>
+        <class>org.superbiz.deltaspike.domain.User</class>
+        <class>org.superbiz.deltaspike.domain.Feedback</class>
+        <class>org.superbiz.deltaspike.domain.Comment</class>
 
         <properties>
             <property name="openjpa.DataCache" value="true"/>
