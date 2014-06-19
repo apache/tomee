@@ -20,6 +20,7 @@
   <packaging>war</packaging>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <myfaces2.version>2.2.3</myfaces2.version>
     <ds.version>1.0.0</ds.version>
     <extval.version>2.0.8</extval.version>
