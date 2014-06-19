@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,22 +15,18 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
--->
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
-              version="2.0">
+ */
+package org.superbiz.deltaspike.service;
 
-    <application>
-        <locale-config>
-            <default-locale>en</default-locale>
-            <supported-locale>en</supported-locale>
-        </locale-config>
-        <message-bundle>org.superbiz.deltaspike.service.i18n.messages</message-bundle>
-        <resource-bundle>
-            <base-name>org.superbiz.deltaspike.service.i18n.messages</base-name>
-            <var>i18n</var>
-        </resource-bundle>
-    </application>
+import org.apache.deltaspike.core.api.projectstage.ProjectStage;
+import org.apache.deltaspike.core.api.projectstage.ProjectStageHolder;
 
-</faces-config>
+public class CustomProjectStage implements ProjectStageHolder
+{
+    public static final class Debugging extends ProjectStage
+    {
+        private static final long serialVersionUID = -8626602281649294170L;
+    }
+
+    public static final Debugging Debugging = new Debugging();
+}
