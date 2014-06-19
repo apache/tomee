@@ -19,5 +19,5 @@
 <validation-config xmlns="http://jboss.org/xml/ns/javax/validation/configuration"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/configuration">
-    <constraint-validator-factory>org.apache.deltaspike.beanValidation.impl.CDIAwareConstraintValidatorFactory</constraint-validator-factory>
+    <constraint-validator-factory>org.apache.deltaspike.beanvalidation.impl.CDIAwareConstraintValidatorFactory</constraint-validator-factory>
 </validation-config>

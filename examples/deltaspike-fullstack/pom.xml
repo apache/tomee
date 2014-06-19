@@ -11,17 +11,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
-
   <name>OpenEJB :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>war</packaging>
 
   <properties>
-    <myfaces2.version>2.1.15</myfaces2.version>
-    <ds.version>0.6</ds.version>
+    <myfaces2.version>2.2.3</myfaces2.version>
+    <ds.version>1.0.0</ds.version>
     <extval.version>2.0.8</extval.version>
   </properties>
 
@@ -48,6 +48,7 @@
       </plugin>
     </plugins>
   </build>
+
   <repositories>
     <repository>
       <id>prime-repo</id>
@@ -56,12 +57,19 @@
       <layout>default</layout>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0-6-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>4.7.0-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -119,13 +127,11 @@
       <version>${ds.version}</version>
       <scope>runtime</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator</groupId>
       <artifactId>myfaces-extval-core</artifactId>
       <version>${extval.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-property-validation</artifactId>
@@ -137,7 +143,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-bean-validation</artifactId>
@@ -149,7 +154,46 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-impl</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-openejb</artifactId>
+      <version>${ds.version}</version>
+      <scope>test</scope>
+    </dependency>
 
+    <!-- only needed for mocked cdi-beans -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for full page-bean tests -->
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
@@ -160,7 +204,19 @@
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>${myfaces2.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-impl-test</artifactId>
+      <version>${myfaces2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.test</groupId>
+      <artifactId>myfaces-test20</artifactId>
+      <version>1.0.6</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- 3rd party libs -->
