@@ -100,7 +100,7 @@
     <tomee.version>1.7.0-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.6-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.6</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -636,6 +636,13 @@
           </releases>
         </repository>
         <repository>
+          <id>staging-owb</id>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1005/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+        <repository>
           <id>staging-quartz</id>
           <url>https://repository.apache.org/content/repositories/orgapachetomee-1027/</url>
           <releases>
@@ -764,6 +771,13 @@
     <repository>
       <id>staging-javaee</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1026/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>staging-owb</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1005/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
