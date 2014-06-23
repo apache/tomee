@@ -19,6 +19,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.BuiltInOwbBean;
+import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadata;
@@ -37,12 +38,14 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ObserverMethod;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
     private Set<Bean<?>> deploymentBeans;
+    private boolean started = false;
 
     public WebappBeanManager(final WebappWebBeansContext ctx) {
         super(ctx);
@@ -243,11 +246,15 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public Set<Bean<?>> getComponents() {
-        if (deploymentBeans.isEmpty()) {
+        if (!started) {
             // probably not yet merged (afterStart())
             // so reuse parent beans
             // this can happen for validations
-            return super.getBeans();
+            return new IteratorSet<Bean<?>>(
+                    new MultipleIterator<Bean<?>>(
+                            InheritedBeanFilter.INSTANCE,
+                            deploymentBeans.iterator(),
+                            getParentBm().getComponents().iterator()));
         }
         return deploymentBeans;
     }
@@ -267,15 +274,20 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     public void afterStart() {
-        deploymentBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
+        started = true;
+        deploymentBeans = mergeBeans();
+        webappCtx.getBeanManagerImpl().getInjectionResolver().clearCaches(); // to force new resolution with new beans
+    }
+
+    private Set<Bean<?>> mergeBeans() {
+        final Set<Bean<?>> allBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
         for (final Bean<?> bean : getParentBm().getBeans()) {
-            if (!BuiltInOwbBean.class.isInstance(bean)) {
-                deploymentBeans.add(bean);
+            if (InheritedBeanFilter.INSTANCE.accept(bean)) {
+                allBeans.add(bean);
             }
         }
-        deploymentBeans.addAll(super.getBeans());
-
-        webappCtx.getBeanManagerImpl().getInjectionResolver().clearCaches(); // to force new resolution with new beans
+        allBeans.addAll(super.getBeans());
+        return allBeans;
     }
 
     public void beforeStop() {
@@ -284,5 +296,77 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     private static boolean isEvent(final Class<?> eventClass) {
         return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass);
+    }
+
+    private static interface Filter<A> {
+        boolean accept(A a);
+    }
+
+    private static class InheritedBeanFilter implements Filter<Bean<?>> {
+        private static InheritedBeanFilter INSTANCE = new InheritedBeanFilter();
+
+        private InheritedBeanFilter() {
+            // no-op
+        }
+
+        @Override
+        public boolean accept(final Bean<?> bean) {
+            return !BuiltInOwbBean.class.isInstance(bean) && !ExtensionBean.class.isInstance(bean);
+        }
+    }
+
+    private static class MultipleIterator<A> implements Iterator<A> {
+        private final Iterator<A>[] delegates;
+        private final Filter<A> filter;
+
+        private A next = null;
+        private int idx = 0;
+
+        /**
+         * @param filter used to filter delegates from index 1 to N-1 (0 is not filtered)
+         * @param delegates iterator this Iterator merges, one delegates is mandatory
+         */
+        private MultipleIterator(final Filter<A> filter, final Iterator<A>... delegates) {
+            this.filter = filter;
+            this.delegates = delegates;
+        }
+
+        @Override
+        public boolean hasNext() {
+            for (; idx < delegates.length; idx++) {
+                while (delegates[idx].hasNext()) {
+                    next = delegates[idx].next();
+                    if (idx == 0 || filter.accept(next)) { // we accept all items of first iterator
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public A next() {
+            return next;
+        }
+
+        @Override
+        public void remove() {
+            delegates[idx].remove();
+        }
+    }
+
+    // hack set, only use it for Set which are used as Iterator
+    // case of getComponent
+    private static class IteratorSet<A> extends HashSet<A> {
+        private final Iterator<A> it;
+
+        private IteratorSet(final Iterator<A> it) {
+            this.it = it;
+        }
+
+        @Override
+        public Iterator<A> iterator() {
+            return it;
+        }
     }
 }
