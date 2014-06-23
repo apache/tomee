@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-6-SNAPSHOT</version>
+      <version>6.0-6</version>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- for the plugin to endorse the build -->

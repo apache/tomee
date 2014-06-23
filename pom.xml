@@ -622,34 +622,6 @@
 	  
       <repositories>
         <repository>
-          <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-        <repository>
-          <id>staging-javaee</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1026/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-        <repository>
-          <id>staging-owb</id>
-          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1005/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-        <repository>
-          <id>staging-quartz</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1027/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-        <repository>
           <releases>
             <enabled>false</enabled>
           </releases>
@@ -659,13 +631,6 @@
       </repositories>
 	  
       <pluginRepositories>
-        <pluginRepository>
-          <id>patch-openjpa</id>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </pluginRepository>
         <pluginRepository>
           <releases>
             <enabled>false</enabled>
@@ -762,34 +727,6 @@
     <!--</repository>-->
     <!-- Apache snapshots -->
     <repository>
-      <id>patch-openjpa</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>staging-javaee</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1026/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>staging-owb</id>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1005/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>staging-quartz</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1027/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>http://repository.apache.org/content/groups/snapshots-group</url>
@@ -856,13 +793,6 @@
     <!--</repository>-->
   </repositories>
   <pluginRepositories>
-    <pluginRepository>
-      <id>patch-openjpa-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1025/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
       <name>Apache Software Foundation M2 Snapshot Repository</name>
