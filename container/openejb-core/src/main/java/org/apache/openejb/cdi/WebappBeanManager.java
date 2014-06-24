@@ -45,7 +45,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
     private Set<Bean<?>> deploymentBeans;
-    private boolean started = false;
+    private boolean started/* = false*/;
 
     public WebappBeanManager(final WebappWebBeansContext ctx) {
         super(ctx);
@@ -298,11 +298,11 @@ public class WebappBeanManager extends BeanManagerImpl {
         return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass);
     }
 
-    private static interface Filter<A> {
+    private interface Filter<A> {
         boolean accept(A a);
     }
 
-    private static class InheritedBeanFilter implements Filter<Bean<?>> {
+    private static final class InheritedBeanFilter implements Filter<Bean<?>> {
         private static InheritedBeanFilter INSTANCE = new InheritedBeanFilter();
 
         private InheritedBeanFilter() {
@@ -315,12 +315,12 @@ public class WebappBeanManager extends BeanManagerImpl {
         }
     }
 
-    private static class MultipleIterator<A> implements Iterator<A> {
+    private static final class MultipleIterator<A> implements Iterator<A> {
         private final Iterator<A>[] delegates;
         private final Filter<A> filter;
 
-        private A next = null;
-        private int idx = 0;
+        private A next/* = null*/;
+        private int idx/* = 0*/;
 
         /**
          * @param filter used to filter delegates from index 1 to N-1 (0 is not filtered)
@@ -357,7 +357,7 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     // hack set, only use it for Set which are used as Iterator
     // case of getComponent
-    private static class IteratorSet<A> extends HashSet<A> {
+    private static final class IteratorSet<A> extends HashSet<A> {
         private final Iterator<A> it;
 
         private IteratorSet(final Iterator<A> it) {
