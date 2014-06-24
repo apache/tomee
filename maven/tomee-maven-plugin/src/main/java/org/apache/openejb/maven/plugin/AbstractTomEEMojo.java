@@ -34,6 +34,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
 
@@ -256,6 +257,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     @Parameter(property = "tomee-plugin.openejb", defaultValue = "false")
     protected boolean useOpenEJB;
+
+    /**
+     * for TomEE and wars only, which docBase to use for this war.
+     */
+    @Parameter
+    protected List<File> docBases;
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
@@ -847,6 +854,21 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (!getWaitTomEE()) {
             strings.add("-Dtomee.noshutdownhook=true");
+        }
+
+        if (docBases != null && !docBases.isEmpty()) {
+            if ("war".equals(packaging)) {
+                final Collection<String> paths = new ArrayList<String>(docBases.size());
+                for (final File path : docBases) { // don't use relative paths (toString())
+                    paths.add(path.getAbsolutePath());
+                }
+
+                final String appName = destinationName().replace(".war", "");
+                strings.add("-Dtomee." + appName + ".docBases=" + Join.join(",", paths));
+                strings.add("-Dtomee." + appName + ".docBases.cache=false"); // doesn't work for dev if activated
+            } else {
+                getLog().warn("docBases parameter only valid for a war");
+            }
         }
 
         return strings;
