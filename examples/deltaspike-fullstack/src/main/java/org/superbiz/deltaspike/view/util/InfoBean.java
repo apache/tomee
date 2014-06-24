@@ -113,9 +113,13 @@ public class InfoBean implements Serializable
         return ClassUtils.getJarVersion(BeanManagerProvider.class);
     }
 
-    public String getCdiVersion()
-    {
-        return ClassUtils.getJarVersion(BeanManagerProvider.getInstance().getBeanManager().getClass());
+    public String getCdiVersion() {
+        try {
+            return ClassUtils.getJarVersion(BeanManagerProvider.getInstance().getBeanManager().getClass());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Failed to get CDI Version: " + e.getMessage();
+        }
     }
 
     public String getExtValVersion()
