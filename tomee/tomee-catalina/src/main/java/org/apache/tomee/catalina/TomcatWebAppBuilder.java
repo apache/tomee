@@ -63,6 +63,7 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.ResourceRef;
+import org.apache.naming.resources.FileDirContext;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
@@ -118,6 +119,7 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
+import org.apache.tomee.catalina.naming.resources.AdditionalDocBase;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
@@ -1742,6 +1744,43 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
 
                 currentWebAppInfo.servlets.add(info);
+            }
+        }
+
+        addConfiguredDocBases(standardContext, contextInfo);
+    }
+
+    private void addConfiguredDocBases(StandardContext standardContext, ContextInfo contextInfo) {
+        if (contextInfo.appInfo.path != null) {   // add external web resources
+            final String webResources = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
+            final String cache = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
+            if (webResources != null) {
+                for (final String alt : webResources.trim().split(",")) {
+                    final String trim = alt.trim();
+                    if (trim.isEmpty()) {
+                        continue;
+                    }
+
+                    if (!new File(trim).isDirectory()) {
+                        logger.warning("Can't add docBase which are not directory: " + trim);
+                        continue;
+                    }
+
+                    final FileDirContext altDirContext = new AdditionalDocBase();
+                    altDirContext.setDocBase(trim);
+                    altDirContext.setAllowLinking(standardContext.isAllowLinking());
+                    altDirContext.setAliases(standardContext.getAliases());
+                    altDirContext.setCacheTTL(standardContext.getCacheTTL());
+                    altDirContext.setCacheMaxSize(standardContext.getCacheMaxSize());
+                    altDirContext.setCacheObjectMaxSize(standardContext.getCacheObjectMaxSize());
+                    if (cache != null) {
+                        altDirContext.setCached(Boolean.parseBoolean(cache));
+                    } else {
+                        altDirContext.setCached(standardContext.isCachingAllowed());
+                    }
+
+                    standardContext.addResourcesDirContext(altDirContext);
+                }
             }
         }
     }
