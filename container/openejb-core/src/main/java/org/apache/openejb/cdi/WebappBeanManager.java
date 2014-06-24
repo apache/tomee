@@ -303,7 +303,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     private static final class InheritedBeanFilter implements Filter<Bean<?>> {
-        private static InheritedBeanFilter INSTANCE = new InheritedBeanFilter();
+        private static final InheritedBeanFilter INSTANCE = new InheritedBeanFilter();
 
         private InheritedBeanFilter() {
             // no-op
