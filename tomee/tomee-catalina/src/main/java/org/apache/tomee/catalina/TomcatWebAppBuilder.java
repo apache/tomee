@@ -120,6 +120,7 @@ import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.naming.resources.AdditionalDocBase;
+import org.apache.tomee.catalina.naming.resources.EmptyDirContext;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
@@ -1026,6 +1027,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 filterMap.addURLPattern(clazzMapping[1]);
                 standardContext.addFilterMapBefore(filterMap);
             }
+        }
+
+        // can only be done until here (before_start)
+        if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.skip-war-resources", "false"))) {
+            final EmptyDirContext resources = new EmptyDirContext(standardContext);
+            standardContext.setResources(resources);
+            standardContext.setCachingAllowed(resources.isCached());
         }
     }
 
