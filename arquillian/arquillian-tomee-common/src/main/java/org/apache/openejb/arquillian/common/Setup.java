@@ -46,7 +46,16 @@ import java.util.logging.Logger;
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
     public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib" + File.separator + "xx-arquillian-tomee-bean-discoverer.jar"; // starts with xx to not be filtered
-    private static final String DEFAULT_MEM_CONFIG = "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m";
+    private static final String DEFAULT_MEM_CONFIG = (javaVersion() >= 1.8 ? "" : "-XX:PermSize=64m -XX:MaxPermSize=256m ")
+                                                            + "-Xmx512m -Xms256m -XX:ReservedCodeCacheSize=64m";
+
+    private static double javaVersion() {
+        try {
+            return Double.parseDouble(System.getProperty("java.version", "1.7").substring(0, 3));
+        } catch (final Exception nfe) {
+            return 1.6;
+        }
+    }
 
     public static void exportProperties(final File tomeeHome, final TomEEConfiguration c, final boolean defaultMem) {
         System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
