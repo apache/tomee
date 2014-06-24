@@ -264,6 +264,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected List<File> docBases;
 
+    /**
+     * when you set docBases to src/main/webapp setting it to true will allow hot refresh.
+     */
+    @Parameter(property = "tomee-plugin.skipWarResources", defaultValue = "false")
+    protected boolean skipWarResources;
+
     protected File deployedFile = null;
     protected RemoteServer server = null;
     protected String container = TOM_EE;
@@ -869,6 +875,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             } else {
                 getLog().warn("docBases parameter only valid for a war");
             }
+        }
+
+        if (skipWarResources) {
+            strings.add("-Dtomee.skip-war-resources=" + skipWarResources);
         }
 
         return strings;

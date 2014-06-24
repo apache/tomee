@@ -18,8 +18,7 @@ package org.apache.tomee.catalina.naming.resources;
 
 import org.apache.naming.resources.FileDirContext;
 
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
+import java.io.File;
 
 // a normal FileDirContext just unwrapping tomcat prefix
 // to simulate a normal webapp dir and not a jar one
@@ -30,18 +29,10 @@ public class AdditionalDocBase extends FileDirContext {
     private static final int PREFIX_LENGTH = PREFIX.length();
 
     @Override
-    protected Object doLookup(final String name) {
+    protected File file(final String name) {
         if (name.startsWith(PREFIX)) {
-            return super.doLookup(name.substring(PREFIX_LENGTH));
+            return super.file(name.substring(PREFIX_LENGTH));
         }
-        return super.doLookup(name);
-    }
-
-    @Override
-    protected Attributes doGetAttributes(final String name, final String[] attrIds) throws NamingException {
-        if (name.startsWith(PREFIX)) {
-            return super.doGetAttributes(name.substring(PREFIX_LENGTH), attrIds);
-        }
-        return super.doGetAttributes(name, attrIds);
+        return super.file(name);
     }
 }
