@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.spi.client.container.ContainerConfiguratio
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnusedDeclaration")
 public class TomEEConfiguration implements ContainerConfiguration {
 
     protected boolean exportConfAsSystemProperty;
@@ -180,7 +181,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     }
 
     public String getStopCommand() {
-        return stopCommand +  Character.toString((char) 0); // last char to avoid warning/error log message
+        return stopCommand + Character.toString((char) 0); // last char to avoid warning/error log message
     }
 
     public void setStopCommand(final String stopCommand) {
