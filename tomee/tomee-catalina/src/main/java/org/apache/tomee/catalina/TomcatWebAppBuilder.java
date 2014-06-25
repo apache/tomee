@@ -50,6 +50,7 @@ import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
+import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
@@ -153,6 +154,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1557,15 +1559,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         final Realm realm = standardContext.getRealm();
+        final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
+        final Thread thread = Thread.currentThread();
         if (realm != null && !(realm instanceof TomEERealm)
                 && (standardContext.getParent() == null
                 || (standardContext.getParent() != null && !realm.equals(standardContext.getParent().getRealm())))) {
-            final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+            final ClassLoader originalLoader = thread.getContextClassLoader();
+            thread.setContextClassLoader(classLoader);
             try {
                 standardContext.setRealm(tomeeRealm(realm));
             } finally {
-                Thread.currentThread().setContextClassLoader(originalLoader);
+                thread.setContextClassLoader(originalLoader);
             }
         }
 
@@ -1589,8 +1593,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
-        final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+        final ClassLoader originalLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader(classLoader);
 
         final NamingContextListener ncl = getNamingContextListener(standardContext);
         final String listenerName = ncl.getName();
@@ -1636,7 +1640,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         } catch (final NamingException e) {
             // no-op
         } finally {
-            Thread.currentThread().setContextClassLoader(originalLoader);
+            thread.setContextClassLoader(originalLoader);
             ContextAccessController.setReadOnly(listenerName);
         }
 
@@ -1729,7 +1733,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 continue;
             }
             try {
-                final Class<?> clazz = standardContext.getLoader().getClassLoader().loadClass(className);
+                final Class<?> clazz = classLoader.loadClass(className);
                 if (Valve.class.isAssignableFrom(clazz)) {
                     final Valve valve = (Valve) clazz.newInstance();
                     pipeline.addValve(valve);

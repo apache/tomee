@@ -144,6 +144,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
 
+    @Parameter(defaultValue = "${project.basedir}/src/main/webapp", property = "tomee-plugin.webappResources")
+    protected File webappResources;
+
+    @Parameter(defaultValue = "${project.build.outputDirectory}", property = "tomee-plugin.webappClasses")
+    protected File webappClasses;
+
     @Parameter(defaultValue = "${project.build.directory}/apache-tomee", property = "tomee-plugin.catalina-base")
     protected File catalinaBase;
 
@@ -192,9 +198,21 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     private List<String> classpaths;
 
+    /**
+     * forcing nice default for war development (WEB-INF/classes and web resources)
+     */
+    @Parameter(property = "tomee-plugin.webappDefaultConfig", defaultValue = "false")
+    protected boolean webappDefaultConfig;
+
+    /**
+     * use a real random instead of secure random. saves few ms at startup.
+     */
     @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
     protected boolean quickSession;
 
+    /**
+     * force webapp to be reloadable
+     */
     @Parameter(property = "tomee-plugin.force-reloadable", defaultValue = "false")
     protected boolean forceReloadable;
 
@@ -263,6 +281,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     @Parameter
     protected List<File> docBases;
+
+    /**
+     * for TomEE and wars only, add some external repositories to classloader.
+     */
+    @Parameter
+    protected List<File> externalRepositories;
 
     /**
      * when you set docBases to src/main/webapp setting it to true will allow hot refresh.
@@ -808,6 +832,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
         }
+
+        if (webappDefaultConfig) {
+            forceDefaultForNiceWebAppDevelopment();
+        }
+
         if (deactivateStrictServletCompliance) {
             strings.add("-D" + servletCompliance + "=false");
         }
@@ -862,18 +891,23 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.add("-Dtomee.noshutdownhook=true");
         }
 
+        String appName = null; // computed lazily
         if (docBases != null && !docBases.isEmpty()) {
             if ("war".equals(packaging)) {
-                final Collection<String> paths = new ArrayList<String>(docBases.size());
-                for (final File path : docBases) { // don't use relative paths (toString())
-                    paths.add(path.getAbsolutePath());
-                }
-
-                final String appName = destinationName().replace(".war", "");
-                strings.add("-Dtomee." + appName + ".docBases=" + Join.join(",", paths));
+                appName = destinationName().replace(".war", "");
+                strings.add("-Dtomee." + appName + ".docBases=" + filesToString(docBases));
                 strings.add("-Dtomee." + appName + ".docBases.cache=false"); // doesn't work for dev if activated
             } else {
                 getLog().warn("docBases parameter only valid for a war");
+            }
+        }
+
+        if (externalRepositories != null && !externalRepositories.isEmpty()) {
+            if ("war".equals(packaging)) {
+                appName = appName == null ? destinationName().replace(".war", "") : appName;
+                strings.add("-Dtomee." + appName + ".externalRepositories=" + filesToString(externalRepositories));
+            } else {
+                getLog().warn("externalRepositories parameter only valid for a war");
             }
         }
 
@@ -882,6 +916,43 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         return strings;
+    }
+
+    private void forceDefaultForNiceWebAppDevelopment() {
+        if (!deployOpenEjbApplication) {
+            getLog().info("Forcing deployOpenEjbApplication=true to be able to type 'reload[ENTER]' when classes are updated");
+            deployOpenEjbApplication = true;
+        }
+        if (!forceReloadable) {
+            getLog().info("Forcing forceReloadable=true to be able to type 'reload[ENTER]' when classes are updated");
+            forceReloadable = true;
+        }
+        if (!skipWarResources) {
+            getLog().info("Forcing skipWarResources=true to be able to refresh resources with F5");
+            skipWarResources = true;
+        }
+        if (docBases == null) {
+            docBases = new ArrayList<File>();
+        }
+        if (docBases.isEmpty() && webappResources.exists()) {
+            getLog().info("adding " + webappResources.toString() + " docBase");
+            docBases.add(webappResources);
+        }
+        if (externalRepositories == null) {
+            externalRepositories = new ArrayList<File>();
+        }
+        if (externalRepositories.isEmpty() && webappClasses.exists()) {
+            getLog().info("adding " + webappClasses.toString() + " externalRepository");
+            externalRepositories.add(webappClasses);
+        }
+    }
+
+    private static String filesToString(final Collection<File> files) {
+        final Collection<String> paths = new ArrayList<String>(files.size());
+        for (final File path : files) { // don't use relative paths (toString())
+            paths.add(path.getAbsolutePath());
+        }
+        return Join.join(",", paths);
     }
 
     protected Collection<String> availableCommands() {

@@ -917,9 +917,28 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // determine war class path
-        final Map<String, URL[]> urls = getWebappUrlsAndRars(warFile);
 
         final List<URL> webUrls = new ArrayList<URL>();
+
+        // add these urls first to ensure we load classes from here first
+        final String externalRepos = SystemInstance.get().getProperty("tomee." + warFile.getName().replace(".war", "") + ".externalRepositories");
+        List<URL> externalUrls = null;
+        if (externalRepos != null) {
+            externalUrls = new ArrayList<URL>();
+            for (final String additional : externalRepos.split(",")) {
+                final String trim = additional.trim();
+                if (!trim.isEmpty()) {
+                    try {
+                        externalUrls.add(new File(trim).toURI().toURL());
+                    } catch (final MalformedURLException e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+            }
+            webUrls.addAll(externalUrls);
+        }
+
+        final Map<String, URL[]> urls = getWebappUrlsAndRars(warFile);
         webUrls.addAll(Arrays.asList(urls.get(URLS_KEY)));
 
         final List<URL> addedUrls = new ArrayList<URL>();
@@ -963,11 +982,22 @@ public class DeploymentLoader implements DeploymentFilterable {
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrlsArray, parentClassLoader);
 
         // create web module
+        final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
+        if (externalUrls != null) {
+            for (final URL url : externalUrls) {
+                if (scannableUrls.contains(url)) {
+                    scannableUrls.remove(url);
+                    scannableUrls.add(0, url);
+                }
+            }
+        }
+
+
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(webUrls);
         webModule.setAddedUrls(addedUrls);
         webModule.setRarUrls(Arrays.asList(urls.get(RAR_URLS_KEY)));
-        webModule.setScannableUrls(filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE)));
+        webModule.setScannableUrls(scannableUrls);
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
