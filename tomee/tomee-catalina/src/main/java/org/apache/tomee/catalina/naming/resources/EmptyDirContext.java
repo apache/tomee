@@ -24,10 +24,15 @@ import java.io.File;
 // we need a FileDirContext (so doesn't work with not exploded wars) for boot time
 // note lifecycle is a quick one mainly used internally, other listeners are not intended to be used
 public class EmptyDirContext extends FileDirContext {
+
     private final StandardContext context;
 
     public EmptyDirContext(final StandardContext standardContext) {
         this.context = standardContext;
+    }
+
+    public StandardContext getContext() {
+        return context;
     }
 
     @Override

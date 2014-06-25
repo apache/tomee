@@ -166,6 +166,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -178,6 +179,7 @@ import static org.apache.tomee.catalina.Contexts.warPath;
  * @version $Rev$ $Date$
  */
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, ParentClassLoaderFinder {
+
     public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
     public static final String OPENEJB_SESSION_MANAGER_PROPERTY = "openejb.session.manager";
     public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
@@ -202,7 +204,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
     private static final boolean SKIP_TLD = SystemInstance.get().getOptions().get("tomee.skip-tld", false);
 
-    private static Method getNamingContextName; // it just sucks but that's private
+    private static final Method getNamingContextName; // it just sucks but that's private
 
     static {
         try {
@@ -255,11 +257,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private CoreContainerSystem containerSystem;
 
-    private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
+    private final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
 
     private Class<?> sessionManagerClass;
 
-    private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
+    private final Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
     private ClassLoader parentClassLoader;
     private boolean initJEEInfo = true;
@@ -684,20 +686,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     // TODO: find something more sexy
-    private static Field HOST_CONFIG_HOST;
+    private static final AtomicReference<Field> HOST_CONFIG_HOST = new AtomicReference<Field>(null);
 
     static {
         try { // do it only once
-            HOST_CONFIG_HOST = HostConfig.class.getDeclaredField("host");
+            HOST_CONFIG_HOST.set(HostConfig.class.getDeclaredField("host"));
         } catch (final NoSuchFieldException e) {
             // no-op
         }
     }
 
     private static boolean isReady(final HostConfig deployer) {
-        if (deployer != null && HOST_CONFIG_HOST != null) {
+        if (deployer != null && HOST_CONFIG_HOST.get() != null) {
             try {
-                return HOST_CONFIG_HOST.get(deployer) != null;
+                return HOST_CONFIG_HOST.get().get(deployer) != null;
             } catch (final Exception e) {
                 // no-op
             }
@@ -1758,7 +1760,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         addConfiguredDocBases(standardContext, contextInfo);
     }
 
-    private void addConfiguredDocBases(StandardContext standardContext, ContextInfo contextInfo) {
+    private void addConfiguredDocBases(final StandardContext standardContext, final ContextInfo contextInfo) {
         if (contextInfo.appInfo.path != null) {   // add external web resources
             final String webResources = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
             final String cache = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
@@ -2386,7 +2388,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static class DeployedApplication {
 
-        private AppInfo appInfo;
+        private final AppInfo appInfo;
         private final Map<File, Long> watchedResource = new HashMap<File, Long>();
 
         public DeployedApplication(final File base, final AppInfo appInfo) {
