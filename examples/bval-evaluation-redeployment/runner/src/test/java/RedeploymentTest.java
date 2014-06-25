@@ -41,7 +41,7 @@ public class RedeploymentTest {
     @Test
     public void validateTest() throws Exception {
 
-        final String port = System.getProperty("server.http.port");
+        final String port = System.getProperty("server.http.port", "8080");
         System.out.println("");
         System.out.println("===========================================");
         System.out.println("Running test on port: " + port);
@@ -53,7 +53,7 @@ public class RedeploymentTest {
         Assert.assertEquals(406, result);
 
         //Not interested in webapp2 output
-        deployer.undeploy("webapp2");
+        // deployer.undeploy("webapp2");
         deployer.deploy("webapp2");
 
         result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
@@ -61,6 +61,14 @@ public class RedeploymentTest {
         System.out.println(result);
         Assert.assertEquals(406, result);
         deployer.undeploy("webapp2");
+        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
+                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
+        System.out.println(result);
+        Assert.assertEquals(406, result);
+        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
+                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+        System.out.println(result);
+        Assert.assertEquals(200, result);
         System.out.println("===========================================");
         System.out.println("");
     }
