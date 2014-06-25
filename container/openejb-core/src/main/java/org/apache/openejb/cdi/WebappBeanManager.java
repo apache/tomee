@@ -57,7 +57,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public void fireEvent(final Object event, final EventMetadata metadata, final boolean isLifecycleEvent) {
         final Class<?> eventClass = event.getClass();
-        if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
+        if (ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
             throw new IllegalArgumentException("Event class : " + event.getClass().getName() + " can not be defined as generic type");
         }
 
@@ -70,7 +70,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadata metadata) {
         final Class<?> eventClass = event.getClass();
-        if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
+        if (ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
             throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + eventClass);
         }
 
@@ -251,10 +251,10 @@ public class WebappBeanManager extends BeanManagerImpl {
             // so reuse parent beans
             // this can happen for validations
             return new IteratorSet<Bean<?>>(
-                    new MultipleIterator<Bean<?>>(
-                            InheritedBeanFilter.INSTANCE,
-                            deploymentBeans.iterator(),
-                            getParentBm().getComponents().iterator()));
+                new MultipleIterator<Bean<?>>(
+                    InheritedBeanFilter.INSTANCE,
+                    deploymentBeans.iterator(),
+                    getParentBm().getComponents().iterator()));
         }
         return deploymentBeans;
     }
@@ -323,7 +323,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         private int idx/* = 0*/;
 
         /**
-         * @param filter used to filter delegates from index 1 to N-1 (0 is not filtered)
+         * @param filter    used to filter delegates from index 1 to N-1 (0 is not filtered)
          * @param delegates iterator this Iterator merges, one delegates is mandatory
          */
         private MultipleIterator(final Filter<A> filter, final Iterator<A>... delegates) {
