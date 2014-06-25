@@ -1035,9 +1035,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // can only be done until here (before_start)
         if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.skip-war-resources", "false"))) {
-            final EmptyDirContext resources = new EmptyDirContext(standardContext);
-            standardContext.setResources(resources);
-            standardContext.setCachingAllowed(resources.isCached());
+            if (!EmptyDirContext.class.isInstance(Reflections.get(standardContext, "webappResources"))) {
+                final EmptyDirContext resources = new EmptyDirContext(standardContext);
+                standardContext.setResources(resources);
+                standardContext.setCachingAllowed(resources.isCached());
+            } // else don't redo it otherwise it just doesn't work when reload() is called
         }
     }
 
