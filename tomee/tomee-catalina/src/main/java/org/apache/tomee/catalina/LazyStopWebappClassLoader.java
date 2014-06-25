@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
@@ -42,6 +43,7 @@ import java.util.Iterator;
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
     private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<ClassLoaderConfigurer>();
+    private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
@@ -165,6 +167,27 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public void start() throws LifecycleException {
         super.start(); // do it first otherwise we can't use this as classloader
 
+        // mainly for tomee-maven-plugin
+        if (CONTEXT.get() != null) {
+            final String root = CONTEXT.get().getServletContext().getRealPath("/");
+            if (root != null) {
+                final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
+                if (externalRepositories != null) {
+                    setSearchExternalFirst(true);
+                    for (final String additional : externalRepositories.split(",")) {
+                        final String trim = additional.trim();
+                        if (!trim.isEmpty()) {
+                            try { // not addURL to look here first
+                                super.addRepository(new File(trim).toURI().toURL().toExternalForm());
+                            } catch (final MalformedURLException e) {
+                                LOGGER.error(e.getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // add configurer enrichments
         if (configurer != null) {
             // add now we removed all we wanted
@@ -259,8 +282,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         INIT_CONFIGURER.set(configurer);
     }
 
-    public static void cleanInitContext() {
+    public static void initContext(final Context ctx) {
+        CONTEXT.set(ctx);
+    }
+
+    public static void cleanContext() {
         INIT_CONFIGURER.remove();
+        CONTEXT.remove();
     }
 
     private static class NoClassClassLoader extends ClassLoader {

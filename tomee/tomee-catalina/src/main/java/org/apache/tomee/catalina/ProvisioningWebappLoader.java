@@ -104,10 +104,11 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         Reflections.set(this, "virtualClasspath", cp);
 
         LazyStopWebappClassLoader.initContext(configurer);
+        LazyStopWebappClassLoader.initContext(Context.class.cast(getContainer()));
         try {
             super.startInternal();
         } finally {
-            LazyStopWebappClassLoader.cleanInitContext();
+            LazyStopWebappClassLoader.cleanContext();
         }
     }
 
