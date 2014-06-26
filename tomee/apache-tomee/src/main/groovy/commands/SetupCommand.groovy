@@ -100,16 +100,6 @@ class SetupCommand {
         ant.delete(file: paths.findTomEELibJar("openejb-javaagent-${openejbVersion}.jar" as String))
         // we need the one without version
 
-        def deleteFiles = { String pattern ->
-            new File(paths.catalinaLibDir as String).listFiles(
-                    [accept: { dir, fileName -> fileName ==~ pattern }] as FilenameFilter
-            ).each { file ->
-                ant.delete(file: file.path)
-            }
-        }
-        deleteFiles(/jquery.*\.jar/)
-        deleteFiles(/bootstrap.*\.jar/)
-
         ant.delete(file: paths.findOpenEJBWebJar('tomee-loader'))
         ant.delete(file: paths.findOpenEJBWebJar('swizzle-stream'))
 
