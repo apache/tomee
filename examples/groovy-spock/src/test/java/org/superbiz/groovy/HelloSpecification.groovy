@@ -18,16 +18,19 @@ package org.superbiz.groovy
 
 import org.apache.ziplock.JarLocation
 import org.jboss.arquillian.container.test.api.Deployment
+import org.jboss.arquillian.spock.ArquillianSputnik
 import org.jboss.shrinkwrap.api.ArchivePaths
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.asset.EmptyAsset
 import org.jboss.shrinkwrap.api.spec.WebArchive
+import org.junit.runner.RunWith
 
 import javax.inject.Inject
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
+@RunWith(ArquillianSputnik.class)
 class HelloSpecification extends spock.lang.Specification {
 
     @Inject
