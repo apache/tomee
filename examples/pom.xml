@@ -34,6 +34,7 @@
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
     <module>application-composer</module>
+    <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
     <module>async-methods</module>
     <module>async-postconstruct</module>
