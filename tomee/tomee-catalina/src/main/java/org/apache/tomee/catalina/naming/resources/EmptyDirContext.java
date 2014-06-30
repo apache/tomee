@@ -54,9 +54,8 @@ public class EmptyDirContext extends FileDirContext {
     }
 
     private static boolean shouldLookup(final String name) {
-        return name != null
-                && (
-                name.startsWith("/WEB-INF/classes") || name.startsWith("WEB-INF/classes")
+        return name != null && !name.equals("/WEB-INF/classes")
+                && (name.matches("/?WEB-INF/[^/]*\\.?[^/]")
                 || name.startsWith("/WEB-INF/lib") || name.startsWith("WEB-INF/lib")
                 || name.startsWith("/META-INF/"));
     }

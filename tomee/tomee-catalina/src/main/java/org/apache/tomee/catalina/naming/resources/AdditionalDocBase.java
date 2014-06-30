@@ -27,11 +27,15 @@ import java.io.File;
 public class AdditionalDocBase extends FileDirContext {
     private static final String PREFIX = "/META-INF/resources";
     private static final int PREFIX_LENGTH = PREFIX.length();
+    private static final String WEB_INF_CLASSES = "/WEB-INF/classes";
 
     @Override
     protected File file(final String name) {
         if (name.startsWith(PREFIX)) {
             return super.file(name.substring(PREFIX_LENGTH));
+        }
+        if (WEB_INF_CLASSES.equals(name)) {
+            return super.file("/");
         }
         return super.file(name);
     }
