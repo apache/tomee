@@ -311,10 +311,9 @@ public class WsDeployer implements DynamicDeployer {
                     // publish more than one port for the same implementation by configuration
                     portComponent.setPortComponentName(sessionBean.getEjbName());
 
-        } else { // JAX-WS Metadata specification default
-            portComponent.setPortComponentName(JaxWsUtils.getPortQName(ejbClass).getLocalPart());
-
-        }
+                } else { // JAX-WS Metadata specification default
+                    portComponent.setPortComponentName(JaxWsUtils.getPortQName(ejbClass).getLocalPart());
+                }
                 webserviceDescription.getPortComponent().add(portComponent);
 
                 final ServiceImplBean serviceImplBean = new ServiceImplBean();
@@ -322,6 +321,9 @@ public class WsDeployer implements DynamicDeployer {
                 portComponent.setServiceImplBean(serviceImplBean);
 
                 // Checking if MTOM must be enabled
+                if (portComponent.getProtocolBinding() == null) {
+                    portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(ejbClass));
+                }
                 if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
                         SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
                     portComponent.setEnableMtom(true);
