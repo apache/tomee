@@ -583,21 +583,23 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         // providers
-        Set<String> providersConfig = new HashSet<String>();
+        Set<String> providersConfig = null;
+
         {
-            // add an exception mapper for EJBAccessException to convert into 403
-            providersConfig.add(SecurityExceptionMapper.class.getName());
-
-            // then add first global providers
-            if (GLOBAL_PROVIDERS != null) {
-                providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
-            }
-
-            // and finally user custom providers
             final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
             if (provider != null) {
+                providersConfig = new HashSet<String>();
                 for (final String p : Arrays.asList(provider.split(","))) {
                     providersConfig.add(p.trim());
+                }
+            }
+
+            {
+                if (GLOBAL_PROVIDERS != null) {
+                    if (providersConfig == null) {
+                        providersConfig = new HashSet<String>();
+                    }
+                    providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
                 }
             }
         }
@@ -608,7 +610,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             }
-            factory.setProviders(providers);
         }
         if (providers == null) {
             providers = new ArrayList<Object>();
@@ -617,10 +618,13 @@ public class CxfRsHttpListener implements RsHttpListener {
             } else {
                 providers.addAll(defaultProviders());
             }
-            factory.setProviders(providers);
-        } else {
-            LOGGER.info("Using providers " + providers);
         }
+
+        // add the EJB access exception mapper
+        providers.add(EJBAccessExceptionMapper.INSTANCE);
+
+        LOGGER.info("Using providers " + providers);
+        factory.setProviders(providers);
     }
 
     private static List<Object> defaultProviders() {
