@@ -583,23 +583,21 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         // providers
-        Set<String> providersConfig = null;
-
+        Set<String> providersConfig = new HashSet<String>();
         {
-            final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
-            if (provider != null) {
-                providersConfig = new HashSet<String>();
-                for (final String p : Arrays.asList(provider.split(","))) {
-                    providersConfig.add(p.trim());
-                }
+            // add an exception mapper for EJBAccessException to convert into 403
+            providersConfig.add(SecurityExceptionMapper.class.getName());
+
+            // then add first global providers
+            if (GLOBAL_PROVIDERS != null) {
+                providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
             }
 
-            {
-                if (GLOBAL_PROVIDERS != null) {
-                    if (providersConfig == null) {
-                        providersConfig = new HashSet<String>();
-                    }
-                    providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
+            // and finally user custom providers
+            final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+            if (provider != null) {
+                for (final String p : Arrays.asList(provider.split(","))) {
+                    providersConfig.add(p.trim());
                 }
             }
         }
