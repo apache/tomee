@@ -51,7 +51,7 @@ public class PageBeanTest
     @Inject
     private ContextControl contextControl;
 
-    @Test
+    //@Test
     public void saveUser()
     {
         final String userName = "gp";
