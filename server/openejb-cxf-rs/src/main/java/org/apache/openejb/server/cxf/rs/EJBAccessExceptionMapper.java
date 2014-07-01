@@ -20,7 +20,9 @@ import javax.ejb.EJBAccessException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
-public class SecurityExceptionMapper implements ExceptionMapper<EJBAccessException> {
+public class EJBAccessExceptionMapper implements ExceptionMapper<EJBAccessException> {
+    public static final EJBAccessExceptionMapper INSTANCE = new EJBAccessExceptionMapper();
+
     @Override
     public Response toResponse(EJBAccessException throwable) {
         return Response.status(Response.Status.FORBIDDEN).build();
