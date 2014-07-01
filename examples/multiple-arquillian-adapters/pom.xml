@@ -29,8 +29,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <tomee.version>1.7.0-SNAPSHOT</tomee.version>
-    <openejb.version>4.7.0-SNAPSHOT</openejb.version>
+    <tomee.version>2.0.0-SNAPSHOT</tomee.version>
+    <openejb.version>5.0.0-SNAPSHOT</openejb.version>
     <arquillian.version>1.0.1.Final</arquillian.version>
   </properties>
 
@@ -42,8 +42,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
