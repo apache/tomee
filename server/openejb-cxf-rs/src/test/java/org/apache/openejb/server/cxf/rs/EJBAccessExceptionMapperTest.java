@@ -41,7 +41,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-public class SecurityExceptionMapperTest {
+public class EJBAccessExceptionMapperTest {
     private static EJBContainer container;
     private static RESTIsCool service;
 
