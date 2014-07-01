@@ -45,16 +45,24 @@
           <exclude name="**/javax.enterprise.inject.spi.Extension"/>
           <exclude name="**/*.handlebars"/>
 
+          <exclude name="report.txt"/>
           <exclude name="shade/quartz/dependency-reduced-pom.xml"/>
           <exclude name="assembly/openejb-lite/dependency-reduced-pom.xml"/>
           <exclude name="container/openejb-core/src/test/resources/cdi-login.config"/>
           <exclude name="tomee/tomee-deb/src/main/resources/changelog.template"/>
+          <exclude name="tomee/tomee-deb/src/main/resources/precompiled-changelog"/>
+          <exclude name="tomee/tomee-deb/src/main/resources/data/copyright.template"/>
+          <exclude name="tomee/tomee-deb/src/main/resources/control/control.template"/>
+          <exclude name="tomee/tomee-deb/src/main/resources/changelog_entry.template"/>
+          <exclude name="tomee/tomee-deb/src/main/resources/control/lib_control.template"/>
           <exclude name="tomee/tomee-deb/src/main/resources/control/control.template"/>
           <exclude name="tomee/tomee-deb/src/main/resources/copyright.template"/>
           <exclude name="tomee/tomee-webaccess/src/test/resources/test/log/**"/>
           <exclude name="utils/openejb-core-eclipselink/src/main/resources/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider"/>
           <exclude name="utils/openejb-core-hibernate/src/main/resources/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider"/>
           <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
+          <exclude name="tomee/apache-tomee/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
+          <exclude name="tomee/tomee-overlay-runner/src/main/resources/META-INF/services/javax.servlet.ServletContainerInitializer"/>
           <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.container.test.spi.RemoteLoadableExtension" />
           <exclude name="arquillian/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
