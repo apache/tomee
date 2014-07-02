@@ -236,7 +236,7 @@ public class WsDeployer implements DynamicDeployer {
         }
     }
 
-    private void configMtomAnnotation(Class<?> clazz, PortComponent portComponent) {
+    private void configMtomAnnotation(final Class<?> clazz, final PortComponent portComponent) {
         final MTOM mtom = clazz.getAnnotation(MTOM.class);
         if (mtom != null) {
             if (portComponent.getEnableMtom() == null) {
@@ -265,7 +265,7 @@ public class WsDeployer implements DynamicDeployer {
 
         final Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
-        WebserviceDescription webserviceDescription = null;
+        WebserviceDescription webserviceDescription;
         for (final EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
             if (!(enterpriseBean instanceof SessionBean)) {
@@ -404,8 +404,7 @@ public class WsDeployer implements DynamicDeployer {
 
         final Object object = module.getAltDDs().get(wsdlFile);
         if (object instanceof Definition) {
-            final Definition definition = (Definition) object;
-            return definition;
+            return (Definition) object;
         }
 
         try {
