@@ -238,7 +238,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final Map<ObjectName, CreationalContext> creationalContextForAppMbeans = new HashMap<ObjectName, CreationalContext>();
-    private final Set<String> moduleIds = new HashSet<String>();
     private final Set<ObjectName> containerObjectNames = new HashSet<ObjectName>();
     private final RemoteResourceMonitor remoteResourceMonitor = new RemoteResourceMonitor();
 
@@ -702,19 +701,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // Bean Validation
                 // ValidatorFactory needs to be put in the map sent to the entity manager factory
                 // so it has to be constructed before
-                final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>();
-                for (final ClientInfo clientInfo : appInfo.clients) {
-                    vfs.add(clientInfo);
-                }
-                for (final ConnectorInfo connectorInfo : appInfo.connectors) {
-                    vfs.add(connectorInfo);
-                }
-                for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                    vfs.add(ejbJarInfo);
-                }
-                for (final WebAppInfo webAppInfo : appInfo.webApps) {
-                    vfs.add(webAppInfo);
-                }
+                final List<CommonInfoObject> vfs = listCommonInfoObjectsForAppInfo(appInfo);
 
                 final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
                 for (final CommonInfoObject info : vfs) {
@@ -728,7 +715,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         validatorFactories.put(info.uniqueId, factory);
                     }
                 }
-                moduleIds.addAll(validatorFactories.keySet());
 
                 // validators bindings
                 for (final Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
@@ -906,6 +892,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
         }
+    }
+
+    private static List<CommonInfoObject> listCommonInfoObjectsForAppInfo(final AppInfo appInfo) {
+        final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>(
+                                appInfo.clients.size() + appInfo.connectors.size() +
+                                appInfo.ejbJars.size() + appInfo.webApps.size());
+        for (final ClientInfo clientInfo : appInfo.clients) {
+            vfs.add(clientInfo);
+        }
+        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
+            vfs.add(connectorInfo);
+        }
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            vfs.add(ejbJarInfo);
+        }
+        for (final WebAppInfo webAppInfo : appInfo.webApps) {
+            vfs.add(webAppInfo);
+        }
+        return vfs;
     }
 
     public void bindGlobals(final Map<String, Object> bindings) throws NamingException {
@@ -1707,15 +1712,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 pool.stop();
             }
 
-            for (final String sId : moduleIds) {
+            for (final CommonInfoObject jar : listCommonInfoObjectsForAppInfo(appInfo)) {
                 try {
-                    globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + sId);
-                    globalContext.unbind(VALIDATOR_NAMING_CONTEXT + sId);
+                    globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + jar.uniqueId);
+                    globalContext.unbind(VALIDATOR_NAMING_CONTEXT + jar.uniqueId);
                 } catch (final NamingException e) {
-                    undeployException.getCauses().add(new Exception("validator: " + sId + ": " + e.getMessage(), e));
+                    if (EjbJarInfo.class.isInstance(jar)) {
+                        undeployException.getCauses().add(new Exception("validator: " + jar.uniqueId + ": " + e.getMessage(), e));
+                    } // else an error but not that important
                 }
             }
-            moduleIds.clear();
             try {
                 if (globalContext instanceof IvmContext) {
                     final IvmContext ivmContext = (IvmContext) globalContext;

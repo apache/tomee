@@ -419,7 +419,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
-        final DeployedApp deployed = moduleIds.get(archive.getName());
+        final DeployedApp deployed = moduleIds.remove(archive.getName());
         try {
             deployer().undeploy(deployed.path);
         } catch (final Exception e) {

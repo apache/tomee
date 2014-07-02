@@ -97,6 +97,7 @@ import org.apache.openejb.jee.SecurityIdentity;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.ServletMapping;
 import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
@@ -2118,9 +2119,21 @@ public class AnnotationDeployer implements DynamicDeployer {
              * Servlet classes are scanned
              */
             for (final Servlet servlet : webApp.getServlet()) {
+                final String servletName = servlet.getServletName();
+                if ("javax.ws.rs.core.Application".equals(servletName)) {
+                    servlet.setServletName(ProvidedJAXRSApplication.class.getName());
+                    webModule.getRestApplications().add(ProvidedJAXRSApplication.class.getName());
+                    for (final ServletMapping mapping : webApp.getServletMapping()) {
+                        if (servletName.equals(mapping.getServletName())) {
+                            mapping.setServletName(ProvidedJAXRSApplication.class.getName());
+                        }
+                    }
+                    continue;
+                }
+
                 String servletClass = realClassName(servlet.getServletClass());
                 if (servletClass == null) { // try with servlet name, @see org.apache.openejb.arquillian.tests.jaxrs.basicapp.BasicApplication
-                    servletClass = realClassName(servlet.getServletName());
+                    servletClass = realClassName(servletName);
                 }
 
                 if (servletClass != null && servlet.getJspFile() == null) { // jaxrs application doesn't have a jsp file
@@ -2135,7 +2148,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (servlet.getServletClass() != null) {
                                 throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
                             } else {
-                                logger.error("servlet " + servlet.getServletName() + " has no servlet-class defined and is not a subclass of Application");
+                                logger.error("servlet " + servletName + " has no servlet-class defined and is not a subclass of Application");
                             }
                         }
                     }
@@ -5573,4 +5586,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
 
+    public static class ProvidedJAXRSApplication extends Application {
+        // no-method
+    }
 }

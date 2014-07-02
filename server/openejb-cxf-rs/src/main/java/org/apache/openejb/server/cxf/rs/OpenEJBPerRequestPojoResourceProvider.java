@@ -72,9 +72,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         context = (Context) Proxy.newProxyInstance(classLoader, new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
 
         constructor = ResourceUtils.findResourceConstructor(clazz, true);
-        if (constructor == null) {
-            throw new RuntimeException("Resource class " + clazz + " has no valid constructor");
-        }
+
         postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
         preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
 
@@ -117,13 +115,22 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 normalScopeCreator = new ProvidedInstanceBeanCreator(bm.getReference(bean, bean.getBeanClass(), bm.createCreationalContext(bean)));
             } else {
                 normalScopeCreator = null;
+                validateConstructorExists(clazz);
             }
         } else {
             bean = null;
             normalScopeCreator = null;
+            validateConstructorExists(clazz);
         }
 
         Contexts.findContextFields(clazz, contextTypes); // for the class itself
+    }
+
+    private void validateConstructorExists(final Class<?> clazz) {
+        // only validate it here otherwise we'll fail for CDI injections
+        if (constructor == null) {
+            throw new RuntimeException("Resource class " + clazz + " has no valid constructor");
+        }
     }
 
     @Override

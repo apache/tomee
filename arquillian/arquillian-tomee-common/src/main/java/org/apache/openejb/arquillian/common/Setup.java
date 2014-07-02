@@ -46,17 +46,27 @@ import java.util.logging.Logger;
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
     public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib" + File.separator + "xx-arquillian-tomee-bean-discoverer.jar"; // starts with xx to not be filtered
-    private static final String DEFAULT_MEM_CONFIG = "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m";
+    private static final String DEFAULT_MEM_CONFIG = (javaVersion() >= 1.8 ? "" : "-XX:PermSize=64m -XX:MaxPermSize=256m ")
+                                                            + "-Xmx512m -Xms256m -XX:ReservedCodeCacheSize=64m";
+
+    private static double javaVersion() {
+        try {
+            return Double.parseDouble(System.getProperty("java.version", "1.7").substring(0, 3));
+        } catch (final Exception nfe) {
+            return 1.6;
+        }
+    }
 
     public static void exportProperties(final File tomeeHome, final TomEEConfiguration c, final boolean defaultMem) {
-        System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
+        final int httpPort = c.getHttpPort();
+        System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + httpPort + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
-        System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
+        System.setProperty("server.http.port", String.valueOf(httpPort));
         System.setProperty("server.shutdown.port", String.valueOf(c.getStopPort()));
         if (defaultMem) {
-            System.setProperty("java.opts", DEFAULT_MEM_CONFIG + " -Dtomee.httpPort=" + c.getHttpPort());
+            System.setProperty("java.opts", DEFAULT_MEM_CONFIG + " -Dtomee.httpPort=" + httpPort);
         } else {
-            System.setProperty("java.opts", "-Dtomee.httpPort=" + c.getHttpPort());
+            System.setProperty("java.opts", "-Dtomee.httpPort=" + httpPort);
         }
         System.setProperty("openejb.home", tomeeHome.getAbsolutePath());
         System.setProperty("tomee.home", tomeeHome.getAbsolutePath());

@@ -101,7 +101,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
             webApp.setContextRoot(contextRoot);
         }
 
-        host = SystemInstance.get().getProperty(id.getName() + ".host", (String) null);
+        host = SystemInstance.get().getProperty(id.getName() + ".host", null);
     }
 
     @Override

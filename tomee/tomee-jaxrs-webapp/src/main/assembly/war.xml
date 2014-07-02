@@ -78,9 +78,6 @@
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
 
-        <!-- exclude all the static web content -->
-        <exclude>org.apache.openejb.staticweb:*</exclude>
-
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
 
@@ -95,8 +92,6 @@
       <includes>
         <include>org.apache.openejb:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>
-        <include>org.webjars:bootstrap</include>
-        <include>org.webjars:jquery</include>
       </includes>
     </dependencySet>
   </dependencySets>

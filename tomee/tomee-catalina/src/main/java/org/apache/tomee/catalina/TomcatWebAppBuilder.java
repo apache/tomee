@@ -63,6 +63,7 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.ResourceRef;
+import org.apache.naming.resources.FileDirContext;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
@@ -118,6 +119,8 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
+import org.apache.tomee.catalina.naming.resources.AdditionalDocBase;
+import org.apache.tomee.catalina.naming.resources.EmptyDirContext;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
@@ -163,6 +166,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -175,6 +179,7 @@ import static org.apache.tomee.catalina.Contexts.warPath;
  * @version $Rev$ $Date$
  */
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, ParentClassLoaderFinder {
+
     public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
     public static final String OPENEJB_SESSION_MANAGER_PROPERTY = "openejb.session.manager";
     public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
@@ -199,7 +204,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
     private static final boolean SKIP_TLD = SystemInstance.get().getOptions().get("tomee.skip-tld", false);
 
-    private static Method getNamingContextName; // it just sucks but that's private
+    private static final Method getNamingContextName; // it just sucks but that's private
 
     static {
         try {
@@ -252,11 +257,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private CoreContainerSystem containerSystem;
 
-    private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
+    private final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
 
     private Class<?> sessionManagerClass;
 
-    private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
+    private final Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
     private ClassLoader parentClassLoader;
     private boolean initJEEInfo = true;
@@ -681,20 +686,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     // TODO: find something more sexy
-    private static Field HOST_CONFIG_HOST;
+    private static final AtomicReference<Field> HOST_CONFIG_HOST = new AtomicReference<Field>(null);
 
     static {
         try { // do it only once
-            HOST_CONFIG_HOST = HostConfig.class.getDeclaredField("host");
+            HOST_CONFIG_HOST.set(HostConfig.class.getDeclaredField("host"));
         } catch (final NoSuchFieldException e) {
             // no-op
         }
     }
 
     private static boolean isReady(final HostConfig deployer) {
-        if (deployer != null && HOST_CONFIG_HOST != null) {
+        if (deployer != null && HOST_CONFIG_HOST.get() != null) {
             try {
-                return HOST_CONFIG_HOST.get(deployer) != null;
+                return HOST_CONFIG_HOST.get().get(deployer) != null;
             } catch (final Exception e) {
                 // no-op
             }
@@ -1024,6 +1029,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 filterMap.addURLPattern(clazzMapping[1]);
                 standardContext.addFilterMapBefore(filterMap);
             }
+        }
+
+        // can only be done until here (before_start)
+        if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.skip-war-resources", "false"))) {
+            if (!EmptyDirContext.class.isInstance(Reflections.get(standardContext, "webappResources"))) {
+                final EmptyDirContext resources = new EmptyDirContext(standardContext);
+                standardContext.setResources(resources);
+                standardContext.setCachingAllowed(resources.isCached());
+            } // else don't redo it otherwise it just doesn't work when reload() is called
         }
     }
 
@@ -1545,15 +1559,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         final Realm realm = standardContext.getRealm();
+        final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
+        final Thread thread = Thread.currentThread();
         if (realm != null && !(realm instanceof TomEERealm)
                 && (standardContext.getParent() == null
                 || (standardContext.getParent() != null && !realm.equals(standardContext.getParent().getRealm())))) {
-            final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+            final ClassLoader originalLoader = thread.getContextClassLoader();
+            thread.setContextClassLoader(classLoader);
             try {
                 standardContext.setRealm(tomeeRealm(realm));
             } finally {
-                Thread.currentThread().setContextClassLoader(originalLoader);
+                thread.setContextClassLoader(originalLoader);
             }
         }
 
@@ -1577,8 +1593,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
-        final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+        final ClassLoader originalLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader(classLoader);
 
         final NamingContextListener ncl = getNamingContextListener(standardContext);
         final String listenerName = ncl.getName();
@@ -1624,7 +1640,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         } catch (final NamingException e) {
             // no-op
         } finally {
-            Thread.currentThread().setContextClassLoader(originalLoader);
+            thread.setContextClassLoader(originalLoader);
             ContextAccessController.setReadOnly(listenerName);
         }
 
@@ -1717,7 +1733,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 continue;
             }
             try {
-                final Class<?> clazz = standardContext.getLoader().getClassLoader().loadClass(className);
+                final Class<?> clazz = classLoader.loadClass(className);
                 if (Valve.class.isAssignableFrom(clazz)) {
                     final Valve valve = (Valve) clazz.newInstance();
                     pipeline.addValve(valve);
@@ -1742,6 +1758,43 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
 
                 currentWebAppInfo.servlets.add(info);
+            }
+        }
+
+        addConfiguredDocBases(standardContext, contextInfo);
+    }
+
+    private void addConfiguredDocBases(final StandardContext standardContext, final ContextInfo contextInfo) {
+        if (contextInfo.appInfo.path != null) {   // add external web resources
+            final String webResources = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
+            final String cache = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
+            if (webResources != null) {
+                for (final String alt : webResources.trim().split(",")) {
+                    final String trim = alt.trim();
+                    if (trim.isEmpty()) {
+                        continue;
+                    }
+
+                    if (!new File(trim).isDirectory()) {
+                        logger.warning("Can't add docBase which are not directory: " + trim);
+                        continue;
+                    }
+
+                    final FileDirContext altDirContext = new AdditionalDocBase();
+                    altDirContext.setDocBase(trim);
+                    altDirContext.setAllowLinking(standardContext.isAllowLinking());
+                    altDirContext.setAliases(standardContext.getAliases());
+                    altDirContext.setCacheTTL(standardContext.getCacheTTL());
+                    altDirContext.setCacheMaxSize(standardContext.getCacheMaxSize());
+                    altDirContext.setCacheObjectMaxSize(standardContext.getCacheObjectMaxSize());
+                    if (cache != null) {
+                        altDirContext.setCached(Boolean.parseBoolean(cache));
+                    } else {
+                        altDirContext.setCached(standardContext.isCachingAllowed());
+                    }
+
+                    standardContext.addResourcesDirContext(altDirContext);
+                }
             }
         }
     }
@@ -2339,7 +2392,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static class DeployedApplication {
 
-        private AppInfo appInfo;
+        private final AppInfo appInfo;
         private final Map<File, Long> watchedResource = new HashMap<File, Long>();
 
         public DeployedApplication(final File base, final AppInfo appInfo) {

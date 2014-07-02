@@ -244,9 +244,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         final File conf = new File(configuration.getConf());
 
         return !(conf.exists()
-                    && (new File(conf, "logging.properties").exists()
-                        || new File(conf, "log4j.properties").exists()
-                        || new File(conf, "log4j.xml").exists()));
+            && (new File(conf, "logging.properties").exists()
+            || new File(conf, "log4j.properties").exists()
+            || new File(conf, "log4j.xml").exists()));
     }
 
     @Override

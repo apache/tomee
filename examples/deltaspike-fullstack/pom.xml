@@ -11,18 +11,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
-
   <name>OpenEJB :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>war</packaging>
 
   <properties>
-    <myfaces2.version>2.1.15</myfaces2.version>
-    <ds.version>0.6</ds.version>
-    <extval.version>2.0.8</extval.version>
+    <version.myfaces2>2.2.3</version.myfaces2>
+    <version.deltaspike>1.0.0</version.deltaspike>
+    <version.extval>2.0.8</version.extval>
+    <version.openejb>4.7.0</version.openejb>
+    <version.tomee>1.7.0</version.tomee>
   </properties>
 
   <build>
@@ -40,7 +42,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>${version.tomee}</version>
         <configuration>
           <context>ROOT</context>
           <simpleLog>true</simpleLog>
@@ -48,6 +50,7 @@
       </plugin>
     </plugins>
   </build>
+
   <repositories>
     <repository>
       <id>prime-repo</id>
@@ -55,81 +58,138 @@
       <url>http://repository.primefaces.org/</url>
       <layout>default</layout>
     </repository>
+    <repository>
+      <id>apache-m2</id>
+      <name>Apache M2 Repository</name>
+      <url>https://repository.apache.org/content/repositories/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-6-SNAPSHOT</version>
+      <version>6.0-6</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version.openejb}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xbean-asm5-shaded</artifactId>
+          <groupId>org.apache.xbean</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-collections</artifactId>
+          <groupId>commons-collections</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-asm5-shaded</artifactId>
+      <version>3.18</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-lang3</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jsf-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jsf-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jpa-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-jpa-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-security-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-security-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-bean-validation-module-api</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-bean-validation-module-impl</artifactId>
-      <version>${ds.version}</version>
+      <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator</groupId>
       <artifactId>myfaces-extval-core</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-property-validation</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.persistence</groupId>
@@ -137,11 +197,10 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>
       <artifactId>myfaces-extval-bean-validation</artifactId>
-      <version>${extval.version}</version>
+      <version>${version.extval}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.validation</groupId>
@@ -149,18 +208,89 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-api</artifactId>
+      <version>${version.deltaspike}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.modules</groupId>
+      <artifactId>deltaspike-test-control-module-impl</artifactId>
+      <version>${version.deltaspike}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${version.deltaspike}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-openejb</artifactId>
+      <version>${version.deltaspike}</version>
+      <scope>test</scope>
+    </dependency>
 
+    <!-- only needed for mocked cdi-beans -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for full page-bean tests -->
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces2.version}</version>
+      <version>${version.myfaces2}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces2.version}</version>
-      <scope>provided</scope>
+      <version>${version.myfaces2}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-collections</artifactId>
+          <groupId>commons-collections</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-beanutils</artifactId>
+          <groupId>commons-beanutils</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-impl-test</artifactId>
+      <version>${version.myfaces2}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.test</groupId>
+      <artifactId>myfaces-test20</artifactId>
+      <version>1.0.6</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- 3rd party libs -->

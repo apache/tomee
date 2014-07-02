@@ -23,16 +23,16 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.0-SNAPSHOT</version>
+    <version>4.7.0</version>
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.7.0</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
   <properties>
-    <version.arquillian>1.1.4.Final</version.arquillian>
+    <version.arquillian>1.1.5.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-6</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.1.2</version.shrinkwrap.shrinkwrap>
     <test.coverage.skip>true</test.coverage.skip>

@@ -23,7 +23,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.0-SNAPSHOT</version>
+    <version>4.7.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>examples</artifactId>
@@ -34,6 +34,7 @@
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
     <module>application-composer</module>
+    <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
     <module>async-methods</module>
     <module>async-postconstruct</module>
@@ -90,6 +91,7 @@
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>

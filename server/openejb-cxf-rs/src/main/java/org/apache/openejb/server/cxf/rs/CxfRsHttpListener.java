@@ -610,7 +610,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             }
-            factory.setProviders(providers);
         }
         if (providers == null) {
             providers = new ArrayList<Object>();
@@ -619,10 +618,13 @@ public class CxfRsHttpListener implements RsHttpListener {
             } else {
                 providers.addAll(defaultProviders());
             }
-            factory.setProviders(providers);
-        } else {
-            LOGGER.info("Using providers " + providers);
         }
+
+        // add the EJB access exception mapper
+        providers.add(EJBAccessExceptionMapper.INSTANCE);
+
+        LOGGER.info("Using providers " + providers);
+        factory.setProviders(providers);
     }
 
     private static List<Object> defaultProviders() {
