@@ -49,6 +49,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
+import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
 import java.io.IOException;
@@ -216,6 +217,7 @@ public class WsDeployer implements DynamicDeployer {
                     if (portComponent.getProtocolBinding() == null) {
                         portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(clazz));
                     }
+                    configMtomAnnotation(clazz, portComponent);
                     if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
                             SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
                         portComponent.setEnableMtom(true);
@@ -230,6 +232,18 @@ public class WsDeployer implements DynamicDeployer {
                 }
             } catch (final Exception e) {
                 throw new OpenEJBException("Unable to load servlet class: " + className, e);
+            }
+        }
+    }
+
+    private void configMtomAnnotation(final Class<?> clazz, final PortComponent portComponent) {
+        final MTOM mtom = clazz.getAnnotation(MTOM.class);
+        if (mtom != null) {
+            if (portComponent.getEnableMtom() == null) {
+                portComponent.setEnableMtom(mtom.enabled());
+            }
+            if (portComponent.getMtomThreshold() == null) {
+                portComponent.setMtomThreshold(mtom.threshold());
             }
         }
     }
@@ -251,7 +265,7 @@ public class WsDeployer implements DynamicDeployer {
 
         final Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
-        WebserviceDescription webserviceDescription = null;
+        WebserviceDescription webserviceDescription;
         for (final EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
             if (!(enterpriseBean instanceof SessionBean)) {
@@ -324,6 +338,7 @@ public class WsDeployer implements DynamicDeployer {
                 if (portComponent.getProtocolBinding() == null) {
                     portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(ejbClass));
                 }
+                configMtomAnnotation(ejbClass, portComponent);
                 if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
                         SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
                     portComponent.setEnableMtom(true);
@@ -389,8 +404,7 @@ public class WsDeployer implements DynamicDeployer {
 
         final Object object = module.getAltDDs().get(wsdlFile);
         if (object instanceof Definition) {
-            final Definition definition = (Definition) object;
-            return definition;
+            return (Definition) object;
         }
 
         try {
