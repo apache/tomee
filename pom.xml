@@ -183,7 +183,7 @@
     <version.groovy>2.3.0</version.groovy>
 
     <!-- arquillian related -->
-    <version.arquillian.bom>1.1.4.Final</version.arquillian.bom>
+    <version.arquillian.bom>1.1.5.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
   </properties>
 
