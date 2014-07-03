@@ -65,7 +65,7 @@ public class EJBAccessExceptionMapperTest {
     @Test
     public void rest() {
         final Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get();
-        assertEquals(200, response.getStatus());
+        assertEquals(403, response.getStatus());
     }
 
 
