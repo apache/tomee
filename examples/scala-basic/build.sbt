@@ -19,7 +19,7 @@ name := "scala-basic"
 
 version := "1.1.0-SNAPSHOT"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.11.1"
 
 resolvers ++= Seq(
 	"Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
@@ -27,8 +27,8 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-    "org.apache.openejb" % "javaee-api" % "6.0-4",
-    "org.apache.openejb" % "openejb-core" % "4.5.1-SNAPSHOT" % "test",
+    "org.apache.openejb" % "javaee-api" % "6.0-6",
+    "org.apache.openejb" % "openejb-core" % "5.0.0-SNAPSHOT" % "test",
     "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 )
 
