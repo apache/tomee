@@ -169,7 +169,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         // our well known web profile ;)
         tomEEMojo.tomeeGroupId = "org.apache.openejb";
         tomEEMojo.tomeeArtifactId = "apache-tomee";
-        tomEEMojo.tomeeVersion = "1" + OpenEjbVersion.get().getVersion().substring(1);
+        tomEEMojo.tomeeVersion = "-1";
         tomEEMojo.tomeeClassifier = "webprofile";
         tomEEMojo.tomeeType = "zip";
 
