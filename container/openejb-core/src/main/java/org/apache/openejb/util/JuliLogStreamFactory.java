@@ -72,7 +72,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     final Field logManager = LogManager.class.getDeclaredField("manager");
                     final int logManagerModifiers = logManager.getModifiers();
                     if (Modifier.isFinal(logManagerModifiers)) {
-                        Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        final Field modifiersField = Field.class.getDeclaredField("modifiers");
                         modifiersField.setAccessible(true);
                         modifiersField.setInt(logManager, logManagerModifiers & ~Modifier.FINAL);
                     }
