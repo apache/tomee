@@ -27,6 +27,7 @@ import org.apache.webbeans.logger.WebBeansLoggerFacade;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -69,6 +70,12 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 useOpenEJBHandler = options.get("openejb.jul.forceReload.use-openejb-handler", true);
                 try {
                     final Field logManager = LogManager.class.getDeclaredField("manager");
+                    final int logManagerModifiers = logManager.getModifiers();
+                    if (Modifier.isFinal(logManagerModifiers)) {
+                        Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(logManager, logManagerModifiers & ~Modifier.FINAL);
+                    }
                     final boolean acc = logManager.isAccessible();
                     logManager.setAccessible(true);
                     final OpenEJBLogManager value = new OpenEJBLogManager();
