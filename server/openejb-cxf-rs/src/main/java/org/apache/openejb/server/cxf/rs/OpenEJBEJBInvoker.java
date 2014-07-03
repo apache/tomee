@@ -85,7 +85,8 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
     protected Object performInvocation(final Exchange exchange, final Object serviceObject,
                                        final Method m, final Object[] paramArray) throws Exception {
         try {
-            return m.invoke(serviceObject, insertExchange(m, paramArray, exchange));
+            final Object[] args = super.insertExchange(m, paramArray, exchange);
+            return m.invoke(serviceObject, args);
         } catch (final InvocationTargetException ite) {
             Throwable cause = ite.getTargetException();
             // unwrap to get ExceptionMapper working
