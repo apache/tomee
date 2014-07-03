@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package commands
 
 import org.apache.tomee.installer.Installer

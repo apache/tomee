@@ -69,8 +69,8 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
             }
 
             if ((provider == null && ejbContainerProviders > 1)
-                    || (!RemoteTomEEEJBContainer.class.equals(provider)
-                    && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
+                || (!RemoteTomEEEJBContainer.class.equals(provider)
+                && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
                 return null;
             }
 

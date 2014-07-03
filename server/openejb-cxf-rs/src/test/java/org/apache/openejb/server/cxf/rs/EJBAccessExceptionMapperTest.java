@@ -14,7 +14,6 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -41,6 +40,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class EJBAccessExceptionMapperTest {
     private static EJBContainer container;
     private static RESTIsCoolOne service;
