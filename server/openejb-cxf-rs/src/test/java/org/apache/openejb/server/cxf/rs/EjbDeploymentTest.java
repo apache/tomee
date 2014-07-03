@@ -14,7 +14,6 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -40,15 +39,15 @@ import static org.junit.Assert.assertNotNull;
 
 public class EjbDeploymentTest {
     private static EJBContainer container;
-    private static RESTIsCool service;
+    private static RESTIsCoolTwo service;
 
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
-        service = (RESTIsCool) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCool");
+        service = (RESTIsCoolTwo) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCoolTwo");
     }
 
     @AfterClass
@@ -66,7 +65,7 @@ public class EjbDeploymentTest {
 
     @Test
     public void rest() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
+        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 
@@ -81,13 +80,13 @@ public class EjbDeploymentTest {
 
     @Test
     public void restFieldInjected() {
-        Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
-        assertEquals(true, response.booleanValue());
+        final Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
+        assertEquals(true, response);
     }
 
     @Stateless
     @Path("/ejb")
-    public static class RESTIsCool {
+    public static class RESTIsCoolTwo {
         @EJB
         private SimpleEJB simpleEJB;
         @javax.ws.rs.core.Context
@@ -107,7 +106,7 @@ public class EjbDeploymentTest {
 
         @Path("/param")
         @GET
-        public String param(@QueryParam("arg") @DefaultValue("true") String p) {
+        public String param(@QueryParam("arg") @DefaultValue("true") final String p) {
             return p;
         }
 
