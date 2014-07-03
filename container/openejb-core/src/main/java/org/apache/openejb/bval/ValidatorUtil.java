@@ -81,11 +81,16 @@ public final class ValidatorUtil {
                         // so the behavior will be the same
                         // + this code should rarely be used
                         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        if (tccl == null) {
+                            return null;
+                        }
+
                         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
                         Object value = null;
                         for (final AppContext appContext : containerSystem.getAppContexts()) {
-                            if (appContext.getClassLoader().equals(tccl)) {
+                            final ClassLoader appContextClassLoader = appContext.getClassLoader();
+                            if (tccl.equals(appContextClassLoader) || appContextClassLoader.equals(tccl)) {
                                 final Collection<String> tested = new ArrayList<String>();
                                 for (final BeanContext bean : appContext.getBeanContexts()) {
                                     if (BeanContext.Comp.class.equals(bean.getBeanClass())) {
@@ -111,7 +116,8 @@ public final class ValidatorUtil {
                                 break;
                             }
                             for (final WebContext web : appContext.getWebContexts()) {
-                                if (web.getClassLoader().equals(tccl)) {
+                                final ClassLoader webClassLoader = web.getClassLoader();
+                                if (webClassLoader.equals(tccl) || tccl.equals(webClassLoader)) {
                                     value = web.getJndiEnc().lookup(jndi);
                                     break;
                                 }

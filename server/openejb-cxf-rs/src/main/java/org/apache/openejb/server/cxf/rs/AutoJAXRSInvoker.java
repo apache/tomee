@@ -37,7 +37,7 @@ public class AutoJAXRSInvoker implements Invoker {
         ejbs = restEjbs;
 
         // delegates
-        jaxrsInvoker = new JAXRSInvoker();
+        jaxrsInvoker = new PojoInvoker();
         if (!ejbs.isEmpty()) {
             ejbInvoker = new OpenEJBEJBInvoker(beanContexts(restEjbs));
         } else {
@@ -54,7 +54,7 @@ public class AutoJAXRSInvoker implements Invoker {
     }
 
     @Override
-    public Object invoke(Exchange exchange, Object o) { // mainly a select the right invoker impl
+    public Object invoke(final Exchange exchange, final Object o) { // mainly a select the right invoker impl
         final ClassResourceInfo cri = (ClassResourceInfo) exchange.get("root.resource.class");
 
         if (cri != null) {
