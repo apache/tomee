@@ -323,7 +323,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         return true;
                     }
                     if (commons.startsWith("lang3.")) {  // us
-                        return true;
+                        return false;
                     }
                     if (commons.startsWith("logging.")) {
                         return false;
