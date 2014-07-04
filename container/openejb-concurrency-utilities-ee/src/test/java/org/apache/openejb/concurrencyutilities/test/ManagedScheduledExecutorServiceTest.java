@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ManagedScheduledExecutorServiceTest {
@@ -120,8 +121,10 @@ public class ManagedScheduledExecutorServiceTest {
         assertEquals("Counter did not count down in time", 0L, counter.getCount());
 
         final boolean done = future.isDone();
+        assertNotNull("Bad done value for future: " + future, done);
         assertTrue(done);
         final boolean cancelled = future.isCancelled();
+        assertNotNull("Bad cancelled value for future: " + future, cancelled);
         assertTrue(cancelled);
     }
 

@@ -244,10 +244,7 @@ public class AsynchronousPool {
 
         @Override
         public boolean isDone() {
-            if (canceled) {
-                return false;
-            }
-            return target.isDone();
+            return !canceled && target.isDone();
         }
     }
 }
