@@ -70,7 +70,7 @@ public class Mapper {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 

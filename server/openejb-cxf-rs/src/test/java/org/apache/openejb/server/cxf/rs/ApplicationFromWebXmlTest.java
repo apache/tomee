@@ -50,7 +50,7 @@ public class ApplicationFromWebXmlTest {
 
     @Test
     public void first() {
-        String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
         assertEquals("Hi from REST World!", hi);
     }
 

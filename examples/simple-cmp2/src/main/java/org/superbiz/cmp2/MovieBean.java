@@ -23,7 +23,7 @@ public abstract class MovieBean implements EntityBean {
     public MovieBean() {
     }
 
-    public Integer ejbCreate(String director, String title, int year) {
+    public Integer ejbCreate(final String director, String title, final int year) {
         this.setDirector(director);
         this.setTitle(title);
         this.setYear(year);

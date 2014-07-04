@@ -27,16 +27,16 @@ import org.apache.openejb.client.RemoteInitialContextFactory;
 
 public class EJBClient {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		try {
 			Properties p = new Properties();
 			p.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
 			p.setProperty(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
 			
-			InitialContext context = new InitialContext(p);
-			MoviesRemote movies = (MoviesRemote) context.lookup("MoviesRemote");
+			final InitialContext context = new InitialContext(p);
+			final MoviesRemote movies = (MoviesRemote) context.lookup("MoviesRemote");
 			List<Movie> allMovies = movies.getMovies();
-			for (Movie movie : allMovies) {
+			for (final Movie movie : allMovies) {
 				System.out.println(movie.getId() + ": " + movie.getTitle() + ", directed by: " + movie.getDirector() + ", year: " + movie.getYear() + ", genre: " + movie.getGenre() + ", rating: " + movie.getRating());
 			}
 		} catch (NamingException e) {

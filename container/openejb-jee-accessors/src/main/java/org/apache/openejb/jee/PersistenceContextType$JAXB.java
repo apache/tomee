@@ -30,17 +30,17 @@ public class PersistenceContextType$JAXB
         super(PersistenceContextType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "persistenceContextType".intern()));
     }
 
-    public PersistenceContextType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
+    public PersistenceContextType parse(final XoXMLStreamReader reader, RuntimeContext context, String value)
             throws Exception {
         return parsePersistenceContextType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, PersistenceContextType persistenceContextType)
+    public String toString(final Object bean, final String parameterName, RuntimeContext context, PersistenceContextType persistenceContextType)
             throws Exception {
         return toStringPersistenceContextType(bean, parameterName, context, persistenceContextType);
     }
 
-    public static PersistenceContextType parsePersistenceContextType(XoXMLStreamReader reader, RuntimeContext context, String value)
+    public static PersistenceContextType parsePersistenceContextType(final XoXMLStreamReader reader, RuntimeContext context, String value)
             throws Exception {
         if ("Transaction".equals(value)) {
             return PersistenceContextType.TRANSACTION;
@@ -52,7 +52,7 @@ public class PersistenceContextType$JAXB
         }
     }
 
-    public static String toStringPersistenceContextType(Object bean, String parameterName, RuntimeContext context, PersistenceContextType persistenceContextType)
+    public static String toStringPersistenceContextType(final Object bean, final String parameterName, final RuntimeContext context, PersistenceContextType persistenceContextType)
             throws Exception {
         if (PersistenceContextType.TRANSACTION == persistenceContextType) {
             return "Transaction";

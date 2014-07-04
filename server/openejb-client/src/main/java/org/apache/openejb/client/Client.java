@@ -163,7 +163,7 @@ public class Client {
         final Connection conn;
         try {
             conn = ConnectionManager.getConnection(cluster, server, req);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RemoteException("Unable to connect", e);
         }
 
@@ -180,7 +180,7 @@ public class Client {
 
                 out = conn.getOutputStream();
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot open output stream to server: ", e);
             }
 
@@ -190,7 +190,7 @@ public class Client {
             try {
                 protocolRequest.writeExternal(out);
                 out.flush();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot write the protocol metadata to the server: ", e);
             }
 
@@ -200,7 +200,7 @@ public class Client {
             final ObjectOutput objectOut;
             try {
                 objectOut = new ObjectOutputStream(out);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot open object output stream to server: ", e);
             }
 
@@ -210,7 +210,7 @@ public class Client {
             try {
                 server.setMetaData(protocolRequest);
                 server.writeExternal(objectOut);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot write the ServerMetaData to the server: ", e);
             }
 
@@ -223,7 +223,7 @@ public class Client {
                 clusterRequest.setMetaData(protocolRequest);
                 objectOut.write(clusterRequest.getRequestType().getCode());
                 clusterRequest.writeExternal(objectOut);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw newIOException("Cannot write the ClusterMetaData to the server: ", e);
             }
 
@@ -232,7 +232,7 @@ public class Client {
             /*----------------------------------*/
             try {
                 objectOut.write(req.getRequestType().getCode());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot write the request type to the server: ", e);
             }
 
@@ -246,11 +246,11 @@ public class Client {
                 objectOut.flush();
                 out.flush();
 
-            } catch (java.io.NotSerializableException e) {
+            } catch (final java.io.NotSerializableException e) {
 
                 throw new IllegalArgumentException("Object is not serializable: " + e.getMessage());
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
 
                 throw newIOException("Cannot write the request to the server: " + e.getMessage(), e);
             }
@@ -263,7 +263,7 @@ public class Client {
 
                 in = conn.getInputStream();
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot open input stream to server: ", e);
             }
 
@@ -273,11 +273,11 @@ public class Client {
 
                 protocolResponse.readExternal(in);
 
-            } catch (EOFException e) {
+            } catch (final EOFException e) {
 
                 throw newIOException("Prematurely reached the end of the stream.  " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
 
                 throw newIOException("Cannot determine server protocol version: Received " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
             }
@@ -287,7 +287,7 @@ public class Client {
 
                 objectIn = new EjbObjectInputStream(in);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot open object input stream to server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
@@ -307,13 +307,13 @@ public class Client {
                         throw clusterResponse.getFailure();
                     }
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new RemoteException("Cannot read the cluster response from the server.  The class for an object being returned is not located in this system:", e);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot read the cluster response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw new RemoteException("Error reading cluster response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
@@ -323,13 +323,13 @@ public class Client {
             try {
                 res.setMetaData(protocolResponse);
                 res.readExternal(objectIn);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw newIOException("Cannot read the response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw new RemoteException("Error reading response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
@@ -361,9 +361,9 @@ public class Client {
                 logger.log(Level.FINEST, message);
             }
 
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw e;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             final URI uri = conn.getURI();
             final Set<URI> failed = getFailed();
 
@@ -381,9 +381,9 @@ public class Client {
                     Client.fireEvent(new RetryingRequest(req, server));
 
                     processRequest(req, res, server);
-                } catch (RemoteFailoverException re) {
+                } catch (final RemoteFailoverException re) {
                     throw re;
-                } catch (RemoteException re) {
+                } catch (final RemoteException re) {
                     if (e instanceof RetryException) {
                         return ((RetryException) e).getResponse();
                     }
@@ -391,7 +391,7 @@ public class Client {
                 }
             }
 
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             throw new RemoteException("Error while communicating with server: ", error);
 
         } finally {
@@ -399,7 +399,7 @@ public class Client {
             if (null != out) {
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -407,7 +407,7 @@ public class Client {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -415,7 +415,7 @@ public class Client {
             if (null != conn) {
                 try {
                     conn.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     logger.log(Level.WARNING, "Error closing connection with server: " + t.getMessage(), t);
                 }
             }

@@ -60,7 +60,7 @@ public class LoaderRepositoryConfig {
      *     {@link String }
      *     
      */
-    public void setConfigParserClass(String value) {
+    public void setConfigParserClass(final String value) {
         this.configParserClass = value;
     }
 
@@ -84,7 +84,7 @@ public class LoaderRepositoryConfig {
      *     {@link String }
      *     
      */
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 

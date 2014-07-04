@@ -65,7 +65,7 @@ public class ValidationKeysAuditorTest {
             generateReport(file, visitor);
             final String confluenceOutput = generateConfluenceReport(file, visitor);
             writeToConfluence(confluenceOutput);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // ignore it
             e.printStackTrace();
         }
@@ -89,7 +89,7 @@ public class ValidationKeysAuditorTest {
                 page.setContent(confluenceOutput);
                 confluence.storePage(page);
                 confluence.logout();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -256,14 +256,14 @@ public class ValidationKeysAuditorTest {
             if (bw != null) {
                 try {
                     bw.flush();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
             if (bw != null) {
                 try {
                     bw.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -353,7 +353,7 @@ public class ValidationKeysAuditorTest {
             } finally {
                 IO.close(in);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

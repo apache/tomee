@@ -73,7 +73,7 @@ public class ServletMapping {
         return servletName;
     }
 
-    public void setServletName(String value) {
+    public void setServletName(final String value) {
         this.servletName = value;
     }
 
@@ -88,7 +88,7 @@ public class ServletMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

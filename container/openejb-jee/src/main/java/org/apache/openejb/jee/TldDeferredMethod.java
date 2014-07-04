@@ -61,7 +61,7 @@ public class TldDeferredMethod {
         return methodSignature;
     }
 
-    public void setMethodSignature(String value) {
+    public void setMethodSignature(final String value) {
         this.methodSignature = value;
     }
 
@@ -69,7 +69,7 @@ public class TldDeferredMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

@@ -22,7 +22,7 @@ import java.security.Principal;
 @RequestScoped
 public class AuthBean {
 
-    public Principal authenticate(final String username, String password) {
+    public Principal authenticate(final String username, final String password) {
         if (("userA".equals(username) || "userB".equals(username)) && "test".equals(password)) {
             return new Principal() {
                 @Override
@@ -39,7 +39,7 @@ public class AuthBean {
         return null;
     }
 
-    public boolean hasRole(Principal principal, String role) {
+    public boolean hasRole(final Principal principal, final String role) {
         if (principal == null) {
             return false;
         }

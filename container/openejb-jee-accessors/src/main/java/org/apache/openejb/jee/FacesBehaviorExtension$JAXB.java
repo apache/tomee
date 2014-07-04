@@ -40,22 +40,22 @@ public class FacesBehaviorExtension$JAXB
         super(FacesBehaviorExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-behavior-extensionType".intern()));
     }
 
-    public static FacesBehaviorExtension readFacesBehaviorExtension(XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesBehaviorExtension readFacesBehaviorExtension(final XoXMLStreamReader reader, final RuntimeContext context)
             throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesBehaviorExtension(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public static void writeFacesBehaviorExtension(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
             throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
             throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
 
-    public final static FacesBehaviorExtension _read(XoXMLStreamReader reader, RuntimeContext context)
+    public final static FacesBehaviorExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
             throws Exception {
 
         // Check for xsi:nil
@@ -81,7 +81,7 @@ public class FacesBehaviorExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -114,12 +114,12 @@ public class FacesBehaviorExtension$JAXB
         return facesBehaviorExtension;
     }
 
-    public final FacesBehaviorExtension read(XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesBehaviorExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
             throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
             throws Exception {
         if (facesBehaviorExtension == null) {
             writer.writeXsiNil();

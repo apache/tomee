@@ -30,7 +30,7 @@ public class Movie {
     private String title;
     private int year;
 
-    public Movie(String director, String title, int year) {
+    public Movie(final String director, final String title, int year) {
         this.director = director;
         this.title = title;
         this.year = year;
@@ -68,7 +68,7 @@ public class Movie {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(final int year) {
         this.year = year;
     }
 }

@@ -111,7 +111,7 @@ public class ServletEnvEntryInjectionTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
                 .version(WebAppVersionType._3_0)
                 .createServlet().servletName("servlet").servletClass(PojoServlet.class.getName()).up()
                 .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
@@ -126,7 +126,7 @@ public class ServletEnvEntryInjectionTest {
         addEnvEntry(descriptor, "auditWriter", "java.lang.Class", "java.lang.String");
         addEnvEntry(descriptor, "defaultCode", Code.class.getName(), "OK");
 
-        Node appNode = ((NodeDescriptor) descriptor).getRootNode();
+        final Node appNode = ((NodeDescriptor) descriptor).getRootNode();
         appNode.createChild("/env-entry")
                 .createChild("env-entry-name").text("name").getParent()
                 .createChild("lookup-name").text("java:module/ModuleName");
@@ -142,7 +142,7 @@ public class ServletEnvEntryInjectionTest {
         return archive;
     }
 
-    private static void addEnvEntry(WebAppDescriptor descriptor, String name, String type, String value) {
+    private static void addEnvEntry(final WebAppDescriptor descriptor, final String name, String type, String value) {
         Node appNode = ((NodeDescriptor) descriptor).getRootNode();
         appNode.createChild("/env-entry")
                 .createChild("env-entry-name").text(name).getParent()
@@ -152,7 +152,7 @@ public class ServletEnvEntryInjectionTest {
 
     }
 
-    private void validateTest(String expectedOutput) throws IOException {
+    private void validateTest(final String expectedOutput) throws IOException {
         final InputStream is = new URL(url.toExternalForm() + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
@@ -165,7 +165,7 @@ public class ServletEnvEntryInjectionTest {
         is.close();
         os.close();
 
-        String output = new String(os.toByteArray(), "UTF-8");
+        final String output = new String(os.toByteArray(), "UTF-8");
         assertNotNull("Response shouldn't be null", output);
         assertTrue("Output should contain: " + expectedOutput, output.contains(expectedOutput));
     }

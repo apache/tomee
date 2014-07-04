@@ -40,10 +40,10 @@ public class ContextLookupSingletonPojoBean {
     public void lookupEntityBean() throws TestFailureException {
         try {
             try {
-                BasicBmpHome home = (BasicBmpHome) getSessionContext().lookup("singleton/beanReferences/bmp_entity");
+                final BasicBmpHome home = (BasicBmpHome) getSessionContext().lookup("singleton/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicBmpObject object = home.createObject("Enc Bean");
+                final BasicBmpObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -56,7 +56,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             try {
-                BasicStatefulHome home = (BasicStatefulHome) getSessionContext().lookup("singleton/beanReferences/stateful");
+                final BasicStatefulHome home = (BasicStatefulHome) getSessionContext().lookup("singleton/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicStatefulObject object = home.createObject("Enc Bean");
@@ -72,7 +72,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupSingletonBean() throws TestFailureException {
         try {
             try {
-                BasicSingletonHome home = (BasicSingletonHome) getSessionContext().lookup("singleton/beanReferences/singleton");
+                final BasicSingletonHome home = (BasicSingletonHome) getSessionContext().lookup("singleton/beanReferences/singleton");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 BasicSingletonObject object = home.createObject();
@@ -88,9 +88,9 @@ public class ContextLookupSingletonPojoBean {
     public void lookupSingletonBusinessLocal() throws TestFailureException{
         try{
             try{
-            BasicSingletonBusinessLocal object = (BasicSingletonBusinessLocal) getSessionContext().lookup("singleton/beanReferences/singleton-business-local");
+            final BasicSingletonBusinessLocal object = (BasicSingletonBusinessLocal) getSessionContext().lookup("singleton/beanReferences/singleton-business-local");
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
-            } catch (Exception e){
+            } catch (final Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
         } catch (AssertionFailedError afe){
@@ -101,9 +101,9 @@ public class ContextLookupSingletonPojoBean {
     public void lookupSingletonBusinessLocalBean() throws TestFailureException{
         try{
             try{
-            BasicSingletonPojoBean object = (BasicSingletonPojoBean) getSessionContext().lookup("singleton/beanReferences/singleton-business-localbean");
+            final BasicSingletonPojoBean object = (BasicSingletonPojoBean) getSessionContext().lookup("singleton/beanReferences/singleton-business-localbean");
             Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
-            } catch (Exception e){
+            } catch (final Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
         } catch (AssertionFailedError afe){
@@ -114,7 +114,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupSingletonBusinessRemote() throws TestFailureException{
         try{
             try{
-            BasicSingletonBusinessRemote object = (BasicSingletonBusinessRemote) getSessionContext().lookup("singleton/beanReferences/singleton-business-remote");
+            final BasicSingletonBusinessRemote object = (BasicSingletonBusinessRemote) getSessionContext().lookup("singleton/beanReferences/singleton-business-remote");
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -127,7 +127,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupStatefulBusinessLocal() throws TestFailureException{
         try{
             try{
-            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) getSessionContext().lookup("singleton/beanReferences/stateful-business-local");
+            final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) getSessionContext().lookup("singleton/beanReferences/stateful-business-local");
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -140,9 +140,9 @@ public class ContextLookupSingletonPojoBean {
     public void lookupStatefulBusinessLocalBean() throws TestFailureException{
         try{
             try{
-            BasicStatefulPojoBean object = (BasicStatefulPojoBean) getSessionContext().lookup("singleton/beanReferences/stateful-business-localbean");
+            final BasicStatefulPojoBean object = (BasicStatefulPojoBean) getSessionContext().lookup("singleton/beanReferences/stateful-business-localbean");
             Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
-            } catch (Exception e){
+            } catch (final Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
         } catch (AssertionFailedError afe){
@@ -153,9 +153,9 @@ public class ContextLookupSingletonPojoBean {
     public void lookupStatefulBusinessRemote() throws TestFailureException{
         try{
             try{
-            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) getSessionContext().lookup("singleton/beanReferences/stateful-business-remote");
+            final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) getSessionContext().lookup("singleton/beanReferences/stateful-business-remote");
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
-            } catch (Exception e){
+            } catch (final Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
         } catch (AssertionFailedError afe){
@@ -167,8 +167,8 @@ public class ContextLookupSingletonPojoBean {
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
-                String expected = new String("1");
-                String actual = (String) getSessionContext().lookup("singleton/references/String");
+                final String expected = new String("1");
+                final String actual = (String) getSessionContext().lookup("singleton/references/String");
 
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -184,8 +184,8 @@ public class ContextLookupSingletonPojoBean {
     public void lookupDoubleEntry() throws TestFailureException {
         try {
             try {
-                Double expected = new Double(1.0D);
-                Double actual = (Double) getSessionContext().lookup("singleton/references/Double");
+                final Double expected = new Double(1.0D);
+                final Double actual = (Double) getSessionContext().lookup("singleton/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -193,7 +193,7 @@ public class ContextLookupSingletonPojoBean {
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -201,7 +201,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupLongEntry() throws TestFailureException {
         try {
             try {
-                Long expected = new Long(1L);
+                final Long expected = new Long(1L);
                 Long actual = (Long) getSessionContext().lookup("singleton/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
@@ -210,7 +210,7 @@ public class ContextLookupSingletonPojoBean {
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -218,13 +218,13 @@ public class ContextLookupSingletonPojoBean {
     public void lookupFloatEntry() throws TestFailureException {
         try {
             try {
-                Float expected = new Float(1.0F);
-                Float actual = (Float) getSessionContext().lookup("singleton/references/Float");
+                final Float expected = new Float(1.0F);
+                final Float actual = (Float) getSessionContext().lookup("singleton/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
         } catch (AssertionFailedError afe) {
@@ -235,16 +235,16 @@ public class ContextLookupSingletonPojoBean {
     public void lookupIntegerEntry() throws TestFailureException {
         try {
             try {
-                Integer expected = new Integer(1);
-                Integer actual = (Integer) getSessionContext().lookup("singleton/references/Integer");
+                final Integer expected = new Integer(1);
+                final Integer actual = (Integer) getSessionContext().lookup("singleton/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -252,8 +252,8 @@ public class ContextLookupSingletonPojoBean {
     public void lookupShortEntry() throws TestFailureException {
         try {
             try {
-                Short expected = new Short((short) 1);
-                Short actual = (Short) getSessionContext().lookup("singleton/references/Short");
+                final Short expected = new Short((short) 1);
+                final Short actual = (Short) getSessionContext().lookup("singleton/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -269,7 +269,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupBooleanEntry() throws TestFailureException {
         try {
             try {
-                Boolean expected = new Boolean(true);
+                final Boolean expected = new Boolean(true);
                 Boolean actual = (Boolean) getSessionContext().lookup("singleton/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);
@@ -278,7 +278,7 @@ public class ContextLookupSingletonPojoBean {
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -286,7 +286,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupByteEntry() throws TestFailureException {
         try {
             try {
-                Byte expected = new Byte((byte) 1);
+                final Byte expected = new Byte((byte) 1);
                 Byte actual = (Byte) getSessionContext().lookup("singleton/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
@@ -303,8 +303,8 @@ public class ContextLookupSingletonPojoBean {
     public void lookupCharacterEntry() throws TestFailureException {
         try {
             try {
-                Character expected = new Character('D');
-                Character actual = (Character) getSessionContext().lookup("singleton/references/Character");
+                final Character expected = new Character('D');
+                final Character actual = (Character) getSessionContext().lookup("singleton/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);
                 Assert.assertEquals(expected, actual);
@@ -320,13 +320,13 @@ public class ContextLookupSingletonPojoBean {
     public void lookupResource() throws TestFailureException {
         try {
             try {
-                Object obj = getSessionContext().lookup("datasource");
+                final Object obj = getSessionContext().lookup("datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -334,12 +334,12 @@ public class ContextLookupSingletonPojoBean {
     public void lookupPersistenceUnit() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
+                final EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
-            } catch (Exception e){
+            } catch (final Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }
         } catch (AssertionFailedError afe){
@@ -350,7 +350,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupSessionContext() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);                
 
                 // lookup in enc
@@ -372,9 +372,9 @@ public class ContextLookupSingletonPojoBean {
     public void lookupPersistenceContext() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                final EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
@@ -395,7 +395,7 @@ public class ContextLookupSingletonPojoBean {
         SessionContext ejbContext = null;
         try {
             ejbContext = (SessionContext) new InitialContext().lookup("java:comp/EJBContext");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

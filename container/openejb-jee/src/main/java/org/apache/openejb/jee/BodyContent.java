@@ -49,7 +49,7 @@ public enum BodyContent {
     SCRIPTLESS("scriptless");
     private final String value;
 
-    BodyContent(String v) {
+    BodyContent(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum BodyContent {
         return value;
     }
 
-    public static BodyContent fromValue(String v) {
+    public static BodyContent fromValue(final String v) {
         for (BodyContent c : values()) {
             if (c.value.equals(v)) {
                 return c;

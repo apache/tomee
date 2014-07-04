@@ -139,7 +139,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setName(String value) {
+	public void setName(final String value) {
 		this.name = value;
 	}
 
@@ -160,7 +160,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.value = value;
 	}
 
@@ -181,7 +181,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setId(String value) {
+	public void setId(final String value) {
 		this.id = value;
 	}
 
@@ -202,7 +202,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link QName }
 	 * 
 	 */
-	public void setType(QName value) {
+	public void setType(final QName value) {
 		this.type = value;
 	}
 
@@ -227,7 +227,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setVersion(String value) {
+	public void setVersion(final String value) {
 		this.version = value;
 	}
 
@@ -248,7 +248,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setHref(String value) {
+	public void setHref(final String value) {
 		this.href = value;
 	}
 
@@ -269,7 +269,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link Object }
 	 * 
 	 */
-	public void setIdref(Object value) {
+	public void setIdref(final Object value) {
 		this.idref = value;
 	}
 
@@ -290,7 +290,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setLabel(String value) {
+	public void setLabel(final String value) {
 		this.label = value;
 	}
 
@@ -311,7 +311,7 @@ public class ActivationConfigProperty {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setUuid(String value) {
+	public void setUuid(final String value) {
 		this.uuid = value;
 	}
 

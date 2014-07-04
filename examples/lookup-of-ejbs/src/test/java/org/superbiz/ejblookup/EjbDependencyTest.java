@@ -32,7 +32,7 @@ public class EjbDependencyTest extends TestCase {
 
     public void testRed() throws Exception {
 
-        Friend red = (Friend) context.lookup("java:global/lookup-of-ejbs/RedBean");
+        final Friend red = (Friend) context.lookup("java:global/lookup-of-ejbs/RedBean");
 
         assertNotNull(red);
         assertEquals("Red says, Hello!", red.sayHello());
@@ -42,7 +42,7 @@ public class EjbDependencyTest extends TestCase {
 
     public void testBlue() throws Exception {
 
-        Friend blue = (Friend) context.lookup("java:global/lookup-of-ejbs/BlueBean");
+        final Friend blue = (Friend) context.lookup("java:global/lookup-of-ejbs/BlueBean");
 
         assertNotNull(blue);
         assertEquals("Blue says, Hello!", blue.sayHello());

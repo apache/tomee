@@ -59,7 +59,7 @@ public class OrderingOthers {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

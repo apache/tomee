@@ -25,10 +25,10 @@ import javax.validation.ConstraintValidatorContext;
 
 public class DifferentNameValidator implements ConstraintValidator<DifferentName, User> {
 
-    public void initialize(DifferentName differentName) {
+    public void initialize(final DifferentName differentName) {
     }
 
-    public boolean isValid(User person, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final User person, final ConstraintValidatorContext constraintValidatorContext) {
         return person == null || !(person.getFirstName() != null && person.getFirstName().equals(person.getLastName()));
     }
 }

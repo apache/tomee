@@ -59,7 +59,7 @@ public class ServletCdiProducerTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
 
-        WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
                 .version(WebAppVersionType._3_0)
                 .createServlet().servletName("servlet").servletClass(SimpleServlet.class.getName()).up()
                 .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
@@ -77,7 +77,7 @@ public class ServletCdiProducerTest {
         return archive;
     }
 
-    private void validateTest(String expectedOutput) throws IOException {
+    private void validateTest(final String expectedOutput) throws IOException {
         Tests.assertOutput(url.toExternalForm() + TEST_NAME, expectedOutput);
     }
 

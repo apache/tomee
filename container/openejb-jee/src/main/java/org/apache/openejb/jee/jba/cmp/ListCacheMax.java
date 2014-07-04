@@ -70,7 +70,7 @@ public class ListCacheMax {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 

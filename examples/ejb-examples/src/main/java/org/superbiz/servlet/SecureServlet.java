@@ -32,9 +32,9 @@ public class SecureServlet extends HttpServlet {
     @EJB
     private SecureEJBLocal secureEJBLocal;
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        ServletOutputStream out = response.getOutputStream();
+        final ServletOutputStream out = response.getOutputStream();
 
         out.println("Servlet");
         Principal principal = request.getUserPrincipal();
@@ -77,7 +77,7 @@ public class SecureServlet extends HttpServlet {
             try {
                 secureEJBLocal.allowFakeMethod();
                 out.println("@EJB.allowFakeMethod() ALLOWED");
-            } catch (EJBAccessException e) {
+            } catch (final EJBAccessException e) {
                 out.println("@EJB.allowFakeMethod() DENIED");
             }
 

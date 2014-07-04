@@ -199,7 +199,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setIsAbstract(Boolean value) {
+	public void setIsAbstract(final Boolean value) {
 		this.isAbstract = value;
 	}
 
@@ -220,7 +220,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setConstructor(Boolean value) {
+	public void setConstructor(final Boolean value) {
 		this.constructor = value;
 	}
 
@@ -241,7 +241,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setIsFinal(Boolean value) {
+	public void setIsFinal(final Boolean value) {
 		this.isFinal = value;
 	}
 
@@ -262,7 +262,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setJavaExceptions(String value) {
+	public void setJavaExceptions(final String value) {
 		this.javaExceptions = value;
 	}
 
@@ -283,7 +283,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link JavaVisibilityEnum }
 	 * 
 	 */
-	public void setJavaVisibility(JavaVisibilityEnum value) {
+	public void setJavaVisibility(final JavaVisibilityEnum value) {
 		this.javaVisibility = value;
 	}
 
@@ -304,7 +304,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setIsNative(Boolean value) {
+	public void setIsNative(final Boolean value) {
 		this.isNative = value;
 	}
 
@@ -325,7 +325,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setSource(String value) {
+	public void setSource(final String value) {
 		this.source = value;
 	}
 
@@ -346,7 +346,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setIsStatic(Boolean value) {
+	public void setIsStatic(final Boolean value) {
 		this.isStatic = value;
 	}
 
@@ -367,7 +367,7 @@ public class Method extends EOperation {
 	 *            allowed object is {@link Boolean }
 	 * 
 	 */
-	public void setIsSynchronized(Boolean value) {
+	public void setIsSynchronized(final Boolean value) {
 		this.isSynchronized = value;
 	}
 

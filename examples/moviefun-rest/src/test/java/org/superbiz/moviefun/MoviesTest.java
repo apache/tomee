@@ -46,13 +46,13 @@ public class MoviesTest {
     @Before
     @After
     public void clean() throws Exception {
-        MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun-rest/MoviesBean!org.superbiz.moviefun.MoviesBean");
+        final MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun-rest/MoviesBean!org.superbiz.moviefun.MoviesBean");
         movies.clean();
     }
 
     @Test
     public void testShouldAddAMovie() throws Exception {
-        MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun-rest/MoviesBean!org.superbiz.moviefun.MoviesBean");
+        final MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun-rest/MoviesBean!org.superbiz.moviefun.MoviesBean");
 
         final Movie movie = new Movie();
         movie.setDirector("Michael Bay");

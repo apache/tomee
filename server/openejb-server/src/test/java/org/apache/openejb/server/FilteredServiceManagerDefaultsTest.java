@@ -45,7 +45,7 @@ public class FilteredServiceManagerDefaultsTest {
         // the return value should be a FilteredServiceManager
         assertEquals(FilteredServiceManager.class, ServiceManager.get().getClass());
 
-        FilteredServiceManager manager = (FilteredServiceManager) ServiceManager.get();
+        final FilteredServiceManager manager = (FilteredServiceManager) ServiceManager.get();
         assertEquals(1, manager.getDaemons().length);
         assertEquals("admin", manager.getDaemons()[0].getName());
     }

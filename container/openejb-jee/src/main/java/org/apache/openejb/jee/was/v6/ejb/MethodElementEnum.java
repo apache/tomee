@@ -54,7 +54,7 @@ public enum MethodElementEnum {
 	SERVICE_ENDPOINT("ServiceEndpoint");
 	private final String value;
 
-	MethodElementEnum(String v) {
+	MethodElementEnum(final String v) {
 		value = v;
 	}
 
@@ -62,8 +62,8 @@ public enum MethodElementEnum {
 		return value;
 	}
 
-	public static MethodElementEnum fromValue(String v) {
-		for (MethodElementEnum c : MethodElementEnum.values()) {
+	public static MethodElementEnum fromValue(final String v) {
+		for (final MethodElementEnum c : MethodElementEnum.values()) {
 			if (c.value.equals(v)) {
 				return c;
 			}
