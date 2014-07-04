@@ -57,6 +57,9 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
         final Method runningMethod = threadContext.get(Method.class);
+        if (runningMethod == null) {
+            throw new IllegalStateException("No running method");
+        }
         if (di.isAsynchronous(runningMethod)) {
             if(runningMethod.getReturnType() == void.class) {
                 throw new IllegalStateException("Current running method " + runningMethod.getName() + " is an asynchronous method, but its return type is void :" + di.getDestinationId());

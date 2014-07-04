@@ -18,20 +18,34 @@ package org.apache.openejb.concurrencyutilities.ee.task;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ivm.ClientSecurity;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
+import javax.security.auth.login.LoginException;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask {
-    private static final SecurityService<?> SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
+    private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     private final Context initialContext;
 
     public CUTask(final Object task) {
         super(task);
 
-        initialContext = new Context(SECURITY_SERVICE.currentState(), ThreadContext.getThreadContext(), Thread.currentThread().getContextClassLoader());
+        Object stateTmp = SECURITY_SERVICE.currentState();
+        final boolean associate;
+        if (stateTmp == null) {
+            stateTmp = ClientSecurity.getIdentity();
+            associate = stateTmp != null;
+        } else {
+            associate = false;
+        }
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        initialContext = new Context(
+                associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
+                threadContext, Thread.currentThread().getContextClassLoader());
     }
 
     protected T invoke(final Callable<T> call) throws Exception{
@@ -71,6 +85,8 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         private final Object securityServiceState;
         private final ThreadContext threadContext;
         private final ClassLoader loader;
+        private final boolean associate;
+        private final AbstractSecurityService.SecurityContext securityContext;
 
         /* propagation of CDI context seems wrong
         private final CdiAppContextsService contextService;
@@ -79,8 +95,12 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
 
         private Context currentContext = null;
 
-        private Context(final Object initialSecurityServiceState, final ThreadContext initialThreadContext, final ClassLoader initialLoader) {
+        private Context(boolean associate, final Object initialSecurityServiceState,
+                        final AbstractSecurityService.SecurityContext securityContext, final ThreadContext initialThreadContext,
+                        final ClassLoader initialLoader) {
+            this.associate = associate;
             this.securityServiceState = initialSecurityServiceState;
+            this.securityContext = securityContext;
             this.threadContext = initialThreadContext;
             this.loader = initialLoader;
 
@@ -102,17 +122,30 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             final ClassLoader oldCl = thread.getContextClassLoader();
             thread.setContextClassLoader(loader);
 
+            final Object threadState;
+            if (associate) {
+                //noinspection unchecked
+                try {
+                    SECURITY_SERVICE.associate(securityServiceState);
+                } catch (final LoginException e) {
+                    throw new IllegalStateException(e);
+                }
+                threadState = null;
+            } else {
+                threadState = SECURITY_SERVICE.currentState();
+                SECURITY_SERVICE.setState(securityServiceState);
+            }
+
             final ThreadContext oldCtx;
             if (threadContext != null) {
-                oldCtx = ThreadContext.enter(new ThreadContext(threadContext));
+                final ThreadContext newContext = new ThreadContext(threadContext);
+                newContext.set(AbstractSecurityService.ProvidedSecurityContext.class, new AbstractSecurityService.ProvidedSecurityContext(securityContext));
+                oldCtx = ThreadContext.enter(newContext);
             } else {
                 oldCtx = null;
             }
 
-            final Object threadState = SECURITY_SERVICE.currentState();
-            SECURITY_SERVICE.setState(securityServiceState);
-
-            currentContext = new Context(threadState, oldCtx, oldCl);
+            currentContext = new Context(associate, threadState, securityContext, oldCtx, oldCl);
 
             /* propagation of CDI context seems wrong
             if (cdiState != null) {
@@ -122,10 +155,14 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         }
 
         public void exit() {
-            SECURITY_SERVICE.setState(currentContext.securityServiceState);
-
             if (currentContext.threadContext != null) {
                 ThreadContext.exit(currentContext.threadContext);
+            }
+
+            if (!associate) {
+                SECURITY_SERVICE.setState(currentContext.securityServiceState);
+            } else {
+                SECURITY_SERVICE.disassociate();
             }
 
             /* propagation of CDI context seems wrong

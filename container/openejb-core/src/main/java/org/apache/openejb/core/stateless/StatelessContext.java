@@ -40,6 +40,9 @@ public class StatelessContext extends BaseSessionContext implements Flushable {
     @Override
     public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
+        if (operation == null) {
+            return; // concurrency utilities or similar
+        }
 
         switch (call) {
             case getEJBLocalObject:

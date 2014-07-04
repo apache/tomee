@@ -146,18 +146,22 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             runAsSubject = getRunAsSubject(oldContext.getBeanContext());
         }
 
-        SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) : null;
-        if (runAsSubject != null) {
+        final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
+        SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
+                (providedSecurityContext != null ? providedSecurityContext.context : null);
+        if (providedSecurityContext == null) {
+            if (runAsSubject != null) {
 
-            securityContext = new SecurityContext(runAsSubject);
+                securityContext = new SecurityContext(runAsSubject);
 
-        } else if (securityContext == null) {
+            } else if (securityContext == null) {
 
-            final Identity identity = clientIdentity.get();
-            if (identity != null) {
-                securityContext = new SecurityContext(identity.subject);
-            } else {
-                securityContext = defaultContext;
+                final Identity identity = clientIdentity.get();
+                if (identity != null) {
+                    securityContext = new SecurityContext(identity.subject);
+                } else {
+                    securityContext = defaultContext;
+                }
             }
         }
 
@@ -360,7 +364,15 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    protected static final class SecurityContext {
+    public static final class ProvidedSecurityContext {
+        public final SecurityContext context;
+
+        public ProvidedSecurityContext(SecurityContext context) {
+            this.context = context;
+        }
+    }
+
+    public static final class SecurityContext {
 
         public final Subject subject;
         public final AccessControlContext acc;

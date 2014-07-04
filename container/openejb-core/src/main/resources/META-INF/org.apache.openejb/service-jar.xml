@@ -1120,7 +1120,6 @@
     Max = 25
     KeepAlive = 5 s
     Queue = 15
-    WaitAtShutdown = 30 seconds
     ThreadFactory = org.apache.openejb.concurrencyutilities.ee.impl.ManagedThreadFactoryImpl
   </ServiceProvider>
   <ServiceProvider id="Default Scheduled Executor Service"
@@ -1129,7 +1128,6 @@
                    factory-name="create"
                    class-name="org.apache.openejb.concurrencyutilities.ee.factory.ManagedScheduledExecutorServiceImplFactory">
     Core = 5
-    WaitAtShutdown = 30 seconds
     ThreadFactory = org.apache.openejb.concurrencyutilities.ee.impl.ManagedThreadFactoryImpl
   </ServiceProvider>
   <ServiceProvider id="Default Managed Thread Factory"
