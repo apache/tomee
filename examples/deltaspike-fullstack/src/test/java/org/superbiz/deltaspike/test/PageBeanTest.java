@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.apache.deltaspike.cdise.api.ContextControl;
 import org.apache.deltaspike.core.spi.scope.window.WindowContext;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.deltaspike.WebappMessageBundle;
@@ -33,6 +34,7 @@ import org.superbiz.deltaspike.view.config.Pages;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+@Ignore
 @RunWith(CdiTestRunner.class)
 public class PageBeanTest
 {
