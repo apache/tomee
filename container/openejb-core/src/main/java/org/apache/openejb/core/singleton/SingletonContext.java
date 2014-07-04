@@ -34,6 +34,9 @@ public class SingletonContext extends BaseSessionContext {
     @Override
     public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
+        if (operation == null) {
+            return; // concurrency utilities or similar
+        }
 
         switch (call) {
             case getEJBLocalObject:
