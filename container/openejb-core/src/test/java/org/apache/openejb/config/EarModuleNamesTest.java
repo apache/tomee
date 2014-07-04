@@ -141,7 +141,7 @@ public class EarModuleNamesTest extends TestCase {
         metaInf.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"orange\" />");
         final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
 
-        Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("green.jar", ejbJar);
         Archives.jarArchive(ear, contents);
 

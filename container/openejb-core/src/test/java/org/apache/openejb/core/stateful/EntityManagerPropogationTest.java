@@ -72,17 +72,17 @@ public class EntityManagerPropogationTest extends TestCase {
     private void _testEMClose() throws Exception {
         final InitialContext ctx = new InitialContext();
 
-        PleaseCloseMyExtendedEmBean checkExtendedWorks = (PleaseCloseMyExtendedEmBean) ctx.lookup("PleaseCloseMyExtendedEmLocalBean");
+        final PleaseCloseMyExtendedEmBean checkExtendedWorks = (PleaseCloseMyExtendedEmBean) ctx.lookup("PleaseCloseMyExtendedEmLocalBean");
         EntityManager savedReference = checkExtendedWorks.getDelegate();
         checkExtendedWorks.remove();
         assertFalse(savedReference.isOpen());
 
-        PleaseCloseMyEmBean please = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyEmLocalBean");
+        final PleaseCloseMyEmBean please = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyEmLocalBean");
         savedReference = please.getDelegate();
         please.remove();
         assertFalse(savedReference.isOpen());
 
-        PleaseCloseMyEmBean statelessIsEasier = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyLessEmLocalBean");
+        final PleaseCloseMyEmBean statelessIsEasier = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyLessEmLocalBean");
         savedReference = statelessIsEasier.getDelegate();
         statelessIsEasier.remove();
         assertFalse(savedReference.isOpen());
@@ -151,7 +151,7 @@ public class EntityManagerPropogationTest extends TestCase {
         for (int l = 0; l < 10; l++) { // because Romain is not sure of the Random ;-)
             Node node = (Node) ctx.lookup("ExtendedLocalBean");
             final List<Node> nodes = new ArrayList<Node>();
-            List<EntityManager> delegates = new ArrayList<EntityManager>();
+            final List<EntityManager> delegates = new ArrayList<EntityManager>();
 
             while (node.getChild() != null) {
                 nodes.add(node);
@@ -162,9 +162,9 @@ public class EntityManagerPropogationTest extends TestCase {
             // random remove all stateful
             do {
                 size = nodes.size();
-                int i = rdm.nextInt(size);
-                Node n = nodes.remove(i);
-                EntityManager entityManager = delegates.remove(i);
+                final int i = rdm.nextInt(size);
+                final Node n = nodes.remove(i);
+                final EntityManager entityManager = delegates.remove(i);
 
                 n.remove();
 
@@ -198,7 +198,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         // This bean should still be attached
         // when the transaction commits
-        Color attachedA = chainA.create(3, "Green");
+        final Color attachedA = chainA.create(3, "Green");
 
         while (chainB.getChild() != null) {
 
@@ -232,7 +232,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         final InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("TransactionToExtendedLocalBean");
+        final Node node = (Node) ctx.lookup("TransactionToExtendedLocalBean");
 
         try {
 //	    System.out.println("SFSB+TPC --> SFSB+EPC");
@@ -252,13 +252,13 @@ public class EntityManagerPropogationTest extends TestCase {
 
         final InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("ExtendedToTransactionLocalBean");
+        final Node node = (Node) ctx.lookup("ExtendedToTransactionLocalBean");
 
         try {
 //	    System.out.println("SFSB+EPC --> SLSB+TPC --> SFSB+EPC");
             node.createUntilLeaf(6, "red");
 
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             e.printStackTrace();
             fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
                 "\n\t--> the SFSB+EPC is the one who starts the transaction and then calls the " +
@@ -280,7 +280,7 @@ public class EntityManagerPropogationTest extends TestCase {
             fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
                 "\n\t--> we cannot have two persistence contexts associated with the transaction");
 
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // OK
 //	    System.out.println(e.getMessage());
         }
@@ -300,7 +300,7 @@ public class EntityManagerPropogationTest extends TestCase {
         // Start creating the test application 
 
         // Create an ejb-jar.xml for this app
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new StatefulBean("PleaseCloseMyExtendedEm", PleaseCloseMyExtendedEmBean.class));
         ejbJar.addEnterpriseBean(new StatefulBean("PleaseCloseMyEm", PleaseCloseMyEmBean.class));
@@ -335,16 +335,16 @@ public class EntityManagerPropogationTest extends TestCase {
 //        declared.add(new ContainerTransaction(TransAttribute.REQUIRED, ExtendedContextBean.class.getName(), "Extendedx5", "*"));
 //        declared.add(new ContainerTransaction(TransAttribute.REQUIRED, ExtendedContextBean.class.getName(), "TransactionToExtended", "*"));        
 
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
 
         // Create an "ear"
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), "test-app");
+        final AppModule appModule = new AppModule(ejbModule.getClassLoader(), "test-app");
 
         // Add the ejb-jar.xml to the ear
         appModule.getEjbModules().add(ejbModule);
 
         // Create a persistence-unit for this app
-        PersistenceUnit unit = new PersistenceUnit("testUnit");
+        final PersistenceUnit unit = new PersistenceUnit("testUnit");
         unit.addClass(Color.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
@@ -353,17 +353,17 @@ public class EntityManagerPropogationTest extends TestCase {
         appModule.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
 
         // Configure and assemble the ear -- aka. deploy it
-        AppInfo info = config.configureApplication(appModule);
+        final AppInfo info = config.configureApplication(appModule);
         assembler.createApplication(info);
     }
 
-    private void addStatefulBean(final EjbJar ejbJar, Class<?> ejbClass, final String name, String reference) {
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(name, ejbClass));
+    private void addStatefulBean(final EjbJar ejbJar, final Class<?> ejbClass, final String name, final String reference) {
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(name, ejbClass));
         bean.getEjbLocalRef().add(new EjbLocalRef("child", reference));
     }
 
-    private void addStatelessBean(final EjbJar ejbJar, Class<?> ejbClass, String name, String reference) {
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(name, ejbClass));
+    private void addStatelessBean(final EjbJar ejbJar, final Class<?> ejbClass, final String name, final String reference) {
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(name, ejbClass));
         bean.getEjbLocalRef().add(new EjbLocalRef("child", reference));
     }
 
@@ -378,7 +378,7 @@ public class EntityManagerPropogationTest extends TestCase {
         public Color() {
         }
 
-        public Color(final int id, String name) {
+        public Color(final int id, final String name) {
             this.id = id;
             this.name = name;
         }
@@ -489,13 +489,13 @@ public class EntityManagerPropogationTest extends TestCase {
         @EJB(name = "child")
         protected Node child;
 
-        public Color create(final int id, String name) {
+        public Color create(final int id, final String name) {
             final Color color = new Color(id, name);
             getEntityManager().persist(color);
             return color;
         }
 
-        public void createUntilLeaf(final int id, String name) {
+        public void createUntilLeaf(final int id, final String name) {
             this.create(id, name);
 
             // recursively call until the leaf is achieved
@@ -530,7 +530,7 @@ public class EntityManagerPropogationTest extends TestCase {
             return false;
         }
 
-        public Color create(final int id, String name) {
+        public Color create(final int id, final String name) {
             return null;
         }
 

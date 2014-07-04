@@ -90,35 +90,35 @@ public class ResourceEnvRef implements JndiReference {
         this.resourceEnvRefType = resourceEnvRefType;
     }
 
-    public ResourceEnvRef(String resourceEnvRefName, final Class resourceEnvRefType) {
+    public ResourceEnvRef(final String resourceEnvRefName, final Class resourceEnvRefType) {
         this(resourceEnvRefName, resourceEnvRefType.getName());
     }
 
-    public ResourceEnvRef name(String resourceEnvRefName) {
+    public ResourceEnvRef name(final String resourceEnvRefName) {
         this.resourceEnvRefName = resourceEnvRefName;
         return this;
     }
 
-    public ResourceEnvRef type(String resourceEnvRefType) {
+    public ResourceEnvRef type(final String resourceEnvRefType) {
         this.resourceEnvRefType = resourceEnvRefType;
         return this;
     }
 
-    public ResourceEnvRef type(Class<?> resourceEnvRefType) {
+    public ResourceEnvRef type(final Class<?> resourceEnvRefType) {
         return type(resourceEnvRefType.getName());
     }
 
-    public ResourceEnvRef mappedName(String mappedName) {
+    public ResourceEnvRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public ResourceEnvRef lookup(String lookupName) {
+    public ResourceEnvRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(String className, final String property) {
+    public ResourceEnvRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.resourceEnvRefName == null) {
@@ -128,7 +128,7 @@ public class ResourceEnvRef implements JndiReference {
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(Class<?> clazz, final String property) {
+    public ResourceEnvRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -138,7 +138,7 @@ public class ResourceEnvRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -148,11 +148,11 @@ public class ResourceEnvRef implements JndiReference {
         return getResourceEnvRefType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setResourceEnvRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setResourceEnvRefType(type);
     }
 
@@ -161,7 +161,7 @@ public class ResourceEnvRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -173,7 +173,7 @@ public class ResourceEnvRef implements JndiReference {
         return resourceEnvRefName;
     }
 
-    public void setResourceEnvRefName(String value) {
+    public void setResourceEnvRefName(final String value) {
         this.resourceEnvRefName = value;
     }
 
@@ -181,7 +181,7 @@ public class ResourceEnvRef implements JndiReference {
         return resourceEnvRefType;
     }
 
-    public void setResourceEnvRefType(String value) {
+    public void setResourceEnvRefType(final String value) {
         this.resourceEnvRefType = value;
     }
 
@@ -189,7 +189,7 @@ public class ResourceEnvRef implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -197,7 +197,7 @@ public class ResourceEnvRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -212,7 +212,7 @@ public class ResourceEnvRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

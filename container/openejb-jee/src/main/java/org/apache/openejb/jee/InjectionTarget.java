@@ -88,7 +88,7 @@ public class InjectionTarget {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        InjectionTarget that = (InjectionTarget) o;
+        final InjectionTarget that = (InjectionTarget) o;
 
         if (injectionTargetClass != null ? !injectionTargetClass.equals(that.injectionTargetClass) : that.injectionTargetClass != null)
             return false;

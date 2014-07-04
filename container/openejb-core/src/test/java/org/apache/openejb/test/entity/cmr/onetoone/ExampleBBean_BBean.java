@@ -83,7 +83,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         aCmr.set(a, null);
     }
 
-    public Object OpenEJB_addCmr(final String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) {
             return null;
         }

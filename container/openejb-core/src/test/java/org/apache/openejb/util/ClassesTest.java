@@ -37,7 +37,7 @@ public class ClassesTest extends TestCase {
             "char", "char[]", "char[][]",
         };
 
-        String[] expected = {
+        final String[] expected = {
             "java.lang.String", "[Ljava.lang.String;", "[[Ljava.lang.String;",
             "boolean", "[Z", "[[Z",
             "byte", "[B", "[[B",

@@ -45,17 +45,17 @@ public class ConcurrentMethod$JAXB
         super(ConcurrentMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "concurrent-methodType".intern()), NamedMethod$JAXB.class, ConcurrentLockType$JAXB.class, Timeout$JAXB.class);
     }
 
-    public static ConcurrentMethod readConcurrentMethod(final XoXMLStreamReader reader, RuntimeContext context)
+    public static ConcurrentMethod readConcurrentMethod(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConcurrentMethod(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+    public static void writeConcurrentMethod(final XoXMLStreamWriter writer, final ConcurrentMethod concurrentMethod, final RuntimeContext context)
         throws Exception {
         _write(writer, concurrentMethod, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final ConcurrentMethod concurrentMethod, final RuntimeContext context)
         throws Exception {
         _write(writer, concurrentMethod, context);
     }
@@ -77,7 +77,7 @@ public class ConcurrentMethod$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("concurrent-methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ConcurrentMethod.class);
@@ -88,7 +88,7 @@ public class ConcurrentMethod$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, concurrentMethod);
                 concurrentMethod.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,14 +97,14 @@ public class ConcurrentMethod$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: method
-                NamedMethod method = readNamedMethod(elementReader, context);
+                final NamedMethod method = readNamedMethod(elementReader, context);
                 concurrentMethod.method = method;
             } else if (("lock" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lock
-                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementAsString());
+                final ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementAsString());
                 if (lock != null) {
                     concurrentMethod.lock = lock;
                 }
@@ -122,12 +122,12 @@ public class ConcurrentMethod$JAXB
         return concurrentMethod;
     }
 
-    public final ConcurrentMethod read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final ConcurrentMethod read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final ConcurrentMethod concurrentMethod, RuntimeContext context)
         throws Exception {
         if (concurrentMethod == null) {
             writer.writeXsiNil();
@@ -138,7 +138,7 @@ public class ConcurrentMethod$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ConcurrentMethod.class != concurrentMethod.getClass()) {
             context.unexpectedSubclass(writer, concurrentMethod, ConcurrentMethod.class);
             return;
@@ -153,14 +153,14 @@ public class ConcurrentMethod$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(concurrentMethod, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: method
-        NamedMethod method = concurrentMethod.method;
+        final NamedMethod method = concurrentMethod.method;
         if (method != null) {
             writer.writeStartElement(prefix, "method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, method, context);
@@ -178,7 +178,7 @@ public class ConcurrentMethod$JAXB
         }
 
         // ELEMENT: accessTimeout
-        Timeout accessTimeout = concurrentMethod.accessTimeout;
+        final Timeout accessTimeout = concurrentMethod.accessTimeout;
         if (accessTimeout != null) {
             writer.writeStartElement(prefix, "access-timeout", "http://java.sun.com/xml/ns/javaee");
             writeTimeout(writer, accessTimeout, context);

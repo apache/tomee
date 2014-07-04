@@ -40,17 +40,17 @@ public class FacesFactoryExtension$JAXB
         super(FacesFactoryExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-factory-extensionType".intern()));
     }
 
-    public static FacesFactoryExtension readFacesFactoryExtension(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesFactoryExtension readFacesFactoryExtension(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesFactoryExtension(final XoXMLStreamWriter writer, final FacesFactoryExtension facesFactoryExtension, RuntimeContext context)
+    public static void writeFacesFactoryExtension(final XoXMLStreamWriter writer, final FacesFactoryExtension facesFactoryExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFactoryExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesFactoryExtension facesFactoryExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesFactoryExtension facesFactoryExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFactoryExtension, context);
     }
@@ -67,13 +67,13 @@ public class FacesFactoryExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesFactoryExtension facesFactoryExtension = new FacesFactoryExtension();
+        final FacesFactoryExtension facesFactoryExtension = new FacesFactoryExtension();
         context.beforeUnmarshal(facesFactoryExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-factory-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesFactoryExtension.class);
@@ -81,10 +81,10 @@ public class FacesFactoryExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesFactoryExtension);
                 facesFactoryExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesFactoryExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesFactoryExtension.any;
@@ -119,7 +119,7 @@ public class FacesFactoryExtension$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesFactoryExtension facesFactoryExtension, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesFactoryExtension facesFactoryExtension, RuntimeContext context)
         throws Exception {
         if (facesFactoryExtension == null) {
             writer.writeXsiNil();
@@ -139,19 +139,19 @@ public class FacesFactoryExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesFactoryExtension.id;
+        final String idRaw = facesFactoryExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesFactoryExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesFactoryExtension.any;
+        final List<Object> any = facesFactoryExtension.any;
         if (any != null) {
             for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesFactoryExtension, "any", anyItem);

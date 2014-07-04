@@ -38,17 +38,17 @@ public class FacesNullValue$JAXB
         super(FacesNullValue.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-null-valueType".intern()));
     }
 
-    public static FacesNullValue readFacesNullValue(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesNullValue readFacesNullValue(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNullValue(final XoXMLStreamWriter writer, FacesNullValue facesNullValue, RuntimeContext context)
+    public static void writeFacesNullValue(final XoXMLStreamWriter writer, final FacesNullValue facesNullValue, final RuntimeContext context)
         throws Exception {
         _write(writer, facesNullValue, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesNullValue facesNullValue, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesNullValue facesNullValue, final RuntimeContext context)
         throws Exception {
         _write(writer, facesNullValue, context);
     }
@@ -65,7 +65,7 @@ public class FacesNullValue$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNullValue facesNullValue = new FacesNullValue();
+        final FacesNullValue facesNullValue = new FacesNullValue();
         context.beforeUnmarshal(facesNullValue, LifecycleCallback.NONE);
 
 
@@ -81,7 +81,7 @@ public class FacesNullValue$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNullValue);
                 facesNullValue.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,7 +90,7 @@ public class FacesNullValue$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             context.unexpectedElement(elementReader);
         }
 
@@ -99,7 +99,7 @@ public class FacesNullValue$JAXB
         return facesNullValue;
     }
 
-    public final FacesNullValue read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesNullValue read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -124,12 +124,12 @@ public class FacesNullValue$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesNullValue.id;
+        final String idRaw = facesNullValue.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesNullValue, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

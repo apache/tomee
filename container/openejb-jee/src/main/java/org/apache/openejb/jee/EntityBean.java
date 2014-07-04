@@ -188,7 +188,7 @@ public class EntityBean implements RemoteBean {
     }
 
 
-    public EntityBean(final String ejbName, final String ejbClass, PersistenceType persistenceType) {
+    public EntityBean(final String ejbName, final String ejbClass, final PersistenceType persistenceType) {
         this();
         this.ejbName = ejbName;
         this.ejbClass = ejbClass;

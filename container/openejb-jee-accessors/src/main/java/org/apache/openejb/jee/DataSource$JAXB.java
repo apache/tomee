@@ -47,17 +47,17 @@ public class DataSource$JAXB
         super(DataSource.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "data-sourceType".intern()), Text$JAXB.class, Property$JAXB.class, IsolationLevel$JAXB.class);
     }
 
-    public static DataSource readDataSource(final XoXMLStreamReader reader, RuntimeContext context)
+    public static DataSource readDataSource(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeDataSource(final XoXMLStreamWriter writer, final DataSource dataSource, RuntimeContext context)
+    public static void writeDataSource(final XoXMLStreamWriter writer, final DataSource dataSource, final RuntimeContext context)
         throws Exception {
         _write(writer, dataSource, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final DataSource dataSource, final RuntimeContext context)
         throws Exception {
         _write(writer, dataSource, context);
     }
@@ -81,7 +81,7 @@ public class DataSource$JAXB
         List<Property> property = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("data-sourceType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, DataSource.class);
@@ -89,7 +89,7 @@ public class DataSource$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -101,7 +101,7 @@ public class DataSource$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
@@ -111,12 +111,12 @@ public class DataSource$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                String nameRaw = elementReader.getElementAsString();
+                final String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -124,12 +124,12 @@ public class DataSource$JAXB
                 dataSource.name = name;
             } else if (("class-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: className
-                String classNameRaw = elementReader.getElementAsString();
+                final String classNameRaw = elementReader.getElementAsString();
 
-                String className;
+                final String className;
                 try {
                     className = Adapters.collapsedStringAdapterAdapter.unmarshal(classNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -137,12 +137,12 @@ public class DataSource$JAXB
                 dataSource.className = className;
             } else if (("server-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serverName
-                String serverNameRaw = elementReader.getElementAsString();
+                final String serverNameRaw = elementReader.getElementAsString();
 
-                String serverName;
+                final String serverName;
                 try {
                     serverName = Adapters.collapsedStringAdapterAdapter.unmarshal(serverNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -150,16 +150,16 @@ public class DataSource$JAXB
                 dataSource.serverName = serverName;
             } else if (("port-number" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portNumber
-                Integer portNumber = Integer.valueOf(elementReader.getElementAsString());
+                final Integer portNumber = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.portNumber = portNumber;
             } else if (("database-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: databaseName
                 final String databaseNameRaw = elementReader.getElementAsString();
 
-                String databaseName;
+                final String databaseName;
                 try {
                     databaseName = Adapters.collapsedStringAdapterAdapter.unmarshal(databaseNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -167,12 +167,12 @@ public class DataSource$JAXB
                 dataSource.databaseName = databaseName;
             } else if (("url" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: url
-                String urlRaw = elementReader.getElementAsString();
+                final String urlRaw = elementReader.getElementAsString();
 
-                String url;
+                final String url;
                 try {
                     url = Adapters.collapsedStringAdapterAdapter.unmarshal(urlRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -180,12 +180,12 @@ public class DataSource$JAXB
                 dataSource.url = url;
             } else if (("user" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: user
-                String userRaw = elementReader.getElementAsString();
+                final String userRaw = elementReader.getElementAsString();
 
-                String user;
+                final String user;
                 try {
                     user = Adapters.collapsedStringAdapterAdapter.unmarshal(userRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -193,12 +193,12 @@ public class DataSource$JAXB
                 dataSource.user = user;
             } else if (("password" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: password
-                String passwordRaw = elementReader.getElementAsString();
+                final String passwordRaw = elementReader.getElementAsString();
 
-                String password;
+                final String password;
                 try {
                     password = Adapters.collapsedStringAdapterAdapter.unmarshal(passwordRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -206,7 +206,7 @@ public class DataSource$JAXB
                 dataSource.password = password;
             } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                Property propertyItem = readProperty(elementReader, context);
+                final Property propertyItem = readProperty(elementReader, context);
                 if (property == null) {
                     property = dataSource.property;
                     if (property != null) {
@@ -218,37 +218,37 @@ public class DataSource$JAXB
                 property.add(propertyItem);
             } else if (("login-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: loginTimeout
-                Integer loginTimeout = Integer.valueOf(elementReader.getElementAsString());
+                final Integer loginTimeout = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.loginTimeout = loginTimeout;
             } else if (("transactional" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactional
-                Boolean transactional = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean transactional = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 dataSource.transactional = transactional;
             } else if (("isolation-level" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: isolationLevel
-                IsolationLevel isolationLevel = parseIsolationLevel(elementReader, context, elementReader.getElementAsString());
+                final IsolationLevel isolationLevel = parseIsolationLevel(elementReader, context, elementReader.getElementAsString());
                 if (isolationLevel != null) {
                     dataSource.isolationLevel = isolationLevel;
                 }
             } else if (("initial-pool-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initialPoolSize
-                Integer initialPoolSize = Integer.valueOf(elementReader.getElementAsString());
+                final Integer initialPoolSize = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.initialPoolSize = initialPoolSize;
             } else if (("max-pool-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxPoolSize
-                Integer maxPoolSize = Integer.valueOf(elementReader.getElementAsString());
+                final Integer maxPoolSize = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.maxPoolSize = maxPoolSize;
             } else if (("min-pool-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: minPoolSize
-                Integer minPoolSize = Integer.valueOf(elementReader.getElementAsString());
+                final Integer minPoolSize = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.minPoolSize = minPoolSize;
             } else if (("max-idle-time" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxIdleTime
-                Integer maxIdleTime = Integer.valueOf(elementReader.getElementAsString());
+                final Integer maxIdleTime = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.maxIdleTime = maxIdleTime;
             } else if (("max-statements" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxStatements
-                Integer maxStatements = Integer.valueOf(elementReader.getElementAsString());
+                final Integer maxStatements = Integer.valueOf(elementReader.getElementAsString());
                 dataSource.maxStatements = maxStatements;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "class-name"), new QName("http://java.sun.com/xml/ns/javaee", "server-name"), new QName("http://java.sun.com/xml/ns/javaee", "port-number"), new QName("http://java.sun.com/xml/ns/javaee", "database-name"), new QName("http://java.sun.com/xml/ns/javaee", "url"), new QName("http://java.sun.com/xml/ns/javaee", "user"), new QName("http://java.sun.com/xml/ns/javaee", "password"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "login-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "transactional"), new QName("http://java.sun.com/xml/ns/javaee", "isolation-level"), new QName("http://java.sun.com/xml/ns/javaee", "initial-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "min-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-idle-time"), new QName("http://java.sun.com/xml/ns/javaee", "max-statements"));
@@ -257,7 +257,7 @@ public class DataSource$JAXB
         if (descriptions != null) {
             try {
                 dataSource.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, DataSource.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -275,7 +275,7 @@ public class DataSource$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final DataSource dataSource, RuntimeContext context)
         throws Exception {
         if (dataSource == null) {
             writer.writeXsiNil();
@@ -286,7 +286,7 @@ public class DataSource$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (DataSource.class != dataSource.getClass()) {
             context.unexpectedSubclass(writer, dataSource, DataSource.class);
             return;
@@ -296,7 +296,7 @@ public class DataSource$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = dataSource.id;
+        final String idRaw = dataSource.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -311,11 +311,11 @@ public class DataSource$JAXB
         Text[] descriptions = null;
         try {
             descriptions = dataSource.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(dataSource, "descriptions", DataSource.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -325,11 +325,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: name
-        String nameRaw = dataSource.name;
+        final String nameRaw = dataSource.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (name != null) {
@@ -341,11 +341,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: className
-        String classNameRaw = dataSource.className;
+        final String classNameRaw = dataSource.className;
         String className = null;
         try {
             className = Adapters.collapsedStringAdapterAdapter.marshal(classNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "className", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (className != null) {
@@ -355,11 +355,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: serverName
-        String serverNameRaw = dataSource.serverName;
+        final String serverNameRaw = dataSource.serverName;
         String serverName = null;
         try {
             serverName = Adapters.collapsedStringAdapterAdapter.marshal(serverNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "serverName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (serverName != null) {
@@ -369,7 +369,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: portNumber
-        Integer portNumber = dataSource.portNumber;
+        final Integer portNumber = dataSource.portNumber;
         if (portNumber != null) {
             writer.writeStartElement(prefix, "port-number", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(portNumber));
@@ -377,11 +377,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: databaseName
-        String databaseNameRaw = dataSource.databaseName;
+        final String databaseNameRaw = dataSource.databaseName;
         String databaseName = null;
         try {
             databaseName = Adapters.collapsedStringAdapterAdapter.marshal(databaseNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "databaseName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (databaseName != null) {
@@ -391,11 +391,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: url
-        String urlRaw = dataSource.url;
+        final String urlRaw = dataSource.url;
         String url = null;
         try {
             url = Adapters.collapsedStringAdapterAdapter.marshal(urlRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "url", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (url != null) {
@@ -405,11 +405,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: user
-        String userRaw = dataSource.user;
+        final String userRaw = dataSource.user;
         String user = null;
         try {
             user = Adapters.collapsedStringAdapterAdapter.marshal(userRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "user", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (user != null) {
@@ -419,11 +419,11 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: password
-        String passwordRaw = dataSource.password;
+        final String passwordRaw = dataSource.password;
         String password = null;
         try {
             password = Adapters.collapsedStringAdapterAdapter.marshal(passwordRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(dataSource, "password", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (password != null) {
@@ -433,9 +433,9 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: property
-        List<Property> property = dataSource.property;
+        final List<Property> property = dataSource.property;
         if (property != null) {
-            for (Property propertyItem : property) {
+            for (final Property propertyItem : property) {
                 writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
                 if (propertyItem != null) {
                     writeProperty(writer, propertyItem, context);
@@ -447,7 +447,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: loginTimeout
-        Integer loginTimeout = dataSource.loginTimeout;
+        final Integer loginTimeout = dataSource.loginTimeout;
         if (loginTimeout != null) {
             writer.writeStartElement(prefix, "login-timeout", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(loginTimeout));
@@ -455,7 +455,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: transactional
-        Boolean transactional = dataSource.transactional;
+        final Boolean transactional = dataSource.transactional;
         if (transactional != null) {
             writer.writeStartElement(prefix, "transactional", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(transactional));
@@ -463,7 +463,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: isolationLevel
-        IsolationLevel isolationLevel = dataSource.isolationLevel;
+        final IsolationLevel isolationLevel = dataSource.isolationLevel;
         if (isolationLevel != null) {
             writer.writeStartElement(prefix, "isolation-level", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringIsolationLevel(dataSource, null, context, isolationLevel));
@@ -471,7 +471,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: initialPoolSize
-        Integer initialPoolSize = dataSource.initialPoolSize;
+        final Integer initialPoolSize = dataSource.initialPoolSize;
         if (initialPoolSize != null) {
             writer.writeStartElement(prefix, "initial-pool-size", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(initialPoolSize));
@@ -479,7 +479,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: maxPoolSize
-        Integer maxPoolSize = dataSource.maxPoolSize;
+        final Integer maxPoolSize = dataSource.maxPoolSize;
         if (maxPoolSize != null) {
             writer.writeStartElement(prefix, "max-pool-size", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxPoolSize));
@@ -487,7 +487,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: minPoolSize
-        Integer minPoolSize = dataSource.minPoolSize;
+        final Integer minPoolSize = dataSource.minPoolSize;
         if (minPoolSize != null) {
             writer.writeStartElement(prefix, "min-pool-size", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(minPoolSize));
@@ -495,7 +495,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: maxIdleTime
-        Integer maxIdleTime = dataSource.maxIdleTime;
+        final Integer maxIdleTime = dataSource.maxIdleTime;
         if (maxIdleTime != null) {
             writer.writeStartElement(prefix, "max-idle-time", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxIdleTime));
@@ -503,7 +503,7 @@ public class DataSource$JAXB
         }
 
         // ELEMENT: maxStatements
-        Integer maxStatements = dataSource.maxStatements;
+        final Integer maxStatements = dataSource.maxStatements;
         if (maxStatements != null) {
             writer.writeStartElement(prefix, "max-statements", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxStatements));

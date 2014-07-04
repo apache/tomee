@@ -35,17 +35,17 @@ public class CheckInjectionTargetsTest {
         final EjbJar ejbJar = new EjbJar();
         final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));
         // Valid
-        EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
+        final EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
         envEntry.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), CheeseEjb.class.getName() + "/count"));
         bean.getEnvEntry().add(envEntry);
 
         // Invalid - can't specify setColor, just color as a target and its setter will be calculated
-        EnvEntry envEntry2 = new EnvEntry("color", String.class.getName(), "yellow");
+        final EnvEntry envEntry2 = new EnvEntry("color", String.class.getName(), "yellow");
         envEntry2.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), CheeseEjb.class.getName() + "/setColor"));
         bean.getEnvEntry().add(envEntry2);
 
         // Invalid - see the comment above
-        EnvEntry envEntry3 = new EnvEntry("age", Integer.class.getName(), "5");
+        final EnvEntry envEntry3 = new EnvEntry("age", Integer.class.getName(), "5");
         envEntry3.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), "setAge"));
         bean.getEnvEntry().add(envEntry3);
 

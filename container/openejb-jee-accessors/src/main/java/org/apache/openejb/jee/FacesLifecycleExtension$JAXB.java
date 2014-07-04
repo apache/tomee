@@ -40,17 +40,17 @@ public class FacesLifecycleExtension$JAXB
         super(FacesLifecycleExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-lifecycle-extensionType".intern()));
     }
 
-    public static FacesLifecycleExtension readFacesLifecycleExtension(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesLifecycleExtension readFacesLifecycleExtension(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesLifecycleExtension(final XoXMLStreamWriter writer, final FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
+    public static void writeFacesLifecycleExtension(final XoXMLStreamWriter writer, final FacesLifecycleExtension facesLifecycleExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLifecycleExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesLifecycleExtension facesLifecycleExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLifecycleExtension, context);
     }
@@ -67,13 +67,13 @@ public class FacesLifecycleExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesLifecycleExtension facesLifecycleExtension = new FacesLifecycleExtension();
+        final FacesLifecycleExtension facesLifecycleExtension = new FacesLifecycleExtension();
         context.beforeUnmarshal(facesLifecycleExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-lifecycle-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesLifecycleExtension.class);
@@ -81,10 +81,10 @@ public class FacesLifecycleExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesLifecycleExtension);
                 facesLifecycleExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesLifecycleExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesLifecycleExtension.any;
@@ -114,7 +114,7 @@ public class FacesLifecycleExtension$JAXB
         return facesLifecycleExtension;
     }
 
-    public final FacesLifecycleExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesLifecycleExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -144,7 +144,7 @@ public class FacesLifecycleExtension$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesLifecycleExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -153,7 +153,7 @@ public class FacesLifecycleExtension$JAXB
         // ELEMENT_REF: any
         final List<Object> any = facesLifecycleExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesLifecycleExtension, "any", anyItem);
             }
         }

@@ -56,7 +56,7 @@ public enum MessageDestinationUsageEnum {
     }
 
     public static MessageDestinationUsageEnum fromValue(final String v) {
-        for (MessageDestinationUsageEnum c : MessageDestinationUsageEnum
+        for (final MessageDestinationUsageEnum c : MessageDestinationUsageEnum
             .values()) {
             if (c.value.equals(v)) {
                 return c;

@@ -48,7 +48,7 @@ public class FormLoginConfig$JAXB
         _write(writer, formLoginConfig, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FormLoginConfig formLoginConfig, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FormLoginConfig formLoginConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, formLoginConfig, context);
     }
@@ -70,7 +70,7 @@ public class FormLoginConfig$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("form-login-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FormLoginConfig.class);
@@ -81,7 +81,7 @@ public class FormLoginConfig$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, formLoginConfig);
                 formLoginConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class FormLoginConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("form-login-page" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: formLoginPage
-                String formLoginPageRaw = elementReader.getElementAsString();
+                final String formLoginPageRaw = elementReader.getElementAsString();
 
-                String formLoginPage;
+                final String formLoginPage;
                 try {
                     formLoginPage = Adapters.collapsedStringAdapterAdapter.unmarshal(formLoginPageRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class FormLoginConfig$JAXB
                 formLoginConfig.formLoginPage = formLoginPage;
             } else if (("form-error-page" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: formErrorPage
-                String formErrorPageRaw = elementReader.getElementAsString();
+                final String formErrorPageRaw = elementReader.getElementAsString();
 
-                String formErrorPage;
+                final String formErrorPage;
                 try {
                     formErrorPage = Adapters.collapsedStringAdapterAdapter.unmarshal(formErrorPageRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,12 +127,12 @@ public class FormLoginConfig$JAXB
         return formLoginConfig;
     }
 
-    public final FormLoginConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FormLoginConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FormLoginConfig formLoginConfig, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FormLoginConfig formLoginConfig, RuntimeContext context)
         throws Exception {
         if (formLoginConfig == null) {
             writer.writeXsiNil();
@@ -143,7 +143,7 @@ public class FormLoginConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FormLoginConfig.class != formLoginConfig.getClass()) {
             context.unexpectedSubclass(writer, formLoginConfig, FormLoginConfig.class);
             return;
@@ -153,23 +153,23 @@ public class FormLoginConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = formLoginConfig.id;
+        final String idRaw = formLoginConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(formLoginConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: formLoginPage
-        String formLoginPageRaw = formLoginConfig.formLoginPage;
+        final String formLoginPageRaw = formLoginConfig.formLoginPage;
         String formLoginPage = null;
         try {
             formLoginPage = Adapters.collapsedStringAdapterAdapter.marshal(formLoginPageRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(formLoginConfig, "formLoginPage", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (formLoginPage != null) {
@@ -181,11 +181,11 @@ public class FormLoginConfig$JAXB
         }
 
         // ELEMENT: formErrorPage
-        String formErrorPageRaw = formLoginConfig.formErrorPage;
+        final String formErrorPageRaw = formLoginConfig.formErrorPage;
         String formErrorPage = null;
         try {
             formErrorPage = Adapters.collapsedStringAdapterAdapter.marshal(formErrorPageRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(formLoginConfig, "formErrorPage", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (formErrorPage != null) {

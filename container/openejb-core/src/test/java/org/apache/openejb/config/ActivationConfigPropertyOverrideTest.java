@@ -52,7 +52,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
     public void testGetOverridesShouldTrimAwayPrefixesCorrectly() {
         final Properties properties = new Properties();
         properties.put("ENTERPRISEBEAN.mdb.activation.destinationType", "something");
-        Properties properties2 = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
+        final Properties properties2 = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
         assertNotNull(properties2.getProperty("destinationType"));
     }
 
@@ -66,7 +66,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         // set overrides for destinationType and check
         System.setProperty("ENTERPRISEBEAN.mdb.activation.destinationType", "testString");
         final MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "stringToBeOverriden").build();
-        ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
+        final ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
         final AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
         activationPropertyOverride.deploy(appModule);
 
@@ -118,7 +118,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
         final MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "shouldNotBeOverriddenString").build();
         final AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
-        ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
+        final ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
         activationPropertyOverride.deploy(appModule);
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "shouldNotBeOverriddenString"));

@@ -77,7 +77,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
 
         for (int i = 0; i < actual.size(); i++) {
             final MethodTransactionInfo a = actual.get(i);
-            MethodTransactionInfo e = expected.get(i);
+            final MethodTransactionInfo e = expected.get(i);
             assertSame(e, a);
         }
     }

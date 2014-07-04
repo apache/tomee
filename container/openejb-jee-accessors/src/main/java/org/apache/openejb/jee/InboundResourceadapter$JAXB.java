@@ -46,12 +46,12 @@ public class InboundResourceadapter$JAXB
         return _read(reader, context);
     }
 
-    public static void writeInboundResourceadapter(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+    public static void writeInboundResourceadapter(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, final RuntimeContext context)
         throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, final RuntimeContext context)
         throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
@@ -81,10 +81,10 @@ public class InboundResourceadapter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, inboundResourceadapter);
                 inboundResourceadapter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,10 +93,10 @@ public class InboundResourceadapter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("messageadapter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageAdapter
-                MessageAdapter messageAdapter = readMessageAdapter(elementReader, context);
+                final MessageAdapter messageAdapter = readMessageAdapter(elementReader, context);
                 inboundResourceadapter.messageAdapter = messageAdapter;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "messageadapter"));
@@ -113,7 +113,7 @@ public class InboundResourceadapter$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
         throws Exception {
         if (inboundResourceadapter == null) {
             writer.writeXsiNil();
@@ -133,19 +133,19 @@ public class InboundResourceadapter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = inboundResourceadapter.id;
+        final String idRaw = inboundResourceadapter.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(inboundResourceadapter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: messageAdapter
-        MessageAdapter messageAdapter = inboundResourceadapter.messageAdapter;
+        final MessageAdapter messageAdapter = inboundResourceadapter.messageAdapter;
         if (messageAdapter != null) {
             writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "messageadapter");
             writeMessageAdapter(writer, messageAdapter, context);

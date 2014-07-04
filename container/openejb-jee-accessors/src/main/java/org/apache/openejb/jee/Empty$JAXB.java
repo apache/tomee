@@ -43,12 +43,12 @@ public class Empty$JAXB
         return _read(reader, context);
     }
 
-    public static void writeEmpty(final XoXMLStreamWriter writer, final Empty empty, RuntimeContext context)
+    public static void writeEmpty(final XoXMLStreamWriter writer, final Empty empty, final RuntimeContext context)
         throws Exception {
         _write(writer, empty, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final Empty empty, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final Empty empty, final RuntimeContext context)
         throws Exception {
         _write(writer, empty, context);
     }
@@ -70,7 +70,7 @@ public class Empty$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("emptyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Empty.class);
@@ -78,10 +78,10 @@ public class Empty$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, empty);
                 empty.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,7 +90,7 @@ public class Empty$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             context.unexpectedElement(elementReader);
         }
 
@@ -99,7 +99,7 @@ public class Empty$JAXB
         return empty;
     }
 
-    public final Empty read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final Empty read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -124,12 +124,12 @@ public class Empty$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = empty.id;
+        final String idRaw = empty.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(empty, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

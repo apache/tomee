@@ -43,7 +43,7 @@ public class ApplicationClientXml {
         }
     }
 
-    public static void marshal(final ApplicationClient applicationClient, OutputStream outputStream) throws Exception {
+    public static void marshal(final ApplicationClient applicationClient, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new ApplicationClient$JAXB(), applicationClient, new StreamResult(outputStream));
     }
 }

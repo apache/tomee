@@ -39,7 +39,7 @@ public class JndiEncInfoBuilderInsertTest {
 
     private String[] getNames(final List<InjectableInfo> infoList) {
         final List<String> names = new ArrayList<String>();
-        for (InjectableInfo info : infoList) {
+        for (final InjectableInfo info : infoList) {
             names.add(info.referenceName);
         }
         return names.toArray(new String[names.size()]);
@@ -52,7 +52,7 @@ public class JndiEncInfoBuilderInsertTest {
         return arr;
     }
 
-    private void assertIsEqual(final String[] globalRefs, final String[] appRefs, String[] moduleRefs, String[] compRefs) {
+    private void assertIsEqual(final String[] globalRefs, final String[] appRefs, final String[] moduleRefs, final String[] compRefs) {
         Assert.assertArrayEquals(getSafeArray(globalRefs), getNames(this.global));
         Assert.assertArrayEquals(getSafeArray(appRefs), getNames(this.app));
         Assert.assertArrayEquals(getSafeArray(moduleRefs), getNames(this.module));

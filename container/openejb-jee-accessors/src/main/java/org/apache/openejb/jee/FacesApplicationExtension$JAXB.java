@@ -45,12 +45,12 @@ public class FacesApplicationExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesApplicationExtension(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+    public static void writeFacesApplicationExtension(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesApplicationExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesApplicationExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesApplicationExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-application-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesApplicationExtension.class);
@@ -81,10 +81,10 @@ public class FacesApplicationExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesApplicationExtension);
                 facesApplicationExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesApplicationExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesApplicationExtension.any;
@@ -114,12 +114,12 @@ public class FacesApplicationExtension$JAXB
         return facesApplicationExtension;
     }
 
-    public final FacesApplicationExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesApplicationExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
         throws Exception {
         if (facesApplicationExtension == null) {
             writer.writeXsiNil();
@@ -139,21 +139,21 @@ public class FacesApplicationExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesApplicationExtension.id;
+        final String idRaw = facesApplicationExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesApplicationExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesApplicationExtension.any;
+        final List<Object> any = facesApplicationExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesApplicationExtension, "any", anyItem);
             }
         }

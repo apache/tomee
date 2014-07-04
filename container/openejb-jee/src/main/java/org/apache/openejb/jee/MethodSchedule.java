@@ -58,18 +58,18 @@ public class MethodSchedule {
     public MethodSchedule() {
     }
 
-    public MethodSchedule(final String className, String ejbName, String methodName, TimerSchedule... schedules) {
+    public MethodSchedule(final String className, final String ejbName, final String methodName, final TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(className, methodName), schedules);
     }
 
-    public MethodSchedule(final String ejbName, java.lang.reflect.Method method, TimerSchedule... schedules) {
+    public MethodSchedule(final String ejbName, final java.lang.reflect.Method method, final TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(method), schedules);
     }
 
-    public MethodSchedule(final String ejbName, NamedMethod method, final TimerSchedule... schedules) {
+    public MethodSchedule(final String ejbName, final NamedMethod method, final TimerSchedule... schedules) {
         this.method = method;
         this.ejbName = ejbName;
-        for (TimerSchedule schedule : schedules) {
+        for (final TimerSchedule schedule : schedules) {
             getSchedule().add(schedule);
         }
     }

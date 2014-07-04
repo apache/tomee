@@ -36,7 +36,7 @@ public class EjbLink {
     public EjbLink() {
     }
 
-    public EjbLink(final String ejbRefName, String deployentId) {
+    public EjbLink(final String ejbRefName, final String deployentId) {
         this.ejbRefName = ejbRefName;
         this.deployentId = deployentId;
     }

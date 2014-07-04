@@ -46,11 +46,11 @@ public class InjectionTest extends TestCase {
     public void testInjections() throws Exception {
         final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("WidgetBeanLocal");
+        final Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
-        Widget widget = (Widget) object;
+        final Widget widget = (Widget) object;
 
         // injected via annotations
         assertEquals("2", widget.getString());
@@ -95,7 +95,7 @@ public class InjectionTest extends TestCase {
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         bean.getEnvEntry().add(new EnvEntry(name("myString"), "java.lang.String", "2"));
@@ -114,7 +114,7 @@ public class InjectionTest extends TestCase {
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedBoolean")));
         bean.getEnvEntry().add(entry);
 
-        ResourceEnvRef resourceEnvRef = new ResourceEnvRef("injectedContext", (String) null);
+        final ResourceEnvRef resourceEnvRef = new ResourceEnvRef("injectedContext", (String) null);
         resourceEnvRef.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedContext")));
         bean.getResourceEnvRef().add(resourceEnvRef);
 

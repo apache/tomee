@@ -43,7 +43,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -61,7 +61,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
         final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
         final Map<String, ResourceReferenceInfo> refs = new HashMap<String, ResourceReferenceInfo>();
-        for (ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
+        for (final ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
             refs.put(ref.referenceName.replaceAll(".*/", ""), ref);
         }
 
@@ -85,7 +85,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -95,15 +95,15 @@ public class AutoConfigResourceRefsTest extends TestCase {
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("YeLLowDataSource", "DataSource", null), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpLEDataSource", "DataSource", null), ResourceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
 
         final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
-        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+        final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
         final Map<String, ResourceReferenceInfo> refs = new HashMap<String, ResourceReferenceInfo>();
-        for (ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
+        for (final ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
             refs.put(ref.referenceName.replaceAll(".*/", ""), ref);
         }
 

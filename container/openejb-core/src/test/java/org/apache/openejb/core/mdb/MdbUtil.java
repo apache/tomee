@@ -62,7 +62,7 @@ public class MdbUtil {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
             }
         }
     }

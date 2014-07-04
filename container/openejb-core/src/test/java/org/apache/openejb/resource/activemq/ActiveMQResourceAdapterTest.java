@@ -28,7 +28,7 @@ public class ActiveMQResourceAdapterTest extends TestCase {
         final ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
         resourceAdapter.setServerUrl("vm://localhost?waitForStart=30000&async=false");
 
-        String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");
+        final String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");
         resourceAdapter.setBrokerXmlConfig(brokerAddress);
         resourceAdapter.setStartupTimeout(new Duration(10, TimeUnit.SECONDS));
 

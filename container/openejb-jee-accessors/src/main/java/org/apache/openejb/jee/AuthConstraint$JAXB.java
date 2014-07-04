@@ -48,12 +48,12 @@ public class AuthConstraint$JAXB
         return _read(reader, context);
     }
 
-    public static void writeAuthConstraint(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, RuntimeContext context)
+    public static void writeAuthConstraint(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, final RuntimeContext context)
         throws Exception {
         _write(writer, authConstraint, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, final RuntimeContext context)
         throws Exception {
         _write(writer, authConstraint, context);
     }
@@ -70,14 +70,14 @@ public class AuthConstraint$JAXB
             context = new RuntimeContext();
         }
 
-        AuthConstraint authConstraint = new AuthConstraint();
+        final AuthConstraint authConstraint = new AuthConstraint();
         context.beforeUnmarshal(authConstraint, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<String> roleName = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("auth-constraintType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AuthConstraint.class);
@@ -85,10 +85,10 @@ public class AuthConstraint$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, authConstraint);
                 authConstraint.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,7 +97,7 @@ public class AuthConstraint$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
@@ -107,12 +107,12 @@ public class AuthConstraint$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: roleName
-                String roleNameItemRaw = elementReader.getElementAsString();
+                final String roleNameItemRaw = elementReader.getElementAsString();
 
-                String roleNameItem;
+                final String roleNameItem;
                 try {
                     roleNameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(roleNameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -133,7 +133,7 @@ public class AuthConstraint$JAXB
         if (descriptions != null) {
             try {
                 authConstraint.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, AuthConstraint.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -151,7 +151,7 @@ public class AuthConstraint$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, AuthConstraint authConstraint, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, RuntimeContext context)
         throws Exception {
         if (authConstraint == null) {
             writer.writeXsiNil();
@@ -162,7 +162,7 @@ public class AuthConstraint$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (AuthConstraint.class != authConstraint.getClass()) {
             context.unexpectedSubclass(writer, authConstraint, AuthConstraint.class);
             return;
@@ -172,12 +172,12 @@ public class AuthConstraint$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = authConstraint.id;
+        final String idRaw = authConstraint.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(authConstraint, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -187,11 +187,11 @@ public class AuthConstraint$JAXB
         Text[] descriptions = null;
         try {
             descriptions = authConstraint.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(authConstraint, "descriptions", AuthConstraint.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

@@ -37,17 +37,17 @@ public class LifecycleCallback$JAXB
         super(org.apache.openejb.jee.LifecycleCallback.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "lifecycle-callbackType".intern()));
     }
 
-    public static org.apache.openejb.jee.LifecycleCallback readLifecycleCallback(final XoXMLStreamReader reader, RuntimeContext context)
+    public static org.apache.openejb.jee.LifecycleCallback readLifecycleCallback(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLifecycleCallback(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
+    public static void writeLifecycleCallback(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, final RuntimeContext context)
         throws Exception {
         _write(writer, lifecycleCallback, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, final RuntimeContext context)
         throws Exception {
         _write(writer, lifecycleCallback, context);
     }
@@ -64,7 +64,7 @@ public class LifecycleCallback$JAXB
             context = new RuntimeContext();
         }
 
-        org.apache.openejb.jee.LifecycleCallback lifecycleCallback = new org.apache.openejb.jee.LifecycleCallback();
+        final org.apache.openejb.jee.LifecycleCallback lifecycleCallback = new org.apache.openejb.jee.LifecycleCallback();
         context.beforeUnmarshal(lifecycleCallback, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
@@ -77,22 +77,22 @@ public class LifecycleCallback$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("lifecycle-callback-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lifecycleCallbackClass
-                String lifecycleCallbackClassRaw = elementReader.getElementAsString();
+                final String lifecycleCallbackClassRaw = elementReader.getElementAsString();
 
-                String lifecycleCallbackClass;
+                final String lifecycleCallbackClass;
                 try {
                     lifecycleCallbackClass = Adapters.collapsedStringAdapterAdapter.unmarshal(lifecycleCallbackClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -100,12 +100,12 @@ public class LifecycleCallback$JAXB
                 lifecycleCallback.lifecycleCallbackClass = lifecycleCallbackClass;
             } else if (("lifecycle-callback-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lifecycleCallbackMethod
-                String lifecycleCallbackMethodRaw = elementReader.getElementAsString();
+                final String lifecycleCallbackMethodRaw = elementReader.getElementAsString();
 
                 final String lifecycleCallbackMethod;
                 try {
                     lifecycleCallbackMethod = Adapters.collapsedStringAdapterAdapter.unmarshal(lifecycleCallbackMethodRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -121,7 +121,7 @@ public class LifecycleCallback$JAXB
         return lifecycleCallback;
     }
 
-    public final org.apache.openejb.jee.LifecycleCallback read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final org.apache.openejb.jee.LifecycleCallback read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -147,11 +147,11 @@ public class LifecycleCallback$JAXB
 
 
         // ELEMENT: lifecycleCallbackClass
-        String lifecycleCallbackClassRaw = lifecycleCallback.lifecycleCallbackClass;
+        final String lifecycleCallbackClassRaw = lifecycleCallback.lifecycleCallbackClass;
         String lifecycleCallbackClass = null;
         try {
             lifecycleCallbackClass = Adapters.collapsedStringAdapterAdapter.marshal(lifecycleCallbackClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(lifecycleCallback, "lifecycleCallbackClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lifecycleCallbackClass != null) {
@@ -165,7 +165,7 @@ public class LifecycleCallback$JAXB
         String lifecycleCallbackMethod = null;
         try {
             lifecycleCallbackMethod = Adapters.collapsedStringAdapterAdapter.marshal(lifecycleCallbackMethodRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(lifecycleCallback, "lifecycleCallbackMethod", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lifecycleCallbackMethod != null) {

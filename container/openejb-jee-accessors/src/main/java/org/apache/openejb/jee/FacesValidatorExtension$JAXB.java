@@ -45,12 +45,12 @@ public class FacesValidatorExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesValidatorExtension(final XoXMLStreamWriter writer, FacesValidatorExtension facesValidatorExtension, final RuntimeContext context)
+    public static void writeFacesValidatorExtension(final XoXMLStreamWriter writer, final FacesValidatorExtension facesValidatorExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesValidatorExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesValidatorExtension facesValidatorExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesValidatorExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesValidatorExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-validator-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesValidatorExtension.class);
@@ -81,10 +81,10 @@ public class FacesValidatorExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesValidatorExtension);
                 facesValidatorExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesValidatorExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesValidatorExtension.any;
@@ -114,7 +114,7 @@ public class FacesValidatorExtension$JAXB
         return facesValidatorExtension;
     }
 
-    public final FacesValidatorExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesValidatorExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -139,21 +139,21 @@ public class FacesValidatorExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesValidatorExtension.id;
+        final String idRaw = facesValidatorExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesValidatorExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesValidatorExtension.any;
+        final List<Object> any = facesValidatorExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesValidatorExtension, "any", anyItem);
             }
         }

@@ -43,7 +43,7 @@ public class FacesRedirect$JAXB
         super(FacesRedirect.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-redirectType".intern()), FacesRedirectViewParam$JAXB.class);
     }
 
-    public static FacesRedirect readFacesRedirect(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesRedirect readFacesRedirect(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -53,7 +53,7 @@ public class FacesRedirect$JAXB
         _write(writer, facesRedirect, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesRedirect facesRedirect, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesRedirect facesRedirect, final RuntimeContext context)
         throws Exception {
         _write(writer, facesRedirect, context);
     }
@@ -70,13 +70,13 @@ public class FacesRedirect$JAXB
             context = new RuntimeContext();
         }
 
-        FacesRedirect facesRedirect = new FacesRedirect();
+        final FacesRedirect facesRedirect = new FacesRedirect();
         context.beforeUnmarshal(facesRedirect, LifecycleCallback.NONE);
 
         List<FacesRedirectViewParam> viewParam = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-redirectType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesRedirect.class);
@@ -87,12 +87,12 @@ public class FacesRedirect$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesRedirect);
                 facesRedirect.id = id;
             } else if (("include-view-params" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: includeViewParams
-                Boolean includeViewParams = ("1".equals(attribute.getValue()) || "true".equals(attribute.getValue()));
+                final Boolean includeViewParams = ("1".equals(attribute.getValue()) || "true".equals(attribute.getValue()));
                 facesRedirect.includeViewParams = includeViewParams;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"), new QName("", "include-view-params"));
@@ -100,10 +100,10 @@ public class FacesRedirect$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("view-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: viewParam
-                FacesRedirectViewParam viewParamItem = readFacesRedirectViewParam(elementReader, context);
+                final FacesRedirectViewParam viewParamItem = readFacesRedirectViewParam(elementReader, context);
                 if (viewParam == null) {
                     viewParam = facesRedirect.viewParam;
                     if (viewParam != null) {
@@ -131,7 +131,7 @@ public class FacesRedirect$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesRedirect facesRedirect, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesRedirect facesRedirect, RuntimeContext context)
         throws Exception {
         if (facesRedirect == null) {
             writer.writeXsiNil();
@@ -163,13 +163,13 @@ public class FacesRedirect$JAXB
         }
 
         // ATTRIBUTE: includeViewParams
-        Boolean includeViewParams = facesRedirect.includeViewParams;
+        final Boolean includeViewParams = facesRedirect.includeViewParams;
         if (includeViewParams != null) {
             writer.writeAttribute("", "", "include-view-params", Boolean.toString(includeViewParams));
         }
 
         // ELEMENT: viewParam
-        List<FacesRedirectViewParam> viewParam = facesRedirect.viewParam;
+        final List<FacesRedirectViewParam> viewParam = facesRedirect.viewParam;
         if (viewParam != null) {
             for (final FacesRedirectViewParam viewParamItem : viewParam) {
                 if (viewParamItem != null) {

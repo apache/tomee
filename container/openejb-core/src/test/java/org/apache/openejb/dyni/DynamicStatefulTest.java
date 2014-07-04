@@ -65,7 +65,7 @@ public class DynamicStatefulTest extends Assert {
         public abstract String blue(String s);
 
         @Override
-        public Object invoke(final Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, Object[] args) throws Throwable {
             return "handle:" + method.getName() + "(" + Join.join(",", args) + ")";
         }
     }

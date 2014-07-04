@@ -41,17 +41,17 @@ public class ExceptionMapping$JAXB
         super(ExceptionMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "exception-mappingType".intern()), ConstructorParameterOrder$JAXB.class);
     }
 
-    public static ExceptionMapping readExceptionMapping(final XoXMLStreamReader reader, RuntimeContext context)
+    public static ExceptionMapping readExceptionMapping(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeExceptionMapping(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, final RuntimeContext context)
+    public static void writeExceptionMapping(final XoXMLStreamWriter writer, final ExceptionMapping exceptionMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, exceptionMapping, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final ExceptionMapping exceptionMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, exceptionMapping, context);
     }
@@ -68,12 +68,12 @@ public class ExceptionMapping$JAXB
             context = new RuntimeContext();
         }
 
-        ExceptionMapping exceptionMapping = new ExceptionMapping();
+        final ExceptionMapping exceptionMapping = new ExceptionMapping();
         context.beforeUnmarshal(exceptionMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("exception-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ExceptionMapping.class);
@@ -81,7 +81,7 @@ public class ExceptionMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -93,15 +93,15 @@ public class ExceptionMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("exception-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: exceptionType
-                String exceptionTypeRaw = elementReader.getElementAsString();
+                final String exceptionTypeRaw = elementReader.getElementAsString();
 
-                String exceptionType;
+                final String exceptionType;
                 try {
                     exceptionType = Adapters.collapsedStringAdapterAdapter.unmarshal(exceptionTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,16 +109,16 @@ public class ExceptionMapping$JAXB
                 exceptionMapping.exceptionType = exceptionType;
             } else if (("wsdl-message" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlMessage
-                QName wsdlMessage = elementReader.getElementAsQName();
+                final QName wsdlMessage = elementReader.getElementAsQName();
                 exceptionMapping.wsdlMessage = wsdlMessage;
             } else if (("wsdl-message-part-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlMessagePartName
-                String wsdlMessagePartNameRaw = elementReader.getElementAsString();
+                final String wsdlMessagePartNameRaw = elementReader.getElementAsString();
 
-                String wsdlMessagePartName;
+                final String wsdlMessagePartName;
                 try {
                     wsdlMessagePartName = Adapters.collapsedStringAdapterAdapter.unmarshal(wsdlMessagePartNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -126,7 +126,7 @@ public class ExceptionMapping$JAXB
                 exceptionMapping.wsdlMessagePartName = wsdlMessagePartName;
             } else if (("constructor-parameter-order" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: constructorParameterOrder
-                ConstructorParameterOrder constructorParameterOrder = readConstructorParameterOrder(elementReader, context);
+                final ConstructorParameterOrder constructorParameterOrder = readConstructorParameterOrder(elementReader, context);
                 exceptionMapping.constructorParameterOrder = constructorParameterOrder;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "exception-type"), new QName("http://java.sun.com/xml/ns/javaee", "wsdl-message"), new QName("http://java.sun.com/xml/ns/javaee", "wsdl-message-part-name"), new QName("http://java.sun.com/xml/ns/javaee", "constructor-parameter-order"));
@@ -138,12 +138,12 @@ public class ExceptionMapping$JAXB
         return exceptionMapping;
     }
 
-    public final ExceptionMapping read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final ExceptionMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final ExceptionMapping exceptionMapping, RuntimeContext context)
         throws Exception {
         if (exceptionMapping == null) {
             writer.writeXsiNil();
@@ -154,7 +154,7 @@ public class ExceptionMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ExceptionMapping.class != exceptionMapping.getClass()) {
             context.unexpectedSubclass(writer, exceptionMapping, ExceptionMapping.class);
             return;
@@ -164,23 +164,23 @@ public class ExceptionMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = exceptionMapping.id;
+        final String idRaw = exceptionMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(exceptionMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: exceptionType
-        String exceptionTypeRaw = exceptionMapping.exceptionType;
+        final String exceptionTypeRaw = exceptionMapping.exceptionType;
         String exceptionType = null;
         try {
             exceptionType = Adapters.collapsedStringAdapterAdapter.marshal(exceptionTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(exceptionMapping, "exceptionType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (exceptionType != null) {
@@ -192,7 +192,7 @@ public class ExceptionMapping$JAXB
         }
 
         // ELEMENT: wsdlMessage
-        QName wsdlMessage = exceptionMapping.wsdlMessage;
+        final QName wsdlMessage = exceptionMapping.wsdlMessage;
         if (wsdlMessage != null) {
             writer.writeStartElement(prefix, "wsdl-message", "http://java.sun.com/xml/ns/javaee");
             writer.writeQName(wsdlMessage);
@@ -202,7 +202,7 @@ public class ExceptionMapping$JAXB
         }
 
         // ELEMENT: wsdlMessagePartName
-        String wsdlMessagePartNameRaw = exceptionMapping.wsdlMessagePartName;
+        final String wsdlMessagePartNameRaw = exceptionMapping.wsdlMessagePartName;
         String wsdlMessagePartName = null;
         try {
             wsdlMessagePartName = Adapters.collapsedStringAdapterAdapter.marshal(wsdlMessagePartNameRaw);
@@ -216,7 +216,7 @@ public class ExceptionMapping$JAXB
         }
 
         // ELEMENT: constructorParameterOrder
-        ConstructorParameterOrder constructorParameterOrder = exceptionMapping.constructorParameterOrder;
+        final ConstructorParameterOrder constructorParameterOrder = exceptionMapping.constructorParameterOrder;
         if (constructorParameterOrder != null) {
             writer.writeStartElement(prefix, "constructor-parameter-order", "http://java.sun.com/xml/ns/javaee");
             writeConstructorParameterOrder(writer, constructorParameterOrder, context);

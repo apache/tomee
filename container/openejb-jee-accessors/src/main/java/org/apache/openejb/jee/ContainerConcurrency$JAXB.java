@@ -52,12 +52,12 @@ public class ContainerConcurrency$JAXB
         return _read(reader, context);
     }
 
-    public static void writeContainerConcurrency(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public static void writeContainerConcurrency(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, final RuntimeContext context)
         throws Exception {
         _write(writer, containerConcurrency, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, final RuntimeContext context)
         throws Exception {
         _write(writer, containerConcurrency, context);
     }
@@ -74,7 +74,7 @@ public class ContainerConcurrency$JAXB
             context = new RuntimeContext();
         }
 
-        ContainerConcurrency containerConcurrency = new ContainerConcurrency();
+        final ContainerConcurrency containerConcurrency = new ContainerConcurrency();
         context.beforeUnmarshal(containerConcurrency, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,10 +89,10 @@ public class ContainerConcurrency$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, containerConcurrency);
                 containerConcurrency.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -101,7 +101,7 @@ public class ContainerConcurrency$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
@@ -111,7 +111,7 @@ public class ContainerConcurrency$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: method
-                Method methodItem = readMethod(elementReader, context);
+                final Method methodItem = readMethod(elementReader, context);
                 if (method == null) {
                     method = containerConcurrency.method;
                     if (method != null) {
@@ -123,7 +123,7 @@ public class ContainerConcurrency$JAXB
                 method.add(methodItem);
             } else if (("concurrency-attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lock
-                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementAsString());
+                final ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementAsString());
                 if (lock != null) {
                     containerConcurrency.lock = lock;
                 }
@@ -134,7 +134,7 @@ public class ContainerConcurrency$JAXB
         if (descriptions != null) {
             try {
                 containerConcurrency.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, ContainerConcurrency.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -152,7 +152,7 @@ public class ContainerConcurrency$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, RuntimeContext context)
         throws Exception {
         if (containerConcurrency == null) {
             writer.writeXsiNil();
@@ -192,7 +192,7 @@ public class ContainerConcurrency$JAXB
             context.getterError(containerConcurrency, "descriptions", ContainerConcurrency.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -204,9 +204,9 @@ public class ContainerConcurrency$JAXB
         }
 
         // ELEMENT: method
-        List<Method> method = containerConcurrency.method;
+        final List<Method> method = containerConcurrency.method;
         if (method != null) {
-            for (Method methodItem : method) {
+            for (final Method methodItem : method) {
                 if (methodItem != null) {
                     writer.writeStartElement(prefix, "method", "http://java.sun.com/xml/ns/javaee");
                     writeMethod(writer, methodItem, context);
@@ -218,7 +218,7 @@ public class ContainerConcurrency$JAXB
         }
 
         // ELEMENT: lock
-        ConcurrentLockType lock = containerConcurrency.lock;
+        final ConcurrentLockType lock = containerConcurrency.lock;
         if (lock != null) {
             writer.writeStartElement(prefix, "concurrency-attribute", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringConcurrentLockType(containerConcurrency, null, context, lock));

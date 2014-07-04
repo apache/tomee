@@ -30,12 +30,12 @@ public class Multiplicity$JAXB
         super(Multiplicity.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "multiplicity".intern()));
     }
 
-    public Multiplicity parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+    public Multiplicity parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseMultiplicity(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, RuntimeContext context, final Multiplicity multiplicity)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final Multiplicity multiplicity)
         throws Exception {
         return toStringMultiplicity(bean, parameterName, context, multiplicity);
     }
@@ -52,7 +52,7 @@ public class Multiplicity$JAXB
         }
     }
 
-    public static String toStringMultiplicity(final Object bean, String parameterName, final RuntimeContext context, final Multiplicity multiplicity)
+    public static String toStringMultiplicity(final Object bean, final String parameterName, final RuntimeContext context, final Multiplicity multiplicity)
         throws Exception {
         if (Multiplicity.ONE == multiplicity) {
             return "One";

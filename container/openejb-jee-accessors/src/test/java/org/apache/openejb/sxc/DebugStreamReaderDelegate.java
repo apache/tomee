@@ -138,7 +138,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public int getTextCharacters(final int sourceStart, char[] target, final int targetStart, final int length) throws XMLStreamException {
+    public int getTextCharacters(final int sourceStart, final char[] target, final int targetStart, final int length) throws XMLStreamException {
         return super.getTextCharacters(sourceStart, target, targetStart, length);
     }
 
@@ -278,7 +278,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public void require(final int type, String namespaceURI, final String localName) throws XMLStreamException {
+    public void require(final int type, final String namespaceURI, final String localName) throws XMLStreamException {
         super.require(type, namespaceURI, localName);
     }
 

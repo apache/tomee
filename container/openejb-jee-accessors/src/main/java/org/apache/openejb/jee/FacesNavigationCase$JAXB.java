@@ -58,7 +58,7 @@ public class FacesNavigationCase$JAXB
         _write(writer, facesNavigationCase, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesNavigationCase facesNavigationCase, final RuntimeContext context)
         throws Exception {
         _write(writer, facesNavigationCase, context);
     }
@@ -94,7 +94,7 @@ public class FacesNavigationCase$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNavigationCase);
                 facesNavigationCase.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -103,24 +103,24 @@ public class FacesNavigationCase$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesNavigationCase.icon;
                     if (icon != null) {
@@ -132,16 +132,16 @@ public class FacesNavigationCase$JAXB
                 icon.add(iconItem);
             } else if (("from-action" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fromAction
-                FacesFromAction fromAction = readFacesFromAction(elementReader, context);
+                final FacesFromAction fromAction = readFacesFromAction(elementReader, context);
                 facesNavigationCase.fromAction = fromAction;
             } else if (("from-outcome" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fromOutcome
-                String fromOutcomeRaw = elementReader.getElementAsString();
+                final String fromOutcomeRaw = elementReader.getElementAsString();
 
-                String fromOutcome;
+                final String fromOutcome;
                 try {
                     fromOutcome = Adapters.collapsedStringAdapterAdapter.unmarshal(fromOutcomeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -149,12 +149,12 @@ public class FacesNavigationCase$JAXB
                 facesNavigationCase.fromOutcome = fromOutcome;
             } else if (("if" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: _if
-                String _ifRaw = elementReader.getElementAsString();
+                final String _ifRaw = elementReader.getElementAsString();
 
-                String _if;
+                final String _if;
                 try {
                     _if = Adapters.collapsedStringAdapterAdapter.unmarshal(_ifRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -162,12 +162,12 @@ public class FacesNavigationCase$JAXB
                 facesNavigationCase._if = _if;
             } else if (("to-view-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: toViewId
-                String toViewIdRaw = elementReader.getElementAsString();
+                final String toViewIdRaw = elementReader.getElementAsString();
 
-                String toViewId;
+                final String toViewId;
                 try {
                     toViewId = Adapters.collapsedStringAdapterAdapter.unmarshal(toViewIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -175,7 +175,7 @@ public class FacesNavigationCase$JAXB
                 facesNavigationCase.toViewId = toViewId;
             } else if (("redirect" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: redirect
-                FacesRedirect redirect = readFacesRedirect(elementReader, context);
+                final FacesRedirect redirect = readFacesRedirect(elementReader, context);
                 facesNavigationCase.redirect = redirect;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "from-action"), new QName("http://java.sun.com/xml/ns/javaee", "from-outcome"), new QName("http://java.sun.com/xml/ns/javaee", "if"), new QName("http://java.sun.com/xml/ns/javaee", "to-view-id"), new QName("http://java.sun.com/xml/ns/javaee", "redirect"));
@@ -184,14 +184,14 @@ public class FacesNavigationCase$JAXB
         if (descriptions != null) {
             try {
                 facesNavigationCase.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesNavigationCase.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesNavigationCase.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesNavigationCase.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -209,7 +209,7 @@ public class FacesNavigationCase$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesNavigationCase facesNavigationCase, RuntimeContext context)
         throws Exception {
         if (facesNavigationCase == null) {
             writer.writeXsiNil();
@@ -230,7 +230,7 @@ public class FacesNavigationCase$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesNavigationCase.id;
+        final String idRaw = facesNavigationCase.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -245,11 +245,11 @@ public class FacesNavigationCase$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesNavigationCase.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesNavigationCase, "descriptions", FacesNavigationCase.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -264,7 +264,7 @@ public class FacesNavigationCase$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesNavigationCase.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesNavigationCase, "displayNames", FacesNavigationCase.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
@@ -280,9 +280,9 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesNavigationCase.icon;
+        final LocalCollection<Icon> icon = facesNavigationCase.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -294,7 +294,7 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: fromAction
-        FacesFromAction fromAction = facesNavigationCase.fromAction;
+        final FacesFromAction fromAction = facesNavigationCase.fromAction;
         if (fromAction != null) {
             writer.writeStartElement(prefix, "from-action", "http://java.sun.com/xml/ns/javaee");
             writeFacesFromAction(writer, fromAction, context);
@@ -302,11 +302,11 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: fromOutcome
-        String fromOutcomeRaw = facesNavigationCase.fromOutcome;
+        final String fromOutcomeRaw = facesNavigationCase.fromOutcome;
         String fromOutcome = null;
         try {
             fromOutcome = Adapters.collapsedStringAdapterAdapter.marshal(fromOutcomeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesNavigationCase, "fromOutcome", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (fromOutcome != null) {
@@ -316,11 +316,11 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: _if
-        String _ifRaw = facesNavigationCase._if;
+        final String _ifRaw = facesNavigationCase._if;
         String _if = null;
         try {
             _if = Adapters.collapsedStringAdapterAdapter.marshal(_ifRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesNavigationCase, "_if", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (_if != null) {
@@ -334,7 +334,7 @@ public class FacesNavigationCase$JAXB
         String toViewId = null;
         try {
             toViewId = Adapters.collapsedStringAdapterAdapter.marshal(toViewIdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesNavigationCase, "toViewId", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (toViewId != null) {
@@ -346,7 +346,7 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: redirect
-        FacesRedirect redirect = facesNavigationCase.redirect;
+        final FacesRedirect redirect = facesNavigationCase.redirect;
         if (redirect != null) {
             writer.writeStartElement(prefix, "redirect", "http://java.sun.com/xml/ns/javaee");
             writeFacesRedirect(writer, redirect, context);

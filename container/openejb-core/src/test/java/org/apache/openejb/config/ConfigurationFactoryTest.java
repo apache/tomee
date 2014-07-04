@@ -46,10 +46,10 @@ public class ConfigurationFactoryTest {
         final boolean offline = true;
         final ConfigurationFactory factory = new ConfigurationFactory(offline);
         final String id = "testConfigureApplicationEjbJar";
-        EjbJar ejbJar = new EjbJar(id);
+        final EjbJar ejbJar = new EjbJar(id);
         // no real classes engaged so disable metadata (annotation) processing
         ejbJar.setMetadataComplete(true);
-        EjbJarInfo info = factory.configureApplication(ejbJar);
+        final EjbJarInfo info = factory.configureApplication(ejbJar);
         // not much to assert
         assertEquals(id, info.moduleName);
     }
@@ -65,8 +65,8 @@ public class ConfigurationFactoryTest {
         final WebApp webApp = new WebApp();
         // no real classes engaged so disable metadata (annotation) processing
         webApp.setMetadataComplete(true);
-        WebModule webModule = new WebModule(webApp, null, null, fileSeparator + "some" + fileSeparator + "where.war", moduleId);
-        WebAppInfo info = factory.configureApplication(webModule);
+        final WebModule webModule = new WebModule(webApp, null, null, fileSeparator + "some" + fileSeparator + "where.war", moduleId);
+        final WebAppInfo info = factory.configureApplication(webModule);
         assertEquals(moduleId, info.moduleId);
     }
 
@@ -92,7 +92,7 @@ public class ConfigurationFactoryTest {
             "org/apache/openejb/config/configurationfactory-openejb.xml");
         props.setProperty(ConfigurationFactory.CONF_FILE_PROPERTY, configUrl.toExternalForm());
         factory.init(props);
-        OpenEjbConfiguration openEjbConfig = factory.getOpenEjbConfiguration();
+        final OpenEjbConfiguration openEjbConfig = factory.getOpenEjbConfiguration();
         assertEquals(0, openEjbConfig.containerSystem.applications.size());
     }
 
@@ -120,7 +120,7 @@ public class ConfigurationFactoryTest {
         final Deployments deployments = (Deployments) factory.toConfigDeclaration("", new URI("new://Deployments?classpath="
             + path));
         final URLClassLoader cl = (URLClassLoader) deployments.getClasspath();
-        URL[] urls = cl.getURLs();
+        final URL[] urls = cl.getURLs();
         assertEquals(urls[0], new File(path).toURI().normalize().toURL());
     }
 }

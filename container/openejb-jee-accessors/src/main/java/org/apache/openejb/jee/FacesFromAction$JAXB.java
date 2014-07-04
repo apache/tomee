@@ -38,17 +38,17 @@ public class FacesFromAction$JAXB
         super(FacesFromAction.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-from-actionType".intern()));
     }
 
-    public static FacesFromAction readFacesFromAction(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesFromAction readFacesFromAction(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesFromAction(final XoXMLStreamWriter writer, final FacesFromAction facesFromAction, RuntimeContext context)
+    public static void writeFacesFromAction(final XoXMLStreamWriter writer, final FacesFromAction facesFromAction, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFromAction, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesFromAction facesFromAction, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesFromAction facesFromAction, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFromAction, context);
     }
@@ -70,7 +70,7 @@ public class FacesFromAction$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-from-actionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesFromAction.class);
@@ -81,7 +81,7 @@ public class FacesFromAction$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesFromAction);
                 facesFromAction.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,7 +97,7 @@ public class FacesFromAction$JAXB
         return facesFromAction;
     }
 
-    public final FacesFromAction read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesFromAction read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -122,19 +122,19 @@ public class FacesFromAction$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesFromAction.id;
+        final String idRaw = facesFromAction.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesFromAction, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // VALUE: value
-        FacesELExpression value = facesFromAction.value;
+        final FacesELExpression value = facesFromAction.value;
 
         context.afterMarshal(facesFromAction, LifecycleCallback.NONE);
     }

@@ -70,13 +70,13 @@ public class AdminObject$JAXB
             context = new RuntimeContext();
         }
 
-        AdminObject adminObject = new AdminObject();
+        final AdminObject adminObject = new AdminObject();
         context.beforeUnmarshal(adminObject, LifecycleCallback.NONE);
 
         List<ConfigProperty> configProperty = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("adminobjectType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AdminObject.class);
@@ -87,7 +87,7 @@ public class AdminObject$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, adminObject);
                 adminObject.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class AdminObject$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("adminobject-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: adminObjectInterface
-                String adminObjectInterfaceRaw = elementReader.getElementAsString();
+                final String adminObjectInterfaceRaw = elementReader.getElementAsString();
 
                 final String adminObjectInterface;
                 try {
                     adminObjectInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(adminObjectInterfaceRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -112,12 +112,12 @@ public class AdminObject$JAXB
                 adminObject.adminObjectInterface = adminObjectInterface;
             } else if (("adminobject-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: adminObjectClass
-                String adminObjectClassRaw = elementReader.getElementAsString();
+                final String adminObjectClassRaw = elementReader.getElementAsString();
 
-                String adminObjectClass;
+                final String adminObjectClass;
                 try {
                     adminObjectClass = Adapters.collapsedStringAdapterAdapter.unmarshal(adminObjectClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -153,7 +153,7 @@ public class AdminObject$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, AdminObject adminObject, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final AdminObject adminObject, RuntimeContext context)
         throws Exception {
         if (adminObject == null) {
             writer.writeXsiNil();
@@ -164,7 +164,7 @@ public class AdminObject$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (AdminObject.class != adminObject.getClass()) {
             context.unexpectedSubclass(writer, adminObject, AdminObject.class);
             return;
@@ -174,19 +174,19 @@ public class AdminObject$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = adminObject.id;
+        final String idRaw = adminObject.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(adminObject, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: adminObjectInterface
-        String adminObjectInterfaceRaw = adminObject.adminObjectInterface;
+        final String adminObjectInterfaceRaw = adminObject.adminObjectInterface;
         String adminObjectInterface = null;
         try {
             adminObjectInterface = Adapters.collapsedStringAdapterAdapter.marshal(adminObjectInterfaceRaw);
@@ -202,11 +202,11 @@ public class AdminObject$JAXB
         }
 
         // ELEMENT: adminObjectClass
-        String adminObjectClassRaw = adminObject.adminObjectClass;
+        final String adminObjectClassRaw = adminObject.adminObjectClass;
         String adminObjectClass = null;
         try {
             adminObjectClass = Adapters.collapsedStringAdapterAdapter.marshal(adminObjectClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(adminObject, "adminObjectClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (adminObjectClass != null) {
@@ -218,9 +218,9 @@ public class AdminObject$JAXB
         }
 
         // ELEMENT: configProperty
-        List<ConfigProperty> configProperty = adminObject.configProperty;
+        final List<ConfigProperty> configProperty = adminObject.configProperty;
         if (configProperty != null) {
-            for (ConfigProperty configPropertyItem : configProperty) {
+            for (final ConfigProperty configPropertyItem : configProperty) {
                 if (configPropertyItem != null) {
                     writer.writeStartElement(prefix, "config-property", "http://java.sun.com/xml/ns/javaee");
                     writeConfigProperty(writer, configPropertyItem, context);

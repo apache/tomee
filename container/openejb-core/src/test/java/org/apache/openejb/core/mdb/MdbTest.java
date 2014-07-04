@@ -65,7 +65,7 @@ public class MdbTest extends JmsTest {
             final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a request messages
-            ObjectMessage requestMessage = session.createObjectMessage();
+            final ObjectMessage requestMessage = session.createObjectMessage();
             requestMessage.setJMSReplyTo(responseQueue);
             requestMessage.setObject((Serializable) request);
 
@@ -80,14 +80,14 @@ public class MdbTest extends JmsTest {
             // verify message
             assertNotNull("Did not get a response message", message);
             assertTrue("Response message is not an ObjectMessage", message instanceof ObjectMessage);
-            ObjectMessage responseMessage = (ObjectMessage) message;
+            final ObjectMessage responseMessage = (ObjectMessage) message;
             final Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
             final Map<String, String> response = (Map<String, String>) object;
 
             // process results
-            String returnValue = (String) response.get("return");
+            final String returnValue = (String) response.get("return");
             assertEquals("test-cheese", returnValue);
         } finally {
             MdbUtil.close(consumer);
@@ -110,7 +110,7 @@ public class MdbTest extends JmsTest {
         activationSpec.setResourceAdapter(ra);
 
         // create the message endpoint
-        MessageEndpointFactory endpointFactory = new JmsEndpointFactory();
+        final MessageEndpointFactory endpointFactory = new JmsEndpointFactory();
 
         // activate the endpoint
         ra.endpointActivation(endpointFactory, activationSpec);
@@ -154,17 +154,17 @@ public class MdbTest extends JmsTest {
             MessageProducer producer = null;
             try {
                 // process request
-                ObjectMessage requestMessage = (ObjectMessage) message;
-                Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
-                Object[] args = (Object[]) request.get("args");
-                String returnValue = "test-" + args[0];
+                final ObjectMessage requestMessage = (ObjectMessage) message;
+                final Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
+                final Object[] args = (Object[]) request.get("args");
+                final String returnValue = "test-" + args[0];
 
                 // create response map
-                Map<String, Object> response = new TreeMap<String, Object>();
+                final Map<String, Object> response = new TreeMap<String, Object>();
                 response.put("return", returnValue);
 
                 // create response message
-                ObjectMessage responseMessage = session.createObjectMessage();
+                final ObjectMessage responseMessage = session.createObjectMessage();
                 responseMessage.setJMSCorrelationID(requestMessage.getJMSCorrelationID());
                 responseMessage.setObject((Serializable) response);
 

@@ -68,7 +68,7 @@ public class QueryMethod {
     public QueryMethod() {
     }
 
-    public QueryMethod(final String methodName, String... params) {
+    public QueryMethod(final String methodName, final String... params) {
         this.methodName = methodName;
         this.methodParams = new MethodParams(params);
     }
@@ -83,7 +83,7 @@ public class QueryMethod {
      * used when the element denotes all the methods of an
      * enterprise bean's client view interfaces.
      */
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 

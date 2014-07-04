@@ -65,7 +65,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Call call = (Call) o;
+            final Call call = (Call) o;
 
             if (!methodName.equals(call.methodName)) return false;
             if (!Arrays.equals(parameterTypes, call.parameterTypes)) return false;
@@ -91,14 +91,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
             this.object = object;
         }
 
-        public Object invoke(final Object proxy, Method method, final Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             final StringBuilder builder = new StringBuilder();
             builder.append(method.getName());
             builder.append("(");
 
-            Class<?>[] parameterTypes = method.getParameterTypes();
+            final Class<?>[] parameterTypes = method.getParameterTypes();
             for (int i = 0; i < parameterTypes.length; i++) {
-                Class<?> parameterType = parameterTypes[i];
+                final Class<?> parameterType = parameterTypes[i];
 
                 if (i > 0) {
                     builder.append(",");
@@ -111,7 +111,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
 
             System.out.println(builder.toString());
 
-            Method m = object.getClass().getMethod(method.getName(), method.getParameterTypes());
+            final Method m = object.getClass().getMethod(method.getName(), method.getParameterTypes());
             calls.add(new Call(m.getName(), m.getParameterTypes()));
             return m.invoke(object, args);
         }
@@ -214,14 +214,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         try {
             proxy.protectedMethod();
             fail("Protected method did not throw exception");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // that's what we expect
         }
 
         try {
             proxy.defaultMethod();
             fail("Default method did not throw exception");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // that's what we expect
         }
     }
@@ -233,7 +233,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         proxy.doWork();
 
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("doWork", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{}, call.getParameterTypes()));
     }
@@ -242,11 +242,11 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testEcho() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
-        String result = proxy.echo("Some text");
+        final String result = proxy.echo("Some text");
 
         assertEquals("Some text", result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("echo", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{String.class}, call.getParameterTypes()));
     }
@@ -255,14 +255,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testAddIntInt() throws Exception {
         final int value1 = 32;
         final int value2 = 64;
-        int expectedResult = 96;
+        final int expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        int result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final int result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Integer.TYPE, Integer.TYPE}, call.getParameterTypes()));
     }
@@ -271,14 +271,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testAddIntegerInteger() throws Exception {
         final Integer value1 = 32;
         final Integer value2 = 64;
-        Integer expectedResult = 96;
+        final Integer expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
-        Integer result = proxy.add(value1, value2);
+        final Integer result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Integer.class, Integer.class}, call.getParameterTypes()));
     }
@@ -291,7 +291,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
 
         assertTrue(result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("isTrue", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Boolean.TYPE}, call.getParameterTypes()));
     }
@@ -299,12 +299,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testIsTrueBoolean1() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Boolean result = proxy.isTrue(new Boolean(true));
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Boolean result = proxy.isTrue(new Boolean(true));
 
         assertTrue(result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("isTrue", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Boolean.class}, call.getParameterTypes()));
     }
@@ -312,12 +312,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testNextCharChar() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
         final char result = proxy.nextChar(new Character('A').charValue());
 
         assertEquals('B', result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("nextChar", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Character.TYPE}, call.getParameterTypes()));
     }
@@ -325,12 +325,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testNextCharCharacter() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Character result = proxy.nextChar(new Character('A'));
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Character result = proxy.nextChar(new Character('A'));
 
         assertEquals(new Character('B'), result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("nextChar", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Character.class}, call.getParameterTypes()));
     }
@@ -339,14 +339,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testAddShortShort() throws Exception {
         final short value1 = 32;
         final short value2 = 64;
-        short expectedResult = 96;
+        final short expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        short result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final short result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Short.TYPE, Short.TYPE}, call.getParameterTypes()));
     }
@@ -354,15 +354,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testAddShortShort1() throws Exception {
         final Short value1 = 32;
-        Short value2 = 64;
-        Short expectedResult = 96;
+        final Short value2 = 64;
+        final Short expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Short result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Short result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Short.class, Short.class}, call.getParameterTypes()));
     }
@@ -370,15 +370,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testAddLongLong() throws Exception {
         final long value1 = 32;
-        long value2 = 64;
+        final long value2 = 64;
         final long expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        long result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final long result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Long.TYPE, Long.TYPE}, call.getParameterTypes()));
     }
@@ -386,15 +386,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testAddLongLong1() throws Exception {
         final Long value1 = 32L;
-        Long value2 = 64L;
-        Long expectedResult = 96L;
+        final Long value2 = 64L;
+        final Long expectedResult = 96L;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Long result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Long result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Long.class, Long.class}, call.getParameterTypes()));
     }
@@ -403,14 +403,14 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testAddDoubleDouble() throws Exception {
         final double value1 = 32;
         final double value2 = 64;
-        double expectedResult = 96;
+        final double expectedResult = 96;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        double result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final double result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Double.TYPE, Double.TYPE}, call.getParameterTypes()));
     }
@@ -418,15 +418,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testAddDoubleDouble1() throws Exception {
         final Double value1 = 32d;
-        Double value2 = 64d;
-        Double expectedResult = 96d;
+        final Double value2 = 64d;
+        final Double expectedResult = 96d;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Double result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Double result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Double.class, Double.class}, call.getParameterTypes()));
     }
@@ -434,15 +434,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testAddFloatFloat() throws Exception {
         final float value1 = 32f;
-        float value2 = 64f;
+        final float value2 = 64f;
         final float expectedResult = 96f;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        float result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final float result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("add", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Float.TYPE, Float.TYPE}, call.getParameterTypes()));
     }
@@ -451,11 +451,11 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testAddFloatFloat1() throws Exception {
         final Float value1 = 32f;
         final Float value2 = 64f;
-        Float expectedResult = 96f;
+        final Float expectedResult = 96f;
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Float result = proxy.add(value1, value2);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Float result = proxy.add(value1, value2);
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
         final Call call = invocationHandler.getCalls()[0];
@@ -468,12 +468,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final ProxyTestObject[] expectedResult = new ProxyTestObject[]{new ProxyTestObject("object1"), new ProxyTestObject("object2")};
 
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
         final ProxyTestObject[] result = proxy.createSomeObjects();
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("createSomeObjects", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{}, call.getParameterTypes()));
     }
@@ -483,12 +483,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final ProxyTestObject expectedResult = new ProxyTestObject("object1");
 
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        ProxyTestObject result = proxy.returnFirst(new ProxyTestObject[]{new ProxyTestObject("object1"), new ProxyTestObject("object2")});
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final ProxyTestObject result = proxy.returnFirst(new ProxyTestObject[]{new ProxyTestObject("object1"), new ProxyTestObject("object2")});
 
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("returnFirst", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{ProxyTestObject[].class}, call.getParameterTypes()));
     }
@@ -496,17 +496,17 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseIntArray() throws Exception {
         final int value1 = 2;
-        int value2 = 4;
+        final int value2 = 4;
         final int value3 = 6;
-        int value4 = 8;
-        int value5 = 10;
+        final int value4 = 8;
+        final int value5 = 10;
 
-        int[] value = new int[]{value1, value2, value3, value4, value5};
+        final int[] value = new int[]{value1, value2, value3, value4, value5};
         final int[] expectedResult = new int[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        int[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final int[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
@@ -518,21 +518,21 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseIntegerArray() throws Exception {
         final Integer value1 = 2;
-        Integer value2 = 4;
-        Integer value3 = 6;
-        Integer value4 = 8;
-        Integer value5 = 10;
+        final Integer value2 = 4;
+        final Integer value3 = 6;
+        final Integer value4 = 8;
+        final Integer value5 = 10;
 
-        Integer[] value = new Integer[]{value1, value2, value3, value4, value5};
-        Integer[] expectedResult = new Integer[]{value5, value4, value3, value2, value1};
+        final Integer[] value = new Integer[]{value1, value2, value3, value4, value5};
+        final Integer[] expectedResult = new Integer[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Integer[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Integer[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Integer[].class}, call.getParameterTypes()));
     }
@@ -540,18 +540,18 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseBooleanArray() throws Exception {
         final boolean value1 = true;
-        boolean value2 = false;
+        final boolean value2 = false;
 
         final boolean[] value = new boolean[]{value1, value2};
         final boolean[] expectedResult = new boolean[]{value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
         final boolean[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{boolean[].class}, call.getParameterTypes()));
     }
@@ -564,13 +564,13 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final Boolean[] value = new Boolean[]{value1, value2};
         final Boolean[] expectedResult = new Boolean[]{value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Boolean[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Boolean[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Boolean[].class}, call.getParameterTypes()));
     }
@@ -579,18 +579,18 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testReverseCharArray() throws Exception {
         final char value1 = 'j';
         final char value2 = 'o';
-        char value3 = 'n';
+        final char value3 = 'n';
 
-        char[] value = new char[]{value1, value2, value3};
-        char[] expectedResult = new char[]{value3, value2, value1};
+        final char[] value = new char[]{value1, value2, value3};
+        final char[] expectedResult = new char[]{value3, value2, value1};
 
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        char[] result = proxy.reverse(value);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final char[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{char[].class}, call.getParameterTypes()));
     }
@@ -599,18 +599,18 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testReverseCharacterArray() throws Exception {
         final Character value1 = 'j';
         final Character value2 = 'o';
-        Character value3 = 'n';
+        final Character value3 = 'n';
 
         final Character[] value = new Character[]{value1, value2, value3};
-        Character[] expectedResult = new Character[]{value3, value2, value1};
+        final Character[] expectedResult = new Character[]{value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Character[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Character[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Character[].class}, call.getParameterTypes()));
     }
@@ -618,21 +618,21 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseShortArray() throws Exception {
         final short value1 = 2;
-        short value2 = 4;
+        final short value2 = 4;
         final short value3 = 6;
-        short value4 = 8;
+        final short value4 = 8;
         final short value5 = 10;
 
-        short[] value = new short[]{value1, value2, value3, value4, value5};
-        short[] expectedResult = new short[]{value5, value4, value3, value2, value1};
+        final short[] value = new short[]{value1, value2, value3, value4, value5};
+        final short[] expectedResult = new short[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        short[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final short[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{short[].class}, call.getParameterTypes()));
     }
@@ -642,19 +642,19 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final Short value1 = 2;
         final Short value2 = 4;
         final Short value3 = 6;
-        Short value4 = 8;
-        Short value5 = 10;
+        final Short value4 = 8;
+        final Short value5 = 10;
 
-        Short[] value = new Short[]{value1, value2, value3, value4, value5};
-        Short[] expectedResult = new Short[]{value5, value4, value3, value2, value1};
+        final Short[] value = new Short[]{value1, value2, value3, value4, value5};
+        final Short[] expectedResult = new Short[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
-        Short[] result = proxy.reverse(value);
+        final Short[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Short[].class}, call.getParameterTypes()));
     }
@@ -664,19 +664,19 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final long value1 = 2L;
         final long value2 = 4L;
         final long value3 = 6L;
-        long value4 = 8L;
-        long value5 = 10L;
+        final long value4 = 8L;
+        final long value5 = 10L;
 
         final long[] value = new long[]{value1, value2, value3, value4, value5};
-        long[] expectedResult = new long[]{value5, value4, value3, value2, value1};
+        final long[] expectedResult = new long[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        long[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final long[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{long[].class}, call.getParameterTypes()));
     }
@@ -684,21 +684,21 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseLongArray1() throws Exception {
         final Long value1 = 2L;
-        Long value2 = 4L;
-        Long value3 = 6L;
-        Long value4 = 8L;
-        Long value5 = 10L;
+        final Long value2 = 4L;
+        final Long value3 = 6L;
+        final Long value4 = 8L;
+        final Long value5 = 10L;
 
-        Long[] value = new Long[]{value1, value2, value3, value4, value5};
-        Long[] expectedResult = new Long[]{value5, value4, value3, value2, value1};
+        final Long[] value = new Long[]{value1, value2, value3, value4, value5};
+        final Long[] expectedResult = new Long[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Long[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Long[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Long[].class}, call.getParameterTypes()));
     }
@@ -707,20 +707,20 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testReverseDoubleArray() throws Exception {
         final double value1 = 2d;
         final double value2 = 4d;
-        double value3 = 6d;
-        double value4 = 8d;
+        final double value3 = 6d;
+        final double value4 = 8d;
         final double value5 = 10d;
 
-        double[] value = new double[]{value1, value2, value3, value4, value5};
-        double[] expectedResult = new double[]{value5, value4, value3, value2, value1};
+        final double[] value = new double[]{value1, value2, value3, value4, value5};
+        final double[] expectedResult = new double[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        double[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final double[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{double[].class}, call.getParameterTypes()));
     }
@@ -731,18 +731,18 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final Double value2 = 4d;
         final Double value3 = 6d;
         final Double value4 = 8d;
-        Double value5 = 10d;
+        final Double value5 = 10d;
 
-        Double[] value = new Double[]{value1, value2, value3, value4, value5};
-        Double[] expectedResult = new Double[]{value5, value4, value3, value2, value1};
+        final Double[] value = new Double[]{value1, value2, value3, value4, value5};
+        final Double[] expectedResult = new Double[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Double[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Double[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Double[].class}, call.getParameterTypes()));
     }
@@ -750,21 +750,21 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseFloatArray() throws Exception {
         final float value1 = 2f;
-        float value2 = 4f;
-        float value3 = 6f;
-        float value4 = 8f;
-        float value5 = 10f;
+        final float value2 = 4f;
+        final float value3 = 6f;
+        final float value4 = 8f;
+        final float value5 = 10f;
 
-        float[] value = new float[]{value1, value2, value3, value4, value5};
-        float[] expectedResult = new float[]{value5, value4, value3, value2, value1};
+        final float[] value = new float[]{value1, value2, value3, value4, value5};
+        final float[] expectedResult = new float[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
         final float[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{float[].class}, call.getParameterTypes()));
     }
@@ -772,21 +772,21 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testReverseFloatArray1() throws Exception {
         final Float value1 = 2f;
-        Float value2 = 4f;
+        final Float value2 = 4f;
         final Float value3 = 6f;
-        Float value4 = 8f;
-        Float value5 = 10f;
+        final Float value4 = 8f;
+        final Float value5 = 10f;
 
-        Float[] value = new Float[]{value1, value2, value3, value4, value5};
-        Float[] expectedResult = new Float[]{value5, value4, value3, value2, value1};
+        final Float[] value = new Float[]{value1, value2, value3, value4, value5};
+        final Float[] expectedResult = new Float[]{value5, value4, value3, value2, value1};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        Float[] result = proxy.reverse(value);
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final Float[] result = proxy.reverse(value);
 
         assertTrue(Arrays.equals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverse", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{Float[].class}, call.getParameterTypes()));
     }
@@ -794,11 +794,11 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testThrowAnException() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
 
         try {
             proxy.throwAnException();
-        } catch (ProxyTestException e) {
+        } catch (final ProxyTestException e) {
         }
 
         assertEquals(1, invocationHandler.getCalls().length);
@@ -810,15 +810,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testThrowAnotherException() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
 
         try {
             proxy.throwAnotherException();
-        } catch (IOException e) {
+        } catch (final IOException e) {
         }
 
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("throwAnotherException", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{}, call.getParameterTypes()));
     }
@@ -834,12 +834,12 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         expectedResult.add(new ProxyTestObject("test1"));
 
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
-        List<ProxyTestObject> result = proxy.reverseList(value);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
+        final List<ProxyTestObject> result = proxy.reverseList(value);
 
         assertEquals(expectedResult, result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverseList", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{List.class}, call.getParameterTypes()));
     }
@@ -849,13 +849,13 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final int[][] value = new int[][]{new int[]{1, 2, 3, 4}, new int[]{5, 6, 7, 8}};
         final int[][] expectedResult = new int[][]{new int[]{8, 7, 6, 5}, new int[]{4, 3, 2, 1}};
 
-        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
         final int[][] result = proxy.reverseAll(value);
 
         assertTrue(Arrays.deepEquals(expectedResult, result));
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("reverseAll", call.getMethodName());
         assertTrue(Arrays.equals(new Class<?>[]{int[][].class}, call.getParameterTypes()));
     }
@@ -882,15 +882,15 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new EnumParams());
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        LocalBeanProxyFactory generator = new LocalBeanProxyFactory();
+        final LocalBeanProxyFactory generator = new LocalBeanProxyFactory();
         final Class cls = generator.createProxy(EnumParams.class, cl, new Class[]{IntraVmProxy.class, Serializable.class});
-        EnumParams proxy = (EnumParams) generator.constructProxy(cls, invocationHandler);
+        final EnumParams proxy = (EnumParams) generator.constructProxy(cls, invocationHandler);
 
         proxy.someStringMethod(Color.GREEN.name());
         proxy.someEnumMethod(Color.RED);
         proxy.someInnerClassMethod(new Name(Color.BLUE.name()));
 
-        Call[] calls = invocationHandler.getCalls();
+        final Call[] calls = invocationHandler.getCalls();
 
         assertEquals(3, calls.length);
 
@@ -908,13 +908,13 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     @Test
     public void testInheritedMethod() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
-        SampleLocalBean proxy = loadProxy(invocationHandler);
+        final SampleLocalBean proxy = loadProxy(invocationHandler);
 
         // call inherited method
         final String result = proxy.hello("Bob");
         assertEquals("Hello Bob", result);
         assertEquals(1, invocationHandler.getCalls().length);
-        Call call = invocationHandler.getCalls()[0];
+        final Call call = invocationHandler.getCalls()[0];
         assertEquals("hello", call.getMethodName());
 
         // call overridden method

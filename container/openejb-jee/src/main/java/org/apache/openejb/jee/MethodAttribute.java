@@ -35,7 +35,7 @@ public class MethodAttribute<A> {
         this.className = method.getClassName();
     }
 
-    public MethodAttribute(final A attribute, String ejbName, final NamedMethod method) {
+    public MethodAttribute(final A attribute, final String ejbName, final NamedMethod method) {
         this.attribute = attribute;
         this.ejbName = ejbName;
         this.methodName = method.getMethodName();

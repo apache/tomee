@@ -55,12 +55,12 @@ public class LegacyInterfaceTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(MySingletonBean.class));
         ejbJar.addEnterpriseBean(new EntityBean(MyBmpBean.class, PersistenceType.BEAN));
 
@@ -99,7 +99,7 @@ public class LegacyInterfaceTest extends TestCase {
         //  </query>
         //</entity>
 
-        EntityBean cmp = ejbJar.addEnterpriseBean(new EntityBean(MyCmpBean.class, PersistenceType.CONTAINER));
+        final EntityBean cmp = ejbJar.addEnterpriseBean(new EntityBean(MyCmpBean.class, PersistenceType.CONTAINER));
         cmp.setPrimKeyClass(Integer.class.getName());
         cmp.setPrimkeyField("id");
         cmp.getCmpField().add(new CmpField("id"));
@@ -108,7 +108,7 @@ public class LegacyInterfaceTest extends TestCase {
         query.setQueryMethod(new QueryMethod("findByPrimaryKey", Integer.class.getName()));
         query.setEjbQl("SELECT OBJECT(DL) FROM License DL");
         cmp.getQuery().add(query);
-        List<ContainerTransaction> transactions = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+        final List<ContainerTransaction> transactions = ejbJar.getAssemblyDescriptor().getContainerTransaction();
 
         //<container-transaction>
         //  <method>
@@ -127,7 +127,7 @@ public class LegacyInterfaceTest extends TestCase {
             throw new Exception("Failed to create test directory: " + f);
         }
 
-        AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
+        final AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
         module.getEjbModules().add(new EjbModule(ejbJar));
         assembler.createApplication(config.configureApplication(module));
 

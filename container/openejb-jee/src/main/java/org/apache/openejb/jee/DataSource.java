@@ -136,7 +136,7 @@ public class DataSource implements Keyable<String> {
     public DataSource() {
     }
 
-    public DataSource(final String name, String className) {
+    public DataSource(final String name, final String className) {
         this.name = name;
         this.className = className;
     }
@@ -183,7 +183,7 @@ public class DataSource implements Keyable<String> {
         return this;
     }
 
-    public DataSource property(final String name, String value) {
+    public DataSource property(final String name, final String value) {
         getProperty().add(new Property(name, value));
         return this;
     }

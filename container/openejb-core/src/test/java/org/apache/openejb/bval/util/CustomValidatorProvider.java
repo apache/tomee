@@ -189,12 +189,12 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         }
 
         @Override
-        public <T> Set<ConstraintViolation<T>> validateProperty(final T object, String propertyName, Class<?>... groups) {
+        public <T> Set<ConstraintViolation<T>> validateProperty(final T object, final String propertyName, final Class<?>... groups) {
             return null;
         }
 
         @Override
-        public <T> Set<ConstraintViolation<T>> validateValue(final Class<T> beanType, final String propertyName, Object value, Class<?>... groups) {
+        public <T> Set<ConstraintViolation<T>> validateValue(final Class<T> beanType, final String propertyName, final Object value, Class<?>... groups) {
             return null;
         }
 

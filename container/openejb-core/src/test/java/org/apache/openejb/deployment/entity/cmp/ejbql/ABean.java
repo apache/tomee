@@ -56,7 +56,7 @@ public abstract class ABean implements EntityBean {
         return null;
     }
 
-    public void ejbPostCreate(CompoundPK compoundPK) {
+    public void ejbPostCreate(final CompoundPK compoundPK) {
     }
 
     public void setEntityContext(final EntityContext ctx) {

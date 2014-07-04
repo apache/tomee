@@ -47,11 +47,11 @@ public class JsfTest extends TestCase {
         managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
         managedBeanClasses.add("org.apache.openejb.faces.OneBean");
         managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
-        FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
-        List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
+        final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
+        final FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
+        final List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
 
-        for (FacesManagedBean bean : managedBean) {
+        for (final FacesManagedBean bean : managedBean) {
             assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
         }
         assertEquals(3, managedBean.size());

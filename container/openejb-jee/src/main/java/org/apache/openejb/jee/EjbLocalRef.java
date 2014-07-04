@@ -96,7 +96,7 @@ public class EjbLocalRef implements EjbReference {
     public EjbLocalRef() {
     }
 
-    public EjbLocalRef(final String ejbRefName, String ejbLink) {
+    public EjbLocalRef(final String ejbRefName, final String ejbLink) {
         this.ejbRefName = ejbRefName;
         this.ejbLink = ejbLink;
     }
@@ -155,7 +155,7 @@ public class EjbLocalRef implements EjbReference {
         return this;
     }
 
-    public EjbLocalRef injectionTarget(final String className, String property) {
+    public EjbLocalRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.ejbRefName == null) {
@@ -165,7 +165,7 @@ public class EjbLocalRef implements EjbReference {
         return this;
     }
 
-    public EjbLocalRef injectionTarget(final Class<?> clazz, String property) {
+    public EjbLocalRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 

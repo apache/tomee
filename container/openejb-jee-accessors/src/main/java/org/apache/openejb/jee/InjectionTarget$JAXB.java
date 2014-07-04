@@ -38,17 +38,17 @@ public class InjectionTarget$JAXB
         super(InjectionTarget.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "injection-targetType".intern()));
     }
 
-    public static InjectionTarget readInjectionTarget(final XoXMLStreamReader reader, RuntimeContext context)
+    public static InjectionTarget readInjectionTarget(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInjectionTarget(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, RuntimeContext context)
+    public static void writeInjectionTarget(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, final RuntimeContext context)
         throws Exception {
         _write(writer, injectionTarget, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, final RuntimeContext context)
         throws Exception {
         _write(writer, injectionTarget, context);
     }
@@ -65,7 +65,7 @@ public class InjectionTarget$JAXB
             context = new RuntimeContext();
         }
 
-        InjectionTarget injectionTarget = new InjectionTarget();
+        final InjectionTarget injectionTarget = new InjectionTarget();
         context.beforeUnmarshal(injectionTarget, LifecycleCallback.NONE);
 
 
@@ -85,15 +85,15 @@ public class InjectionTarget$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("injection-target-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTargetClass
-                String injectionTargetClassRaw = elementReader.getElementAsString();
+                final String injectionTargetClassRaw = elementReader.getElementAsString();
 
                 final String injectionTargetClass;
                 try {
                     injectionTargetClass = Adapters.collapsedStringAdapterAdapter.unmarshal(injectionTargetClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -101,12 +101,12 @@ public class InjectionTarget$JAXB
                 injectionTarget.injectionTargetClass = injectionTargetClass;
             } else if (("injection-target-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTargetName
-                String injectionTargetNameRaw = elementReader.getElementAsString();
+                final String injectionTargetNameRaw = elementReader.getElementAsString();
 
-                String injectionTargetName;
+                final String injectionTargetName;
                 try {
                     injectionTargetName = Adapters.collapsedStringAdapterAdapter.unmarshal(injectionTargetNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,7 +122,7 @@ public class InjectionTarget$JAXB
         return injectionTarget;
     }
 
-    public final InjectionTarget read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final InjectionTarget read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -148,11 +148,11 @@ public class InjectionTarget$JAXB
 
 
         // ELEMENT: injectionTargetClass
-        String injectionTargetClassRaw = injectionTarget.injectionTargetClass;
+        final String injectionTargetClassRaw = injectionTarget.injectionTargetClass;
         String injectionTargetClass = null;
         try {
             injectionTargetClass = Adapters.collapsedStringAdapterAdapter.marshal(injectionTargetClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(injectionTarget, "injectionTargetClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (injectionTargetClass != null) {
@@ -164,11 +164,11 @@ public class InjectionTarget$JAXB
         }
 
         // ELEMENT: injectionTargetName
-        String injectionTargetNameRaw = injectionTarget.injectionTargetName;
+        final String injectionTargetNameRaw = injectionTarget.injectionTargetName;
         String injectionTargetName = null;
         try {
             injectionTargetName = Adapters.collapsedStringAdapterAdapter.marshal(injectionTargetNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(injectionTarget, "injectionTargetName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (injectionTargetName != null) {

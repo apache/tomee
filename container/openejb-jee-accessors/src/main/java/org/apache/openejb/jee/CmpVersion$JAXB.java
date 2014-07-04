@@ -30,17 +30,17 @@ public class CmpVersion$JAXB
         super(CmpVersion.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmpVersion".intern()));
     }
 
-    public CmpVersion parse(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public CmpVersion parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseCmpVersion(reader, context, value);
     }
 
-    public String toString(final Object bean, final String parameterName, RuntimeContext context, CmpVersion cmpVersion)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final CmpVersion cmpVersion)
         throws Exception {
         return toStringCmpVersion(bean, parameterName, context, cmpVersion);
     }
 
-    public static CmpVersion parseCmpVersion(final XoXMLStreamReader reader, RuntimeContext context, final String value)
+    public static CmpVersion parseCmpVersion(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("1.x".equals(value)) {
             return CmpVersion.CMP1;
@@ -52,7 +52,7 @@ public class CmpVersion$JAXB
         }
     }
 
-    public static String toStringCmpVersion(final Object bean, final String parameterName, final RuntimeContext context, CmpVersion cmpVersion)
+    public static String toStringCmpVersion(final Object bean, final String parameterName, final RuntimeContext context, final CmpVersion cmpVersion)
         throws Exception {
         if (CmpVersion.CMP1 == cmpVersion) {
             return "1.x";

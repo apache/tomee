@@ -51,17 +51,17 @@ public class FacesApplication$JAXB
         super(FacesApplication.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-applicationType".intern()), FacesSystemEventListener$JAXB.class, FacesLocaleConfig$JAXB.class, FacesApplicationResourceBundle$JAXB.class, FacesApplicationExtension$JAXB.class, FacesValidator$JAXB.class);
     }
 
-    public static FacesApplication readFacesApplication(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesApplication readFacesApplication(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesApplication(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+    public static void writeFacesApplication(final XoXMLStreamWriter writer, final FacesApplication facesApplication, final RuntimeContext context)
         throws Exception {
         _write(writer, facesApplication, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesApplication facesApplication, final RuntimeContext context)
         throws Exception {
         _write(writer, facesApplication, context);
     }
@@ -78,7 +78,7 @@ public class FacesApplication$JAXB
             context = new RuntimeContext();
         }
 
-        FacesApplication facesApplication = new FacesApplication();
+        final FacesApplication facesApplication = new FacesApplication();
         context.beforeUnmarshal(facesApplication, LifecycleCallback.NONE);
 
         List<String> actionListener = null;
@@ -97,7 +97,7 @@ public class FacesApplication$JAXB
         List<FacesValidator> defaultValidators = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-applicationType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesApplication.class);
@@ -105,7 +105,7 @@ public class FacesApplication$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -120,9 +120,9 @@ public class FacesApplication$JAXB
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("action-listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: actionListener
-                String actionListenerItemRaw = elementReader.getElementAsString();
+                final String actionListenerItemRaw = elementReader.getElementAsString();
 
-                String actionListenerItem;
+                final String actionListenerItem;
                 try {
                     actionListenerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(actionListenerItemRaw);
                 } catch (final Exception e) {
@@ -141,9 +141,9 @@ public class FacesApplication$JAXB
                 actionListener.add(actionListenerItem);
             } else if (("default-render-kit-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultRenderKitId
-                String defaultRenderKitIdItemRaw = elementReader.getElementAsString();
+                final String defaultRenderKitIdItemRaw = elementReader.getElementAsString();
 
-                String defaultRenderKitIdItem;
+                final String defaultRenderKitIdItem;
                 try {
                     defaultRenderKitIdItem = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultRenderKitIdItemRaw);
                 } catch (final Exception e) {
@@ -162,12 +162,12 @@ public class FacesApplication$JAXB
                 defaultRenderKitId.add(defaultRenderKitIdItem);
             } else if (("message-bundle" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageBundle
-                String messageBundleItemRaw = elementReader.getElementAsString();
+                final String messageBundleItemRaw = elementReader.getElementAsString();
 
-                String messageBundleItem;
+                final String messageBundleItem;
                 try {
                     messageBundleItem = Adapters.collapsedStringAdapterAdapter.unmarshal(messageBundleItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -183,12 +183,12 @@ public class FacesApplication$JAXB
                 messageBundle.add(messageBundleItem);
             } else if (("navigation-handler" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: navigationHandler
-                String navigationHandlerItemRaw = elementReader.getElementAsString();
+                final String navigationHandlerItemRaw = elementReader.getElementAsString();
 
-                String navigationHandlerItem;
+                final String navigationHandlerItem;
                 try {
                     navigationHandlerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(navigationHandlerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -204,12 +204,12 @@ public class FacesApplication$JAXB
                 navigationHandler.add(navigationHandlerItem);
             } else if (("view-handler" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: viewHandler
-                String viewHandlerItemRaw = elementReader.getElementAsString();
+                final String viewHandlerItemRaw = elementReader.getElementAsString();
 
-                String viewHandlerItem;
+                final String viewHandlerItem;
                 try {
                     viewHandlerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(viewHandlerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -225,12 +225,12 @@ public class FacesApplication$JAXB
                 viewHandler.add(viewHandlerItem);
             } else if (("state-manager" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: stateManager
-                String stateManagerItemRaw = elementReader.getElementAsString();
+                final String stateManagerItemRaw = elementReader.getElementAsString();
 
-                String stateManagerItem;
+                final String stateManagerItem;
                 try {
                     stateManagerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(stateManagerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -246,12 +246,12 @@ public class FacesApplication$JAXB
                 stateManager.add(stateManagerItem);
             } else if (("el-resolver" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: elResolver
-                String elResolverItemRaw = elementReader.getElementAsString();
+                final String elResolverItemRaw = elementReader.getElementAsString();
 
-                String elResolverItem;
+                final String elResolverItem;
                 try {
                     elResolverItem = Adapters.collapsedStringAdapterAdapter.unmarshal(elResolverItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -267,12 +267,12 @@ public class FacesApplication$JAXB
                 elResolver.add(elResolverItem);
             } else if (("property-resolver" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: propertyResolver
-                String propertyResolverItemRaw = elementReader.getElementAsString();
+                final String propertyResolverItemRaw = elementReader.getElementAsString();
 
-                String propertyResolverItem;
+                final String propertyResolverItem;
                 try {
                     propertyResolverItem = Adapters.collapsedStringAdapterAdapter.unmarshal(propertyResolverItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -288,12 +288,12 @@ public class FacesApplication$JAXB
                 propertyResolver.add(propertyResolverItem);
             } else if (("variable-resolver" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: variableResolver
-                String variableResolverItemRaw = elementReader.getElementAsString();
+                final String variableResolverItemRaw = elementReader.getElementAsString();
 
-                String variableResolverItem;
+                final String variableResolverItem;
                 try {
                     variableResolverItem = Adapters.collapsedStringAdapterAdapter.unmarshal(variableResolverItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -309,12 +309,12 @@ public class FacesApplication$JAXB
                 variableResolver.add(variableResolverItem);
             } else if (("resource-handler" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceHandler
-                String resourceHandlerItemRaw = elementReader.getElementAsString();
+                final String resourceHandlerItemRaw = elementReader.getElementAsString();
 
                 final String resourceHandlerItem;
                 try {
                     resourceHandlerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(resourceHandlerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -330,7 +330,7 @@ public class FacesApplication$JAXB
                 resourceHandler.add(resourceHandlerItem);
             } else if (("system-event-listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: systemEventListener
-                FacesSystemEventListener systemEventListenerItem = readFacesSystemEventListener(elementReader, context);
+                final FacesSystemEventListener systemEventListenerItem = readFacesSystemEventListener(elementReader, context);
                 if (systemEventListener == null) {
                     systemEventListener = facesApplication.systemEventListener;
                     if (systemEventListener != null) {
@@ -342,7 +342,7 @@ public class FacesApplication$JAXB
                 systemEventListener.add(systemEventListenerItem);
             } else if (("locale-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: localeConfig
-                FacesLocaleConfig localeConfigItem = readFacesLocaleConfig(elementReader, context);
+                final FacesLocaleConfig localeConfigItem = readFacesLocaleConfig(elementReader, context);
                 if (localeConfig == null) {
                     localeConfig = facesApplication.localeConfig;
                     if (localeConfig != null) {
@@ -354,11 +354,11 @@ public class FacesApplication$JAXB
                 localeConfig.add(localeConfigItem);
             } else if (("resource-bundle" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceBundle
-                FacesApplicationResourceBundle resourceBundle = readFacesApplicationResourceBundle(elementReader, context);
+                final FacesApplicationResourceBundle resourceBundle = readFacesApplicationResourceBundle(elementReader, context);
                 facesApplication.resourceBundle = resourceBundle;
             } else if (("application-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: applicationExtension
-                FacesApplicationExtension applicationExtensionItem = readFacesApplicationExtension(elementReader, context);
+                final FacesApplicationExtension applicationExtensionItem = readFacesApplicationExtension(elementReader, context);
                 if (applicationExtension == null) {
                     applicationExtension = facesApplication.applicationExtension;
                     if (applicationExtension != null) {
@@ -370,7 +370,7 @@ public class FacesApplication$JAXB
                 applicationExtension.add(applicationExtensionItem);
             } else if (("default-validators" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultValidators
-                FacesValidator defaultValidatorsItem = readFacesValidator(elementReader, context);
+                final FacesValidator defaultValidatorsItem = readFacesValidator(elementReader, context);
                 if (defaultValidators == null) {
                     defaultValidators = facesApplication.defaultValidators;
                     if (defaultValidators != null) {
@@ -434,12 +434,12 @@ public class FacesApplication$JAXB
         return facesApplication;
     }
 
-    public final FacesApplication read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesApplication read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesApplication facesApplication, RuntimeContext context)
         throws Exception {
         if (facesApplication == null) {
             writer.writeXsiNil();
@@ -450,7 +450,7 @@ public class FacesApplication$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesApplication.class != facesApplication.getClass()) {
             context.unexpectedSubclass(writer, facesApplication, FacesApplication.class);
             return;
@@ -460,25 +460,25 @@ public class FacesApplication$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesApplication.id;
+        final String idRaw = facesApplication.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesApplication, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: actionListener
-        List<String> actionListenerRaw = facesApplication.actionListener;
+        final List<String> actionListenerRaw = facesApplication.actionListener;
         if (actionListenerRaw != null) {
-            for (String actionListenerItem : actionListenerRaw) {
+            for (final String actionListenerItem : actionListenerRaw) {
                 String actionListener = null;
                 try {
                     actionListener = Adapters.collapsedStringAdapterAdapter.marshal(actionListenerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "actionListener", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (actionListener != null) {
@@ -490,13 +490,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: defaultRenderKitId
-        List<String> defaultRenderKitIdRaw = facesApplication.defaultRenderKitId;
+        final List<String> defaultRenderKitIdRaw = facesApplication.defaultRenderKitId;
         if (defaultRenderKitIdRaw != null) {
-            for (String defaultRenderKitIdItem : defaultRenderKitIdRaw) {
+            for (final String defaultRenderKitIdItem : defaultRenderKitIdRaw) {
                 String defaultRenderKitId = null;
                 try {
                     defaultRenderKitId = Adapters.collapsedStringAdapterAdapter.marshal(defaultRenderKitIdItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "defaultRenderKitId", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (defaultRenderKitId != null) {
@@ -508,13 +508,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: messageBundle
-        List<String> messageBundleRaw = facesApplication.messageBundle;
+        final List<String> messageBundleRaw = facesApplication.messageBundle;
         if (messageBundleRaw != null) {
-            for (String messageBundleItem : messageBundleRaw) {
+            for (final String messageBundleItem : messageBundleRaw) {
                 String messageBundle = null;
                 try {
                     messageBundle = Adapters.collapsedStringAdapterAdapter.marshal(messageBundleItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "messageBundle", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (messageBundle != null) {
@@ -526,13 +526,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: navigationHandler
-        List<String> navigationHandlerRaw = facesApplication.navigationHandler;
+        final List<String> navigationHandlerRaw = facesApplication.navigationHandler;
         if (navigationHandlerRaw != null) {
-            for (String navigationHandlerItem : navigationHandlerRaw) {
+            for (final String navigationHandlerItem : navigationHandlerRaw) {
                 String navigationHandler = null;
                 try {
                     navigationHandler = Adapters.collapsedStringAdapterAdapter.marshal(navigationHandlerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "navigationHandler", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (navigationHandler != null) {
@@ -544,13 +544,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: viewHandler
-        List<String> viewHandlerRaw = facesApplication.viewHandler;
+        final List<String> viewHandlerRaw = facesApplication.viewHandler;
         if (viewHandlerRaw != null) {
-            for (String viewHandlerItem : viewHandlerRaw) {
+            for (final String viewHandlerItem : viewHandlerRaw) {
                 String viewHandler = null;
                 try {
                     viewHandler = Adapters.collapsedStringAdapterAdapter.marshal(viewHandlerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "viewHandler", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (viewHandler != null) {
@@ -562,13 +562,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: stateManager
-        List<String> stateManagerRaw = facesApplication.stateManager;
+        final List<String> stateManagerRaw = facesApplication.stateManager;
         if (stateManagerRaw != null) {
-            for (String stateManagerItem : stateManagerRaw) {
+            for (final String stateManagerItem : stateManagerRaw) {
                 String stateManager = null;
                 try {
                     stateManager = Adapters.collapsedStringAdapterAdapter.marshal(stateManagerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "stateManager", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (stateManager != null) {
@@ -580,13 +580,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: elResolver
-        List<String> elResolverRaw = facesApplication.elResolver;
+        final List<String> elResolverRaw = facesApplication.elResolver;
         if (elResolverRaw != null) {
-            for (String elResolverItem : elResolverRaw) {
+            for (final String elResolverItem : elResolverRaw) {
                 String elResolver = null;
                 try {
                     elResolver = Adapters.collapsedStringAdapterAdapter.marshal(elResolverItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "elResolver", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (elResolver != null) {
@@ -598,9 +598,9 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: propertyResolver
-        List<String> propertyResolverRaw = facesApplication.propertyResolver;
+        final List<String> propertyResolverRaw = facesApplication.propertyResolver;
         if (propertyResolverRaw != null) {
-            for (String propertyResolverItem : propertyResolverRaw) {
+            for (final String propertyResolverItem : propertyResolverRaw) {
                 String propertyResolver = null;
                 try {
                     propertyResolver = Adapters.collapsedStringAdapterAdapter.marshal(propertyResolverItem);
@@ -616,7 +616,7 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: variableResolver
-        List<String> variableResolverRaw = facesApplication.variableResolver;
+        final List<String> variableResolverRaw = facesApplication.variableResolver;
         if (variableResolverRaw != null) {
             for (final String variableResolverItem : variableResolverRaw) {
                 String variableResolver = null;
@@ -634,13 +634,13 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: resourceHandler
-        List<String> resourceHandlerRaw = facesApplication.resourceHandler;
+        final List<String> resourceHandlerRaw = facesApplication.resourceHandler;
         if (resourceHandlerRaw != null) {
-            for (String resourceHandlerItem : resourceHandlerRaw) {
+            for (final String resourceHandlerItem : resourceHandlerRaw) {
                 String resourceHandler = null;
                 try {
                     resourceHandler = Adapters.collapsedStringAdapterAdapter.marshal(resourceHandlerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "resourceHandler", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (resourceHandler != null) {
@@ -652,9 +652,9 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: systemEventListener
-        List<FacesSystemEventListener> systemEventListener = facesApplication.systemEventListener;
+        final List<FacesSystemEventListener> systemEventListener = facesApplication.systemEventListener;
         if (systemEventListener != null) {
-            for (FacesSystemEventListener systemEventListenerItem : systemEventListener) {
+            for (final FacesSystemEventListener systemEventListenerItem : systemEventListener) {
                 if (systemEventListenerItem != null) {
                     writer.writeStartElement(prefix, "system-event-listener", "http://java.sun.com/xml/ns/javaee");
                     writeFacesSystemEventListener(writer, systemEventListenerItem, context);
@@ -664,9 +664,9 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: localeConfig
-        List<FacesLocaleConfig> localeConfig = facesApplication.localeConfig;
+        final List<FacesLocaleConfig> localeConfig = facesApplication.localeConfig;
         if (localeConfig != null) {
-            for (FacesLocaleConfig localeConfigItem : localeConfig) {
+            for (final FacesLocaleConfig localeConfigItem : localeConfig) {
                 if (localeConfigItem != null) {
                     writer.writeStartElement(prefix, "locale-config", "http://java.sun.com/xml/ns/javaee");
                     writeFacesLocaleConfig(writer, localeConfigItem, context);
@@ -676,7 +676,7 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: resourceBundle
-        FacesApplicationResourceBundle resourceBundle = facesApplication.resourceBundle;
+        final FacesApplicationResourceBundle resourceBundle = facesApplication.resourceBundle;
         if (resourceBundle != null) {
             writer.writeStartElement(prefix, "resource-bundle", "http://java.sun.com/xml/ns/javaee");
             writeFacesApplicationResourceBundle(writer, resourceBundle, context);
@@ -686,9 +686,9 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: applicationExtension
-        List<FacesApplicationExtension> applicationExtension = facesApplication.applicationExtension;
+        final List<FacesApplicationExtension> applicationExtension = facesApplication.applicationExtension;
         if (applicationExtension != null) {
-            for (FacesApplicationExtension applicationExtensionItem : applicationExtension) {
+            for (final FacesApplicationExtension applicationExtensionItem : applicationExtension) {
                 if (applicationExtensionItem != null) {
                     writer.writeStartElement(prefix, "application-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesApplicationExtension(writer, applicationExtensionItem, context);
@@ -698,9 +698,9 @@ public class FacesApplication$JAXB
         }
 
         // ELEMENT: defaultValidators
-        List<FacesValidator> defaultValidators = facesApplication.defaultValidators;
+        final List<FacesValidator> defaultValidators = facesApplication.defaultValidators;
         if (defaultValidators != null) {
-            for (FacesValidator defaultValidatorsItem : defaultValidators) {
+            for (final FacesValidator defaultValidatorsItem : defaultValidators) {
                 if (defaultValidatorsItem != null) {
                     writer.writeStartElement(prefix, "default-validators", "http://java.sun.com/xml/ns/javaee");
                     writeFacesValidator(writer, defaultValidatorsItem, context);

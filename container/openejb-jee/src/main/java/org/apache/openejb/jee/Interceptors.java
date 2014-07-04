@@ -98,7 +98,7 @@ public class Interceptors {
 
     public void setInterceptor(final Interceptor[] v) {
         interceptors.clear();
-        for (Interceptor e : v) addInterceptor(e);
+        for (final Interceptor e : v) addInterceptor(e);
     }
 
     public Interceptor addInterceptor(final Interceptor interceptor) {

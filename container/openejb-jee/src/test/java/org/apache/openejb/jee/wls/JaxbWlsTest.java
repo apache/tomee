@@ -43,22 +43,22 @@ public class JaxbWlsTest extends TestCase {
 
     public void marshallAndUnmarshall(final String xmlFile) throws Exception {
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFile);
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFile);
         final String expected = readContent(in);
 
-        Object object = JaxbWls.unmarshal(WeblogicEjbJar.class, new ByteArrayInputStream(expected.getBytes()));
+        final Object object = JaxbWls.unmarshal(WeblogicEjbJar.class, new ByteArrayInputStream(expected.getBytes()));
 
-        JAXBElement element = (JAXBElement) object;
+        final JAXBElement element = (JAXBElement) object;
 
         assertTrue(element.getValue() instanceof WeblogicEjbJar);
 
-        String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
+        final String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
 
         XMLUnit.setIgnoreWhitespace(true);
         try {
-            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            final Diff myDiff = new DetailedDiff(new Diff(expected, actual));
             assertTrue("Files are not similar " + myDiff, myDiff.similar());
-        } catch (AssertionFailedError e) {
+        } catch (final AssertionFailedError e) {
             assertEquals(expected, actual);
             throw e;
         }

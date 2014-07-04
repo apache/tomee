@@ -45,12 +45,12 @@ public class FacesRenderKitExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesRenderKitExtension(final XoXMLStreamWriter writer, final FacesRenderKitExtension facesRenderKitExtension, RuntimeContext context)
+    public static void writeFacesRenderKitExtension(final XoXMLStreamWriter writer, final FacesRenderKitExtension facesRenderKitExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesRenderKitExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesRenderKitExtension facesRenderKitExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesRenderKitExtension facesRenderKitExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesRenderKitExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesRenderKitExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-render-kit-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesRenderKitExtension.class);
@@ -84,7 +84,7 @@ public class FacesRenderKitExtension$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesRenderKitExtension);
                 facesRenderKitExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesRenderKitExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesRenderKitExtension.any;
@@ -114,7 +114,7 @@ public class FacesRenderKitExtension$JAXB
         return facesRenderKitExtension;
     }
 
-    public final FacesRenderKitExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesRenderKitExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -139,7 +139,7 @@ public class FacesRenderKitExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesRenderKitExtension.id;
+        final String idRaw = facesRenderKitExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -151,7 +151,7 @@ public class FacesRenderKitExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesRenderKitExtension.any;
+        final List<Object> any = facesRenderKitExtension.any;
         if (any != null) {
             for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesRenderKitExtension, "any", anyItem);

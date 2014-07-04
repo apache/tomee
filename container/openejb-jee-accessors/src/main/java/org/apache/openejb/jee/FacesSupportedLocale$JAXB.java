@@ -38,17 +38,17 @@ public class FacesSupportedLocale$JAXB
         super(FacesSupportedLocale.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-supported-localeType".intern()));
     }
 
-    public static FacesSupportedLocale readFacesSupportedLocale(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesSupportedLocale readFacesSupportedLocale(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesSupportedLocale(final XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
+    public static void writeFacesSupportedLocale(final XoXMLStreamWriter writer, final FacesSupportedLocale facesSupportedLocale, final RuntimeContext context)
         throws Exception {
         _write(writer, facesSupportedLocale, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesSupportedLocale facesSupportedLocale, final RuntimeContext context)
         throws Exception {
         _write(writer, facesSupportedLocale, context);
     }
@@ -78,10 +78,10 @@ public class FacesSupportedLocale$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesSupportedLocale);
                 facesSupportedLocale.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,7 +97,7 @@ public class FacesSupportedLocale$JAXB
         return facesSupportedLocale;
     }
 
-    public final FacesSupportedLocale read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesSupportedLocale read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -122,12 +122,12 @@ public class FacesSupportedLocale$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesSupportedLocale.id;
+        final String idRaw = facesSupportedLocale.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesSupportedLocale, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

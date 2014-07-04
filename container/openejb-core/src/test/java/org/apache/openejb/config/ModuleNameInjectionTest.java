@@ -47,7 +47,7 @@ public class ModuleNameInjectionTest extends TestCase {
 
         assertTrue("instanceof widget", object instanceof Widget);
 
-        Widget widget = (Widget) object;
+        final Widget widget = (Widget) object;
 
         assertEquals("myApp", widget.getAppName());
         assertEquals("myEjbModule", widget.getModuleName());
@@ -59,14 +59,14 @@ public class ModuleNameInjectionTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "10");
         statelessContainerInfo.properties.setProperty("MaxSize", "0");
         statelessContainerInfo.properties.setProperty("StrictPooling", "false");
@@ -74,11 +74,11 @@ public class ModuleNameInjectionTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(WidgetBean.class);
+        final StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.setModuleName("myEjbModule");
         ejbJar.addEnterpriseBean(bean);
 
@@ -94,7 +94,7 @@ public class ModuleNameInjectionTest extends TestCase {
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "appName")));
         bean.getEnvEntry().add(entry);
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app", new Application("myApp"), false);
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app", new Application("myApp"), false);
         app.getEjbModules().add(new EjbModule(ejbJar));
 
         assembler.createApplication(config.configureApplication(app));

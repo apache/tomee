@@ -86,7 +86,7 @@ public class NamedMethod {
         this.methodName = methodName;
 
         if (parameters.length > 0) {
-            MethodParams params = new MethodParams();
+            final MethodParams params = new MethodParams();
             for (final String paramName : parameters) {
                 params.getMethodParam().add(paramName);
             }

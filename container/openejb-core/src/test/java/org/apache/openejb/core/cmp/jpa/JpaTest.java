@@ -157,17 +157,17 @@ public class JpaTest extends TestCase {
     private EntityManagerFactory createEntityManagerFactory() throws Exception {
         final PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
 
-            public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+            public void addTransformer(final String unitId, final ClassLoader classLoader, final ClassFileTransformer classFileTransformer) {
                 /*
                 Instrumentation instrumentation = Agent.getInstrumentation();
                 instrumentation.addTransformer(classFileTransformer);
                 */
             }
 
-            public void destroy(String unitId) {
+            public void destroy(final String unitId) {
             }
 
-            public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+            public ClassLoader getNewTempClassLoader(final ClassLoader classLoader) {
                 return new TempClassLoader(classLoader);
             }
         };
@@ -199,7 +199,7 @@ public class JpaTest extends TestCase {
         unitInfo.getMappingFileNames().add("META-INF/jpa-test-mappings.xml");
 
         // Handle Properties
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         properties.setProperty("openjpa.Log", "DefaultLevel=WARN");
         properties.setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
@@ -209,16 +209,16 @@ public class JpaTest extends TestCase {
 
         unitInfo.getManagedClassNames().add("org.apache.openejb.core.cmp.jpa.Employee");
 
-        PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
-        EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
+        final PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
+        final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
         return emf;
     }
 
-    private static void set(final Object instance, String parameterName, final Class type, Object value) throws Exception {
+    private static void set(final Object instance, final String parameterName, final Class type, final Object value) throws Exception {
         try {
             instance.getClass().getMethod("set" + parameterName, type).invoke(instance, value);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
@@ -230,11 +230,11 @@ public class JpaTest extends TestCase {
         }
     }
 
-    private static void invoke(final Object instance, String methodName) throws Exception {
+    private static void invoke(final Object instance, final String methodName) throws Exception {
         try {
             instance.getClass().getMethod(methodName).invoke(instance);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
+        } catch (final InvocationTargetException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             } else if (cause instanceof Error) {
@@ -266,17 +266,17 @@ public class JpaTest extends TestCase {
         execute(dataSource, "INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
     }
 
-    private void createTable(final DataSource dataSource, String tableName, String create) throws SQLException {
+    private void createTable(final DataSource dataSource, final String tableName, final String create) throws SQLException {
         try {
             execute(dataSource, "DROP TABLE " + tableName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         execute(dataSource, create);
     }
 
     private DataSource createJtaDataSource(final TransactionManager transactionManager) throws Exception {
-        BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + "createJtaDs");
+        final BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + "createJtaDs");
         ds.setTransactionManager(transactionManager);
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
@@ -301,13 +301,13 @@ public class JpaTest extends TestCase {
     }
 
 
-    public boolean execute(final DataSource ds, String statement) throws SQLException {
+    public boolean execute(final DataSource ds, final String statement) throws SQLException {
         boolean retval;
         Connection connection = null;
         try {
             connection = ds.getConnection();
 
-            Statement stmt = connection.createStatement();
+            final Statement stmt = connection.createStatement();
             try {
                 retval = stmt.execute(statement);
             } finally {
@@ -337,14 +337,14 @@ public class JpaTest extends TestCase {
         }
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
     public static byte[] addNewField(final byte[] origBytes) {
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
-        FieldAdderClassVisitor visitor = new FieldAdderClassVisitor(classWriter);
+        final FieldAdderClassVisitor visitor = new FieldAdderClassVisitor(classWriter);
 
         final ClassReader classReader = new ClassReader(origBytes);
         classReader.accept(visitor, 0);

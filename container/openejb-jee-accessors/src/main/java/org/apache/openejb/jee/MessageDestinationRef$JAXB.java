@@ -48,12 +48,12 @@ public class MessageDestinationRef$JAXB
         super(MessageDestinationRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-destination-refType".intern()), Text$JAXB.class, MessageDestinationUsage$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static MessageDestinationRef readMessageDestinationRef(final XoXMLStreamReader reader, RuntimeContext context)
+    public static MessageDestinationRef readMessageDestinationRef(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageDestinationRef(final XoXMLStreamWriter writer, final MessageDestinationRef messageDestinationRef, RuntimeContext context)
+    public static void writeMessageDestinationRef(final XoXMLStreamWriter writer, final MessageDestinationRef messageDestinationRef, final RuntimeContext context)
         throws Exception {
         _write(writer, messageDestinationRef, context);
     }
@@ -75,7 +75,7 @@ public class MessageDestinationRef$JAXB
             context = new RuntimeContext();
         }
 
-        MessageDestinationRef messageDestinationRef = new MessageDestinationRef();
+        final MessageDestinationRef messageDestinationRef = new MessageDestinationRef();
         context.beforeUnmarshal(messageDestinationRef, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -90,10 +90,10 @@ public class MessageDestinationRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, messageDestinationRef);
                 messageDestinationRef.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -105,16 +105,16 @@ public class MessageDestinationRef$JAXB
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("message-destination-ref-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationRefName
-                String messageDestinationRefNameRaw = elementReader.getElementAsString();
+                final String messageDestinationRefNameRaw = elementReader.getElementAsString();
 
-                String messageDestinationRefName;
+                final String messageDestinationRefName;
                 try {
                     messageDestinationRefName = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationRefNameRaw);
                 } catch (final Exception e) {
@@ -125,12 +125,12 @@ public class MessageDestinationRef$JAXB
                 messageDestinationRef.messageDestinationRefName = messageDestinationRefName;
             } else if (("message-destination-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationType
-                String messageDestinationTypeRaw = elementReader.getElementAsString();
+                final String messageDestinationTypeRaw = elementReader.getElementAsString();
 
-                String messageDestinationType;
+                final String messageDestinationType;
                 try {
                     messageDestinationType = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -138,18 +138,18 @@ public class MessageDestinationRef$JAXB
                 messageDestinationRef.messageDestinationType = messageDestinationType;
             } else if (("message-destination-usage" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationUsage
-                MessageDestinationUsage messageDestinationUsage = parseMessageDestinationUsage(elementReader, context, elementReader.getElementAsString());
+                final MessageDestinationUsage messageDestinationUsage = parseMessageDestinationUsage(elementReader, context, elementReader.getElementAsString());
                 if (messageDestinationUsage != null) {
                     messageDestinationRef.messageDestinationUsage = messageDestinationUsage;
                 }
             } else if (("message-destination-link" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationLink
-                String messageDestinationLinkRaw = elementReader.getElementAsString();
+                final String messageDestinationLinkRaw = elementReader.getElementAsString();
 
-                String messageDestinationLink;
+                final String messageDestinationLink;
                 try {
                     messageDestinationLink = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationLinkRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -157,12 +157,12 @@ public class MessageDestinationRef$JAXB
                 messageDestinationRef.messageDestinationLink = messageDestinationLink;
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -170,7 +170,7 @@ public class MessageDestinationRef$JAXB
                 messageDestinationRef.mappedName = mappedName;
             } else if (("injection-target" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTarget
-                InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
+                final InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
                 if (injectionTarget == null) {
                     injectionTarget = messageDestinationRef.injectionTarget;
                     if (injectionTarget != null) {
@@ -182,12 +182,12 @@ public class MessageDestinationRef$JAXB
                 injectionTarget.add(injectionTargetItem);
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
-                String lookupName;
+                final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -200,7 +200,7 @@ public class MessageDestinationRef$JAXB
         if (descriptions != null) {
             try {
                 messageDestinationRef.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, MessageDestinationRef.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -213,7 +213,7 @@ public class MessageDestinationRef$JAXB
         return messageDestinationRef;
     }
 
-    public final MessageDestinationRef read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final MessageDestinationRef read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -229,7 +229,7 @@ public class MessageDestinationRef$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MessageDestinationRef.class != messageDestinationRef.getClass()) {
             context.unexpectedSubclass(writer, messageDestinationRef, MessageDestinationRef.class);
             return;
@@ -239,7 +239,7 @@ public class MessageDestinationRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = messageDestinationRef.id;
+        final String idRaw = messageDestinationRef.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -254,11 +254,11 @@ public class MessageDestinationRef$JAXB
         Text[] descriptions = null;
         try {
             descriptions = messageDestinationRef.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDestinationRef, "descriptions", MessageDestinationRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -270,11 +270,11 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: messageDestinationRefName
-        String messageDestinationRefNameRaw = messageDestinationRef.messageDestinationRefName;
+        final String messageDestinationRefNameRaw = messageDestinationRef.messageDestinationRefName;
         String messageDestinationRefName = null;
         try {
             messageDestinationRefName = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationRefNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDestinationRef, "messageDestinationRefName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageDestinationRefName != null) {
@@ -286,7 +286,7 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: messageDestinationType
-        String messageDestinationTypeRaw = messageDestinationRef.messageDestinationType;
+        final String messageDestinationTypeRaw = messageDestinationRef.messageDestinationType;
         String messageDestinationType = null;
         try {
             messageDestinationType = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationTypeRaw);
@@ -308,11 +308,11 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: messageDestinationLink
-        String messageDestinationLinkRaw = messageDestinationRef.messageDestinationLink;
+        final String messageDestinationLinkRaw = messageDestinationRef.messageDestinationLink;
         String messageDestinationLink = null;
         try {
             messageDestinationLink = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationLinkRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDestinationRef, "messageDestinationLink", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageDestinationLink != null) {
@@ -322,11 +322,11 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = messageDestinationRef.mappedName;
+        final String mappedNameRaw = messageDestinationRef.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDestinationRef, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {
@@ -336,9 +336,9 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: injectionTarget
-        Set<InjectionTarget> injectionTarget = messageDestinationRef.injectionTarget;
+        final Set<InjectionTarget> injectionTarget = messageDestinationRef.injectionTarget;
         if (injectionTarget != null) {
-            for (InjectionTarget injectionTargetItem : injectionTarget) {
+            for (final InjectionTarget injectionTargetItem : injectionTarget) {
                 if (injectionTargetItem != null) {
                     writer.writeStartElement(prefix, "injection-target", "http://java.sun.com/xml/ns/javaee");
                     writeInjectionTarget(writer, injectionTargetItem, context);
@@ -350,11 +350,11 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: lookupName
-        String lookupNameRaw = messageDestinationRef.lookupName;
+        final String lookupNameRaw = messageDestinationRef.lookupName;
         String lookupName = null;
         try {
             lookupName = Adapters.collapsedStringAdapterAdapter.marshal(lookupNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDestinationRef, "lookupName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lookupName != null) {

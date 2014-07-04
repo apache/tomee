@@ -43,17 +43,17 @@ public class FacesFactory$JAXB
         super(FacesFactory.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-factoryType".intern()), FacesFactoryExtension$JAXB.class);
     }
 
-    public static FacesFactory readFacesFactory(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesFactory readFacesFactory(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesFactory(final XoXMLStreamWriter writer, FacesFactory facesFactory, RuntimeContext context)
+    public static void writeFacesFactory(final XoXMLStreamWriter writer, final FacesFactory facesFactory, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFactory, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesFactory facesFactory, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesFactory facesFactory, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFactory, context);
     }
@@ -70,7 +70,7 @@ public class FacesFactory$JAXB
             context = new RuntimeContext();
         }
 
-        FacesFactory facesFactory = new FacesFactory();
+        final FacesFactory facesFactory = new FacesFactory();
         context.beforeUnmarshal(facesFactory, LifecycleCallback.NONE);
 
         List<String> applicationFactory = null;
@@ -94,10 +94,10 @@ public class FacesFactory$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesFactory);
                 facesFactory.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,15 +106,15 @@ public class FacesFactory$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("application-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: applicationFactory
-                String applicationFactoryItemRaw = elementReader.getElementAsString();
+                final String applicationFactoryItemRaw = elementReader.getElementAsString();
 
-                String applicationFactoryItem;
+                final String applicationFactoryItem;
                 try {
                     applicationFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(applicationFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -132,10 +132,10 @@ public class FacesFactory$JAXB
                 // ELEMENT: exceptionHandlerFactory
                 final String exceptionHandlerFactoryItemRaw = elementReader.getElementAsString();
 
-                String exceptionHandlerFactoryItem;
+                final String exceptionHandlerFactoryItem;
                 try {
                     exceptionHandlerFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(exceptionHandlerFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -153,10 +153,10 @@ public class FacesFactory$JAXB
                 // ELEMENT: externalContextFactory
                 final String externalContextFactoryItemRaw = elementReader.getElementAsString();
 
-                String externalContextFactoryItem;
+                final String externalContextFactoryItem;
                 try {
                     externalContextFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(externalContextFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -172,12 +172,12 @@ public class FacesFactory$JAXB
                 externalContextFactory.add(externalContextFactoryItem);
             } else if (("faces-context-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: facesContextFactory
-                String facesContextFactoryItemRaw = elementReader.getElementAsString();
+                final String facesContextFactoryItemRaw = elementReader.getElementAsString();
 
-                String facesContextFactoryItem;
+                final String facesContextFactoryItem;
                 try {
                     facesContextFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(facesContextFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -193,12 +193,12 @@ public class FacesFactory$JAXB
                 facesContextFactory.add(facesContextFactoryItem);
             } else if (("partial-view-context-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: partialViewContextFactory
-                String partialViewContextFactoryItemRaw = elementReader.getElementAsString();
+                final String partialViewContextFactoryItemRaw = elementReader.getElementAsString();
 
-                String partialViewContextFactoryItem;
+                final String partialViewContextFactoryItem;
                 try {
                     partialViewContextFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(partialViewContextFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -214,12 +214,12 @@ public class FacesFactory$JAXB
                 partialViewContextFactory.add(partialViewContextFactoryItem);
             } else if (("lifecycle-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lifecycleFactory
-                String lifecycleFactoryItemRaw = elementReader.getElementAsString();
+                final String lifecycleFactoryItemRaw = elementReader.getElementAsString();
 
-                String lifecycleFactoryItem;
+                final String lifecycleFactoryItem;
                 try {
                     lifecycleFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(lifecycleFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -235,12 +235,12 @@ public class FacesFactory$JAXB
                 lifecycleFactory.add(lifecycleFactoryItem);
             } else if (("view-declaration-language-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: viewDeclarationLanguageFactory
-                String viewDeclarationLanguageFactoryItemRaw = elementReader.getElementAsString();
+                final String viewDeclarationLanguageFactoryItemRaw = elementReader.getElementAsString();
 
-                String viewDeclarationLanguageFactoryItem;
+                final String viewDeclarationLanguageFactoryItem;
                 try {
                     viewDeclarationLanguageFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(viewDeclarationLanguageFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -256,12 +256,12 @@ public class FacesFactory$JAXB
                 viewDeclarationLanguageFactory.add(viewDeclarationLanguageFactoryItem);
             } else if (("tag-handler-delegate-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tagHandlerDelegateFactory
-                String tagHandlerDelegateFactoryItemRaw = elementReader.getElementAsString();
+                final String tagHandlerDelegateFactoryItemRaw = elementReader.getElementAsString();
 
-                String tagHandlerDelegateFactoryItem;
+                final String tagHandlerDelegateFactoryItem;
                 try {
                     tagHandlerDelegateFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(tagHandlerDelegateFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -277,12 +277,12 @@ public class FacesFactory$JAXB
                 tagHandlerDelegateFactory.add(tagHandlerDelegateFactoryItem);
             } else if (("render-kit-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: renderKitFactory
-                String renderKitFactoryItemRaw = elementReader.getElementAsString();
+                final String renderKitFactoryItemRaw = elementReader.getElementAsString();
 
-                String renderKitFactoryItem;
+                final String renderKitFactoryItem;
                 try {
                     renderKitFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(renderKitFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -298,12 +298,12 @@ public class FacesFactory$JAXB
                 renderKitFactory.add(renderKitFactoryItem);
             } else if (("visit-context-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: visitContextFactory
-                String visitContextFactoryItemRaw = elementReader.getElementAsString();
+                final String visitContextFactoryItemRaw = elementReader.getElementAsString();
 
-                String visitContextFactoryItem;
+                final String visitContextFactoryItem;
                 try {
                     visitContextFactoryItem = Adapters.collapsedStringAdapterAdapter.unmarshal(visitContextFactoryItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -319,7 +319,7 @@ public class FacesFactory$JAXB
                 visitContextFactory.add(visitContextFactoryItem);
             } else if (("factory-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: factoryExtension
-                FacesFactoryExtension factoryExtensionItem = readFacesFactoryExtension(elementReader, context);
+                final FacesFactoryExtension factoryExtensionItem = readFacesFactoryExtension(elementReader, context);
                 if (factoryExtension == null) {
                     factoryExtension = facesFactory.factoryExtension;
                     if (factoryExtension != null) {
@@ -400,25 +400,25 @@ public class FacesFactory$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesFactory.id;
+        final String idRaw = facesFactory.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesFactory, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: applicationFactory
-        List<String> applicationFactoryRaw = facesFactory.applicationFactory;
+        final List<String> applicationFactoryRaw = facesFactory.applicationFactory;
         if (applicationFactoryRaw != null) {
-            for (String applicationFactoryItem : applicationFactoryRaw) {
+            for (final String applicationFactoryItem : applicationFactoryRaw) {
                 String applicationFactory = null;
                 try {
                     applicationFactory = Adapters.collapsedStringAdapterAdapter.marshal(applicationFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "applicationFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (applicationFactory != null) {
@@ -430,13 +430,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: exceptionHandlerFactory
-        List<String> exceptionHandlerFactoryRaw = facesFactory.exceptionHandlerFactory;
+        final List<String> exceptionHandlerFactoryRaw = facesFactory.exceptionHandlerFactory;
         if (exceptionHandlerFactoryRaw != null) {
-            for (String exceptionHandlerFactoryItem : exceptionHandlerFactoryRaw) {
+            for (final String exceptionHandlerFactoryItem : exceptionHandlerFactoryRaw) {
                 String exceptionHandlerFactory = null;
                 try {
                     exceptionHandlerFactory = Adapters.collapsedStringAdapterAdapter.marshal(exceptionHandlerFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "exceptionHandlerFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (exceptionHandlerFactory != null) {
@@ -448,13 +448,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: externalContextFactory
-        List<String> externalContextFactoryRaw = facesFactory.externalContextFactory;
+        final List<String> externalContextFactoryRaw = facesFactory.externalContextFactory;
         if (externalContextFactoryRaw != null) {
-            for (String externalContextFactoryItem : externalContextFactoryRaw) {
+            for (final String externalContextFactoryItem : externalContextFactoryRaw) {
                 String externalContextFactory = null;
                 try {
                     externalContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(externalContextFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "externalContextFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (externalContextFactory != null) {
@@ -466,13 +466,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: facesContextFactory
-        List<String> facesContextFactoryRaw = facesFactory.facesContextFactory;
+        final List<String> facesContextFactoryRaw = facesFactory.facesContextFactory;
         if (facesContextFactoryRaw != null) {
-            for (String facesContextFactoryItem : facesContextFactoryRaw) {
+            for (final String facesContextFactoryItem : facesContextFactoryRaw) {
                 String facesContextFactory = null;
                 try {
                     facesContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(facesContextFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "facesContextFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (facesContextFactory != null) {
@@ -484,9 +484,9 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: partialViewContextFactory
-        List<String> partialViewContextFactoryRaw = facesFactory.partialViewContextFactory;
+        final List<String> partialViewContextFactoryRaw = facesFactory.partialViewContextFactory;
         if (partialViewContextFactoryRaw != null) {
-            for (String partialViewContextFactoryItem : partialViewContextFactoryRaw) {
+            for (final String partialViewContextFactoryItem : partialViewContextFactoryRaw) {
                 String partialViewContextFactory = null;
                 try {
                     partialViewContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(partialViewContextFactoryItem);
@@ -502,13 +502,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: lifecycleFactory
-        List<String> lifecycleFactoryRaw = facesFactory.lifecycleFactory;
+        final List<String> lifecycleFactoryRaw = facesFactory.lifecycleFactory;
         if (lifecycleFactoryRaw != null) {
-            for (String lifecycleFactoryItem : lifecycleFactoryRaw) {
+            for (final String lifecycleFactoryItem : lifecycleFactoryRaw) {
                 String lifecycleFactory = null;
                 try {
                     lifecycleFactory = Adapters.collapsedStringAdapterAdapter.marshal(lifecycleFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "lifecycleFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (lifecycleFactory != null) {
@@ -520,13 +520,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: viewDeclarationLanguageFactory
-        List<String> viewDeclarationLanguageFactoryRaw = facesFactory.viewDeclarationLanguageFactory;
+        final List<String> viewDeclarationLanguageFactoryRaw = facesFactory.viewDeclarationLanguageFactory;
         if (viewDeclarationLanguageFactoryRaw != null) {
-            for (String viewDeclarationLanguageFactoryItem : viewDeclarationLanguageFactoryRaw) {
+            for (final String viewDeclarationLanguageFactoryItem : viewDeclarationLanguageFactoryRaw) {
                 String viewDeclarationLanguageFactory = null;
                 try {
                     viewDeclarationLanguageFactory = Adapters.collapsedStringAdapterAdapter.marshal(viewDeclarationLanguageFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "viewDeclarationLanguageFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (viewDeclarationLanguageFactory != null) {
@@ -538,13 +538,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: tagHandlerDelegateFactory
-        List<String> tagHandlerDelegateFactoryRaw = facesFactory.tagHandlerDelegateFactory;
+        final List<String> tagHandlerDelegateFactoryRaw = facesFactory.tagHandlerDelegateFactory;
         if (tagHandlerDelegateFactoryRaw != null) {
-            for (String tagHandlerDelegateFactoryItem : tagHandlerDelegateFactoryRaw) {
+            for (final String tagHandlerDelegateFactoryItem : tagHandlerDelegateFactoryRaw) {
                 String tagHandlerDelegateFactory = null;
                 try {
                     tagHandlerDelegateFactory = Adapters.collapsedStringAdapterAdapter.marshal(tagHandlerDelegateFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "tagHandlerDelegateFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (tagHandlerDelegateFactory != null) {
@@ -556,13 +556,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: renderKitFactory
-        List<String> renderKitFactoryRaw = facesFactory.renderKitFactory;
+        final List<String> renderKitFactoryRaw = facesFactory.renderKitFactory;
         if (renderKitFactoryRaw != null) {
-            for (String renderKitFactoryItem : renderKitFactoryRaw) {
+            for (final String renderKitFactoryItem : renderKitFactoryRaw) {
                 String renderKitFactory = null;
                 try {
                     renderKitFactory = Adapters.collapsedStringAdapterAdapter.marshal(renderKitFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "renderKitFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (renderKitFactory != null) {
@@ -574,13 +574,13 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: visitContextFactory
-        List<String> visitContextFactoryRaw = facesFactory.visitContextFactory;
+        final List<String> visitContextFactoryRaw = facesFactory.visitContextFactory;
         if (visitContextFactoryRaw != null) {
             for (final String visitContextFactoryItem : visitContextFactoryRaw) {
                 String visitContextFactory = null;
                 try {
                     visitContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(visitContextFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "visitContextFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (visitContextFactory != null) {
@@ -592,9 +592,9 @@ public class FacesFactory$JAXB
         }
 
         // ELEMENT: factoryExtension
-        List<FacesFactoryExtension> factoryExtension = facesFactory.factoryExtension;
+        final List<FacesFactoryExtension> factoryExtension = facesFactory.factoryExtension;
         if (factoryExtension != null) {
-            for (FacesFactoryExtension factoryExtensionItem : factoryExtension) {
+            for (final FacesFactoryExtension factoryExtensionItem : factoryExtension) {
                 if (factoryExtensionItem != null) {
                     writer.writeStartElement(prefix, "factory-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesFactoryExtension(writer, factoryExtensionItem, context);

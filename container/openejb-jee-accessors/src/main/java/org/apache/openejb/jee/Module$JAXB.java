@@ -46,12 +46,12 @@ public class Module$JAXB
         return _read(reader, context);
     }
 
-    public static void writeModule(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+    public static void writeModule(final XoXMLStreamWriter writer, final Module module, final RuntimeContext context)
         throws Exception {
         _write(writer, module, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final Module module, final RuntimeContext context)
         throws Exception {
         _write(writer, module, context);
     }
@@ -68,7 +68,7 @@ public class Module$JAXB
             context = new RuntimeContext();
         }
 
-        Module module = new Module();
+        final Module module = new Module();
         context.beforeUnmarshal(module, LifecycleCallback.NONE);
 
 
@@ -81,7 +81,7 @@ public class Module$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -96,12 +96,12 @@ public class Module$JAXB
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("connector" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connector
-                String connectorRaw = elementReader.getElementAsString();
+                final String connectorRaw = elementReader.getElementAsString();
 
-                String connector;
+                final String connector;
                 try {
                     connector = Adapters.collapsedStringAdapterAdapter.unmarshal(connectorRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,12 +109,12 @@ public class Module$JAXB
                 module.connector = connector;
             } else if (("ejb" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejb
-                String ejbRaw = elementReader.getElementAsString();
+                final String ejbRaw = elementReader.getElementAsString();
 
-                String ejb;
+                final String ejb;
                 try {
                     ejb = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,12 +122,12 @@ public class Module$JAXB
                 module.ejb = ejb;
             } else if (("java" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: java
-                String javaRaw = elementReader.getElementAsString();
+                final String javaRaw = elementReader.getElementAsString();
 
-                String java;
+                final String java;
                 try {
                     java = Adapters.collapsedStringAdapterAdapter.unmarshal(javaRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -135,16 +135,16 @@ public class Module$JAXB
                 module.java = java;
             } else if (("web" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: web
-                Web web = readWeb(elementReader, context);
+                final Web web = readWeb(elementReader, context);
                 module.web = web;
             } else if (("alt-dd" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: altDd
-                String altDdRaw = elementReader.getElementAsString();
+                final String altDdRaw = elementReader.getElementAsString();
 
-                String altDd;
+                final String altDd;
                 try {
                     altDd = Adapters.collapsedStringAdapterAdapter.unmarshal(altDdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -160,12 +160,12 @@ public class Module$JAXB
         return module;
     }
 
-    public final Module read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final Module read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final Module module, RuntimeContext context)
         throws Exception {
         if (module == null) {
             writer.writeXsiNil();
@@ -176,7 +176,7 @@ public class Module$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Module.class != module.getClass()) {
             context.unexpectedSubclass(writer, module, Module.class);
             return;
@@ -186,23 +186,23 @@ public class Module$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = module.id;
+        final String idRaw = module.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(module, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: connector
-        String connectorRaw = module.connector;
+        final String connectorRaw = module.connector;
         String connector = null;
         try {
             connector = Adapters.collapsedStringAdapterAdapter.marshal(connectorRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(module, "connector", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (connector != null) {
@@ -212,11 +212,11 @@ public class Module$JAXB
         }
 
         // ELEMENT: ejb
-        String ejbRaw = module.ejb;
+        final String ejbRaw = module.ejb;
         String ejb = null;
         try {
             ejb = Adapters.collapsedStringAdapterAdapter.marshal(ejbRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(module, "ejb", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejb != null) {
@@ -226,11 +226,11 @@ public class Module$JAXB
         }
 
         // ELEMENT: java
-        String javaRaw = module.java;
+        final String javaRaw = module.java;
         String java = null;
         try {
             java = Adapters.collapsedStringAdapterAdapter.marshal(javaRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(module, "java", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (java != null) {
@@ -240,7 +240,7 @@ public class Module$JAXB
         }
 
         // ELEMENT: web
-        Web web = module.web;
+        final Web web = module.web;
         if (web != null) {
             writer.writeStartElement(prefix, "web", "http://java.sun.com/xml/ns/javaee");
             writeWeb(writer, web, context);
@@ -248,11 +248,11 @@ public class Module$JAXB
         }
 
         // ELEMENT: altDd
-        String altDdRaw = module.altDd;
+        final String altDdRaw = module.altDd;
         String altDd = null;
         try {
             altDd = Adapters.collapsedStringAdapterAdapter.marshal(altDdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(module, "altDd", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (altDd != null) {

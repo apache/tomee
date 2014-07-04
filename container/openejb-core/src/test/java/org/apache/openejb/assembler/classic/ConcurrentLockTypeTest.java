@@ -45,18 +45,18 @@ public class ConcurrentLockTypeTest extends TestCase {
 
     public void test() throws Exception {
         final Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(Color.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Red.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Crimson.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Scarlet.class));
-        List<ContainerConcurrency> declared = ejbJar.getAssemblyDescriptor().getContainerConcurrency();
+        final List<ContainerConcurrency> declared = ejbJar.getAssemblyDescriptor().getContainerConcurrency();
 
         declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "*", "*", "*"));
         declared.add(new ContainerConcurrency(ConcurrentLockType.READ, "*", "Crimson", "*"));
@@ -64,7 +64,7 @@ public class ConcurrentLockTypeTest extends TestCase {
         declared.add(new ContainerConcurrency(ConcurrentLockType.READ, Red.class.getName(), "Scarlet", "red"));
         declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "Scarlet", Scarlet.class.getMethod("scarlet")));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         loadAttributes(ejbJarInfo, "Color");
@@ -115,16 +115,16 @@ public class ConcurrentLockTypeTest extends TestCase {
     }
 
     private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
-        ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext beanContext = system.getBeanContext(deploymentId);
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
         final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         attributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
     }
 
     private void assertAttribute(final String attribute, final Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
         assertEquals(method.toString(), attribute, info.concurrencyAttribute);
     }
 

@@ -47,12 +47,12 @@ public class AbsoluteOrdering$JAXB
         return _read(reader, context);
     }
 
-    public static void writeAbsoluteOrdering(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+    public static void writeAbsoluteOrdering(final XoXMLStreamWriter writer, final AbsoluteOrdering absoluteOrdering, final RuntimeContext context)
         throws Exception {
         _write(writer, absoluteOrdering, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final AbsoluteOrdering absoluteOrdering, final RuntimeContext context)
         throws Exception {
         _write(writer, absoluteOrdering, context);
     }
@@ -75,7 +75,7 @@ public class AbsoluteOrdering$JAXB
         List<Object> nameOrOthers = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("absoluteOrderingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AbsoluteOrdering.class);
@@ -83,17 +83,17 @@ public class AbsoluteOrdering$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameOrOthers
-                java.lang.String nameOrOthersItem = elementReader.getElementAsString();
+                final java.lang.String nameOrOthersItem = elementReader.getElementAsString();
                 if (nameOrOthers == null) {
                     nameOrOthers = absoluteOrdering.nameOrOthers;
                     if (nameOrOthers != null) {
@@ -105,7 +105,7 @@ public class AbsoluteOrdering$JAXB
                 nameOrOthers.add(nameOrOthersItem);
             } else if (("others" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameOrOthers
-                org.apache.openejb.jee.OrderingOthers nameOrOthersItem1 = readOrderingOthers(elementReader, context);
+                final org.apache.openejb.jee.OrderingOthers nameOrOthersItem1 = readOrderingOthers(elementReader, context);
                 if (nameOrOthers == null) {
                     nameOrOthers = absoluteOrdering.nameOrOthers;
                     if (nameOrOthers != null) {
@@ -133,7 +133,7 @@ public class AbsoluteOrdering$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final AbsoluteOrdering absoluteOrdering, RuntimeContext context)
         throws Exception {
         if (absoluteOrdering == null) {
             writer.writeXsiNil();
@@ -156,9 +156,9 @@ public class AbsoluteOrdering$JAXB
         // ELEMENT: nameOrOthers
         final List<Object> nameOrOthers = absoluteOrdering.nameOrOthers;
         if (nameOrOthers != null) {
-            for (Object nameOrOthersItem : nameOrOthers) {
+            for (final Object nameOrOthersItem : nameOrOthers) {
                 if (nameOrOthersItem instanceof org.apache.openejb.jee.OrderingOthers) {
-                    org.apache.openejb.jee.OrderingOthers OrderingOthers = ((org.apache.openejb.jee.OrderingOthers) nameOrOthersItem);
+                    final org.apache.openejb.jee.OrderingOthers OrderingOthers = ((org.apache.openejb.jee.OrderingOthers) nameOrOthersItem);
                     writer.writeStartElement(prefix, "others", "http://java.sun.com/xml/ns/javaee");
                     writeOrderingOthers(writer, OrderingOthers, context);
                     writer.writeEndElement();

@@ -45,7 +45,7 @@ public class FacesConverterExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesConverterExtension(final XoXMLStreamWriter writer, FacesConverterExtension facesConverterExtension, RuntimeContext context)
+    public static void writeFacesConverterExtension(final XoXMLStreamWriter writer, final FacesConverterExtension facesConverterExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesConverterExtension, context);
     }
@@ -67,13 +67,13 @@ public class FacesConverterExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesConverterExtension facesConverterExtension = new FacesConverterExtension();
+        final FacesConverterExtension facesConverterExtension = new FacesConverterExtension();
         context.beforeUnmarshal(facesConverterExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-converter-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesConverterExtension.class);
@@ -81,10 +81,10 @@ public class FacesConverterExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesConverterExtension);
                 facesConverterExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -114,7 +114,7 @@ public class FacesConverterExtension$JAXB
         return facesConverterExtension;
     }
 
-    public final FacesConverterExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesConverterExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -139,19 +139,19 @@ public class FacesConverterExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesConverterExtension.id;
+        final String idRaw = facesConverterExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesConverterExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesConverterExtension.any;
+        final List<Object> any = facesConverterExtension.any;
         if (any != null) {
             for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesConverterExtension, "any", anyItem);

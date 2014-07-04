@@ -76,7 +76,7 @@ public @interface MetaTest {
         // The test method
         private final FrameworkMethod testMethod;
 
-        public $(final FrameworkMethod testMethod, Object target) {
+        public $(final FrameworkMethod testMethod, final Object target) {
             this.testMethod = testMethod;
         }
 
@@ -105,29 +105,29 @@ public @interface MetaTest {
 
 
                 try {
-                    ConfigurationFactory factory = factory();
+                    final ConfigurationFactory factory = factory();
 
-                    EjbJar expected = new EjbJar("expected");
+                    final EjbJar expected = new EjbJar("expected");
                     final EnterpriseBean bean = expected.addEnterpriseBean(newBean(beanType, annotation.expected()));
 
-                    EjbJar actual = new EjbJar("actual");
+                    final EjbJar actual = new EjbJar("actual");
                     actual.addEnterpriseBean(newBean(beanType, annotation.actual()));
 
 
-                    AppModule app = new AppModule(this.getClass().getClassLoader(), "test");
+                    final AppModule app = new AppModule(this.getClass().getClassLoader(), "test");
                     app.getEjbModules().add(module(expected));
                     app.getEjbModules().add(module(actual));
 
-                    AppInfo appInfo = factory.configureApplication(app);
+                    final AppInfo appInfo = factory.configureApplication(app);
 
-                    List<ContainerTransaction> expectedList = expected.getAssemblyDescriptor().getContainerTransaction();
-                    List<ContainerTransaction> actualList = actual.getAssemblyDescriptor().getContainerTransaction();
+                    final List<ContainerTransaction> expectedList = expected.getAssemblyDescriptor().getContainerTransaction();
+                    final List<ContainerTransaction> actualList = actual.getAssemblyDescriptor().getContainerTransaction();
 
                     assertEquals(expectedList.size(), actualList.size());
-                    String expectedXml = toString(expected);
-                    String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
+                    final String expectedXml = toString(expected);
+                    final String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
                     assertEquals(expectedXml, actualXml);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new AssertionError(beanType.getSimpleName()).initCause(e);
                 }
             }
@@ -141,7 +141,7 @@ public @interface MetaTest {
                 SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
                 final Assembler assembler = new Assembler();
-                ConfigurationFactory factory = new ConfigurationFactory();
+                final ConfigurationFactory factory = new ConfigurationFactory();
                 assembler.createTransactionManager(factory.configureService(TransactionServiceInfo.class));
                 assembler.createSecurityService(factory.configureService(SecurityServiceInfo.class));
 
@@ -168,12 +168,12 @@ public @interface MetaTest {
 
                 factory.configureApplication(app);
 
-                EjbJar expected = getDescriptor(app, "expected");
-                EjbJar actual = getDescriptor(app, "actual");
+                final EjbJar expected = getDescriptor(app, "expected");
+                final EjbJar actual = getDescriptor(app, "actual");
                 final String expectedXml = toString(expected);
                 final String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
                 assertEquals(expectedXml, actualXml);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new AssertionError().initCause(e);
             }
         }
@@ -193,7 +193,7 @@ public @interface MetaTest {
             classes.add(clazz);
 
             final Annotation[] annotations = clazz.getAnnotations();
-            for (Annotation ann : annotations) {
+            for (final Annotation ann : annotations) {
                 final Class<? extends Annotation> type = ann.annotationType();
                 final String name = type.getName();
                 if (name.startsWith("javax.")) continue;
@@ -203,8 +203,8 @@ public @interface MetaTest {
             }
         }
 
-        private EjbJar getDescriptor(final AppModule app, String name) {
-            for (EjbModule ejbModule : app.getEjbModules()) {
+        private EjbJar getDescriptor(final AppModule app, final String name) {
+            for (final EjbModule ejbModule : app.getEjbModules()) {
                 if (name.equals(ejbModule.getModuleId())) {
                     return ejbModule.getEjbJar();
                 }
@@ -213,7 +213,7 @@ public @interface MetaTest {
         }
 
         private boolean isSpecificBeanType(final MetaTest annotation) {
-            Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
+            final Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
             for (final Class<? extends Annotation> compDef : annotations) {
                 if (annotation.expected().isAnnotationPresent(compDef)) {
                     return true;
@@ -229,10 +229,10 @@ public @interface MetaTest {
                 SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
                 final Assembler assembler = new Assembler();
-                ConfigurationFactory factory = new ConfigurationFactory();
+                final ConfigurationFactory factory = new ConfigurationFactory();
 
                 // Configure the system but don't actually build it
-                OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
+                final OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
                 final ContainerInfo container = new ContainerInfo();
                 container.id = "foo";
                 conf.containerSystem.containers.add(container);
@@ -240,13 +240,13 @@ public @interface MetaTest {
                 SystemInstance.get().setComponent(OpenEjbConfiguration.class, conf);
 
                 return factory;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }
 
         private EjbModule module(final EjbJar ejbJar) {
-            OpenejbJar openejbJar = new OpenejbJar();
+            final OpenejbJar openejbJar = new OpenejbJar();
             openejbJar.addEjbDeployment(ejbJar.getEnterpriseBeans()[0]).setContainerId("foo");
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
@@ -258,7 +258,7 @@ public @interface MetaTest {
             try {
                 final Constructor<T> constructor = beanType.getConstructor(Class.class);
                 return constructor.newInstance(ejbClass);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }

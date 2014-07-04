@@ -75,11 +75,11 @@ public class EjbSecurityRoleRefTest extends TestCase {
         statelessBean.getSecurityRoleRef().add(securityRoleRef);
         ejbJar.addEnterpriseBean(statelessBean);
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJar.hashCode());
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJar.hashCode());
         app.getEjbModules().add(new EjbModule(ejbJar));
         assembler.createApplication(config.configureApplication(app));
 
-        User user = (User) context.lookup("UserBeanLocal");
+        final User user = (User) context.lookup("UserBeanLocal");
         assertTrue(user.isUserInRole());
     }
 

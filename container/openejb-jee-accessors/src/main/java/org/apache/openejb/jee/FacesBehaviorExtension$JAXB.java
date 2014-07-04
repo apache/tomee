@@ -40,17 +40,17 @@ public class FacesBehaviorExtension$JAXB
         super(FacesBehaviorExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-behavior-extensionType".intern()));
     }
 
-    public static FacesBehaviorExtension readFacesBehaviorExtension(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesBehaviorExtension readFacesBehaviorExtension(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesBehaviorExtension(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public static void writeFacesBehaviorExtension(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
@@ -67,13 +67,13 @@ public class FacesBehaviorExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesBehaviorExtension facesBehaviorExtension = new FacesBehaviorExtension();
+        final FacesBehaviorExtension facesBehaviorExtension = new FacesBehaviorExtension();
         context.beforeUnmarshal(facesBehaviorExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-behavior-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesBehaviorExtension.class);
@@ -81,7 +81,7 @@ public class FacesBehaviorExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -114,12 +114,12 @@ public class FacesBehaviorExtension$JAXB
         return facesBehaviorExtension;
     }
 
-    public final FacesBehaviorExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesBehaviorExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
         throws Exception {
         if (facesBehaviorExtension == null) {
             writer.writeXsiNil();
@@ -139,21 +139,21 @@ public class FacesBehaviorExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesBehaviorExtension.id;
+        final String idRaw = facesBehaviorExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesBehaviorExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesBehaviorExtension.any;
+        final List<Object> any = facesBehaviorExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesBehaviorExtension, "any", anyItem);
             }
         }

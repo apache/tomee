@@ -42,13 +42,13 @@ public class InvalidEjbRefTest extends TestCase {
 
         ejbJar.addEnterpriseBean(new StatelessBean(EjbRefBean.class));
 
-        StatelessBean fooBean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        final StatelessBean fooBean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         fooBean.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
         fooBean.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         fooBean.addBusinessLocal(FooLocal.class.getName());
         fooBean.addBusinessRemote(FooRemote.class.getName());
 
-        StatelessBean fooImpl = ejbJar.addEnterpriseBean(new StatelessBean(FooImpl.class));
+        final StatelessBean fooImpl = ejbJar.addEnterpriseBean(new StatelessBean(FooImpl.class));
         fooImpl.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
         fooImpl.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         fooImpl.addBusinessLocal(FooLocal.class.getName());

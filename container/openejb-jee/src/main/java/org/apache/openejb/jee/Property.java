@@ -77,7 +77,7 @@ public class Property {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -93,7 +93,7 @@ public class Property {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -54,7 +54,7 @@ public class JaxbOpenejbJar3 {
     }
 
     public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
-        JAXBContext ctx2 = getContext(type);
+        final JAXBContext ctx2 = getContext(type);
         final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -69,30 +69,30 @@ public class JaxbOpenejbJar3 {
         return jaxbContext;
     }
 
-    public static <T> T unmarshal(final Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
+    public static <T> T unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
-        JAXBContext ctx = getContext(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = getContext(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(ValidationEvent validationEvent) {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
 //                System.out.println(validationEvent);
                 return false;
             }
         });
 
 
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+        final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        Object o = unmarshaller.unmarshal(source);
+        final Object o = unmarshaller.unmarshal(source);
         if (o instanceof JAXBElement) {
             final JAXBElement element = (JAXBElement) o;
             return (T) element.getValue();
@@ -107,11 +107,11 @@ public class JaxbOpenejbJar3 {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(final String publicId, String systemId) throws SAXException, IOException {
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             return EMPTY_INPUT_SOURCE;
         }
 
-        public void startElement(final String uri, String localName, String qname, final Attributes atts) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
             super.startElement("http://www.openejb.org/openejb-jar/1.1", localName, qname, atts);
         }
     }

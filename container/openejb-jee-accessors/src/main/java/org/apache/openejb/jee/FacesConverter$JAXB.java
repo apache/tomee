@@ -51,17 +51,17 @@ public class FacesConverter$JAXB
         super(FacesConverter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-converterType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesConverterExtension$JAXB.class);
     }
 
-    public static FacesConverter readFacesConverter(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesConverter readFacesConverter(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesConverter(final XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
+    public static void writeFacesConverter(final XoXMLStreamWriter writer, final FacesConverter facesConverter, final RuntimeContext context)
         throws Exception {
         _write(writer, facesConverter, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesConverter facesConverter, final RuntimeContext context)
         throws Exception {
         _write(writer, facesConverter, context);
     }
@@ -97,10 +97,10 @@ public class FacesConverter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesConverter);
                 facesConverter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -109,24 +109,24 @@ public class FacesConverter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesConverter.icon;
                     if (icon != null) {
@@ -138,12 +138,12 @@ public class FacesConverter$JAXB
                 icon.add(iconItem);
             } else if (("converter-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: converterId
-                String converterIdRaw = elementReader.getElementAsString();
+                final String converterIdRaw = elementReader.getElementAsString();
 
-                String converterId;
+                final String converterId;
                 try {
                     converterId = Adapters.collapsedStringAdapterAdapter.unmarshal(converterIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -151,12 +151,12 @@ public class FacesConverter$JAXB
                 facesConverter.converterId = converterId;
             } else if (("converter-for-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: converterForClass
-                String converterForClassRaw = elementReader.getElementAsString();
+                final String converterForClassRaw = elementReader.getElementAsString();
 
-                String converterForClass;
+                final String converterForClass;
                 try {
                     converterForClass = Adapters.collapsedStringAdapterAdapter.unmarshal(converterForClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -164,12 +164,12 @@ public class FacesConverter$JAXB
                 facesConverter.converterForClass = converterForClass;
             } else if (("converter-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: converterClass
-                String converterClassRaw = elementReader.getElementAsString();
+                final String converterClassRaw = elementReader.getElementAsString();
 
-                String converterClass;
+                final String converterClass;
                 try {
                     converterClass = Adapters.collapsedStringAdapterAdapter.unmarshal(converterClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -177,7 +177,7 @@ public class FacesConverter$JAXB
                 facesConverter.converterClass = converterClass;
             } else if (("attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attribute
-                FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
+                final FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
                 if (attribute1 == null) {
                     attribute1 = facesConverter.attribute;
                     if (attribute1 != null) {
@@ -201,7 +201,7 @@ public class FacesConverter$JAXB
                 property.add(propertyItem);
             } else if (("converter-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: converterExtension
-                FacesConverterExtension converterExtensionItem = readFacesConverterExtension(elementReader, context);
+                final FacesConverterExtension converterExtensionItem = readFacesConverterExtension(elementReader, context);
                 if (converterExtension == null) {
                     converterExtension = facesConverter.converterExtension;
                     if (converterExtension != null) {
@@ -220,14 +220,14 @@ public class FacesConverter$JAXB
         if (descriptions != null) {
             try {
                 facesConverter.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesConverter.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesConverter.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesConverter.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -265,7 +265,7 @@ public class FacesConverter$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesConverter.class != facesConverter.getClass()) {
             context.unexpectedSubclass(writer, facesConverter, FacesConverter.class);
             return;
@@ -280,7 +280,7 @@ public class FacesConverter$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesConverter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -290,11 +290,11 @@ public class FacesConverter$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesConverter.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesConverter, "descriptions", FacesConverter.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -309,11 +309,11 @@ public class FacesConverter$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesConverter.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesConverter, "displayNames", FacesConverter.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -325,7 +325,7 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesConverter.icon;
+        final LocalCollection<Icon> icon = facesConverter.icon;
         if (icon != null) {
             for (final Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -339,11 +339,11 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: converterId
-        String converterIdRaw = facesConverter.converterId;
+        final String converterIdRaw = facesConverter.converterId;
         String converterId = null;
         try {
             converterId = Adapters.collapsedStringAdapterAdapter.marshal(converterIdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesConverter, "converterId", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (converterId != null) {
@@ -353,11 +353,11 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: converterForClass
-        String converterForClassRaw = facesConverter.converterForClass;
+        final String converterForClassRaw = facesConverter.converterForClass;
         String converterForClass = null;
         try {
             converterForClass = Adapters.collapsedStringAdapterAdapter.marshal(converterForClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesConverter, "converterForClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (converterForClass != null) {
@@ -367,11 +367,11 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: converterClass
-        String converterClassRaw = facesConverter.converterClass;
+        final String converterClassRaw = facesConverter.converterClass;
         String converterClass = null;
         try {
             converterClass = Adapters.collapsedStringAdapterAdapter.marshal(converterClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesConverter, "converterClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (converterClass != null) {
@@ -383,9 +383,9 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: attribute
-        List<FacesAttribute> attribute = facesConverter.attribute;
+        final List<FacesAttribute> attribute = facesConverter.attribute;
         if (attribute != null) {
-            for (FacesAttribute attributeItem : attribute) {
+            for (final FacesAttribute attributeItem : attribute) {
                 writer.writeStartElement(prefix, "attribute", "http://java.sun.com/xml/ns/javaee");
                 if (attributeItem != null) {
                     writeFacesAttribute(writer, attributeItem, context);
@@ -397,9 +397,9 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: property
-        List<FacesProperty> property = facesConverter.property;
+        final List<FacesProperty> property = facesConverter.property;
         if (property != null) {
-            for (FacesProperty propertyItem : property) {
+            for (final FacesProperty propertyItem : property) {
                 writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
                 if (propertyItem != null) {
                     writeFacesProperty(writer, propertyItem, context);
@@ -411,9 +411,9 @@ public class FacesConverter$JAXB
         }
 
         // ELEMENT: converterExtension
-        List<FacesConverterExtension> converterExtension = facesConverter.converterExtension;
+        final List<FacesConverterExtension> converterExtension = facesConverter.converterExtension;
         if (converterExtension != null) {
-            for (FacesConverterExtension converterExtensionItem : converterExtension) {
+            for (final FacesConverterExtension converterExtensionItem : converterExtension) {
                 if (converterExtensionItem != null) {
                     writer.writeStartElement(prefix, "converter-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesConverterExtension(writer, converterExtensionItem, context);

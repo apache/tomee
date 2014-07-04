@@ -86,7 +86,7 @@ public class Basic implements Field {
         this.name = name;
     }
 
-    public Basic(final String name, String columnName) {
+    public Basic(final String name, final String columnName) {
         this.name = name;
         this.column = new Column(columnName);
     }

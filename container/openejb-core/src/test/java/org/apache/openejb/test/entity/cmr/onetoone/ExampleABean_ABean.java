@@ -65,7 +65,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         bCmr.set(License, null);
     }
 
-    public Object OpenEJB_addCmr(final String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) {
             return null;
         }
@@ -80,7 +80,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(final String name, Object bean) {
+    public void OpenEJB_removeCmr(final String name, final Object bean) {
         if (deleted) {
             return;
         }

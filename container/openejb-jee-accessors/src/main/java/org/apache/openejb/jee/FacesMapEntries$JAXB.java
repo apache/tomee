@@ -48,12 +48,12 @@ public class FacesMapEntries$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesMapEntries(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, RuntimeContext context)
+    public static void writeFacesMapEntries(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, final RuntimeContext context)
         throws Exception {
         _write(writer, facesMapEntries, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, final RuntimeContext context)
         throws Exception {
         _write(writer, facesMapEntries, context);
     }
@@ -70,7 +70,7 @@ public class FacesMapEntries$JAXB
             context = new RuntimeContext();
         }
 
-        FacesMapEntries facesMapEntries = new FacesMapEntries();
+        final FacesMapEntries facesMapEntries = new FacesMapEntries();
         context.beforeUnmarshal(facesMapEntries, LifecycleCallback.NONE);
 
         List<FacesMapEntry> mapEntry = null;
@@ -84,10 +84,10 @@ public class FacesMapEntries$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesMapEntries);
                 facesMapEntries.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class FacesMapEntries$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("key-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: keyClass
-                String keyClassRaw = elementReader.getElementAsString();
+                final String keyClassRaw = elementReader.getElementAsString();
 
-                String keyClass;
+                final String keyClass;
                 try {
                     keyClass = Adapters.collapsedStringAdapterAdapter.unmarshal(keyClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -112,12 +112,12 @@ public class FacesMapEntries$JAXB
                 facesMapEntries.keyClass = keyClass;
             } else if (("value-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: valueClass
-                String valueClassRaw = elementReader.getElementAsString();
+                final String valueClassRaw = elementReader.getElementAsString();
 
-                String valueClass;
+                final String valueClass;
                 try {
                     valueClass = Adapters.collapsedStringAdapterAdapter.unmarshal(valueClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -125,7 +125,7 @@ public class FacesMapEntries$JAXB
                 facesMapEntries.valueClass = valueClass;
             } else if (("map-entry" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mapEntry
-                FacesMapEntry mapEntryItem = readFacesMapEntry(elementReader, context);
+                final FacesMapEntry mapEntryItem = readFacesMapEntry(elementReader, context);
                 if (mapEntry == null) {
                     mapEntry = facesMapEntries.mapEntry;
                     if (mapEntry != null) {
@@ -179,18 +179,18 @@ public class FacesMapEntries$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesMapEntries, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: keyClass
-        String keyClassRaw = facesMapEntries.keyClass;
+        final String keyClassRaw = facesMapEntries.keyClass;
         String keyClass = null;
         try {
             keyClass = Adapters.collapsedStringAdapterAdapter.marshal(keyClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesMapEntries, "keyClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (keyClass != null) {
@@ -200,11 +200,11 @@ public class FacesMapEntries$JAXB
         }
 
         // ELEMENT: valueClass
-        String valueClassRaw = facesMapEntries.valueClass;
+        final String valueClassRaw = facesMapEntries.valueClass;
         String valueClass = null;
         try {
             valueClass = Adapters.collapsedStringAdapterAdapter.marshal(valueClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesMapEntries, "valueClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (valueClass != null) {
@@ -214,9 +214,9 @@ public class FacesMapEntries$JAXB
         }
 
         // ELEMENT: mapEntry
-        List<FacesMapEntry> mapEntry = facesMapEntries.mapEntry;
+        final List<FacesMapEntry> mapEntry = facesMapEntries.mapEntry;
         if (mapEntry != null) {
-            for (FacesMapEntry mapEntryItem : mapEntry) {
+            for (final FacesMapEntry mapEntryItem : mapEntry) {
                 if (mapEntryItem != null) {
                     writer.writeStartElement(prefix, "map-entry", "http://java.sun.com/xml/ns/javaee");
                     writeFacesMapEntry(writer, mapEntryItem, context);

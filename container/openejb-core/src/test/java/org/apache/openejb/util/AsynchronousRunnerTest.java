@@ -58,7 +58,7 @@ public class AsynchronousRunnerTest extends TestCase {
     public void testCancel() throws Exception {
         final CountDownLatch cdl = new CountDownLatch(1);
         final AsynchronousRunner asyncRunner = instantiate(cdl);
-        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
+        final Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         future.cancel(true);
         assertTrue(future.isCancelled());
         try {
@@ -74,8 +74,8 @@ public class AsynchronousRunnerTest extends TestCase {
      */
     public void testDelayedGet() throws Exception {
         final CountDownLatch cdl = new CountDownLatch(1);
-        AsynchronousRunner asyncRunner = instantiate(cdl);
-        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
+        final AsynchronousRunner asyncRunner = instantiate(cdl);
+        final Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertFalse(future.isDone());
         cdl.countDown();
         //Give some time for the execution to finish
@@ -90,7 +90,7 @@ public class AsynchronousRunnerTest extends TestCase {
     public void testGet() throws Exception {
         final CountDownLatch cdl = new CountDownLatch(0);
         final AsynchronousRunner asyncRunner = instantiate(cdl);
-        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
+        final Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertEquals(expected(), future.get());
     }
 
@@ -99,12 +99,12 @@ public class AsynchronousRunnerTest extends TestCase {
      */
     public void testTimedGet() throws Exception {
         final CountDownLatch cdl = new CountDownLatch(1);
-        AsynchronousRunner asyncRunner = instantiate(cdl);
+        final AsynchronousRunner asyncRunner = instantiate(cdl);
         final Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         try {
             future.get(1, TimeUnit.SECONDS);
             fail();
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             //Ok
         }
         cdl.countDown();

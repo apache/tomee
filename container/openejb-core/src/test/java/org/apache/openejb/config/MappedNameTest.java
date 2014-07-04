@@ -57,9 +57,9 @@ public class MappedNameTest extends TestCase {
         final EjbJarInfo info = config.configureApplication(ejbModule);
         assembler.createApplication(info);
 
-        InitialContext initialContext = new InitialContext();
+        final InitialContext initialContext = new InitialContext();
         final Color green = (Color) initialContext.lookup("foo/bar/baz/GreenLocal");
-        Color red = (Color) initialContext.lookup("foo/bar/baz/RedLocal");
+        final Color red = (Color) initialContext.lookup("foo/bar/baz/RedLocal");
 
         red.test();
     }

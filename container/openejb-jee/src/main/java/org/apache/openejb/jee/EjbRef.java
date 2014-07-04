@@ -140,7 +140,7 @@ public class EjbRef implements EjbReference {
         return this;
     }
 
-    public EjbRef injectionTarget(final String className, String property) {
+    public EjbRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.ejbRefName == null) {
@@ -150,7 +150,7 @@ public class EjbRef implements EjbReference {
         return this;
     }
 
-    public EjbRef injectionTarget(Class<?> clazz, final String property) {
+    public EjbRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -158,7 +158,7 @@ public class EjbRef implements EjbReference {
         return refType;
     }
 
-    public void setRefType(Type refType) {
+    public void setRefType(final Type refType) {
         this.refType = refType;
     }
 
@@ -167,7 +167,7 @@ public class EjbRef implements EjbReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -184,7 +184,7 @@ public class EjbRef implements EjbReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -193,14 +193,14 @@ public class EjbRef implements EjbReference {
         return getEjbRefType().name();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setEjbRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
-    public void setEjbRefName(String value) {
+    public void setEjbRefName(final String value) {
         this.ejbRefName = value;
     }
 
@@ -208,7 +208,7 @@ public class EjbRef implements EjbReference {
         return ejbRefType;
     }
 
-    public void setEjbRefType(EjbRefType value) {
+    public void setEjbRefType(final EjbRefType value) {
         this.ejbRefType = value;
     }
 
@@ -216,7 +216,7 @@ public class EjbRef implements EjbReference {
         return home;
     }
 
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
 
@@ -228,7 +228,7 @@ public class EjbRef implements EjbReference {
         return getRemote();
     }
 
-    public void setRemote(String value) {
+    public void setRemote(final String value) {
         this.remote = value;
     }
 
@@ -236,7 +236,7 @@ public class EjbRef implements EjbReference {
         return ejbLink;
     }
 
-    public void setEjbLink(String value) {
+    public void setEjbLink(final String value) {
         this.ejbLink = value;
     }
 
@@ -244,7 +244,7 @@ public class EjbRef implements EjbReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -252,7 +252,7 @@ public class EjbRef implements EjbReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -267,7 +267,7 @@ public class EjbRef implements EjbReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

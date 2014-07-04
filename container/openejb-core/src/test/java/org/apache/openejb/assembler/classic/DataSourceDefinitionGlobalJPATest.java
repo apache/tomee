@@ -75,7 +75,7 @@ public class DataSourceDefinitionGlobalJPATest {
         unit.setJtaDataSource("java:app/foo");
         unit.setExcludeUnlistedClasses(true);
 
-        Persistence persistence = new Persistence(unit);
+        final Persistence persistence = new Persistence(unit);
         persistence.setVersion("2.0");
         return persistence;
     }

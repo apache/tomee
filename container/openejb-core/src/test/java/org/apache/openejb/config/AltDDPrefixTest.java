@@ -48,8 +48,8 @@ public class AltDDPrefixTest extends TestCase {
         DeploymentLoader.reloadAltDD();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp1");
-        File file = URLs.toFile(resource);
+        final URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp1");
+        final File file = URLs.toFile(resource);
         final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
@@ -60,10 +60,10 @@ public class AltDDPrefixTest extends TestCase {
         final Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
         DeploymentLoader.reloadAltDD();
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp2");
-        File file = URLs.toFile(resource);
+        final URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp2");
+        final File file = URLs.toFile(resource);
         final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
@@ -92,16 +92,16 @@ public class AltDDPrefixTest extends TestCase {
         final Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
         DeploymentLoader.reloadAltDD();
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
-        File file = URLs.toFile(resource);
+        final URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
+        final File file = URLs.toFile(resource);
         final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(0, appInfo.ejbJars.size());
         assertEquals(1, appInfo.persistenceUnits.size());
 
-        PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
         assertTrue(info.id.startsWith("footest-unit ")); // a space must be present before hashcode
 
 //        appInfo = factory.configureApplication(file);
@@ -121,14 +121,14 @@ public class AltDDPrefixTest extends TestCase {
         DeploymentLoader.reloadAltDD();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
-        File file = URLs.toFile(resource);
-        AppInfo appInfo = factory.configureApplication(file);
+        final URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
+        final File file = URLs.toFile(resource);
+        final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(0, appInfo.ejbJars.size());
         assertEquals(1, appInfo.persistenceUnits.size());
 
-        PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
         assertTrue(info.id.startsWith("unit ")); // a space must be present before hashcode
     }
 

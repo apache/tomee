@@ -56,13 +56,13 @@ public class GlobalLookupScopesTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
 
-        AppContext circleApp = createApp("circle", config, assembler);
-        AppContext squareApp = createApp("square", config, assembler);
+        final AppContext circleApp = createApp("circle", config, assembler);
+        final AppContext squareApp = createApp("square", config, assembler);
 
         {
-            BeanContext bean = squareApp.getBeanContexts().get(0);
+            final BeanContext bean = squareApp.getBeanContexts().get(0);
 
-            Context context = bean.getJndiContext();
+            final Context context = bean.getJndiContext();
 
             assertTrue(context.lookup("global/square") instanceof Context);
             assertTrue(context.lookup("global/square/Bean") instanceof Bean);
@@ -78,7 +78,7 @@ public class GlobalLookupScopesTest extends TestCase {
         }
     }
 
-    private AppContext createApp(final String name, ConfigurationFactory config, final Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
+    private AppContext createApp(final String name, final ConfigurationFactory config, final Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
         // Setup the descriptor information
 
         final EjbJar ejbJar = new EjbJar(name);
@@ -89,7 +89,7 @@ public class GlobalLookupScopesTest extends TestCase {
         // are re-declared in a compatible way
         ejbJar.addEnterpriseBean(new SingletonBean("Other", Bean.class));
 
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         final AppModule module = new AppModule(ejbModule);
         return assembler.createApplication(config.configureApplication(module));
     }
@@ -113,7 +113,7 @@ public class GlobalLookupScopesTest extends TestCase {
 
 
         public Object lookup(final String s) throws javax.naming.NamingException {
-            InitialContext context = new InitialContext();
+            final InitialContext context = new InitialContext();
             return context.lookup(s);
         }
     }

@@ -52,7 +52,7 @@ public class CrossClassLoaderProxyTestObject extends TestCase {
         assertNotSame("is copy", lifecycle, CrossClassLoaderProxyTest.WidgetBean.lifecycle);
 
         // Check the lifecycle of the bean
-        List expected = Arrays.asList(CrossClassLoaderProxyTest.Lifecycle.values());
+        final List expected = Arrays.asList(CrossClassLoaderProxyTest.Lifecycle.values());
 
         assertEquals(join("\n", expected), join("\n", lifecycle));
 
@@ -132,8 +132,8 @@ public class CrossClassLoaderProxyTestObject extends TestCase {
 //    }
 
     private static String join(final String delimeter, final List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

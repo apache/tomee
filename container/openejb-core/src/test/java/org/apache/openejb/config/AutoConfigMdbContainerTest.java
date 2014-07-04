@@ -69,7 +69,7 @@ public class AutoConfigMdbContainerTest extends TestCase {
     public void _testJmsMdbNoContainerConfigured() throws Exception {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(JmsBean.class));
-        EjbJarInfo info = config.configureApplication(ejbJar);
+        final EjbJarInfo info = config.configureApplication(ejbJar);
 //        assembler.createApplication(info);
     }
 
@@ -81,8 +81,8 @@ public class AutoConfigMdbContainerTest extends TestCase {
         assembler.createContainer(info);
 
         // Create an Email MDB Container
-        Container container = new Container("EmailContainer", "MESSAGE", null);
-        Properties properties = container.getProperties();
+        final Container container = new Container("EmailContainer", "MESSAGE", null);
+        final Properties properties = container.getProperties();
         properties.setProperty("ResourceAdapter", EmailResourceAdapter.class.getSimpleName());
         properties.setProperty("MessageListenerInterface", EmailConsumer.class.getName());
         properties.setProperty("ActivationSpecClass", EmailAccountInfo.class.getName());
@@ -124,7 +124,7 @@ public class AutoConfigMdbContainerTest extends TestCase {
         public void stop() {
         }
 
-        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
+        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) throws ResourceException {
             final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
             final EmailConsumer emailConsumer = (EmailConsumer) messageEndpointFactory.createEndpoint(null);
@@ -132,10 +132,10 @@ public class AutoConfigMdbContainerTest extends TestCase {
         }
 
         public void endpointDeactivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) {
-            EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
+            final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
-            EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
             endpoint.release();
         }
 
@@ -146,11 +146,11 @@ public class AutoConfigMdbContainerTest extends TestCase {
         public void deliverEmail(final Properties headers, final String body) throws Exception {
             final String to = headers.getProperty("To");
 
-            EmailConsumer emailConsumer = consumers.get(to);
+            final EmailConsumer emailConsumer = consumers.get(to);
 
             if (emailConsumer == null) throw new Exception("No such account");
 
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
 
             endpoint.beforeDelivery(EmailConsumer.class.getMethod("receiveEmail", Properties.class, String.class));
             emailConsumer.receiveEmail(headers, body);

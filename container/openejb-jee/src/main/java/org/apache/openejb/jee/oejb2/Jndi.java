@@ -39,7 +39,7 @@ public class Jndi {
     public Jndi() {
     }
 
-    public Jndi(final String name, String intrface) {
+    public Jndi(final String name, final String intrface) {
         this.name = name;
         this.intrface = intrface;
     }
@@ -48,7 +48,7 @@ public class Jndi {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

@@ -44,7 +44,7 @@ public class LocalClientNoInjectionTest extends TestCase {
         JULLoggerFactory.class.getName();
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -54,11 +54,11 @@ public class LocalClientNoInjectionTest extends TestCase {
         final Persistence persistence = new Persistence(new org.apache.openejb.jee.jpa.unit.PersistenceUnit("foo-unit"));
         app.addPersistenceModule(new PersistenceModule("root", persistence));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
-        ClientModule clientModule = new ClientModule(null, app.getClassLoader(), app.getJarLocation(), null, null);
+        final ClientModule clientModule = new ClientModule(null, app.getClassLoader(), app.getJarLocation(), null, null);
         clientModule.getLocalClients().add(this.getClass().getName());
 
         app.getClientModules().add(clientModule);
@@ -100,7 +100,7 @@ public class LocalClientNoInjectionTest extends TestCase {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Reference value1 = (Reference) o;
+            final Reference value1 = (Reference) o;
 
             if (!value.equals(value1.value)) return false;
 

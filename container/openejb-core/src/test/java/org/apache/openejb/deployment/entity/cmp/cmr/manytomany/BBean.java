@@ -55,7 +55,7 @@ public abstract class BBean implements EntityBean {
     public void ejbPostCreate(final Integer field1) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         context = ctx;
     }
 

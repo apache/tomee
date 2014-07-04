@@ -48,12 +48,12 @@ public class JavaXmlTypeMapping$JAXB
         return _read(reader, context);
     }
 
-    public static void writeJavaXmlTypeMapping(final XoXMLStreamWriter writer, final JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
+    public static void writeJavaXmlTypeMapping(final XoXMLStreamWriter writer, final JavaXmlTypeMapping javaXmlTypeMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, javaXmlTypeMapping, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final JavaXmlTypeMapping javaXmlTypeMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, javaXmlTypeMapping, context);
     }
@@ -70,7 +70,7 @@ public class JavaXmlTypeMapping$JAXB
             context = new RuntimeContext();
         }
 
-        JavaXmlTypeMapping javaXmlTypeMapping = new JavaXmlTypeMapping();
+        final JavaXmlTypeMapping javaXmlTypeMapping = new JavaXmlTypeMapping();
         context.beforeUnmarshal(javaXmlTypeMapping, LifecycleCallback.NONE);
 
         List<VariableMapping> variableMapping = null;
@@ -87,7 +87,7 @@ public class JavaXmlTypeMapping$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, javaXmlTypeMapping);
                 javaXmlTypeMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,12 +96,12 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("java-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: javaType
-                String javaTypeRaw = elementReader.getElementAsString();
+                final String javaTypeRaw = elementReader.getElementAsString();
 
-                String javaType;
+                final String javaType;
                 try {
                     javaType = Adapters.collapsedStringAdapterAdapter.unmarshal(javaTypeRaw);
                 } catch (final Exception e) {
@@ -112,16 +112,16 @@ public class JavaXmlTypeMapping$JAXB
                 javaXmlTypeMapping.javaType = javaType;
             } else if (("root-type-qname" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: rootTypeQname
-                QName rootTypeQname = elementReader.getElementAsQName();
+                final QName rootTypeQname = elementReader.getElementAsQName();
                 javaXmlTypeMapping.rootTypeQname = rootTypeQname;
             } else if (("anonymous-type-qname" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: anonymousTypeQname
-                String anonymousTypeQnameRaw = elementReader.getElementAsString();
+                final String anonymousTypeQnameRaw = elementReader.getElementAsString();
 
                 final String anonymousTypeQname;
                 try {
                     anonymousTypeQname = Adapters.collapsedStringAdapterAdapter.unmarshal(anonymousTypeQnameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -129,12 +129,12 @@ public class JavaXmlTypeMapping$JAXB
                 javaXmlTypeMapping.anonymousTypeQname = anonymousTypeQname;
             } else if (("qname-scope" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: qnameScope
-                String qnameScopeRaw = elementReader.getElementAsString();
+                final String qnameScopeRaw = elementReader.getElementAsString();
 
-                String qnameScope;
+                final String qnameScope;
                 try {
                     qnameScope = Adapters.collapsedStringAdapterAdapter.unmarshal(qnameScopeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -142,7 +142,7 @@ public class JavaXmlTypeMapping$JAXB
                 javaXmlTypeMapping.qnameScope = qnameScope;
             } else if (("variable-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: variableMapping
-                VariableMapping variableMappingItem = readVariableMapping(elementReader, context);
+                final VariableMapping variableMappingItem = readVariableMapping(elementReader, context);
                 if (variableMapping == null) {
                     variableMapping = javaXmlTypeMapping.variableMapping;
                     if (variableMapping != null) {
@@ -170,7 +170,7 @@ public class JavaXmlTypeMapping$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
         throws Exception {
         if (javaXmlTypeMapping == null) {
             writer.writeXsiNil();
@@ -181,7 +181,7 @@ public class JavaXmlTypeMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (JavaXmlTypeMapping.class != javaXmlTypeMapping.getClass()) {
             context.unexpectedSubclass(writer, javaXmlTypeMapping, JavaXmlTypeMapping.class);
             return;
@@ -191,7 +191,7 @@ public class JavaXmlTypeMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = javaXmlTypeMapping.id;
+        final String idRaw = javaXmlTypeMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -203,11 +203,11 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // ELEMENT: javaType
-        String javaTypeRaw = javaXmlTypeMapping.javaType;
+        final String javaTypeRaw = javaXmlTypeMapping.javaType;
         String javaType = null;
         try {
             javaType = Adapters.collapsedStringAdapterAdapter.marshal(javaTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(javaXmlTypeMapping, "javaType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (javaType != null) {
@@ -219,7 +219,7 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // ELEMENT: rootTypeQname
-        QName rootTypeQname = javaXmlTypeMapping.rootTypeQname;
+        final QName rootTypeQname = javaXmlTypeMapping.rootTypeQname;
         if (rootTypeQname != null) {
             writer.writeStartElement(prefix, "root-type-qname", "http://java.sun.com/xml/ns/javaee");
             writer.writeQName(rootTypeQname);
@@ -227,11 +227,11 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // ELEMENT: anonymousTypeQname
-        String anonymousTypeQnameRaw = javaXmlTypeMapping.anonymousTypeQname;
+        final String anonymousTypeQnameRaw = javaXmlTypeMapping.anonymousTypeQname;
         String anonymousTypeQname = null;
         try {
             anonymousTypeQname = Adapters.collapsedStringAdapterAdapter.marshal(anonymousTypeQnameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(javaXmlTypeMapping, "anonymousTypeQname", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (anonymousTypeQname != null) {
@@ -241,7 +241,7 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // ELEMENT: qnameScope
-        String qnameScopeRaw = javaXmlTypeMapping.qnameScope;
+        final String qnameScopeRaw = javaXmlTypeMapping.qnameScope;
         String qnameScope = null;
         try {
             qnameScope = Adapters.collapsedStringAdapterAdapter.marshal(qnameScopeRaw);
@@ -257,9 +257,9 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // ELEMENT: variableMapping
-        List<VariableMapping> variableMapping = javaXmlTypeMapping.variableMapping;
+        final List<VariableMapping> variableMapping = javaXmlTypeMapping.variableMapping;
         if (variableMapping != null) {
-            for (VariableMapping variableMappingItem : variableMapping) {
+            for (final VariableMapping variableMappingItem : variableMapping) {
                 if (variableMappingItem != null) {
                     writer.writeStartElement(prefix, "variable-mapping", "http://java.sun.com/xml/ns/javaee");
                     writeVariableMapping(writer, variableMappingItem, context);

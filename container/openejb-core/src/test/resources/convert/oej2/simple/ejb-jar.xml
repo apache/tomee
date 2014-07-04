@@ -17,19 +17,19 @@
 -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
-  <enterprise-beans>
-    <session id="FooBean">
-      <ejb-name>FooBean</ejb-name>
-      <home>org.foo.RHGreen</home>
-      <remote>org.foo.RGreen</remote>
-      <local-home>org.foo.LHYellow</local-home>
-      <local>org.foo.LYellow</local>
-      <business-local>org.foo.Orange</business-local>
-      <business-remote>org.foo.Red</business-remote>
-      <ejb-class>org.foo.FooBean</ejb-class>
-      <session-type>Stateless</session-type>
-      <transaction-type>Container</transaction-type>
-    </session>
-  </enterprise-beans>
-  <assembly-descriptor/>
+    <enterprise-beans>
+        <session id="FooBean">
+            <ejb-name>FooBean</ejb-name>
+            <home>org.foo.RHGreen</home>
+            <remote>org.foo.RGreen</remote>
+            <local-home>org.foo.LHYellow</local-home>
+            <local>org.foo.LYellow</local>
+            <business-local>org.foo.Orange</business-local>
+            <business-remote>org.foo.Red</business-remote>
+            <ejb-class>org.foo.FooBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+    </enterprise-beans>
+    <assembly-descriptor/>
 </ejb-jar>

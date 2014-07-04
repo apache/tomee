@@ -63,7 +63,7 @@ public class BusinessInterfacesTest extends TestCase {
         for (final Class<?> bean : beans) {
             addBean(bean);
         }
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
 
         return asMap(ejbJarInfo.enterpriseBeans);
     }
@@ -428,7 +428,7 @@ public class BusinessInterfacesTest extends TestCase {
             setUp();
             strict(strict);
 
-            List<String> expectedKeys = new ArrayList<String>();
+            final List<String> expectedKeys = new ArrayList<String>();
             expectedKeys.add("ann.local.noAttributes");
             expectedKeys.add("ann.remote.noAttributes");
             expectedKeys.add("noInterfaceDeclared.session");
@@ -436,7 +436,7 @@ public class BusinessInterfacesTest extends TestCase {
 
             try {
                 deploy(InvalidYellowOneBean.class, InvalidYellowTwoBean.class, InvalidYellowThreeBean.class);
-            } catch (ValidationFailedException e) {
+            } catch (final ValidationFailedException e) {
                 ValidationAssertions.assertFailures(expectedKeys, e);
             }
         }
@@ -479,7 +479,7 @@ public class BusinessInterfacesTest extends TestCase {
             setUp();
             strict(strict);
 
-            Map<String, EnterpriseBeanInfo> beans = deploy(GreenOneBean.class, GreenTwoBean.class);
+            final Map<String, EnterpriseBeanInfo> beans = deploy(GreenOneBean.class, GreenTwoBean.class);
 
             EnterpriseBeanInfo beanInfo;
 
@@ -562,7 +562,7 @@ public class BusinessInterfacesTest extends TestCase {
 
         try {
             deploy(OrangeOneBean.class, OrangeTwoBean.class);
-        } catch (ValidationFailedException e) {
+        } catch (final ValidationFailedException e) {
             ValidationAssertions.assertFailures(expectedKeys, e);
         }
     }

@@ -30,17 +30,17 @@ public class AddressingResponses$JAXB
         super(AddressingResponses.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "addressing-responsesType".intern()));
     }
 
-    public AddressingResponses parse(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public AddressingResponses parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseAddressingResponses(reader, context, value);
     }
 
-    public String toString(final Object bean, final String parameterName, final RuntimeContext context, AddressingResponses addressingResponses)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final AddressingResponses addressingResponses)
         throws Exception {
         return toStringAddressingResponses(bean, parameterName, context, addressingResponses);
     }
 
-    public static AddressingResponses parseAddressingResponses(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+    public static AddressingResponses parseAddressingResponses(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("ANONYMOUS".equals(value)) {
             return AddressingResponses.ANONYMOUS;
@@ -54,7 +54,7 @@ public class AddressingResponses$JAXB
         }
     }
 
-    public static String toStringAddressingResponses(final Object bean, String parameterName, final RuntimeContext context, AddressingResponses addressingResponses)
+    public static String toStringAddressingResponses(final Object bean, final String parameterName, final RuntimeContext context, final AddressingResponses addressingResponses)
         throws Exception {
         if (AddressingResponses.ANONYMOUS == addressingResponses) {
             return "ANONYMOUS";

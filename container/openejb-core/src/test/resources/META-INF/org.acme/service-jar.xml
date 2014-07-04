@@ -22,11 +22,11 @@
 <ServiceJar>
 
   <ServiceProvider id="CheddarContainer" service="Container" class-name="org.acme.SuperContainer">
-    myProperty = Yummy Cheese
+      myProperty = Yummy Cheese
   </ServiceProvider>
 
   <ServiceProvider id="Default Stateless Container" service="Container" class-name="org.acme.SuperContainer">
-    myProperty = Overridden Declaration
+      myProperty = Overridden Declaration
   </ServiceProvider>
 
 

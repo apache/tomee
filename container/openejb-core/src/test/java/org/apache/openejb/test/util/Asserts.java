@@ -25,7 +25,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class Asserts {
-    public static void assertEquals(final Iterable<?> expectedList, Iterable<?> actualList) {
+    public static void assertEquals(final Iterable<?> expectedList, final Iterable<?> actualList) {
         final Iterator<?> expected = expectedList.iterator();
         final Iterator<?> actual = actualList.iterator();
 

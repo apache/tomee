@@ -16,5 +16,5 @@
     limitations under the License.
 -->
 <openejb>
-  <Resource id="app-composer" type="DataSource"/>
+  <Resource id="app-composer" type="DataSource" />
 </openejb>

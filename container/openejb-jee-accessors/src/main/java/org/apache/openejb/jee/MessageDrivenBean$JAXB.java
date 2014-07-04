@@ -89,12 +89,12 @@ public class MessageDrivenBean$JAXB
         return _read(reader, context);
     }
 
-    public static void writeMessageDrivenBean(final XoXMLStreamWriter writer, final MessageDrivenBean messageDrivenBean, RuntimeContext context)
+    public static void writeMessageDrivenBean(final XoXMLStreamWriter writer, final MessageDrivenBean messageDrivenBean, final RuntimeContext context)
         throws Exception {
         _write(writer, messageDrivenBean, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final MessageDrivenBean messageDrivenBean, final RuntimeContext context)
         throws Exception {
         _write(writer, messageDrivenBean, context);
     }
@@ -135,7 +135,7 @@ public class MessageDrivenBean$JAXB
         List<SecurityRoleRef> securityRoleRef = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("message-driven-beanType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MessageDrivenBean.class);
@@ -146,7 +146,7 @@ public class MessageDrivenBean$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, messageDrivenBean);
                 messageDrivenBean.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -155,7 +155,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
@@ -165,7 +165,7 @@ public class MessageDrivenBean$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
@@ -184,9 +184,9 @@ public class MessageDrivenBean$JAXB
                 icon.add(iconItem);
             } else if (("ejb-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbName
-                String ejbNameRaw = elementReader.getElementAsString();
+                final String ejbNameRaw = elementReader.getElementAsString();
 
-                String ejbName;
+                final String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
                 } catch (final Exception e) {
@@ -197,12 +197,12 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.ejbName = ejbName;
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -210,12 +210,12 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.mappedName = mappedName;
             } else if (("ejb-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbClass
-                String ejbClassRaw = elementReader.getElementAsString();
+                final String ejbClassRaw = elementReader.getElementAsString();
 
-                String ejbClass;
+                final String ejbClass;
                 try {
                     ejbClass = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -223,12 +223,12 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.ejbClass = ejbClass;
             } else if (("messaging-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messagingType
-                String messagingTypeRaw = elementReader.getElementAsString();
+                final String messagingTypeRaw = elementReader.getElementAsString();
 
                 final String messagingType;
                 try {
                     messagingType = Adapters.collapsedStringAdapterAdapter.unmarshal(messagingTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -236,11 +236,11 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.messagingType = messagingType;
             } else if (("timeout-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timeoutMethod
-                NamedMethod timeoutMethod = readNamedMethod(elementReader, context);
+                final NamedMethod timeoutMethod = readNamedMethod(elementReader, context);
                 messageDrivenBean.timeoutMethod = timeoutMethod;
             } else if (("timer" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timer
-                Timer timerItem = readTimer(elementReader, context);
+                final Timer timerItem = readTimer(elementReader, context);
                 if (timer == null) {
                     timer = messageDrivenBean.timer;
                     if (timer != null) {
@@ -252,60 +252,60 @@ public class MessageDrivenBean$JAXB
                 timer.add(timerItem);
             } else if (("transaction-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionType
-                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementAsString());
+                final TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementAsString());
                 if (transactionType != null) {
                     messageDrivenBean.transactionType = transactionType;
                 }
             } else if (("message-selector" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageSelector
-                String messageSelectorRaw = elementReader.getElementAsString();
+                final String messageSelectorRaw = elementReader.getElementAsString();
 
-                String messageSelector;
+                final String messageSelector;
                 try {
                     messageSelector = Adapters.collapsedStringAdapterAdapter.unmarshal(messageSelectorRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 try {
                     messageDrivenBean.setMessageSelector(messageSelector);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.setterError(reader, MessageDrivenBean.class, "setMessageSelector", String.class, e);
                 }
             } else if (("acknowledge-mode" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: acknowledgeMode
-                String acknowledgeModeRaw = elementReader.getElementAsString();
+                final String acknowledgeModeRaw = elementReader.getElementAsString();
 
-                String acknowledgeMode;
+                final String acknowledgeMode;
                 try {
                     acknowledgeMode = Adapters.collapsedStringAdapterAdapter.unmarshal(acknowledgeModeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 try {
                     messageDrivenBean.setAcknowledgeMode(acknowledgeMode);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.setterError(reader, MessageDrivenBean.class, "setAcknowledgeMode", String.class, e);
                 }
             } else if (("message-driven-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDrivenDestination
-                MessageDrivenDestination messageDrivenDestination = readMessageDrivenDestination(elementReader, context);
+                final MessageDrivenDestination messageDrivenDestination = readMessageDrivenDestination(elementReader, context);
                 try {
                     messageDrivenBean.setMessageDrivenDestination(messageDrivenDestination);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.setterError(reader, MessageDrivenBean.class, "setMessageDrivenDestination", MessageDrivenDestination.class, e);
                 }
             } else if (("message-destination-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationType
-                String messageDestinationTypeRaw = elementReader.getElementAsString();
+                final String messageDestinationTypeRaw = elementReader.getElementAsString();
 
-                String messageDestinationType;
+                final String messageDestinationType;
                 try {
                     messageDestinationType = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -313,12 +313,12 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.messageDestinationType = messageDestinationType;
             } else if (("message-destination-link" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationLink
-                String messageDestinationLinkRaw = elementReader.getElementAsString();
+                final String messageDestinationLinkRaw = elementReader.getElementAsString();
 
-                String messageDestinationLink;
+                final String messageDestinationLink;
                 try {
                     messageDestinationLink = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationLinkRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -326,11 +326,11 @@ public class MessageDrivenBean$JAXB
                 messageDrivenBean.messageDestinationLink = messageDestinationLink;
             } else if (("activation-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: activationConfig
-                ActivationConfig activationConfig = readActivationConfig(elementReader, context);
+                final ActivationConfig activationConfig = readActivationConfig(elementReader, context);
                 messageDrivenBean.activationConfig = activationConfig;
             } else if (("around-invoke" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: aroundInvoke
-                AroundInvoke aroundInvokeItem = readAroundInvoke(elementReader, context);
+                final AroundInvoke aroundInvokeItem = readAroundInvoke(elementReader, context);
                 if (aroundInvoke == null) {
                     aroundInvoke = messageDrivenBean.aroundInvoke;
                     if (aroundInvoke != null) {
@@ -342,7 +342,7 @@ public class MessageDrivenBean$JAXB
                 aroundInvoke.add(aroundInvokeItem);
             } else if (("around-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: aroundTimeout
-                AroundTimeout aroundTimeoutItem = readAroundTimeout(elementReader, context);
+                final AroundTimeout aroundTimeoutItem = readAroundTimeout(elementReader, context);
                 if (aroundTimeout == null) {
                     aroundTimeout = messageDrivenBean.aroundTimeout;
                     if (aroundTimeout != null) {
@@ -354,7 +354,7 @@ public class MessageDrivenBean$JAXB
                 aroundTimeout.add(aroundTimeoutItem);
             } else if (("env-entry" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntry
-                EnvEntry envEntryItem = readEnvEntry(elementReader, context);
+                final EnvEntry envEntryItem = readEnvEntry(elementReader, context);
                 if (envEntry == null) {
                     envEntry = messageDrivenBean.envEntry;
                     if (envEntry != null) {
@@ -366,7 +366,7 @@ public class MessageDrivenBean$JAXB
                 envEntry.add(envEntryItem);
             } else if (("ejb-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRef
-                EjbRef ejbRefItem = readEjbRef(elementReader, context);
+                final EjbRef ejbRefItem = readEjbRef(elementReader, context);
                 if (ejbRef == null) {
                     ejbRef = messageDrivenBean.ejbRef;
                     if (ejbRef != null) {
@@ -378,7 +378,7 @@ public class MessageDrivenBean$JAXB
                 ejbRef.add(ejbRefItem);
             } else if (("ejb-local-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbLocalRef
-                EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
+                final EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
                 if (ejbLocalRef == null) {
                     ejbLocalRef = messageDrivenBean.ejbLocalRef;
                     if (ejbLocalRef != null) {
@@ -390,7 +390,7 @@ public class MessageDrivenBean$JAXB
                 ejbLocalRef.add(ejbLocalRefItem);
             } else if (("service-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceRef
-                ServiceRef serviceRefItem = readServiceRef(elementReader, context);
+                final ServiceRef serviceRefItem = readServiceRef(elementReader, context);
                 if (serviceRef == null) {
                     serviceRef = messageDrivenBean.serviceRef;
                     if (serviceRef != null) {
@@ -402,7 +402,7 @@ public class MessageDrivenBean$JAXB
                 serviceRef.add(serviceRefItem);
             } else if (("resource-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceRef
-                ResourceRef resourceRefItem = readResourceRef(elementReader, context);
+                final ResourceRef resourceRefItem = readResourceRef(elementReader, context);
                 if (resourceRef == null) {
                     resourceRef = messageDrivenBean.resourceRef;
                     if (resourceRef != null) {
@@ -414,7 +414,7 @@ public class MessageDrivenBean$JAXB
                 resourceRef.add(resourceRefItem);
             } else if (("resource-env-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceEnvRef
-                ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
+                final ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
                 if (resourceEnvRef == null) {
                     resourceEnvRef = messageDrivenBean.resourceEnvRef;
                     if (resourceEnvRef != null) {
@@ -426,7 +426,7 @@ public class MessageDrivenBean$JAXB
                 resourceEnvRef.add(resourceEnvRefItem);
             } else if (("message-destination-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationRef
-                MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
+                final MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
                 if (messageDestinationRef == null) {
                     messageDestinationRef = messageDrivenBean.messageDestinationRef;
                     if (messageDestinationRef != null) {
@@ -438,7 +438,7 @@ public class MessageDrivenBean$JAXB
                 messageDestinationRef.add(messageDestinationRefItem);
             } else if (("persistence-context-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextRef
-                PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
+                final PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
                 if (persistenceContextRef == null) {
                     persistenceContextRef = messageDrivenBean.persistenceContextRef;
                     if (persistenceContextRef != null) {
@@ -450,7 +450,7 @@ public class MessageDrivenBean$JAXB
                 persistenceContextRef.add(persistenceContextRefItem);
             } else if (("persistence-unit-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceUnitRef
-                PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
+                final PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
                 if (persistenceUnitRef == null) {
                     persistenceUnitRef = messageDrivenBean.persistenceUnitRef;
                     if (persistenceUnitRef != null) {
@@ -462,7 +462,7 @@ public class MessageDrivenBean$JAXB
                 persistenceUnitRef.add(persistenceUnitRefItem);
             } else if (("post-construct" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: postConstruct
-                org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
                 if (postConstruct == null) {
                     postConstruct = messageDrivenBean.postConstruct;
                     if (postConstruct != null) {
@@ -474,7 +474,7 @@ public class MessageDrivenBean$JAXB
                 postConstruct.add(postConstructItem);
             } else if (("pre-destroy" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: preDestroy
-                org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
                 if (preDestroy == null) {
                     preDestroy = messageDrivenBean.preDestroy;
                     if (preDestroy != null) {
@@ -486,7 +486,7 @@ public class MessageDrivenBean$JAXB
                 preDestroy.add(preDestroyItem);
             } else if (("data-source" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dataSource
-                DataSource dataSourceItem = readDataSource(elementReader, context);
+                final DataSource dataSourceItem = readDataSource(elementReader, context);
                 if (dataSource == null) {
                     dataSource = messageDrivenBean.dataSource;
                     if (dataSource != null) {
@@ -498,7 +498,7 @@ public class MessageDrivenBean$JAXB
                 dataSource.add(dataSourceItem);
             } else if (("security-role-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityRoleRef
-                SecurityRoleRef securityRoleRefItem = readSecurityRoleRef(elementReader, context);
+                final SecurityRoleRef securityRoleRefItem = readSecurityRoleRef(elementReader, context);
                 if (securityRoleRef == null) {
                     securityRoleRef = messageDrivenBean.securityRoleRef;
                     if (securityRoleRef != null) {
@@ -510,7 +510,7 @@ public class MessageDrivenBean$JAXB
                 securityRoleRef.add(securityRoleRefItem);
             } else if (("security-identity" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityIdentity
-                SecurityIdentity securityIdentity = readSecurityIdentity(elementReader, context);
+                final SecurityIdentity securityIdentity = readSecurityIdentity(elementReader, context);
                 messageDrivenBean.securityIdentity = securityIdentity;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-name"), new QName("http://java.sun.com/xml/ns/javaee", "mapped-name"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-class"), new QName("http://java.sun.com/xml/ns/javaee", "messaging-type"), new QName("http://java.sun.com/xml/ns/javaee", "timeout-method"), new QName("http://java.sun.com/xml/ns/javaee", "timer"), new QName("http://java.sun.com/xml/ns/javaee", "transaction-type"), new QName("http://java.sun.com/xml/ns/javaee", "message-selector"), new QName("http://java.sun.com/xml/ns/javaee", "acknowledge-mode"), new QName("http://java.sun.com/xml/ns/javaee", "message-driven-destination"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-type"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-link"), new QName("http://java.sun.com/xml/ns/javaee", "activation-config"), new QName("http://java.sun.com/xml/ns/javaee", "around-invoke"), new QName("http://java.sun.com/xml/ns/javaee", "around-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "post-construct"), new QName("http://java.sun.com/xml/ns/javaee", "pre-destroy"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "security-role-ref"), new QName("http://java.sun.com/xml/ns/javaee", "security-identity"));
@@ -519,14 +519,14 @@ public class MessageDrivenBean$JAXB
         if (descriptions != null) {
             try {
                 messageDrivenBean.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, MessageDrivenBean.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 messageDrivenBean.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, MessageDrivenBean.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -587,12 +587,12 @@ public class MessageDrivenBean$JAXB
         return messageDrivenBean;
     }
 
-    public final MessageDrivenBean read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final MessageDrivenBean read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final MessageDrivenBean messageDrivenBean, RuntimeContext context)
         throws Exception {
         if (messageDrivenBean == null) {
             writer.writeXsiNil();
@@ -603,7 +603,7 @@ public class MessageDrivenBean$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MessageDrivenBean.class != messageDrivenBean.getClass()) {
             context.unexpectedSubclass(writer, messageDrivenBean, MessageDrivenBean.class);
             return;
@@ -613,12 +613,12 @@ public class MessageDrivenBean$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = messageDrivenBean.id;
+        final String idRaw = messageDrivenBean.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(messageDrivenBean, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -628,11 +628,11 @@ public class MessageDrivenBean$JAXB
         Text[] descriptions = null;
         try {
             descriptions = messageDrivenBean.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDrivenBean, "descriptions", MessageDrivenBean.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -651,7 +651,7 @@ public class MessageDrivenBean$JAXB
             context.getterError(messageDrivenBean, "displayNames", MessageDrivenBean.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -665,7 +665,7 @@ public class MessageDrivenBean$JAXB
         // ELEMENT: icon
         final LocalCollection<Icon> icon = messageDrivenBean.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -677,11 +677,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: ejbName
-        String ejbNameRaw = messageDrivenBean.ejbName;
+        final String ejbNameRaw = messageDrivenBean.ejbName;
         String ejbName = null;
         try {
             ejbName = Adapters.collapsedStringAdapterAdapter.marshal(ejbNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "ejbName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbName != null) {
@@ -693,11 +693,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = messageDrivenBean.mappedName;
+        final String mappedNameRaw = messageDrivenBean.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {
@@ -707,11 +707,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: ejbClass
-        String ejbClassRaw = messageDrivenBean.ejbClass;
+        final String ejbClassRaw = messageDrivenBean.ejbClass;
         String ejbClass = null;
         try {
             ejbClass = Adapters.collapsedStringAdapterAdapter.marshal(ejbClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "ejbClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbClass != null) {
@@ -721,11 +721,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: messagingType
-        String messagingTypeRaw = messageDrivenBean.messagingType;
+        final String messagingTypeRaw = messageDrivenBean.messagingType;
         String messagingType = null;
         try {
             messagingType = Adapters.collapsedStringAdapterAdapter.marshal(messagingTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "messagingType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messagingType != null) {
@@ -735,7 +735,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: timeoutMethod
-        NamedMethod timeoutMethod = messageDrivenBean.timeoutMethod;
+        final NamedMethod timeoutMethod = messageDrivenBean.timeoutMethod;
         if (timeoutMethod != null) {
             writer.writeStartElement(prefix, "timeout-method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, timeoutMethod, context);
@@ -743,9 +743,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: timer
-        List<Timer> timer = messageDrivenBean.timer;
+        final List<Timer> timer = messageDrivenBean.timer;
         if (timer != null) {
-            for (Timer timerItem : timer) {
+            for (final Timer timerItem : timer) {
                 writer.writeStartElement(prefix, "timer", "http://java.sun.com/xml/ns/javaee");
                 if (timerItem != null) {
                     writeTimer(writer, timerItem, context);
@@ -757,7 +757,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: transactionType
-        TransactionType transactionType = messageDrivenBean.transactionType;
+        final TransactionType transactionType = messageDrivenBean.transactionType;
         if (transactionType != null) {
             writer.writeStartElement(prefix, "transaction-type", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringTransactionType(messageDrivenBean, null, context, transactionType));
@@ -774,7 +774,7 @@ public class MessageDrivenBean$JAXB
         String messageSelector = null;
         try {
             messageSelector = Adapters.collapsedStringAdapterAdapter.marshal(messageSelectorRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "messageSelector", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageSelector != null) {
@@ -787,13 +787,13 @@ public class MessageDrivenBean$JAXB
         String acknowledgeModeRaw = null;
         try {
             acknowledgeModeRaw = messageDrivenBean.getAcknowledgeMode();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDrivenBean, "acknowledgeMode", MessageDrivenBean.class, "getAcknowledgeMode", e);
         }
         String acknowledgeMode = null;
         try {
             acknowledgeMode = Adapters.collapsedStringAdapterAdapter.marshal(acknowledgeModeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "acknowledgeMode", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (acknowledgeMode != null) {
@@ -806,7 +806,7 @@ public class MessageDrivenBean$JAXB
         MessageDrivenDestination messageDrivenDestination = null;
         try {
             messageDrivenDestination = messageDrivenBean.getMessageDrivenDestination();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDrivenBean, "messageDrivenDestination", MessageDrivenBean.class, "getMessageDrivenDestination", e);
         }
         if (messageDrivenDestination != null) {
@@ -816,11 +816,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: messageDestinationType
-        String messageDestinationTypeRaw = messageDrivenBean.messageDestinationType;
+        final String messageDestinationTypeRaw = messageDrivenBean.messageDestinationType;
         String messageDestinationType = null;
         try {
             messageDestinationType = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "messageDestinationType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageDestinationType != null) {
@@ -830,11 +830,11 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: messageDestinationLink
-        String messageDestinationLinkRaw = messageDrivenBean.messageDestinationLink;
+        final String messageDestinationLinkRaw = messageDrivenBean.messageDestinationLink;
         String messageDestinationLink = null;
         try {
             messageDestinationLink = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationLinkRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDrivenBean, "messageDestinationLink", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageDestinationLink != null) {
@@ -844,7 +844,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: activationConfig
-        ActivationConfig activationConfig = messageDrivenBean.activationConfig;
+        final ActivationConfig activationConfig = messageDrivenBean.activationConfig;
         if (activationConfig != null) {
             writer.writeStartElement(prefix, "activation-config", "http://java.sun.com/xml/ns/javaee");
             writeActivationConfig(writer, activationConfig, context);
@@ -852,9 +852,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: aroundInvoke
-        List<AroundInvoke> aroundInvoke = messageDrivenBean.aroundInvoke;
+        final List<AroundInvoke> aroundInvoke = messageDrivenBean.aroundInvoke;
         if (aroundInvoke != null) {
-            for (AroundInvoke aroundInvokeItem : aroundInvoke) {
+            for (final AroundInvoke aroundInvokeItem : aroundInvoke) {
                 if (aroundInvokeItem != null) {
                     writer.writeStartElement(prefix, "around-invoke", "http://java.sun.com/xml/ns/javaee");
                     writeAroundInvoke(writer, aroundInvokeItem, context);
@@ -866,9 +866,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: aroundTimeout
-        List<AroundTimeout> aroundTimeout = messageDrivenBean.aroundTimeout;
+        final List<AroundTimeout> aroundTimeout = messageDrivenBean.aroundTimeout;
         if (aroundTimeout != null) {
-            for (AroundTimeout aroundTimeoutItem : aroundTimeout) {
+            for (final AroundTimeout aroundTimeoutItem : aroundTimeout) {
                 if (aroundTimeoutItem != null) {
                     writer.writeStartElement(prefix, "around-timeout", "http://java.sun.com/xml/ns/javaee");
                     writeAroundTimeout(writer, aroundTimeoutItem, context);
@@ -878,9 +878,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: envEntry
-        KeyedCollection<String, EnvEntry> envEntry = messageDrivenBean.envEntry;
+        final KeyedCollection<String, EnvEntry> envEntry = messageDrivenBean.envEntry;
         if (envEntry != null) {
-            for (EnvEntry envEntryItem : envEntry) {
+            for (final EnvEntry envEntryItem : envEntry) {
                 if (envEntryItem != null) {
                     writer.writeStartElement(prefix, "env-entry", "http://java.sun.com/xml/ns/javaee");
                     writeEnvEntry(writer, envEntryItem, context);
@@ -892,9 +892,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: ejbRef
-        KeyedCollection<String, EjbRef> ejbRef = messageDrivenBean.ejbRef;
+        final KeyedCollection<String, EjbRef> ejbRef = messageDrivenBean.ejbRef;
         if (ejbRef != null) {
-            for (EjbRef ejbRefItem : ejbRef) {
+            for (final EjbRef ejbRefItem : ejbRef) {
                 if (ejbRefItem != null) {
                     writer.writeStartElement(prefix, "ejb-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbRef(writer, ejbRefItem, context);
@@ -906,9 +906,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: ejbLocalRef
-        KeyedCollection<String, EjbLocalRef> ejbLocalRef = messageDrivenBean.ejbLocalRef;
+        final KeyedCollection<String, EjbLocalRef> ejbLocalRef = messageDrivenBean.ejbLocalRef;
         if (ejbLocalRef != null) {
-            for (EjbLocalRef ejbLocalRefItem : ejbLocalRef) {
+            for (final EjbLocalRef ejbLocalRefItem : ejbLocalRef) {
                 if (ejbLocalRefItem != null) {
                     writer.writeStartElement(prefix, "ejb-local-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbLocalRef(writer, ejbLocalRefItem, context);
@@ -922,7 +922,7 @@ public class MessageDrivenBean$JAXB
         // ELEMENT: serviceRef
         final KeyedCollection<String, ServiceRef> serviceRef = messageDrivenBean.serviceRef;
         if (serviceRef != null) {
-            for (ServiceRef serviceRefItem : serviceRef) {
+            for (final ServiceRef serviceRefItem : serviceRef) {
                 if (serviceRefItem != null) {
                     writer.writeStartElement(prefix, "service-ref", "http://java.sun.com/xml/ns/javaee");
                     writeServiceRef(writer, serviceRefItem, context);
@@ -934,9 +934,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: resourceRef
-        KeyedCollection<String, ResourceRef> resourceRef = messageDrivenBean.resourceRef;
+        final KeyedCollection<String, ResourceRef> resourceRef = messageDrivenBean.resourceRef;
         if (resourceRef != null) {
-            for (ResourceRef resourceRefItem : resourceRef) {
+            for (final ResourceRef resourceRefItem : resourceRef) {
                 if (resourceRefItem != null) {
                     writer.writeStartElement(prefix, "resource-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceRef(writer, resourceRefItem, context);
@@ -948,9 +948,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: resourceEnvRef
-        KeyedCollection<String, ResourceEnvRef> resourceEnvRef = messageDrivenBean.resourceEnvRef;
+        final KeyedCollection<String, ResourceEnvRef> resourceEnvRef = messageDrivenBean.resourceEnvRef;
         if (resourceEnvRef != null) {
-            for (ResourceEnvRef resourceEnvRefItem : resourceEnvRef) {
+            for (final ResourceEnvRef resourceEnvRefItem : resourceEnvRef) {
                 if (resourceEnvRefItem != null) {
                     writer.writeStartElement(prefix, "resource-env-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceEnvRef(writer, resourceEnvRefItem, context);
@@ -962,9 +962,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: messageDestinationRef
-        KeyedCollection<String, MessageDestinationRef> messageDestinationRef = messageDrivenBean.messageDestinationRef;
+        final KeyedCollection<String, MessageDestinationRef> messageDestinationRef = messageDrivenBean.messageDestinationRef;
         if (messageDestinationRef != null) {
-            for (MessageDestinationRef messageDestinationRefItem : messageDestinationRef) {
+            for (final MessageDestinationRef messageDestinationRefItem : messageDestinationRef) {
                 if (messageDestinationRefItem != null) {
                     writer.writeStartElement(prefix, "message-destination-ref", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDestinationRef(writer, messageDestinationRefItem, context);
@@ -976,9 +976,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: persistenceContextRef
-        KeyedCollection<String, PersistenceContextRef> persistenceContextRef = messageDrivenBean.persistenceContextRef;
+        final KeyedCollection<String, PersistenceContextRef> persistenceContextRef = messageDrivenBean.persistenceContextRef;
         if (persistenceContextRef != null) {
-            for (PersistenceContextRef persistenceContextRefItem : persistenceContextRef) {
+            for (final PersistenceContextRef persistenceContextRefItem : persistenceContextRef) {
                 if (persistenceContextRefItem != null) {
                     writer.writeStartElement(prefix, "persistence-context-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceContextRef(writer, persistenceContextRefItem, context);
@@ -990,9 +990,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: persistenceUnitRef
-        KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = messageDrivenBean.persistenceUnitRef;
+        final KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = messageDrivenBean.persistenceUnitRef;
         if (persistenceUnitRef != null) {
-            for (PersistenceUnitRef persistenceUnitRefItem : persistenceUnitRef) {
+            for (final PersistenceUnitRef persistenceUnitRefItem : persistenceUnitRef) {
                 if (persistenceUnitRefItem != null) {
                     writer.writeStartElement(prefix, "persistence-unit-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceUnitRef(writer, persistenceUnitRefItem, context);
@@ -1004,9 +1004,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: postConstruct
-        List<org.apache.openejb.jee.LifecycleCallback> postConstruct = messageDrivenBean.postConstruct;
+        final List<org.apache.openejb.jee.LifecycleCallback> postConstruct = messageDrivenBean.postConstruct;
         if (postConstruct != null) {
-            for (org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
+            for (final org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
                 if (postConstructItem != null) {
                     writer.writeStartElement(prefix, "post-construct", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, postConstructItem, context);
@@ -1018,9 +1018,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: preDestroy
-        List<org.apache.openejb.jee.LifecycleCallback> preDestroy = messageDrivenBean.preDestroy;
+        final List<org.apache.openejb.jee.LifecycleCallback> preDestroy = messageDrivenBean.preDestroy;
         if (preDestroy != null) {
-            for (org.apache.openejb.jee.LifecycleCallback preDestroyItem : preDestroy) {
+            for (final org.apache.openejb.jee.LifecycleCallback preDestroyItem : preDestroy) {
                 if (preDestroyItem != null) {
                     writer.writeStartElement(prefix, "pre-destroy", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, preDestroyItem, context);
@@ -1032,9 +1032,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: dataSource
-        KeyedCollection<String, DataSource> dataSource = messageDrivenBean.dataSource;
+        final KeyedCollection<String, DataSource> dataSource = messageDrivenBean.dataSource;
         if (dataSource != null) {
-            for (DataSource dataSourceItem : dataSource) {
+            for (final DataSource dataSourceItem : dataSource) {
                 if (dataSourceItem != null) {
                     writer.writeStartElement(prefix, "data-source", "http://java.sun.com/xml/ns/javaee");
                     writeDataSource(writer, dataSourceItem, context);
@@ -1046,9 +1046,9 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: securityRoleRef
-        List<SecurityRoleRef> securityRoleRef = messageDrivenBean.securityRoleRef;
+        final List<SecurityRoleRef> securityRoleRef = messageDrivenBean.securityRoleRef;
         if (securityRoleRef != null) {
-            for (SecurityRoleRef securityRoleRefItem : securityRoleRef) {
+            for (final SecurityRoleRef securityRoleRefItem : securityRoleRef) {
                 if (securityRoleRefItem != null) {
                     writer.writeStartElement(prefix, "security-role-ref", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityRoleRef(writer, securityRoleRefItem, context);
@@ -1060,7 +1060,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: securityIdentity
-        SecurityIdentity securityIdentity = messageDrivenBean.securityIdentity;
+        final SecurityIdentity securityIdentity = messageDrivenBean.securityIdentity;
         if (securityIdentity != null) {
             writer.writeStartElement(prefix, "security-identity", "http://java.sun.com/xml/ns/javaee");
             writeSecurityIdentity(writer, securityIdentity, context);

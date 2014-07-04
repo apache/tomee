@@ -30,17 +30,17 @@ public class Dispatcher$JAXB
         super(Dispatcher.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "dispatcherType".intern()));
     }
 
-    public Dispatcher parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+    public Dispatcher parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseDispatcher(reader, context, value);
     }
 
-    public String toString(final Object bean, final String parameterName, RuntimeContext context, Dispatcher dispatcher)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final Dispatcher dispatcher)
         throws Exception {
         return toStringDispatcher(bean, parameterName, context, dispatcher);
     }
 
-    public static Dispatcher parseDispatcher(final XoXMLStreamReader reader, RuntimeContext context, final String value)
+    public static Dispatcher parseDispatcher(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("FORWARD".equals(value)) {
             return Dispatcher.FORWARD;
@@ -58,7 +58,7 @@ public class Dispatcher$JAXB
         }
     }
 
-    public static String toStringDispatcher(final Object bean, final String parameterName, RuntimeContext context, Dispatcher dispatcher)
+    public static String toStringDispatcher(final Object bean, final String parameterName, final RuntimeContext context, final Dispatcher dispatcher)
         throws Exception {
         if (Dispatcher.FORWARD == dispatcher) {
             return "FORWARD";

@@ -30,17 +30,17 @@ public class JmsProxyTest extends JmsTest {
         final MdbInvoker mdbInvoker = new MdbInvoker(connectionFactory, testObject);
 
         // Create a Session
-        Connection connection = connectionFactory.createConnection();
+        final Connection connection = connectionFactory.createConnection();
         connection.start();
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         // Create the request Queue
-        Destination requestQueue = session.createQueue(REQUEST_QUEUE_NAME);
-        MessageConsumer consumer = session.createConsumer(requestQueue);
+        final Destination requestQueue = session.createQueue(REQUEST_QUEUE_NAME);
+        final MessageConsumer consumer = session.createConsumer(requestQueue);
         consumer.setMessageListener(mdbInvoker);
 
         // create in invoker
-        JmsProxyTest.TestInterface testInterface = MdbProxy.newProxyInstance(JmsProxyTest.TestInterface.class, connectionFactory, REQUEST_QUEUE_NAME);
+        final JmsProxyTest.TestInterface testInterface = MdbProxy.newProxyInstance(JmsProxyTest.TestInterface.class, connectionFactory, REQUEST_QUEUE_NAME);
         assertEquals("foobar", testInterface.echo("bar"));
         assertEquals("foobar", testInterface.echo("bar"));
         assertEquals("foobar", testInterface.echo("bar"));

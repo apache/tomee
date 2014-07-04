@@ -170,7 +170,7 @@ public class ObjectFactory {
      * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link AnnotationType }{@code >}}
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "annotation", scope = ElementType.class)
-    public JAXBElement<AnnotationType> createElementTypeAnnotation(AnnotationType value) {
+    public JAXBElement<AnnotationType> createElementTypeAnnotation(final AnnotationType value) {
         return new JAXBElement<AnnotationType>(_ElementTypeAnnotation_QNAME, AnnotationType.class, ElementType.class, value);
     }
 
@@ -179,7 +179,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ElementType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createElementTypeValue(String value) {
+    public JAXBElement<String> createElementTypeValue(final String value) {
         return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, ElementType.class, value);
     }
 
@@ -187,7 +187,7 @@ public class ObjectFactory {
      * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link ValidationConfigType }{@code >}}
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/configuration", name = "validation-config")
-    public JAXBElement<ValidationConfigType> createValidationConfig(ValidationConfigType value) {
+    public JAXBElement<ValidationConfigType> createValidationConfig(final ValidationConfigType value) {
         return new JAXBElement<ValidationConfigType>(_ValidationConfig_QNAME, ValidationConfigType.class, null, value);
     }
 
@@ -195,7 +195,7 @@ public class ObjectFactory {
      * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link ConstraintMappingsType }{@code >}}
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "constraint-mappings")
-    public JAXBElement<ConstraintMappingsType> createConstraintMappings(ConstraintMappingsType value) {
+    public JAXBElement<ConstraintMappingsType> createConstraintMappings(final ConstraintMappingsType value) {
         return new JAXBElement<ConstraintMappingsType>(_ConstraintMappings_QNAME, ConstraintMappingsType.class, null, value);
     }
 
@@ -204,7 +204,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/configuration", name = "constraint-mapping", scope = ValidationConfigType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createValidationConfigTypeConstraintMapping(String value) {
+    public JAXBElement<String> createValidationConfigTypeConstraintMapping(final String value) {
         return new JAXBElement<String>(_ValidationConfigTypeConstraintMapping_QNAME, String.class, ValidationConfigType.class, value);
     }
 
@@ -213,7 +213,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = GroupSequenceType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createGroupSequenceTypeValue(String value) {
+    public JAXBElement<String> createGroupSequenceTypeValue(final String value) {
         return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, GroupSequenceType.class, value);
     }
 
@@ -222,7 +222,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ValidatedByType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createValidatedByTypeValue(String value) {
+    public JAXBElement<String> createValidatedByTypeValue(final String value) {
         return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, ValidatedByType.class, value);
     }
 
@@ -231,7 +231,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = GroupsType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createGroupsTypeValue(String value) {
+    public JAXBElement<String> createGroupsTypeValue(final String value) {
         return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, GroupsType.class, value);
     }
 

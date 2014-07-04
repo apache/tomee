@@ -83,10 +83,10 @@ public class HandlerChains$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, handlerChains);
                 handlerChains.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,10 +95,10 @@ public class HandlerChains$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("handler-chain" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handlerChain
-                HandlerChain handlerChainItem = readHandlerChain(elementReader, context);
+                final HandlerChain handlerChainItem = readHandlerChain(elementReader, context);
                 if (handlerChain == null) {
                     handlerChain = handlerChains.handlerChain;
                     if (handlerChain != null) {
@@ -121,12 +121,12 @@ public class HandlerChains$JAXB
         return handlerChains;
     }
 
-    public final HandlerChains read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final HandlerChains read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final HandlerChains handlerChains, RuntimeContext context)
         throws Exception {
         if (handlerChains == null) {
             writer.writeXsiNil();
@@ -151,16 +151,16 @@ public class HandlerChains$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(handlerChains, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: handlerChain
-        List<HandlerChain> handlerChain = handlerChains.handlerChain;
+        final List<HandlerChain> handlerChain = handlerChains.handlerChain;
         if (handlerChain != null) {
-            for (HandlerChain handlerChainItem : handlerChain) {
+            for (final HandlerChain handlerChainItem : handlerChain) {
                 if (handlerChainItem != null) {
                     writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "handler-chain");
                     writeHandlerChain(writer, handlerChainItem, context);

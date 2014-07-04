@@ -44,7 +44,7 @@ public class CheckNoCreateMethodsTest {
     public EjbJar noCreateMethod() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         final EjbJar ejbJar = new EjbJar();
-        StatelessBean stateless = new StatelessBean(FooStateless.class);
+        final StatelessBean stateless = new StatelessBean(FooStateless.class);
         stateless.setHomeAndRemote(FooStatelessHome.class, FooStatelessRemote.class);
         stateless.setHomeAndLocal(FooStatelessLocalHome.class, FooStatelessLocal.class);
         ejbJar.addEnterpriseBean(stateless);
@@ -52,18 +52,18 @@ public class CheckNoCreateMethodsTest {
         stateful.setHomeAndRemote(FooStatefulHome.class, FooStatefulRemote.class);
         stateful.setHomeAndLocal(FooStatefulLocalHome.class, FooStatefulLocal.class);
         ejbJar.addEnterpriseBean(stateful);
-        org.apache.openejb.jee.EntityBean bean = new org.apache.openejb.jee.EntityBean(MyEntity.class, PersistenceType.BEAN);
+        final org.apache.openejb.jee.EntityBean bean = new org.apache.openejb.jee.EntityBean(MyEntity.class, PersistenceType.BEAN);
         bean.setLocalHome(MyLocalHome.class.getName());
         bean.setLocal(MyLocal.class.getName());
         ejbJar.addEnterpriseBean(bean);
-        org.apache.openejb.jee.EntityBean bean1 = new org.apache.openejb.jee.EntityBean(YourEntity.class, PersistenceType.BEAN);
+        final org.apache.openejb.jee.EntityBean bean1 = new org.apache.openejb.jee.EntityBean(YourEntity.class, PersistenceType.BEAN);
         bean1.setLocalHome(MyLocalHome.class.getName());
         bean1.setLocal(MyLocal.class.getName());
         ejbJar.addEnterpriseBean(bean1);
-        StatelessBean bar = new StatelessBean(BarStateless.class);
+        final StatelessBean bar = new StatelessBean(BarStateless.class);
         bar.setHomeAndRemote(BarStatelessHome.class, BarStatelessRemote.class);
         ejbJar.addEnterpriseBean(bar);
-        StatefulBean bazStateful = new StatefulBean(BazStateful.class);
+        final StatefulBean bazStateful = new StatefulBean(BazStateful.class);
         ejbJar.addEnterpriseBean(bazStateful);
         return ejbJar;
     }

@@ -48,12 +48,12 @@ public class ConnectionDefinition$JAXB
         return _read(reader, context);
     }
 
-    public static void writeConnectionDefinition(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+    public static void writeConnectionDefinition(final XoXMLStreamWriter writer, final ConnectionDefinition connectionDefinition, final RuntimeContext context)
         throws Exception {
         _write(writer, connectionDefinition, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final ConnectionDefinition connectionDefinition, final RuntimeContext context)
         throws Exception {
         _write(writer, connectionDefinition, context);
     }
@@ -70,13 +70,13 @@ public class ConnectionDefinition$JAXB
             context = new RuntimeContext();
         }
 
-        ConnectionDefinition connectionDefinition = new ConnectionDefinition();
+        final ConnectionDefinition connectionDefinition = new ConnectionDefinition();
         context.beforeUnmarshal(connectionDefinition, LifecycleCallback.NONE);
 
         List<ConfigProperty> configProperty = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("connection-definitionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ConnectionDefinition.class);
@@ -87,7 +87,7 @@ public class ConnectionDefinition$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, connectionDefinition);
                 connectionDefinition.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class ConnectionDefinition$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("managedconnectionfactory-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedConnectionFactoryClass
-                String managedConnectionFactoryClassRaw = elementReader.getElementAsString();
+                final String managedConnectionFactoryClassRaw = elementReader.getElementAsString();
 
-                String managedConnectionFactoryClass;
+                final String managedConnectionFactoryClass;
                 try {
                     managedConnectionFactoryClass = Adapters.collapsedStringAdapterAdapter.unmarshal(managedConnectionFactoryClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -112,7 +112,7 @@ public class ConnectionDefinition$JAXB
                 connectionDefinition.managedConnectionFactoryClass = managedConnectionFactoryClass;
             } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configProperty
-                ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
+                final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {
                     configProperty = connectionDefinition.configProperty;
                     if (configProperty != null) {
@@ -124,12 +124,12 @@ public class ConnectionDefinition$JAXB
                 configProperty.add(configPropertyItem);
             } else if (("connectionfactory-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connectionFactoryInterface
-                String connectionFactoryInterfaceRaw = elementReader.getElementAsString();
+                final String connectionFactoryInterfaceRaw = elementReader.getElementAsString();
 
-                String connectionFactoryInterface;
+                final String connectionFactoryInterface;
                 try {
                     connectionFactoryInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(connectionFactoryInterfaceRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -137,12 +137,12 @@ public class ConnectionDefinition$JAXB
                 connectionDefinition.connectionFactoryInterface = connectionFactoryInterface;
             } else if (("connectionfactory-impl-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connectionFactoryImplClass
-                String connectionFactoryImplClassRaw = elementReader.getElementAsString();
+                final String connectionFactoryImplClassRaw = elementReader.getElementAsString();
 
-                String connectionFactoryImplClass;
+                final String connectionFactoryImplClass;
                 try {
                     connectionFactoryImplClass = Adapters.collapsedStringAdapterAdapter.unmarshal(connectionFactoryImplClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -150,12 +150,12 @@ public class ConnectionDefinition$JAXB
                 connectionDefinition.connectionFactoryImplClass = connectionFactoryImplClass;
             } else if (("connection-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connectionInterface
-                String connectionInterfaceRaw = elementReader.getElementAsString();
+                final String connectionInterfaceRaw = elementReader.getElementAsString();
 
-                String connectionInterface;
+                final String connectionInterface;
                 try {
                     connectionInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(connectionInterfaceRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -163,12 +163,12 @@ public class ConnectionDefinition$JAXB
                 connectionDefinition.connectionInterface = connectionInterface;
             } else if (("connection-impl-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connectionImplClass
-                String connectionImplClassRaw = elementReader.getElementAsString();
+                final String connectionImplClassRaw = elementReader.getElementAsString();
 
-                String connectionImplClass;
+                final String connectionImplClass;
                 try {
                     connectionImplClass = Adapters.collapsedStringAdapterAdapter.unmarshal(connectionImplClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -187,12 +187,12 @@ public class ConnectionDefinition$JAXB
         return connectionDefinition;
     }
 
-    public final ConnectionDefinition read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final ConnectionDefinition read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final ConnectionDefinition connectionDefinition, RuntimeContext context)
         throws Exception {
         if (connectionDefinition == null) {
             writer.writeXsiNil();
@@ -213,23 +213,23 @@ public class ConnectionDefinition$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = connectionDefinition.id;
+        final String idRaw = connectionDefinition.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(connectionDefinition, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: managedConnectionFactoryClass
-        String managedConnectionFactoryClassRaw = connectionDefinition.managedConnectionFactoryClass;
+        final String managedConnectionFactoryClassRaw = connectionDefinition.managedConnectionFactoryClass;
         String managedConnectionFactoryClass = null;
         try {
             managedConnectionFactoryClass = Adapters.collapsedStringAdapterAdapter.marshal(managedConnectionFactoryClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(connectionDefinition, "managedConnectionFactoryClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (managedConnectionFactoryClass != null) {
@@ -241,9 +241,9 @@ public class ConnectionDefinition$JAXB
         }
 
         // ELEMENT: configProperty
-        List<ConfigProperty> configProperty = connectionDefinition.configProperty;
+        final List<ConfigProperty> configProperty = connectionDefinition.configProperty;
         if (configProperty != null) {
-            for (ConfigProperty configPropertyItem : configProperty) {
+            for (final ConfigProperty configPropertyItem : configProperty) {
                 if (configPropertyItem != null) {
                     writer.writeStartElement(prefix, "config-property", "http://java.sun.com/xml/ns/javaee");
                     writeConfigProperty(writer, configPropertyItem, context);
@@ -257,7 +257,7 @@ public class ConnectionDefinition$JAXB
         String connectionFactoryInterface = null;
         try {
             connectionFactoryInterface = Adapters.collapsedStringAdapterAdapter.marshal(connectionFactoryInterfaceRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(connectionDefinition, "connectionFactoryInterface", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (connectionFactoryInterface != null) {
@@ -269,7 +269,7 @@ public class ConnectionDefinition$JAXB
         }
 
         // ELEMENT: connectionFactoryImplClass
-        String connectionFactoryImplClassRaw = connectionDefinition.connectionFactoryImplClass;
+        final String connectionFactoryImplClassRaw = connectionDefinition.connectionFactoryImplClass;
         String connectionFactoryImplClass = null;
         try {
             connectionFactoryImplClass = Adapters.collapsedStringAdapterAdapter.marshal(connectionFactoryImplClassRaw);
@@ -285,11 +285,11 @@ public class ConnectionDefinition$JAXB
         }
 
         // ELEMENT: connectionInterface
-        String connectionInterfaceRaw = connectionDefinition.connectionInterface;
+        final String connectionInterfaceRaw = connectionDefinition.connectionInterface;
         String connectionInterface = null;
         try {
             connectionInterface = Adapters.collapsedStringAdapterAdapter.marshal(connectionInterfaceRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(connectionDefinition, "connectionInterface", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (connectionInterface != null) {
@@ -301,11 +301,11 @@ public class ConnectionDefinition$JAXB
         }
 
         // ELEMENT: connectionImplClass
-        String connectionImplClassRaw = connectionDefinition.connectionImplClass;
+        final String connectionImplClassRaw = connectionDefinition.connectionImplClass;
         String connectionImplClass = null;
         try {
             connectionImplClass = Adapters.collapsedStringAdapterAdapter.marshal(connectionImplClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(connectionDefinition, "connectionImplClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (connectionImplClass != null) {

@@ -49,7 +49,7 @@ public class JndiNameFormatTest extends TestCase {
 
         final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EchoImpl.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
@@ -62,8 +62,8 @@ public class JndiNameFormatTest extends TestCase {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(p);
-        Echo echo = (Echo) context.lookup("EchoImpl/remote");
+        final InitialContext context = new InitialContext(p);
+        final Echo echo = (Echo) context.lookup("EchoImpl/remote");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
         assembler.destroy();
@@ -75,7 +75,7 @@ public class JndiNameFormatTest extends TestCase {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(p);
+        final InitialContext context = new InitialContext(p);
         final Echo echo = (Echo) context.lookup("EchoImpl/REMOTE");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
@@ -88,7 +88,7 @@ public class JndiNameFormatTest extends TestCase {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(p);
+        final InitialContext context = new InitialContext(p);
         final Echo echo = (Echo) context.lookup("EchoImpl/Remote");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
@@ -101,7 +101,7 @@ public class JndiNameFormatTest extends TestCase {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(p);
+        final InitialContext context = new InitialContext(p);
         final Echo echo = (Echo) context.lookup("echoimpl/REMOTE");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));

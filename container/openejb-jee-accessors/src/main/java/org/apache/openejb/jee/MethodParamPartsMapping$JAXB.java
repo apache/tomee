@@ -47,12 +47,12 @@ public class MethodParamPartsMapping$JAXB
         return _read(reader, context);
     }
 
-    public static void writeMethodParamPartsMapping(final XoXMLStreamWriter writer, final MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
+    public static void writeMethodParamPartsMapping(final XoXMLStreamWriter writer, final MethodParamPartsMapping methodParamPartsMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, methodParamPartsMapping, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, MethodParamPartsMapping methodParamPartsMapping, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final MethodParamPartsMapping methodParamPartsMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, methodParamPartsMapping, context);
     }
@@ -69,12 +69,12 @@ public class MethodParamPartsMapping$JAXB
             context = new RuntimeContext();
         }
 
-        MethodParamPartsMapping methodParamPartsMapping = new MethodParamPartsMapping();
+        final MethodParamPartsMapping methodParamPartsMapping = new MethodParamPartsMapping();
         context.beforeUnmarshal(methodParamPartsMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("method-param-parts-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MethodParamPartsMapping.class);
@@ -82,10 +82,10 @@ public class MethodParamPartsMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, methodParamPartsMapping);
                 methodParamPartsMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -94,19 +94,19 @@ public class MethodParamPartsMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("param-position" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: paramPosition
-                BigInteger paramPosition = new BigInteger(elementReader.getElementAsString());
+                final BigInteger paramPosition = new BigInteger(elementReader.getElementAsString());
                 methodParamPartsMapping.paramPosition = paramPosition;
             } else if (("param-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: paramType
-                String paramTypeRaw = elementReader.getElementAsString();
+                final String paramTypeRaw = elementReader.getElementAsString();
 
                 final String paramType;
                 try {
                     paramType = Adapters.collapsedStringAdapterAdapter.unmarshal(paramTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -114,7 +114,7 @@ public class MethodParamPartsMapping$JAXB
                 methodParamPartsMapping.paramType = paramType;
             } else if (("wsdl-message-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlMessageMapping
-                WsdlMessageMapping wsdlMessageMapping = readWsdlMessageMapping(elementReader, context);
+                final WsdlMessageMapping wsdlMessageMapping = readWsdlMessageMapping(elementReader, context);
                 methodParamPartsMapping.wsdlMessageMapping = wsdlMessageMapping;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "param-position"), new QName("http://java.sun.com/xml/ns/javaee", "param-type"), new QName("http://java.sun.com/xml/ns/javaee", "wsdl-message-mapping"));
@@ -126,7 +126,7 @@ public class MethodParamPartsMapping$JAXB
         return methodParamPartsMapping;
     }
 
-    public final MethodParamPartsMapping read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final MethodParamPartsMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -142,7 +142,7 @@ public class MethodParamPartsMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MethodParamPartsMapping.class != methodParamPartsMapping.getClass()) {
             context.unexpectedSubclass(writer, methodParamPartsMapping, MethodParamPartsMapping.class);
             return;
@@ -152,19 +152,19 @@ public class MethodParamPartsMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = methodParamPartsMapping.id;
+        final String idRaw = methodParamPartsMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(methodParamPartsMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: paramPosition
-        BigInteger paramPosition = methodParamPartsMapping.paramPosition;
+        final BigInteger paramPosition = methodParamPartsMapping.paramPosition;
         if (paramPosition != null) {
             writer.writeStartElement(prefix, "param-position", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(paramPosition.toString());
@@ -174,11 +174,11 @@ public class MethodParamPartsMapping$JAXB
         }
 
         // ELEMENT: paramType
-        String paramTypeRaw = methodParamPartsMapping.paramType;
+        final String paramTypeRaw = methodParamPartsMapping.paramType;
         String paramType = null;
         try {
             paramType = Adapters.collapsedStringAdapterAdapter.marshal(paramTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(methodParamPartsMapping, "paramType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (paramType != null) {
@@ -190,7 +190,7 @@ public class MethodParamPartsMapping$JAXB
         }
 
         // ELEMENT: wsdlMessageMapping
-        WsdlMessageMapping wsdlMessageMapping = methodParamPartsMapping.wsdlMessageMapping;
+        final WsdlMessageMapping wsdlMessageMapping = methodParamPartsMapping.wsdlMessageMapping;
         if (wsdlMessageMapping != null) {
             writer.writeStartElement(prefix, "wsdl-message-mapping", "http://java.sun.com/xml/ns/javaee");
             writeWsdlMessageMapping(writer, wsdlMessageMapping, context);

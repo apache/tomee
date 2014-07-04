@@ -33,7 +33,7 @@ public class ComplexSuperclass {
     public ComplexSuperclass() {
     }
 
-    public ComplexSuperclass(final String firstId, String secondId) {
+    public ComplexSuperclass(final String firstId, final String secondId) {
         this.firstId = firstId;
         this.secondId = secondId;
     }

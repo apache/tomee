@@ -45,12 +45,12 @@ public class FacesPropertyExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesPropertyExtension(final XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
+    public static void writeFacesPropertyExtension(final XoXMLStreamWriter writer, final FacesPropertyExtension facesPropertyExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesPropertyExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesPropertyExtension facesPropertyExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesPropertyExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesPropertyExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-property-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesPropertyExtension.class);
@@ -81,10 +81,10 @@ public class FacesPropertyExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesPropertyExtension);
                 facesPropertyExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesPropertyExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesPropertyExtension.any;
@@ -139,12 +139,12 @@ public class FacesPropertyExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesPropertyExtension.id;
+        final String idRaw = facesPropertyExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesPropertyExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

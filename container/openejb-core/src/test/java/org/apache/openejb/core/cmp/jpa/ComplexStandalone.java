@@ -33,7 +33,7 @@ public class ComplexStandalone {
     public ComplexStandalone() {
     }
 
-    public ComplexStandalone(final String firstId, String secondId) {
+    public ComplexStandalone(final String firstId, final String secondId) {
         this.firstId = firstId;
         this.secondId = secondId;
     }

@@ -48,17 +48,17 @@ public class EjbLocalRef$JAXB
         super(EjbLocalRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-local-refType".intern()), Text$JAXB.class, EjbRefType$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static EjbLocalRef readEjbLocalRef(final XoXMLStreamReader reader, RuntimeContext context)
+    public static EjbLocalRef readEjbLocalRef(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbLocalRef(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, final RuntimeContext context)
+    public static void writeEjbLocalRef(final XoXMLStreamWriter writer, final EjbLocalRef ejbLocalRef, final RuntimeContext context)
         throws Exception {
         _write(writer, ejbLocalRef, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final EjbLocalRef ejbLocalRef, final RuntimeContext context)
         throws Exception {
         _write(writer, ejbLocalRef, context);
     }
@@ -75,14 +75,14 @@ public class EjbLocalRef$JAXB
             context = new RuntimeContext();
         }
 
-        EjbLocalRef ejbLocalRef = new EjbLocalRef();
+        final EjbLocalRef ejbLocalRef = new EjbLocalRef();
         context.beforeUnmarshal(ejbLocalRef, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         Set<InjectionTarget> injectionTarget = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("ejb-local-refType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, EjbLocalRef.class);
@@ -102,7 +102,7 @@ public class EjbLocalRef$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
@@ -114,10 +114,10 @@ public class EjbLocalRef$JAXB
                 // ELEMENT: ejbRefName
                 final String ejbRefNameRaw = elementReader.getElementAsString();
 
-                String ejbRefName;
+                final String ejbRefName;
                 try {
                     ejbRefName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbRefNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -125,18 +125,18 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.ejbRefName = ejbRefName;
             } else if (("ejb-ref-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRefType
-                EjbRefType ejbRefType = parseEjbRefType(elementReader, context, elementReader.getElementAsString());
+                final EjbRefType ejbRefType = parseEjbRefType(elementReader, context, elementReader.getElementAsString());
                 if (ejbRefType != null) {
                     ejbLocalRef.ejbRefType = ejbRefType;
                 }
             } else if (("local-home" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: localHome
-                String localHomeRaw = elementReader.getElementAsString();
+                final String localHomeRaw = elementReader.getElementAsString();
 
                 final String localHome;
                 try {
                     localHome = Adapters.collapsedStringAdapterAdapter.unmarshal(localHomeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -144,9 +144,9 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.localHome = localHome;
             } else if (("local" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: local
-                String localRaw = elementReader.getElementAsString();
+                final String localRaw = elementReader.getElementAsString();
 
-                String local;
+                final String local;
                 try {
                     local = Adapters.collapsedStringAdapterAdapter.unmarshal(localRaw);
                 } catch (final Exception e) {
@@ -157,12 +157,12 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.local = local;
             } else if (("ejb-link" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbLink
-                String ejbLinkRaw = elementReader.getElementAsString();
+                final String ejbLinkRaw = elementReader.getElementAsString();
 
-                String ejbLink;
+                final String ejbLink;
                 try {
                     ejbLink = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbLinkRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -170,12 +170,12 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.ejbLink = ejbLink;
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -183,7 +183,7 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.mappedName = mappedName;
             } else if (("injection-target" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTarget
-                InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
+                final InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
                 if (injectionTarget == null) {
                     injectionTarget = ejbLocalRef.injectionTarget;
                     if (injectionTarget != null) {
@@ -195,12 +195,12 @@ public class EjbLocalRef$JAXB
                 injectionTarget.add(injectionTargetItem);
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
                 final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -213,7 +213,7 @@ public class EjbLocalRef$JAXB
         if (descriptions != null) {
             try {
                 ejbLocalRef.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, EjbLocalRef.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -226,12 +226,12 @@ public class EjbLocalRef$JAXB
         return ejbLocalRef;
     }
 
-    public final EjbLocalRef read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final EjbLocalRef read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final EjbLocalRef ejbLocalRef, RuntimeContext context)
         throws Exception {
         if (ejbLocalRef == null) {
             writer.writeXsiNil();
@@ -252,12 +252,12 @@ public class EjbLocalRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = ejbLocalRef.id;
+        final String idRaw = ejbLocalRef.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(ejbLocalRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -267,7 +267,7 @@ public class EjbLocalRef$JAXB
         Text[] descriptions = null;
         try {
             descriptions = ejbLocalRef.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(ejbLocalRef, "descriptions", EjbLocalRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
@@ -283,11 +283,11 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: ejbRefName
-        String ejbRefNameRaw = ejbLocalRef.ejbRefName;
+        final String ejbRefNameRaw = ejbLocalRef.ejbRefName;
         String ejbRefName = null;
         try {
             ejbRefName = Adapters.collapsedStringAdapterAdapter.marshal(ejbRefNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "ejbRefName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbRefName != null) {
@@ -299,7 +299,7 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: ejbRefType
-        EjbRefType ejbRefType = ejbLocalRef.ejbRefType;
+        final EjbRefType ejbRefType = ejbLocalRef.ejbRefType;
         if (ejbRefType != null) {
             writer.writeStartElement(prefix, "ejb-ref-type", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringEjbRefType(ejbLocalRef, null, context, ejbRefType));
@@ -307,11 +307,11 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: localHome
-        String localHomeRaw = ejbLocalRef.localHome;
+        final String localHomeRaw = ejbLocalRef.localHome;
         String localHome = null;
         try {
             localHome = Adapters.collapsedStringAdapterAdapter.marshal(localHomeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "localHome", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (localHome != null) {
@@ -321,11 +321,11 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: local
-        String localRaw = ejbLocalRef.local;
+        final String localRaw = ejbLocalRef.local;
         String local = null;
         try {
             local = Adapters.collapsedStringAdapterAdapter.marshal(localRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "local", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (local != null) {
@@ -335,11 +335,11 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: ejbLink
-        String ejbLinkRaw = ejbLocalRef.ejbLink;
+        final String ejbLinkRaw = ejbLocalRef.ejbLink;
         String ejbLink = null;
         try {
             ejbLink = Adapters.collapsedStringAdapterAdapter.marshal(ejbLinkRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "ejbLink", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbLink != null) {
@@ -349,7 +349,7 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = ejbLocalRef.mappedName;
+        final String mappedNameRaw = ejbLocalRef.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
@@ -363,9 +363,9 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: injectionTarget
-        Set<InjectionTarget> injectionTarget = ejbLocalRef.injectionTarget;
+        final Set<InjectionTarget> injectionTarget = ejbLocalRef.injectionTarget;
         if (injectionTarget != null) {
-            for (InjectionTarget injectionTargetItem : injectionTarget) {
+            for (final InjectionTarget injectionTargetItem : injectionTarget) {
                 if (injectionTargetItem != null) {
                     writer.writeStartElement(prefix, "injection-target", "http://java.sun.com/xml/ns/javaee");
                     writeInjectionTarget(writer, injectionTargetItem, context);
@@ -377,11 +377,11 @@ public class EjbLocalRef$JAXB
         }
 
         // ELEMENT: lookupName
-        String lookupNameRaw = ejbLocalRef.lookupName;
+        final String lookupNameRaw = ejbLocalRef.lookupName;
         String lookupName = null;
         try {
             lookupName = Adapters.collapsedStringAdapterAdapter.marshal(lookupNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "lookupName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lookupName != null) {

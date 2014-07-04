@@ -321,7 +321,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         if (destinationType != null) {
             activationConfig.addProperty("destinationType", destinationType.getvalue());
         }
-        SubscriptionDurability subscriptionDurability = value.getSubscriptionDurability();
+        final SubscriptionDurability subscriptionDurability = value.getSubscriptionDurability();
         if (subscriptionDurability != null) {
             activationConfig.addProperty("subscriptionDurability", subscriptionDurability.getvalue());
         }

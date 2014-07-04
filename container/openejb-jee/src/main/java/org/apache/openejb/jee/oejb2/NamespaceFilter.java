@@ -151,7 +151,7 @@ public class NamespaceFilter extends XMLFilterImpl {
     }
 
     //String uri, String localName, String qName, Attributes atts
-    public void startElement(String uri, final String localName, final String qname, Attributes atts) throws SAXException {
+    public void startElement(String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
 
         if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")) {
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
@@ -175,10 +175,10 @@ public class NamespaceFilter extends XMLFilterImpl {
             uri = "http://geronimo.apache.org/xml/ns/security-2.0";
         }
 
-        String previousNs = visibleNamespaces.peek();
+        final String previousNs = visibleNamespaces.peek();
 
-        String correctNamespace = ns.get(localName);
-        boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
+        final String correctNamespace = ns.get(localName);
+        final boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
         if (correctable && correctNamespace != null) {
             uri = correctNamespace;
         } else if (duplicates.containsKey(localName)) {
@@ -198,7 +198,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         super.startElement(uri, localName, qname, atts);
     }
 
-    public void endElement(final String uri, String localName, String qName) throws SAXException {
+    public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         visibleNamespaces.pop();
         super.endElement(uri, localName, qName);
     }

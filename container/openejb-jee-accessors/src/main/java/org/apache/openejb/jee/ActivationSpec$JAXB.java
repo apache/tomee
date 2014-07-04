@@ -45,17 +45,17 @@ public class ActivationSpec$JAXB
         super(ActivationSpec.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "activationspecType".intern()), RequiredConfigProperty$JAXB.class, ConfigProperty$JAXB.class);
     }
 
-    public static ActivationSpec readActivationSpec(final XoXMLStreamReader reader, RuntimeContext context)
+    public static ActivationSpec readActivationSpec(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeActivationSpec(final XoXMLStreamWriter writer, final ActivationSpec activationSpec, RuntimeContext context)
+    public static void writeActivationSpec(final XoXMLStreamWriter writer, final ActivationSpec activationSpec, final RuntimeContext context)
         throws Exception {
         _write(writer, activationSpec, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final ActivationSpec activationSpec, final RuntimeContext context)
         throws Exception {
         _write(writer, activationSpec, context);
     }
@@ -79,7 +79,7 @@ public class ActivationSpec$JAXB
         List<ConfigProperty> configProperty = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("activationspecType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ActivationSpec.class);
@@ -87,10 +87,10 @@ public class ActivationSpec$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, activationSpec);
                 activationSpec.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,15 +99,15 @@ public class ActivationSpec$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("activationspec-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: activationSpecClass
-                String activationSpecClassRaw = elementReader.getElementAsString();
+                final String activationSpecClassRaw = elementReader.getElementAsString();
 
-                String activationSpecClass;
+                final String activationSpecClass;
                 try {
                     activationSpecClass = Adapters.collapsedStringAdapterAdapter.unmarshal(activationSpecClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,7 +127,7 @@ public class ActivationSpec$JAXB
                 requiredConfigProperty.add(requiredConfigPropertyItem);
             } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configProperty
-                ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
+                final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {
                     configProperty = activationSpec.configProperty;
                     if (configProperty != null) {
@@ -158,7 +158,7 @@ public class ActivationSpec$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final ActivationSpec activationSpec, RuntimeContext context)
         throws Exception {
         if (activationSpec == null) {
             writer.writeXsiNil();
@@ -169,7 +169,7 @@ public class ActivationSpec$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ActivationSpec.class != activationSpec.getClass()) {
             context.unexpectedSubclass(writer, activationSpec, ActivationSpec.class);
             return;
@@ -179,23 +179,23 @@ public class ActivationSpec$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = activationSpec.id;
+        final String idRaw = activationSpec.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(activationSpec, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: activationSpecClass
-        String activationSpecClassRaw = activationSpec.activationSpecClass;
+        final String activationSpecClassRaw = activationSpec.activationSpecClass;
         String activationSpecClass = null;
         try {
             activationSpecClass = Adapters.collapsedStringAdapterAdapter.marshal(activationSpecClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(activationSpec, "activationSpecClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (activationSpecClass != null) {
@@ -207,9 +207,9 @@ public class ActivationSpec$JAXB
         }
 
         // ELEMENT: requiredConfigProperty
-        List<RequiredConfigProperty> requiredConfigProperty = activationSpec.requiredConfigProperty;
+        final List<RequiredConfigProperty> requiredConfigProperty = activationSpec.requiredConfigProperty;
         if (requiredConfigProperty != null) {
-            for (RequiredConfigProperty requiredConfigPropertyItem : requiredConfigProperty) {
+            for (final RequiredConfigProperty requiredConfigPropertyItem : requiredConfigProperty) {
                 if (requiredConfigPropertyItem != null) {
                     writer.writeStartElement(prefix, "required-config-property", "http://java.sun.com/xml/ns/javaee");
                     writeRequiredConfigProperty(writer, requiredConfigPropertyItem, context);
@@ -219,9 +219,9 @@ public class ActivationSpec$JAXB
         }
 
         // ELEMENT: configProperty
-        List<ConfigProperty> configProperty = activationSpec.configProperty;
+        final List<ConfigProperty> configProperty = activationSpec.configProperty;
         if (configProperty != null) {
-            for (ConfigProperty configPropertyItem : configProperty) {
+            for (final ConfigProperty configPropertyItem : configProperty) {
                 if (configPropertyItem != null) {
                     writer.writeStartElement(prefix, "config-property", "http://java.sun.com/xml/ns/javaee");
                     writeConfigProperty(writer, configPropertyItem, context);

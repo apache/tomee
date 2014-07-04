@@ -41,13 +41,13 @@ public class CheckNoBusinessMethodTest {
         final StatelessBean stateLessLocal = new StatelessBean(FooStatelessSession.class);
         stateLessLocal.setLocalHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocalHome");
         stateLessLocal.setLocal("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocal");
-        StatefulBean statefulLocal = new StatefulBean(FooStatefulSession.class);
+        final StatefulBean statefulLocal = new StatefulBean(FooStatefulSession.class);
         statefulLocal.setLocalHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocalHome");
         statefulLocal.setLocal("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocal");
-        StatelessBean stateLessRemote = new StatelessBean(FooRemoteStatelessSession.class);
+        final StatelessBean stateLessRemote = new StatelessBean(FooRemoteStatelessSession.class);
         stateLessRemote.setHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemoteHome");
         stateLessRemote.setRemote("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemote");
-        StatefulBean statefulRemote = new StatefulBean(FooRemoteStatefulSession.class);
+        final StatefulBean statefulRemote = new StatefulBean(FooRemoteStatefulSession.class);
         statefulRemote.setHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemoteHome");
         statefulRemote.setRemote("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemote");
         ejbJar.addEnterpriseBean(stateLessLocal);
@@ -74,7 +74,7 @@ public class CheckNoBusinessMethodTest {
         }
 
         // method name has a different case
-        public void Foo(final String x, String y) {
+        public void Foo(final String x, final String y) {
         }
 
         public void ejbCreate() {
@@ -144,7 +144,7 @@ public class CheckNoBusinessMethodTest {
         }
 
         // method name has a different case
-        public void Foo(final String x, String y) {
+        public void Foo(final String x, final String y) {
         }
 
         public void ejbCreate() {
@@ -173,7 +173,7 @@ public class CheckNoBusinessMethodTest {
         }
 
         // method name has a different case
-        public void Foo(final String x, String y) {
+        public void Foo(final String x, final String y) {
         }
 
         public void ejbCreate() {

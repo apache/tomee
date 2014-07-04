@@ -132,7 +132,7 @@ public class AnnotationDeployerTest {
         final List<Annotated<Class<?>>> classes = finder.findMetaAnnotatedClasses(Resource.class);
         assertTrue(classes.size() >= 3);
 
-        List<Annotated<Class<?>>> sorted = AnnotationDeployer.sortClasses(classes);
+        final List<Annotated<Class<?>>> sorted = AnnotationDeployer.sortClasses(classes);
 
         assertTrue(sorted.size() >= 3);
 
@@ -165,17 +165,17 @@ public class AnnotationDeployerTest {
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
         final ClientModule clientModule = new ClientModule(null, app.getClassLoader(), app.getJarLocation(), null, null);
 
         // change "." --> "/" to check that main class is changed by the AnnotationDeployer
-        String mainClass = MyMainClass.class.getName().replaceAll("\\.", "/");
+        final String mainClass = MyMainClass.class.getName().replaceAll("\\.", "/");
         clientModule.setMainClass(mainClass);
 
         app.getClientModules().add(clientModule);
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
 
         assembler.createApplication(appInfo);
 
@@ -207,7 +207,7 @@ public class AnnotationDeployerTest {
     @Test
     public void testLocalBean() throws Exception {
         final EjbModule ejbModule = testModule();
-        EjbJar ejbJar = ejbModule.getEjbJar();
+        final EjbJar ejbJar = ejbModule.getEjbJar();
 
         AppModule appModule = new AppModule(Thread.currentThread().getContextClassLoader(), "myapp");
         appModule.getEjbModules().add(ejbModule);
@@ -230,7 +230,7 @@ public class AnnotationDeployerTest {
         final AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
         discvrAnnBeans.deploy(connectorModule);
 
-        Connector connector = connectorModule.getConnector();
+        final Connector connector = connectorModule.getConnector();
         Assert.assertEquals("displayName", connector.getDisplayName());
         Assert.assertEquals("description", connector.getDescription());
         Assert.assertEquals("eisType", connector.getEisType());
@@ -241,14 +241,14 @@ public class AnnotationDeployerTest {
         Assert.assertEquals("licenseDescription", connector.getLicense().getDescription());
         Assert.assertEquals(true, connector.getLicense().isLicenseRequired());
 
-        List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
+        final List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
         Assert.assertEquals("description", securityPermission.get(0).getDescription());
         Assert.assertEquals("permissionSpec", securityPermission.get(0).getSecurityPermissionSpec());
 
-        List<String> requiredWorkContext = connector.getRequiredWorkContext();
+        final List<String> requiredWorkContext = connector.getRequiredWorkContext();
         Assert.assertEquals(TestWorkContext.class.getName(), requiredWorkContext.get(0));
 
-        List<org.apache.openejb.jee.AuthenticationMechanism> authenticationMechanism = connector.getResourceAdapter().getOutboundResourceAdapter().getAuthenticationMechanism();
+        final List<org.apache.openejb.jee.AuthenticationMechanism> authenticationMechanism = connector.getResourceAdapter().getOutboundResourceAdapter().getAuthenticationMechanism();
         Assert.assertEquals("authMechanism", authenticationMechanism.get(0).getAuthenticationMechanismType());
         Assert.assertEquals(CredentialInterface.GenericCredential.toString(), authenticationMechanism.get(0).getCredentialInterface());
         Assert.assertEquals("description", authenticationMechanism.get(0).getDescription());
@@ -270,7 +270,7 @@ public class AnnotationDeployerTest {
 
     private ConnectorModule testConnectorModule() {
         final Connector connector = new Connector();
-        ConnectorModule connectorModule = new ConnectorModule(connector);
+        final ConnectorModule connectorModule = new ConnectorModule(connector);
         connectorModule.setFinder(new ClassFinder(TestConnector.class, TestManagedConnectionFactory.class, TestActivation.class, TestAdminObject.class));
         return connectorModule;
     }
@@ -281,7 +281,7 @@ public class AnnotationDeployerTest {
 
         final List<ConfigProperty> configProperty = new ArrayList<ConfigProperty>();
 
-        Object object = new Object() {
+        final Object object = new Object() {
             public List<ConfigProperty> getConfigProperty() {
                 return configProperty;
             }
@@ -401,7 +401,7 @@ public class AnnotationDeployerTest {
             return null;
         }
 
-        public ManagedConnection matchManagedConnections(final Set managedConnections, final Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
+        public ManagedConnection matchManagedConnections(final Set managedConnections, final Subject subject, final ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
             return null;
         }
 
@@ -502,7 +502,7 @@ public class AnnotationDeployerTest {
         webModule = annotationDeployer.deploy(webModule);
 
         final Set<String> classes = webModule.getRestClasses();
-        Set<String> applications = webModule.getRestApplications();
+        final Set<String> applications = webModule.getRestApplications();
 
         assertEquals(2, classes.size());
         assertTrue(classes.contains(RESTClass.class.getName()));

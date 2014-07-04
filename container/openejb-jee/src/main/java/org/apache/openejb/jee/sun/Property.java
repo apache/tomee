@@ -59,7 +59,7 @@ public class Property {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -81,7 +81,7 @@ public class Property {
         return value;
     }
 
-    private void setValueElement(String value) {
+    private void setValueElement(final String value) {
         this.value = value;
     }
 }

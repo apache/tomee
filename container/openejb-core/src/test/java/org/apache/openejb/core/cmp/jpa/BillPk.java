@@ -26,7 +26,7 @@ public class BillPk {
 
     }
 
-    public BillPk(final long number, long version, final long revision) {
+    public BillPk(final long number, final long version, final long revision) {
         this.billNumber = number;
         this.billVersion = version;
         this.billRevision = revision;

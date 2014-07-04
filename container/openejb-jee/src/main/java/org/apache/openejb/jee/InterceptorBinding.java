@@ -96,20 +96,20 @@ public class InterceptorBinding {
     public InterceptorBinding() {
     }
 
-    public InterceptorBinding(final EnterpriseBean bean, Interceptor... interceptors) {
+    public InterceptorBinding(final EnterpriseBean bean, final Interceptor... interceptors) {
         this(bean.getEjbName(), interceptors);
         this.className = bean.getEjbClass();
     }
 
-    public InterceptorBinding(final String ejbName, Interceptor... interceptors) {
+    public InterceptorBinding(final String ejbName, final Interceptor... interceptors) {
         this.ejbName = ejbName;
-        List<String> interceptorClasses = this.getInterceptorClass();
-        for (Interceptor interceptor : interceptors) {
+        final List<String> interceptorClasses = this.getInterceptorClass();
+        for (final Interceptor interceptor : interceptors) {
             interceptorClasses.add(interceptor.getInterceptorClass());
         }
     }
 
-    public InterceptorBinding(final String ejbName, String... interceptorClasses) {
+    public InterceptorBinding(final String ejbName, final String... interceptorClasses) {
         this.ejbName = ejbName;
         this.getInterceptorClass().addAll(Arrays.asList(interceptorClasses));
     }

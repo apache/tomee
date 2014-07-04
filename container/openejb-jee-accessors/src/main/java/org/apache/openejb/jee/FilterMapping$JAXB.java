@@ -48,12 +48,12 @@ public class FilterMapping$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFilterMapping(final XoXMLStreamWriter writer, FilterMapping filterMapping, final RuntimeContext context)
+    public static void writeFilterMapping(final XoXMLStreamWriter writer, final FilterMapping filterMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, filterMapping, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FilterMapping filterMapping, final RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FilterMapping filterMapping, final RuntimeContext context)
         throws Exception {
         _write(writer, filterMapping, context);
     }
@@ -78,7 +78,7 @@ public class FilterMapping$JAXB
         List<Dispatcher> dispatcher = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("filter-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FilterMapping.class);
@@ -86,10 +86,10 @@ public class FilterMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, filterMapping);
                 filterMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -98,15 +98,15 @@ public class FilterMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("filter-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: filterName
-                String filterNameRaw = elementReader.getElementAsString();
+                final String filterNameRaw = elementReader.getElementAsString();
 
-                String filterName;
+                final String filterName;
                 try {
                     filterName = Adapters.collapsedStringAdapterAdapter.unmarshal(filterNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -114,12 +114,12 @@ public class FilterMapping$JAXB
                 filterMapping.filterName = filterName;
             } else if (("url-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: urlPattern
-                String urlPatternItemRaw = elementReader.getElementAsString();
+                final String urlPatternItemRaw = elementReader.getElementAsString();
 
-                String urlPatternItem;
+                final String urlPatternItem;
                 try {
                     urlPatternItem = Adapters.trimStringAdapterAdapter.unmarshal(urlPatternItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, TrimStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -135,12 +135,12 @@ public class FilterMapping$JAXB
                 urlPattern.add(urlPatternItem);
             } else if (("servlet-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servletName
-                String servletNameItemRaw = elementReader.getElementAsString();
+                final String servletNameItemRaw = elementReader.getElementAsString();
 
-                String servletNameItem;
+                final String servletNameItem;
                 try {
                     servletNameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(servletNameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -204,7 +204,7 @@ public class FilterMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FilterMapping.class != filterMapping.getClass()) {
             context.unexpectedSubclass(writer, filterMapping, FilterMapping.class);
             return;
@@ -214,23 +214,23 @@ public class FilterMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = filterMapping.id;
+        final String idRaw = filterMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(filterMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: filterName
-        String filterNameRaw = filterMapping.filterName;
+        final String filterNameRaw = filterMapping.filterName;
         String filterName = null;
         try {
             filterName = Adapters.collapsedStringAdapterAdapter.marshal(filterNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(filterMapping, "filterName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (filterName != null) {
@@ -242,9 +242,9 @@ public class FilterMapping$JAXB
         }
 
         // ELEMENT: urlPattern
-        List<String> urlPatternRaw = filterMapping.urlPattern;
+        final List<String> urlPatternRaw = filterMapping.urlPattern;
         if (urlPatternRaw != null) {
-            for (String urlPatternItem : urlPatternRaw) {
+            for (final String urlPatternItem : urlPatternRaw) {
                 String urlPattern = null;
                 try {
                     urlPattern = Adapters.trimStringAdapterAdapter.marshal(urlPatternItem);
@@ -260,13 +260,13 @@ public class FilterMapping$JAXB
         }
 
         // ELEMENT: servletName
-        List<String> servletNameRaw = filterMapping.servletName;
+        final List<String> servletNameRaw = filterMapping.servletName;
         if (servletNameRaw != null) {
-            for (String servletNameItem : servletNameRaw) {
+            for (final String servletNameItem : servletNameRaw) {
                 String servletName = null;
                 try {
                     servletName = Adapters.collapsedStringAdapterAdapter.marshal(servletNameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(filterMapping, "servletName", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (servletName != null) {
@@ -280,7 +280,7 @@ public class FilterMapping$JAXB
         // ELEMENT: dispatcher
         final List<Dispatcher> dispatcher = filterMapping.dispatcher;
         if (dispatcher != null) {
-            for (Dispatcher dispatcherItem : dispatcher) {
+            for (final Dispatcher dispatcherItem : dispatcher) {
                 writer.writeStartElement(prefix, "dispatcher", "http://java.sun.com/xml/ns/javaee");
                 if (dispatcherItem != null) {
                     writer.writeCharacters(toStringDispatcher(filterMapping, null, context, dispatcherItem));

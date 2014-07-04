@@ -42,15 +42,15 @@ public class CheckInvalidInterceptorTest extends TestCase {
     public EjbJar test() throws Exception {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
-        Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
+        final Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
         interceptor.addAroundInvoke("wrongMethod");
         interceptor.addPostConstruct("foo");
         interceptor.addPostConstruct("wrongMethod");
-        List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
+        final List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
         final InterceptorBinding binding = new InterceptorBinding("wrongEjbName");
         // binding.setMethod(new NamedMethod("wrongMethod"));
         interceptorBindings.add(binding);
-        InterceptorBinding binding1 = new InterceptorBinding();
+        final InterceptorBinding binding1 = new InterceptorBinding();
         binding1.setMethod(new NamedMethod("aMethod"));
         interceptorBindings.add(binding1);
         return ejbJar;
@@ -61,10 +61,10 @@ public class CheckInvalidInterceptorTest extends TestCase {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));
         final Interceptor unused = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UnusedInterceptor.class));
-        Interceptor unused1 = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UnusedInterceptor1.class));
-        Interceptor used = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UsedInterceptor.class));
-        List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
-        InterceptorBinding binding = new InterceptorBinding("BarBean", used);
+        final Interceptor unused1 = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UnusedInterceptor1.class));
+        final Interceptor used = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UsedInterceptor.class));
+        final List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
+        final InterceptorBinding binding = new InterceptorBinding("BarBean", used);
         interceptorBindings.add(binding);
         return ejbJar;
     }
@@ -77,7 +77,7 @@ public class CheckInvalidInterceptorTest extends TestCase {
     @Keys
     public EjbJar testDeclaringInterceptorClass() {
         final EjbJar ejbJar = new EjbJar();
-        Interceptor subInterceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(SubInterceptor.class));
+        final Interceptor subInterceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(SubInterceptor.class));
         subInterceptor.getPostConstruct().add(new LifecycleCallback(BaseInterceptor.class.getName(), "interceptPostConstruct"));
         subInterceptor.getPreDestroy().add(new LifecycleCallback(BaseInterceptor.class.getName(), "interceptPreDestroy"));
         subInterceptor.getAroundInvoke().add(new org.apache.openejb.jee.AroundInvoke(BaseInterceptor.class.getName(), "interceptAroundInvoke"));

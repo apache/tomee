@@ -45,12 +45,12 @@ public class FacesFacetExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesFacetExtension(final XoXMLStreamWriter writer, FacesFacetExtension facesFacetExtension, RuntimeContext context)
+    public static void writeFacesFacetExtension(final XoXMLStreamWriter writer, final FacesFacetExtension facesFacetExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFacetExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesFacetExtension facesFacetExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesFacetExtension facesFacetExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesFacetExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesFacetExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-facet-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesFacetExtension.class);
@@ -81,7 +81,7 @@ public class FacesFacetExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -93,7 +93,7 @@ public class FacesFacetExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesFacetExtension.any;
@@ -139,21 +139,21 @@ public class FacesFacetExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesFacetExtension.id;
+        final String idRaw = facesFacetExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesFacetExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesFacetExtension.any;
+        final List<Object> any = facesFacetExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesFacetExtension, "any", anyItem);
             }
         }

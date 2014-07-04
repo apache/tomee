@@ -64,7 +64,7 @@ public class AroundTimeout implements CallbackMethod {
         this(method.getDeclaringClass().getName(), method.getName());
     }
 
-    public AroundTimeout(final String clazz, String methodName) {
+    public AroundTimeout(final String clazz, final String methodName) {
         this.clazz = clazz;
         this.methodName = methodName;
     }

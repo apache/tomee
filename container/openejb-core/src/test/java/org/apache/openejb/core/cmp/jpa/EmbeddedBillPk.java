@@ -30,7 +30,7 @@ public class EmbeddedBillPk {
 
     }
 
-    public EmbeddedBillPk(final long number, long version, long revision) {
+    public EmbeddedBillPk(final long number, final long version, final long revision) {
         this.billNumber = number;
         this.billVersion = version;
         this.billRevision = revision;

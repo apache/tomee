@@ -63,7 +63,7 @@ public class AroundInvoke implements CallbackMethod {
         this(method.getDeclaringClass().getName(), method.getName());
     }
 
-    public AroundInvoke(final String clazz, String methodName) {
+    public AroundInvoke(final String clazz, final String methodName) {
         this.clazz = clazz;
         this.methodName = methodName;
     }

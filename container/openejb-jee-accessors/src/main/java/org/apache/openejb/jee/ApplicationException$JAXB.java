@@ -43,7 +43,7 @@ public class ApplicationException$JAXB
         return _read(reader, context);
     }
 
-    public static void writeApplicationException(final XoXMLStreamWriter writer, final ApplicationException applicationException, RuntimeContext context)
+    public static void writeApplicationException(final XoXMLStreamWriter writer, final ApplicationException applicationException, final RuntimeContext context)
         throws Exception {
         _write(writer, applicationException, context);
     }
@@ -78,10 +78,10 @@ public class ApplicationException$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, applicationException);
                 applicationException.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class ApplicationException$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("exception-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: exceptionClass
-                String exceptionClassRaw = elementReader.getElementAsString();
+                final String exceptionClassRaw = elementReader.getElementAsString();
 
-                String exceptionClass;
+                final String exceptionClass;
                 try {
                     exceptionClass = Adapters.collapsedStringAdapterAdapter.unmarshal(exceptionClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,11 +106,11 @@ public class ApplicationException$JAXB
                 applicationException.exceptionClass = exceptionClass;
             } else if (("rollback" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: rollback
-                Boolean rollback = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean rollback = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 applicationException.rollback = rollback;
             } else if (("inherited" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: inherited
-                Boolean inherited = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean inherited = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 applicationException.inherited = inherited;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "exception-class"), new QName("http://java.sun.com/xml/ns/javaee", "rollback"), new QName("http://java.sun.com/xml/ns/javaee", "inherited"));
@@ -122,7 +122,7 @@ public class ApplicationException$JAXB
         return applicationException;
     }
 
-    public final ApplicationException read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final ApplicationException read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -138,7 +138,7 @@ public class ApplicationException$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ApplicationException.class != applicationException.getClass()) {
             context.unexpectedSubclass(writer, applicationException, ApplicationException.class);
             return;
@@ -148,7 +148,7 @@ public class ApplicationException$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = applicationException.id;
+        final String idRaw = applicationException.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -160,11 +160,11 @@ public class ApplicationException$JAXB
         }
 
         // ELEMENT: exceptionClass
-        String exceptionClassRaw = applicationException.exceptionClass;
+        final String exceptionClassRaw = applicationException.exceptionClass;
         String exceptionClass = null;
         try {
             exceptionClass = Adapters.collapsedStringAdapterAdapter.marshal(exceptionClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(applicationException, "exceptionClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (exceptionClass != null) {
@@ -176,7 +176,7 @@ public class ApplicationException$JAXB
         }
 
         // ELEMENT: rollback
-        Boolean rollback = applicationException.rollback;
+        final Boolean rollback = applicationException.rollback;
         if (rollback != null) {
             writer.writeStartElement(prefix, "rollback", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(rollback));
@@ -184,7 +184,7 @@ public class ApplicationException$JAXB
         }
 
         // ELEMENT: inherited
-        Boolean inherited = applicationException.inherited;
+        final Boolean inherited = applicationException.inherited;
         if (inherited != null) {
             writer.writeStartElement(prefix, "inherited", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(inherited));

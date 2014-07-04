@@ -66,7 +66,7 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
         if (localPart.equals("*")) {
             return localPart;
         }
-        String prefix = name.getPrefix();
+        final String prefix = name.getPrefix();
         if (prefix == null || prefix.isEmpty()) {
             return localPart;
         }

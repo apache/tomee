@@ -63,7 +63,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
     public AuthorBean() {
     }
 
-    public AuthorBean(String name) {
+    public AuthorBean(final String name) {
         this.name = name;
     }
 

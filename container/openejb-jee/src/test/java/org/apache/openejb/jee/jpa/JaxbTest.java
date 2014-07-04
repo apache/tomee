@@ -33,23 +33,23 @@ public class JaxbTest extends TestCase {
         unmarshalAndMarshal(EntityMappings.class, "jpa-mapping-full_2.0.xml");
     }
 
-    private <T> void unmarshalAndMarshal(final Class<T> type, java.lang.String xmlFileName) throws Exception {
+    private <T> void unmarshalAndMarshal(final Class<T> type, final java.lang.String xmlFileName) throws Exception {
         unmarshalAndMarshal(type, xmlFileName, xmlFileName);
     }
 
-    private <T> void unmarshalAndMarshal(final Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
+    private <T> void unmarshalAndMarshal(final Class<T> type, final java.lang.String xmlFileName, final java.lang.String expectedFile) throws Exception {
 
-        Object object = JpaJaxbUtil.unmarshal(type, getInputStream(xmlFileName));
+        final Object object = JpaJaxbUtil.unmarshal(type, getInputStream(xmlFileName));
 
         final String actual = JpaJaxbUtil.marshal(type, object);
 
-        String expected;
+        final String expected;
         if (xmlFileName.equals(expectedFile)) {
             expected = readContent(getInputStream(xmlFileName));
         } else {
             expected = readContent(getInputStream(expectedFile));
         }
-        Diff myDiff = new Diff(expected, actual);
+        final Diff myDiff = new Diff(expected, actual);
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 

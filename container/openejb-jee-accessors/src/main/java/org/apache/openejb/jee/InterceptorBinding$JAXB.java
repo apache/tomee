@@ -47,17 +47,17 @@ public class InterceptorBinding$JAXB
         super(InterceptorBinding.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptor-bindingType".intern()), Text$JAXB.class, InterceptorOrder$JAXB.class, NamedMethod$JAXB.class);
     }
 
-    public static InterceptorBinding readInterceptorBinding(final XoXMLStreamReader reader, RuntimeContext context)
+    public static InterceptorBinding readInterceptorBinding(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInterceptorBinding(final XoXMLStreamWriter writer, final InterceptorBinding interceptorBinding, RuntimeContext context)
+    public static void writeInterceptorBinding(final XoXMLStreamWriter writer, final InterceptorBinding interceptorBinding, final RuntimeContext context)
         throws Exception {
         _write(writer, interceptorBinding, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final InterceptorBinding interceptorBinding, final RuntimeContext context)
         throws Exception {
         _write(writer, interceptorBinding, context);
     }
@@ -74,14 +74,14 @@ public class InterceptorBinding$JAXB
             context = new RuntimeContext();
         }
 
-        InterceptorBinding interceptorBinding = new InterceptorBinding();
+        final InterceptorBinding interceptorBinding = new InterceptorBinding();
         context.beforeUnmarshal(interceptorBinding, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<String> interceptorClass = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("interceptor-bindingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InterceptorBinding.class);
@@ -89,10 +89,10 @@ public class InterceptorBinding$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, interceptorBinding);
                 interceptorBinding.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -101,22 +101,22 @@ public class InterceptorBinding$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("ejb-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbName
-                String ejbNameRaw = elementReader.getElementAsString();
+                final String ejbNameRaw = elementReader.getElementAsString();
 
-                String ejbName;
+                final String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -124,12 +124,12 @@ public class InterceptorBinding$JAXB
                 interceptorBinding.ejbName = ejbName;
             } else if (("interceptor-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptorClass
-                String interceptorClassItemRaw = elementReader.getElementAsString();
+                final String interceptorClassItemRaw = elementReader.getElementAsString();
 
-                String interceptorClassItem;
+                final String interceptorClassItem;
                 try {
                     interceptorClassItem = Adapters.collapsedStringAdapterAdapter.unmarshal(interceptorClassItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -145,19 +145,19 @@ public class InterceptorBinding$JAXB
                 interceptorClass.add(interceptorClassItem);
             } else if (("interceptor-order" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptorOrder
-                InterceptorOrder interceptorOrder = readInterceptorOrder(elementReader, context);
+                final InterceptorOrder interceptorOrder = readInterceptorOrder(elementReader, context);
                 interceptorBinding.interceptorOrder = interceptorOrder;
             } else if (("exclude-default-interceptors" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeDefaultInterceptors
-                Boolean excludeDefaultInterceptors = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean excludeDefaultInterceptors = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 interceptorBinding.excludeDefaultInterceptors = excludeDefaultInterceptors;
             } else if (("exclude-class-interceptors" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeClassInterceptors
-                Boolean excludeClassInterceptors = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean excludeClassInterceptors = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 interceptorBinding.excludeClassInterceptors = excludeClassInterceptors;
             } else if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: method
-                NamedMethod method = readNamedMethod(elementReader, context);
+                final NamedMethod method = readNamedMethod(elementReader, context);
                 interceptorBinding.method = method;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-name"), new QName("http://java.sun.com/xml/ns/javaee", "interceptor-class"), new QName("http://java.sun.com/xml/ns/javaee", "interceptor-order"), new QName("http://java.sun.com/xml/ns/javaee", "exclude-default-interceptors"), new QName("http://java.sun.com/xml/ns/javaee", "exclude-class-interceptors"), new QName("http://java.sun.com/xml/ns/javaee", "method"));
@@ -166,7 +166,7 @@ public class InterceptorBinding$JAXB
         if (descriptions != null) {
             try {
                 interceptorBinding.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, InterceptorBinding.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -179,12 +179,12 @@ public class InterceptorBinding$JAXB
         return interceptorBinding;
     }
 
-    public final InterceptorBinding read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final InterceptorBinding read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final InterceptorBinding interceptorBinding, RuntimeContext context)
         throws Exception {
         if (interceptorBinding == null) {
             writer.writeXsiNil();
@@ -195,7 +195,7 @@ public class InterceptorBinding$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (InterceptorBinding.class != interceptorBinding.getClass()) {
             context.unexpectedSubclass(writer, interceptorBinding, InterceptorBinding.class);
             return;
@@ -205,7 +205,7 @@ public class InterceptorBinding$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = interceptorBinding.id;
+        final String idRaw = interceptorBinding.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -224,7 +224,7 @@ public class InterceptorBinding$JAXB
             context.getterError(interceptorBinding, "descriptions", InterceptorBinding.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -236,11 +236,11 @@ public class InterceptorBinding$JAXB
         }
 
         // ELEMENT: ejbName
-        String ejbNameRaw = interceptorBinding.ejbName;
+        final String ejbNameRaw = interceptorBinding.ejbName;
         String ejbName = null;
         try {
             ejbName = Adapters.collapsedStringAdapterAdapter.marshal(ejbNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(interceptorBinding, "ejbName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbName != null) {
@@ -252,13 +252,13 @@ public class InterceptorBinding$JAXB
         }
 
         // ELEMENT: interceptorClass
-        List<String> interceptorClassRaw = interceptorBinding.interceptorClass;
+        final List<String> interceptorClassRaw = interceptorBinding.interceptorClass;
         if (interceptorClassRaw != null) {
-            for (String interceptorClassItem : interceptorClassRaw) {
+            for (final String interceptorClassItem : interceptorClassRaw) {
                 String interceptorClass = null;
                 try {
                     interceptorClass = Adapters.collapsedStringAdapterAdapter.marshal(interceptorClassItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(interceptorBinding, "interceptorClass", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (interceptorClass != null) {
@@ -272,7 +272,7 @@ public class InterceptorBinding$JAXB
         }
 
         // ELEMENT: interceptorOrder
-        InterceptorOrder interceptorOrder = interceptorBinding.interceptorOrder;
+        final InterceptorOrder interceptorOrder = interceptorBinding.interceptorOrder;
         if (interceptorOrder != null) {
             writer.writeStartElement(prefix, "interceptor-order", "http://java.sun.com/xml/ns/javaee");
             writeInterceptorOrder(writer, interceptorOrder, context);
@@ -280,19 +280,19 @@ public class InterceptorBinding$JAXB
         }
 
         // ELEMENT: excludeDefaultInterceptors
-        Boolean excludeDefaultInterceptors = interceptorBinding.excludeDefaultInterceptors;
+        final Boolean excludeDefaultInterceptors = interceptorBinding.excludeDefaultInterceptors;
         writer.writeStartElement(prefix, "exclude-default-interceptors", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Boolean.toString(excludeDefaultInterceptors));
         writer.writeEndElement();
 
         // ELEMENT: excludeClassInterceptors
-        Boolean excludeClassInterceptors = interceptorBinding.excludeClassInterceptors;
+        final Boolean excludeClassInterceptors = interceptorBinding.excludeClassInterceptors;
         writer.writeStartElement(prefix, "exclude-class-interceptors", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Boolean.toString(excludeClassInterceptors));
         writer.writeEndElement();
 
         // ELEMENT: method
-        NamedMethod method = interceptorBinding.method;
+        final NamedMethod method = interceptorBinding.method;
         if (method != null) {
             writer.writeStartElement(prefix, "method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, method, context);

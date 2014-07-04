@@ -41,17 +41,17 @@ public class NamedMethod$JAXB
         super(NamedMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "named-methodType".intern()), MethodParams$JAXB.class);
     }
 
-    public static NamedMethod readNamedMethod(final XoXMLStreamReader reader, RuntimeContext context)
+    public static NamedMethod readNamedMethod(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeNamedMethod(final XoXMLStreamWriter writer, final NamedMethod namedMethod, RuntimeContext context)
+    public static void writeNamedMethod(final XoXMLStreamWriter writer, final NamedMethod namedMethod, final RuntimeContext context)
         throws Exception {
         _write(writer, namedMethod, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, NamedMethod namedMethod, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final NamedMethod namedMethod, final RuntimeContext context)
         throws Exception {
         _write(writer, namedMethod, context);
     }
@@ -84,7 +84,7 @@ public class NamedMethod$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, namedMethod);
                 namedMethod.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class NamedMethod$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("method-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodName
-                String methodNameRaw = elementReader.getElementAsString();
+                final String methodNameRaw = elementReader.getElementAsString();
 
-                String methodName;
+                final String methodName;
                 try {
                     methodName = Adapters.collapsedStringAdapterAdapter.unmarshal(methodNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,7 +109,7 @@ public class NamedMethod$JAXB
                 namedMethod.methodName = methodName;
             } else if (("method-params" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodParams
-                MethodParams methodParams = readMethodParams(elementReader, context);
+                final MethodParams methodParams = readMethodParams(elementReader, context);
                 namedMethod.methodParams = methodParams;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "method-name"), new QName("http://java.sun.com/xml/ns/javaee", "method-params"));
@@ -121,7 +121,7 @@ public class NamedMethod$JAXB
         return namedMethod;
     }
 
-    public final NamedMethod read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final NamedMethod read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -137,7 +137,7 @@ public class NamedMethod$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (NamedMethod.class != namedMethod.getClass()) {
             context.unexpectedSubclass(writer, namedMethod, NamedMethod.class);
             return;
@@ -147,23 +147,23 @@ public class NamedMethod$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = namedMethod.id;
+        final String idRaw = namedMethod.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(namedMethod, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: methodName
-        String methodNameRaw = namedMethod.methodName;
+        final String methodNameRaw = namedMethod.methodName;
         String methodName = null;
         try {
             methodName = Adapters.collapsedStringAdapterAdapter.marshal(methodNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(namedMethod, "methodName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (methodName != null) {
@@ -175,7 +175,7 @@ public class NamedMethod$JAXB
         }
 
         // ELEMENT: methodParams
-        MethodParams methodParams = namedMethod.methodParams;
+        final MethodParams methodParams = namedMethod.methodParams;
         if (methodParams != null) {
             writer.writeStartElement(prefix, "method-params", "http://java.sun.com/xml/ns/javaee");
             writeMethodParams(writer, methodParams, context);

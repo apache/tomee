@@ -117,15 +117,15 @@ public class BeanValidationAppendixInterceptorTest {
             fail();
         } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
         try {
             mgr.drive(p, 17);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
     }
@@ -143,7 +143,7 @@ public class BeanValidationAppendixInterceptorTest {
         try {
             mgrRemote.drive(p, 15);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
             final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());

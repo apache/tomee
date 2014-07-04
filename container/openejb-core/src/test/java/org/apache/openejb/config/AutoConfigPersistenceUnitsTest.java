@@ -93,7 +93,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void test() throws Exception {
 
         final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
@@ -130,8 +130,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testMultiple() throws Exception {
 
         final ResourceInfo orangeJta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo orangeNonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo limeJta = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        final ResourceInfo orangeNonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo limeJta = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
         final ResourceInfo limeNonJta = addDataSource("LimeUnmanaged", LimeDriver.class, "jdbc:lime:some:stuff", false);
 
         assertSame(orangeJta, resources.get(0));
@@ -139,26 +139,26 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(limeJta, resources.get(2));
         assertSame(limeNonJta, resources.get(3));
 
-        PersistenceUnit unit1 = new PersistenceUnit("orange-unit");
+        final PersistenceUnit unit1 = new PersistenceUnit("orange-unit");
         unit1.setJtaDataSource("Orange");
         unit1.setNonJtaDataSource("OrangeUnmanaged");
 
-        PersistenceUnit unit2 = new PersistenceUnit("lime-unit");
+        final PersistenceUnit unit2 = new PersistenceUnit("lime-unit");
         unit2.setJtaDataSource("Lime");
         unit2.setNonJtaDataSource("LimeUnmanaged");
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit1, unit2)));
 
         // Create app
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
 
-        PersistenceUnitInfo orangeUnit = appInfo.persistenceUnits.get(0);
-        PersistenceUnitInfo limeUnit = appInfo.persistenceUnits.get(1);
+        final PersistenceUnitInfo orangeUnit = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo limeUnit = appInfo.persistenceUnits.get(1);
 
         assertNotNull(orangeUnit);
 
@@ -213,7 +213,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -237,14 +237,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         final Resource resource = new Resource("orange-unit", "DataSource");
         resource.setClasspath("foo/bar.jar");
-        ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
+        final ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -306,16 +306,16 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
         final ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, null, "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
-        PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
 
         //Check results
         assertEquals(supplied.id, unitInfo.jtaDataSource);
@@ -340,21 +340,21 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
+        final ClassLoader cl = this.getClass().getClassLoader();
         final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -381,17 +381,17 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
@@ -422,19 +422,19 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
         final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
-        PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
 
         //Check results
         assertEquals(supplied.id, unitInfo.jtaDataSource);
@@ -461,19 +461,19 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -500,21 +500,21 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -539,7 +539,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         //Check results
@@ -590,11 +590,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         final ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -624,7 +624,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -711,7 +711,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
@@ -842,7 +842,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeOne", "orangeOne");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeOne", "orangeOne");
 
         assertNotNull(unitInfo);
 
@@ -875,12 +875,12 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testSameDataSourceForBoth4() throws Exception {
 
         final ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeTwo", "orangeTwo");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeTwo", "orangeTwo");
 
         assertNotNull(unitInfo);
 
@@ -912,7 +912,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/orange", "java:foo/bar/baz/orangeUnmanaged");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/orange", "java:foo/bar/baz/orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -939,12 +939,12 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testInvalidRefs() throws Exception {
 
         final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "DoesNotExist", "AlsoDoesNotExist");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "DoesNotExist", "AlsoDoesNotExist");
 
         assertNotNull(unitInfo);
 
@@ -972,7 +972,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testJtaRefToContrarilyConfiguredDataSource() throws Exception {
 
         final ResourceInfo nonJta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo nonJta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(nonJta1, resources.get(0));
         assertSame(nonJta2, resources.get(1));
@@ -1003,7 +1003,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testNonJtaRefToContrarilyConfiguredDataSource() throws Exception {
 
         final ResourceInfo jta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo jta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo jta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(jta1, resources.get(0));
         assertSame(jta2, resources.get(1));
@@ -1011,7 +1011,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         try {
             addPersistenceUnit("orange-unit", "orangeOne", "orangeTwo");
             fail("Configuration should be rejected");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
@@ -1168,16 +1168,16 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testInvalidOptionsJta() throws Exception {
 
         final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(2);
+        final ResourceInfo generated = resources.get(2);
 
         assertEquals(generated.id, unitInfo.jtaDataSource);
         assertEquals(supplied.id, unitInfo.nonJtaDataSource);
@@ -1215,12 +1215,12 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
 
-        ResourceInfo generated = resources.get(2);
+        final ResourceInfo generated = resources.get(2);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -1256,7 +1256,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
-        ResourceInfo goodMatch = addDataSource("JtaOrange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo goodMatch = addDataSource("JtaOrange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
@@ -1291,7 +1291,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
         final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", false);
-        ResourceInfo goodMatch = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo goodMatch = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
@@ -1330,7 +1330,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
 
         assertNotNull(unitInfo);
 
@@ -1375,7 +1375,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -1418,7 +1418,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
         final ResourceInfo jta = resources.get(0);
-        ResourceInfo nonJta = resources.get(1);
+        final ResourceInfo nonJta = resources.get(1);
 
         assertEquals("Default JDBC Database", jta.id);
         assertEquals("Default Unmanaged JDBC Database", nonJta.id);
@@ -1431,17 +1431,17 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     //  Convenience methods
     // --------------------------------------------------------------------------------------------
 
-    private PersistenceUnitInfo addPersistenceUnit(final String unitName, String jtaDataSource, final String nonJtaDataSource) throws OpenEJBException, IOException, NamingException {
-        PersistenceUnit unit = new PersistenceUnit(unitName);
+    private PersistenceUnitInfo addPersistenceUnit(final String unitName, final String jtaDataSource, final String nonJtaDataSource) throws OpenEJBException, IOException, NamingException {
+        final PersistenceUnit unit = new PersistenceUnit(unitName);
         unit.setJtaDataSource(jtaDataSource);
         unit.setNonJtaDataSource(nonJtaDataSource);
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), unitName + "-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), unitName + "-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
 
         // Create app
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
@@ -1449,12 +1449,12 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         return appInfo.persistenceUnits.get(0);
     }
 
-    private ResourceInfo addDataSource(final String id, final Class driver, String url, Boolean managed) throws OpenEJBException {
-        Resource resource = new Resource(id, "DataSource");
+    private ResourceInfo addDataSource(final String id, final Class driver, final String url, final Boolean managed) throws OpenEJBException {
+        final Resource resource = new Resource(id, "DataSource");
         return addDataSource(driver, url, managed, resource);
     }
 
-    private ResourceInfo addDataSource(final Class driver, String url, final Boolean managed, Resource resource) throws OpenEJBException {
+    private ResourceInfo addDataSource(final Class driver, final String url, final Boolean managed, final Resource resource) throws OpenEJBException {
         resource.getProperties().put("JdbcDriver", driver.getName());
         resource.getProperties().put("JdbcUrl", url);
         resource.getProperties().put("JtaManaged", managed + " ");  // space should be trimmed later, this verifies that.

@@ -25,11 +25,11 @@ package org.apache.openejb.jee;
 public class ManagedBean extends SessionBean {
     private boolean hidden;
 
-    public ManagedBean(final String ejbName, String ejbClass) {
+    public ManagedBean(final String ejbName, final String ejbClass) {
         super(ejbName, ejbClass, SessionType.MANAGED);
     }
 
-    public ManagedBean(final String ejbName, final String ejbClass, boolean hidden) {
+    public ManagedBean(final String ejbName, final String ejbClass, final boolean hidden) {
         super(ejbName, ejbClass, SessionType.MANAGED);
         this.hidden = hidden;
     }

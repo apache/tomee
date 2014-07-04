@@ -72,7 +72,7 @@ public class ApplicationScopedTest extends TestCase {
         assertSame(greenA, greenB);
     }
 
-    private <T extends Message> T createAndMutate(final Context context, Class<T> beanType) {
+    private <T extends Message> T createAndMutate(final Context context, final Class<T> beanType) {
 
         final Bean<T> bean = (Bean<T>) beanManager.getBeans(beanType).iterator().next();
 

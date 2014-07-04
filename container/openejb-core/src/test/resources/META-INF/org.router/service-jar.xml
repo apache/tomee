@@ -20,8 +20,8 @@
 <!-- $Rev$ -->
 <ServiceJar>
   <ServiceProvider id="DeterminedRouter" service="Resource"
-                   type="org.apache.openejb.resource.jdbc.router.Router"
-                   class-name="org.apache.openejb.resource.jdbc.DynamicDataSourceTest$DeterminedRouter">
+    type="org.apache.openejb.resource.jdbc.router.Router"
+    class-name="org.apache.openejb.resource.jdbc.DynamicDataSourceTest$DeterminedRouter">
     DataSourceNames
     DefaultDataSourceName
   </ServiceProvider>

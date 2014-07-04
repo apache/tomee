@@ -42,9 +42,9 @@ public class CheckDescriptorLocationTest {
         // incorrect location (directly
         // under root)
 
-        File jarFile = Archives.jarArchive(map, FILENAME_PREFIX, FooBean.class);
+        final File jarFile = Archives.jarArchive(map, FILENAME_PREFIX, FooBean.class);
         final DeploymentLoader loader = new DeploymentLoader();
-        AppModule appModule = loader.load(jarFile);
+        final AppModule appModule = loader.load(jarFile);
 
         return appModule;
     }
@@ -59,10 +59,10 @@ public class CheckDescriptorLocationTest {
         // Place the descriptor in
         // incorrect location (directly
         // under root)
-        File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
+        final File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
 
-        DeploymentLoader loader = new DeploymentLoader();
-        AppModule appModule = loader.load(warFile);
+        final DeploymentLoader loader = new DeploymentLoader();
+        final AppModule appModule = loader.load(warFile);
 
         return appModule;
     }
@@ -77,10 +77,10 @@ public class CheckDescriptorLocationTest {
         // Place the descriptor in
         // incorrect location (directly
         // under root)
-        File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
+        final File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
 
-        DeploymentLoader loader = new DeploymentLoader();
-        AppModule appModule = loader.load(warFile);
+        final DeploymentLoader loader = new DeploymentLoader();
+        final AppModule appModule = loader.load(warFile);
 
         return appModule;
     }

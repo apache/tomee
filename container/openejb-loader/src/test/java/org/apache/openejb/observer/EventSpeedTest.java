@@ -74,7 +74,7 @@ public class EventSpeedTest extends Assert {
         private final long events;
         private final long observers;
 
-        public Stats(final long total, long events, long observers) {
+        public Stats(final long total, final long events, final long observers) {
             this.total = total;
             this.events = events;
             this.observers = observers;

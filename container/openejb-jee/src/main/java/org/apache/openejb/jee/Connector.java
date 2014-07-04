@@ -113,7 +113,7 @@ public class Connector implements NamedModule {
     }
 
     public static Connector newConnector(final Connector10 source) {
-        Connector connector = new Connector();
+        final Connector connector = new Connector();
         connector.setDescriptions(source.getDescriptions());
         connector.setDisplayNames(source.getDisplayNames());
         connector.getIcons().addAll(source.getIcons());

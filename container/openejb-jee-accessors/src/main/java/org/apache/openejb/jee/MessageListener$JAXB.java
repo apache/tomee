@@ -46,12 +46,12 @@ public class MessageListener$JAXB
         return _read(reader, context);
     }
 
-    public static void writeMessageListener(final XoXMLStreamWriter writer, MessageListener messageListener, RuntimeContext context)
+    public static void writeMessageListener(final XoXMLStreamWriter writer, final MessageListener messageListener, final RuntimeContext context)
         throws Exception {
         _write(writer, messageListener, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final MessageListener messageListener, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final MessageListener messageListener, final RuntimeContext context)
         throws Exception {
         _write(writer, messageListener, context);
     }
@@ -68,12 +68,12 @@ public class MessageListener$JAXB
             context = new RuntimeContext();
         }
 
-        MessageListener messageListener = new MessageListener();
+        final MessageListener messageListener = new MessageListener();
         context.beforeUnmarshal(messageListener, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("messagelistenerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MessageListener.class);
@@ -81,10 +81,10 @@ public class MessageListener$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, messageListener);
                 messageListener.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class MessageListener$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("messagelistener-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageListenerType
-                String messageListenerTypeRaw = elementReader.getElementAsString();
+                final String messageListenerTypeRaw = elementReader.getElementAsString();
 
-                String messageListenerType;
+                final String messageListenerType;
                 try {
                     messageListenerType = Adapters.collapsedStringAdapterAdapter.unmarshal(messageListenerTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,7 +109,7 @@ public class MessageListener$JAXB
                 messageListener.messageListenerType = messageListenerType;
             } else if (("activationspec" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: activationSpec
-                ActivationSpec activationSpec = readActivationSpec(elementReader, context);
+                final ActivationSpec activationSpec = readActivationSpec(elementReader, context);
                 messageListener.activationSpec = activationSpec;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "messagelistener-type"), new QName("http://java.sun.com/xml/ns/javaee", "activationspec"));
@@ -137,7 +137,7 @@ public class MessageListener$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MessageListener.class != messageListener.getClass()) {
             context.unexpectedSubclass(writer, messageListener, MessageListener.class);
             return;
@@ -147,7 +147,7 @@ public class MessageListener$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = messageListener.id;
+        final String idRaw = messageListener.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -159,11 +159,11 @@ public class MessageListener$JAXB
         }
 
         // ELEMENT: messageListenerType
-        String messageListenerTypeRaw = messageListener.messageListenerType;
+        final String messageListenerTypeRaw = messageListener.messageListenerType;
         String messageListenerType = null;
         try {
             messageListenerType = Adapters.collapsedStringAdapterAdapter.marshal(messageListenerTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageListener, "messageListenerType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageListenerType != null) {
@@ -175,7 +175,7 @@ public class MessageListener$JAXB
         }
 
         // ELEMENT: activationSpec
-        ActivationSpec activationSpec = messageListener.activationSpec;
+        final ActivationSpec activationSpec = messageListener.activationSpec;
         if (activationSpec != null) {
             writer.writeStartElement(prefix, "activationspec", "http://java.sun.com/xml/ns/javaee");
             writeActivationSpec(writer, activationSpec, context);

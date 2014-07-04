@@ -61,11 +61,11 @@ public class MdbConfigTest extends TestCase {
         assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
 
         // JMS Container
-        MdbContainerInfo mdbContainerInfo = config.configureService(MdbContainerInfo.class);
+        final MdbContainerInfo mdbContainerInfo = config.configureService(MdbContainerInfo.class);
         assembler.createContainer(mdbContainerInfo);
 
         // FakeRA
-        ResourceInfo resourceInfo = new ResourceInfo();
+        final ResourceInfo resourceInfo = new ResourceInfo();
         resourceInfo.service = "Resource";
         resourceInfo.className = FakeRA.class.getName();
         resourceInfo.id = "FakeRA";
@@ -73,7 +73,7 @@ public class MdbConfigTest extends TestCase {
         assembler.createResource(resourceInfo);
 
         // FakeRA container
-        ContainerInfo containerInfo = config.configureService(MdbContainerInfo.class);
+        final ContainerInfo containerInfo = config.configureService(MdbContainerInfo.class);
         containerInfo.id = "FakeContainer";
         containerInfo.displayName = "Fake Container";
         containerInfo.properties.setProperty("ResourceAdapter", "FakeRA");
@@ -82,13 +82,13 @@ public class MdbConfigTest extends TestCase {
         assembler.createContainer(containerInfo);
 
         // generate ejb jar application
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(createJaxbMdb("JmsMdb", BasicMdbBean.class.getName(), MessageListener.class.getName()));
         ejbJar.addEnterpriseBean(createJaxbMdb("FakeMdb", FakeMdb.class.getName(), FakeMessageListener.class.getName()));
-        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "FakeEjbJar", "fake.jar", ejbJar, null);
+        final EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "FakeEjbJar", "fake.jar", ejbJar, null);
 
         // configure and deploy it
-        EjbJarInfo info = config.configureApplication(ejbModule);
+        final EjbJarInfo info = config.configureApplication(ejbModule);
         assembler.createEjbJar(info);
     }
 
@@ -120,7 +120,7 @@ public class MdbConfigTest extends TestCase {
             assertTrue("RA was not started", started);
         }
 
-        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
+        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) throws ResourceException {
             assertNotNull("messageEndpointFactory is null", messageEndpointFactory);
             assertNotNull("activationSpec is null", activationSpec);
             assertTrue("activationSpec should be an instance of FakeActivationSpec", activationSpec instanceof FakeActivationSpec);
@@ -161,12 +161,12 @@ public class MdbConfigTest extends TestCase {
         }
     }
 
-    private MessageDrivenBean createJaxbMdb(final String ejbName, final String mdbClass, String messageListenerInterface) {
+    private MessageDrivenBean createJaxbMdb(final String ejbName, final String mdbClass, final String messageListenerInterface) {
         final MessageDrivenBean bean = new MessageDrivenBean(ejbName);
         bean.setEjbClass(mdbClass);
         bean.setMessagingType(messageListenerInterface);
 
-        ActivationConfig activationConfig = new ActivationConfig();
+        final ActivationConfig activationConfig = new ActivationConfig();
         activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty("destination", ejbName));
         activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty("destinationType", "javax.jms.Queue"));
         bean.setActivationConfig(activationConfig);

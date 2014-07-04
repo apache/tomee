@@ -55,7 +55,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
         final InitialContext ctx = new InitialContext();
 
-        Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
+        final Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
 
         // Do a business method...
         final Stack<Lifecycle> lifecycle = widget.getLifecycle();
@@ -74,7 +74,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         final RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
 
         // Do a business method...
-        Stack<Lifecycle> lifecycle = widget.getLifecycle();
+        final Stack<Lifecycle> lifecycle = widget.getLifecycle();
         assertNotNull("lifecycle", lifecycle);
         assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
 
@@ -91,13 +91,13 @@ public class CrossClassLoaderProxyTest extends TestCase {
         assertNotNull("home", home);
         assertTrue("home should be an instance of WidgetHome", home instanceof WidgetHome);
         CrossClassLoaderProxyTestObject.widgetHome = (WidgetHome) home;
-        CrossClassLoaderProxyTestObject proxyTestObject = new CrossClassLoaderProxyTestObject();
+        final CrossClassLoaderProxyTestObject proxyTestObject = new CrossClassLoaderProxyTestObject();
         proxyTestObject.testRemoteInterface();
     }
 
     public void testCrossClassLoaderRemoteInterface() throws Exception {
         final HackClassLoader loader = new HackClassLoader(getClass().getClassLoader());
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
             final Class testObjectClass = loader.loadClass(CrossClassLoaderProxyTestObject.class.getName());
@@ -114,8 +114,8 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
             final Object testObject = testObjectClass.newInstance();
 
-            InitialContext ctx = new InitialContext();
-            EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
+            final InitialContext ctx = new InitialContext();
+            final EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
 
             EJBHome home = (EJBHome) copy(rawHome);
             assertNotNull("home", home);
@@ -133,7 +133,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
     private static Object copy(final Object source) throws Exception {
         IntraVmCopyMonitor.preCrossClassLoaderOperation();
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
             ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(source);
             out.close();
@@ -156,7 +156,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             return loadClass(name, false);
         }
 
-        protected synchronized Class loadClass(final String name, boolean resolve) throws ClassNotFoundException {
+        protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
             // see if we've already loaded it
             final Class c = findLoadedClass(name);
             if (c != null) {
@@ -170,7 +170,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             }
 
             final String resourceName = name.replace('.', '/') + ".class";
-            InputStream in = getResourceAsStream(resourceName);
+            final InputStream in = getResourceAsStream(resourceName);
             if (in == null) {
                 throw new ClassNotFoundException(name);
             }
@@ -181,7 +181,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             // copy the input stream into a byte array
             byte[] bytes = new byte[0];
             try {
-                byte[] buf = new byte[4 * 1024];
+                final byte[] buf = new byte[4 * 1024];
                 for (int count = -1; (count = in.read(buf)) >= 0; ) {
                     bout.write(buf, 0, count);
                 }
@@ -225,7 +225,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "10");
         statelessContainerInfo.properties.setProperty("MaxSize", "0");
         statelessContainerInfo.properties.setProperty("StrictPooling", "false");
@@ -249,8 +249,8 @@ public class CrossClassLoaderProxyTest extends TestCase {
     }
 
     private static String join(final String delimeter, final List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

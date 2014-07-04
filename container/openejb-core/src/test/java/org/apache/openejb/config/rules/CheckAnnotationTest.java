@@ -40,10 +40,10 @@ public class CheckAnnotationTest {
     public AppModule testWebServiceWithStateful() {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(Green.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Green.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
@@ -51,10 +51,10 @@ public class CheckAnnotationTest {
     public AppModule testWebServiceWithMessageDriven() {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(Yellow.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Yellow.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
@@ -66,7 +66,7 @@ public class CheckAnnotationTest {
         final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Red.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
@@ -74,7 +74,7 @@ public class CheckAnnotationTest {
     public EjbModule shouldWarnForLocalAnnotationOnBeanWithNoInterface() {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EjbWithoutInterface.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(EjbWithoutInterface.class)).link());
         return ejbModule;
     }

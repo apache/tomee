@@ -51,7 +51,7 @@ public class Property {
 
     }
 
-    public Property(final String name, String value) {
+    public Property(final String name, final String value) {
         this.name = name;
         this.value = value;
     }
@@ -72,7 +72,7 @@ public class Property {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -92,7 +92,7 @@ public class Property {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 

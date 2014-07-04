@@ -43,7 +43,7 @@ public class JavaLookupTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
         assertTrue(context.lookup("java:openejb/TransactionManager") instanceof TransactionManager);
 
         assertTrue(context.lookup("java:comp/TransactionManager") instanceof TransactionManager);
@@ -57,7 +57,7 @@ public class JavaLookupTest extends TestCase {
     public void testLinking() throws Exception {
 
         final Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));

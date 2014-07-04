@@ -159,7 +159,7 @@ public class BeanValidationTest {
             fail();
         } catch (final EJBException ejbException) {
             assertTrue(ejbException.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException constraintViolationException = (ConstraintViolationException) ejbException.getCause();
+            final ConstraintViolationException constraintViolationException = (ConstraintViolationException) ejbException.getCause();
             assertEquals(1, constraintViolationException.getConstraintViolations().size());
         }
     }

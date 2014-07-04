@@ -50,7 +50,7 @@ public class JspConfig$JAXB
         return _read(reader, context);
     }
 
-    public static void writeJspConfig(final XoXMLStreamWriter writer, JspConfig jspConfig, RuntimeContext context)
+    public static void writeJspConfig(final XoXMLStreamWriter writer, final JspConfig jspConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, jspConfig, context);
     }
@@ -72,7 +72,7 @@ public class JspConfig$JAXB
             context = new RuntimeContext();
         }
 
-        JspConfig jspConfig = new JspConfig();
+        final JspConfig jspConfig = new JspConfig();
         context.beforeUnmarshal(jspConfig, LifecycleCallback.NONE);
 
         List<Taglib> taglib = null;
@@ -99,10 +99,10 @@ public class JspConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("taglib" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: taglib
-                Taglib taglibItem = readTaglib(elementReader, context);
+                final Taglib taglibItem = readTaglib(elementReader, context);
                 if (taglib == null) {
                     taglib = jspConfig.taglib;
                     if (taglib != null) {
@@ -114,7 +114,7 @@ public class JspConfig$JAXB
                 taglib.add(taglibItem);
             } else if (("jsp-property-group" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: jspPropertyGroup
-                JspPropertyGroup jspPropertyGroupItem = readJspPropertyGroup(elementReader, context);
+                final JspPropertyGroup jspPropertyGroupItem = readJspPropertyGroup(elementReader, context);
                 if (jspPropertyGroup == null) {
                     jspPropertyGroup = jspConfig.jspPropertyGroup;
                     if (jspPropertyGroup != null) {
@@ -140,7 +140,7 @@ public class JspConfig$JAXB
         return jspConfig;
     }
 
-    public final JspConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final JspConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -171,16 +171,16 @@ public class JspConfig$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(jspConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: taglib
-        List<Taglib> taglib = jspConfig.taglib;
+        final List<Taglib> taglib = jspConfig.taglib;
         if (taglib != null) {
-            for (Taglib taglibItem : taglib) {
+            for (final Taglib taglibItem : taglib) {
                 writer.writeStartElement(prefix, "taglib", "http://java.sun.com/xml/ns/javaee");
                 if (taglibItem != null) {
                     writeTaglib(writer, taglibItem, context);
@@ -192,7 +192,7 @@ public class JspConfig$JAXB
         }
 
         // ELEMENT: jspPropertyGroup
-        List<JspPropertyGroup> jspPropertyGroup = jspConfig.jspPropertyGroup;
+        final List<JspPropertyGroup> jspPropertyGroup = jspConfig.jspPropertyGroup;
         if (jspPropertyGroup != null) {
             for (final JspPropertyGroup jspPropertyGroupItem : jspPropertyGroup) {
                 if (jspPropertyGroupItem != null) {

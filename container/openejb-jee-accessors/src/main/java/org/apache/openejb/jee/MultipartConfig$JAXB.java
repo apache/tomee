@@ -38,17 +38,17 @@ public class MultipartConfig$JAXB
         super(MultipartConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "multipart-configType".intern()));
     }
 
-    public static MultipartConfig readMultipartConfig(final XoXMLStreamReader reader, RuntimeContext context)
+    public static MultipartConfig readMultipartConfig(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMultipartConfig(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+    public static void writeMultipartConfig(final XoXMLStreamWriter writer, final MultipartConfig multipartConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, multipartConfig, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final MultipartConfig multipartConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, multipartConfig, context);
     }
@@ -70,7 +70,7 @@ public class MultipartConfig$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("multipart-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MultipartConfig.class);
@@ -85,15 +85,15 @@ public class MultipartConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("location" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: location
-                String locationRaw = elementReader.getElementAsString();
+                final String locationRaw = elementReader.getElementAsString();
 
-                String location;
+                final String location;
                 try {
                     location = Adapters.collapsedStringAdapterAdapter.unmarshal(locationRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -101,15 +101,15 @@ public class MultipartConfig$JAXB
                 multipartConfig.location = location;
             } else if (("max-file-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxFileSize
-                Long maxFileSize = Long.valueOf(elementReader.getElementAsString());
+                final Long maxFileSize = Long.valueOf(elementReader.getElementAsString());
                 multipartConfig.maxFileSize = maxFileSize;
             } else if (("max-request-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxRequestSize
-                Long maxRequestSize = Long.valueOf(elementReader.getElementAsString());
+                final Long maxRequestSize = Long.valueOf(elementReader.getElementAsString());
                 multipartConfig.maxRequestSize = maxRequestSize;
             } else if (("file-size-threshold" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fileSizeThreshold
-                Integer fileSizeThreshold = Integer.valueOf(elementReader.getElementAsString());
+                final Integer fileSizeThreshold = Integer.valueOf(elementReader.getElementAsString());
                 multipartConfig.fileSizeThreshold = fileSizeThreshold;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "location"), new QName("http://java.sun.com/xml/ns/javaee", "max-file-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-request-size"), new QName("http://java.sun.com/xml/ns/javaee", "file-size-threshold"));
@@ -121,12 +121,12 @@ public class MultipartConfig$JAXB
         return multipartConfig;
     }
 
-    public final MultipartConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final MultipartConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final MultipartConfig multipartConfig, RuntimeContext context)
         throws Exception {
         if (multipartConfig == null) {
             writer.writeXsiNil();
@@ -147,11 +147,11 @@ public class MultipartConfig$JAXB
 
 
         // ELEMENT: location
-        String locationRaw = multipartConfig.location;
+        final String locationRaw = multipartConfig.location;
         String location = null;
         try {
             location = Adapters.collapsedStringAdapterAdapter.marshal(locationRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(multipartConfig, "location", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (location != null) {
@@ -161,19 +161,19 @@ public class MultipartConfig$JAXB
         }
 
         // ELEMENT: maxFileSize
-        Long maxFileSize = multipartConfig.maxFileSize;
+        final Long maxFileSize = multipartConfig.maxFileSize;
         writer.writeStartElement(prefix, "max-file-size", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Long.toString(maxFileSize));
         writer.writeEndElement();
 
         // ELEMENT: maxRequestSize
-        Long maxRequestSize = multipartConfig.maxRequestSize;
+        final Long maxRequestSize = multipartConfig.maxRequestSize;
         writer.writeStartElement(prefix, "max-request-size", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Long.toString(maxRequestSize));
         writer.writeEndElement();
 
         // ELEMENT: fileSizeThreshold
-        Integer fileSizeThreshold = multipartConfig.fileSizeThreshold;
+        final Integer fileSizeThreshold = multipartConfig.fileSizeThreshold;
         writer.writeStartElement(prefix, "file-size-threshold", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Integer.toString(fileSizeThreshold));
         writer.writeEndElement();

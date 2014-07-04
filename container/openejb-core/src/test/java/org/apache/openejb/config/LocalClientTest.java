@@ -90,7 +90,7 @@ public class LocalClientTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
         final Persistence persistence = new Persistence(new org.apache.openejb.jee.jpa.unit.PersistenceUnit("foo-unit"));
         app.addPersistenceModule(new PersistenceModule("root", persistence));
@@ -169,8 +169,8 @@ public class LocalClientTest extends TestCase {
 
     private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();

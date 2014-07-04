@@ -123,7 +123,7 @@ public class ContextWrapperStatementTest {
         try {
             wrapper.evaluate();
             fail("Wrapper call succeeded.");
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
         }
 
         assertFalse(configuredInvoked);

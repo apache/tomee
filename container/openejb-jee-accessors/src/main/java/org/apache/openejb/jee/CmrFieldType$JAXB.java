@@ -30,17 +30,17 @@ public class CmrFieldType$JAXB
         super(CmrFieldType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmrFieldType".intern()));
     }
 
-    public CmrFieldType parse(final XoXMLStreamReader reader, RuntimeContext context, final String value)
+    public CmrFieldType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseCmrFieldType(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, RuntimeContext context, final CmrFieldType cmrFieldType)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final CmrFieldType cmrFieldType)
         throws Exception {
         return toStringCmrFieldType(bean, parameterName, context, cmrFieldType);
     }
 
-    public static CmrFieldType parseCmrFieldType(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+    public static CmrFieldType parseCmrFieldType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("java.util.Collection".equals(value)) {
             return CmrFieldType.COLLECTION;
@@ -52,7 +52,7 @@ public class CmrFieldType$JAXB
         }
     }
 
-    public static String toStringCmrFieldType(final Object bean, String parameterName, RuntimeContext context, final CmrFieldType cmrFieldType)
+    public static String toStringCmrFieldType(final Object bean, final String parameterName, final RuntimeContext context, final CmrFieldType cmrFieldType)
         throws Exception {
         if (CmrFieldType.COLLECTION == cmrFieldType) {
             return "java.util.Collection";

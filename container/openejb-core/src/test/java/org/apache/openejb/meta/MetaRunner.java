@@ -42,7 +42,7 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
     protected void collectInitializationErrors(final List<Throwable> errors) {
         super.collectInitializationErrors(errors);
         final List<FrameworkMethod> methodsAnnotatedWithKeys = getTestClass().getAnnotatedMethods(MetaTest.class);
-        for (FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
+        for (final FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
             if (frameworkMethod.getAnnotation(Test.class) != null) {
                 final String gripe = "The method " + frameworkMethod.getName() + "() can only be annotated with @MetaTest";
                 errors.add(new Exception(gripe));
@@ -52,7 +52,7 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement methodBlock(final FrameworkMethod method) {
-        Object test;
+        final Object test;
         try {
             test = new ReflectiveCallable() {
                 @Override

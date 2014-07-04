@@ -127,10 +127,10 @@ public class DataSourceDefinitionTest {
         assertDataSourceDefinitionValues(multipleDatasources.getGiga(), "org.hsqldb.jdbc.JDBCDataSource", "foo2", "bar2");
     }
 
-    private void assertDataSourceDefinitionValues(final DataSource dataSource, String clazz, final String user, String password) throws Exception {
+    private void assertDataSourceDefinitionValues(final DataSource dataSource, final String clazz, final String user, final String password) throws Exception {
         assertNotNull("injection should work", dataSource);
 
-        Movies movies = new Movies(dataSource);
+        final Movies movies = new Movies(dataSource);
 
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
         movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
@@ -139,13 +139,13 @@ public class DataSourceDefinitionTest {
         final List<Movie> list = movies.getMovies();
         assertEquals("List.size()", 3, list.size());
 
-        for (Movie movie : list) {
+        for (final Movie movie : list) {
             movies.deleteMovie(movie);
         }
 
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
 
-        Connection connection = dataSource.getConnection();
+        final Connection connection = dataSource.getConnection();
         connection.setAutoCommit(true);
         connection.prepareStatement("DROP TABLE movie").execute();
 //        assertEquals("configuration should be ok - class", "org.hsqldb.jdbc.jdbcDataSource", dataSource.getClass().getName());
@@ -153,10 +153,10 @@ public class DataSourceDefinitionTest {
 //        assertEqualsByReflection("configuration should be ok - password", dataSource, "password", password);
     }
 
-    private void assertEqualsByReflection(final String message, Object value, String name, final Object expected) throws Exception {
-        Class<?> clazz = value.getClass();
+    private void assertEqualsByReflection(final String message, final Object value, final String name, final Object expected) throws Exception {
+        final Class<?> clazz = value.getClass();
         final Field field = clazz.getDeclaredField(name);
-        boolean acc = field.isAccessible();
+        final boolean acc = field.isAccessible();
         if (!acc) {
             field.setAccessible(true);
         }
@@ -201,7 +201,7 @@ public class DataSourceDefinitionTest {
         public void deleteMovie(final Movie movie) throws Exception {
             final Connection conn = movieDatabase.getConnection();
             try {
-                PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
+                final PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
                 sql.setString(1, movie.getDirector());
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
@@ -214,10 +214,10 @@ public class DataSourceDefinitionTest {
 
         public List<Movie> getMovies() throws Exception {
             final ArrayList<Movie> movies = new ArrayList<Movie>();
-            Connection conn = movieDatabase.getConnection();
+            final Connection conn = movieDatabase.getConnection();
             try {
-                PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
-                ResultSet set = sql.executeQuery();
+                final PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
+                final ResultSet set = sql.executeQuery();
                 while (set.next()) {
                     final Movie movie = new Movie();
                     movie.setDirector(set.getString("director"));
@@ -241,7 +241,7 @@ public class DataSourceDefinitionTest {
         public Movie() {
         }
 
-        public Movie(final String director, String title, final int year) {
+        public Movie(final String director, final String title, final int year) {
             this.director = director;
             this.title = title;
             this.year = year;

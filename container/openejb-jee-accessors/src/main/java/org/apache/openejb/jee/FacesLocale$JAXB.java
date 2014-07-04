@@ -43,12 +43,12 @@ public class FacesLocale$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesLocale(final XoXMLStreamWriter writer, final FacesLocale facesLocale, RuntimeContext context)
+    public static void writeFacesLocale(final XoXMLStreamWriter writer, final FacesLocale facesLocale, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLocale, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesLocale facesLocale, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesLocale facesLocale, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLocale, context);
     }
@@ -65,7 +65,7 @@ public class FacesLocale$JAXB
             context = new RuntimeContext();
         }
 
-        FacesLocale facesLocale = new FacesLocale();
+        final FacesLocale facesLocale = new FacesLocale();
         context.beforeUnmarshal(facesLocale, LifecycleCallback.NONE);
 
 
@@ -78,21 +78,21 @@ public class FacesLocale$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // VALUE: value
-        String valueRaw = reader.getElementText();
+        final String valueRaw = reader.getElementText();
 
         String value = null;
         boolean valueConverted;
         try {
             value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
             valueConverted = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(reader, CollapsedStringAdapter.class, String.class, String.class, e);
             valueConverted = false;
         }
@@ -111,7 +111,7 @@ public class FacesLocale$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesLocale facesLocale, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesLocale facesLocale, RuntimeContext context)
         throws Exception {
         if (facesLocale == null) {
             writer.writeXsiNil();
@@ -131,11 +131,11 @@ public class FacesLocale$JAXB
 
 
         // VALUE: value
-        String valueRaw = facesLocale.value;
+        final String valueRaw = facesLocale.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesLocale, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         writer.writeCharacters(value);

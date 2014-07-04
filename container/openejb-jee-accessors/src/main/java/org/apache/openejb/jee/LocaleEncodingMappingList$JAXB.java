@@ -43,17 +43,17 @@ public class LocaleEncodingMappingList$JAXB
         super(LocaleEncodingMappingList.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "locale-encoding-mapping-listType".intern()), LocaleEncodingMapping$JAXB.class);
     }
 
-    public static LocaleEncodingMappingList readLocaleEncodingMappingList(final XoXMLStreamReader reader, RuntimeContext context)
+    public static LocaleEncodingMappingList readLocaleEncodingMappingList(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLocaleEncodingMappingList(final XoXMLStreamWriter writer, final LocaleEncodingMappingList localeEncodingMappingList, RuntimeContext context)
+    public static void writeLocaleEncodingMappingList(final XoXMLStreamWriter writer, final LocaleEncodingMappingList localeEncodingMappingList, final RuntimeContext context)
         throws Exception {
         _write(writer, localeEncodingMappingList, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, LocaleEncodingMappingList localeEncodingMappingList, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final LocaleEncodingMappingList localeEncodingMappingList, final RuntimeContext context)
         throws Exception {
         _write(writer, localeEncodingMappingList, context);
     }
@@ -70,7 +70,7 @@ public class LocaleEncodingMappingList$JAXB
             context = new RuntimeContext();
         }
 
-        LocaleEncodingMappingList localeEncodingMappingList = new LocaleEncodingMappingList();
+        final LocaleEncodingMappingList localeEncodingMappingList = new LocaleEncodingMappingList();
         context.beforeUnmarshal(localeEncodingMappingList, LifecycleCallback.NONE);
 
         List<LocaleEncodingMapping> localeEncodingMapping = null;
@@ -84,7 +84,7 @@ public class LocaleEncodingMappingList$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -99,7 +99,7 @@ public class LocaleEncodingMappingList$JAXB
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("locale-encoding-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: localeEncodingMapping
-                LocaleEncodingMapping localeEncodingMappingItem = readLocaleEncodingMapping(elementReader, context);
+                final LocaleEncodingMapping localeEncodingMappingItem = readLocaleEncodingMapping(elementReader, context);
                 if (localeEncodingMapping == null) {
                     localeEncodingMapping = localeEncodingMappingList.localeEncodingMapping;
                     if (localeEncodingMapping != null) {
@@ -127,7 +127,7 @@ public class LocaleEncodingMappingList$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, LocaleEncodingMappingList localeEncodingMappingList, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final LocaleEncodingMappingList localeEncodingMappingList, RuntimeContext context)
         throws Exception {
         if (localeEncodingMappingList == null) {
             writer.writeXsiNil();
@@ -152,7 +152,7 @@ public class LocaleEncodingMappingList$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(localeEncodingMappingList, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -161,7 +161,7 @@ public class LocaleEncodingMappingList$JAXB
         // ELEMENT: localeEncodingMapping
         final List<LocaleEncodingMapping> localeEncodingMapping = localeEncodingMappingList.localeEncodingMapping;
         if (localeEncodingMapping != null) {
-            for (LocaleEncodingMapping localeEncodingMappingItem : localeEncodingMapping) {
+            for (final LocaleEncodingMapping localeEncodingMappingItem : localeEncodingMapping) {
                 if (localeEncodingMappingItem != null) {
                     writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "locale-encoding-mapping");
                     writeLocaleEncodingMapping(writer, localeEncodingMappingItem, context);

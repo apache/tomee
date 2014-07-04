@@ -48,15 +48,15 @@ public class JavaLookupScopesTest extends TestCase {
 
         final AppContext app;
         {
-            ConfigurationFactory config = new ConfigurationFactory();
-            Assembler assembler = new Assembler();
+            final ConfigurationFactory config = new ConfigurationFactory();
+            final Assembler assembler = new Assembler();
 
             assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
             assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
             // Setup the descriptor information
 
-            EjbJar ejbJar = new EjbJar("testmodule");
+            final EjbJar ejbJar = new EjbJar("testmodule");
             ejbJar.addEnterpriseBean(new SingletonBean(Bean.class));
 
             // Deploy the bean a second time to simulate situations
@@ -65,17 +65,17 @@ public class JavaLookupScopesTest extends TestCase {
             ejbJar.addEnterpriseBean(new SingletonBean("Other", Bean.class));
 
             final EjbModule ejbModule = new EjbModule(ejbJar);
-            AppModule module = new AppModule(ejbModule);
+            final AppModule module = new AppModule(ejbModule);
             app = assembler.createApplication(config.configureApplication(module));
         }
 
         final BeanContext bean = app.getBeanContexts().get(0);
 
-        ModuleContext module = bean.getModuleContext();
+        final ModuleContext module = bean.getModuleContext();
 
 
         { // app context lookups
-            Context context = app.getAppJndiContext();
+            final Context context = app.getAppJndiContext();
 
             assertTrue(context.lookup("app") instanceof Context);
             assertTrue(context.lookup("app/AppName") instanceof String);
@@ -90,7 +90,7 @@ public class JavaLookupScopesTest extends TestCase {
         }
 
         { // module context lookups
-            Context context = module.getModuleJndiContext();
+            final Context context = module.getModuleJndiContext();
 
             assertTrue(context.lookup("module") instanceof Context);
             assertTrue(context.lookup("module/ModuleName") instanceof String);
@@ -104,7 +104,7 @@ public class JavaLookupScopesTest extends TestCase {
         }
 
         {
-            Context context = bean.getJndiContext();
+            final Context context = bean.getJndiContext();
 
             assertTrue(context.lookup("comp") instanceof Context);
             assertTrue(context.lookup("comp/EJBContext") instanceof EJBContext);
@@ -170,7 +170,7 @@ public class JavaLookupScopesTest extends TestCase {
 
 
         public Object lookup(final String s) throws javax.naming.NamingException {
-            InitialContext context = new InitialContext();
+            final InitialContext context = new InitialContext();
             return context.lookup(s);
         }
     }

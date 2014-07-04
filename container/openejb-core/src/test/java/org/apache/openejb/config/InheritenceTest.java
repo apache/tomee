@@ -97,9 +97,9 @@ public class InheritenceTest extends TestCase {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(Color.class));
         ejbJar.addEnterpriseBean(new StatefulBean(Red.class));
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
-        StatefulBeanInfo expected = (StatefulBeanInfo) ejbJarInfo.enterpriseBeans.get(0);
+        final StatefulBeanInfo expected = (StatefulBeanInfo) ejbJarInfo.enterpriseBeans.get(0);
         final StatefulBeanInfo actual = (StatefulBeanInfo) ejbJarInfo.enterpriseBeans.get(1);
 
 
@@ -272,11 +272,11 @@ public class InheritenceTest extends TestCase {
 
     // -- ReferenceLocationInfo --------------------------------//
 
-    public static void assertReferenceLocationInfos(final String s, List<ReferenceLocationInfo> expected, List<ReferenceLocationInfo> actual) {
+    public static void assertReferenceLocationInfos(final String s, final List<ReferenceLocationInfo> expected, final List<ReferenceLocationInfo> actual) {
         assertTrue(s, equalsReferenceLocationInfos(expected, actual));
     }
 
-    public static boolean equalsReferenceLocationInfos(final List<ReferenceLocationInfo> expected, List<ReferenceLocationInfo> actual) {
+    public static boolean equalsReferenceLocationInfos(final List<ReferenceLocationInfo> expected, final List<ReferenceLocationInfo> actual) {
         return new ReferenceLocationInfoComparator().compare(expected, actual);
     }
 
@@ -286,7 +286,7 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String m, ReferenceLocationInfo a, final ReferenceLocationInfo b) {
+    public static void assertEquals(final String m, final ReferenceLocationInfo a, final ReferenceLocationInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -303,21 +303,21 @@ public class InheritenceTest extends TestCase {
 
     // -- EnvEntryInfo --------------------------------//
 
-    public static void assertEnvEntryInfos(final String s, List<EnvEntryInfo> expected, final List<EnvEntryInfo> actual) {
+    public static void assertEnvEntryInfos(final String s, final List<EnvEntryInfo> expected, final List<EnvEntryInfo> actual) {
         assertTrue(s, equalsEnvEntryInfos(expected, actual));
     }
 
-    public static boolean equalsEnvEntryInfos(final List<EnvEntryInfo> expected, List<EnvEntryInfo> actual) {
+    public static boolean equalsEnvEntryInfos(final List<EnvEntryInfo> expected, final List<EnvEntryInfo> actual) {
         return new EnvEntryInfoComparator().compare(expected, actual);
     }
 
     public static class EnvEntryInfoComparator extends ListComparator<EnvEntryInfo> {
-        public boolean compare(final EnvEntryInfo a, EnvEntryInfo b) {
+        public boolean compare(final EnvEntryInfo a, final EnvEntryInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
 
-    public static void assertEquals(final String m, final EnvEntryInfo a, EnvEntryInfo b) {
+    public static void assertEquals(final String m, final EnvEntryInfo a, final EnvEntryInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -345,7 +345,7 @@ public class InheritenceTest extends TestCase {
     }
 
     public static class InjectionInfoComparator extends ListComparator<InjectionInfo> {
-        public boolean compare(final InjectionInfo a, InjectionInfo b) {
+        public boolean compare(final InjectionInfo a, final InjectionInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
@@ -366,11 +366,11 @@ public class InheritenceTest extends TestCase {
 
     // -- EjbReferenceInfo --------------------------------//
 
-    public static void assertEjbReferenceInfos(final String s, List<EjbReferenceInfo> expected, List<EjbReferenceInfo> actual) {
+    public static void assertEjbReferenceInfos(final String s, final List<EjbReferenceInfo> expected, final List<EjbReferenceInfo> actual) {
         assertTrue(s, equalsEjbReferenceInfos(expected, actual));
     }
 
-    public static boolean equalsEjbReferenceInfos(final List<EjbReferenceInfo> expected, List<EjbReferenceInfo> actual) {
+    public static boolean equalsEjbReferenceInfos(final List<EjbReferenceInfo> expected, final List<EjbReferenceInfo> actual) {
         return new EjbReferenceInfoComparator().compare(expected, actual);
     }
 
@@ -380,11 +380,11 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String m, EjbReferenceInfo a, EjbReferenceInfo b) {
+    public static void assertEquals(final String m, final EjbReferenceInfo a, final EjbReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
-    public static boolean equals(final EjbReferenceInfo a, EjbReferenceInfo b) {
+    public static boolean equals(final EjbReferenceInfo a, final EjbReferenceInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -404,7 +404,7 @@ public class InheritenceTest extends TestCase {
 
     // -- EjbLocalReferenceInfo --------------------------------//
 
-    public static void assertEjbLocalReferenceInfos(final String s, final List<EjbLocalReferenceInfo> expected, List<EjbLocalReferenceInfo> actual) {
+    public static void assertEjbLocalReferenceInfos(final String s, final List<EjbLocalReferenceInfo> expected, final List<EjbLocalReferenceInfo> actual) {
         assertTrue(s, equalsEjbLocalReferenceInfos(expected, actual));
     }
 
@@ -420,11 +420,11 @@ public class InheritenceTest extends TestCase {
 
     // -- ResourceReferenceInfo --------------------------------//
 
-    public static void assertResourceReferenceInfos(final String s, final List<ResourceReferenceInfo> expected, List<ResourceReferenceInfo> actual) {
+    public static void assertResourceReferenceInfos(final String s, final List<ResourceReferenceInfo> expected, final List<ResourceReferenceInfo> actual) {
         assertTrue(s, equalsResourceReferenceInfos(expected, actual));
     }
 
-    public static boolean equalsResourceReferenceInfos(final List<ResourceReferenceInfo> expected, List<ResourceReferenceInfo> actual) {
+    public static boolean equalsResourceReferenceInfos(final List<ResourceReferenceInfo> expected, final List<ResourceReferenceInfo> actual) {
         return new ResourceReferenceInfoComparator().compare(expected, actual);
     }
 
@@ -434,7 +434,7 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String m, final ResourceReferenceInfo a, ResourceReferenceInfo b) {
+    public static void assertEquals(final String m, final ResourceReferenceInfo a, final ResourceReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -455,7 +455,7 @@ public class InheritenceTest extends TestCase {
 
     // -- PersistenceUnitReferenceInfo --------------------------------//
 
-    public static void assertPersistenceUnitReferenceInfos(final String s, List<PersistenceUnitReferenceInfo> expected, List<PersistenceUnitReferenceInfo> actual) {
+    public static void assertPersistenceUnitReferenceInfos(final String s, final List<PersistenceUnitReferenceInfo> expected, final List<PersistenceUnitReferenceInfo> actual) {
         assertTrue(s, equalsPersistenceUnitReferenceInfos(expected, actual));
     }
 
@@ -464,12 +464,12 @@ public class InheritenceTest extends TestCase {
     }
 
     public static class PersistenceUnitReferenceInfoComparator extends ListComparator<PersistenceUnitReferenceInfo> {
-        public boolean compare(final PersistenceUnitReferenceInfo a, PersistenceUnitReferenceInfo b) {
+        public boolean compare(final PersistenceUnitReferenceInfo a, final PersistenceUnitReferenceInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
 
-    public static void assertEquals(final String m, final PersistenceUnitReferenceInfo a, PersistenceUnitReferenceInfo b) {
+    public static void assertEquals(final String m, final PersistenceUnitReferenceInfo a, final PersistenceUnitReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -489,7 +489,7 @@ public class InheritenceTest extends TestCase {
 
     // -- PersistenceContextReferenceInfo --------------------------------//
 
-    public static void assertPersistenceContextReferenceInfos(final String s, List<PersistenceContextReferenceInfo> expected, List<PersistenceContextReferenceInfo> actual) {
+    public static void assertPersistenceContextReferenceInfos(final String s, final List<PersistenceContextReferenceInfo> expected, final List<PersistenceContextReferenceInfo> actual) {
         assertTrue(s, equalsPersistenceContextReferenceInfos(expected, actual));
     }
 
@@ -498,16 +498,16 @@ public class InheritenceTest extends TestCase {
     }
 
     public static class PersistenceContextReferenceInfoComparator extends ListComparator<PersistenceContextReferenceInfo> {
-        public boolean compare(final PersistenceContextReferenceInfo a, PersistenceContextReferenceInfo b) {
+        public boolean compare(final PersistenceContextReferenceInfo a, final PersistenceContextReferenceInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
 
-    public static void assertEquals(final String m, PersistenceContextReferenceInfo a, PersistenceContextReferenceInfo b) {
+    public static void assertEquals(final String m, final PersistenceContextReferenceInfo a, final PersistenceContextReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
-    public static boolean equals(final PersistenceContextReferenceInfo a, PersistenceContextReferenceInfo b) {
+    public static boolean equals(final PersistenceContextReferenceInfo a, final PersistenceContextReferenceInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -525,11 +525,11 @@ public class InheritenceTest extends TestCase {
 
     // -- ResourceEnvReferenceInfo --------------------------------//
 
-    public static void assertResourceEnvReferenceInfos(final String s, List<ResourceEnvReferenceInfo> expected, final List<ResourceEnvReferenceInfo> actual) {
+    public static void assertResourceEnvReferenceInfos(final String s, final List<ResourceEnvReferenceInfo> expected, final List<ResourceEnvReferenceInfo> actual) {
         assertTrue(s, equalsResourceEnvReferenceInfos(expected, actual));
     }
 
-    public static boolean equalsResourceEnvReferenceInfos(final List<ResourceEnvReferenceInfo> expected, List<ResourceEnvReferenceInfo> actual) {
+    public static boolean equalsResourceEnvReferenceInfos(final List<ResourceEnvReferenceInfo> expected, final List<ResourceEnvReferenceInfo> actual) {
         return new ResourceEnvReferenceInfoComparator().compare(expected, actual);
     }
 
@@ -543,7 +543,7 @@ public class InheritenceTest extends TestCase {
         assertTrue(m, equals(a, b));
     }
 
-    public static boolean equals(final ResourceEnvReferenceInfo a, ResourceEnvReferenceInfo b) {
+    public static boolean equals(final ResourceEnvReferenceInfo a, final ResourceEnvReferenceInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -561,11 +561,11 @@ public class InheritenceTest extends TestCase {
 
     // -- ServiceReferenceInfo --------------------------------//
 
-    public static void assertServiceReferenceInfos(final String s, List<ServiceReferenceInfo> expected, List<ServiceReferenceInfo> actual) {
+    public static void assertServiceReferenceInfos(final String s, final List<ServiceReferenceInfo> expected, final List<ServiceReferenceInfo> actual) {
         assertTrue(s, equalsServiceReferenceInfos(expected, actual));
     }
 
-    public static boolean equalsServiceReferenceInfos(final List<ServiceReferenceInfo> expected, List<ServiceReferenceInfo> actual) {
+    public static boolean equalsServiceReferenceInfos(final List<ServiceReferenceInfo> expected, final List<ServiceReferenceInfo> actual) {
         return new ServiceReferenceInfoComparator().compare(expected, actual);
     }
 
@@ -576,11 +576,11 @@ public class InheritenceTest extends TestCase {
     }
 
 
-    public static void assertEquals(final String m, ServiceReferenceInfo a, ServiceReferenceInfo b) {
+    public static void assertEquals(final String m, final ServiceReferenceInfo a, final ServiceReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
-    public static boolean equals(final ServiceReferenceInfo a, ServiceReferenceInfo b) {
+    public static boolean equals(final ServiceReferenceInfo a, final ServiceReferenceInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -603,11 +603,11 @@ public class InheritenceTest extends TestCase {
 
     // -- HandlerChainInfo --------------------------------//
 
-    public static void assertHandlerChainInfos(final String s, List<HandlerChainInfo> expected, List<HandlerChainInfo> actual) {
+    public static void assertHandlerChainInfos(final String s, final List<HandlerChainInfo> expected, final List<HandlerChainInfo> actual) {
         assertTrue(s, equalsHandlerChainInfos(expected, actual));
     }
 
-    public static boolean equalsHandlerChainInfos(final List<HandlerChainInfo> expected, List<HandlerChainInfo> actual) {
+    public static boolean equalsHandlerChainInfos(final List<HandlerChainInfo> expected, final List<HandlerChainInfo> actual) {
         return new HandlerChainInfoComparator().compare(expected, actual);
     }
 
@@ -617,11 +617,11 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String s, final HandlerChainInfo a, HandlerChainInfo b) {
+    public static void assertEquals(final String s, final HandlerChainInfo a, final HandlerChainInfo b) {
         assertTrue(s, equals(a, b));
     }
 
-    public static boolean equals(final HandlerChainInfo a, HandlerChainInfo b) {
+    public static boolean equals(final HandlerChainInfo a, final HandlerChainInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -638,7 +638,7 @@ public class InheritenceTest extends TestCase {
 
     // -- HandlerInfo --------------------------------//
 
-    public static void assertHandlerInfos(final String s, List<HandlerInfo> expected, List<HandlerInfo> actual) {
+    public static void assertHandlerInfos(final String s, final List<HandlerInfo> expected, final List<HandlerInfo> actual) {
         assertTrue(s, equalsHandlerInfos(expected, actual));
     }
 
@@ -652,7 +652,7 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String s, final HandlerInfo a, HandlerInfo b) {
+    public static void assertEquals(final String s, final HandlerInfo a, final HandlerInfo b) {
         assertTrue(s, equals(a, b));
     }
 
@@ -671,21 +671,21 @@ public class InheritenceTest extends TestCase {
 
     // -- PortRefInfo --------------------------------//
 
-    public static void assertPortRefInfos(final String s, List<PortRefInfo> expected, final List<PortRefInfo> actual) {
+    public static void assertPortRefInfos(final String s, final List<PortRefInfo> expected, final List<PortRefInfo> actual) {
         assertTrue(s, equalsPortRefInfos(expected, actual));
     }
 
-    public static boolean equalsPortRefInfos(final List<PortRefInfo> expected, List<PortRefInfo> actual) {
+    public static boolean equalsPortRefInfos(final List<PortRefInfo> expected, final List<PortRefInfo> actual) {
         return new PortRefInfoComparator().compare(expected, actual);
     }
 
     public static class PortRefInfoComparator extends ListComparator<PortRefInfo> {
-        public boolean compare(final PortRefInfo a, PortRefInfo b) {
+        public boolean compare(final PortRefInfo a, final PortRefInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
 
-    public static void assertEquals(final String s, final PortRefInfo a, PortRefInfo b) {
+    public static void assertEquals(final String s, final PortRefInfo a, final PortRefInfo b) {
         assertTrue(s, equals(a, b));
     }
 
@@ -704,11 +704,11 @@ public class InheritenceTest extends TestCase {
 
     // -- CallbackInfo --------------------------------//
 
-    public static void assertCallbackInfos(final String s, List<CallbackInfo> expected, List<CallbackInfo> actual) {
+    public static void assertCallbackInfos(final String s, final List<CallbackInfo> expected, final List<CallbackInfo> actual) {
         assertTrue(s, equalsCallbackInfos(expected, actual));
     }
 
-    public static boolean equalsCallbackInfos(final List<CallbackInfo> expected, List<CallbackInfo> actual) {
+    public static boolean equalsCallbackInfos(final List<CallbackInfo> expected, final List<CallbackInfo> actual) {
         return new CallbackInfoComparator().compare(expected, actual);
     }
 
@@ -719,7 +719,7 @@ public class InheritenceTest extends TestCase {
     }
 
 
-    public static void assertEquals(final String m, CallbackInfo a, CallbackInfo b) {
+    public static void assertEquals(final String m, final CallbackInfo a, final CallbackInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -733,7 +733,7 @@ public class InheritenceTest extends TestCase {
 
     // -- SecurityRoleReferenceInfo --------------------------------//
 
-    public static void assertSecurityRoleReferenceInfos(final String s, List<SecurityRoleReferenceInfo> expected, final List<SecurityRoleReferenceInfo> actual) {
+    public static void assertSecurityRoleReferenceInfos(final String s, final List<SecurityRoleReferenceInfo> expected, final List<SecurityRoleReferenceInfo> actual) {
         assertTrue(s, equalsSecurityRoleReferenceInfos(expected, actual));
     }
 
@@ -742,12 +742,12 @@ public class InheritenceTest extends TestCase {
     }
 
     public static class SecurityRoleReferenceInfoComparator extends ListComparator<SecurityRoleReferenceInfo> {
-        public boolean compare(final SecurityRoleReferenceInfo a, SecurityRoleReferenceInfo b) {
+        public boolean compare(final SecurityRoleReferenceInfo a, final SecurityRoleReferenceInfo b) {
             return InheritenceTest.equals(a, b);
         }
     }
 
-    public static void assertEquals(final String m, SecurityRoleReferenceInfo a, final SecurityRoleReferenceInfo b) {
+    public static void assertEquals(final String m, final SecurityRoleReferenceInfo a, final SecurityRoleReferenceInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -762,11 +762,11 @@ public class InheritenceTest extends TestCase {
 
     // -- RemoveMethodInfo --------------------------------//
 
-    public static void assertRemoveMethodInfos(final String s, List<RemoveMethodInfo> expected, List<RemoveMethodInfo> actual) {
+    public static void assertRemoveMethodInfos(final String s, final List<RemoveMethodInfo> expected, final List<RemoveMethodInfo> actual) {
         assertTrue(s, equalsRemoveMethodInfos(expected, actual));
     }
 
-    public static boolean equalsRemoveMethodInfos(final List<RemoveMethodInfo> expected, List<RemoveMethodInfo> actual) {
+    public static boolean equalsRemoveMethodInfos(final List<RemoveMethodInfo> expected, final List<RemoveMethodInfo> actual) {
         return new RemoveMethodInfoComparator().compare(expected, actual);
     }
 
@@ -776,11 +776,11 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String m, RemoveMethodInfo a, final RemoveMethodInfo b) {
+    public static void assertEquals(final String m, final RemoveMethodInfo a, final RemoveMethodInfo b) {
         assertTrue(m, equals(a, b));
     }
 
-    public static boolean equals(final RemoveMethodInfo a, RemoveMethodInfo b) {
+    public static boolean equals(final RemoveMethodInfo a, final RemoveMethodInfo b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
@@ -789,7 +789,7 @@ public class InheritenceTest extends TestCase {
         return equals(a.beanMethod, b.beanMethod);
     }
 
-    public static void assertInitMethodInfos(final String s, final List<InitMethodInfo> expected, List<InitMethodInfo> actual) {
+    public static void assertInitMethodInfos(final String s, final List<InitMethodInfo> expected, final List<InitMethodInfo> actual) {
         assertTrue(s, equalsInitMethodInfos(expected, actual));
     }
 
@@ -803,7 +803,7 @@ public class InheritenceTest extends TestCase {
         }
     }
 
-    public static void assertEquals(final String m, final InitMethodInfo a, InitMethodInfo b) {
+    public static void assertEquals(final String m, final InitMethodInfo a, final InitMethodInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -816,7 +816,7 @@ public class InheritenceTest extends TestCase {
         return true;
     }
 
-    public static void assertEquals(final String m, NamedMethodInfo a, final NamedMethodInfo b) {
+    public static void assertEquals(final String m, final NamedMethodInfo a, final NamedMethodInfo b) {
         assertTrue(m, equals(a, b));
     }
 
@@ -830,7 +830,7 @@ public class InheritenceTest extends TestCase {
         return true;
     }
 
-    public static void assertList(final String s, final List expected, final List actual, ListComparator comparator) {
+    public static void assertList(final String s, final List expected, final List actual, final ListComparator comparator) {
         assertTrue(s, comparator.compare(expected, actual));
     }
 
@@ -840,10 +840,10 @@ public class InheritenceTest extends TestCase {
             if (listA == listB) return true;
 
             final ListIterator iA = listA.listIterator();
-            ListIterator iB = listB.listIterator();
+            final ListIterator iB = listB.listIterator();
             while (iA.hasNext() && iB.hasNext()) {
-                T a = (T) iA.next();
-                T b = (T) iB.next();
+                final T a = (T) iA.next();
+                final T b = (T) iB.next();
                 if (!(a == null ? b == null : compare(a, b))) {
                     return false;
                 }

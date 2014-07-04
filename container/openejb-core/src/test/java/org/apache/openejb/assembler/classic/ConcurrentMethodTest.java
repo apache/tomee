@@ -70,11 +70,11 @@ public class ConcurrentMethodTest extends TestCase {
         assertLockAttribute("Read", Color.class.getMethod("color", Boolean.class));
     }
 
-    private void loadAttributes(final EjbJarInfo ejbJarInfo, String deploymentId) {
+    private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
         final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
         final BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         accessTimeoutAttributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
         lockAttributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
@@ -88,7 +88,7 @@ public class ConcurrentMethodTest extends TestCase {
     }
 
     private void assertLockAttribute(final String attribute, final Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) lockAttributes.get(method);
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) lockAttributes.get(method);
         assertEquals(method.toString(), attribute, info.concurrencyAttribute);
     }
 

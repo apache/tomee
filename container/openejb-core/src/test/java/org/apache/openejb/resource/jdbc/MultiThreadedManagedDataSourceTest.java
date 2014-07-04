@@ -177,7 +177,7 @@ public class MultiThreadedManagedDataSourceTest {
                         if (!exists(id)) {
                             fail.incrementAndGet();
                         }
-                    } catch (SQLException e) {
+                    } catch (final SQLException e) {
                         errors.incrementAndGet();
                         ex.add(e);
                     }

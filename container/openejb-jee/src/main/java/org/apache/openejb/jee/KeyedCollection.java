@@ -54,7 +54,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
     @SuppressWarnings({"unchecked"})
     public KeyedCollection(final Collection<? extends V> c) {
         if (c instanceof KeyedCollection) {
-            KeyedCollection keyedCollection = (KeyedCollection) c;
+            final KeyedCollection keyedCollection = (KeyedCollection) c;
             // NOTE: if types don't match bad things could happen
             keyExtractor = keyedCollection.keyExtractor;
         } else {
@@ -88,11 +88,11 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
     }
 
     public boolean add(final V value) {
-        K key = getKey(value);
+        final K key = getKey(value);
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        V oldValue = map.put(key, value);
+        final V oldValue = map.put(key, value);
         return value != oldValue;
     }
 

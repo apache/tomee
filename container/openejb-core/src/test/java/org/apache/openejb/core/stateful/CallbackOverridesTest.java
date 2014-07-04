@@ -54,7 +54,7 @@ public class CallbackOverridesTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(ChildBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
@@ -65,7 +65,7 @@ public class CallbackOverridesTest extends TestCase {
 
         callbacks.clear();
 
-        ChildBean childBean = (ChildBean) context.lookup("ChildBeanLocalBean");
+        final ChildBean childBean = (ChildBean) context.lookup("ChildBeanLocalBean");
 
 
         assertEquals(asList(ParentInterceptor.class, ChildInterceptor.class, ParentBean.class, ChildBean.class), callbacks);

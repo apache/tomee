@@ -72,7 +72,7 @@ public class EjbDeployment {
     public EjbDeployment() {
     }
 
-    public EjbDeployment(final String containerId, String deploymentId, final String ejbName) {
+    public EjbDeployment(final String containerId, final String deploymentId, final String ejbName) {
         this.containerId = containerId;
         this.deploymentId = deploymentId;
         this.ejbName = ejbName;
@@ -117,7 +117,7 @@ public class EjbDeployment {
 
     public Map<String, ResourceLink> getResourceLinksMap() {
         final Map<String, ResourceLink> map = new LinkedHashMap<String, ResourceLink>();
-        for (ResourceLink link : getResourceLink()) {
+        for (final ResourceLink link : getResourceLink()) {
             map.put(link.getResRefName(), link);
         }
         return map;
@@ -166,7 +166,7 @@ public class EjbDeployment {
 
     public void removeResourceLink(final String resRefName) {
         for (final Iterator<ResourceLink> iterator = resourceLink.iterator(); iterator.hasNext(); ) {
-            ResourceLink link = iterator.next();
+            final ResourceLink link = iterator.next();
             if (resRefName.equals(link.getResRefName())) {
                 iterator.remove();
             }
@@ -188,7 +188,7 @@ public class EjbDeployment {
         return properties;
     }
 
-    public void addProperty(final String key, String value) {
+    public void addProperty(final String key, final String value) {
         getProperties().setProperty(key, value);
     }
 

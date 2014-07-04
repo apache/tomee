@@ -38,17 +38,17 @@ public class FacesSystemEventListener$JAXB
         super(FacesSystemEventListener.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-system-event-listenerType".intern()));
     }
 
-    public static FacesSystemEventListener readFacesSystemEventListener(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesSystemEventListener readFacesSystemEventListener(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesSystemEventListener(final XoXMLStreamWriter writer, FacesSystemEventListener facesSystemEventListener, RuntimeContext context)
+    public static void writeFacesSystemEventListener(final XoXMLStreamWriter writer, final FacesSystemEventListener facesSystemEventListener, final RuntimeContext context)
         throws Exception {
         _write(writer, facesSystemEventListener, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesSystemEventListener facesSystemEventListener, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesSystemEventListener facesSystemEventListener, final RuntimeContext context)
         throws Exception {
         _write(writer, facesSystemEventListener, context);
     }
@@ -65,12 +65,12 @@ public class FacesSystemEventListener$JAXB
             context = new RuntimeContext();
         }
 
-        FacesSystemEventListener facesSystemEventListener = new FacesSystemEventListener();
+        final FacesSystemEventListener facesSystemEventListener = new FacesSystemEventListener();
         context.beforeUnmarshal(facesSystemEventListener, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-system-event-listenerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesSystemEventListener.class);
@@ -78,7 +78,7 @@ public class FacesSystemEventListener$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -90,15 +90,15 @@ public class FacesSystemEventListener$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("system-event-listener-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: systemEventListenerClass
-                String systemEventListenerClassRaw = elementReader.getElementAsString();
+                final String systemEventListenerClassRaw = elementReader.getElementAsString();
 
-                String systemEventListenerClass;
+                final String systemEventListenerClass;
                 try {
                     systemEventListenerClass = Adapters.collapsedStringAdapterAdapter.unmarshal(systemEventListenerClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,9 +106,9 @@ public class FacesSystemEventListener$JAXB
                 facesSystemEventListener.systemEventListenerClass = systemEventListenerClass;
             } else if (("system-event-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: systemEventClass
-                String systemEventClassRaw = elementReader.getElementAsString();
+                final String systemEventClassRaw = elementReader.getElementAsString();
 
-                String systemEventClass;
+                final String systemEventClass;
                 try {
                     systemEventClass = Adapters.collapsedStringAdapterAdapter.unmarshal(systemEventClassRaw);
                 } catch (final Exception e) {
@@ -119,12 +119,12 @@ public class FacesSystemEventListener$JAXB
                 facesSystemEventListener.systemEventClass = systemEventClass;
             } else if (("source-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: sourceClass
-                String sourceClassRaw = elementReader.getElementAsString();
+                final String sourceClassRaw = elementReader.getElementAsString();
 
-                String sourceClass;
+                final String sourceClass;
                 try {
                     sourceClass = Adapters.collapsedStringAdapterAdapter.unmarshal(sourceClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -140,7 +140,7 @@ public class FacesSystemEventListener$JAXB
         return facesSystemEventListener;
     }
 
-    public final FacesSystemEventListener read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesSystemEventListener read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -166,23 +166,23 @@ public class FacesSystemEventListener$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesSystemEventListener.id;
+        final String idRaw = facesSystemEventListener.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesSystemEventListener, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: systemEventListenerClass
-        String systemEventListenerClassRaw = facesSystemEventListener.systemEventListenerClass;
+        final String systemEventListenerClassRaw = facesSystemEventListener.systemEventListenerClass;
         String systemEventListenerClass = null;
         try {
             systemEventListenerClass = Adapters.collapsedStringAdapterAdapter.marshal(systemEventListenerClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesSystemEventListener, "systemEventListenerClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (systemEventListenerClass != null) {
@@ -194,11 +194,11 @@ public class FacesSystemEventListener$JAXB
         }
 
         // ELEMENT: systemEventClass
-        String systemEventClassRaw = facesSystemEventListener.systemEventClass;
+        final String systemEventClassRaw = facesSystemEventListener.systemEventClass;
         String systemEventClass = null;
         try {
             systemEventClass = Adapters.collapsedStringAdapterAdapter.marshal(systemEventClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesSystemEventListener, "systemEventClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (systemEventClass != null) {
@@ -210,11 +210,11 @@ public class FacesSystemEventListener$JAXB
         }
 
         // ELEMENT: sourceClass
-        String sourceClassRaw = facesSystemEventListener.sourceClass;
+        final String sourceClassRaw = facesSystemEventListener.sourceClass;
         String sourceClass = null;
         try {
             sourceClass = Adapters.collapsedStringAdapterAdapter.marshal(sourceClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesSystemEventListener, "sourceClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (sourceClass != null) {

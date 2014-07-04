@@ -44,7 +44,7 @@ public class ErrorPage$JAXB
         return _read(reader, context);
     }
 
-    public static void writeErrorPage(final XoXMLStreamWriter writer, ErrorPage errorPage, final RuntimeContext context)
+    public static void writeErrorPage(final XoXMLStreamWriter writer, final ErrorPage errorPage, final RuntimeContext context)
         throws Exception {
         _write(writer, errorPage, context);
     }
@@ -66,7 +66,7 @@ public class ErrorPage$JAXB
             context = new RuntimeContext();
         }
 
-        ErrorPage errorPage = new ErrorPage();
+        final ErrorPage errorPage = new ErrorPage();
         context.beforeUnmarshal(errorPage, LifecycleCallback.NONE);
 
 
@@ -79,10 +79,10 @@ public class ErrorPage$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, errorPage);
                 errorPage.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -94,16 +94,16 @@ public class ErrorPage$JAXB
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("error-code" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: errorCode
-                BigInteger errorCode = new BigInteger(elementReader.getElementAsString());
+                final BigInteger errorCode = new BigInteger(elementReader.getElementAsString());
                 errorPage.errorCode = errorCode;
             } else if (("exception-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: exceptionType
-                String exceptionTypeRaw = elementReader.getElementAsString();
+                final String exceptionTypeRaw = elementReader.getElementAsString();
 
                 final String exceptionType;
                 try {
                     exceptionType = Adapters.collapsedStringAdapterAdapter.unmarshal(exceptionTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -111,12 +111,12 @@ public class ErrorPage$JAXB
                 errorPage.exceptionType = exceptionType;
             } else if (("location" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: location
-                String locationRaw = elementReader.getElementAsString();
+                final String locationRaw = elementReader.getElementAsString();
 
-                String location;
+                final String location;
                 try {
                     location = Adapters.collapsedStringAdapterAdapter.unmarshal(locationRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -132,7 +132,7 @@ public class ErrorPage$JAXB
         return errorPage;
     }
 
-    public final ErrorPage read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final ErrorPage read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -148,7 +148,7 @@ public class ErrorPage$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ErrorPage.class != errorPage.getClass()) {
             context.unexpectedSubclass(writer, errorPage, ErrorPage.class);
             return;
@@ -158,19 +158,19 @@ public class ErrorPage$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = errorPage.id;
+        final String idRaw = errorPage.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(errorPage, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: errorCode
-        BigInteger errorCode = errorPage.errorCode;
+        final BigInteger errorCode = errorPage.errorCode;
         if (errorCode != null) {
             writer.writeStartElement(prefix, "error-code", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(errorCode.toString());
@@ -178,11 +178,11 @@ public class ErrorPage$JAXB
         }
 
         // ELEMENT: exceptionType
-        String exceptionTypeRaw = errorPage.exceptionType;
+        final String exceptionTypeRaw = errorPage.exceptionType;
         String exceptionType = null;
         try {
             exceptionType = Adapters.collapsedStringAdapterAdapter.marshal(exceptionTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(errorPage, "exceptionType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (exceptionType != null) {
@@ -192,11 +192,11 @@ public class ErrorPage$JAXB
         }
 
         // ELEMENT: location
-        String locationRaw = errorPage.location;
+        final String locationRaw = errorPage.location;
         String location = null;
         try {
             location = Adapters.collapsedStringAdapterAdapter.marshal(locationRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(errorPage, "location", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (location != null) {

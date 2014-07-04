@@ -77,7 +77,7 @@ public class FullyInterceptedTest extends TestCase {
         expected.add("beanClassBusinessMethodInterceptor");
         expected.add("businessMethod");
 
-        List<String> actual = fullyIntercepted.businessMethod();
+        final List<String> actual = fullyIntercepted.businessMethod();
         Asserts.assertEquals(expected, actual);
     }
 
@@ -95,7 +95,7 @@ public class FullyInterceptedTest extends TestCase {
         expected.add("beanClassBusinessMethodInterceptor");
         expected.add("methodWithDefaultInterceptorsExcluded");
 
-        List<String> actual = fullyIntercepted.methodWithDefaultInterceptorsExcluded();
+        final List<String> actual = fullyIntercepted.methodWithDefaultInterceptorsExcluded();
         Asserts.assertEquals(expected, actual);
     }
 }

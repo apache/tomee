@@ -44,17 +44,17 @@ public class Listener$JAXB
         super(Listener.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "listenerType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static Listener readListener(final XoXMLStreamReader reader, RuntimeContext context)
+    public static Listener readListener(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeListener(final XoXMLStreamWriter writer, Listener listener, final RuntimeContext context)
+    public static void writeListener(final XoXMLStreamWriter writer, final Listener listener, final RuntimeContext context)
         throws Exception {
         _write(writer, listener, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final Listener listener, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final Listener listener, final RuntimeContext context)
         throws Exception {
         _write(writer, listener, context);
     }
@@ -71,7 +71,7 @@ public class Listener$JAXB
             context = new RuntimeContext();
         }
 
-        Listener listener = new Listener();
+        final Listener listener = new Listener();
         context.beforeUnmarshal(listener, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -79,7 +79,7 @@ public class Listener$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("listenerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Listener.class);
@@ -87,10 +87,10 @@ public class Listener$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, listener);
                 listener.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,24 +99,24 @@ public class Listener$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = listener.icon;
                     if (icon != null) {
@@ -128,12 +128,12 @@ public class Listener$JAXB
                 icon.add(iconItem);
             } else if (("listener-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: listenerClass
-                String listenerClassRaw = elementReader.getElementAsString();
+                final String listenerClassRaw = elementReader.getElementAsString();
 
                 final String listenerClass;
                 try {
                     listenerClass = Adapters.collapsedStringAdapterAdapter.unmarshal(listenerClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -146,14 +146,14 @@ public class Listener$JAXB
         if (descriptions != null) {
             try {
                 listener.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Listener.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 listener.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Listener.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -166,12 +166,12 @@ public class Listener$JAXB
         return listener;
     }
 
-    public final Listener read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final Listener read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, Listener listener, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final Listener listener, RuntimeContext context)
         throws Exception {
         if (listener == null) {
             writer.writeXsiNil();
@@ -182,7 +182,7 @@ public class Listener$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Listener.class != listener.getClass()) {
             context.unexpectedSubclass(writer, listener, Listener.class);
             return;
@@ -192,12 +192,12 @@ public class Listener$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = listener.id;
+        final String idRaw = listener.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(listener, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -207,11 +207,11 @@ public class Listener$JAXB
         Text[] descriptions = null;
         try {
             descriptions = listener.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(listener, "descriptions", Listener.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -226,11 +226,11 @@ public class Listener$JAXB
         Text[] displayNames = null;
         try {
             displayNames = listener.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(listener, "displayNames", Listener.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -244,7 +244,7 @@ public class Listener$JAXB
         // ELEMENT: icon
         final LocalCollection<Icon> icon = listener.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -260,7 +260,7 @@ public class Listener$JAXB
         String listenerClass = null;
         try {
             listenerClass = Adapters.collapsedStringAdapterAdapter.marshal(listenerClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(listener, "listenerClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (listenerClass != null) {

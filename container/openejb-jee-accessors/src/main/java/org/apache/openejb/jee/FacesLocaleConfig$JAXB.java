@@ -50,12 +50,12 @@ public class FacesLocaleConfig$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesLocaleConfig(final XoXMLStreamWriter writer, FacesLocaleConfig facesLocaleConfig, final RuntimeContext context)
+    public static void writeFacesLocaleConfig(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLocaleConfig, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, facesLocaleConfig, context);
     }
@@ -89,7 +89,7 @@ public class FacesLocaleConfig$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesLocaleConfig);
                 facesLocaleConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -98,14 +98,14 @@ public class FacesLocaleConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("default-locale" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultLocale
-                FacesDefaultLocale defaultLocale = readFacesDefaultLocale(elementReader, context);
+                final FacesDefaultLocale defaultLocale = readFacesDefaultLocale(elementReader, context);
                 facesLocaleConfig.defaultLocale = defaultLocale;
             } else if (("supported-locale" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: supportedLocale
-                FacesSupportedLocale supportedLocaleItem = readFacesSupportedLocale(elementReader, context);
+                final FacesSupportedLocale supportedLocaleItem = readFacesSupportedLocale(elementReader, context);
                 if (supportedLocale == null) {
                     supportedLocale = facesLocaleConfig.supportedLocale;
                     if (supportedLocale != null) {
@@ -154,19 +154,19 @@ public class FacesLocaleConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesLocaleConfig.id;
+        final String idRaw = facesLocaleConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesLocaleConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: defaultLocale
-        FacesDefaultLocale defaultLocale = facesLocaleConfig.defaultLocale;
+        final FacesDefaultLocale defaultLocale = facesLocaleConfig.defaultLocale;
         if (defaultLocale != null) {
             writer.writeStartElement(prefix, "default-locale", "http://java.sun.com/xml/ns/javaee");
             writeFacesDefaultLocale(writer, defaultLocale, context);
@@ -174,9 +174,9 @@ public class FacesLocaleConfig$JAXB
         }
 
         // ELEMENT: supportedLocale
-        List<FacesSupportedLocale> supportedLocale = facesLocaleConfig.supportedLocale;
+        final List<FacesSupportedLocale> supportedLocale = facesLocaleConfig.supportedLocale;
         if (supportedLocale != null) {
-            for (FacesSupportedLocale supportedLocaleItem : supportedLocale) {
+            for (final FacesSupportedLocale supportedLocaleItem : supportedLocale) {
                 if (supportedLocaleItem != null) {
                     writer.writeStartElement(prefix, "supported-locale", "http://java.sun.com/xml/ns/javaee");
                     writeFacesSupportedLocale(writer, supportedLocaleItem, context);

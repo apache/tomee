@@ -84,29 +84,29 @@ public class Method {
     protected String id;
 
 
-    public Method(final String ejbName, java.lang.reflect.Method method) {
+    public Method(final String ejbName, final java.lang.reflect.Method method) {
         this.ejbName = ejbName;
         this.methodName = method.getName();
         this.className = method.getDeclaringClass().getName();
-        MethodParams methodParams = new MethodParams();
-        for (Class<?> type : method.getParameterTypes()) {
+        final MethodParams methodParams = new MethodParams();
+        for (final Class<?> type : method.getParameterTypes()) {
             methodParams.getMethodParam().add(type.getName());
         }
         this.methodParams = methodParams;
     }
 
-    public Method(final String ejbName, String methodName, String... parameters) {
+    public Method(final String ejbName, final String methodName, final String... parameters) {
         this(ejbName, null, methodName, parameters);
     }
 
-    public Method(String ejbName, final String className, String methodName, String... parameters) {
+    public Method(final String ejbName, final String className, final String methodName, final String... parameters) {
         this.ejbName = ejbName;
         this.methodName = methodName;
         this.className = className;
 
         if (parameters.length > 0) {
-            MethodParams params = new MethodParams();
-            for (String paramName : parameters) {
+            final MethodParams params = new MethodParams();
+            for (final String paramName : parameters) {
                 params.getMethodParam().add(paramName);
             }
             this.methodParams = params;
@@ -116,11 +116,11 @@ public class Method {
     public Method() {
     }
 
-    public Method(String ejbName, final String methodName) {
+    public Method(final String ejbName, final String methodName) {
         this(ejbName, null, methodName);
     }
 
-    public Method(final String ejbName, String className, String methodName) {
+    public Method(final String ejbName, final String className, final String methodName) {
         this.ejbName = ejbName;
         this.methodName = methodName;
         this.className = className;
@@ -135,7 +135,7 @@ public class Method {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -166,7 +166,7 @@ public class Method {
      * <p/>
      * <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -174,11 +174,11 @@ public class Method {
         return methodIntf;
     }
 
-    public void setMethodIntf(MethodIntf value) {
+    public void setMethodIntf(final MethodIntf value) {
         this.methodIntf = value;
     }
 
-    public Method withInterface(MethodIntf methodIntf) {
+    public Method withInterface(final MethodIntf methodIntf) {
         setMethodIntf(methodIntf);
         return this;
     }
@@ -193,7 +193,7 @@ public class Method {
      * used when the element denotes all the methods of an
      * enterprise bean's client view interfaces.
      */
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -201,7 +201,7 @@ public class Method {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 
@@ -209,7 +209,7 @@ public class Method {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

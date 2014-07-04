@@ -89,7 +89,7 @@ public class SecurityRoleRef {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -101,7 +101,7 @@ public class SecurityRoleRef {
         return roleName;
     }
 
-    public void setRoleName(String value) {
+    public void setRoleName(final String value) {
         this.roleName = value;
     }
 
@@ -109,7 +109,7 @@ public class SecurityRoleRef {
         return roleLink;
     }
 
-    public void setRoleLink(String value) {
+    public void setRoleLink(final String value) {
         this.roleLink = value;
     }
 
@@ -117,7 +117,7 @@ public class SecurityRoleRef {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

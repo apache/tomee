@@ -71,7 +71,7 @@ public class JaxWsInvocationTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -84,7 +84,7 @@ public class JaxWsInvocationTest extends TestCase {
 
         assembler.createApplication(ejbJar);
 
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
         final BeanContext beanContext = containerSystem.getBeanContext("EchoBean");
 
@@ -99,26 +99,26 @@ public class JaxWsInvocationTest extends TestCase {
         // the arguments of the standard container.invoke signature.
 
         // So let's create a fake message context.
-        MessageContext messageContext = new FakeMessageContext();
+        final MessageContext messageContext = new FakeMessageContext();
 
         // Now let's create a fake interceptor as would be supplied by the
         // web service provider.  Instead of writing "fake" marshalling
         // code that would pull the arguments from the soap message, we'll
         // just give it the argument values directly.
-        Object wsProviderInterceptor = new FakeWsProviderInterceptor("Hello world");
+        final Object wsProviderInterceptor = new FakeWsProviderInterceptor("Hello world");
 
         // Ok, now we have the two arguments expected on a JAX-RPC Web Service
         // invocation as per the OpenEJB-specific agreement between OpenEJB
         // and the Web Service Provider
-        Object[] args = new Object[]{messageContext, wsProviderInterceptor};
+        final Object[] args = new Object[]{messageContext, wsProviderInterceptor};
 
         // Let's grab the container as the Web Service Provider would do and
         // perform an invocation
-        RpcContainer container = (RpcContainer) beanContext.getContainer();
+        final RpcContainer container = (RpcContainer) beanContext.getContainer();
 
-        Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
+        final Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        String value = (String) container.invoke("EchoBean", InterfaceType.SERVICE_ENDPOINT, echoMethod.getDeclaringClass(), echoMethod, args, null);
+        final String value = (String) container.invoke("EchoBean", InterfaceType.SERVICE_ENDPOINT, echoMethod.getDeclaringClass(), echoMethod, args, null);
 
         assertCalls(Call.values());
         calls.clear();
@@ -146,7 +146,7 @@ public class JaxWsInvocationTest extends TestCase {
     public EjbModule buildTestApp() {
         final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(EchoBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(EchoBean.class));
         bean.setServiceEndpoint(EchoServiceEndpoint.class.getName());
 
         return new EjbModule(this.getClass().getClassLoader(), this.getClass().getSimpleName(), "test", ejbJar, null);
@@ -172,7 +172,7 @@ public class JaxWsInvocationTest extends TestCase {
              * and the container should then ensure it's available via getContextData()
              * for the duration of this call.
              */
-            MessageContext messageContext = (MessageContext) context.getContextData();
+            final MessageContext messageContext = (MessageContext) context.getContextData();
 
             org.junit.Assert.assertNotNull("message context should not be null", messageContext);
             org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
@@ -193,7 +193,7 @@ public class JaxWsInvocationTest extends TestCase {
             org.junit.Assert.assertNotNull("user principal", wsContext.getUserPrincipal());
 
             calls.add(Call.Bean_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);
             return o;
         }
@@ -229,8 +229,8 @@ public class JaxWsInvocationTest extends TestCase {
     }
 
 
-    private static String join(final String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
@@ -353,7 +353,7 @@ public class JaxWsInvocationTest extends TestCase {
             // the InvocationContext so we can invoke the bean.
             invocationContext.setParameters(args);
 
-            Object returnValue;
+            final Object returnValue;
             try {
 
                 // Track this call so we can assert proper interceptor order
@@ -366,7 +366,7 @@ public class JaxWsInvocationTest extends TestCase {
                 // Track this call so we can assert proper interceptor order
                 calls.add(Call.WebServiceProvider_Invoke_AFTER);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // handler chain fault processing would happen here
                 throw e;
             }

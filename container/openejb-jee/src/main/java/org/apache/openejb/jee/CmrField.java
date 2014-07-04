@@ -73,7 +73,7 @@ public class CmrField {
     public CmrField() {
     }
 
-    public CmrField(final String cmrFieldName, CmrFieldType cmrFieldType) {
+    public CmrField(final String cmrFieldName, final CmrFieldType cmrFieldType) {
         this.cmrFieldName = cmrFieldName;
         this.cmrFieldType = cmrFieldType;
     }

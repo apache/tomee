@@ -162,7 +162,7 @@ public class ServiceRef implements JndiReference {
         return this;
     }
 
-    public ServiceRef injectionTarget(final String className, String property) {
+    public ServiceRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         // TODO move this to getKey()
@@ -173,7 +173,7 @@ public class ServiceRef implements JndiReference {
         return this;
     }
 
-    public ServiceRef injectionTarget(final Class<?> clazz, String property) {
+    public ServiceRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -182,7 +182,7 @@ public class ServiceRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -191,11 +191,11 @@ public class ServiceRef implements JndiReference {
         return getServiceRefType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setServiceRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
     @XmlElement(name = "description", required = true)
@@ -203,7 +203,7 @@ public class ServiceRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -216,7 +216,7 @@ public class ServiceRef implements JndiReference {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -246,7 +246,7 @@ public class ServiceRef implements JndiReference {
         return serviceRefName;
     }
 
-    public void setServiceRefName(String value) {
+    public void setServiceRefName(final String value) {
         this.serviceRefName = value;
     }
 
@@ -262,7 +262,7 @@ public class ServiceRef implements JndiReference {
         return serviceRefType;
     }
 
-    public void setServiceRefType(String value) {
+    public void setServiceRefType(final String value) {
         this.serviceRefType = value;
     }
 

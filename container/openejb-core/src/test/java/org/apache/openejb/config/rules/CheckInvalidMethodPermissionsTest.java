@@ -26,7 +26,7 @@ public class CheckInvalidMethodPermissionsTest {
     @Keys({@Key("methodPermission.ejbNameRequired"), @Key("methodPermission.noSuchEjbName")})
     public EjbJar test() throws Exception {
         final EjbJar ejbJar = new EjbJar();
-        MethodPermission permission = new MethodPermission(new Method((String) null, (String) null));
+        final MethodPermission permission = new MethodPermission(new Method((String) null, (String) null));
         ejbJar.getAssemblyDescriptor().getMethodPermission().add(permission);
         final MethodPermission permission1 = new MethodPermission(new Method("wrongEjbName", "wrongMethodName"));
         ejbJar.getAssemblyDescriptor().getMethodPermission().add(permission1);

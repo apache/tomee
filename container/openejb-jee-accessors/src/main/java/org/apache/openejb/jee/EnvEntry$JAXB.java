@@ -56,7 +56,7 @@ public class EnvEntry$JAXB
         _write(writer, envEntry, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final EnvEntry envEntry, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final EnvEntry envEntry, final RuntimeContext context)
         throws Exception {
         _write(writer, envEntry, context);
     }
@@ -80,7 +80,7 @@ public class EnvEntry$JAXB
         Set<InjectionTarget> injectionTarget = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("env-entryType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, EnvEntry.class);
@@ -91,7 +91,7 @@ public class EnvEntry$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, envEntry);
                 envEntry.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -100,22 +100,22 @@ public class EnvEntry$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("env-entry-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntryName
-                String envEntryNameRaw = elementReader.getElementAsString();
+                final String envEntryNameRaw = elementReader.getElementAsString();
 
-                String envEntryName;
+                final String envEntryName;
                 try {
                     envEntryName = Adapters.collapsedStringAdapterAdapter.unmarshal(envEntryNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -123,12 +123,12 @@ public class EnvEntry$JAXB
                 envEntry.envEntryName = envEntryName;
             } else if (("env-entry-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntryType
-                String envEntryTypeRaw = elementReader.getElementAsString();
+                final String envEntryTypeRaw = elementReader.getElementAsString();
 
-                String envEntryType;
+                final String envEntryType;
                 try {
                     envEntryType = Adapters.collapsedStringAdapterAdapter.unmarshal(envEntryTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -136,12 +136,12 @@ public class EnvEntry$JAXB
                 envEntry.envEntryType = envEntryType;
             } else if (("env-entry-value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntryValue
-                String envEntryValueRaw = elementReader.getElementText(); // don't trim
+                final String envEntryValueRaw = elementReader.getElementText(); // don't trim
 
-                String envEntryValue;
+                final String envEntryValue;
                 try {
                     envEntryValue = Adapters.stringAdapterAdapter.unmarshal(envEntryValueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, StringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -149,12 +149,12 @@ public class EnvEntry$JAXB
                 envEntry.envEntryValue = envEntryValue;
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -162,7 +162,7 @@ public class EnvEntry$JAXB
                 envEntry.mappedName = mappedName;
             } else if (("injection-target" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTarget
-                InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
+                final InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
                 if (injectionTarget == null) {
                     injectionTarget = envEntry.injectionTarget;
                     if (injectionTarget != null) {
@@ -174,12 +174,12 @@ public class EnvEntry$JAXB
                 injectionTarget.add(injectionTargetItem);
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
-                String lookupName;
+                final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -192,7 +192,7 @@ public class EnvEntry$JAXB
         if (descriptions != null) {
             try {
                 envEntry.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, EnvEntry.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -205,7 +205,7 @@ public class EnvEntry$JAXB
         return envEntry;
     }
 
-    public final EnvEntry read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final EnvEntry read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -221,7 +221,7 @@ public class EnvEntry$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (EnvEntry.class != envEntry.getClass()) {
             context.unexpectedSubclass(writer, envEntry, EnvEntry.class);
             return;
@@ -231,12 +231,12 @@ public class EnvEntry$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = envEntry.id;
+        final String idRaw = envEntry.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(envEntry, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -246,11 +246,11 @@ public class EnvEntry$JAXB
         Text[] descriptions = null;
         try {
             descriptions = envEntry.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(envEntry, "descriptions", EnvEntry.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -262,11 +262,11 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: envEntryName
-        String envEntryNameRaw = envEntry.envEntryName;
+        final String envEntryNameRaw = envEntry.envEntryName;
         String envEntryName = null;
         try {
             envEntryName = Adapters.collapsedStringAdapterAdapter.marshal(envEntryNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(envEntry, "envEntryName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (envEntryName != null) {
@@ -278,7 +278,7 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: envEntryType
-        String envEntryTypeRaw = envEntry.envEntryType;
+        final String envEntryTypeRaw = envEntry.envEntryType;
         String envEntryType = null;
         try {
             envEntryType = Adapters.collapsedStringAdapterAdapter.marshal(envEntryTypeRaw);
@@ -292,11 +292,11 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: envEntryValue
-        String envEntryValueRaw = envEntry.envEntryValue;
+        final String envEntryValueRaw = envEntry.envEntryValue;
         String envEntryValue = null;
         try {
             envEntryValue = Adapters.stringAdapterAdapter.marshal(envEntryValueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(envEntry, "envEntryValue", StringAdapter.class, String.class, String.class, e);
         }
         if (envEntryValue != null) {
@@ -306,11 +306,11 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = envEntry.mappedName;
+        final String mappedNameRaw = envEntry.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(envEntry, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {
@@ -320,9 +320,9 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: injectionTarget
-        Set<InjectionTarget> injectionTarget = envEntry.injectionTarget;
+        final Set<InjectionTarget> injectionTarget = envEntry.injectionTarget;
         if (injectionTarget != null) {
-            for (InjectionTarget injectionTargetItem : injectionTarget) {
+            for (final InjectionTarget injectionTargetItem : injectionTarget) {
                 if (injectionTargetItem != null) {
                     writer.writeStartElement(prefix, "injection-target", "http://java.sun.com/xml/ns/javaee");
                     writeInjectionTarget(writer, injectionTargetItem, context);
@@ -334,11 +334,11 @@ public class EnvEntry$JAXB
         }
 
         // ELEMENT: lookupName
-        String lookupNameRaw = envEntry.lookupName;
+        final String lookupNameRaw = envEntry.lookupName;
         String lookupName = null;
         try {
             lookupName = Adapters.collapsedStringAdapterAdapter.marshal(lookupNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(envEntry, "lookupName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lookupName != null) {

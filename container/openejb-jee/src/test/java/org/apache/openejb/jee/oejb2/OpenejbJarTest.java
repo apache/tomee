@@ -73,14 +73,14 @@ public class OpenejbJarTest extends TestCase {
         unmarshalAndMarshal(type, xmlFileName, xmlFileName);
     }
 
-    private <T> void unmarshalAndMarshal(final Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
-        InputStream in = getInputStream(xmlFileName);
+    private <T> void unmarshalAndMarshal(final Class<T> type, final java.lang.String xmlFileName, final java.lang.String expectedFile) throws Exception {
+        final InputStream in = getInputStream(xmlFileName);
         assertNotNull(in);
-        Object object = JaxbOpenejbJar2.unmarshal(type, in);
+        final Object object = JaxbOpenejbJar2.unmarshal(type, in);
 
-        String actual = JaxbOpenejbJar2.marshal(type, object);
+        final String actual = JaxbOpenejbJar2.marshal(type, object);
 
-        String expected;
+        final String expected;
         if (xmlFileName.equals(expectedFile)) {
             expected = readContent(getInputStream(xmlFileName));
         } else {
@@ -88,7 +88,7 @@ public class OpenejbJarTest extends TestCase {
         }
         XMLUnit.setIgnoreWhitespace(true);
         try {
-            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            final Diff myDiff = new DetailedDiff(new Diff(expected, actual));
             assertTrue("Files are not similar " + myDiff, myDiff.similar());
         } catch (final AssertionFailedError e) {
             e.printStackTrace();

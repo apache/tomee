@@ -153,7 +153,7 @@ public class AlternativeDriver implements Driver {
 
                 throw new SQLFeatureNotSupportedException(e);
 
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
 
                 if (e.getCause() instanceof SQLFeatureNotSupportedException) {
                     throw (SQLFeatureNotSupportedException) e.getCause();

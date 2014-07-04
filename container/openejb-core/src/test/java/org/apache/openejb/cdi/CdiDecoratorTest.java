@@ -71,23 +71,23 @@ public class CdiDecoratorTest extends TestCase {
 
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("HelloOne", RedBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean("HelloTwo", RedBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(OrangeBean.class));
 
-        Beans beans = new Beans();
+        final Beans beans = new Beans();
         beans.addInterceptor(OrangeCdiInterceptor.class);
         beans.addDecorator(OrangeOneDecorator.class);
         beans.addDecorator(OrangeTwoDecorator.class);
         beans.addManagedClass(YellowBean.class);
 
-        EjbModule module = new EjbModule(ejbJar);
+        final EjbModule module = new EjbModule(ejbJar);
         module.setBeans(beans);
 
         assembler.createApplication(config.configureApplication(module));
 
-        Properties properties = new Properties(System.getProperties());
+        final Properties properties = new Properties(System.getProperties());
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         ctx = new InitialContext(properties);
     }
@@ -98,11 +98,11 @@ public class CdiDecoratorTest extends TestCase {
             final Color color = (Color) ctx.lookup("HelloOneLocal");
             color.hello();
 
-            for (String call : callback) {
+            for (final String call : callback) {
                 System.out.println("callback = " + call);
             }
 
-            for (String call : businessMethod) {
+            for (final String call : businessMethod) {
                 System.out.println("call = " + call);
             }
 
@@ -113,7 +113,7 @@ public class CdiDecoratorTest extends TestCase {
             assertTrue(OrangeCdiInterceptor.RUN);
             assertTrue(OrangeOneDecorator.RUN);
 
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             e.printStackTrace();
         }
     }

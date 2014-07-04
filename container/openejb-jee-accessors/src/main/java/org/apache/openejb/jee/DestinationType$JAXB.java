@@ -38,17 +38,17 @@ public class DestinationType$JAXB
         super(DestinationType.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "destination-type".intern()), null);
     }
 
-    public static DestinationType readDestinationType(final XoXMLStreamReader reader, RuntimeContext context)
+    public static DestinationType readDestinationType(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeDestinationType(final XoXMLStreamWriter writer, final DestinationType destinationType, RuntimeContext context)
+    public static void writeDestinationType(final XoXMLStreamWriter writer, final DestinationType destinationType, final RuntimeContext context)
         throws Exception {
         _write(writer, destinationType, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final DestinationType destinationType, final RuntimeContext context)
         throws Exception {
         _write(writer, destinationType, context);
     }
@@ -70,7 +70,7 @@ public class DestinationType$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             return context.unexpectedXsiType(reader, DestinationType.class);
         }
@@ -79,7 +79,7 @@ public class DestinationType$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, destinationType);
                 destinationType.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -88,14 +88,14 @@ public class DestinationType$JAXB
         }
 
         // VALUE: value
-        String valueRaw = reader.getElementText();
+        final String valueRaw = reader.getElementText();
 
         String value = null;
         boolean valueConverted;
         try {
             value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
             valueConverted = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(reader, CollapsedStringAdapter.class, String.class, String.class, e);
             valueConverted = false;
         }
@@ -109,12 +109,12 @@ public class DestinationType$JAXB
         return destinationType;
     }
 
-    public final DestinationType read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final DestinationType read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final DestinationType destinationType, RuntimeContext context)
         throws Exception {
         if (destinationType == null) {
             writer.writeXsiNil();
@@ -134,19 +134,19 @@ public class DestinationType$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = destinationType.id;
+        final String idRaw = destinationType.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(destinationType, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // VALUE: value
-        String valueRaw = destinationType.value;
+        final String valueRaw = destinationType.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);

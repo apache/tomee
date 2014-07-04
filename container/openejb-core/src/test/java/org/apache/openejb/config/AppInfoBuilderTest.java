@@ -39,8 +39,8 @@ public class AppInfoBuilderTest extends TestCase {
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
 
-        OpenejbJar openejbJar = new OpenejbJar();
-        EjbDeployment ejbDeployment = new EjbDeployment();
+        final OpenejbJar openejbJar = new OpenejbJar();
+        final EjbDeployment ejbDeployment = new EjbDeployment();
         openejbJar.addEjbDeployment(ejbDeployment);
 
         ejbDeployment.setEjbName("MySessionBean");
@@ -51,10 +51,10 @@ public class AppInfoBuilderTest extends TestCase {
         ejbDeployment.addProperty("wss4j.in.action", "Timestamp");
         ejbDeployment.addProperty("wss4j.out.action", "Timestamp");
 
-        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
-        EjbJarInfo ejbJarInfo = new EjbJarInfo();
-        PortInfo portInfo = new PortInfo();
+        final EjbJarInfo ejbJarInfo = new EjbJarInfo();
+        final PortInfo portInfo = new PortInfo();
         portInfo.serviceLink = "MySessionBean";
         ejbJarInfo.portInfos.add(portInfo);
 
@@ -62,7 +62,7 @@ public class AppInfoBuilderTest extends TestCase {
 
         final List<PortInfo> portInfoList = ejbJarInfo.portInfos;
         assertEquals(1, portInfoList.size());
-        PortInfo info = portInfoList.get(0);
+        final PortInfo info = portInfoList.get(0);
         assertEquals("MyRealm", info.realmName);
         assertEquals("MySecurityRealm", info.securityRealmName);
         assertEquals("BASIC", info.authMethod);
@@ -79,24 +79,24 @@ public class AppInfoBuilderTest extends TestCase {
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
 
-        OpenejbJar openejbJar = new OpenejbJar();
-        EjbDeployment ejbDeployment = new EjbDeployment();
+        final OpenejbJar openejbJar = new OpenejbJar();
+        final EjbDeployment ejbDeployment = new EjbDeployment();
         openejbJar.addEjbDeployment(ejbDeployment);
 
         ejbDeployment.setEjbName("MySessionBean");
 
-        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
-        EjbJarInfo ejbJarInfo = new EjbJarInfo();
-        PortInfo portInfo = new PortInfo();
+        final EjbJarInfo ejbJarInfo = new EjbJarInfo();
+        final PortInfo portInfo = new PortInfo();
         portInfo.serviceLink = "MySessionBean";
         ejbJarInfo.portInfos.add(portInfo);
 
         new AppInfoBuilder(null).configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-        List<PortInfo> portInfoList = ejbJarInfo.portInfos;
+        final List<PortInfo> portInfoList = ejbJarInfo.portInfos;
         assertEquals(1, portInfoList.size());
-        PortInfo info = portInfoList.get(0);
+        final PortInfo info = portInfoList.get(0);
         assertEquals(null, info.realmName);
         assertEquals(null, info.securityRealmName);
         assertEquals("NONE", info.authMethod);
@@ -118,16 +118,16 @@ public class AppInfoBuilderTest extends TestCase {
 
         ejbDeployment.setEjbName("MySessionBean");
 
-        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
-        EjbJarInfo ejbJarInfo = new EjbJarInfo();
-        PortInfo portInfo = new PortInfo();
+        final EjbJarInfo ejbJarInfo = new EjbJarInfo();
+        final PortInfo portInfo = new PortInfo();
         portInfo.authMethod = "DIGEST";
         portInfo.realmName = "";
         portInfo.securityRealmName = "";
         portInfo.transportGuarantee = "CONFIDENTIAL";
         portInfo.serviceLink = "DifferentInfo";
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put("wss4j.in.action", "Timestamp");
         props.put("wss4j.out.action", "Timestamp");
         portInfo.properties = props;
@@ -137,7 +137,7 @@ public class AppInfoBuilderTest extends TestCase {
 
         final List<PortInfo> portInfoList = ejbJarInfo.portInfos;
         assertEquals(1, portInfoList.size());
-        PortInfo info = portInfoList.get(0);
+        final PortInfo info = portInfoList.get(0);
         assertEquals("", info.realmName);
         assertEquals("", info.securityRealmName);
         assertEquals("DIGEST", info.authMethod);

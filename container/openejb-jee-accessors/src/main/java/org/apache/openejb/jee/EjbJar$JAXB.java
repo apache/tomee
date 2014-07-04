@@ -56,17 +56,17 @@ public class EjbJar$JAXB
         super(EjbJar.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jar".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jarType".intern()), Text$JAXB.class, Icon$JAXB.class, MessageDrivenBean$JAXB.class, SessionBean$JAXB.class, EntityBean$JAXB.class, Interceptors$JAXB.class, Relationships$JAXB.class, AssemblyDescriptor$JAXB.class);
     }
 
-    public static EjbJar readEjbJar(final XoXMLStreamReader reader, RuntimeContext context)
+    public static EjbJar readEjbJar(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbJar(final XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
+    public static void writeEjbJar(final XoXMLStreamWriter writer, final EjbJar ejbJar, final RuntimeContext context)
         throws Exception {
         _write(writer, ejbJar, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final EjbJar ejbJar, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final EjbJar ejbJar, final RuntimeContext context)
         throws Exception {
         _write(writer, ejbJar, context);
     }
@@ -83,7 +83,7 @@ public class EjbJar$JAXB
             context = new RuntimeContext();
         }
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         context.beforeUnmarshal(ejbJar, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -91,7 +91,7 @@ public class EjbJar$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("ejb-jarType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, EjbJar.class);
@@ -102,12 +102,12 @@ public class EjbJar$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, ejbJar);
                 ejbJar.id = id;
             } else if (("metadata-complete" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: metadataComplete
-                Boolean metadataComplete = ("1".equals(attribute.getValue()) || "true".equals(attribute.getValue()));
+                final Boolean metadataComplete = ("1".equals(attribute.getValue()) || "true".equals(attribute.getValue()));
                 ejbJar.metadataComplete = metadataComplete;
             } else if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: version
@@ -118,15 +118,15 @@ public class EjbJar$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("module-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: moduleName
-                String moduleNameRaw = elementReader.getElementAsString();
+                final String moduleNameRaw = elementReader.getElementAsString();
 
-                String moduleName;
+                final String moduleName;
                 try {
                     moduleName = Adapters.collapsedStringAdapterAdapter.unmarshal(moduleNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -134,21 +134,21 @@ public class EjbJar$JAXB
                 ejbJar.moduleName = moduleName;
             } else if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = ejbJar.icon;
                     if (icon != null) {
@@ -163,7 +163,7 @@ public class EjbJar$JAXB
                 _readEnterpriseBeans(elementReader, context, ejbJar);
             } else if (("interceptors" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptors
-                Interceptors interceptors = readInterceptors(elementReader, context);
+                final Interceptors interceptors = readInterceptors(elementReader, context);
                 ejbJar.interceptors = interceptors;
             } else if (("relationships" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: relationships
@@ -171,16 +171,16 @@ public class EjbJar$JAXB
                 ejbJar.relationships = relationships;
             } else if (("assembly-descriptor" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: assemblyDescriptor
-                AssemblyDescriptor assemblyDescriptor = readAssemblyDescriptor(elementReader, context);
+                final AssemblyDescriptor assemblyDescriptor = readAssemblyDescriptor(elementReader, context);
                 ejbJar.assemblyDescriptor = assemblyDescriptor;
             } else if (("ejb-client-jar" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbClientJar
-                String ejbClientJarRaw = elementReader.getElementAsString();
+                final String ejbClientJarRaw = elementReader.getElementAsString();
 
-                String ejbClientJar;
+                final String ejbClientJar;
                 try {
                     ejbClientJar = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbClientJarRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -193,14 +193,14 @@ public class EjbJar$JAXB
         if (descriptions != null) {
             try {
                 ejbJar.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, EjbJar.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 ejbJar.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, EjbJar.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -218,29 +218,29 @@ public class EjbJar$JAXB
         return _read(reader, context);
     }
 
-    public final static void _readEnterpriseBeans(final XoXMLStreamReader reader, RuntimeContext context, EjbJar ejbJar)
+    public final static void _readEnterpriseBeans(final XoXMLStreamReader reader, final RuntimeContext context, final EjbJar ejbJar)
         throws Exception {
         ArrayList<EnterpriseBean> enterpriseBeans = null;
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("message-driven" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enterpriseBeans
-                org.apache.openejb.jee.MessageDrivenBean enterpriseBeansItem = readMessageDrivenBean(elementReader, context);
+                final org.apache.openejb.jee.MessageDrivenBean enterpriseBeansItem = readMessageDrivenBean(elementReader, context);
                 if (enterpriseBeans == null) {
                     enterpriseBeans = new ArrayList<EnterpriseBean>();
                 }
                 enterpriseBeans.add(enterpriseBeansItem);
             } else if (("session" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enterpriseBeans
-                org.apache.openejb.jee.SessionBean enterpriseBeansItem1 = readSessionBean(elementReader, context);
+                final org.apache.openejb.jee.SessionBean enterpriseBeansItem1 = readSessionBean(elementReader, context);
                 if (enterpriseBeans == null) {
                     enterpriseBeans = new ArrayList<EnterpriseBean>();
                 }
                 enterpriseBeans.add(enterpriseBeansItem1);
             } else if (("entity" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enterpriseBeans
-                org.apache.openejb.jee.EntityBean enterpriseBeansItem2 = readEntityBean(elementReader, context);
+                final org.apache.openejb.jee.EntityBean enterpriseBeansItem2 = readEntityBean(elementReader, context);
                 if (enterpriseBeans == null) {
                     enterpriseBeans = new ArrayList<EnterpriseBean>();
                 }
@@ -250,13 +250,13 @@ public class EjbJar$JAXB
         if (enterpriseBeans != null) {
             try {
                 ejbJar.setEnterpriseBeans(enterpriseBeans.toArray(new EnterpriseBean[enterpriseBeans.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, EjbJar.class, "setEnterpriseBeans", EnterpriseBean[].class, e);
             }
         }
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final EjbJar ejbJar, RuntimeContext context)
         throws Exception {
         if (ejbJar == null) {
             writer.writeXsiNil();
@@ -267,7 +267,7 @@ public class EjbJar$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (EjbJar.class != ejbJar.getClass()) {
             context.unexpectedSubclass(writer, ejbJar, EjbJar.class);
             return;
@@ -277,12 +277,12 @@ public class EjbJar$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = ejbJar.id;
+        final String idRaw = ejbJar.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(ejbJar, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -295,12 +295,12 @@ public class EjbJar$JAXB
         }
 
         // ATTRIBUTE: version
-        String versionRaw = ejbJar.version;
+        final String versionRaw = ejbJar.version;
         if (versionRaw != null) {
             String version = null;
             try {
                 version = Adapters.collapsedStringAdapterAdapter.marshal(versionRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(ejbJar, "version", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "version", version);
@@ -311,7 +311,7 @@ public class EjbJar$JAXB
         String moduleName = null;
         try {
             moduleName = Adapters.collapsedStringAdapterAdapter.marshal(moduleNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbJar, "moduleName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (moduleName != null) {
@@ -324,11 +324,11 @@ public class EjbJar$JAXB
         Text[] descriptions = null;
         try {
             descriptions = ejbJar.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(ejbJar, "descriptions", EjbJar.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -343,11 +343,11 @@ public class EjbJar$JAXB
         Text[] displayNames = null;
         try {
             displayNames = ejbJar.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(ejbJar, "displayNames", EjbJar.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -361,7 +361,7 @@ public class EjbJar$JAXB
         // ELEMENT: icon
         final LocalCollection<Icon> icon = ejbJar.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -376,19 +376,19 @@ public class EjbJar$JAXB
         EnterpriseBean[] enterpriseBeans = null;
         try {
             enterpriseBeans = ejbJar.getEnterpriseBeans();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(ejbJar, "enterpriseBeans", EjbJar.class, "getEnterpriseBeans", e);
         }
         writer.writeStartElement(prefix, "enterprise-beans", "http://java.sun.com/xml/ns/javaee");
         if (enterpriseBeans != null) {
-            for (EnterpriseBean enterpriseBeansItem : enterpriseBeans) {
+            for (final EnterpriseBean enterpriseBeansItem : enterpriseBeans) {
                 if (enterpriseBeansItem instanceof org.apache.openejb.jee.EntityBean) {
-                    org.apache.openejb.jee.EntityBean EntityBean = ((org.apache.openejb.jee.EntityBean) enterpriseBeansItem);
+                    final org.apache.openejb.jee.EntityBean EntityBean = ((org.apache.openejb.jee.EntityBean) enterpriseBeansItem);
                     writer.writeStartElement(prefix, "entity", "http://java.sun.com/xml/ns/javaee");
                     writeEntityBean(writer, EntityBean, context);
                     writer.writeEndElement();
                 } else if (enterpriseBeansItem instanceof org.apache.openejb.jee.SessionBean) {
-                    org.apache.openejb.jee.SessionBean SessionBean = ((org.apache.openejb.jee.SessionBean) enterpriseBeansItem);
+                    final org.apache.openejb.jee.SessionBean SessionBean = ((org.apache.openejb.jee.SessionBean) enterpriseBeansItem);
                     writer.writeStartElement(prefix, "session", "http://java.sun.com/xml/ns/javaee");
                     writeSessionBean(writer, SessionBean, context);
                     writer.writeEndElement();
@@ -407,7 +407,7 @@ public class EjbJar$JAXB
         writer.writeEndElement();
 
         // ELEMENT: interceptors
-        Interceptors interceptors = ejbJar.interceptors;
+        final Interceptors interceptors = ejbJar.interceptors;
         if (interceptors != null) {
             writer.writeStartElement(prefix, "interceptors", "http://java.sun.com/xml/ns/javaee");
             writeInterceptors(writer, interceptors, context);
@@ -415,7 +415,7 @@ public class EjbJar$JAXB
         }
 
         // ELEMENT: relationships
-        Relationships relationships = ejbJar.relationships;
+        final Relationships relationships = ejbJar.relationships;
         if (relationships != null) {
             writer.writeStartElement(prefix, "relationships", "http://java.sun.com/xml/ns/javaee");
             writeRelationships(writer, relationships, context);
@@ -423,7 +423,7 @@ public class EjbJar$JAXB
         }
 
         // ELEMENT: assemblyDescriptor
-        AssemblyDescriptor assemblyDescriptor = ejbJar.assemblyDescriptor;
+        final AssemblyDescriptor assemblyDescriptor = ejbJar.assemblyDescriptor;
         if (assemblyDescriptor != null) {
             writer.writeStartElement(prefix, "assembly-descriptor", "http://java.sun.com/xml/ns/javaee");
             writeAssemblyDescriptor(writer, assemblyDescriptor, context);
@@ -431,11 +431,11 @@ public class EjbJar$JAXB
         }
 
         // ELEMENT: ejbClientJar
-        String ejbClientJarRaw = ejbJar.ejbClientJar;
+        final String ejbClientJarRaw = ejbJar.ejbClientJar;
         String ejbClientJar = null;
         try {
             ejbClientJar = Adapters.collapsedStringAdapterAdapter.marshal(ejbClientJarRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbJar, "ejbClientJar", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbClientJar != null) {

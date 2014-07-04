@@ -123,7 +123,7 @@ public class DependsOnTest extends TestCase {
         actual.clear();
 
         // startup and trigger @PreDestroy
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
 
@@ -156,7 +156,7 @@ public class DependsOnTest extends TestCase {
             config.configureApplication(ejbJar);
             fail("Validation should have found a circular reference");
         } catch (final ValidationFailedException e) {
-            ValidationFailure[] failures = e.getFailures();
+            final ValidationFailure[] failures = e.getFailures();
             assertEquals(1, failures.length);
             assertEquals("dependsOn.noSuchEjb", failures[0].getMessageKey());
         }
@@ -167,7 +167,7 @@ public class DependsOnTest extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -187,8 +187,8 @@ public class DependsOnTest extends TestCase {
         try {
             config.configureApplication(ejbJar);
             fail("Validation should have found a circular reference");
-        } catch (ValidationFailedException e) {
-            ValidationFailure[] failures = e.getFailures();
+        } catch (final ValidationFailedException e) {
+            final ValidationFailure[] failures = e.getFailures();
             assertEquals(1, failures.length);
             assertEquals("dependsOn.circuit", failures[0].getMessageKey());
         }

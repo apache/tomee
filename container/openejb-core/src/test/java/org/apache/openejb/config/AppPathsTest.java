@@ -44,13 +44,13 @@ public class AppPathsTest extends TestCase {
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final URL resource = AppPathsTest.class.getClassLoader().getResource("mixedcase");
-        File file = URLs.toFile(resource);
+        final File file = URLs.toFile(resource);
 
         final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
 
-        EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
+        final EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
 
         // was the footest.ejb-jar.xml picked up
         assertEquals("EjbJar.enterpriseBeans", 1, ejbJar.enterpriseBeans.size());

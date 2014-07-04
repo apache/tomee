@@ -97,7 +97,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         if (deleted) return null;
 
         if ("a".equals(name)) {
-            Object oldValue = a;
+            final Object oldValue = a;
             a = (ExampleABean_ABean) bean;
             return oldValue;
         }
@@ -111,7 +111,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 
-    public void OpenEJB_removeCmr(final String name, Object bean) {
+    public void OpenEJB_removeCmr(final String name, final Object bean) {
         if (deleted) return;
 
         if ("a".equals(name)) {

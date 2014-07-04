@@ -38,11 +38,11 @@ public class MdbInvoker implements MessageListener {
     private Session session;
     private ConnectionFactory connectionFactory;
 
-    public MdbInvoker(final ConnectionFactory connectionFactory, Object target) throws JMSException {
+    public MdbInvoker(final ConnectionFactory connectionFactory, final Object target) throws JMSException {
         this.target = target;
         this.connectionFactory = connectionFactory;
-        for (Method method : target.getClass().getMethods()) {
-            String signature = MdbUtil.getSignature(method);
+        for (final Method method : target.getClass().getMethods()) {
+            final String signature = MdbUtil.getSignature(method);
             signatures.put(signature, method);
         }
     }
@@ -65,33 +65,33 @@ public class MdbInvoker implements MessageListener {
         if (!(message instanceof ObjectMessage)) return;
 
         try {
-            Session session = getSession();
+            final Session session = getSession();
             if (session == null) throw new IllegalStateException("Invoker has been destroyed");
 
             if (message == null) throw new NullPointerException("request message is null");
             if (!(message instanceof ObjectMessage))
                 throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
-            ObjectMessage objectMessage = (ObjectMessage) message;
-            Serializable object = objectMessage.getObject();
+            final ObjectMessage objectMessage = (ObjectMessage) message;
+            final Serializable object = objectMessage.getObject();
             if (object == null) throw new NullPointerException("object in ObjectMessage is null");
             if (!(object instanceof Map)) {
                 if (message instanceof ObjectMessage)
                     throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage request but got a " + object.getClass().getName());
             }
-            Map request = (Map) object;
+            final Map request = (Map) object;
 
-            String signature = (String) request.get("method");
-            Method method = signatures.get(signature);
-            Object[] args = (Object[]) request.get("args");
+            final String signature = (String) request.get("method");
+            final Method method = signatures.get(signature);
+            final Object[] args = (Object[]) request.get("args");
 
             boolean exception = false;
             Object result = null;
             try {
                 result = method.invoke(target, args);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 result = e;
                 exception = true;
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 result = e.getCause();
                 if (result == null) result = e;
                 exception = true;
@@ -100,27 +100,27 @@ public class MdbInvoker implements MessageListener {
             MessageProducer producer = null;
             try {
                 // create response
-                Map<String, Object> response = new TreeMap<String, Object>();
+                final Map<String, Object> response = new TreeMap<String, Object>();
                 if (exception) {
                     response.put("exception", "true");
                 }
                 response.put("return", result);
 
                 // create response message
-                ObjectMessage resMessage = session.createObjectMessage();
+                final ObjectMessage resMessage = session.createObjectMessage();
                 resMessage.setJMSCorrelationID(objectMessage.getJMSCorrelationID());
                 resMessage.setObject((Serializable) response);
 
                 // send response message
                 producer = session.createProducer(objectMessage.getJMSReplyTo());
                 producer.send(resMessage);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             } finally {
                 MdbUtil.close(producer);
                 destroy();
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }

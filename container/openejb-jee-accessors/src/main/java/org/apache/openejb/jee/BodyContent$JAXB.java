@@ -30,17 +30,17 @@ public class BodyContent$JAXB
         super(BodyContent.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "bodyContent".intern()));
     }
 
-    public BodyContent parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+    public BodyContent parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseBodyContent(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final BodyContent bodyContent)
         throws Exception {
         return toStringBodyContent(bean, parameterName, context, bodyContent);
     }
 
-    public static BodyContent parseBodyContent(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public static BodyContent parseBodyContent(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("tagdependent".equalsIgnoreCase(value)) {
             return BodyContent.TAGDEPENDENT;
@@ -56,7 +56,7 @@ public class BodyContent$JAXB
         }
     }
 
-    public static String toStringBodyContent(final Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
+    public static String toStringBodyContent(final Object bean, final String parameterName, final RuntimeContext context, final BodyContent bodyContent)
         throws Exception {
         if (BodyContent.TAGDEPENDENT == bodyContent) {
             return "tagdependent";

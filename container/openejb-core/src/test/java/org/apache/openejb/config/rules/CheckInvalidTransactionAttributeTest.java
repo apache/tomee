@@ -40,7 +40,7 @@ public class CheckInvalidTransactionAttributeTest {
         final EjbJar ejbJar = new EjbJar();
         final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));
         bean.setTransactionType(TransactionType.BEAN);
-        ContainerTransaction tx = new ContainerTransaction();
+        final ContainerTransaction tx = new ContainerTransaction();
         tx.getMethod().add(new Method(bean.getEjbName(), CheeseEjb.class.getMethod("sayCheesePlease", null)));
         tx.setTransAttribute(TransAttribute.REQUIRED);
         ejbJar.getAssemblyDescriptor().getContainerTransaction().add(tx);

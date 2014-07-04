@@ -89,7 +89,7 @@ public class CleanEnvEntriesTest extends TestCase {
 
     private Map<String, EnvEntryInfo> map(final List<EnvEntryInfo> envEntries) {
         final Map<String, EnvEntryInfo> map = new HashMap<String, EnvEntryInfo>();
-        for (EnvEntryInfo entry : envEntries) {
+        for (final EnvEntryInfo entry : envEntries) {
             map.put(entry.referenceName, entry);
         }
         return map;

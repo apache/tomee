@@ -52,16 +52,16 @@ public class JaxbWls {
     private static Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<Class<?>, JAXBContext>();
 
     public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         JaxbWls.marshal(type, object, baos);
 
         return new String(baos.toByteArray());
     }
 
-    public static <T> void marshal(final Class<T> type, final Object object, OutputStream out) throws JAXBException {
-        JAXBContext ctx2 = JaxbWls.getContext(type);
-        Marshaller marshaller = ctx2.createMarshaller();
+    public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
+        final JAXBContext ctx2 = JaxbWls.getContext(type);
+        final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
@@ -85,20 +85,20 @@ public class JaxbWls {
         factory.setValidating(false);
         final SAXParser parser = factory.newSAXParser();
 
-        JAXBContext ctx = JaxbWls.getContext(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = JaxbWls.getContext(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(ValidationEvent validationEvent) {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
                 System.out.println(validationEvent);
                 return false;
             }
         });
 
 
-        JaxbWls.NamespaceFilter xmlFilter = new JaxbWls.NamespaceFilter(parser.getXMLReader());
+        final JaxbWls.NamespaceFilter xmlFilter = new JaxbWls.NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
         JaxbWls.currentPublicId.set(new TreeSet<String>());
         try {
@@ -116,14 +116,14 @@ public class JaxbWls {
         }
 
         public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
-            Set<String> publicIds = JaxbWls.currentPublicId.get();
+            final Set<String> publicIds = JaxbWls.currentPublicId.get();
             if (publicIds != null) {
                 publicIds.add(publicId);
             }
             return JaxbWls.NamespaceFilter.EMPTY_INPUT_SOURCE;
         }
 
-        public void startElement(final String uri, String localName, String qname, Attributes atts) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
             super.startElement("http://www.bea.com/ns/weblogic/90", localName, qname, atts);
         }
     }

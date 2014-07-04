@@ -91,7 +91,7 @@ public class JpaTestObject extends org.junit.Assert {
                     if (transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION) {
                         transactionManager.rollback();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -349,7 +349,7 @@ public class JpaTestObject extends org.junit.Assert {
         entityManager.flush();
         advanced = entityManager.merge(advanced);
 
-        BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
+        final BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
 
         assertTrue(entityManager.contains(advanced));
 
@@ -408,7 +408,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         basicCmpBean = entityManager.merge(basicCmpBean);
-        int lloydId = basicCmpBean.getPrimaryKey();
+        final int lloydId = basicCmpBean.getPrimaryKey();
 
         assertTrue(entityManager.contains(basicCmpBean));
         commitTx();
@@ -539,12 +539,12 @@ public class JpaTestObject extends org.junit.Assert {
         beginTx();
 
         final AuthorBean mcLaughlin = new AuthorBean(MCLAUGHLIN);
-        AuthorBean flanagan = new AuthorBean(FLANAGAN);
+        final AuthorBean flanagan = new AuthorBean(FLANAGAN);
 
-        BookBean tiger = new BookBean(TIGER);
-        BookBean javaScript = new BookBean(JAVASCRIPT);
+        final BookBean tiger = new BookBean(TIGER);
+        final BookBean javaScript = new BookBean(JAVASCRIPT);
 
-        BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
+        final BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
 
         entityManager.persist(mcLaughlin);
         entityManager.persist(flanagan);
@@ -561,19 +561,19 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        BookBean book = entityManager.find(BookBean.class, TIGER);
+        final BookBean book = entityManager.find(BookBean.class, TIGER);
         assertTrue(entityManager.contains(book));
 
         assertEquals(book.getTitle(), TIGER);
-        Set<AuthorBean> authors = book.getAuthors();
+        final Set<AuthorBean> authors = book.getAuthors();
         assertEquals(authors.size(), 2);
 
         commitTx();
     }
 
-    private void link(final String authorName, String title) throws Exception {
+    private void link(final String authorName, final String title) throws Exception {
         beginTx();
-        AuthorBean author = entityManager.find(AuthorBean.class, authorName);
+        final AuthorBean author = entityManager.find(AuthorBean.class, authorName);
         assertNotNull("Author not found " + authorName, author);
 
         final BookBean book = entityManager.find(BookBean.class, title);
@@ -722,7 +722,7 @@ public class JpaTestObject extends org.junit.Assert {
         JpaTestObject.dumpTable(nonJtaDs, "OneToOneB");
     }
 
-    public static void dumpTable(final DataSource ds, String table) throws SQLException {
+    public static void dumpTable(final DataSource ds, final String table) throws SQLException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -730,10 +730,10 @@ public class JpaTestObject extends org.junit.Assert {
             connection = ds.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM " + table);
-            ResultSetMetaData setMetaData = resultSet.getMetaData();
-            int columnCount = setMetaData.getColumnCount();
+            final ResultSetMetaData setMetaData = resultSet.getMetaData();
+            final int columnCount = setMetaData.getColumnCount();
             while (resultSet.next()) {
-                StringBuilder row = new StringBuilder();
+                final StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= columnCount; i++) {
                     if (i > 1) {
                         row.append(", ");
@@ -755,7 +755,7 @@ public class JpaTestObject extends org.junit.Assert {
         if (resultSet == null) return;
         try {
             resultSet.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
@@ -763,7 +763,7 @@ public class JpaTestObject extends org.junit.Assert {
         if (statement == null) return;
         try {
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
@@ -771,7 +771,7 @@ public class JpaTestObject extends org.junit.Assert {
         if (connection == null) return;
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 }

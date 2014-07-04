@@ -73,7 +73,7 @@ public class CustomPoolDataSourceTest {
         }
 
         @Override
-        public DataSource pool(final String name, DataSource ds, final Properties properties) {
+        public DataSource pool(final String name, final DataSource ds, final Properties properties) {
             throw new UnsupportedOperationException();
         }
 
@@ -83,7 +83,7 @@ public class CustomPoolDataSourceTest {
                 new Class<?>[]{CustomDataSource.class},
                 new InvocationHandler() {
                     @Override
-                    public Object invoke(final Object proxy, Method method, Object[] args) throws Throwable {
+                    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                         if (method.getName().equals("name")) {
                             return properties.getProperty("Name");
                         }

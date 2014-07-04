@@ -81,17 +81,17 @@ public class MethodPermission {
     public MethodPermission() {
     }
 
-    public MethodPermission(final String className, String ejbName, String methodName, String... roles) {
+    public MethodPermission(final String className, final String ejbName, final String methodName, final String... roles) {
         this(new Method(ejbName, className, methodName), roles);
     }
 
-    public MethodPermission(final String ejbName, java.lang.reflect.Method method, String... roles) {
+    public MethodPermission(final String ejbName, final java.lang.reflect.Method method, final String... roles) {
         this(new Method(ejbName, method), roles);
     }
 
-    public MethodPermission(final Method method, String... roles) {
+    public MethodPermission(final Method method, final String... roles) {
         getMethod().add(method);
-        for (String role : roles) {
+        for (final String role : roles) {
             getRoleName().add(role);
         }
     }
@@ -107,7 +107,7 @@ public class MethodPermission {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -126,7 +126,7 @@ public class MethodPermission {
         return unchecked != null;
     }
 
-    public void setUnchecked(boolean b) {
+    public void setUnchecked(final boolean b) {
         this.unchecked = (b) ? new Empty() : null;
     }
 
@@ -141,7 +141,7 @@ public class MethodPermission {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

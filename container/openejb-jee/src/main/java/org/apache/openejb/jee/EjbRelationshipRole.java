@@ -131,7 +131,7 @@ public class EjbRelationshipRole {
         return cmrField;
     }
 
-    public void setCmrField(CmrField value) {
+    public void setCmrField(final CmrField value) {
         this.cmrField = value;
     }
 
@@ -139,7 +139,7 @@ public class EjbRelationshipRole {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

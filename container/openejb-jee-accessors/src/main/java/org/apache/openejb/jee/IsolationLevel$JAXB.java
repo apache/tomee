@@ -30,17 +30,17 @@ public class IsolationLevel$JAXB
         super(IsolationLevel.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "isolation-levelType".intern()));
     }
 
-    public IsolationLevel parse(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public IsolationLevel parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseIsolationLevel(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, RuntimeContext context, final IsolationLevel isolationLevel)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final IsolationLevel isolationLevel)
         throws Exception {
         return toStringIsolationLevel(bean, parameterName, context, isolationLevel);
     }
 
-    public static IsolationLevel parseIsolationLevel(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public static IsolationLevel parseIsolationLevel(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("TRANSACTION_READ_UNCOMMITTED".equals(value)) {
             return IsolationLevel.TRANSACTION_READ_UNCOMMITTED;
@@ -56,7 +56,7 @@ public class IsolationLevel$JAXB
         }
     }
 
-    public static String toStringIsolationLevel(final Object bean, String parameterName, RuntimeContext context, final IsolationLevel isolationLevel)
+    public static String toStringIsolationLevel(final Object bean, final String parameterName, final RuntimeContext context, final IsolationLevel isolationLevel)
         throws Exception {
         if (IsolationLevel.TRANSACTION_READ_UNCOMMITTED == isolationLevel) {
             return "TRANSACTION_READ_UNCOMMITTED";

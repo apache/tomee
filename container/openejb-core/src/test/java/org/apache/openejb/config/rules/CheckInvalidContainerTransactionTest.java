@@ -29,7 +29,7 @@ public class CheckInvalidContainerTransactionTest {
         final EjbJar ejbJar = new EjbJar();
         final ContainerTransaction tx = new ContainerTransaction(TransAttribute.REQUIRED, new Method((String) null, (String) null));
         ejbJar.getAssemblyDescriptor().getContainerTransaction().add(tx);
-        ContainerTransaction tx1 = new ContainerTransaction(TransAttribute.REQUIRED, new Method("wrongEjbName", "wrongMethodName"));
+        final ContainerTransaction tx1 = new ContainerTransaction(TransAttribute.REQUIRED, new Method("wrongEjbName", "wrongMethodName"));
         ejbJar.getAssemblyDescriptor().getContainerTransaction().add(tx1);
         return ejbJar;
     }

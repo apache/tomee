@@ -48,12 +48,12 @@ public class HandlerChain$JAXB
         return _read(reader, context);
     }
 
-    public static void writeHandlerChain(final XoXMLStreamWriter writer, final HandlerChain handlerChain, RuntimeContext context)
+    public static void writeHandlerChain(final XoXMLStreamWriter writer, final HandlerChain handlerChain, final RuntimeContext context)
         throws Exception {
         _write(writer, handlerChain, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, HandlerChain handlerChain, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final HandlerChain handlerChain, final RuntimeContext context)
         throws Exception {
         _write(writer, handlerChain, context);
     }
@@ -77,7 +77,7 @@ public class HandlerChain$JAXB
         List<Handler> handler = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("handler-chainType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, HandlerChain.class);
@@ -85,10 +85,10 @@ public class HandlerChain$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, handlerChain);
                 handlerChain.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,15 +97,15 @@ public class HandlerChain$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("service-name-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceNamePattern
-                String serviceNamePatternRaw = elementReader.getElementAsString();
+                final String serviceNamePatternRaw = elementReader.getElementAsString();
 
-                QName serviceNamePattern;
+                final QName serviceNamePattern;
                 try {
                     serviceNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.unmarshal(serviceNamePatternRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
                     continue;
                 }
@@ -113,12 +113,12 @@ public class HandlerChain$JAXB
                 handlerChain.serviceNamePattern = serviceNamePattern;
             } else if (("port-name-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portNamePattern
-                String portNamePatternRaw = elementReader.getElementAsString();
+                final String portNamePatternRaw = elementReader.getElementAsString();
 
-                QName portNamePattern;
+                final QName portNamePattern;
                 try {
                     portNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.unmarshal(portNamePatternRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
                     continue;
                 }
@@ -128,10 +128,10 @@ public class HandlerChain$JAXB
                 // ELEMENT: protocolBindings
                 for (final String protocolBindingsItem : elementReader.getElementAsXmlList()) {
 
-                    String protocolBindingsItem1;
+                    final String protocolBindingsItem1;
                     try {
                         protocolBindingsItem1 = Adapters.collapsedStringAdapterAdapter.unmarshal(protocolBindingsItem);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                         continue;
                     }
@@ -148,7 +148,7 @@ public class HandlerChain$JAXB
                 }
             } else if (("handler" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handler
-                Handler handlerItem = readHandler(elementReader, context);
+                final Handler handlerItem = readHandler(elementReader, context);
                 if (handler == null) {
                     handler = handlerChain.handler;
                     if (handler != null) {
@@ -174,7 +174,7 @@ public class HandlerChain$JAXB
         return handlerChain;
     }
 
-    public final HandlerChain read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final HandlerChain read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -190,7 +190,7 @@ public class HandlerChain$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (HandlerChain.class != handlerChain.getClass()) {
             context.unexpectedSubclass(writer, handlerChain, HandlerChain.class);
             return;
@@ -205,18 +205,18 @@ public class HandlerChain$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(handlerChain, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: serviceNamePattern
-        QName serviceNamePatternRaw = handlerChain.serviceNamePattern;
+        final QName serviceNamePatternRaw = handlerChain.serviceNamePattern;
         String serviceNamePattern = null;
         try {
             serviceNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.marshal(serviceNamePatternRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(handlerChain, "serviceNamePattern", HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
         }
         if (serviceNamePattern != null) {
@@ -226,11 +226,11 @@ public class HandlerChain$JAXB
         }
 
         // ELEMENT: portNamePattern
-        QName portNamePatternRaw = handlerChain.portNamePattern;
+        final QName portNamePatternRaw = handlerChain.portNamePattern;
         String portNamePattern = null;
         try {
             portNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.marshal(portNamePatternRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(handlerChain, "portNamePattern", HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
         }
         if (portNamePattern != null) {
@@ -244,11 +244,11 @@ public class HandlerChain$JAXB
         if (protocolBindingsRaw != null) {
             writer.writeStartElement(prefix, "protocol-bindings", "http://java.sun.com/xml/ns/javaee");
             boolean protocolBindingsFirst = true;
-            for (String protocolBindingsItem : protocolBindingsRaw) {
+            for (final String protocolBindingsItem : protocolBindingsRaw) {
                 String protocolBindings = null;
                 try {
                     protocolBindings = Adapters.collapsedStringAdapterAdapter.marshal(protocolBindingsItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(handlerChain, "protocolBindings", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (protocolBindings != null) {
@@ -263,9 +263,9 @@ public class HandlerChain$JAXB
         }
 
         // ELEMENT: handler
-        List<Handler> handler = handlerChain.handler;
+        final List<Handler> handler = handlerChain.handler;
         if (handler != null) {
-            for (Handler handlerItem : handler) {
+            for (final Handler handlerItem : handler) {
                 if (handlerItem != null) {
                     writer.writeStartElement(prefix, "handler", "http://java.sun.com/xml/ns/javaee");
                     writeHandler(writer, handlerItem, context);

@@ -42,7 +42,7 @@ public class CheckMissingClassTest {
         stateless.setLocal("WrongLocal");
         stateless.setLocalHome("WrongLocalHome");
         ejbJar.addEnterpriseBean(stateless);
-        StatefulBean stateful = new StatefulBean(FooStateful.class);
+        final StatefulBean stateful = new StatefulBean(FooStateful.class);
         stateful.setHomeAndRemote("WrongHome", "WrongRemote");
         stateful.setLocal("WrongLocal");
         stateful.setLocalHome("WrongLocalHome");
@@ -53,7 +53,7 @@ public class CheckMissingClassTest {
         bmpEntityBean.setRemote("WrongRemote");
         bmpEntityBean.setLocal("WrongLocal");
         ejbJar.addEnterpriseBean(bmpEntityBean);
-        EntityBean cmpEntityBean = new EntityBean(FooEntityCMP.class, PersistenceType.CONTAINER);
+        final EntityBean cmpEntityBean = new EntityBean(FooEntityCMP.class, PersistenceType.CONTAINER);
         cmpEntityBean.setHome("WrongHome");
         cmpEntityBean.setLocalHome("WrongLocalHome");
         cmpEntityBean.setRemote("WrongRemote");

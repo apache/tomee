@@ -35,7 +35,7 @@ public class CheckInvalidTimeoutTest extends TestCase {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
-        StatelessBean barBean = new StatelessBean(BarBean.class);
+        final StatelessBean barBean = new StatelessBean(BarBean.class);
         barBean.setTimeoutMethod(new NamedMethod("foo", "java.lang.String"));
         ejbJar.addEnterpriseBean(barBean);
         return ejbJar;

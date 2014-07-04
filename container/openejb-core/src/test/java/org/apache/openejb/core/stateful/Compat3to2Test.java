@@ -53,7 +53,7 @@ public class Compat3to2Test extends TestCase {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -66,22 +66,22 @@ public class Compat3to2Test extends TestCase {
         statefulContainerInfo.properties.setProperty("Frequency", "0");
         assembler.createContainer(statefulContainerInfo);
 
-        EjbJar ejbJar = new EjbJar();
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
         bean.setHomeAndRemote(TargetHome.class, Target.class);
 
         assembler.createApplication(config.configureApplication(new EjbModule(getClass().getClassLoader(), getClass().getSimpleName(), "test", ejbJar, null)));
 
         calls.clear();
 
-        InitialContext ctx = new InitialContext();
-        TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
+        final InitialContext ctx = new InitialContext();
+        final TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
         assertNotNull(home);
 
-        Target target = home.create("Fuzz");
+        final Target target = home.create("Fuzz");
         assertNotNull(target);
 
-        String name = target.getName();
+        final String name = target.getName();
         assertEquals("Fuzz", name);
 
         target.remove();
@@ -91,7 +91,7 @@ public class Compat3to2Test extends TestCase {
     }
 
     private void assertCalls(final Call... expectedCalls) {
-        List expected = Arrays.asList(expectedCalls);
+        final List expected = Arrays.asList(expectedCalls);
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
@@ -158,8 +158,8 @@ public class Compat3to2Test extends TestCase {
     }
 
     private String join(final String delimeter, final List items) {
-        StringBuilder sb = new StringBuilder();
-        for (Object item : items) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

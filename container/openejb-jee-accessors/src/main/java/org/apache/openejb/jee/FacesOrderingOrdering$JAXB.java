@@ -48,12 +48,12 @@ public class FacesOrderingOrdering$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesOrderingOrdering(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+    public static void writeFacesOrderingOrdering(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, final RuntimeContext context)
         throws Exception {
         _write(writer, facesOrderingOrdering, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, final RuntimeContext context)
         throws Exception {
         _write(writer, facesOrderingOrdering, context);
     }
@@ -76,7 +76,7 @@ public class FacesOrderingOrdering$JAXB
         List<String> name = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-ordering-orderingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesOrderingOrdering.class);
@@ -84,14 +84,14 @@ public class FacesOrderingOrdering$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
                 String nameItemRaw = null;
@@ -99,10 +99,10 @@ public class FacesOrderingOrdering$JAXB
                     nameItemRaw = elementReader.getElementAsString();
                 }
 
-                String nameItem;
+                final String nameItem;
                 try {
                     nameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(nameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -118,7 +118,7 @@ public class FacesOrderingOrdering$JAXB
                 name.add(nameItem);
             } else if (("others" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: others
-                FacesOrderingOthers others = readFacesOrderingOthers(elementReader, context);
+                final FacesOrderingOthers others = readFacesOrderingOthers(elementReader, context);
                 facesOrderingOrdering.others = others;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "others"));
@@ -138,7 +138,7 @@ public class FacesOrderingOrdering$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
         throws Exception {
         if (facesOrderingOrdering == null) {
             writer.writeXsiNil();
@@ -149,7 +149,7 @@ public class FacesOrderingOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesOrderingOrdering.class != facesOrderingOrdering.getClass()) {
             context.unexpectedSubclass(writer, facesOrderingOrdering, FacesOrderingOrdering.class);
             return;
@@ -159,13 +159,13 @@ public class FacesOrderingOrdering$JAXB
 
 
         // ELEMENT: name
-        List<String> nameRaw = facesOrderingOrdering.name;
+        final List<String> nameRaw = facesOrderingOrdering.name;
         if (nameRaw != null) {
             for (final String nameItem : nameRaw) {
                 String name = null;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.marshal(nameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesOrderingOrdering, "name", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
@@ -179,7 +179,7 @@ public class FacesOrderingOrdering$JAXB
         }
 
         // ELEMENT: others
-        FacesOrderingOthers others = facesOrderingOrdering.others;
+        final FacesOrderingOthers others = facesOrderingOrdering.others;
         if (others != null) {
             writer.writeStartElement(prefix, "others", "http://java.sun.com/xml/ns/javaee");
             writeFacesOrderingOthers(writer, others, context);

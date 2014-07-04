@@ -43,12 +43,12 @@ public class FacesELExpression$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesELExpression(final XoXMLStreamWriter writer, final FacesELExpression facesELExpression, RuntimeContext context)
+    public static void writeFacesELExpression(final XoXMLStreamWriter writer, final FacesELExpression facesELExpression, final RuntimeContext context)
         throws Exception {
         _write(writer, facesELExpression, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesELExpression facesELExpression, final RuntimeContext context)
         throws Exception {
         _write(writer, facesELExpression, context);
     }
@@ -65,7 +65,7 @@ public class FacesELExpression$JAXB
             context = new RuntimeContext();
         }
 
-        FacesELExpression facesELExpression = new FacesELExpression();
+        final FacesELExpression facesELExpression = new FacesELExpression();
         context.beforeUnmarshal(facesELExpression, LifecycleCallback.NONE);
 
 
@@ -78,21 +78,21 @@ public class FacesELExpression$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // VALUE: value
-        String valueRaw = reader.getElementText();
+        final String valueRaw = reader.getElementText();
 
         String value = null;
         boolean valueConverted;
         try {
             value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
             valueConverted = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(reader, CollapsedStringAdapter.class, String.class, String.class, e);
             valueConverted = false;
         }
@@ -111,7 +111,7 @@ public class FacesELExpression$JAXB
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final FacesELExpression facesELExpression, RuntimeContext context)
         throws Exception {
         if (facesELExpression == null) {
             writer.writeXsiNil();
@@ -131,11 +131,11 @@ public class FacesELExpression$JAXB
 
 
         // VALUE: value
-        String valueRaw = facesELExpression.value;
+        final String valueRaw = facesELExpression.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesELExpression, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         writer.writeCharacters(value);

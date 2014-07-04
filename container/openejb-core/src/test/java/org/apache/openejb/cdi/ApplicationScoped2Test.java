@@ -64,7 +64,7 @@ public class ApplicationScoped2Test extends TestCase {
 
         final BrownLocal brownLocal = createAndMutate(BrownLocal.class);
         {
-            BrownLocal brownLocal2 = getInstance(BrownLocal.class);
+            final BrownLocal brownLocal2 = getInstance(BrownLocal.class);
 
             assertEquals(brownLocal.getMessage(), brownLocal2.getMessage());
         }

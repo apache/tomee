@@ -112,7 +112,7 @@ public class DynamicSubclassTest extends Assert {
         private final Method method;
         private final Object[] args;
 
-        public Invocation(final Object proxy, Method method, Object[] args) {
+        public Invocation(final Object proxy, final Method method, Object[] args) {
             this.proxy = proxy;
             this.method = method;
             this.args = args;
@@ -141,7 +141,7 @@ public class DynamicSubclassTest extends Assert {
 
         // TODO: check to ensure this method is implemented, issue validation failure if not
         @Override
-        public Object invoke(final Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             invocation = new Invocation(proxy, method, args);
             return null;
         }

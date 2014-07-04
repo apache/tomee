@@ -107,7 +107,7 @@ public class InvalidInterfacesTest {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(BBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(CBean.class));
-        StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
+        final StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
         return ejbJar;
     }
 

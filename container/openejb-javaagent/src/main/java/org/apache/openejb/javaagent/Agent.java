@@ -236,7 +236,7 @@ public class Agent {
             }
 
             return file.getAbsolutePath();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (file != null) {
                 if (!file.delete()) {
                     file.deleteOnExit();

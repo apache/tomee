@@ -40,17 +40,17 @@ public class FacesNavigationRuleExtension$JAXB
         super(FacesNavigationRuleExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-navigation-rule-extensionType".intern()));
     }
 
-    public static FacesNavigationRuleExtension readFacesNavigationRuleExtension(final XoXMLStreamReader reader, RuntimeContext context)
+    public static FacesNavigationRuleExtension readFacesNavigationRuleExtension(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNavigationRuleExtension(final XoXMLStreamWriter writer, final FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
+    public static void writeFacesNavigationRuleExtension(final XoXMLStreamWriter writer, final FacesNavigationRuleExtension facesNavigationRuleExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesNavigationRuleExtension, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final FacesNavigationRuleExtension facesNavigationRuleExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesNavigationRuleExtension, context);
     }
@@ -73,7 +73,7 @@ public class FacesNavigationRuleExtension$JAXB
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-navigation-rule-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesNavigationRuleExtension.class);
@@ -81,7 +81,7 @@ public class FacesNavigationRuleExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -93,7 +93,7 @@ public class FacesNavigationRuleExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesNavigationRuleExtension.any;
@@ -114,7 +114,7 @@ public class FacesNavigationRuleExtension$JAXB
         return facesNavigationRuleExtension;
     }
 
-    public final FacesNavigationRuleExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final FacesNavigationRuleExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
@@ -144,7 +144,7 @@ public class FacesNavigationRuleExtension$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesNavigationRuleExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -153,7 +153,7 @@ public class FacesNavigationRuleExtension$JAXB
         // ELEMENT_REF: any
         final List<Object> any = facesNavigationRuleExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesNavigationRuleExtension, "any", anyItem);
             }
         }

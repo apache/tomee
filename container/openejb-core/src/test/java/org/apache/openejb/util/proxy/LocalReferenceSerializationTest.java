@@ -117,7 +117,7 @@ public class LocalReferenceSerializationTest {
     @Local
     public static class RedBean implements RedLocal {
 
-        public int add(final int a, int b) {
+        public int add(final int a, final int b) {
             return a + b;
         }
     }

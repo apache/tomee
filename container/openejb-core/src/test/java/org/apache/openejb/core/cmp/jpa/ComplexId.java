@@ -25,7 +25,7 @@ public class ComplexId {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ComplexId complexId = (ComplexId) o;
+        final ComplexId complexId = (ComplexId) o;
 
         if (secondId != null ? !secondId.equals(complexId.secondId) : complexId.secondId != null) return false;
         if (firstId != null ? !firstId.equals(complexId.firstId) : complexId.firstId != null) return false;

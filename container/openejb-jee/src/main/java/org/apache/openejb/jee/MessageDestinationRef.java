@@ -141,7 +141,7 @@ public class MessageDestinationRef implements JndiReference {
         return this;
     }
 
-    public MessageDestinationRef injectionTarget(final Class<?> clazz, String property) {
+    public MessageDestinationRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -150,11 +150,11 @@ public class MessageDestinationRef implements JndiReference {
         return getMessageDestinationType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setMessageDestinationRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setMessageDestinationType(type);
     }
 
@@ -163,7 +163,7 @@ public class MessageDestinationRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -175,7 +175,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationRefName;
     }
 
-    public void setMessageDestinationRefName(String value) {
+    public void setMessageDestinationRefName(final String value) {
         this.messageDestinationRefName = value;
     }
 
@@ -183,7 +183,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationType;
     }
 
-    public void setMessageDestinationType(String value) {
+    public void setMessageDestinationType(final String value) {
         this.messageDestinationType = value;
     }
 
@@ -191,7 +191,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationUsage;
     }
 
-    public void setMessageDestinationUsage(MessageDestinationUsage value) {
+    public void setMessageDestinationUsage(final MessageDestinationUsage value) {
         this.messageDestinationUsage = value;
     }
 
@@ -216,7 +216,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationLink;
     }
 
-    public void setMessageDestinationLink(String value) {
+    public void setMessageDestinationLink(final String value) {
         this.messageDestinationLink = value;
     }
 
@@ -224,7 +224,7 @@ public class MessageDestinationRef implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -232,7 +232,7 @@ public class MessageDestinationRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -247,7 +247,7 @@ public class MessageDestinationRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

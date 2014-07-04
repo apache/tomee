@@ -81,11 +81,11 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
     public ContainerTransaction() {
     }
 
-    public ContainerTransaction(final TransAttribute transAttribute, String className, String ejbName, final String methodName) {
+    public ContainerTransaction(final TransAttribute transAttribute, final String className, String ejbName, final String methodName) {
         this(transAttribute, new Method(ejbName, className, methodName));
     }
 
-    public ContainerTransaction(final TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
+    public ContainerTransaction(final TransAttribute transAttribute, final String ejbName, java.lang.reflect.Method method) {
         this(transAttribute, new Method(ejbName, method));
     }
 

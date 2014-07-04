@@ -41,7 +41,7 @@ public class AccessTimeoutTest extends TestCase {
 
     public void test() throws Exception {
         final Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -49,13 +49,13 @@ public class AccessTimeoutTest extends TestCase {
         //TODO alternative to hack in CidBuilder to initialize if missing
 //        SystemInstance.get().setComponent(ThreadSingletonService.class, new ThreadSingletonServiceImpl(getClass().getClassLoader()));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(Color.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Red.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Crimson.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Scarlet.class));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         loadAttributes(ejbJarInfo, "Color");
@@ -110,23 +110,23 @@ public class AccessTimeoutTest extends TestCase {
     }
 
     private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
-        ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext beanContext = system.getBeanContext(deploymentId);
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
     }
 
     private void assertAttribute(final long time, final TimeUnit unit, final Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
         assertTrue("Null timeout for " + method, info != null && info.accessTimeout != null);
         assertEquals("Timeout time for " + method, time, info.accessTimeout.time);
         assertEquals("Timeout unit for " + method, unit, TimeUnit.valueOf(info.accessTimeout.unit));
     }
 
     private void assertNullAttribute(final Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
         assertTrue("Non-null timeout for " + method, info == null || info.accessTimeout == null);
     }
 

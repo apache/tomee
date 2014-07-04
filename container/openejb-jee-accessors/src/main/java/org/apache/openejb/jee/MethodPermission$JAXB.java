@@ -47,17 +47,17 @@ public class MethodPermission$JAXB
         super(MethodPermission.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "method-permissionType".intern()), Text$JAXB.class, Empty$JAXB.class, Method$JAXB.class);
     }
 
-    public static MethodPermission readMethodPermission(final XoXMLStreamReader reader, RuntimeContext context)
+    public static MethodPermission readMethodPermission(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethodPermission(final XoXMLStreamWriter writer, MethodPermission methodPermission, RuntimeContext context)
+    public static void writeMethodPermission(final XoXMLStreamWriter writer, final MethodPermission methodPermission, final RuntimeContext context)
         throws Exception {
         _write(writer, methodPermission, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final MethodPermission methodPermission, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final MethodPermission methodPermission, final RuntimeContext context)
         throws Exception {
         _write(writer, methodPermission, context);
     }
@@ -82,7 +82,7 @@ public class MethodPermission$JAXB
         List<Method> method = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("method-permissionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MethodPermission.class);
@@ -93,7 +93,7 @@ public class MethodPermission$JAXB
         for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, methodPermission);
                 methodPermission.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -102,22 +102,22 @@ public class MethodPermission$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: roleName
-                String roleNameItemRaw = elementReader.getElementAsString();
+                final String roleNameItemRaw = elementReader.getElementAsString();
 
-                String roleNameItem;
+                final String roleNameItem;
                 try {
                     roleNameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(roleNameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -133,11 +133,11 @@ public class MethodPermission$JAXB
                 roleName.add(roleNameItem);
             } else if (("unchecked" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: unchecked
-                Empty unchecked = readEmpty(elementReader, context);
+                final Empty unchecked = readEmpty(elementReader, context);
                 methodPermission.unchecked = unchecked;
             } else if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: method
-                Method methodItem = readMethod(elementReader, context);
+                final Method methodItem = readMethod(elementReader, context);
                 if (method == null) {
                     method = methodPermission.method;
                     if (method != null) {
@@ -154,7 +154,7 @@ public class MethodPermission$JAXB
         if (descriptions != null) {
             try {
                 methodPermission.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, MethodPermission.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -186,7 +186,7 @@ public class MethodPermission$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MethodPermission.class != methodPermission.getClass()) {
             context.unexpectedSubclass(writer, methodPermission, MethodPermission.class);
             return;
@@ -196,7 +196,7 @@ public class MethodPermission$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = methodPermission.id;
+        final String idRaw = methodPermission.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -211,11 +211,11 @@ public class MethodPermission$JAXB
         Text[] descriptions = null;
         try {
             descriptions = methodPermission.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(methodPermission, "descriptions", MethodPermission.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -227,9 +227,9 @@ public class MethodPermission$JAXB
         }
 
         // ELEMENT: roleName
-        List<String> roleNameRaw = methodPermission.roleName;
+        final List<String> roleNameRaw = methodPermission.roleName;
         if (roleNameRaw != null) {
-            for (String roleNameItem : roleNameRaw) {
+            for (final String roleNameItem : roleNameRaw) {
                 String roleName = null;
                 try {
                     roleName = Adapters.collapsedStringAdapterAdapter.marshal(roleNameItem);
@@ -247,7 +247,7 @@ public class MethodPermission$JAXB
         }
 
         // ELEMENT: unchecked
-        Empty unchecked = methodPermission.unchecked;
+        final Empty unchecked = methodPermission.unchecked;
         if (unchecked != null) {
             writer.writeStartElement(prefix, "unchecked", "http://java.sun.com/xml/ns/javaee");
             writeEmpty(writer, unchecked, context);
@@ -255,9 +255,9 @@ public class MethodPermission$JAXB
         }
 
         // ELEMENT: method
-        List<Method> method = methodPermission.method;
+        final List<Method> method = methodPermission.method;
         if (method != null) {
-            for (Method methodItem : method) {
+            for (final Method methodItem : method) {
                 if (methodItem != null) {
                     writer.writeStartElement(prefix, "method", "http://java.sun.com/xml/ns/javaee");
                     writeMethod(writer, methodItem, context);

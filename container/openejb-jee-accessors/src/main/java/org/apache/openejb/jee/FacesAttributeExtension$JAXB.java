@@ -45,7 +45,7 @@ public class FacesAttributeExtension$JAXB
         return _read(reader, context);
     }
 
-    public static void writeFacesAttributeExtension(final XoXMLStreamWriter writer, FacesAttributeExtension facesAttributeExtension, final RuntimeContext context)
+    public static void writeFacesAttributeExtension(final XoXMLStreamWriter writer, final FacesAttributeExtension facesAttributeExtension, final RuntimeContext context)
         throws Exception {
         _write(writer, facesAttributeExtension, context);
     }
@@ -81,10 +81,10 @@ public class FacesAttributeExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesAttributeExtension);
                 facesAttributeExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesAttributeExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesAttributeExtension.any;
@@ -139,7 +139,7 @@ public class FacesAttributeExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesAttributeExtension.id;
+        final String idRaw = facesAttributeExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -151,9 +151,9 @@ public class FacesAttributeExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesAttributeExtension.any;
+        final List<Object> any = facesAttributeExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesAttributeExtension, "any", anyItem);
             }
         }

@@ -21,7 +21,7 @@ import javax.ejb.Stateless;
 
 @Stateless
 public class BasicEjb implements BasicEjbLocal {
-    public String concat(final String s1, String s2) {
+    public String concat(final String s1, final String s2) {
         return s1 + " " + s2;
     }
 

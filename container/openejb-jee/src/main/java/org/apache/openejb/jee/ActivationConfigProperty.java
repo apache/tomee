@@ -79,7 +79,7 @@ public class ActivationConfigProperty {
         return activationConfigPropertyName;
     }
 
-    public void setActivationConfigPropertyName(String value) {
+    public void setActivationConfigPropertyName(final String value) {
         this.activationConfigPropertyName = value;
     }
 
@@ -87,7 +87,7 @@ public class ActivationConfigProperty {
         return activationConfigPropertyValue;
     }
 
-    public void setActivationConfigPropertyValue(String value) {
+    public void setActivationConfigPropertyValue(final String value) {
         this.activationConfigPropertyValue = value;
     }
 
@@ -95,7 +95,7 @@ public class ActivationConfigProperty {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

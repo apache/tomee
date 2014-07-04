@@ -35,12 +35,12 @@ public class ConcurrencyManagementType$JAXB
         return parseConcurrencyManagementType(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, RuntimeContext context, ConcurrencyManagementType concurrencyManagementType)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrencyManagementType concurrencyManagementType)
         throws Exception {
         return toStringConcurrencyManagementType(bean, parameterName, context, concurrencyManagementType);
     }
 
-    public static ConcurrencyManagementType parseConcurrencyManagementType(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public static ConcurrencyManagementType parseConcurrencyManagementType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         if ("Bean".equals(value)) {
             return ConcurrencyManagementType.BEAN;
@@ -52,7 +52,7 @@ public class ConcurrencyManagementType$JAXB
         }
     }
 
-    public static String toStringConcurrencyManagementType(final Object bean, String parameterName, final RuntimeContext context, ConcurrencyManagementType concurrencyManagementType)
+    public static String toStringConcurrencyManagementType(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrencyManagementType concurrencyManagementType)
         throws Exception {
         if (ConcurrencyManagementType.BEAN == concurrencyManagementType) {
             return "Bean";

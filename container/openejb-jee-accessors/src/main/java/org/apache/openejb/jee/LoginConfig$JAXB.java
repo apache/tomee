@@ -46,12 +46,12 @@ public class LoginConfig$JAXB
         return _read(reader, context);
     }
 
-    public static void writeLoginConfig(final XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
+    public static void writeLoginConfig(final XoXMLStreamWriter writer, final LoginConfig loginConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, loginConfig, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final LoginConfig loginConfig, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final LoginConfig loginConfig, final RuntimeContext context)
         throws Exception {
         _write(writer, loginConfig, context);
     }
@@ -68,12 +68,12 @@ public class LoginConfig$JAXB
             context = new RuntimeContext();
         }
 
-        LoginConfig loginConfig = new LoginConfig();
+        final LoginConfig loginConfig = new LoginConfig();
         context.beforeUnmarshal(loginConfig, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("login-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, LoginConfig.class);
@@ -81,10 +81,10 @@ public class LoginConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, loginConfig);
                 loginConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class LoginConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("auth-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: authMethod
-                String authMethodRaw = elementReader.getElementAsString();
+                final String authMethodRaw = elementReader.getElementAsString();
 
-                String authMethod;
+                final String authMethod;
                 try {
                     authMethod = Adapters.collapsedStringAdapterAdapter.unmarshal(authMethodRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,12 +109,12 @@ public class LoginConfig$JAXB
                 loginConfig.authMethod = authMethod;
             } else if (("realm-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: realmName
-                String realmNameRaw = elementReader.getElementAsString();
+                final String realmNameRaw = elementReader.getElementAsString();
 
-                String realmName;
+                final String realmName;
                 try {
                     realmName = Adapters.collapsedStringAdapterAdapter.unmarshal(realmNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,7 +122,7 @@ public class LoginConfig$JAXB
                 loginConfig.realmName = realmName;
             } else if (("form-login-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: formLoginConfig
-                FormLoginConfig formLoginConfig = readFormLoginConfig(elementReader, context);
+                final FormLoginConfig formLoginConfig = readFormLoginConfig(elementReader, context);
                 loginConfig.formLoginConfig = formLoginConfig;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "auth-method"), new QName("http://java.sun.com/xml/ns/javaee", "realm-name"), new QName("http://java.sun.com/xml/ns/javaee", "form-login-config"));
@@ -134,12 +134,12 @@ public class LoginConfig$JAXB
         return loginConfig;
     }
 
-    public final LoginConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+    public final LoginConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
         throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, final LoginConfig loginConfig, RuntimeContext context)
         throws Exception {
         if (loginConfig == null) {
             writer.writeXsiNil();
@@ -150,7 +150,7 @@ public class LoginConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (LoginConfig.class != loginConfig.getClass()) {
             context.unexpectedSubclass(writer, loginConfig, LoginConfig.class);
             return;
@@ -172,7 +172,7 @@ public class LoginConfig$JAXB
         }
 
         // ELEMENT: authMethod
-        String authMethodRaw = loginConfig.authMethod;
+        final String authMethodRaw = loginConfig.authMethod;
         String authMethod = null;
         try {
             authMethod = Adapters.collapsedStringAdapterAdapter.marshal(authMethodRaw);
@@ -186,11 +186,11 @@ public class LoginConfig$JAXB
         }
 
         // ELEMENT: realmName
-        String realmNameRaw = loginConfig.realmName;
+        final String realmNameRaw = loginConfig.realmName;
         String realmName = null;
         try {
             realmName = Adapters.collapsedStringAdapterAdapter.marshal(realmNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(loginConfig, "realmName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (realmName != null) {
@@ -200,7 +200,7 @@ public class LoginConfig$JAXB
         }
 
         // ELEMENT: formLoginConfig
-        FormLoginConfig formLoginConfig = loginConfig.formLoginConfig;
+        final FormLoginConfig formLoginConfig = loginConfig.formLoginConfig;
         if (formLoginConfig != null) {
             writer.writeStartElement(prefix, "form-login-config", "http://java.sun.com/xml/ns/javaee");
             writeFormLoginConfig(writer, formLoginConfig, context);

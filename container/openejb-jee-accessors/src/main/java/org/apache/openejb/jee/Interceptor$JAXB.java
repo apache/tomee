@@ -73,12 +73,12 @@ public class Interceptor$JAXB
         return _read(reader, context);
     }
 
-    public static void writeInterceptor(final XoXMLStreamWriter writer, Interceptor interceptor, RuntimeContext context)
+    public static void writeInterceptor(final XoXMLStreamWriter writer, final Interceptor interceptor, final RuntimeContext context)
         throws Exception {
         _write(writer, interceptor, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final Interceptor interceptor, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, final Interceptor interceptor, final RuntimeContext context)
         throws Exception {
         _write(writer, interceptor, context);
     }
@@ -95,7 +95,7 @@ public class Interceptor$JAXB
             context = new RuntimeContext();
         }
 
-        Interceptor interceptor = new Interceptor();
+        final Interceptor interceptor = new Interceptor();
         context.beforeUnmarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -120,7 +120,7 @@ public class Interceptor$JAXB
         List<org.apache.openejb.jee.LifecycleCallback> afterCompletion = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("interceptorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Interceptor.class);
@@ -128,10 +128,10 @@ public class Interceptor$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, interceptor);
                 interceptor.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -140,22 +140,22 @@ public class Interceptor$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("interceptor-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptorClass
-                String interceptorClassRaw = elementReader.getElementAsString();
+                final String interceptorClassRaw = elementReader.getElementAsString();
 
-                String interceptorClass;
+                final String interceptorClass;
                 try {
                     interceptorClass = Adapters.collapsedStringAdapterAdapter.unmarshal(interceptorClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -163,7 +163,7 @@ public class Interceptor$JAXB
                 interceptor.interceptorClass = interceptorClass;
             } else if (("around-invoke" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: aroundInvoke
-                AroundInvoke aroundInvokeItem = readAroundInvoke(elementReader, context);
+                final AroundInvoke aroundInvokeItem = readAroundInvoke(elementReader, context);
                 if (aroundInvoke == null) {
                     aroundInvoke = interceptor.aroundInvoke;
                     if (aroundInvoke != null) {
@@ -175,7 +175,7 @@ public class Interceptor$JAXB
                 aroundInvoke.add(aroundInvokeItem);
             } else if (("around-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: aroundTimeout
-                AroundTimeout aroundTimeoutItem = readAroundTimeout(elementReader, context);
+                final AroundTimeout aroundTimeoutItem = readAroundTimeout(elementReader, context);
                 if (aroundTimeout == null) {
                     aroundTimeout = interceptor.aroundTimeout;
                     if (aroundTimeout != null) {
@@ -187,7 +187,7 @@ public class Interceptor$JAXB
                 aroundTimeout.add(aroundTimeoutItem);
             } else if (("env-entry" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntry
-                EnvEntry envEntryItem = readEnvEntry(elementReader, context);
+                final EnvEntry envEntryItem = readEnvEntry(elementReader, context);
                 if (envEntry == null) {
                     envEntry = interceptor.envEntry;
                     if (envEntry != null) {
@@ -211,7 +211,7 @@ public class Interceptor$JAXB
                 ejbRef.add(ejbRefItem);
             } else if (("ejb-local-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbLocalRef
-                EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
+                final EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
                 if (ejbLocalRef == null) {
                     ejbLocalRef = interceptor.ejbLocalRef;
                     if (ejbLocalRef != null) {
@@ -223,7 +223,7 @@ public class Interceptor$JAXB
                 ejbLocalRef.add(ejbLocalRefItem);
             } else if (("service-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceRef
-                ServiceRef serviceRefItem = readServiceRef(elementReader, context);
+                final ServiceRef serviceRefItem = readServiceRef(elementReader, context);
                 if (serviceRef == null) {
                     serviceRef = interceptor.serviceRef;
                     if (serviceRef != null) {
@@ -235,7 +235,7 @@ public class Interceptor$JAXB
                 serviceRef.add(serviceRefItem);
             } else if (("resource-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceRef
-                ResourceRef resourceRefItem = readResourceRef(elementReader, context);
+                final ResourceRef resourceRefItem = readResourceRef(elementReader, context);
                 if (resourceRef == null) {
                     resourceRef = interceptor.resourceRef;
                     if (resourceRef != null) {
@@ -247,7 +247,7 @@ public class Interceptor$JAXB
                 resourceRef.add(resourceRefItem);
             } else if (("resource-env-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceEnvRef
-                ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
+                final ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
                 if (resourceEnvRef == null) {
                     resourceEnvRef = interceptor.resourceEnvRef;
                     if (resourceEnvRef != null) {
@@ -259,7 +259,7 @@ public class Interceptor$JAXB
                 resourceEnvRef.add(resourceEnvRefItem);
             } else if (("message-destination-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationRef
-                MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
+                final MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
                 if (messageDestinationRef == null) {
                     messageDestinationRef = interceptor.messageDestinationRef;
                     if (messageDestinationRef != null) {
@@ -271,7 +271,7 @@ public class Interceptor$JAXB
                 messageDestinationRef.add(messageDestinationRefItem);
             } else if (("persistence-context-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextRef
-                PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
+                final PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
                 if (persistenceContextRef == null) {
                     persistenceContextRef = interceptor.persistenceContextRef;
                     if (persistenceContextRef != null) {
@@ -283,7 +283,7 @@ public class Interceptor$JAXB
                 persistenceContextRef.add(persistenceContextRefItem);
             } else if (("persistence-unit-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceUnitRef
-                PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
+                final PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
                 if (persistenceUnitRef == null) {
                     persistenceUnitRef = interceptor.persistenceUnitRef;
                     if (persistenceUnitRef != null) {
@@ -295,7 +295,7 @@ public class Interceptor$JAXB
                 persistenceUnitRef.add(persistenceUnitRefItem);
             } else if (("post-construct" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: postConstruct
-                org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
                 if (postConstruct == null) {
                     postConstruct = interceptor.postConstruct;
                     if (postConstruct != null) {
@@ -307,7 +307,7 @@ public class Interceptor$JAXB
                 postConstruct.add(postConstructItem);
             } else if (("pre-destroy" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: preDestroy
-                org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
                 if (preDestroy == null) {
                     preDestroy = interceptor.preDestroy;
                     if (preDestroy != null) {
@@ -319,7 +319,7 @@ public class Interceptor$JAXB
                 preDestroy.add(preDestroyItem);
             } else if (("data-source" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dataSource
-                DataSource dataSourceItem = readDataSource(elementReader, context);
+                final DataSource dataSourceItem = readDataSource(elementReader, context);
                 if (dataSource == null) {
                     dataSource = interceptor.dataSource;
                     if (dataSource != null) {
@@ -331,7 +331,7 @@ public class Interceptor$JAXB
                 dataSource.add(dataSourceItem);
             } else if (("post-activate" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: postActivate
-                org.apache.openejb.jee.LifecycleCallback postActivateItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback postActivateItem = readLifecycleCallback(elementReader, context);
                 if (postActivate == null) {
                     postActivate = interceptor.postActivate;
                     if (postActivate != null) {
@@ -343,7 +343,7 @@ public class Interceptor$JAXB
                 postActivate.add(postActivateItem);
             } else if (("pre-passivate" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: prePassivate
-                org.apache.openejb.jee.LifecycleCallback prePassivateItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback prePassivateItem = readLifecycleCallback(elementReader, context);
                 if (prePassivate == null) {
                     prePassivate = interceptor.prePassivate;
                     if (prePassivate != null) {
@@ -355,7 +355,7 @@ public class Interceptor$JAXB
                 prePassivate.add(prePassivateItem);
             } else if (("after-begin" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: afterBegin
-                org.apache.openejb.jee.LifecycleCallback afterBeginItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback afterBeginItem = readLifecycleCallback(elementReader, context);
                 if (afterBegin == null) {
                     afterBegin = interceptor.afterBegin;
                     if (afterBegin != null) {
@@ -367,7 +367,7 @@ public class Interceptor$JAXB
                 afterBegin.add(afterBeginItem);
             } else if (("before-completion" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: beforeCompletion
-                org.apache.openejb.jee.LifecycleCallback beforeCompletionItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback beforeCompletionItem = readLifecycleCallback(elementReader, context);
                 if (beforeCompletion == null) {
                     beforeCompletion = interceptor.beforeCompletion;
                     if (beforeCompletion != null) {
@@ -379,7 +379,7 @@ public class Interceptor$JAXB
                 beforeCompletion.add(beforeCompletionItem);
             } else if (("after-completion" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: afterCompletion
-                org.apache.openejb.jee.LifecycleCallback afterCompletionItem = readLifecycleCallback(elementReader, context);
+                final org.apache.openejb.jee.LifecycleCallback afterCompletionItem = readLifecycleCallback(elementReader, context);
                 if (afterCompletion == null) {
                     afterCompletion = interceptor.afterCompletion;
                     if (afterCompletion != null) {
@@ -396,7 +396,7 @@ public class Interceptor$JAXB
         if (descriptions != null) {
             try {
                 interceptor.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Interceptor.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -479,7 +479,7 @@ public class Interceptor$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Interceptor.class != interceptor.getClass()) {
             context.unexpectedSubclass(writer, interceptor, Interceptor.class);
             return;
@@ -489,12 +489,12 @@ public class Interceptor$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = interceptor.id;
+        final String idRaw = interceptor.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(interceptor, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -504,11 +504,11 @@ public class Interceptor$JAXB
         Text[] descriptions = null;
         try {
             descriptions = interceptor.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(interceptor, "descriptions", Interceptor.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -520,11 +520,11 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: interceptorClass
-        String interceptorClassRaw = interceptor.interceptorClass;
+        final String interceptorClassRaw = interceptor.interceptorClass;
         String interceptorClass = null;
         try {
             interceptorClass = Adapters.collapsedStringAdapterAdapter.marshal(interceptorClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(interceptor, "interceptorClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (interceptorClass != null) {
@@ -536,9 +536,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: aroundInvoke
-        List<AroundInvoke> aroundInvoke = interceptor.aroundInvoke;
+        final List<AroundInvoke> aroundInvoke = interceptor.aroundInvoke;
         if (aroundInvoke != null) {
-            for (AroundInvoke aroundInvokeItem : aroundInvoke) {
+            for (final AroundInvoke aroundInvokeItem : aroundInvoke) {
                 if (aroundInvokeItem != null) {
                     writer.writeStartElement(prefix, "around-invoke", "http://java.sun.com/xml/ns/javaee");
                     writeAroundInvoke(writer, aroundInvokeItem, context);
@@ -550,7 +550,7 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: aroundTimeout
-        List<AroundTimeout> aroundTimeout = interceptor.aroundTimeout;
+        final List<AroundTimeout> aroundTimeout = interceptor.aroundTimeout;
         if (aroundTimeout != null) {
             for (final AroundTimeout aroundTimeoutItem : aroundTimeout) {
                 if (aroundTimeoutItem != null) {
@@ -562,7 +562,7 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: envEntry
-        KeyedCollection<String, EnvEntry> envEntry = interceptor.envEntry;
+        final KeyedCollection<String, EnvEntry> envEntry = interceptor.envEntry;
         if (envEntry != null) {
             for (final EnvEntry envEntryItem : envEntry) {
                 if (envEntryItem != null) {
@@ -576,9 +576,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: ejbRef
-        KeyedCollection<String, EjbRef> ejbRef = interceptor.ejbRef;
+        final KeyedCollection<String, EjbRef> ejbRef = interceptor.ejbRef;
         if (ejbRef != null) {
-            for (EjbRef ejbRefItem : ejbRef) {
+            for (final EjbRef ejbRefItem : ejbRef) {
                 if (ejbRefItem != null) {
                     writer.writeStartElement(prefix, "ejb-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbRef(writer, ejbRefItem, context);
@@ -590,9 +590,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: ejbLocalRef
-        KeyedCollection<String, EjbLocalRef> ejbLocalRef = interceptor.ejbLocalRef;
+        final KeyedCollection<String, EjbLocalRef> ejbLocalRef = interceptor.ejbLocalRef;
         if (ejbLocalRef != null) {
-            for (EjbLocalRef ejbLocalRefItem : ejbLocalRef) {
+            for (final EjbLocalRef ejbLocalRefItem : ejbLocalRef) {
                 if (ejbLocalRefItem != null) {
                     writer.writeStartElement(prefix, "ejb-local-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbLocalRef(writer, ejbLocalRefItem, context);
@@ -604,9 +604,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: serviceRef
-        KeyedCollection<String, ServiceRef> serviceRef = interceptor.serviceRef;
+        final KeyedCollection<String, ServiceRef> serviceRef = interceptor.serviceRef;
         if (serviceRef != null) {
-            for (ServiceRef serviceRefItem : serviceRef) {
+            for (final ServiceRef serviceRefItem : serviceRef) {
                 if (serviceRefItem != null) {
                     writer.writeStartElement(prefix, "service-ref", "http://java.sun.com/xml/ns/javaee");
                     writeServiceRef(writer, serviceRefItem, context);
@@ -618,9 +618,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: resourceRef
-        KeyedCollection<String, ResourceRef> resourceRef = interceptor.resourceRef;
+        final KeyedCollection<String, ResourceRef> resourceRef = interceptor.resourceRef;
         if (resourceRef != null) {
-            for (ResourceRef resourceRefItem : resourceRef) {
+            for (final ResourceRef resourceRefItem : resourceRef) {
                 if (resourceRefItem != null) {
                     writer.writeStartElement(prefix, "resource-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceRef(writer, resourceRefItem, context);
@@ -632,9 +632,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: resourceEnvRef
-        KeyedCollection<String, ResourceEnvRef> resourceEnvRef = interceptor.resourceEnvRef;
+        final KeyedCollection<String, ResourceEnvRef> resourceEnvRef = interceptor.resourceEnvRef;
         if (resourceEnvRef != null) {
-            for (ResourceEnvRef resourceEnvRefItem : resourceEnvRef) {
+            for (final ResourceEnvRef resourceEnvRefItem : resourceEnvRef) {
                 if (resourceEnvRefItem != null) {
                     writer.writeStartElement(prefix, "resource-env-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceEnvRef(writer, resourceEnvRefItem, context);
@@ -646,9 +646,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: messageDestinationRef
-        KeyedCollection<String, MessageDestinationRef> messageDestinationRef = interceptor.messageDestinationRef;
+        final KeyedCollection<String, MessageDestinationRef> messageDestinationRef = interceptor.messageDestinationRef;
         if (messageDestinationRef != null) {
-            for (MessageDestinationRef messageDestinationRefItem : messageDestinationRef) {
+            for (final MessageDestinationRef messageDestinationRefItem : messageDestinationRef) {
                 if (messageDestinationRefItem != null) {
                     writer.writeStartElement(prefix, "message-destination-ref", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDestinationRef(writer, messageDestinationRefItem, context);
@@ -660,9 +660,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: persistenceContextRef
-        KeyedCollection<String, PersistenceContextRef> persistenceContextRef = interceptor.persistenceContextRef;
+        final KeyedCollection<String, PersistenceContextRef> persistenceContextRef = interceptor.persistenceContextRef;
         if (persistenceContextRef != null) {
-            for (PersistenceContextRef persistenceContextRefItem : persistenceContextRef) {
+            for (final PersistenceContextRef persistenceContextRefItem : persistenceContextRef) {
                 if (persistenceContextRefItem != null) {
                     writer.writeStartElement(prefix, "persistence-context-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceContextRef(writer, persistenceContextRefItem, context);
@@ -674,9 +674,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: persistenceUnitRef
-        KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = interceptor.persistenceUnitRef;
+        final KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = interceptor.persistenceUnitRef;
         if (persistenceUnitRef != null) {
-            for (PersistenceUnitRef persistenceUnitRefItem : persistenceUnitRef) {
+            for (final PersistenceUnitRef persistenceUnitRefItem : persistenceUnitRef) {
                 if (persistenceUnitRefItem != null) {
                     writer.writeStartElement(prefix, "persistence-unit-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceUnitRef(writer, persistenceUnitRefItem, context);
@@ -688,7 +688,7 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: postConstruct
-        List<org.apache.openejb.jee.LifecycleCallback> postConstruct = interceptor.postConstruct;
+        final List<org.apache.openejb.jee.LifecycleCallback> postConstruct = interceptor.postConstruct;
         if (postConstruct != null) {
             for (final org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
                 if (postConstructItem != null) {
@@ -702,9 +702,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: preDestroy
-        List<org.apache.openejb.jee.LifecycleCallback> preDestroy = interceptor.preDestroy;
+        final List<org.apache.openejb.jee.LifecycleCallback> preDestroy = interceptor.preDestroy;
         if (preDestroy != null) {
-            for (org.apache.openejb.jee.LifecycleCallback preDestroyItem : preDestroy) {
+            for (final org.apache.openejb.jee.LifecycleCallback preDestroyItem : preDestroy) {
                 if (preDestroyItem != null) {
                     writer.writeStartElement(prefix, "pre-destroy", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, preDestroyItem, context);
@@ -716,9 +716,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: dataSource
-        KeyedCollection<String, DataSource> dataSource = interceptor.dataSource;
+        final KeyedCollection<String, DataSource> dataSource = interceptor.dataSource;
         if (dataSource != null) {
-            for (DataSource dataSourceItem : dataSource) {
+            for (final DataSource dataSourceItem : dataSource) {
                 if (dataSourceItem != null) {
                     writer.writeStartElement(prefix, "data-source", "http://java.sun.com/xml/ns/javaee");
                     writeDataSource(writer, dataSourceItem, context);
@@ -730,9 +730,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: postActivate
-        List<org.apache.openejb.jee.LifecycleCallback> postActivate = interceptor.postActivate;
+        final List<org.apache.openejb.jee.LifecycleCallback> postActivate = interceptor.postActivate;
         if (postActivate != null) {
-            for (org.apache.openejb.jee.LifecycleCallback postActivateItem : postActivate) {
+            for (final org.apache.openejb.jee.LifecycleCallback postActivateItem : postActivate) {
                 if (postActivateItem != null) {
                     writer.writeStartElement(prefix, "post-activate", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, postActivateItem, context);
@@ -744,9 +744,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: prePassivate
-        List<org.apache.openejb.jee.LifecycleCallback> prePassivate = interceptor.prePassivate;
+        final List<org.apache.openejb.jee.LifecycleCallback> prePassivate = interceptor.prePassivate;
         if (prePassivate != null) {
-            for (org.apache.openejb.jee.LifecycleCallback prePassivateItem : prePassivate) {
+            for (final org.apache.openejb.jee.LifecycleCallback prePassivateItem : prePassivate) {
                 if (prePassivateItem != null) {
                     writer.writeStartElement(prefix, "pre-passivate", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, prePassivateItem, context);
@@ -758,9 +758,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: afterBegin
-        List<org.apache.openejb.jee.LifecycleCallback> afterBegin = interceptor.afterBegin;
+        final List<org.apache.openejb.jee.LifecycleCallback> afterBegin = interceptor.afterBegin;
         if (afterBegin != null) {
-            for (org.apache.openejb.jee.LifecycleCallback afterBeginItem : afterBegin) {
+            for (final org.apache.openejb.jee.LifecycleCallback afterBeginItem : afterBegin) {
                 if (afterBeginItem != null) {
                     writer.writeStartElement(prefix, "after-begin", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, afterBeginItem, context);
@@ -772,9 +772,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: beforeCompletion
-        List<org.apache.openejb.jee.LifecycleCallback> beforeCompletion = interceptor.beforeCompletion;
+        final List<org.apache.openejb.jee.LifecycleCallback> beforeCompletion = interceptor.beforeCompletion;
         if (beforeCompletion != null) {
-            for (org.apache.openejb.jee.LifecycleCallback beforeCompletionItem : beforeCompletion) {
+            for (final org.apache.openejb.jee.LifecycleCallback beforeCompletionItem : beforeCompletion) {
                 if (beforeCompletionItem != null) {
                     writer.writeStartElement(prefix, "before-completion", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, beforeCompletionItem, context);
@@ -786,9 +786,9 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: afterCompletion
-        List<org.apache.openejb.jee.LifecycleCallback> afterCompletion = interceptor.afterCompletion;
+        final List<org.apache.openejb.jee.LifecycleCallback> afterCompletion = interceptor.afterCompletion;
         if (afterCompletion != null) {
-            for (org.apache.openejb.jee.LifecycleCallback afterCompletionItem : afterCompletion) {
+            for (final org.apache.openejb.jee.LifecycleCallback afterCompletionItem : afterCompletion) {
                 if (afterCompletionItem != null) {
                     writer.writeStartElement(prefix, "after-completion", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, afterCompletionItem, context);

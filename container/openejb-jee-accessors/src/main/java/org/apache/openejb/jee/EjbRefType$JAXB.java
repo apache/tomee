@@ -30,12 +30,12 @@ public class EjbRefType$JAXB
         super(EjbRefType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejbRefType".intern()));
     }
 
-    public EjbRefType parse(final XoXMLStreamReader reader, RuntimeContext context, String value)
+    public EjbRefType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
         throws Exception {
         return parseEjbRefType(reader, context, value);
     }
 
-    public String toString(final Object bean, String parameterName, final RuntimeContext context, EjbRefType ejbRefType)
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final EjbRefType ejbRefType)
         throws Exception {
         return toStringEjbRefType(bean, parameterName, context, ejbRefType);
     }
@@ -52,7 +52,7 @@ public class EjbRefType$JAXB
         }
     }
 
-    public static String toStringEjbRefType(final Object bean, final String parameterName, RuntimeContext context, EjbRefType ejbRefType)
+    public static String toStringEjbRefType(final Object bean, final String parameterName, final RuntimeContext context, final EjbRefType ejbRefType)
         throws Exception {
         if (EjbRefType.ENTITY == ejbRefType) {
             return "Entity";

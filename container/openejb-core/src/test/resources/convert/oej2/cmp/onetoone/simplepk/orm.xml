@@ -20,45 +20,45 @@
 <!-- $Rev$ $Date$ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-  <entity name="OneToOneA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneA">
-    <description>TestModule#A</description>
-    <table name="A"/>
-    <named-query name="OneToOneA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
-      <query>SELECT OBJECT(A) FROM OneToOneA A</query>
-    </named-query>
-    <attributes>
-      <id name="field1">
-        <column name="a1"/>
-      </id>
-      <basic name="field2">
-        <column name="a2"/>
-      </basic>
-      <one-to-one name="b" mapped-by="a"/>
-    </attributes>
-  </entity>
-  <entity name="OneToOneB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneB">
-    <description>TestModule#B</description>
-    <table name="B"/>
-    <named-query name="OneToOneB.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
-      <query>SELECT OBJECT(B) FROM OneToOneB B</query>
-    </named-query>
-    <attributes>
-      <id name="field1">
-        <column name="b1"/>
-      </id>
-      <basic name="field2">
-        <column name="b2"/>
-      </basic>
-      <basic name="field3">
-        <column name="fka1"/>
-      </basic>
-      <basic name="field4"/>
-      <one-to-one name="a">
-        <join-column referenced-column-name="a1" name="fka1"/>
-        <cascade>
-          <cascade-all/>
-        </cascade>
-      </one-to-one>
-    </attributes>
-  </entity>
+    <entity name="OneToOneA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneA">
+        <description>TestModule#A</description>
+        <table name="A"/>
+        <named-query name="OneToOneA.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+            <query>SELECT OBJECT(A) FROM OneToOneA A</query>
+        </named-query>
+        <attributes>
+            <id name="field1">
+                <column name="a1"/>
+            </id>
+            <basic name="field2">
+                <column name="a2"/>
+            </basic>
+            <one-to-one name="b" mapped-by="a"/>
+        </attributes>
+    </entity>
+    <entity name="OneToOneB" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.onetoone.OneToOneB">
+        <description>TestModule#B</description>
+        <table name="B"/>
+        <named-query name="OneToOneB.findByPrimaryKey(org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK)">
+            <query>SELECT OBJECT(B) FROM OneToOneB B</query>
+        </named-query>
+        <attributes>
+            <id name="field1">
+                <column name="b1"/>
+            </id>
+            <basic name="field2">
+                <column name="b2"/>
+            </basic>
+            <basic name="field3">
+                <column name="fka1"/>
+            </basic>
+            <basic name="field4"/>
+            <one-to-one name="a">
+                <join-column referenced-column-name="a1" name="fka1"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-one>
+        </attributes>
+    </entity>
 </entity-mappings>

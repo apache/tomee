@@ -46,7 +46,7 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
 
         final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(MethodLevelInterceptorOnlySLSBean.class));
 
-        AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
+        final AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
 
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorOne.class)));
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorTwo.class)));
@@ -63,7 +63,7 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
         expected.add("MethodLevelInterceptorOne");
         expected.add("makePersistent");
 
-        List<String> actual = bean.makePersistent(null);
+        final List<String> actual = bean.makePersistent(null);
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }

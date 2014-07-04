@@ -68,7 +68,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
     @Keys(@Key("aroundInvoke.missing.possibleTypo"))
     public EjbJar test1() {
         final EjbJar ejbJar = new EjbJar();
-        StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
+        final StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
         testBean.addAroundInvoke("foo");
         return ejbJar;
     }
@@ -80,7 +80,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
         final StatelessBean sun = ejbJar.addEnterpriseBean(new StatelessBean("SunStateless", Sun.class));
         sun.setLocalHome(SunLocalHome.class.getName());
         sun.setLocal(SunLocal.class.getName());
-        StatefulBean meteor = ejbJar.addEnterpriseBean(new StatefulBean("MeteorStateful", Meteor.class));
+        final StatefulBean meteor = ejbJar.addEnterpriseBean(new StatefulBean("MeteorStateful", Meteor.class));
         meteor.setLocal(SunLocal.class.getName());
         meteor.setLocalHome(SunLocalHome.class.getName());
         return ejbJar;

@@ -37,21 +37,21 @@ import java.io.OutputStream;
  */
 public class JpaJaxbUtil {
 
-    public static <T> String marshal(final Class<T> type, Object object) throws JAXBException {
-        JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
+    public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
+        final JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
         final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
         return new String(baos.toByteArray());
     }
 
-    public static <T> void marshal(final Class<T> type, Object object, OutputStream out) throws JAXBException {
-        JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
-        Marshaller marshaller = ctx2.createMarshaller();
+    public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
+        final JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
+        final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
@@ -66,10 +66,10 @@ public class JpaJaxbUtil {
         factory.setNamespaceAware(true);
         factory.setValidating(false);
 
-        JAXBContext ctx = JAXBContextFactory.newInstance(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(ValidationEvent validationEvent) {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
                 System.out.println(validationEvent);
                 return false;
             }

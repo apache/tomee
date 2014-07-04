@@ -60,15 +60,15 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
     public ContainerConcurrency() {
     }
 
-    public ContainerConcurrency(final ConcurrentLockType lock, String className, String ejbName, final String methodName) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final String className, final String ejbName, final String methodName) {
         this(lock, new Method(ejbName, className, methodName));
     }
 
-    public ContainerConcurrency(final ConcurrentLockType lock, final String ejbName, java.lang.reflect.Method method) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final String ejbName, final java.lang.reflect.Method method) {
         this(lock, new Method(ejbName, method));
     }
 
-    public ContainerConcurrency(final ConcurrentLockType lock, Method method) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final Method method) {
         this.lock = lock;
         getMethod().add(method);
     }

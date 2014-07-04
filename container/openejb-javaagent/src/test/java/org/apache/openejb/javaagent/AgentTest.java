@@ -25,7 +25,7 @@ public class AgentTest extends TestCase {
             final Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
             vmClass.getMethod("attach", String.class);
             vmClass.getMethod("loadAgent", String.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not a sun vm
             return;
         }
