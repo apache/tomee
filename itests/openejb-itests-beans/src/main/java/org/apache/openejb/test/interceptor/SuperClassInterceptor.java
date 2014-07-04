@@ -58,7 +58,7 @@ public class SuperClassInterceptor {
      */    
     @SuppressWarnings("unchecked")
     @AroundInvoke
-    public Object superClassInterceptor(InvocationContext ctx) throws Exception {
+    public Object superClassInterceptor(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "superClassInterceptor");
         return ctx.proceed();
     }
@@ -72,7 +72,7 @@ public class SuperClassInterceptor {
      * @throws runtime exceptions.
      */    
     @PostConstruct
-    public void superClassInterceptorPostConstruct(InvocationContext ctx) throws Exception {
+    public void superClassInterceptorPostConstruct(final InvocationContext ctx) throws Exception {
         /*if (sessionContext != null) {
             System.out.println(sessionContext.lookup("java:comp/env"));        
         }
@@ -95,7 +95,7 @@ public class SuperClassInterceptor {
      * @throws runtime exceptions.
      */    
     @PostActivate
-    public void superClassInterceptorPostActivate(InvocationContext ctx) throws Exception {
+    public void superClassInterceptorPostActivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "superClassInterceptorPostActivate");
         ctx.proceed();
         return;
@@ -110,7 +110,7 @@ public class SuperClassInterceptor {
      * @throws runtime exceptions.
      */    
     @PrePassivate
-    public void superClassInterceptorPrePassivate(InvocationContext ctx) throws Exception {
+    public void superClassInterceptorPrePassivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "superClassInterceptorPrePassivate");
         ctx.proceed();
         return;
@@ -125,7 +125,7 @@ public class SuperClassInterceptor {
      * @throws runtime exceptions.
      */    
     @PreDestroy
-    public void superClassInterceptorPreDestroy(InvocationContext ctx) throws Exception {
+    public void superClassInterceptorPreDestroy(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "superClassInterceptorPreDestroy");
         ctx.proceed();
         return;

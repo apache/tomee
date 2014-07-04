@@ -41,7 +41,7 @@ public class LocaleCharsetMap {
         return locale;
     }
 
-    public void setLocale(String value) {
+    public void setLocale(final String value) {
         this.locale = value;
     }
 
@@ -49,7 +49,7 @@ public class LocaleCharsetMap {
         return agent;
     }
 
-    public void setAgent(String value) {
+    public void setAgent(final String value) {
         this.agent = value;
     }
 
@@ -57,7 +57,7 @@ public class LocaleCharsetMap {
         return charset;
     }
 
-    public void setCharset(String value) {
+    public void setCharset(final String value) {
         this.charset = value;
     }
 
@@ -65,7 +65,7 @@ public class LocaleCharsetMap {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 }

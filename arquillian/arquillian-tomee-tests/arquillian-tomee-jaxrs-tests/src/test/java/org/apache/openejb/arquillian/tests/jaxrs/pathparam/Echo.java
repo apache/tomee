@@ -28,7 +28,7 @@ public class Echo {
 
     @GET
     @Path("/reverse")
-    public String reverse(@PathParam("param") String message) {
+    public String reverse(@PathParam("param")final String message) {
 
         return new StringBuilder(message).reverse().toString();
     }

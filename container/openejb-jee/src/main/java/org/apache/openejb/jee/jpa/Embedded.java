@@ -149,7 +149,7 @@ public class Embedded {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -173,7 +173,7 @@ public class Embedded {
          *     {@link AccessType }
          *
          */
-        public void setAccess(AccessType value) {
+        public void setAccess(final AccessType value) {
             this.access = value;
         }
 

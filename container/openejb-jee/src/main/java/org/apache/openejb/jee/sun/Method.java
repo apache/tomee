@@ -44,7 +44,7 @@ public class Method {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -52,7 +52,7 @@ public class Method {
         return ejbName;
     }
 
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -60,7 +60,7 @@ public class Method {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -68,7 +68,7 @@ public class Method {
         return methodIntf;
     }
 
-    public void setMethodIntf(String value) {
+    public void setMethodIntf(final String value) {
         this.methodIntf = value;
     }
 
@@ -76,7 +76,7 @@ public class Method {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 }

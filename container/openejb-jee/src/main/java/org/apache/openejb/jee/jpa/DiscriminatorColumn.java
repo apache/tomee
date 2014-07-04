@@ -88,7 +88,7 @@ public class DiscriminatorColumn {
      *     {@link String }
      *     
      */
-    public void setColumnDefinition(String value) {
+    public void setColumnDefinition(final String value) {
         this.columnDefinition = value;
     }
 
@@ -112,7 +112,7 @@ public class DiscriminatorColumn {
      *     {@link DiscriminatorType }
      *     
      */
-    public void setDiscriminatorType(DiscriminatorType value) {
+    public void setDiscriminatorType(final DiscriminatorType value) {
         this.discriminatorType = value;
     }
 
@@ -136,7 +136,7 @@ public class DiscriminatorColumn {
      *     {@link Integer }
      *     
      */
-    public void setLength(Integer value) {
+    public void setLength(final Integer value) {
         this.length = value;
     }
 
@@ -160,7 +160,7 @@ public class DiscriminatorColumn {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

@@ -46,7 +46,7 @@ public class MultiplePUServlet extends HttpServlet {
     private EntityManager entityManager2;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         Runner.run(req, resp, this);
     }
 

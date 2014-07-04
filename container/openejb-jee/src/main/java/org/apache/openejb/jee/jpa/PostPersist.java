@@ -80,7 +80,7 @@ public class PostPersist {
      *     {@link String }
      *
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -104,7 +104,7 @@ public class PostPersist {
      *     {@link String }
      *     
      */
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 

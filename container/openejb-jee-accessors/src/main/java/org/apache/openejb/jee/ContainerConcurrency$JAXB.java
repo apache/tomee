@@ -47,22 +47,22 @@ public class ContainerConcurrency$JAXB
         super(ContainerConcurrency.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "container-concurrencyType".intern()), Text$JAXB.class, Method$JAXB.class, ConcurrentLockType$JAXB.class);
     }
 
-    public static ContainerConcurrency readContainerConcurrency(XoXMLStreamReader reader, RuntimeContext context)
+    public static ContainerConcurrency readContainerConcurrency(final XoXMLStreamReader reader, RuntimeContext context)
             throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeContainerConcurrency(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public static void writeContainerConcurrency(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, RuntimeContext context)
             throws Exception {
         _write(writer, containerConcurrency, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public void write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
             throws Exception {
         _write(writer, containerConcurrency, context);
     }
 
-    public final static ContainerConcurrency _read(XoXMLStreamReader reader, RuntimeContext context)
+    public final static ContainerConcurrency _read(final XoXMLStreamReader reader, RuntimeContext context)
             throws Exception {
 
         // Check for xsi:nil
@@ -81,7 +81,7 @@ public class ContainerConcurrency$JAXB
         List<Method> method = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("container-concurrencyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ContainerConcurrency.class);
@@ -147,12 +147,12 @@ public class ContainerConcurrency$JAXB
         return containerConcurrency;
     }
 
-    public final ContainerConcurrency read(XoXMLStreamReader reader, RuntimeContext context)
+    public final ContainerConcurrency read(final XoXMLStreamReader reader, final RuntimeContext context)
             throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+    public final static void _write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
             throws Exception {
         if (containerConcurrency == null) {
             writer.writeXsiNil();
@@ -163,7 +163,7 @@ public class ContainerConcurrency$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ContainerConcurrency.class != containerConcurrency.getClass()) {
             context.unexpectedSubclass(writer, containerConcurrency, ContainerConcurrency.class);
             return;
@@ -192,7 +192,7 @@ public class ContainerConcurrency$JAXB
             context.getterError(containerConcurrency, "descriptions", ContainerConcurrency.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

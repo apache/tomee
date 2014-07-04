@@ -18,7 +18,7 @@ package org.apache.openejb.util.proxy;
 
 public class BaseLocalBean {
 
-	public String hello(String name) {
+	public String hello(final String name) {
 	    return "Hello " + name;
 	}
 	

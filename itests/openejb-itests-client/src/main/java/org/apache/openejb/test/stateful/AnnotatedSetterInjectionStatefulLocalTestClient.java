@@ -24,7 +24,7 @@ package org.apache.openejb.test.stateful;
  */
 public abstract class AnnotatedSetterInjectionStatefulLocalTestClient extends BasicStatefulLocalTestClient {
 
-    public AnnotatedSetterInjectionStatefulLocalTestClient(String name) {
+    public AnnotatedSetterInjectionStatefulLocalTestClient(final String name) {
         super("AnnotatedSetterInjectionStatefulLocalTestClient." + name);
     }
     

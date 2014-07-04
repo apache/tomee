@@ -99,7 +99,7 @@ public class NamedQuery {
      *     {@link String }
      *
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -123,7 +123,7 @@ public class NamedQuery {
      *     {@link String }
      *     
      */
-    public void setQuery(String value) {
+    public void setQuery(final String value) {
         this.query = value;
     }
 
@@ -147,7 +147,7 @@ public class NamedQuery {
      *     {@link LockModeType }
      *
      */
-    public void setLockMode(LockModeType value) {
+    public void setLockMode(final LockModeType value) {
         this.lockMode = value;
     }
 
@@ -200,7 +200,7 @@ public class NamedQuery {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

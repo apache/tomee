@@ -101,7 +101,7 @@ public class KeyField {
      *     {@link FieldName }
      *     
      */
-    public void setFieldName(FieldName value) {
+    public void setFieldName(final FieldName value) {
         this.fieldName = value;
     }
 
@@ -125,7 +125,7 @@ public class KeyField {
      *     {@link ColumnName }
      *     
      */
-    public void setColumnName(ColumnName value) {
+    public void setColumnName(final ColumnName value) {
         this.columnName = value;
     }
 
@@ -149,7 +149,7 @@ public class KeyField {
      *     {@link JdbcType }
      *     
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
@@ -173,7 +173,7 @@ public class KeyField {
      *     {@link SqlType }
      *     
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 
@@ -226,7 +226,7 @@ public class KeyField {
      *     {@link Dbindex }
      *     
      */
-    public void setDbindex(Dbindex value) {
+    public void setDbindex(final Dbindex value) {
         this.dbindex = value;
     }
 

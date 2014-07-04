@@ -158,7 +158,7 @@ public class SecondaryTable {
      *     {@link String }
      *     
      */
-    public void setCatalog(String value) {
+    public void setCatalog(final String value) {
         this.catalog = value;
     }
 
@@ -182,7 +182,7 @@ public class SecondaryTable {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -206,7 +206,7 @@ public class SecondaryTable {
      *     {@link String }
      *     
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 

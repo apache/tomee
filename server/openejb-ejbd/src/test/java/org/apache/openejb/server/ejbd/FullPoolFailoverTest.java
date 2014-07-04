@@ -74,7 +74,7 @@ public class FullPoolFailoverTest extends TestCase {
         paused = new CountingLatch(10);
 
         // Do a business method...
-        Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 counter.hit();
             }
@@ -92,7 +92,7 @@ public class FullPoolFailoverTest extends TestCase {
             if (!paused.await(3000, TimeUnit.MILLISECONDS)) {
                 System.out.println();
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             System.out.println();
         }
         assertTrue("expected 10 invocations", paused.await(3000, TimeUnit.MILLISECONDS));
@@ -100,7 +100,7 @@ public class FullPoolFailoverTest extends TestCase {
         assertEquals(10, CounterBean.instances.get());
         assertEquals(10, hits.size());
 
-        List<URI> expected = new ArrayList<URI>();
+        final List<URI> expected = new ArrayList<URI>();
         for (int i = 0; i < 10; i++) {
             expected.add(red);
         }
@@ -150,7 +150,7 @@ public class FullPoolFailoverTest extends TestCase {
         paused = new CountingLatch(10);
 
         // Do a business method...
-        Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 counter.hit();
             }
@@ -174,7 +174,7 @@ public class FullPoolFailoverTest extends TestCase {
         assertEquals(expected, hits);
 
         // This one should failover to the blue server
-        URI uri = counter.hit();
+        final URI uri = counter.hit();
         assertEquals(blue, uri);
 
         // the red pool is fully busy, so we should have failed over to blue
@@ -187,7 +187,7 @@ public class FullPoolFailoverTest extends TestCase {
         for (int i = 0; i < 10; i++) {
             paused.countUp();
             expected.add(blue);
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -215,7 +215,7 @@ public class FullPoolFailoverTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        for (ServiceDaemon daemon : daemons) {
+        for (final ServiceDaemon daemon : daemons) {
             daemon.stop();
         }
 
@@ -224,7 +224,7 @@ public class FullPoolFailoverTest extends TestCase {
 
     private final List<ServiceDaemon> daemons = new ArrayList<ServiceDaemon>();
 
-    protected void setup(int statelessPoolSize, int connectionPoolSize) throws Exception {
+    protected void setup(final int statelessPoolSize, final int connectionPoolSize) throws Exception {
         Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
@@ -238,8 +238,8 @@ public class FullPoolFailoverTest extends TestCase {
         daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, red));
         daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, blue));
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
         // containers
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
@@ -277,11 +277,11 @@ public class FullPoolFailoverTest extends TestCase {
         hits.clear();
     }
 
-    private ServiceDaemon createServiceDaemon(int poolSize, EjbServer ejbServer, URI uri) throws ServiceException {
+    private ServiceDaemon createServiceDaemon(final int poolSize, final EjbServer ejbServer, URI uri) throws ServiceException {
         ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);
         KeepAliveServer keepAliveServer = new KeepAliveServer(serviceIdentifier);
         ServicePool pool = new ServicePool(keepAliveServer, poolSize);
-        ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
+        final ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
         daemon.start();
         return daemon;
     }
@@ -292,13 +292,13 @@ public class FullPoolFailoverTest extends TestCase {
 
         private final URI me;
 
-        public ServiceIdentifier(ServerService service, URI me) {
+        public ServiceIdentifier(final ServerService service, URI me) {
             super(service);
             this.me = me;
         }
 
         @Override
-        public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        public void service(final InputStream in, OutputStream out) throws ServiceException, IOException {
             synchronized (hits) {
                 hits.add(me);
             }
@@ -313,7 +313,7 @@ public class FullPoolFailoverTest extends TestCase {
 
     public static Object lock = new Object[]{};
 
-    private static void comment(String x) {
+    private static void comment(final String x) {
         //        synchronized(lock){
         //            System.out.println(x);
         //            System.out.flush();
@@ -348,13 +348,13 @@ public class FullPoolFailoverTest extends TestCase {
         }
 
         public URI hit() {
-            URI uri = host.get();
+            final URI uri = host.get();
 
             if (hold.contains(uri)) {
                 try {
                     paused.countDown();
                     resume.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
             }

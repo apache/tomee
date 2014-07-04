@@ -79,7 +79,7 @@ public class UnknownPrimaryKeyField {
      *     {@link String }
      *     
      */
-    public void setCmpField(String value) {
+    public void setCmpField(final String value) {
         this.cmpField = value;
     }
 
@@ -103,7 +103,7 @@ public class UnknownPrimaryKeyField {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

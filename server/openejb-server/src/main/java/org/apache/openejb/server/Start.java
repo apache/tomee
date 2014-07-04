@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class Start {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         //        System.exit(new Start().start()?0:1);
 
@@ -65,9 +65,9 @@ public class Start {
 
         try {
 
-            ArrayList<String> cmd = new ArrayList<String>();
+            final ArrayList<String> cmd = new ArrayList<String>();
 
-            String s = java.io.File.separator;
+            final String s = java.io.File.separator;
 
             //Not really required here for exec, but as a reminder that we run on all platforms
             final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
@@ -84,9 +84,9 @@ public class Start {
 
             cmd.add("org.apache.openejb.server.Main");
 
-            String[] command = cmd.toArray(new String[cmd.size()]);
+            final String[] command = cmd.toArray(new String[cmd.size()]);
 
-            Runtime runtime = Runtime.getRuntime();
+            final Runtime runtime = Runtime.getRuntime();
 
             Process server = runtime.exec(command);
 
@@ -98,7 +98,7 @@ public class Start {
 
             serverOut.start();
 
-            InputStream err = server.getErrorStream();
+            final InputStream err = server.getErrorStream();
 
             Thread serverErr = new Thread(new Pipe(err, System.err));
 
@@ -114,13 +114,13 @@ public class Start {
 
     }
 
-    private void addSystemProperties(ArrayList<String> cmd) {
+    private void addSystemProperties(final ArrayList<String> cmd) {
 
-        Set set = System.getProperties().entrySet();
+        final Set set = System.getProperties().entrySet();
 
         for (final Object aSet : set) {
 
-            Map.Entry entry = (Map.Entry) aSet;
+            final Map.Entry entry = (Map.Entry) aSet;
 
             String key = (String) entry.getKey();
 
@@ -145,7 +145,7 @@ public class Start {
 
         String classpath = System.getProperty("java.class.path");
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         String antLoader = "org.apache.tools.ant.AntClassLoader";
 
@@ -153,7 +153,7 @@ public class Start {
 
             try {
 
-                Class ant = cl.getClass();
+                final Class ant = cl.getClass();
 
                 Method getClasspath = ant.getMethod("getClasspath", new Class[0]);
 
@@ -176,7 +176,7 @@ public class Start {
         private final InputStream is;
         private final OutputStream out;
 
-        private Pipe(InputStream is, OutputStream out) {
+        private Pipe(final InputStream is, final OutputStream out) {
 
             super();
 
@@ -203,7 +203,7 @@ public class Start {
 
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 e.printStackTrace();
 

@@ -249,15 +249,15 @@ public class ServiceClasspathTest extends Assert {
             return wrap(blue);
         }
 
-        public void setRed(String red) {
+        public void setRed(final String red) {
             this.red = red;
         }
 
-        public void setGreen(String green) {
+        public void setGreen(final String green) {
             this.green = green;
         }
 
-        public void setBlue(String blue) {
+        public void setBlue(final String blue) {
             this.blue = blue;
         }
 
@@ -266,7 +266,7 @@ public class ServiceClasspathTest extends Assert {
         }
     }
 
-    public static File subclass(Class<?> parent, String subclassName) throws Exception {
+    public static File subclass(final Class<?> parent, final String subclassName) throws Exception {
         final String subclassNameInternal = subclassName.replace('.', '/');
 
         final byte[] bytes;
@@ -303,17 +303,17 @@ public class ServiceClasspathTest extends Assert {
             return new Archive();
         }
 
-        public Archive manifest(String key, Object value) {
+        public Archive manifest(final String key, final Object value) {
             manifest.put(key, value.toString());
             return this;
         }
 
-        public Archive manifest(String key, Class value) {
+        public Archive manifest(final String key, final Class value) {
             manifest.put(key, value.getName());
             return this;
         }
 
-        public Archive add(Class<?> clazz) {
+        public Archive add(final Class<?> clazz) {
             try {
                 final String name = clazz.getName().replace('.', '/') + ".class";
 
@@ -336,7 +336,7 @@ public class ServiceClasspathTest extends Assert {
             }
         }
 
-        public Archive add(String name, byte[] bytes) {
+        public Archive add(final String name, byte[] bytes) {
             entries.put(name, bytes);
             return this;
         }
@@ -348,7 +348,7 @@ public class ServiceClasspathTest extends Assert {
             // Create the ZIP file
             final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 
-            for (Map.Entry<String, byte[]> entry : entries().entrySet()) {
+            for (final Map.Entry<String, byte[]> entry : entries().entrySet()) {
                 out.putNextEntry(new ZipEntry(entry.getKey()));
                 out.write(entry.getValue());
             }
@@ -361,16 +361,16 @@ public class ServiceClasspathTest extends Assert {
         public File asJar() {
             try {
                 return toJar();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
         public File toDir() throws IOException {
 
-            File classpath = Files.tmpdir();
+            final File classpath = Files.tmpdir();
 
-            for (Map.Entry<String, byte[]> entry : entries().entrySet()) {
+            for (final Map.Entry<String, byte[]> entry : entries().entrySet()) {
 
                 final String key = entry.getKey().replace('/', File.separatorChar);
 
@@ -393,7 +393,7 @@ public class ServiceClasspathTest extends Assert {
         public File asDir() {
             try {
                 return toDir();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -407,7 +407,7 @@ public class ServiceClasspathTest extends Assert {
         private String buildManifest() {
             return Join.join("\r\n", new Join.NameCallback<Map.Entry<String, String>>() {
                 @Override
-                public String getName(Map.Entry<String, String> entry) {
+                public String getName(final Map.Entry<String, String> entry) {
                     return entry.getKey() + ": " + entry.getValue();
                 }
             }, manifest.entrySet());

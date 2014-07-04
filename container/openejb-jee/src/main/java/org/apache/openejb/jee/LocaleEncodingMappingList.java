@@ -75,7 +75,7 @@ public class LocaleEncodingMappingList {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
