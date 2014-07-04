@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
+import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -46,9 +47,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected final Collection<Injection> injections;
@@ -148,10 +151,12 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             creator = new DefaultBeanCreator(m);
         }
         m.put(BeanCreator.class, creator);
+        m.put(OpenEJBPerRequestPojoResourceProvider.class, this);
 
         // important to switch of classloader to get the right InitialContext
-        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader(classLoader);
         try {
             return creator.create();
         } catch (final NoBeanFoundException nbfe) {
@@ -159,7 +164,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             m.put(BeanCreator.class, creator);
             return creator.create();
         } finally {
-            Thread.currentThread().setContextClassLoader(oldLoader);
+            thread.setContextClassLoader(oldLoader);
         }
     }
 
@@ -179,6 +184,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     @Override
     public boolean isSingleton() {
         return false;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     private static class InitialContextWrapper implements InvocationHandler {

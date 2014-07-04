@@ -64,7 +64,7 @@ public class EJBAccessExceptionMapperTest {
 
     @Test
     public void rest() {
-        final Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get();
+        final Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejbsecu/rest").get();
         assertEquals(200, response.getStatus()); //TODO - Should this be 200 or 403?
     }
 
@@ -72,7 +72,7 @@ public class EJBAccessExceptionMapperTest {
     @Singleton
     @RolesAllowed("Something that does not exit at all")
     @Lock(LockType.READ)
-    @Path("/ejb")
+    @Path("/ejbsecu")
     public static class RESTIsCoolOne {
         @EJB
         private SimpleEJB simpleEJB;
