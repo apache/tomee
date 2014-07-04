@@ -39,33 +39,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Connector$JAXB
-        extends JAXBObject<Connector> {
+    extends JAXBObject<Connector> {
 
 
     public Connector$JAXB() {
         super(Connector.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "connector".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "connectorType".intern()), Text$JAXB.class, Icon$JAXB.class, License$JAXB.class, ResourceAdapter$JAXB.class);
     }
 
-    public static Connector readConnector(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Connector readConnector(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConnector(XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
-            throws Exception {
+    public static void writeConnector(final XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
+        throws Exception {
         _write(writer, connector, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
+        throws Exception {
         _write(writer, connector, context);
     }
 
-    public final static Connector _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Connector _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -93,7 +93,7 @@ public class Connector$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -115,7 +115,7 @@ public class Connector$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("module-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: moduleName
-                String moduleNameRaw = elementReader.getElementAsString();
+                final String moduleNameRaw = elementReader.getElementAsString();
 
                 String moduleName;
                 try {
@@ -156,7 +156,7 @@ public class Connector$JAXB
                 // ELEMENT: vendorName
                 String vendorNameRaw = elementReader.getElementAsString();
 
-                String vendorName;
+                final String vendorName;
                 try {
                     vendorName = Adapters.collapsedStringAdapterAdapter.unmarshal(vendorNameRaw);
                 } catch (Exception e) {
@@ -250,13 +250,13 @@ public class Connector$JAXB
         return connector;
     }
 
-    public final Connector read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Connector read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Connector connector, RuntimeContext context)
+        throws Exception {
         if (connector == null) {
             writer.writeXsiNil();
             return;
@@ -281,7 +281,7 @@ public class Connector$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(connector, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -306,7 +306,7 @@ public class Connector$JAXB
         }
 
         // ELEMENT: moduleName
-        String moduleNameRaw = connector.moduleName;
+        final String moduleNameRaw = connector.moduleName;
         String moduleName = null;
         try {
             moduleName = Adapters.collapsedStringAdapterAdapter.marshal(moduleNameRaw);

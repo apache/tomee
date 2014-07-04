@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 public class SunQueryFilterTest extends TestCase {
     private SunConversion sunConversion = new SunConversion();
+
     public void testTrivial() {
         String ejbQl = sunConversion.convertToEjbQl("item", null, null);
         assertEquals("SELECT OBJECT(o) FROM item AS o", ejbQl);
@@ -30,22 +31,22 @@ public class SunQueryFilterTest extends TestCase {
     }
 
     public void testParameterReplacement() {
-        String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("NAME"), "java.lang.String name", "NAME == name");
+        final String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("NAME"), "java.lang.String name", "NAME == name");
         assertEquals("SELECT OBJECT(o) FROM item AS o WHERE o.NAME = ?1", ejbQl);
     }
 
     public void testSymbolReplacement() {
-        String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("PRICE"), "float start, float end", "start <= PRICE && PRICE >= end");
+        final String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("PRICE"), "float start, float end", "start <= PRICE && PRICE >= end");
         assertEquals("SELECT OBJECT(o) FROM item AS o WHERE ?1 <= o.PRICE and o.PRICE >= ?2", ejbQl);
     }
 
     public void testAllSymbolReplacement() {
-        String ejbQl = sunConversion.convertToEjbQl("item", null, "&& || ! == !=");
+        final String ejbQl = sunConversion.convertToEjbQl("item", null, "&& || ! == !=");
         assertEquals("SELECT OBJECT(o) FROM item AS o WHERE and or not = <>", ejbQl);
     }
 
     public void testNoWhiteSpace() {
-        String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("PRICE"), "float start, float end", "start<=PRICE&&PRICE>=end");
+        final String ejbQl = sunConversion.convertToEjbQl("item", Arrays.asList("PRICE"), "float start, float end", "start<=PRICE&&PRICE>=end");
         assertEquals("SELECT OBJECT(o) FROM item AS o WHERE ?1 <= o.PRICE and o.PRICE >= ?2", ejbQl);
     }
 }

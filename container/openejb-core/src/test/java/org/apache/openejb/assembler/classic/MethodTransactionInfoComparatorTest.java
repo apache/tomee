@@ -29,7 +29,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
 
     public void testOrdering() throws Exception {
 
-        ArrayList<MethodTransactionInfo> expected = new ArrayList<MethodTransactionInfo>();
+        final ArrayList<MethodTransactionInfo> expected = new ArrayList<MethodTransactionInfo>();
 
         MethodTransactionInfo info = null;
         MethodInfo method = null;
@@ -71,19 +71,19 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         method.methodParams.add("java.lang.String");
         info.methods.add(method);
 
-        ArrayList<MethodTransactionInfo> actual = new ArrayList<MethodTransactionInfo>(expected);
+        final ArrayList<MethodTransactionInfo> actual = new ArrayList<MethodTransactionInfo>(expected);
         Collections.shuffle(actual);
         Collections.sort(actual, new MethodTransactionBuilder.MethodTransactionComparator());
 
         for (int i = 0; i < actual.size(); i++) {
-            MethodTransactionInfo a = actual.get(i);
+            final MethodTransactionInfo a = actual.get(i);
             MethodTransactionInfo e = expected.get(i);
             assertSame(e, a);
         }
     }
 
 
-    private MethodTransactionInfo add(List list, MethodTransactionInfo bindingInfo) {
+    private MethodTransactionInfo add(final List list, final MethodTransactionInfo bindingInfo) {
         list.add(bindingInfo);
         return bindingInfo;
     }

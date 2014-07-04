@@ -59,42 +59,42 @@ public class SimpleCdiTest extends TestCase {
     @Before
     public void setUp() throws Exception {
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(Echo.class));
 
-        Beans beans = new Beans();
+        final Beans beans = new Beans();
         beans.addInterceptor(EchoInterceptor.class);
         beans.addDecorator(EchoDecorator.class);
         beans.addManagedClass(SimpleModel.class);
         beans.addManagedClass(ProducesEjbInjector.class);
 
-        EjbModule module = new EjbModule(ejbJar);
+        final EjbModule module = new EjbModule(ejbJar);
         module.setBeans(beans);
 
         assembler.createApplication(config.configureApplication(module));
 
-        Properties properties = new Properties(System.getProperties());
+        final Properties properties = new Properties(System.getProperties());
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         ctx = new InitialContext(properties);
     }
 
     public void testSimple() {
         try {
-            EchoLocal echo = (EchoLocal) ctx.lookup("EchoLocal");
-            String result = echo.echo("Gurkan");
+            final EchoLocal echo = (EchoLocal) ctx.lookup("EchoLocal");
+            final String result = echo.echo("Gurkan");
             assertEquals("Gurkan", result);
 
             assertTrue(EchoInterceptor.RUN);
             assertTrue(NormalEjbInterceptor.RUN);
             assertTrue(NormalEjbInterceptor.INJECTED);
 
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             e.printStackTrace();
         }
     }
@@ -113,7 +113,7 @@ public class SimpleCdiTest extends TestCase {
         public static boolean RUN = false;
 
         @AroundInvoke
-        public Object aroundInvoke(InvocationContext context) throws Exception {
+        public Object aroundInvoke(final InvocationContext context) throws Exception {
             RUN = true;
             return context.proceed();
         }
@@ -131,7 +131,7 @@ public class SimpleCdiTest extends TestCase {
         private ProducesEjbInjector injector;
 
         @Override
-        public String echo(String echo) {
+        public String echo(final String echo) {
             assertNotNull(model);
             return echo;
         }
@@ -153,7 +153,7 @@ public class SimpleCdiTest extends TestCase {
             return echo;
         }
 
-        public void setEcho(EchoLocal echo) {
+        public void setEcho(final EchoLocal echo) {
             this.echo = echo;
         }
     }
@@ -167,7 +167,7 @@ public class SimpleCdiTest extends TestCase {
         private SimpleModel injection;
 
         @AroundInvoke
-        public Object aroundInvoke(InvocationContext context) throws Exception {
+        public Object aroundInvoke(final InvocationContext context) throws Exception {
             RUN = true;
             if (injection != null) {
                 INJECTED = true;
@@ -198,7 +198,7 @@ public class SimpleCdiTest extends TestCase {
             return local2ViaProduce;
         }
 
-        public void setLocal2ViaProduce(EchoLocal local2ViaProduce) {
+        public void setLocal2ViaProduce(final EchoLocal local2ViaProduce) {
             this.local2ViaProduce = local2ViaProduce;
         }
 
@@ -206,7 +206,7 @@ public class SimpleCdiTest extends TestCase {
             return echoLocal;
         }
 
-        public void setEchoLocal(EchoLocal echoLocal) {
+        public void setEchoLocal(final EchoLocal echoLocal) {
             this.echoLocal = echoLocal;
         }
     }
@@ -219,7 +219,7 @@ public class SimpleCdiTest extends TestCase {
         private EchoLocal local;
 
         @Override
-        public String echo(String echo) {
+        public String echo(final String echo) {
             return local.echo(echo);
         }
     }

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for security-permission complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="security-permission">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-permission", propOrder = {
@@ -64,11 +62,9 @@ public class SecurityPermission {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
+     *
+     * @return possible object is
+     * {@link Description }
      */
     public Description getDescription() {
         return description;
@@ -76,23 +72,19 @@ public class SecurityPermission {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Description }
      */
-    public void setDescription(Description value) {
+    public void setDescription(final Description value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the securityPermissionSpec property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSecurityPermissionSpec() {
         return securityPermissionSpec;
@@ -100,23 +92,19 @@ public class SecurityPermission {
 
     /**
      * Sets the value of the securityPermissionSpec property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSecurityPermissionSpec(String value) {
+    public void setSecurityPermissionSpec(final String value) {
         this.securityPermissionSpec = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -124,13 +112,11 @@ public class SecurityPermission {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

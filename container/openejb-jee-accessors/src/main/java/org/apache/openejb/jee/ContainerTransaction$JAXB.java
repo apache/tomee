@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.TransAttribute$JAXB.parseTransAttribute;
 import static org.apache.openejb.jee.TransAttribute$JAXB.toStringTransAttribute;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ContainerTransaction$JAXB
-        extends JAXBObject<ContainerTransaction> {
+    extends JAXBObject<ContainerTransaction> {
 
 
     public ContainerTransaction$JAXB() {
         super(ContainerTransaction.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "container-transactionType".intern()), Text$JAXB.class, Method$JAXB.class, TransAttribute$JAXB.class);
     }
 
-    public static ContainerTransaction readContainerTransaction(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ContainerTransaction readContainerTransaction(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeContainerTransaction(XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
-            throws Exception {
+    public static void writeContainerTransaction(final XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
+        throws Exception {
         _write(writer, containerTransaction, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
+        throws Exception {
         _write(writer, containerTransaction, context);
     }
 
-    public final static ContainerTransaction _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ContainerTransaction _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -81,7 +81,7 @@ public class ContainerTransaction$JAXB
         List<Method> method = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("container-transactionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ContainerTransaction.class);
@@ -147,13 +147,13 @@ public class ContainerTransaction$JAXB
         return containerTransaction;
     }
 
-    public final ContainerTransaction read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ContainerTransaction read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ContainerTransaction containerTransaction, RuntimeContext context)
+        throws Exception {
         if (containerTransaction == null) {
             writer.writeXsiNil();
             return;
@@ -204,7 +204,7 @@ public class ContainerTransaction$JAXB
         }
 
         // ELEMENT: method
-        List<Method> method = containerTransaction.method;
+        final List<Method> method = containerTransaction.method;
         if (method != null) {
             for (Method methodItem : method) {
                 if (methodItem != null) {

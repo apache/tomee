@@ -34,11 +34,11 @@ import java.rmi.RemoteException;
 
 @RunWith(ValidationRunner.class)
 public class CheckNoBusinessMethodTest {
-    @Keys( { @Key(value = "no.busines.method.case", count = 4), @Key(value = "no.busines.method.args", count = 4), @Key(value = "no.busines.method", count = 4) })
+    @Keys({@Key(value = "no.busines.method.case", count = 4), @Key(value = "no.busines.method.args", count = 4), @Key(value = "no.busines.method", count = 4)})
     public EjbJar noBusinessMethod() throws OpenEJBException {
         // System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean stateLessLocal = new StatelessBean(FooStatelessSession.class);
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean stateLessLocal = new StatelessBean(FooStatelessSession.class);
         stateLessLocal.setLocalHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocalHome");
         stateLessLocal.setLocal("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocal");
         StatefulBean statefulLocal = new StatefulBean(FooStatefulSession.class);
@@ -70,46 +70,60 @@ public class CheckNoBusinessMethodTest {
 
     private static class FooStatelessSession implements SessionBean {
         // method name is same as in the Local interface, except arguments are different
-        public void foo(int x, String y) {}
+        public void foo(final int x, final String y) {
+        }
 
         // method name has a different case
-        public void Foo(String x, String y) {}
+        public void Foo(final String x, String y) {
+        }
 
-        public void ejbCreate() {}
-
-        @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static class FooStatefulSession implements SessionBean {
         // method name is same as in the Local interface, except arguments are different
-        public void foo(int x, String y) {}
+        public void foo(final int x, final String y) {
+        }
 
         // method name has a different case
-        public void Foo(String x, String y) {}
+        public void Foo(final String x, final String y) {
+        }
 
-        public void ejbCreate() {}
-
-        @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     // =================
@@ -126,45 +140,59 @@ public class CheckNoBusinessMethodTest {
 
     private static class FooRemoteStatelessSession implements SessionBean {
         // method name is same as in the Remote interface, except arguments are different
-        public void foo(int x, String y) {}
+        public void foo(final int x, final String y) {
+        }
 
         // method name has a different case
-        public void Foo(String x, String y) {}
+        public void Foo(final String x, String y) {
+        }
 
-        public void ejbCreate() {}
-
-        @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static class FooRemoteStatefulSession implements SessionBean {
         // method name is same as in the Remote interface, except arguments are different
-        public void foo(int x, String y) {}
+        public void foo(final int x, final String y) {
+        }
 
         // method name has a different case
-        public void Foo(String x, String y) {}
+        public void Foo(final String x, String y) {
+        }
 
-        public void ejbCreate() {}
-
-        @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 }

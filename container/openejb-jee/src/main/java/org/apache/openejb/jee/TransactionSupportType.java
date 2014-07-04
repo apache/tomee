@@ -21,11 +21,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for transaction-supportType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="transaction-supportType">
  *   &lt;simpleContent>
@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlEnum
@@ -49,7 +47,7 @@ public enum TransactionSupportType {
     XA_TRANSACTION("XATransaction");
     private final String value;
 
-    TransactionSupportType(String v) {
+    TransactionSupportType(final String v) {
         value = v;
     }
 
@@ -57,8 +55,8 @@ public enum TransactionSupportType {
         return value;
     }
 
-    public static TransactionSupportType fromValue(String v) {
-        for (TransactionSupportType c : TransactionSupportType.values()) {
+    public static TransactionSupportType fromValue(final String v) {
+        for (final TransactionSupportType c : TransactionSupportType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

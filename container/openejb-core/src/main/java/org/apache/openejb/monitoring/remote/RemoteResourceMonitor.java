@@ -50,9 +50,9 @@ public class RemoteResourceMonitor implements DynamicMBean {
     private static final MBeanAttributeInfo[] EMPTY_ATTRIBUTES = new MBeanAttributeInfo[0];
     private static final MBeanNotificationInfo[] EMPTY_NOTIFICATIONS = new MBeanNotificationInfo[0];
     private static final MBeanParameterInfo[] EMPTY_PARAMETERS = new MBeanParameterInfo[0];
-    private static final MBeanOperationInfo PING_INFO = new MBeanOperationInfo("ping", "ping the parameter host", new MBeanParameterInfo[] {
-                                                                new MBeanParameterInfo("host", String.class.getName(), "the host to ping")
-                                                            }, String.class.getName(), MBeanOperationInfo.INFO);
+    private static final MBeanOperationInfo PING_INFO = new MBeanOperationInfo("ping", "ping the parameter host", new MBeanParameterInfo[]{
+        new MBeanParameterInfo("host", String.class.getName(), "the host to ping")
+    }, String.class.getName(), MBeanOperationInfo.INFO);
 
     private final Collection<String> hosts = new CopyOnWriteArraySet<String>();
     private ObjectName objectName;
@@ -136,16 +136,16 @@ public class RemoteResourceMonitor implements DynamicMBean {
 
     private void buildMBeanInfo() {
         final List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
-        for (final String host: hosts) {
+        for (final String host : hosts) {
             operationInfos.add(new MBeanOperationInfo(host, "ping host " + host, EMPTY_PARAMETERS, String.class.getName(), MBeanOperationInfo.INFO));
         }
         operationInfos.add(PING_INFO);
         info = new MBeanInfo(RemoteResourceMonitor.class.getName(),
-                "Monitor remote resources",
-                EMPTY_ATTRIBUTES,
-                null,
-                operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
-                EMPTY_NOTIFICATIONS);
+            "Monitor remote resources",
+            EMPTY_ATTRIBUTES,
+            null,
+            operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
+            EMPTY_NOTIFICATIONS);
     }
 
     private static String ping(final String host) {

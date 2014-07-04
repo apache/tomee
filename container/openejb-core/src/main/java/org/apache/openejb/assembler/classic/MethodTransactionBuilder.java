@@ -78,12 +78,12 @@ public class MethodTransactionBuilder {
      * exactly one MethodInfo per MethodTransactionInfo.  A single MethodTransactionInfo
      * with three MethodInfos would be expanded into three MethodTransactionInfo with
      * one MethodInfo each.
-     *
+     * <p/>
      * The MethodTransactionInfo list is then sorted from least to most specific.
      *
      * @return a normalized list of new MethodTransactionInfo objects
      */
-    public static List<MethodTransactionInfo> normalize(final List<MethodTransactionInfo> infos){
+    public static List<MethodTransactionInfo> normalize(final List<MethodTransactionInfo> infos) {
         final List<MethodTransactionInfo> normalized = new ArrayList<MethodTransactionInfo>();
         for (final MethodTransactionInfo oldInfo : infos) {
             for (final MethodInfo methodInfo : oldInfo.methods) {

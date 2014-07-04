@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for remove-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="remove-methodType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "remove-methodType", propOrder = {
-        "beanMethod",
-        "retainIfException"
-        })
+    "beanMethod",
+    "retainIfException"
+})
 public class RemoveMethod {
 
     @XmlElement(name = "bean-method", required = true)
@@ -70,11 +68,11 @@ public class RemoveMethod {
     public RemoveMethod() {
     }
 
-    public RemoveMethod(java.lang.reflect.Method beanMethod) {
+    public RemoveMethod(final java.lang.reflect.Method beanMethod) {
         this(beanMethod, false);
     }
 
-    public RemoveMethod(java.lang.reflect.Method beanMethod, boolean retainIfException) {
+    public RemoveMethod(final java.lang.reflect.Method beanMethod, final boolean retainIfException) {
         this.beanMethod = new NamedMethod(beanMethod);
         this.retainIfException = retainIfException;
     }
@@ -83,7 +81,7 @@ public class RemoveMethod {
         return beanMethod;
     }
 
-    public void setBeanMethod(NamedMethod value) {
+    public void setBeanMethod(final NamedMethod value) {
         this.beanMethod = value;
     }
 
@@ -95,7 +93,7 @@ public class RemoveMethod {
         return retainIfException != null && retainIfException;
     }
 
-    public void setRetainIfException(boolean value) {
+    public void setRetainIfException(final boolean value) {
         this.retainIfException = value;
     }
 
@@ -103,11 +101,11 @@ public class RemoveMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

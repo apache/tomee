@@ -37,6 +37,6 @@ public class ServiceReferenceInfo extends InjectableInfo {
     public String wsdlFile;
     public String jaxrpcMappingFile;
     public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
-    public final List<PortRefInfo> portRefs =new ArrayList<PortRefInfo>();
-    
+    public final List<PortRefInfo> portRefs = new ArrayList<PortRefInfo>();
+
 }

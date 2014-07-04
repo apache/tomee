@@ -30,19 +30,19 @@ import java.util.List;
 import java.util.Properties;
 
 public class AppInfoBuilderTest extends TestCase {
-    
+
     public void testShouldAddSecurityDetailsToPortInfo() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        SessionBean sessionBean = new SessionBean();
+        final EjbJar ejbJar = new EjbJar();
+        final SessionBean sessionBean = new SessionBean();
         sessionBean.setEjbName("MySessionBean");
         sessionBean.setEjbClass("org.superbiz.MySessionBean");
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
-        
+
         OpenejbJar openejbJar = new OpenejbJar();
         EjbDeployment ejbDeployment = new EjbDeployment();
         openejbJar.addEjbDeployment(ejbDeployment);
-        
+
         ejbDeployment.setEjbName("MySessionBean");
         ejbDeployment.addProperty("webservice.security.realm", "MyRealm");
         ejbDeployment.addProperty("webservice.security.securityRealm", "MySecurityRealm");
@@ -51,16 +51,16 @@ public class AppInfoBuilderTest extends TestCase {
         ejbDeployment.addProperty("wss4j.in.action", "Timestamp");
         ejbDeployment.addProperty("wss4j.out.action", "Timestamp");
 
-        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
+        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
-        portInfo.serviceLink = "MySessionBean"; 
+        portInfo.serviceLink = "MySessionBean";
         ejbJarInfo.portInfos.add(portInfo);
 
         new AppInfoBuilder(null).configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-        List<PortInfo> portInfoList = ejbJarInfo.portInfos;
+        final List<PortInfo> portInfoList = ejbJarInfo.portInfos;
         assertEquals(1, portInfoList.size());
         PortInfo info = portInfoList.get(0);
         assertEquals("MyRealm", info.realmName);
@@ -72,20 +72,20 @@ public class AppInfoBuilderTest extends TestCase {
     }
 
     public void testShouldUseDefaultsIfSettingIsNull() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        SessionBean sessionBean = new SessionBean();
+        final EjbJar ejbJar = new EjbJar();
+        final SessionBean sessionBean = new SessionBean();
         sessionBean.setEjbName("MySessionBean");
         sessionBean.setEjbClass("org.superbiz.MySessionBean");
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
-        
+
         OpenejbJar openejbJar = new OpenejbJar();
         EjbDeployment ejbDeployment = new EjbDeployment();
         openejbJar.addEjbDeployment(ejbDeployment);
-        
+
         ejbDeployment.setEjbName("MySessionBean");
 
-        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
+        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
@@ -105,20 +105,20 @@ public class AppInfoBuilderTest extends TestCase {
     }
 
     public void testShouldIgnorePortInfoThatDontMatchTheEjb() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        SessionBean sessionBean = new SessionBean();
+        final EjbJar ejbJar = new EjbJar();
+        final SessionBean sessionBean = new SessionBean();
         sessionBean.setEjbName("MySessionBean");
         sessionBean.setEjbClass("org.superbiz.MySessionBean");
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
 
-        OpenejbJar openejbJar = new OpenejbJar();
-        EjbDeployment ejbDeployment = new EjbDeployment();
+        final OpenejbJar openejbJar = new OpenejbJar();
+        final EjbDeployment ejbDeployment = new EjbDeployment();
         openejbJar.addEjbDeployment(ejbDeployment);
-        
+
         ejbDeployment.setEjbName("MySessionBean");
 
-        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
+        EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
@@ -135,7 +135,7 @@ public class AppInfoBuilderTest extends TestCase {
 
         new AppInfoBuilder(null).configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-        List<PortInfo> portInfoList = ejbJarInfo.portInfos;
+        final List<PortInfo> portInfoList = ejbJarInfo.portInfos;
         assertEquals(1, portInfoList.size());
         PortInfo info = portInfoList.get(0);
         assertEquals("", info.realmName);

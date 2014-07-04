@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for variableType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="variableType">
  *   &lt;complexContent>
@@ -52,8 +52,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "variableType", propOrder = {
@@ -85,7 +83,7 @@ public class Variable {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -97,7 +95,7 @@ public class Variable {
         return nameGiven;
     }
 
-    public void setNameGiven(String value) {
+    public void setNameGiven(final String value) {
         this.nameGiven = value;
     }
 
@@ -105,7 +103,7 @@ public class Variable {
         return nameFromAttribute;
     }
 
-    public void setNameFromAttribute(String value) {
+    public void setNameFromAttribute(final String value) {
         this.nameFromAttribute = value;
     }
 
@@ -113,7 +111,7 @@ public class Variable {
         return variableClass;
     }
 
-    public void setVariableClass(String value) {
+    public void setVariableClass(final String value) {
         this.variableClass = value;
     }
 
@@ -121,7 +119,7 @@ public class Variable {
         return declare;
     }
 
-    public void setDeclare(String value) {
+    public void setDeclare(final String value) {
         this.declare = value;
     }
 
@@ -129,7 +127,7 @@ public class Variable {
         return scope;
     }
 
-    public void setScope(String value) {
+    public void setScope(final String value) {
         this.scope = value;
     }
 
@@ -137,7 +135,7 @@ public class Variable {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

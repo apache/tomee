@@ -38,33 +38,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EjbLocalRef$JAXB
-        extends JAXBObject<EjbLocalRef> {
+    extends JAXBObject<EjbLocalRef> {
 
 
     public EjbLocalRef$JAXB() {
         super(EjbLocalRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-local-refType".intern()), Text$JAXB.class, EjbRefType$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static EjbLocalRef readEjbLocalRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EjbLocalRef readEjbLocalRef(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbLocalRef(XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, RuntimeContext context)
-            throws Exception {
+    public static void writeEjbLocalRef(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, ejbLocalRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, ejbLocalRef, context);
     }
 
-    public final static EjbLocalRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EjbLocalRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -90,10 +90,10 @@ public class EjbLocalRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, ejbLocalRef);
                 ejbLocalRef.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -105,14 +105,14 @@ public class EjbLocalRef$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("ejb-ref-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRefName
-                String ejbRefNameRaw = elementReader.getElementAsString();
+                final String ejbRefNameRaw = elementReader.getElementAsString();
 
                 String ejbRefName;
                 try {
@@ -133,7 +133,7 @@ public class EjbLocalRef$JAXB
                 // ELEMENT: localHome
                 String localHomeRaw = elementReader.getElementAsString();
 
-                String localHome;
+                final String localHome;
                 try {
                     localHome = Adapters.collapsedStringAdapterAdapter.unmarshal(localHomeRaw);
                 } catch (Exception e) {
@@ -149,7 +149,7 @@ public class EjbLocalRef$JAXB
                 String local;
                 try {
                     local = Adapters.collapsedStringAdapterAdapter.unmarshal(localRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -197,7 +197,7 @@ public class EjbLocalRef$JAXB
                 // ELEMENT: lookupName
                 String lookupNameRaw = elementReader.getElementAsString();
 
-                String lookupName;
+                final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
                 } catch (Exception e) {
@@ -226,13 +226,13 @@ public class EjbLocalRef$JAXB
         return ejbLocalRef;
     }
 
-    public final EjbLocalRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EjbLocalRef read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, EjbLocalRef ejbLocalRef, RuntimeContext context)
+        throws Exception {
         if (ejbLocalRef == null) {
             writer.writeXsiNil();
             return;
@@ -242,7 +242,7 @@ public class EjbLocalRef$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (EjbLocalRef.class != ejbLocalRef.getClass()) {
             context.unexpectedSubclass(writer, ejbLocalRef, EjbLocalRef.class);
             return;
@@ -271,7 +271,7 @@ public class EjbLocalRef$JAXB
             context.getterError(ejbLocalRef, "descriptions", EjbLocalRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -353,7 +353,7 @@ public class EjbLocalRef$JAXB
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbLocalRef, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {

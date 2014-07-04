@@ -20,10 +20,10 @@ package org.apache.openejb.resource.jdbc.cipher;
 /**
  * In order to reuse that same interface for every passwords in TomEE, it has been moved
  * to another package. Just keeping that interface for compatibility reasons.
- * 
+ *
  * @See org.apache.openejb.cipher.PasswordCipher
  */
 @Deprecated
 public interface PasswordCipher extends org.apache.openejb.cipher.PasswordCipher {
-    
+
 }

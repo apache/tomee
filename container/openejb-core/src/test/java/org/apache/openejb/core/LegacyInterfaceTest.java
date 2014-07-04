@@ -54,7 +54,7 @@ public class LegacyInterfaceTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -104,7 +104,7 @@ public class LegacyInterfaceTest extends TestCase {
         cmp.setPrimkeyField("id");
         cmp.getCmpField().add(new CmpField("id"));
         cmp.getCmpField().add(new CmpField("name"));
-        Query query = new Query();
+        final Query query = new Query();
         query.setQueryMethod(new QueryMethod("findByPrimaryKey", Integer.class.getName()));
         query.setEjbQl("SELECT OBJECT(DL) FROM License DL");
         cmp.getQuery().add(query);
@@ -149,14 +149,14 @@ public class LegacyInterfaceTest extends TestCase {
         public void doit() {
         }
 
-        public Integer ejbCreateObject(String id) throws CreateException {
+        public Integer ejbCreateObject(final String id) throws CreateException {
             return null;
         }
 
-        public void ejbPostCreateObject(String id) {
+        public void ejbPostCreateObject(final String id) {
         }
 
-        public void setEntityContext(EntityContext ctx) {
+        public void setEntityContext(final EntityContext ctx) {
         }
 
         public void unsetEntityContext() {
@@ -189,22 +189,22 @@ public class LegacyInterfaceTest extends TestCase {
             return new java.util.Vector();
         }
 
-        public Integer ejbFindByPrimaryKey(Integer primaryKey) throws javax.ejb.FinderException {
+        public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws javax.ejb.FinderException {
             return new Integer(-1);
         }
 
-        public Integer ejbCreateObject(String name) throws javax.ejb.CreateException {
+        public Integer ejbCreateObject(final String name) throws javax.ejb.CreateException {
             return new Integer(-1);
         }
 
-        public void ejbPostCreateObject(String name) throws javax.ejb.CreateException {
+        public void ejbPostCreateObject(final String name) throws javax.ejb.CreateException {
         }
 
 
         public void ejbLoad() throws EJBException, RemoteException {
         }
 
-        public void setEntityContext(EntityContext entityContext) throws EJBException, RemoteException {
+        public void setEntityContext(final EntityContext entityContext) throws EJBException, RemoteException {
         }
 
         public void unsetEntityContext() throws EJBException, RemoteException {
@@ -226,13 +226,13 @@ public class LegacyInterfaceTest extends TestCase {
     public interface MyRemoteHome extends javax.ejb.EJBHome {
 
         public MyRemoteObject createObject(String name)
-                throws javax.ejb.CreateException, java.rmi.RemoteException;
+            throws javax.ejb.CreateException, java.rmi.RemoteException;
 
         public MyRemoteObject findByPrimaryKey(Integer primarykey)
-                throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws javax.ejb.FinderException, java.rmi.RemoteException;
 
         public java.util.Collection findEmptyCollection()
-                throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws javax.ejb.FinderException, java.rmi.RemoteException;
 
     }
 
@@ -245,13 +245,13 @@ public class LegacyInterfaceTest extends TestCase {
     public interface MyLocalHome extends javax.ejb.EJBLocalHome {
 
         public MyLocalObject createObject(String name)
-                throws javax.ejb.CreateException;
+            throws javax.ejb.CreateException;
 
         public MyLocalObject findByPrimaryKey(Integer primarykey)
-                throws javax.ejb.FinderException;
+            throws javax.ejb.FinderException;
 
         public java.util.Collection findEmptyCollection()
-                throws javax.ejb.FinderException;
+            throws javax.ejb.FinderException;
 
     }
 
@@ -280,13 +280,13 @@ public class LegacyInterfaceTest extends TestCase {
         public void ejbRemove() throws EJBException, RemoteException {
         }
 
-        public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
+        public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
         }
     }
 
     public interface MySessionRemoteHome extends javax.ejb.EJBHome {
         public MySessionRemoteObject createObject()
-                throws javax.ejb.CreateException, java.rmi.RemoteException;
+            throws javax.ejb.CreateException, java.rmi.RemoteException;
     }
 
     public interface MySessionRemoteObject extends javax.ejb.EJBObject {
@@ -295,7 +295,7 @@ public class LegacyInterfaceTest extends TestCase {
 
     public interface MySessionLocalHome extends javax.ejb.EJBLocalHome {
         public MySessionLocalObject createObject()
-                throws javax.ejb.CreateException;
+            throws javax.ejb.CreateException;
     }
 
     public interface MySessionLocalObject extends javax.ejb.EJBLocalObject {

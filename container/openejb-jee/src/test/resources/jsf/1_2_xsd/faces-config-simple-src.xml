@@ -21,23 +21,23 @@
 <!-- my components examples -->
 
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
-  version="1.2">
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+              version="1.2">
 
-    <!-- Managed Beans for sayhello.jsp -->
-    <managed-bean>
-        <managed-bean-name>sayHelloBean</managed-bean-name>
-        <managed-bean-class>org.myorganization.component.example.SayHelloBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+  <!-- Managed Beans for sayhello.jsp -->
+  <managed-bean>
+    <managed-bean-name>sayHelloBean</managed-bean-name>
+    <managed-bean-class>org.myorganization.component.example.SayHelloBean</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
 
-    <!-- NAVIGATION RULES -->
+  <!-- NAVIGATION RULES -->
 
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>go_home</from-outcome>
-            <to-view-id>/home.jsp</to-view-id>
-        </navigation-case>
-    </navigation-rule>
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_home</from-outcome>
+      <to-view-id>/home.jsp</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
 </faces-config>

@@ -45,7 +45,7 @@ public class PmDescriptor {
         return pmIdentifier;
     }
 
-    public void setPmIdentifier(String value) {
+    public void setPmIdentifier(final String value) {
         this.pmIdentifier = value;
     }
 
@@ -53,7 +53,7 @@ public class PmDescriptor {
         return pmVersion;
     }
 
-    public void setPmVersion(String value) {
+    public void setPmVersion(final String value) {
         this.pmVersion = value;
     }
 
@@ -61,7 +61,7 @@ public class PmDescriptor {
         return pmConfig;
     }
 
-    public void setPmConfig(String value) {
+    public void setPmConfig(final String value) {
         this.pmConfig = value;
     }
 
@@ -69,7 +69,7 @@ public class PmDescriptor {
         return pmClassGenerator;
     }
 
-    public void setPmClassGenerator(String value) {
+    public void setPmClassGenerator(final String value) {
         this.pmClassGenerator = value;
     }
 
@@ -77,7 +77,7 @@ public class PmDescriptor {
         return pmMappingFactory;
     }
 
-    public void setPmMappingFactory(String value) {
+    public void setPmMappingFactory(final String value) {
         this.pmMappingFactory = value;
     }
 }

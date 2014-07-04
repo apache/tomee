@@ -51,7 +51,7 @@ public class FinderFactory {
 
     private static FinderFactory get() {
         final FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
-        return factory != null ? factory: FinderFactory.factory;
+        return factory != null ? factory : FinderFactory.factory;
     }
 
     public static IAnnotationFinder createFinder(final DeploymentModule module) throws Exception {
@@ -165,7 +165,7 @@ public class FinderFactory {
     private static boolean enableFindSubclasses() {
         return SystemInstance.get().getOptions().get(FORCE_LINK, false)
             || !SystemInstance.get().getOptions().get(SKIP_LINK, false)
-                && (isTomEE() || isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
+            && (isTomEE() || isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
     }
 
     public static boolean isTomEE() {

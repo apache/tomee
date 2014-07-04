@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesManagedBeanExtension$JAXB
-        extends JAXBObject<FacesManagedBeanExtension> {
+    extends JAXBObject<FacesManagedBeanExtension> {
 
 
     public FacesManagedBeanExtension$JAXB() {
         super(FacesManagedBeanExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-managed-bean-extensionType".intern()));
     }
 
-    public static FacesManagedBeanExtension readFacesManagedBeanExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesManagedBeanExtension readFacesManagedBeanExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesManagedBeanExtension(XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesManagedBeanExtension(final XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedBeanExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedBeanExtension, context);
     }
 
-    public final static FacesManagedBeanExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesManagedBeanExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -93,7 +93,7 @@ public class FacesManagedBeanExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesManagedBeanExtension.any;
@@ -114,13 +114,13 @@ public class FacesManagedBeanExtension$JAXB
         return facesManagedBeanExtension;
     }
 
-    public final FacesManagedBeanExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesManagedBeanExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesManagedBeanExtension facesManagedBeanExtension, RuntimeContext context)
+        throws Exception {
         if (facesManagedBeanExtension == null) {
             writer.writeXsiNil();
             return;
@@ -151,9 +151,9 @@ public class FacesManagedBeanExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesManagedBeanExtension.any;
+        final List<Object> any = facesManagedBeanExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesManagedBeanExtension, "any", anyItem);
             }
         }

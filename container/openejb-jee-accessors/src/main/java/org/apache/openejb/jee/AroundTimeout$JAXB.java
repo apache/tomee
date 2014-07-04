@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AroundTimeout$JAXB
-        extends JAXBObject<AroundTimeout> {
+    extends JAXBObject<AroundTimeout> {
 
 
     public AroundTimeout$JAXB() {
         super(AroundTimeout.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "around-timeoutType".intern()));
     }
 
-    public static AroundTimeout readAroundTimeout(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AroundTimeout readAroundTimeout(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAroundTimeout(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public static void writeAroundTimeout(final XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
+        throws Exception {
         _write(writer, aroundTimeout, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, AroundTimeout aroundTimeout, final RuntimeContext context)
+        throws Exception {
         _write(writer, aroundTimeout, context);
     }
 
-    public final static AroundTimeout _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AroundTimeout _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,7 +65,7 @@ public class AroundTimeout$JAXB
             context = new RuntimeContext();
         }
 
-        AroundTimeout aroundTimeout = new AroundTimeout();
+        final AroundTimeout aroundTimeout = new AroundTimeout();
         context.beforeUnmarshal(aroundTimeout, LifecycleCallback.NONE);
 
 
@@ -103,7 +103,7 @@ public class AroundTimeout$JAXB
                 // ELEMENT: methodName
                 String methodNameRaw = elementReader.getElementAsString();
 
-                String methodName;
+                final String methodName;
                 try {
                     methodName = Adapters.collapsedStringAdapterAdapter.unmarshal(methodNameRaw);
                 } catch (Exception e) {
@@ -122,13 +122,13 @@ public class AroundTimeout$JAXB
         return aroundTimeout;
     }
 
-    public final AroundTimeout read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AroundTimeout read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final AroundTimeout aroundTimeout, RuntimeContext context)
+        throws Exception {
         if (aroundTimeout == null) {
             writer.writeXsiNil();
             return;

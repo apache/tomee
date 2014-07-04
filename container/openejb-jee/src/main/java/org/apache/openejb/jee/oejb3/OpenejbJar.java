@@ -18,26 +18,24 @@
 
 package org.apache.openejb.jee.oejb3;
 
-import org.apache.openejb.jee.NamedModule;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.NamedModule;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.Properties;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"moduleName", "properties","ejbDeployment", "pojoDeployment"})
+@XmlType(propOrder = {"moduleName", "properties", "ejbDeployment", "pojoDeployment"})
 @XmlRootElement(name = "openejb-jar")
 public class OpenejbJar implements NamedModule {
     @XmlElement(name = "properties")
@@ -67,17 +65,17 @@ public class OpenejbJar implements NamedModule {
         return pojoDeployment;
     }
 
-    public Map<String,EjbDeployment> getDeploymentsById(){
-        Map<String,EjbDeployment> map = new LinkedHashMap<String,EjbDeployment>();
-        for (EjbDeployment deployment : getEjbDeployment()) {
+    public Map<String, EjbDeployment> getDeploymentsById() {
+        final Map<String, EjbDeployment> map = new LinkedHashMap<String, EjbDeployment>();
+        for (final EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getDeploymentId(), deployment);
         }
         return map;
     }
 
-    public Map<String,EjbDeployment> getDeploymentsByEjbName(){
-        Map<String,EjbDeployment> map = new LinkedHashMap<String,EjbDeployment>();
-        for (EjbDeployment deployment : getEjbDeployment()) {
+    public Map<String, EjbDeployment> getDeploymentsByEjbName() {
+        final Map<String, EjbDeployment> map = new LinkedHashMap<String, EjbDeployment>();
+        for (final EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getEjbName(), deployment);
         }
         return map;
@@ -89,7 +87,7 @@ public class OpenejbJar implements NamedModule {
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         setModuleName(id);
     }
 
@@ -99,7 +97,7 @@ public class OpenejbJar implements NamedModule {
     }
 
     @Override
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -107,12 +105,12 @@ public class OpenejbJar implements NamedModule {
         return getEjbDeployment().size();
     }
 
-    public EjbDeployment addEjbDeployment(EjbDeployment ejbDeployment) {
+    public EjbDeployment addEjbDeployment(final EjbDeployment ejbDeployment) {
         getEjbDeployment().add(ejbDeployment);
         return ejbDeployment;
     }
 
-    public void removeEjbDeployment(EjbDeployment ejbDeployment) {
+    public void removeEjbDeployment(final EjbDeployment ejbDeployment) {
         getEjbDeployment().remove(ejbDeployment);
     }
 
@@ -123,14 +121,14 @@ public class OpenejbJar implements NamedModule {
         return properties;
     }
 
-    public EjbDeployment addEjbDeployment(EnterpriseBean bean) {
+    public EjbDeployment addEjbDeployment(final EnterpriseBean bean) {
         return addEjbDeployment(new EjbDeployment(bean));
     }
 
     public OpenejbJar postRead() {
         if (pojoDeployment != null && properties != null) {
-            for (PojoDeployment pojo : pojoDeployment) {
-                for (String key : properties.stringPropertyNames()) {
+            for (final PojoDeployment pojo : pojoDeployment) {
+                for (final String key : properties.stringPropertyNames()) {
                     if (!pojo.getProperties().containsKey(key)) {
                         pojo.getProperties().put(key, properties.get(key));
                     }

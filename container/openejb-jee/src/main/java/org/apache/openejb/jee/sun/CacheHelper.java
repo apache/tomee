@@ -42,7 +42,7 @@ public class CacheHelper {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -50,7 +50,7 @@ public class CacheHelper {
         return className;
     }
 
-    public void setClassName(String value) {
+    public void setClassName(final String value) {
         this.className = value;
     }
 

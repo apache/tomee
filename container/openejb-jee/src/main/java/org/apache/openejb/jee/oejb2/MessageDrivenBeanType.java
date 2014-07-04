@@ -19,10 +19,6 @@ package org.apache.openejb.jee.oejb2;
 
 import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
-import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,17 +26,21 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
  * <p>Java class for message-driven-beanType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-driven-beanType">
  *   &lt;complexContent>
@@ -56,8 +56,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-beanType", propOrder = {
@@ -83,7 +81,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
     @XmlJavaTypeAdapter(PropertiesAdapter.class)
     protected Properties properties;
 
-    @XmlElement(name = "resource-adapter",  namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
+    @XmlElement(name = "resource-adapter", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected ResourceLocatorType resourceAdapter;
 
     @XmlElement(name = "activation-config")
@@ -92,10 +90,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
 
-    @XmlElement(name = "persistence-context-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "persistence-context-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<PersistenceContextRefType> persistenceContextRef;
 
-    @XmlElement(name = "persistence-unit-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "persistence-unit-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<PersistenceUnitRefType> persistenceUnitRef;
 
     @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
@@ -134,11 +132,9 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbName() {
         return ejbName;
@@ -146,23 +142,19 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the resourceAdapter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResourceLocatorType }
-     *     
+     *
+     * @return possible object is
+     * {@link ResourceLocatorType }
      */
     public ResourceLocatorType getResourceAdapter() {
         return resourceAdapter;
@@ -170,23 +162,19 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Sets the value of the resourceAdapter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResourceLocatorType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ResourceLocatorType }
      */
-    public void setResourceAdapter(ResourceLocatorType value) {
+    public void setResourceAdapter(final ResourceLocatorType value) {
         this.resourceAdapter = value;
     }
 
     /**
      * Gets the value of the activationConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ActivationConfigType }
-     *     
+     *
+     * @return possible object is
+     * {@link ActivationConfigType }
      */
     public ActivationConfigType getActivationConfig() {
         return activationConfig;
@@ -194,40 +182,36 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Sets the value of the activationConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ActivationConfigType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ActivationConfigType }
      */
-    public void setActivationConfig(ActivationConfigType value) {
+    public void setActivationConfig(final ActivationConfigType value) {
         this.activationConfig = value;
     }
 
     /**
      * Gets the value of the abstractNamingEntry property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractNamingEntry property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractNamingEntry().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractNamingEntryType }{@code >}
      * {@link JAXBElement }{@code <}{@link PersistenceContextRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link PersistenceUnitRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link GbeanRefType }{@code >}
-     * 
-     * 
      */
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
@@ -238,14 +222,14 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
-        if (persistenceContextRef == null){
+        if (persistenceContextRef == null) {
             persistenceContextRef = new ArrayList<PersistenceContextRefType>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
-        if (persistenceUnitRef == null){
+        if (persistenceUnitRef == null) {
             persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
         }
         return persistenceUnitRef;
@@ -253,25 +237,23 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the ejbRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRefType }
-     * 
-     * 
      */
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
@@ -282,25 +264,23 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the ejbLocalRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbLocalRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbLocalRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbLocalRefType }
-     * 
-     * 
      */
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
@@ -311,25 +291,23 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the serviceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServiceRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceRefType }
-     * 
-     * 
      */
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
@@ -340,25 +318,23 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the resourceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceRefType }
-     * 
-     * 
      */
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
@@ -369,25 +345,23 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the resourceEnvRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceEnvRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvRefType }
-     * 
-     * 
      */
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
@@ -398,11 +372,9 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -410,13 +382,11 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

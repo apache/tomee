@@ -90,7 +90,7 @@ public abstract class ValidationBase implements ValidationRule {
         module.getValidation().warn(componentName, key, details);
     }
 
-    public void missingMethod(final ValidationContext set, final EnterpriseBean bean, final String key, final String methodName, final Class returnType, final Class... paramTypes){
+    public void missingMethod(final ValidationContext set, final EnterpriseBean bean, final String key, final String methodName, final Class returnType, final Class... paramTypes) {
         fail(bean, key, methodName, returnType.getName(), getParameters(paramTypes));
     }
 
@@ -103,7 +103,7 @@ public abstract class ValidationBase implements ValidationRule {
     }
 
     public static boolean paramsMatch(final Method methodA, final Method methodB) {
-        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
+        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public abstract class ValidationBase implements ValidationRule {
     }
 
     public String getParameters(final MethodParams methodParams) {
-        if(methodParams == null) {
+        if (methodParams == null) {
             return "";
         } else {
             return Join.join(",", methodParams.getMethodParam());

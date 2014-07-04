@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class Dispatcher$JAXB
-        extends JAXBEnum<Dispatcher> {
+    extends JAXBEnum<Dispatcher> {
 
 
     public Dispatcher$JAXB() {
         super(Dispatcher.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "dispatcherType".intern()));
     }
 
-    public Dispatcher parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public Dispatcher parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+        throws Exception {
         return parseDispatcher(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, Dispatcher dispatcher)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, RuntimeContext context, Dispatcher dispatcher)
+        throws Exception {
         return toStringDispatcher(bean, parameterName, context, dispatcher);
     }
 
-    public static Dispatcher parseDispatcher(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static Dispatcher parseDispatcher(final XoXMLStreamReader reader, RuntimeContext context, final String value)
+        throws Exception {
         if ("FORWARD".equals(value)) {
             return Dispatcher.FORWARD;
         } else if ("REQUEST".equals(value)) {
@@ -58,8 +58,8 @@ public class Dispatcher$JAXB
         }
     }
 
-    public static String toStringDispatcher(Object bean, String parameterName, RuntimeContext context, Dispatcher dispatcher)
-            throws Exception {
+    public static String toStringDispatcher(final Object bean, final String parameterName, RuntimeContext context, Dispatcher dispatcher)
+        throws Exception {
         if (Dispatcher.FORWARD == dispatcher) {
             return "FORWARD";
         } else if (Dispatcher.REQUEST == dispatcher) {

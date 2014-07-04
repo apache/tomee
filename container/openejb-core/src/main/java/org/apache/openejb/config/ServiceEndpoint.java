@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * This is a completely fake annotation and is only a placeholder for the real annotation
  * that specifies an interface is a webservice interface
+ *
  * @version $Rev$ $Date$
  */
 @Retention(RetentionPolicy.RUNTIME)

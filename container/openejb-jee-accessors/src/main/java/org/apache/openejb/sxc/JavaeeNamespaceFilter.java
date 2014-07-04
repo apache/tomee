@@ -20,10 +20,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class JavaeeNamespaceFilter extends StreamReaderDelegate {
-    public JavaeeNamespaceFilter(XMLStreamReader streamReader) {
+    public JavaeeNamespaceFilter(final XMLStreamReader streamReader) {
         super(streamReader);
     }
 

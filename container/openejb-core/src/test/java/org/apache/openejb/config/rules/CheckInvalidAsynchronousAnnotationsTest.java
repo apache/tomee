@@ -42,7 +42,7 @@ public class CheckInvalidAsynchronousAnnotationsTest {
     @BeforeClass
     public static void setupTestCase() {
         SystemInstance.reset();
-        SystemInstance system = SystemInstance.get();
+        final SystemInstance system = SystemInstance.get();
         system.setProperty(VALIDATION_OUTPUT_LEVEL, "VERBOSE");
     }
 
@@ -51,7 +51,7 @@ public class CheckInvalidAsynchronousAnnotationsTest {
         SystemInstance.reset();
     }
 
-    @Keys( { @Key("asynchronous.badReturnType")})
+    @Keys({@Key("asynchronous.badReturnType")})
     public EjbJar shouldRecognizeBadReturnTypeForAnnotatedMethod() throws Exception {
         return ejbJarWithStatelessBean(AsyncBeanMethodWithWrongReturnType.class);
     }
@@ -66,7 +66,7 @@ public class CheckInvalidAsynchronousAnnotationsTest {
         return ejbJarWithStatelessBean(AsyncBeanMethodWithFutureReturnType.class);
     }
 
-    @Keys( { @Key("asynchronous.badReturnType")})
+    @Keys({@Key("asynchronous.badReturnType")})
     public EjbJar shouldRecognizeBadReturnTypeForAnnotatedBean() throws Exception {
         return ejbJarWithStatelessBean(AsyncBeanWithWrongReturnType.class);
     }
@@ -81,29 +81,29 @@ public class CheckInvalidAsynchronousAnnotationsTest {
         return ejbJarWithStatelessBean(AsyncBeanWithFutureReturnType.class);
     }
 
-    @Keys( { @Key("asynchronous.badExceptionType")})
+    @Keys({@Key("asynchronous.badExceptionType")})
     public EjbJar shouldRecognizeBadExceptionTypeForAsyncMethodWithVoidReturnType() {
         return ejbJarWithStatelessBean(AsyncBeanWithIllegalExceptionType.class);
     }
 
-    @Keys( { @Key(value = "ignoredMethodAnnotation", type = KeyType.WARNING )})
+    @Keys({@Key(value = "ignoredMethodAnnotation", type = KeyType.WARNING)})
     public EjbJar shouldWarnForAsyncAnnotationOnNonSessionBeanMethod() {
         return ejbJarWithMessageDrivenBean(MessageDrivenBeanWithAsyncMethod.class);
     }
 
-    @Keys( { @Key(value = "ignoredClassAnnotation", type = KeyType.WARNING )})
+    @Keys({@Key(value = "ignoredClassAnnotation", type = KeyType.WARNING)})
     public EjbJar shouldWarnForAsyncAnnotationOnNonSessionBean() {
         return ejbJarWithMessageDrivenBean(MessageDrivenBeanWithAsyncClassLevelAnnotation.class);
     }
 
     private static EjbJar ejbJarWithStatelessBean(final Class<?> beanClass) {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(beanClass));
         return ejbJar;
     }
 
     private static EjbJar ejbJarWithMessageDrivenBean(final Class<?> beanClass) {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(beanClass));
         return ejbJar;
     }
@@ -117,7 +117,8 @@ public class CheckInvalidAsynchronousAnnotationsTest {
 
     public static class AsyncBeanMethodWithVoidReturnType {
         @Asynchronous
-        public void validReturnType() {}
+        public void validReturnType() {
+        }
     }
 
     public static class AsyncBeanMethodWithFutureReturnType {
@@ -136,7 +137,8 @@ public class CheckInvalidAsynchronousAnnotationsTest {
 
     @Asynchronous
     public static class AsyncBeanWithVoidReturnType {
-        public void validReturnType() {}
+        public void validReturnType() {
+        }
     }
 
     @Asynchronous
@@ -148,21 +150,27 @@ public class CheckInvalidAsynchronousAnnotationsTest {
 
     @Asynchronous
     public static class AsyncBeanWithIllegalExceptionType {
-        private class ArbitraryApplicationException extends Exception {}
-        public void businessMethod() throws ArbitraryApplicationException {}
+        private class ArbitraryApplicationException extends Exception {
+        }
+
+        public void businessMethod() throws ArbitraryApplicationException {
+        }
     }
 
     @Asynchronous
     @MessageDriven
     public static class MessageDrivenBeanWithAsyncClassLevelAnnotation implements MessageListener {
-        public void onMessage(final Message message) {}
+        public void onMessage(final Message message) {
+        }
     }
 
     @MessageDriven
     public static class MessageDrivenBeanWithAsyncMethod implements MessageListener {
-        public void onMessage(final Message message) {}
+        public void onMessage(final Message message) {
+        }
 
         @Asynchronous
-        public void asyncMethod() {}
+        public void asyncMethod() {
+        }
     }
 }

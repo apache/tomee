@@ -45,10 +45,14 @@ import java.io.Serializable;
  */
 public class SecondMoment extends FirstMoment implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1232403127395076445L;
 
-    /** second moment of values that have been added */
+    /**
+     * second moment of values that have been added
+     */
     protected double m2;
 
     /**
@@ -114,7 +118,7 @@ public class SecondMoment extends FirstMoment implements Serializable {
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source SecondMoment to copy
-     * @param dest SecondMoment to copy to
+     * @param dest   SecondMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final SecondMoment source, final SecondMoment dest) {

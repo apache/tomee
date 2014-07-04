@@ -40,33 +40,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesManagedProperty$JAXB
-        extends JAXBObject<FacesManagedProperty> {
+    extends JAXBObject<FacesManagedProperty> {
 
 
     public FacesManagedProperty$JAXB() {
         super(FacesManagedProperty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-managed-propertyType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesMapEntries$JAXB.class, FacesNullValue$JAXB.class, FacesListEntries$JAXB.class);
     }
 
-    public static FacesManagedProperty readFacesManagedProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesManagedProperty readFacesManagedProperty(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesManagedProperty(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesManagedProperty(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedProperty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedProperty, context);
     }
 
-    public final static FacesManagedProperty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesManagedProperty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -77,7 +77,7 @@ public class FacesManagedProperty$JAXB
             context = new RuntimeContext();
         }
 
-        FacesManagedProperty facesManagedProperty = new FacesManagedProperty();
+        final FacesManagedProperty facesManagedProperty = new FacesManagedProperty();
         context.beforeUnmarshal(facesManagedProperty, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -210,13 +210,13 @@ public class FacesManagedProperty$JAXB
         return facesManagedProperty;
     }
 
-    public final FacesManagedProperty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesManagedProperty read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, RuntimeContext context)
+        throws Exception {
         if (facesManagedProperty == null) {
             writer.writeXsiNil();
             return;
@@ -226,7 +226,7 @@ public class FacesManagedProperty$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesManagedProperty.class != facesManagedProperty.getClass()) {
             context.unexpectedSubclass(writer, facesManagedProperty, FacesManagedProperty.class);
             return;
@@ -274,7 +274,7 @@ public class FacesManagedProperty$JAXB
             context.getterError(facesManagedProperty, "displayNames", FacesManagedProperty.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);

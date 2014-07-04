@@ -66,29 +66,40 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     public static final String OPENEJB_CDI_SKIP_CLASS_NOT_FOUND = "openejb.cdi.skip-class-not-found";
 
-    /**Discover bean classes*/
+    /**
+     * Discover bean classes
+     */
     protected ScannerService scannerService;
 
     protected final ContextsService contextsService;
 
-    /**Deploy discovered beans*/
+    /**
+     * Deploy discovered beans
+     */
     private final BeansDeployer deployer;
 
-    /**XML discovery. */
+    /**
+     * XML discovery.
+     */
     //XML discovery is removed from the specification. It is here for next revisions of spec.
     private final WebBeansXMLConfigurator xmlDeployer;
 
-    /**Using for lookup operations*/
+    /**
+     * Using for lookup operations
+     */
     private final JNDIService jndiService;
 
-    /**Root container.*/
+    /**
+     * Root container.
+     */
     private final BeanManagerImpl beanManager;
     private final WebBeansContext webBeansContext;
-    /**Manages unused conversations*/
+    /**
+     * Manages unused conversations
+     */
     private ScheduledExecutorService service;
 
-    public OpenEJBLifecycle(final WebBeansContext webBeansContext)
-    {
+    public OpenEJBLifecycle(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
         beforeInitApplication(null);
 
@@ -104,14 +115,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public BeanManager getBeanManager()
-    {
+    public BeanManager getBeanManager() {
         return this.beanManager;
     }
 
     @Override
-    public void startApplication(final Object startupObject)
-    {
+    public void startApplication(final Object startupObject) {
         if (startupObject instanceof ServletContextEvent) {
             startServletContext((ServletContext) getServletContext(startupObject)); // TODO: check it is relevant
             return;
@@ -218,12 +227,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public void stopApplication(final Object endObject)
-    {
+    public void stopApplication(final Object endObject) {
         logger.debug("OpenWebBeans Container is stopping.");
 
-        try
-        {
+        try {
             //Sub-classes operations
             beforeStopApplication(null);
 
@@ -263,9 +270,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             // Clear singleton list
             WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             logger.error("An error occured while stopping the container.", e);
         }
 
@@ -274,43 +279,37 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**
      * @return the scannerService
      */
-    protected ScannerService getScannerService()
-    {
+    protected ScannerService getScannerService() {
         return scannerService;
     }
 
     /**
      * @return the contextsService
      */
-    public ContextsService getContextService()
-    {
+    public ContextsService getContextService() {
         return contextsService;
     }
 
     /**
      * @return the xmlDeployer
      */
-    protected WebBeansXMLConfigurator getXmlDeployer()
-    {
+    protected WebBeansXMLConfigurator getXmlDeployer() {
         return xmlDeployer;
     }
 
     /**
      * @return the jndiService
      */
-    protected JNDIService getJndiService()
-    {
+    protected JNDIService getJndiService() {
         return jndiService;
     }
 
     @Override
-    public void initApplication(final Properties properties)
-    {
+    public void initApplication(final Properties properties) {
         afterInitApplication(properties);
     }
 
-    protected void beforeInitApplication(final Properties properties)
-    {
+    protected void beforeInitApplication(final Properties properties) {
         //Do nothing as default
     }
 
@@ -366,30 +365,25 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**
      * Conversation cleaner thread, that
      * clears unused conversations.
-     *
      */
-    private static final class ConversationCleaner implements Runnable
-    {
+    private static final class ConversationCleaner implements Runnable {
         private final WebBeansContext webBeansContext;
 
         private ConversationCleaner(final WebBeansContext webBeansContext) {
             this.webBeansContext = webBeansContext;
         }
 
-        public void run()
-        {
+        public void run() {
             webBeansContext.getConversationManager().destroyWithRespectToTimout();
 
         }
     }
 
-    protected void afterStopApplication(final Object stopObject) throws Exception
-    {
+    protected void afterStopApplication(final Object stopObject) throws Exception {
 
         //Clear the resource injection service
         final ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
-        if(injectionServices != null)
-        {
+        if (injectionServices != null) {
             injectionServices.clear();
         }
 
@@ -403,6 +397,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     /**
      * Returns servelt context otherwise throws exception.
+     *
      * @param object object
      * @return servlet context
      */
@@ -414,15 +409,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         return object;
     }
 
-    protected void beforeStartApplication(final Object startupObject)
-    {
+    protected void beforeStartApplication(final Object startupObject) {
         //Do nothing as default
     }
 
-    protected void beforeStopApplication(final Object stopObject) throws Exception
-    {
-        if(service != null)
-        {
+    protected void beforeStopApplication(final Object stopObject) throws Exception {
+        if (service != null) {
             service.shutdownNow();
         }
     }

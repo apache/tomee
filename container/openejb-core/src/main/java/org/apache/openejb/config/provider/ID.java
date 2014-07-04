@@ -49,6 +49,7 @@ public class ID {
             throw new IllegalArgumentException("name cannot be null");
         }
     }
+
     public static ID parse(final String raw) {
         return parse(raw, (String) null);
     }
@@ -107,8 +108,8 @@ public class ID {
     @Override
     public String toString() {
         return "ID{" +
-                "namespace='" + namespace + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+            "namespace='" + namespace + '\'' +
+            ", name='" + name + '\'' +
+            '}';
     }
 }

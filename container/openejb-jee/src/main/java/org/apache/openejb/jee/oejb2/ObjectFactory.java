@@ -24,18 +24,17 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.apache.openejb.jee.oej2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.apache.openejb.jee.oej2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -76,14 +75,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.oej2
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ActivationConfigPropertyType }
-     * 
      */
     public ActivationConfigPropertyType createActivationConfigPropertyType() {
         return new ActivationConfigPropertyType();
@@ -91,7 +88,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AutoIncrementTableType }
-     * 
      */
     public AutoIncrementTableType createAutoIncrementTableType() {
         return new AutoIncrementTableType();
@@ -99,7 +95,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GroupType.CmrField }
-     * 
      */
     public GroupType.CmrField createGroupTypeCmrField() {
         return new GroupType.CmrField();
@@ -107,7 +102,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnvironmentType }
-     * 
      */
     public EnvironmentType createEnvironmentType() {
         return new EnvironmentType();
@@ -115,7 +109,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferencesType }
-     * 
      */
     public ReferencesType createReferencesType() {
         return new ReferencesType();
@@ -123,7 +116,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType.QueryMethod }
-     * 
      */
     public QueryType.QueryMethod createQueryTypeQueryMethod() {
         return new QueryType.QueryMethod();
@@ -131,7 +123,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassFilterType }
-     * 
      */
     public ClassFilterType createClassFilterType() {
         return new ClassFilterType();
@@ -139,7 +130,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityBeanType.Cache }
-     * 
      */
     public EntityBeanType.Cache createEntityBeanTypeCache() {
         return new EntityBeanType.Cache();
@@ -147,7 +137,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XmlAttributeType }
-     * 
      */
     public XmlAttributeType createXmlAttributeType() {
         return new XmlAttributeType();
@@ -155,7 +144,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationType }
-     * 
      */
     public EjbRelationType createEjbRelationType() {
         return new EjbRelationType();
@@ -163,7 +151,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GroupType }
-     * 
      */
     public GroupType createGroupType() {
         return new GroupType();
@@ -171,7 +158,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SequenceTableType }
-     * 
      */
     public SequenceTableType createSequenceTableType() {
         return new SequenceTableType();
@@ -179,7 +165,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmpFieldGroupMappingType }
-     * 
      */
     public CmpFieldGroupMappingType createCmpFieldGroupMappingType() {
         return new CmpFieldGroupMappingType();
@@ -187,7 +172,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersistenceUnitRefType }
-     * 
      */
     public PersistenceUnitRefType createPersistenceUnitRefType() {
         return new PersistenceUnitRefType();
@@ -195,7 +179,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SqlGeneratorType }
-     * 
      */
     public SqlGeneratorType createSqlGeneratorType() {
         return new SqlGeneratorType();
@@ -203,7 +186,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleType.CmrField }
-     * 
      */
     public EjbRelationshipRoleType.CmrField createEjbRelationshipRoleTypeCmrField() {
         return new EjbRelationshipRoleType.CmrField();
@@ -211,7 +193,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SessionBeanType }
-     * 
      */
     public SessionBeanType createSessionBeanType() {
         return new SessionBeanType();
@@ -219,7 +200,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WebServiceSecurityType }
-     * 
      */
     public WebServiceSecurityType createWebServiceSecurityType() {
         return new WebServiceSecurityType();
@@ -227,7 +207,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRefType }
-     * 
      */
     public EjbRefType createEjbRefType() {
         return new EjbRefType();
@@ -235,7 +214,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceEnvRefType }
-     * 
      */
     public ResourceEnvRefType createResourceEnvRefType() {
         return new ResourceEnvRefType();
@@ -243,7 +221,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleType }
-     * 
      */
     public EjbRelationshipRoleType createEjbRelationshipRoleType() {
         return new EjbRelationshipRoleType();
@@ -251,7 +228,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GbeanRefType }
-     * 
      */
     public GbeanRefType createGbeanRefType() {
         return new GbeanRefType();
@@ -259,7 +235,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityBeanType.PrefetchGroup }
-     * 
      */
     public EntityBeanType.PrefetchGroup createEntityBeanTypePrefetchGroup() {
         return new EntityBeanType.PrefetchGroup();
@@ -267,7 +242,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GbeanLocatorType }
-     * 
      */
     public GbeanLocatorType createGbeanLocatorType() {
         return new GbeanLocatorType();
@@ -275,7 +249,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceRefType }
-     * 
      */
     public ResourceRefType createResourceRefType() {
         return new ResourceRefType();
@@ -283,7 +256,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CustomGeneratorType }
-     * 
      */
     public CustomGeneratorType createCustomGeneratorType() {
         return new CustomGeneratorType();
@@ -291,7 +263,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDestinationType }
-     * 
      */
     public MessageDestinationType createMessageDestinationType() {
         return new MessageDestinationType();
@@ -299,7 +270,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ApplicationType }
-     * 
      */
     public ApplicationType createApplicationType() {
         return new ApplicationType();
@@ -307,7 +277,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityGroupMappingType }
-     * 
      */
     public EntityGroupMappingType createEntityGroupMappingType() {
         return new EntityGroupMappingType();
@@ -315,7 +284,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRefType }
-     * 
      */
     public ServiceRefType createServiceRefType() {
         return new ServiceRefType();
@@ -323,7 +291,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeyGeneratorType }
-     * 
      */
     public KeyGeneratorType createKeyGeneratorType() {
         return new KeyGeneratorType();
@@ -331,7 +298,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbLocalRefType }
-     * 
      */
     public EjbLocalRefType createEjbLocalRefType() {
         return new EjbLocalRefType();
@@ -339,7 +305,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceModuleType }
-     * 
      */
     public ServiceModuleType createServiceModuleType() {
         return new ServiceModuleType();
@@ -348,7 +313,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceCompletionType }
-     * 
      */
     public ServiceCompletionType createServiceCompletionType() {
         return new ServiceCompletionType();
@@ -356,7 +320,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PatternType }
-     * 
      */
     public PatternType createPatternType() {
         return new PatternType();
@@ -364,7 +327,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DependencyType }
-     * 
      */
     public DependencyType createDependencyType() {
         return new DependencyType();
@@ -372,7 +334,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OpenejbJarType }
-     * 
      */
     public OpenejbJarType createOpenejbJarType() {
         return new OpenejbJarType();
@@ -380,7 +341,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityBeanType }
-     * 
      */
     public EntityBeanType createEntityBeanType() {
         return new EntityBeanType();
@@ -388,7 +348,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleType.RelationshipRoleSource }
-     * 
      */
     public EjbRelationshipRoleType.RelationshipRoleSource createEjbRelationshipRoleTypeRelationshipRoleSource() {
         return new EjbRelationshipRoleType.RelationshipRoleSource();
@@ -396,7 +355,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActivationConfigType }
-     * 
      */
     public ActivationConfigType createActivationConfigType() {
         return new ActivationConfigType();
@@ -404,7 +362,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArtifactType }
-     * 
      */
     public ArtifactType createArtifactType() {
         return new ArtifactType();
@@ -412,7 +369,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtModuleType }
-     * 
      */
     public ExtModuleType createExtModuleType() {
         return new ExtModuleType();
@@ -420,7 +376,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GbeanType }
-     * 
      */
     public GbeanType createGbeanType() {
         return new GbeanType();
@@ -428,7 +383,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmptyType }
-     * 
      */
     public EmptyType createEmptyType() {
         return new EmptyType();
@@ -436,7 +390,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType }
-     * 
      */
     public QueryType createQueryType() {
         return new QueryType();
@@ -444,7 +397,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DatabaseGeneratedType }
-     * 
      */
     public DatabaseGeneratedType createDatabaseGeneratedType() {
         return new DatabaseGeneratedType();
@@ -452,7 +404,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmrFieldGroupMappingType }
-     * 
      */
     public CmrFieldGroupMappingType createCmrFieldGroupMappingType() {
         return new CmrFieldGroupMappingType();
@@ -460,7 +411,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleType.RoleMapping.CmrFieldMapping }
-     * 
      */
     public EjbRelationshipRoleType.RoleMapping.CmrFieldMapping createEjbRelationshipRoleTypeRoleMappingCmrFieldMapping() {
         return new EjbRelationshipRoleType.RoleMapping.CmrFieldMapping();
@@ -468,7 +418,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortType }
-     * 
      */
     public PortType createPortType() {
         return new PortType();
@@ -476,7 +425,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleType.RoleMapping }
-     * 
      */
     public EjbRelationshipRoleType.RoleMapping createEjbRelationshipRoleTypeRoleMapping() {
         return new EjbRelationshipRoleType.RoleMapping();
@@ -484,7 +432,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityBeanType.CmpFieldMapping }
-     * 
      */
     public EntityBeanType.CmpFieldMapping createEntityBeanTypeCmpFieldMapping() {
         return new EntityBeanType.CmpFieldMapping();
@@ -492,7 +439,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModuleType }
-     * 
      */
     public ModuleType createModuleType() {
         return new ModuleType();
@@ -500,7 +446,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDrivenBeanType }
-     * 
      */
     public MessageDrivenBeanType createMessageDrivenBeanType() {
         return new MessageDrivenBeanType();
@@ -508,7 +453,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersistenceContextRefType }
-     * 
      */
     public PersistenceContextRefType createPersistenceContextRefType() {
         return new PersistenceContextRefType();
@@ -516,7 +460,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortCompletionType }
-     * 
      */
     public PortCompletionType createPortCompletionType() {
         return new PortCompletionType();
@@ -524,7 +467,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceLocatorType }
-     * 
      */
     public ResourceLocatorType createResourceLocatorType() {
         return new ResourceLocatorType();
@@ -532,7 +474,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DependenciesType }
-     * 
      */
     public DependenciesType createDependenciesType() {
         return new DependenciesType();
@@ -540,7 +481,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType.QueryMethod.MethodParams }
-     * 
      */
     public QueryType.QueryMethod.MethodParams createQueryTypeQueryMethodMethodParams() {
         return new QueryType.QueryMethod.MethodParams();
@@ -548,7 +488,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceType }
-     * 
      */
     public ReferenceType createReferenceType() {
         return new ReferenceType();
@@ -556,7 +495,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyType }
-     * 
      */
     public PropertyType createPropertyType() {
         return new PropertyType();
@@ -564,7 +502,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributeType }
-     * 
      */
     public AttributeType createAttributeType() {
         return new AttributeType();
@@ -572,199 +509,177 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferencesType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "references", scope = GbeanType.class)
-    public JAXBElement<ReferencesType> createGbeanTypeReferences(ReferencesType value) {
+    public JAXBElement<ReferencesType> createGbeanTypeReferences(final ReferencesType value) {
         return new JAXBElement<ReferencesType>(_GbeanTypeReferences_QNAME, ReferencesType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XmlAttributeType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "xml-reference", scope = GbeanType.class)
-    public JAXBElement<XmlAttributeType> createGbeanTypeXmlReference(XmlAttributeType value) {
+    public JAXBElement<XmlAttributeType> createGbeanTypeXmlReference(final XmlAttributeType value) {
         return new JAXBElement<XmlAttributeType>(_GbeanTypeXmlReference_QNAME, XmlAttributeType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PatternType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "dependency", scope = GbeanType.class)
-    public JAXBElement<PatternType> createGbeanTypeDependency(PatternType value) {
+    public JAXBElement<PatternType> createGbeanTypeDependency(final PatternType value) {
         return new JAXBElement<PatternType>(_GbeanTypeDependency_QNAME, PatternType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributeType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "attribute", scope = GbeanType.class)
-    public JAXBElement<AttributeType> createGbeanTypeAttribute(AttributeType value) {
+    public JAXBElement<AttributeType> createGbeanTypeAttribute(final AttributeType value) {
         return new JAXBElement<AttributeType>(_GbeanTypeAttribute_QNAME, AttributeType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "reference", scope = GbeanType.class)
-    public JAXBElement<ReferenceType> createGbeanTypeReference(ReferenceType value) {
+    public JAXBElement<ReferenceType> createGbeanTypeReference(final ReferenceType value) {
         return new JAXBElement<ReferenceType>(_GbeanTypeReference_QNAME, ReferenceType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XmlAttributeType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "xml-attribute", scope = GbeanType.class)
-    public JAXBElement<XmlAttributeType> createGbeanTypeXmlAttribute(XmlAttributeType value) {
+    public JAXBElement<XmlAttributeType> createGbeanTypeXmlAttribute(final XmlAttributeType value) {
         return new JAXBElement<XmlAttributeType>(_GbeanTypeXmlAttribute_QNAME, XmlAttributeType.class, GbeanType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResourceEnvRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-env-ref")
-    public JAXBElement<ResourceEnvRefType> createResourceEnvRef(ResourceEnvRefType value) {
+    public JAXBElement<ResourceEnvRefType> createResourceEnvRef(final ResourceEnvRefType value) {
         return new JAXBElement<ResourceEnvRefType>(_ResourceEnvRef_QNAME, ResourceEnvRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResourceRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-ref")
-    public JAXBElement<ResourceRefType> createResourceRef(ResourceRefType value) {
+    public JAXBElement<ResourceRefType> createResourceRef(final ResourceRefType value) {
         return new JAXBElement<ResourceRefType>(_ResourceRef_QNAME, ResourceRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PersistenceUnitRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "entity-manager-factory-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
-    public JAXBElement<PersistenceUnitRefType> createEntityManagerFactoryRef(PersistenceUnitRefType value) {
+    public JAXBElement<PersistenceUnitRefType> createEntityManagerFactoryRef(final PersistenceUnitRefType value) {
         return new JAXBElement<PersistenceUnitRefType>(_EntityManagerFactoryRef_QNAME, PersistenceUnitRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractNamingEntryType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "abstract-naming-entry")
-    public JAXBElement<AbstractNamingEntryType> createAbstractNamingEntry(AbstractNamingEntryType value) {
+    public JAXBElement<AbstractNamingEntryType> createAbstractNamingEntry(final AbstractNamingEntryType value) {
         return new JAXBElement<AbstractNamingEntryType>(_AbstractNamingEntry_QNAME, AbstractNamingEntryType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DependenciesType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "dependencies")
-    public JAXBElement<DependenciesType> createDependencies(DependenciesType value) {
+    public JAXBElement<DependenciesType> createDependencies(final DependenciesType value) {
         return new JAXBElement<DependenciesType>(_Dependencies_QNAME, DependenciesType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ApplicationType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "application")
-    public JAXBElement<ApplicationType> createApplication(ApplicationType value) {
+    public JAXBElement<ApplicationType> createApplication(final ApplicationType value) {
         return new JAXBElement<ApplicationType>(_Application_QNAME, ApplicationType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MessageDestinationType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "message-destination")
-    public JAXBElement<MessageDestinationType> createMessageDestination(MessageDestinationType value) {
+    public JAXBElement<MessageDestinationType> createMessageDestination(final MessageDestinationType value) {
         return new JAXBElement<MessageDestinationType>(_MessageDestination_QNAME, MessageDestinationType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceModuleType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "module")
-    public JAXBElement<ServiceModuleType> createModule(ServiceModuleType value) {
+    public JAXBElement<ServiceModuleType> createModule(final ServiceModuleType value) {
         return new JAXBElement<ServiceModuleType>(_Module_QNAME, ServiceModuleType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractClusteringType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "clustering")
-    public JAXBElement<AbstractClusteringType> createClustering(AbstractClusteringType value) {
+    public JAXBElement<AbstractClusteringType> createClustering(final AbstractClusteringType value) {
         return new JAXBElement<AbstractClusteringType>(_Clustering_QNAME, AbstractClusteringType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link KeyGeneratorType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", name = "key-generator")
-    public JAXBElement<KeyGeneratorType> createKeyGenerator(KeyGeneratorType value) {
+    public JAXBElement<KeyGeneratorType> createKeyGenerator(final KeyGeneratorType value) {
         return new JAXBElement<KeyGeneratorType>(_KeyGenerator_QNAME, KeyGeneratorType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "environment")
-    public JAXBElement<EnvironmentType> createEnvironment(EnvironmentType value) {
+    public JAXBElement<EnvironmentType> createEnvironment(final EnvironmentType value) {
         return new JAXBElement<EnvironmentType>(_Environment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSecurityType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "security")
-    public JAXBElement<AbstractSecurityType> createSecurity(AbstractSecurityType value) {
+    public JAXBElement<AbstractSecurityType> createSecurity(final AbstractSecurityType value) {
         return new JAXBElement<AbstractSecurityType>(_Security_QNAME, AbstractSecurityType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResourceLocatorType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-adapter")
-    public JAXBElement<ResourceLocatorType> createResourceAdapter(ResourceLocatorType value) {
+    public JAXBElement<ResourceLocatorType> createResourceAdapter(final ResourceLocatorType value) {
         return new JAXBElement<ResourceLocatorType>(_ResourceAdapter_QNAME, ResourceLocatorType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EjbLocalRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "ejb-local-ref")
-    public JAXBElement<EjbLocalRefType> createEjbLocalRef(EjbLocalRefType value) {
+    public JAXBElement<EjbLocalRefType> createEjbLocalRef(final EjbLocalRefType value) {
         return new JAXBElement<EjbLocalRefType>(_EjbLocalRef_QNAME, EjbLocalRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "server-environment")
-    public JAXBElement<EnvironmentType> createServerEnvironment(EnvironmentType value) {
+    public JAXBElement<EnvironmentType> createServerEnvironment(final EnvironmentType value) {
         return new JAXBElement<EnvironmentType>(_ServerEnvironment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "service")
-    public JAXBElement<AbstractServiceType> createService(AbstractServiceType value) {
+    public JAXBElement<AbstractServiceType> createService(final AbstractServiceType value) {
         return new JAXBElement<AbstractServiceType>(_Service_QNAME, AbstractServiceType.class, null, value);
     }
 
@@ -779,99 +694,90 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GbeanType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "gbean", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", substitutionHeadName = "service")
-    public JAXBElement<GbeanType> createGbean(GbeanType value) {
+    public JAXBElement<GbeanType> createGbean(final GbeanType value) {
         return new JAXBElement<GbeanType>(_Gbean_QNAME, GbeanType.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/security-2.0", name = "security", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "security")
-    public JAXBElement<SecurityType> createSecurity(SecurityType value) {
+    public JAXBElement<SecurityType> createSecurity(final SecurityType value) {
         return new JAXBElement<SecurityType>(_Security2_QNAME, SecurityType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GbeanLocatorType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "workmanager")
-    public JAXBElement<GbeanLocatorType> createWorkmanager(GbeanLocatorType value) {
+    public JAXBElement<GbeanLocatorType> createWorkmanager(final GbeanLocatorType value) {
         return new JAXBElement<GbeanLocatorType>(_Workmanager_QNAME, GbeanLocatorType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "service-ref")
-    public JAXBElement<ServiceRefType> createServiceRef(ServiceRefType value) {
+    public JAXBElement<ServiceRefType> createServiceRef(final ServiceRefType value) {
         return new JAXBElement<ServiceRefType>(_ServiceRef_QNAME, ServiceRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResourceLocatorType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "cmp-connection-factory")
-    public JAXBElement<ResourceLocatorType> createCmpConnectionFactory(ResourceLocatorType value) {
+    public JAXBElement<ResourceLocatorType> createCmpConnectionFactory(final ResourceLocatorType value) {
         return new JAXBElement<ResourceLocatorType>(_CmpConnectionFactory_QNAME, ResourceLocatorType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "client-environment")
-    public JAXBElement<EnvironmentType> createClientEnvironment(EnvironmentType value) {
+    public JAXBElement<EnvironmentType> createClientEnvironment(final EnvironmentType value) {
         return new JAXBElement<EnvironmentType>(_ClientEnvironment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GbeanRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "gbean-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
-    public JAXBElement<GbeanRefType> createGbeanRef(GbeanRefType value) {
+    public JAXBElement<GbeanRefType> createGbeanRef(final GbeanRefType value) {
         return new JAXBElement<GbeanRefType>(_GbeanRef_QNAME, GbeanRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OpenejbJarType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", name = "openejb-jar")
-    public JAXBElement<OpenejbJarType> createOpenejbJar(OpenejbJarType value) {
+    public JAXBElement<OpenejbJarType> createOpenejbJar(final OpenejbJarType value) {
         return new JAXBElement<OpenejbJarType>(_OpenejbJar_QNAME, OpenejbJarType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EjbRefType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "ejb-ref")
-    public JAXBElement<EjbRefType> createEjbRef(EjbRefType value) {
+    public JAXBElement<EjbRefType> createEjbRef(final EjbRefType value) {
         return new JAXBElement<EjbRefType>(_EjbRef_QNAME, EjbRefType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GbeanLocatorType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "web-container")
-    public JAXBElement<GbeanLocatorType> createWebContainer(GbeanLocatorType value) {
+    public JAXBElement<GbeanLocatorType> createWebContainer(final GbeanLocatorType value) {
         return new JAXBElement<GbeanLocatorType>(_WebContainer_QNAME, GbeanLocatorType.class, null, value);
     }
 
     private final static QName _EjbJar_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", "ejb-jar");
+
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", name = "ejb-jar")
-    public JAXBElement<GeronimoEjbJarType> createEjbJar(GeronimoEjbJarType value) {
+    public JAXBElement<GeronimoEjbJarType> createEjbJar(final GeronimoEjbJarType value) {
         return new JAXBElement<GeronimoEjbJarType>(_EjbJar_QNAME, GeronimoEjbJarType.class, null, value);
     }
 
     /**
      * Create an instance of {@link OpenejbClusteringWadiType }
-     * 
      */
     public OpenejbClusteringWadiType createOpenejbClusteringWadiType() {
         return new OpenejbClusteringWadiType();
@@ -879,10 +785,9 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OpenejbClusteringWadiType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2", name = "openejb-clustering-wadi", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "clustering")
-    public JAXBElement<OpenejbClusteringWadiType> createOpenejbClusteringWadi(OpenejbClusteringWadiType value) {
+    public JAXBElement<OpenejbClusteringWadiType> createOpenejbClusteringWadi(final OpenejbClusteringWadiType value) {
         return new JAXBElement<OpenejbClusteringWadiType>(_OpenejbClusteringWadi_QNAME, OpenejbClusteringWadiType.class, null, value);
     }
 

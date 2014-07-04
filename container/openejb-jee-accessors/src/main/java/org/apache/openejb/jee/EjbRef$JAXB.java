@@ -38,33 +38,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EjbRef$JAXB
-        extends JAXBObject<EjbRef> {
+    extends JAXBObject<EjbRef> {
 
 
     public EjbRef$JAXB() {
         super(EjbRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-refType".intern()), Text$JAXB.class, EjbRefType$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static EjbRef readEjbRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EjbRef readEjbRef(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbRef(XoXMLStreamWriter writer, EjbRef ejbRef, RuntimeContext context)
-            throws Exception {
+    public static void writeEjbRef(final XoXMLStreamWriter writer, final EjbRef ejbRef, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EjbRef ejbRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, EjbRef ejbRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRef, context);
     }
 
-    public final static EjbRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EjbRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -90,7 +90,7 @@ public class EjbRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -112,7 +112,7 @@ public class EjbRef$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("ejb-ref-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRefName
-                String ejbRefNameRaw = elementReader.getElementAsString();
+                final String ejbRefNameRaw = elementReader.getElementAsString();
 
                 String ejbRefName;
                 try {
@@ -226,13 +226,13 @@ public class EjbRef$JAXB
         return ejbRef;
     }
 
-    public final EjbRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EjbRef read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EjbRef ejbRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, EjbRef ejbRef, RuntimeContext context)
+        throws Exception {
         if (ejbRef == null) {
             writer.writeXsiNil();
             return;
@@ -252,12 +252,12 @@ public class EjbRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = ejbRef.id;
+        final String idRaw = ejbRef.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(ejbRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -325,7 +325,7 @@ public class EjbRef$JAXB
         String remote = null;
         try {
             remote = Adapters.collapsedStringAdapterAdapter.marshal(remoteRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(ejbRef, "remote", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (remote != null) {

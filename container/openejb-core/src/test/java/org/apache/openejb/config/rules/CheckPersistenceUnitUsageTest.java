@@ -30,20 +30,20 @@ import javax.persistence.EntityManagerFactory;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceUnitUsageTest {
-    @Keys( { @Key(value = "persistenceUnitRef.noPersistenceUnits", count = 3), @Key("persistenceUnitAnnotation.onClassWithNoName"),
-            @Key("persistenceUnitAnnotation.onEntityManager"), @Key("persistenceUnitAnnotation.onNonEntityManagerFactory") })
+    @Keys({@Key(value = "persistenceUnitRef.noPersistenceUnits", count = 3), @Key("persistenceUnitAnnotation.onClassWithNoName"),
+        @Key("persistenceUnitAnnotation.onEntityManager"), @Key("persistenceUnitAnnotation.onNonEntityManagerFactory")})
     public EjbJar wrongUsage() throws OpenEJBException {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "persistenceUnitRef.noMatches"), @Key(value = "persistenceUnitRef.noUnitName") })
+    @Keys({@Key(value = "persistenceUnitRef.noMatches"), @Key(value = "persistenceUnitRef.noUnitName")})
     public AppModule noUnitName() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessOne.class));
         EjbModule ejbModule = new EjbModule(ejbJar);
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        final AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
         PersistenceUnit pu = new PersistenceUnit("fooUnit");
         PersistenceUnit pu1 = new PersistenceUnit("fooUnit1");
@@ -54,11 +54,11 @@ public class CheckPersistenceUnitUsageTest {
         return appModule;
     }
 
-    @Keys( { @Key(value = "persistenceUnitRef.vagueMatches") })
+    @Keys({@Key(value = "persistenceUnitRef.vagueMatches")})
     public AppModule vagueMatches() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessTwo.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
         PersistenceUnit pu = new PersistenceUnit("fooUnit");

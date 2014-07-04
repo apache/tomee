@@ -225,7 +225,7 @@
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
   </properties>
-  
+
   <build>
     <resources>
       <resource>

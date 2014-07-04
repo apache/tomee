@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Timeout$JAXB.readTimeout;
 import static org.apache.openejb.jee.Timeout$JAXB.writeTimeout;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ConcurrentMethod$JAXB
-        extends JAXBObject<ConcurrentMethod> {
+    extends JAXBObject<ConcurrentMethod> {
 
 
     public ConcurrentMethod$JAXB() {
         super(ConcurrentMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "concurrent-methodType".intern()), NamedMethod$JAXB.class, ConcurrentLockType$JAXB.class, Timeout$JAXB.class);
     }
 
-    public static ConcurrentMethod readConcurrentMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ConcurrentMethod readConcurrentMethod(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConcurrentMethod(XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
-            throws Exception {
+    public static void writeConcurrentMethod(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, concurrentMethod, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, concurrentMethod, context);
     }
 
-    public final static ConcurrentMethod _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ConcurrentMethod _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,7 +72,7 @@ public class ConcurrentMethod$JAXB
             context = new RuntimeContext();
         }
 
-        ConcurrentMethod concurrentMethod = new ConcurrentMethod();
+        final ConcurrentMethod concurrentMethod = new ConcurrentMethod();
         context.beforeUnmarshal(concurrentMethod, LifecycleCallback.NONE);
 
 
@@ -85,7 +85,7 @@ public class ConcurrentMethod$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -110,7 +110,7 @@ public class ConcurrentMethod$JAXB
                 }
             } else if (("access-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: accessTimeout
-                Timeout accessTimeout = readTimeout(elementReader, context);
+                final Timeout accessTimeout = readTimeout(elementReader, context);
                 concurrentMethod.accessTimeout = accessTimeout;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "method"), new QName("http://java.sun.com/xml/ns/javaee", "lock"), new QName("http://java.sun.com/xml/ns/javaee", "access-timeout"));
@@ -122,13 +122,13 @@ public class ConcurrentMethod$JAXB
         return concurrentMethod;
     }
 
-    public final ConcurrentMethod read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ConcurrentMethod read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ConcurrentMethod concurrentMethod, RuntimeContext context)
+        throws Exception {
         if (concurrentMethod == null) {
             writer.writeXsiNil();
             return;
@@ -148,7 +148,7 @@ public class ConcurrentMethod$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = concurrentMethod.id;
+        final String idRaw = concurrentMethod.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -170,7 +170,7 @@ public class ConcurrentMethod$JAXB
         }
 
         // ELEMENT: lock
-        ConcurrentLockType lock = concurrentMethod.lock;
+        final ConcurrentLockType lock = concurrentMethod.lock;
         if (lock != null) {
             writer.writeStartElement(prefix, "lock", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringConcurrentLockType(concurrentMethod, null, context, lock));

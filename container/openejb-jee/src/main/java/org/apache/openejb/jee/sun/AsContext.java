@@ -39,7 +39,7 @@ public class AsContext {
         return authMethod;
     }
 
-    public void setAuthMethod(String value) {
+    public void setAuthMethod(final String value) {
         this.authMethod = value;
     }
 
@@ -47,7 +47,7 @@ public class AsContext {
         return realm;
     }
 
-    public void setRealm(String value) {
+    public void setRealm(final String value) {
         this.realm = value;
     }
 
@@ -55,7 +55,7 @@ public class AsContext {
         return required;
     }
 
-    public void setRequired(String value) {
+    public void setRequired(final String value) {
         this.required = value;
     }
 }

@@ -34,11 +34,11 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for web-fragmentType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="web-fragmentType">
  *   &lt;complexContent>
@@ -53,49 +53,47 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlRootElement(name = "web-fragment")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-fragmentType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "distributable",
-        "contextParam",
-        "filter",
-        "filterMapping",
-        "listener",
-        "servlet",
-        "servletMapping",
-        "sessionConfig",
-        "mimeMapping",
-        "welcomeFileList",
-        "errorPage",
-        //TDOD not in schema?
+    "descriptions",
+    "displayNames",
+    "icon",
+    "distributable",
+    "contextParam",
+    "filter",
+    "filterMapping",
+    "listener",
+    "servlet",
+    "servletMapping",
+    "sessionConfig",
+    "mimeMapping",
+    "welcomeFileList",
+    "errorPage",
+    //TDOD not in schema?
 //        "taglib",
-        "jspConfig",
-        "securityConstraint",
-        "loginConfig",
-        "securityRole",
-        "localeEncodingMappingList",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "messageDestination",
-        "ordering",
-        "dataSource",
-        "name"
+    "jspConfig",
+    "securityConstraint",
+    "loginConfig",
+    "securityRole",
+    "localeEncodingMappingList",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "messageDestination",
+    "ordering",
+    "dataSource",
+    "name"
 
 })
 public class WebFragment implements WebCommon {
@@ -142,25 +140,25 @@ public class WebFragment implements WebCommon {
     protected List<LocaleEncodingMappingList> localeEncodingMappingList;
 
     @XmlElement(name = "env-entry", required = true)
-    protected KeyedCollection<String,EnvEntry> envEntry;
+    protected KeyedCollection<String, EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected KeyedCollection<String,EjbRef> ejbRef;
+    protected KeyedCollection<String, EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String, EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected KeyedCollection<String,ServiceRef> serviceRef;
+    protected KeyedCollection<String, ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected KeyedCollection<String,ResourceRef> resourceRef;
+    protected KeyedCollection<String, ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String, ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "data-source", required = true)
-    protected KeyedCollection<String,DataSource> dataSource;
+    protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -197,7 +195,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setContextRoot(String contextRoot) {
+    public void setContextRoot(final String contextRoot) {
         this.contextRoot = contextRoot;
     }
 
@@ -208,7 +206,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -224,7 +222,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -242,7 +240,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -385,15 +383,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry;
     }
 
     @Override
-    public Map<String,EnvEntry> getEnvEntryMap() {
+    public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry.toMap();
     }
@@ -401,15 +399,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef;
     }
 
     @Override
-    public Map<String,EjbRef> getEjbRefMap() {
+    public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef.toMap();
     }
@@ -417,15 +415,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
     @Override
-    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+    public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef.toMap();
     }
@@ -433,15 +431,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef;
     }
 
     @Override
-    public Map<String,ServiceRef> getServiceRefMap() {
+    public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef.toMap();
     }
@@ -449,15 +447,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef;
     }
 
     @Override
-    public Map<String,ResourceRef> getResourceRefMap() {
+    public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef.toMap();
     }
@@ -465,15 +463,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
     @Override
-    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+    public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef.toMap();
     }
@@ -481,15 +479,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
     @Override
-    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+    public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef.toMap();
     }
@@ -497,15 +495,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
     @Override
-    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+    public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef.toMap();
     }
@@ -513,15 +511,15 @@ public class WebFragment implements WebCommon {
     @Override
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
     }
 
     @Override
-    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+    public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -556,7 +554,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -566,7 +564,7 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
@@ -576,22 +574,22 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
     @Override
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource;
     }
 
     @Override
-    public Map<String,DataSource> getDataSourceMap() {
+    public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
     }
@@ -600,7 +598,7 @@ public class WebFragment implements WebCommon {
         return ordering;
     }
 
-    public void setOrdering(Ordering ordering) {
+    public void setOrdering(final Ordering ordering) {
         this.ordering = ordering;
     }
 
@@ -608,7 +606,7 @@ public class WebFragment implements WebCommon {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

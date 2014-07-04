@@ -100,7 +100,8 @@ public class CheckAsynchronous extends ValidationBase {
     }
 
     /**
-     *  If the return value of the target method is void, it is not allowed to throw any application exception
+     * If the return value of the target method is void, it is not allowed to throw any application exception
+     *
      * @param exceptionTypes
      * @param applicationExceptions
      * @return

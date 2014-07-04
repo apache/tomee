@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesAttributeExtension$JAXB
-        extends JAXBObject<FacesAttributeExtension> {
+    extends JAXBObject<FacesAttributeExtension> {
 
 
     public FacesAttributeExtension$JAXB() {
         super(FacesAttributeExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-attribute-extensionType".intern()));
     }
 
-    public static FacesAttributeExtension readFacesAttributeExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesAttributeExtension readFacesAttributeExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesAttributeExtension(XoXMLStreamWriter writer, FacesAttributeExtension facesAttributeExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesAttributeExtension(final XoXMLStreamWriter writer, FacesAttributeExtension facesAttributeExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAttributeExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesAttributeExtension facesAttributeExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesAttributeExtension facesAttributeExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAttributeExtension, context);
     }
 
-    public final static FacesAttributeExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesAttributeExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class FacesAttributeExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesAttributeExtension facesAttributeExtension = new FacesAttributeExtension();
+        final FacesAttributeExtension facesAttributeExtension = new FacesAttributeExtension();
         context.beforeUnmarshal(facesAttributeExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-attribute-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesAttributeExtension.class);
@@ -114,13 +114,13 @@ public class FacesAttributeExtension$JAXB
         return facesAttributeExtension;
     }
 
-    public final FacesAttributeExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesAttributeExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesAttributeExtension facesAttributeExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesAttributeExtension facesAttributeExtension, RuntimeContext context)
+        throws Exception {
         if (facesAttributeExtension == null) {
             writer.writeXsiNil();
             return;
@@ -144,7 +144,7 @@ public class FacesAttributeExtension$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesAttributeExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

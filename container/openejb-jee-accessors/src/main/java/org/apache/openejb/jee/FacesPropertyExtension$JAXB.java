@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesPropertyExtension$JAXB
-        extends JAXBObject<FacesPropertyExtension> {
+    extends JAXBObject<FacesPropertyExtension> {
 
 
     public FacesPropertyExtension$JAXB() {
         super(FacesPropertyExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-property-extensionType".intern()));
     }
 
-    public static FacesPropertyExtension readFacesPropertyExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesPropertyExtension readFacesPropertyExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesPropertyExtension(XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesPropertyExtension(final XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesPropertyExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesPropertyExtension, context);
     }
 
-    public final static FacesPropertyExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesPropertyExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class FacesPropertyExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesPropertyExtension facesPropertyExtension = new FacesPropertyExtension();
+        final FacesPropertyExtension facesPropertyExtension = new FacesPropertyExtension();
         context.beforeUnmarshal(facesPropertyExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
@@ -114,13 +114,13 @@ public class FacesPropertyExtension$JAXB
         return facesPropertyExtension;
     }
 
-    public final FacesPropertyExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesPropertyExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesPropertyExtension facesPropertyExtension, RuntimeContext context)
+        throws Exception {
         if (facesPropertyExtension == null) {
             writer.writeXsiNil();
             return;
@@ -151,9 +151,9 @@ public class FacesPropertyExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesPropertyExtension.any;
+        final List<Object> any = facesPropertyExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesPropertyExtension, "any", anyItem);
             }
         }

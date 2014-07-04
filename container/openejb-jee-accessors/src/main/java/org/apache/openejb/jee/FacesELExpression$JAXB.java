@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesELExpression$JAXB
-        extends JAXBObject<FacesELExpression> {
+    extends JAXBObject<FacesELExpression> {
 
 
     public FacesELExpression$JAXB() {
         super(FacesELExpression.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-el-expressionType".intern()));
     }
 
-    public static FacesELExpression readFacesELExpression(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesELExpression readFacesELExpression(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesELExpression(XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesELExpression(final XoXMLStreamWriter writer, final FacesELExpression facesELExpression, RuntimeContext context)
+        throws Exception {
         _write(writer, facesELExpression, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
+        throws Exception {
         _write(writer, facesELExpression, context);
     }
 
-    public final static FacesELExpression _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesELExpression _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class FacesELExpression$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-el-expressionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesELExpression.class);
@@ -106,13 +106,13 @@ public class FacesELExpression$JAXB
         return facesELExpression;
     }
 
-    public final FacesELExpression read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesELExpression read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesELExpression facesELExpression, RuntimeContext context)
+        throws Exception {
         if (facesELExpression == null) {
             writer.writeXsiNil();
             return;

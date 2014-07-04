@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesRedirectViewParam$JAXB.readFacesRedire
 import static org.apache.openejb.jee.FacesRedirectViewParam$JAXB.writeFacesRedirectViewParam;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRedirect$JAXB
-        extends JAXBObject<FacesRedirect> {
+    extends JAXBObject<FacesRedirect> {
 
 
     public FacesRedirect$JAXB() {
         super(FacesRedirect.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-redirectType".intern()), FacesRedirectViewParam$JAXB.class);
     }
 
-    public static FacesRedirect readFacesRedirect(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRedirect readFacesRedirect(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRedirect(XoXMLStreamWriter writer, FacesRedirect facesRedirect, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRedirect(final XoXMLStreamWriter writer, final FacesRedirect facesRedirect, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirect, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRedirect facesRedirect, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesRedirect facesRedirect, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirect, context);
     }
 
-    public final static FacesRedirect _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRedirect _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class FacesRedirect$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -126,13 +126,13 @@ public class FacesRedirect$JAXB
         return facesRedirect;
     }
 
-    public final FacesRedirect read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRedirect read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRedirect facesRedirect, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesRedirect facesRedirect, RuntimeContext context)
+        throws Exception {
         if (facesRedirect == null) {
             writer.writeXsiNil();
             return;
@@ -151,12 +151,12 @@ public class FacesRedirect$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesRedirect.id;
+        final String idRaw = facesRedirect.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesRedirect, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -171,7 +171,7 @@ public class FacesRedirect$JAXB
         // ELEMENT: viewParam
         List<FacesRedirectViewParam> viewParam = facesRedirect.viewParam;
         if (viewParam != null) {
-            for (FacesRedirectViewParam viewParamItem : viewParam) {
+            for (final FacesRedirectViewParam viewParamItem : viewParam) {
                 if (viewParamItem != null) {
                     writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "view-param");
                     writeFacesRedirectViewParam(writer, viewParamItem, context);

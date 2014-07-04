@@ -63,7 +63,7 @@ public class MdbInstanceFactory {
     /**
      * Creates a MdbInstanceFactory for a single specific deployment.
      *
-     * @param beanContext  the deployment for which instances will be created
+     * @param beanContext     the deployment for which instances will be created
      * @param securityService the transaction manager for this container system
      * @param instanceLimit   the maximal number of instances or <= 0 if unlimited
      */
@@ -157,7 +157,7 @@ public class MdbInstanceFactory {
         }
 
         final ThreadContext callContext = ThreadContext.getThreadContext();
-        
+
         final Operation originalOperation = callContext == null ? null : callContext.getCurrentOperation();
         final BaseContext.State[] originalAllowedStates = callContext == null ? null : callContext.getCurrentAllowedStates();
 
@@ -176,7 +176,7 @@ public class MdbInstanceFactory {
         } catch (final Throwable re) {
             MdbInstanceFactory.logger.error("The bean instance " + instance.bean + " threw a system exception:" + re, re);
         } finally {
-            
+
             if (callContext != null) {
                 callContext.setCurrentOperation(originalOperation);
                 callContext.setCurrentAllowedStates(originalAllowedStates);

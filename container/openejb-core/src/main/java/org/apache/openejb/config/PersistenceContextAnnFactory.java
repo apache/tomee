@@ -38,6 +38,7 @@ import java.util.Set;
 
 public class PersistenceContextAnnFactory {
     private static boolean useAsm;
+
     static {
         boolean isPersistenceContextAnnotationValid = false;
         try {

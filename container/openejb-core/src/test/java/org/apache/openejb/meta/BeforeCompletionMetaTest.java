@@ -43,7 +43,8 @@ public class BeforeCompletionMetaTest {
 
             @FinishTransaction
             @BeforeCompletion
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

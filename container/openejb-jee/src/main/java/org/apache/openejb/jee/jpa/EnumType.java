@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for enum-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="enum-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "enum-type")
 @XmlEnum
@@ -47,7 +46,7 @@ public enum EnumType {
         return name();
     }
 
-    public static EnumType fromValue(String v) {
+    public static EnumType fromValue(final String v) {
         return valueOf(v);
     }
 

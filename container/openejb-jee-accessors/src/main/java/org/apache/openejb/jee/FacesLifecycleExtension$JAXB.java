@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesLifecycleExtension$JAXB
-        extends JAXBObject<FacesLifecycleExtension> {
+    extends JAXBObject<FacesLifecycleExtension> {
 
 
     public FacesLifecycleExtension$JAXB() {
         super(FacesLifecycleExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-lifecycle-extensionType".intern()));
     }
 
-    public static FacesLifecycleExtension readFacesLifecycleExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesLifecycleExtension readFacesLifecycleExtension(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesLifecycleExtension(XoXMLStreamWriter writer, FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesLifecycleExtension(final XoXMLStreamWriter writer, final FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesLifecycleExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesLifecycleExtension, context);
     }
 
-    public final static FacesLifecycleExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesLifecycleExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -114,13 +114,13 @@ public class FacesLifecycleExtension$JAXB
         return facesLifecycleExtension;
     }
 
-    public final FacesLifecycleExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesLifecycleExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesLifecycleExtension facesLifecycleExtension, RuntimeContext context)
+        throws Exception {
         if (facesLifecycleExtension == null) {
             writer.writeXsiNil();
             return;
@@ -139,7 +139,7 @@ public class FacesLifecycleExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesLifecycleExtension.id;
+        final String idRaw = facesLifecycleExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -151,7 +151,7 @@ public class FacesLifecycleExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesLifecycleExtension.any;
+        final List<Object> any = facesLifecycleExtension.any;
         if (any != null) {
             for (Object anyItem : any) {
                 context.writeXmlAny(writer, facesLifecycleExtension, "any", anyItem);

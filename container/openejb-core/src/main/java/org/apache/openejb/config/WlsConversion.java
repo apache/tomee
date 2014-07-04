@@ -42,14 +42,14 @@ public class WlsConversion implements DynamicDeployer {
         Object altDD = ejbModule.getAltDDs().get(descriptor);
         if (altDD instanceof String) {
             try {
-                altDD = JaxbWls.unmarshal(type, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbWls.unmarshal(type, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbWls.unmarshal(type, IO.read((URL)altDD));
+                altDD = JaxbWls.unmarshal(type, IO.read((URL) altDD));
             } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor

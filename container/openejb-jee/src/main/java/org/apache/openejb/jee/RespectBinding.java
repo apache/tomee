@@ -26,17 +26,17 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Rev$ $Date$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "respect-bindingType", propOrder = { "enabled" })
+@XmlType(name = "respect-bindingType", propOrder = {"enabled"})
 public class RespectBinding {
 
-    @XmlElement(name="enabled")
+    @XmlElement(name = "enabled")
     protected Boolean enabled;
 
     public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean value) {
+    public void setEnabled(final Boolean value) {
         this.enabled = value;
     }
 }

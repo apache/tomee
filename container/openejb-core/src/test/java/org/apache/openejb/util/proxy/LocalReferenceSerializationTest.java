@@ -92,7 +92,7 @@ public class LocalReferenceSerializationTest {
         assertEquals(5, copy(greenLocal).add(2, 3));
     }
 
-    private static <T> T copy(T bean) throws IOException, ClassNotFoundException {
+    private static <T> T copy(final T bean) throws IOException, ClassNotFoundException {
         assertNotNull(bean);
 
         ServerFederation.setApplicationServer(new TestApplicationServer());
@@ -109,7 +109,7 @@ public class LocalReferenceSerializationTest {
     @LocalBean
     public static class OrangeLocalBean {
 
-        public int add(int a, int b) {
+        public int add(final int a, final int b) {
             return a + b;
         }
     }
@@ -117,7 +117,7 @@ public class LocalReferenceSerializationTest {
     @Local
     public static class RedBean implements RedLocal {
 
-        public int add(int a, int b) {
+        public int add(final int a, int b) {
             return a + b;
         }
     }
@@ -129,7 +129,7 @@ public class LocalReferenceSerializationTest {
     @LocalHome(GreenLocalHome.class)
     public static class GreenBean {
 
-        public int add(int a, int b) {
+        public int add(final int a, final int b) {
             return a + b;
         }
     }
@@ -145,32 +145,32 @@ public class LocalReferenceSerializationTest {
 
     private static class TestApplicationServer implements ApplicationServer {
         @Override
-        public EJBMetaData getEJBMetaData(ProxyInfo proxyInfo) {
+        public EJBMetaData getEJBMetaData(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
 
         @Override
-        public Handle getHandle(ProxyInfo proxyInfo) {
+        public Handle getHandle(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
 
         @Override
-        public HomeHandle getHomeHandle(ProxyInfo proxyInfo) {
+        public HomeHandle getHomeHandle(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
 
         @Override
-        public EJBObject getEJBObject(ProxyInfo proxyInfo) {
+        public EJBObject getEJBObject(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
 
         @Override
-        public Object getBusinessObject(ProxyInfo proxyInfo) {
+        public Object getBusinessObject(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
 
         @Override
-        public EJBHome getEJBHome(ProxyInfo proxyInfo) {
+        public EJBHome getEJBHome(final ProxyInfo proxyInfo) {
             throw new AssertionError("Should never be called");
         }
     }

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -81,11 +79,9 @@ public class JbosscmpJdbc {
 
     /**
      * Gets the value of the defaults property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Defaults }
-     *     
+     *
+     * @return possible object is
+     * {@link Defaults }
      */
     public Defaults getDefaults() {
         return defaults;
@@ -93,23 +89,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the defaults property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Defaults }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Defaults }
      */
-    public void setDefaults(Defaults value) {
+    public void setDefaults(final Defaults value) {
         this.defaults = value;
     }
 
     /**
      * Gets the value of the enterpriseBeans property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnterpriseBeans }
-     *     
+     *
+     * @return possible object is
+     * {@link EnterpriseBeans }
      */
     public EnterpriseBeans getEnterpriseBeans() {
         return enterpriseBeans;
@@ -117,23 +109,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the enterpriseBeans property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnterpriseBeans }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EnterpriseBeans }
      */
-    public void setEnterpriseBeans(EnterpriseBeans value) {
+    public void setEnterpriseBeans(final EnterpriseBeans value) {
         this.enterpriseBeans = value;
     }
 
     /**
      * Gets the value of the relationships property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Relationships }
-     *     
+     *
+     * @return possible object is
+     * {@link Relationships }
      */
     public Relationships getRelationships() {
         return relationships;
@@ -141,23 +129,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the relationships property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Relationships }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Relationships }
      */
-    public void setRelationships(Relationships value) {
+    public void setRelationships(final Relationships value) {
         this.relationships = value;
     }
 
     /**
      * Gets the value of the dependentValueClasses property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DependentValueClasses }
-     *     
+     *
+     * @return possible object is
+     * {@link DependentValueClasses }
      */
     public DependentValueClasses getDependentValueClasses() {
         return dependentValueClasses;
@@ -165,23 +149,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the dependentValueClasses property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DependentValueClasses }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DependentValueClasses }
      */
-    public void setDependentValueClasses(DependentValueClasses value) {
+    public void setDependentValueClasses(final DependentValueClasses value) {
         this.dependentValueClasses = value;
     }
 
     /**
      * Gets the value of the typeMappings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TypeMappings }
-     *     
+     *
+     * @return possible object is
+     * {@link TypeMappings }
      */
     public TypeMappings getTypeMappings() {
         return typeMappings;
@@ -189,23 +169,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the typeMappings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TypeMappings }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TypeMappings }
      */
-    public void setTypeMappings(TypeMappings value) {
+    public void setTypeMappings(final TypeMappings value) {
         this.typeMappings = value;
     }
 
     /**
      * Gets the value of the entityCommands property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityCommands }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityCommands }
      */
     public EntityCommands getEntityCommands() {
         return entityCommands;
@@ -213,23 +189,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the entityCommands property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityCommands }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityCommands }
      */
-    public void setEntityCommands(EntityCommands value) {
+    public void setEntityCommands(final EntityCommands value) {
         this.entityCommands = value;
     }
 
     /**
      * Gets the value of the userTypeMappings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UserTypeMappings }
-     *     
+     *
+     * @return possible object is
+     * {@link UserTypeMappings }
      */
     public UserTypeMappings getUserTypeMappings() {
         return userTypeMappings;
@@ -237,23 +209,19 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the userTypeMappings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UserTypeMappings }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UserTypeMappings }
      */
-    public void setUserTypeMappings(UserTypeMappings value) {
+    public void setUserTypeMappings(final UserTypeMappings value) {
         this.userTypeMappings = value;
     }
 
     /**
      * Gets the value of the reservedWords property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReservedWords }
-     *     
+     *
+     * @return possible object is
+     * {@link ReservedWords }
      */
     public ReservedWords getReservedWords() {
         return reservedWords;
@@ -261,13 +229,11 @@ public class JbosscmpJdbc {
 
     /**
      * Sets the value of the reservedWords property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReservedWords }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReservedWords }
      */
-    public void setReservedWords(ReservedWords value) {
+    public void setReservedWords(final ReservedWords value) {
         this.reservedWords = value;
     }
 

@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.MethodParams$JAXB.readMethodParams;
 import static org.apache.openejb.jee.MethodParams$JAXB.writeMethodParams;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class NamedMethod$JAXB
-        extends JAXBObject<NamedMethod> {
+    extends JAXBObject<NamedMethod> {
 
 
     public NamedMethod$JAXB() {
         super(NamedMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "named-methodType".intern()), MethodParams$JAXB.class);
     }
 
-    public static NamedMethod readNamedMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static NamedMethod readNamedMethod(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeNamedMethod(XoXMLStreamWriter writer, NamedMethod namedMethod, RuntimeContext context)
-            throws Exception {
+    public static void writeNamedMethod(final XoXMLStreamWriter writer, final NamedMethod namedMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, namedMethod, context);
     }
 
-    public void write(XoXMLStreamWriter writer, NamedMethod namedMethod, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, NamedMethod namedMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, namedMethod, context);
     }
 
-    public final static NamedMethod _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static NamedMethod _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,12 +68,12 @@ public class NamedMethod$JAXB
             context = new RuntimeContext();
         }
 
-        NamedMethod namedMethod = new NamedMethod();
+        final NamedMethod namedMethod = new NamedMethod();
         context.beforeUnmarshal(namedMethod, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("named-methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, NamedMethod.class);
@@ -81,7 +81,7 @@ public class NamedMethod$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -121,13 +121,13 @@ public class NamedMethod$JAXB
         return namedMethod;
     }
 
-    public final NamedMethod read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final NamedMethod read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, NamedMethod namedMethod, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final NamedMethod namedMethod, RuntimeContext context)
+        throws Exception {
         if (namedMethod == null) {
             writer.writeXsiNil();
             return;

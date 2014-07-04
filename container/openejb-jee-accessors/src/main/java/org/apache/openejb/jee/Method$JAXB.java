@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Method$JAXB
-        extends JAXBObject<Method> {
+    extends JAXBObject<Method> {
 
 
     public Method$JAXB() {
         super(Method.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "methodType".intern()), Text$JAXB.class, MethodIntf$JAXB.class, MethodParams$JAXB.class);
     }
 
-    public static Method readMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Method readMethod(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethod(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public static void writeMethod(final XoXMLStreamWriter writer, final Method method, RuntimeContext context)
+        throws Exception {
         _write(writer, method, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Method method, RuntimeContext context)
+        throws Exception {
         _write(writer, method, context);
     }
 
-    public final static Method _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Method _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,7 +73,7 @@ public class Method$JAXB
             context = new RuntimeContext();
         }
 
-        Method method = new Method();
+        final Method method = new Method();
         context.beforeUnmarshal(method, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -114,7 +114,7 @@ public class Method$JAXB
                 String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -160,13 +160,13 @@ public class Method$JAXB
         return method;
     }
 
-    public final Method read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Method read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Method method, RuntimeContext context)
+        throws Exception {
         if (method == null) {
             writer.writeXsiNil();
             return;
@@ -176,7 +176,7 @@ public class Method$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Method.class != method.getClass()) {
             context.unexpectedSubclass(writer, method, Method.class);
             return;

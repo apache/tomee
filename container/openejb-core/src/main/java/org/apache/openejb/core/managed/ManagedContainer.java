@@ -858,8 +858,8 @@ public class ManagedContainer implements RpcContainer {
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
         final boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
-                                    callContext.getBeanContext().isSessionSynchronized() &&
-                                    txPolicy.isTransactionActive();
+            callContext.getBeanContext().isSessionSynchronized() &&
+            txPolicy.isTransactionActive();
 
         coordinator.registerSessionSynchronization(instance, callContext.getBeanContext(), callContext.getPrimaryKey(), synchronize);
     }

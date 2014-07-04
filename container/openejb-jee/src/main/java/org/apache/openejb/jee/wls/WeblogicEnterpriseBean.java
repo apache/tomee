@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,13 +24,16 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for weblogic-enterprise-bean complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-enterprise-bean">
  *   &lt;complexContent>
@@ -66,8 +66,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-enterprise-bean", propOrder = {
@@ -175,11 +173,9 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbName() {
         return ejbName;
@@ -187,23 +183,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the entityDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityDescriptor }
      */
     public EntityDescriptor getEntityDescriptor() {
         return entityDescriptor;
@@ -211,23 +203,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the entityDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityDescriptor }
      */
-    public void setEntityDescriptor(EntityDescriptor value) {
+    public void setEntityDescriptor(final EntityDescriptor value) {
         this.entityDescriptor = value;
     }
 
     /**
      * Gets the value of the statelessSessionDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatelessSessionDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link StatelessSessionDescriptor }
      */
     public StatelessSessionDescriptor getStatelessSessionDescriptor() {
         return statelessSessionDescriptor;
@@ -235,23 +223,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the statelessSessionDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatelessSessionDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StatelessSessionDescriptor }
      */
-    public void setStatelessSessionDescriptor(StatelessSessionDescriptor value) {
+    public void setStatelessSessionDescriptor(final StatelessSessionDescriptor value) {
         this.statelessSessionDescriptor = value;
     }
 
     /**
      * Gets the value of the statefulSessionDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatefulSessionDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link StatefulSessionDescriptor }
      */
     public StatefulSessionDescriptor getStatefulSessionDescriptor() {
         return statefulSessionDescriptor;
@@ -259,23 +243,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the statefulSessionDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatefulSessionDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StatefulSessionDescriptor }
      */
-    public void setStatefulSessionDescriptor(StatefulSessionDescriptor value) {
+    public void setStatefulSessionDescriptor(final StatefulSessionDescriptor value) {
         this.statefulSessionDescriptor = value;
     }
 
     /**
      * Gets the value of the messageDrivenDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MessageDrivenDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link MessageDrivenDescriptor }
      */
     public MessageDrivenDescriptor getMessageDrivenDescriptor() {
         return messageDrivenDescriptor;
@@ -283,23 +263,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the messageDrivenDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MessageDrivenDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MessageDrivenDescriptor }
      */
-    public void setMessageDrivenDescriptor(MessageDrivenDescriptor value) {
+    public void setMessageDrivenDescriptor(final MessageDrivenDescriptor value) {
         this.messageDrivenDescriptor = value;
     }
 
     /**
      * Gets the value of the transactionDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransactionDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link TransactionDescriptor }
      */
     public TransactionDescriptor getTransactionDescriptor() {
         return transactionDescriptor;
@@ -307,23 +283,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the transactionDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransactionDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransactionDescriptor }
      */
-    public void setTransactionDescriptor(TransactionDescriptor value) {
+    public void setTransactionDescriptor(final TransactionDescriptor value) {
         this.transactionDescriptor = value;
     }
 
     /**
      * Gets the value of the iiopSecurityDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IiopSecurityDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link IiopSecurityDescriptor }
      */
     public IiopSecurityDescriptor getIiopSecurityDescriptor() {
         return iiopSecurityDescriptor;
@@ -331,13 +303,11 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the iiopSecurityDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IiopSecurityDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IiopSecurityDescriptor }
      */
-    public void setIiopSecurityDescriptor(IiopSecurityDescriptor value) {
+    public void setIiopSecurityDescriptor(final IiopSecurityDescriptor value) {
         this.iiopSecurityDescriptor = value;
     }
 
@@ -345,31 +315,29 @@ public class WeblogicEnterpriseBean {
         return referenceDescriptor;
     }
 
-    public void setReferenceDescriptor(ReferenceDescriptor referenceDescriptor) {
+    public void setReferenceDescriptor(final ReferenceDescriptor referenceDescriptor) {
         this.referenceDescriptor = referenceDescriptor;
     }
 
     /**
      * Gets the value of the resourceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceDescription }
-     * 
-     * 
      */
     public List<ResourceDescription> getResourceDescription() {
         if (resourceDescription == null) {
@@ -380,25 +348,23 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the resourceEnvDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceEnvDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceEnvDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvDescription }
-     * 
-     * 
      */
     public List<ResourceEnvDescription> getResourceEnvDescription() {
         if (resourceEnvDescription == null) {
@@ -409,25 +375,23 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the ejbReferenceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbReferenceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbReferenceDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbReferenceDescription }
-     * 
-     * 
      */
     public List<EjbReferenceDescription> getEjbReferenceDescription() {
         if (ejbReferenceDescription == null) {
@@ -438,25 +402,23 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the serviceReferenceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the serviceReferenceDescription property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServiceReferenceDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceReferenceDescription }
-     * 
-     * 
      */
     public List<ServiceReferenceDescription> getServiceReferenceDescription() {
         if (serviceReferenceDescription == null) {
@@ -467,11 +429,9 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the enableCallByReference property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableCallByReference() {
         return enableCallByReference;
@@ -479,23 +439,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the enableCallByReference property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableCallByReference(Boolean value) {
+    public void setEnableCallByReference(final Boolean value) {
         this.enableCallByReference = value;
     }
 
     /**
      * Gets the value of the networkAccessPoint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getNetworkAccessPoint() {
         return networkAccessPoint;
@@ -503,23 +459,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the networkAccessPoint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setNetworkAccessPoint(String value) {
+    public void setNetworkAccessPoint(final String value) {
         this.networkAccessPoint = value;
     }
 
     /**
      * Gets the value of the clientsOnSameServer property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getClientsOnSameServer() {
         return clientsOnSameServer;
@@ -527,23 +479,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the clientsOnSameServer property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setClientsOnSameServer(Boolean value) {
+    public void setClientsOnSameServer(final Boolean value) {
         this.clientsOnSameServer = value;
     }
 
     /**
      * Gets the value of the runAsPrincipalName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRunAsPrincipalName() {
         return runAsPrincipalName;
@@ -551,23 +499,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the runAsPrincipalName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRunAsPrincipalName(String value) {
+    public void setRunAsPrincipalName(final String value) {
         this.runAsPrincipalName = value;
     }
 
     /**
      * Gets the value of the createAsPrincipalName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCreateAsPrincipalName() {
         return createAsPrincipalName;
@@ -575,23 +519,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the createAsPrincipalName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCreateAsPrincipalName(String value) {
+    public void setCreateAsPrincipalName(final String value) {
         this.createAsPrincipalName = value;
     }
 
     /**
      * Gets the value of the removeAsPrincipalName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRemoveAsPrincipalName() {
         return removeAsPrincipalName;
@@ -599,23 +539,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the removeAsPrincipalName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRemoveAsPrincipalName(String value) {
+    public void setRemoveAsPrincipalName(final String value) {
         this.removeAsPrincipalName = value;
     }
 
     /**
      * Gets the value of the passivateAsPrincipalName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPassivateAsPrincipalName() {
         return passivateAsPrincipalName;
@@ -623,23 +559,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the passivateAsPrincipalName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPassivateAsPrincipalName(String value) {
+    public void setPassivateAsPrincipalName(final String value) {
         this.passivateAsPrincipalName = value;
     }
 
     /**
      * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJndiName() {
         return jndiName;
@@ -647,23 +579,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
     /**
      * Gets the value of the localJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLocalJndiName() {
         return localJndiName;
@@ -671,23 +599,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the localJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLocalJndiName(String value) {
+    public void setLocalJndiName(final String value) {
         this.localJndiName = value;
     }
 
     /**
      * Gets the value of the dispatchPolicy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDispatchPolicy() {
         return dispatchPolicy;
@@ -695,23 +619,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the dispatchPolicy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDispatchPolicy(String value) {
+    public void setDispatchPolicy(final String value) {
         this.dispatchPolicy = value;
     }
 
     /**
      * Gets the value of the remoteClientTimeout property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getRemoteClientTimeout() {
         return remoteClientTimeout;
@@ -719,23 +639,19 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the remoteClientTimeout property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setRemoteClientTimeout(BigInteger value) {
+    public void setRemoteClientTimeout(final BigInteger value) {
         this.remoteClientTimeout = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -743,13 +659,11 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

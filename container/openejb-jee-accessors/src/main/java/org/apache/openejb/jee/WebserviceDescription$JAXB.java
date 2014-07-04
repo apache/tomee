@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.PortComponent$JAXB.readPortComponent;
 import static org.apache.openejb.jee.PortComponent$JAXB.writePortComponent;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class WebserviceDescription$JAXB
-        extends JAXBObject<WebserviceDescription> {
+    extends JAXBObject<WebserviceDescription> {
 
 
     public WebserviceDescription$JAXB() {
         super(WebserviceDescription.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "webservice-descriptionType".intern()), Icon$JAXB.class, PortComponent$JAXB.class);
     }
 
-    public static WebserviceDescription readWebserviceDescription(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static WebserviceDescription readWebserviceDescription(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeWebserviceDescription(XoXMLStreamWriter writer, WebserviceDescription webserviceDescription, RuntimeContext context)
-            throws Exception {
+    public static void writeWebserviceDescription(final XoXMLStreamWriter writer, final WebserviceDescription webserviceDescription, final RuntimeContext context)
+        throws Exception {
         _write(writer, webserviceDescription, context);
     }
 
-    public void write(XoXMLStreamWriter writer, WebserviceDescription webserviceDescription, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final WebserviceDescription webserviceDescription, final RuntimeContext context)
+        throws Exception {
         _write(writer, webserviceDescription, context);
     }
 
-    public final static WebserviceDescription _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static WebserviceDescription _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,13 +70,13 @@ public class WebserviceDescription$JAXB
             context = new RuntimeContext();
         }
 
-        WebserviceDescription webserviceDescription = new WebserviceDescription();
+        final WebserviceDescription webserviceDescription = new WebserviceDescription();
         context.beforeUnmarshal(webserviceDescription, LifecycleCallback.NONE);
 
         KeyedCollection<String, PortComponent> portComponent = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("webservice-descriptionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, WebserviceDescription.class);
@@ -84,10 +84,10 @@ public class WebserviceDescription$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, webserviceDescription);
                 webserviceDescription.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class WebserviceDescription$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: description
-                String descriptionRaw = elementReader.getElementAsString();
+                final String descriptionRaw = elementReader.getElementAsString();
 
-                String description;
+                final String description;
                 try {
                     description = Adapters.collapsedStringAdapterAdapter.unmarshal(descriptionRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -112,12 +112,12 @@ public class WebserviceDescription$JAXB
                 webserviceDescription.description = description;
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayName
-                String displayNameRaw = elementReader.getElementAsString();
+                final String displayNameRaw = elementReader.getElementAsString();
 
-                String displayName;
+                final String displayName;
                 try {
                     displayName = Adapters.collapsedStringAdapterAdapter.unmarshal(displayNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -125,16 +125,16 @@ public class WebserviceDescription$JAXB
                 webserviceDescription.displayName = displayName;
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon icon = readIcon(elementReader, context);
+                final Icon icon = readIcon(elementReader, context);
                 webserviceDescription.icon = icon;
             } else if (("webservice-description-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: webserviceDescriptionName
-                String webserviceDescriptionNameRaw = elementReader.getElementAsString();
+                final String webserviceDescriptionNameRaw = elementReader.getElementAsString();
 
-                String webserviceDescriptionName;
+                final String webserviceDescriptionName;
                 try {
                     webserviceDescriptionName = Adapters.collapsedStringAdapterAdapter.unmarshal(webserviceDescriptionNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -142,12 +142,12 @@ public class WebserviceDescription$JAXB
                 webserviceDescription.webserviceDescriptionName = webserviceDescriptionName;
             } else if (("wsdl-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlFile
-                String wsdlFileRaw = elementReader.getElementAsString();
+                final String wsdlFileRaw = elementReader.getElementAsString();
 
-                String wsdlFile;
+                final String wsdlFile;
                 try {
                     wsdlFile = Adapters.collapsedStringAdapterAdapter.unmarshal(wsdlFileRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -155,12 +155,12 @@ public class WebserviceDescription$JAXB
                 webserviceDescription.wsdlFile = wsdlFile;
             } else if (("jaxrpc-mapping-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: jaxrpcMappingFile
-                String jaxrpcMappingFileRaw = elementReader.getElementAsString();
+                final String jaxrpcMappingFileRaw = elementReader.getElementAsString();
 
-                String jaxrpcMappingFile;
+                final String jaxrpcMappingFile;
                 try {
                     jaxrpcMappingFile = Adapters.collapsedStringAdapterAdapter.unmarshal(jaxrpcMappingFileRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -168,7 +168,7 @@ public class WebserviceDescription$JAXB
                 webserviceDescription.jaxrpcMappingFile = jaxrpcMappingFile;
             } else if (("port-component" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portComponent
-                PortComponent portComponentItem = readPortComponent(elementReader, context);
+                final PortComponent portComponentItem = readPortComponent(elementReader, context);
                 if (portComponent == null) {
                     portComponent = webserviceDescription.portComponent;
                     if (portComponent != null) {
@@ -191,13 +191,13 @@ public class WebserviceDescription$JAXB
         return webserviceDescription;
     }
 
-    public final WebserviceDescription read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final WebserviceDescription read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, WebserviceDescription webserviceDescription, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final WebserviceDescription webserviceDescription, RuntimeContext context)
+        throws Exception {
         if (webserviceDescription == null) {
             writer.writeXsiNil();
             return;
@@ -207,7 +207,7 @@ public class WebserviceDescription$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (WebserviceDescription.class != webserviceDescription.getClass()) {
             context.unexpectedSubclass(writer, webserviceDescription, WebserviceDescription.class);
             return;
@@ -217,23 +217,23 @@ public class WebserviceDescription$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = webserviceDescription.id;
+        final String idRaw = webserviceDescription.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(webserviceDescription, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: description
-        String descriptionRaw = webserviceDescription.description;
+        final String descriptionRaw = webserviceDescription.description;
         String description = null;
         try {
             description = Adapters.collapsedStringAdapterAdapter.marshal(descriptionRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webserviceDescription, "description", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (description != null) {
@@ -243,11 +243,11 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: displayName
-        String displayNameRaw = webserviceDescription.displayName;
+        final String displayNameRaw = webserviceDescription.displayName;
         String displayName = null;
         try {
             displayName = Adapters.collapsedStringAdapterAdapter.marshal(displayNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webserviceDescription, "displayName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (displayName != null) {
@@ -257,7 +257,7 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: icon
-        Icon icon = webserviceDescription.icon;
+        final Icon icon = webserviceDescription.icon;
         if (icon != null) {
             writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
             writeIcon(writer, icon, context);
@@ -265,11 +265,11 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: webserviceDescriptionName
-        String webserviceDescriptionNameRaw = webserviceDescription.webserviceDescriptionName;
+        final String webserviceDescriptionNameRaw = webserviceDescription.webserviceDescriptionName;
         String webserviceDescriptionName = null;
         try {
             webserviceDescriptionName = Adapters.collapsedStringAdapterAdapter.marshal(webserviceDescriptionNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webserviceDescription, "webserviceDescriptionName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (webserviceDescriptionName != null) {
@@ -281,11 +281,11 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: wsdlFile
-        String wsdlFileRaw = webserviceDescription.wsdlFile;
+        final String wsdlFileRaw = webserviceDescription.wsdlFile;
         String wsdlFile = null;
         try {
             wsdlFile = Adapters.collapsedStringAdapterAdapter.marshal(wsdlFileRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webserviceDescription, "wsdlFile", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (wsdlFile != null) {
@@ -295,11 +295,11 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: jaxrpcMappingFile
-        String jaxrpcMappingFileRaw = webserviceDescription.jaxrpcMappingFile;
+        final String jaxrpcMappingFileRaw = webserviceDescription.jaxrpcMappingFile;
         String jaxrpcMappingFile = null;
         try {
             jaxrpcMappingFile = Adapters.collapsedStringAdapterAdapter.marshal(jaxrpcMappingFileRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webserviceDescription, "jaxrpcMappingFile", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (jaxrpcMappingFile != null) {
@@ -309,9 +309,9 @@ public class WebserviceDescription$JAXB
         }
 
         // ELEMENT: portComponent
-        KeyedCollection<String, PortComponent> portComponent = webserviceDescription.portComponent;
+        final KeyedCollection<String, PortComponent> portComponent = webserviceDescription.portComponent;
         if (portComponent != null) {
-            for (PortComponent portComponentItem : portComponent) {
+            for (final PortComponent portComponentItem : portComponent) {
                 if (portComponentItem != null) {
                     writer.writeStartElement(prefix, "port-component", "http://java.sun.com/xml/ns/javaee");
                     writePortComponent(writer, portComponentItem, context);

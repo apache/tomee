@@ -43,7 +43,7 @@ public final class ClassLoaderAwareHandler implements InvocationHandler {
         thread.setContextClassLoader(loader);
         try {
             return method.invoke(delegate, args);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             // Reflection wraps all exceptions thrown from the Method with
             // InvocationTargetException.  We must unwrap it and throw the
             // real exception otherwise TomEE/OpenEJB will see 'UndeclaredThrowableException'

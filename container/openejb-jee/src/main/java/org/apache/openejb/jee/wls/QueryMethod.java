@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for query-method complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="query-method">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "query-method", propOrder = {
@@ -65,11 +63,9 @@ public class QueryMethod {
 
     /**
      * Gets the value of the methodName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMethodName() {
         return methodName;
@@ -77,23 +73,19 @@ public class QueryMethod {
 
     /**
      * Sets the value of the methodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
     /**
      * Gets the value of the methodParams property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MethodParams }
-     *     
+     *
+     * @return possible object is
+     * {@link MethodParams }
      */
     public MethodParams getMethodParams() {
         return methodParams;
@@ -101,23 +93,19 @@ public class QueryMethod {
 
     /**
      * Sets the value of the methodParams property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodParams }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MethodParams }
      */
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -125,13 +113,11 @@ public class QueryMethod {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -33,7 +33,7 @@ public class MdbBuilder {
         return this;
     }
 
-    public MdbBuilder withActivationProperty(String key, String value) {
+    public MdbBuilder withActivationProperty(final String key, String value) {
 
         activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty(key, value) {
         });
@@ -45,7 +45,7 @@ public class MdbBuilder {
         return messageDrivenBean;
     }
 
-    private MessageDrivenBean createJaxbMdb(String ejbName, String mdbClass, String messageListenerInterface) {
+    private MessageDrivenBean createJaxbMdb(final String ejbName, final String mdbClass, String messageListenerInterface) {
         MessageDrivenBean bean = new MessageDrivenBean(ejbName);
         bean.setEjbClass(mdbClass);
         bean.setMessagingType(messageListenerInterface);

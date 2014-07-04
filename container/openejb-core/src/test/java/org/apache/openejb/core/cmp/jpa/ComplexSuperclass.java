@@ -33,12 +33,12 @@ public class ComplexSuperclass {
     public ComplexSuperclass() {
     }
 
-    public ComplexSuperclass(String firstId, String secondId) {
+    public ComplexSuperclass(final String firstId, String secondId) {
         this.firstId = firstId;
         this.secondId = secondId;
     }
 
-    public void initializeIds(String firstId, String secondId) {
+    public void initializeIds(final String firstId, final String secondId) {
         this.firstId = firstId;
         this.secondId = secondId;
     }
@@ -47,7 +47,7 @@ public class ComplexSuperclass {
         return firstId;
     }
 
-    public void setFirstId(String firstId) {
+    public void setFirstId(final String firstId) {
         this.firstId = firstId;
     }
 
@@ -55,7 +55,7 @@ public class ComplexSuperclass {
         return secondId;
     }
 
-    public void setSecondId(String secondId) {
+    public void setSecondId(final String secondId) {
         this.secondId = secondId;
     }
 }

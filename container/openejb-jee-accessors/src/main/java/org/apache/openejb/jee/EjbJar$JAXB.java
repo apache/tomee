@@ -46,33 +46,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EjbJar$JAXB
-        extends JAXBObject<EjbJar> {
+    extends JAXBObject<EjbJar> {
 
 
     public EjbJar$JAXB() {
         super(EjbJar.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jar".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jarType".intern()), Text$JAXB.class, Icon$JAXB.class, MessageDrivenBean$JAXB.class, SessionBean$JAXB.class, EntityBean$JAXB.class, Interceptors$JAXB.class, Relationships$JAXB.class, AssemblyDescriptor$JAXB.class);
     }
 
-    public static EjbJar readEjbJar(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EjbJar readEjbJar(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbJar(XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
-            throws Exception {
+    public static void writeEjbJar(final XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbJar, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final EjbJar ejbJar, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbJar, context);
     }
 
-    public final static EjbJar _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EjbJar _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -99,7 +99,7 @@ public class EjbJar$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -167,7 +167,7 @@ public class EjbJar$JAXB
                 ejbJar.interceptors = interceptors;
             } else if (("relationships" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: relationships
-                Relationships relationships = readRelationships(elementReader, context);
+                final Relationships relationships = readRelationships(elementReader, context);
                 ejbJar.relationships = relationships;
             } else if (("assembly-descriptor" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: assemblyDescriptor
@@ -213,13 +213,13 @@ public class EjbJar$JAXB
         return ejbJar;
     }
 
-    public final EjbJar read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EjbJar read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _readEnterpriseBeans(XoXMLStreamReader reader, RuntimeContext context, EjbJar ejbJar)
-            throws Exception {
+    public final static void _readEnterpriseBeans(final XoXMLStreamReader reader, RuntimeContext context, EjbJar ejbJar)
+        throws Exception {
         ArrayList<EnterpriseBean> enterpriseBeans = null;
 
         // Read elements
@@ -256,8 +256,8 @@ public class EjbJar$JAXB
         }
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, EjbJar ejbJar, RuntimeContext context)
+        throws Exception {
         if (ejbJar == null) {
             writer.writeXsiNil();
             return;
@@ -289,7 +289,7 @@ public class EjbJar$JAXB
         }
 
         // ATTRIBUTE: metadataComplete
-        Boolean metadataComplete = ejbJar.metadataComplete;
+        final Boolean metadataComplete = ejbJar.metadataComplete;
         if (metadataComplete != null) {
             writer.writeAttribute("", "", "metadata-complete", Boolean.toString(metadataComplete));
         }
@@ -307,7 +307,7 @@ public class EjbJar$JAXB
         }
 
         // ELEMENT: moduleName
-        String moduleNameRaw = ejbJar.moduleName;
+        final String moduleNameRaw = ejbJar.moduleName;
         String moduleName = null;
         try {
             moduleName = Adapters.collapsedStringAdapterAdapter.marshal(moduleNameRaw);
@@ -359,7 +359,7 @@ public class EjbJar$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = ejbJar.icon;
+        final LocalCollection<Icon> icon = ejbJar.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -393,7 +393,7 @@ public class EjbJar$JAXB
                     writeSessionBean(writer, SessionBean, context);
                     writer.writeEndElement();
                 } else if (enterpriseBeansItem instanceof org.apache.openejb.jee.MessageDrivenBean) {
-                    org.apache.openejb.jee.MessageDrivenBean MessageDrivenBean = ((org.apache.openejb.jee.MessageDrivenBean) enterpriseBeansItem);
+                    final org.apache.openejb.jee.MessageDrivenBean MessageDrivenBean = ((org.apache.openejb.jee.MessageDrivenBean) enterpriseBeansItem);
                     writer.writeStartElement(prefix, "message-driven", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDrivenBean(writer, MessageDrivenBean, context);
                     writer.writeEndElement();

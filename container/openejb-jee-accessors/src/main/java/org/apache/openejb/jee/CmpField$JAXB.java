@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class CmpField$JAXB
-        extends JAXBObject<CmpField> {
+    extends JAXBObject<CmpField> {
 
 
     public CmpField$JAXB() {
         super(CmpField.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmp-fieldType".intern()), Text$JAXB.class);
     }
 
-    public static CmpField readCmpField(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static CmpField readCmpField(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeCmpField(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public static void writeCmpField(final XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
+        throws Exception {
         _write(writer, cmpField, context);
     }
 
-    public void write(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final CmpField cmpField, RuntimeContext context)
+        throws Exception {
         _write(writer, cmpField, context);
     }
 
-    public final static CmpField _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static CmpField _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -75,7 +75,7 @@ public class CmpField$JAXB
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("cmp-fieldType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, CmpField.class);
@@ -86,7 +86,7 @@ public class CmpField$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, cmpField);
                 cmpField.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -133,13 +133,13 @@ public class CmpField$JAXB
         return cmpField;
     }
 
-    public final CmpField read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final CmpField read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
+        throws Exception {
         if (cmpField == null) {
             writer.writeXsiNil();
             return;
@@ -174,7 +174,7 @@ public class CmpField$JAXB
         Text[] descriptions = null;
         try {
             descriptions = cmpField.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(cmpField, "descriptions", CmpField.class, "getDescriptions", e);
         }
         if (descriptions != null) {

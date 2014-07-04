@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for stateless-clustering complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="stateless-clustering">
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "stateless-clustering", propOrder = {
@@ -88,11 +86,9 @@ public class StatelessClustering {
 
     /**
      * Gets the value of the homeIsClusterable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getHomeIsClusterable() {
         return homeIsClusterable;
@@ -100,23 +96,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the homeIsClusterable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setHomeIsClusterable(Boolean value) {
+    public void setHomeIsClusterable(final Boolean value) {
         this.homeIsClusterable = value;
     }
 
     /**
      * Gets the value of the homeLoadAlgorithm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHomeLoadAlgorithm() {
         return homeLoadAlgorithm;
@@ -124,23 +116,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the homeLoadAlgorithm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHomeLoadAlgorithm(String value) {
+    public void setHomeLoadAlgorithm(final String value) {
         this.homeLoadAlgorithm = value;
     }
 
     /**
      * Gets the value of the homeCallRouterClassName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHomeCallRouterClassName() {
         return homeCallRouterClassName;
@@ -148,23 +136,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the homeCallRouterClassName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHomeCallRouterClassName(String value) {
+    public void setHomeCallRouterClassName(final String value) {
         this.homeCallRouterClassName = value;
     }
 
     /**
      * Gets the value of the useServersideStubs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getUseServersideStubs() {
         return useServersideStubs;
@@ -172,23 +156,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the useServersideStubs property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setUseServersideStubs(Boolean value) {
+    public void setUseServersideStubs(final Boolean value) {
         this.useServersideStubs = value;
     }
 
     /**
      * Gets the value of the statelessBeanIsClusterable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getStatelessBeanIsClusterable() {
         return statelessBeanIsClusterable;
@@ -196,23 +176,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the statelessBeanIsClusterable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setStatelessBeanIsClusterable(Boolean value) {
+    public void setStatelessBeanIsClusterable(final Boolean value) {
         this.statelessBeanIsClusterable = value;
     }
 
     /**
      * Gets the value of the statelessBeanLoadAlgorithm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStatelessBeanLoadAlgorithm() {
         return statelessBeanLoadAlgorithm;
@@ -220,23 +196,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the statelessBeanLoadAlgorithm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setStatelessBeanLoadAlgorithm(String value) {
+    public void setStatelessBeanLoadAlgorithm(final String value) {
         this.statelessBeanLoadAlgorithm = value;
     }
 
     /**
      * Gets the value of the statelessBeanCallRouterClassName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStatelessBeanCallRouterClassName() {
         return statelessBeanCallRouterClassName;
@@ -244,23 +216,19 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the statelessBeanCallRouterClassName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setStatelessBeanCallRouterClassName(String value) {
+    public void setStatelessBeanCallRouterClassName(final String value) {
         this.statelessBeanCallRouterClassName = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -268,13 +236,11 @@ public class StatelessClustering {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

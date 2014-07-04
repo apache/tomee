@@ -23,23 +23,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for resource-env-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="resource-env-refType">
  *   &lt;complexContent>
@@ -55,18 +53,16 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-env-refType", propOrder = {
-        "descriptions",
-        "resourceEnvRefName",
-        "resourceEnvRefType",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "resourceEnvRefName",
+    "resourceEnvRefType",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class ResourceEnvRef implements JndiReference {
 
     @XmlTransient
@@ -89,12 +85,12 @@ public class ResourceEnvRef implements JndiReference {
     public ResourceEnvRef() {
     }
 
-    public ResourceEnvRef(String resourceEnvRefName, String resourceEnvRefType) {
+    public ResourceEnvRef(final String resourceEnvRefName, final String resourceEnvRefType) {
         this.resourceEnvRefName = resourceEnvRefName;
         this.resourceEnvRefType = resourceEnvRefType;
     }
 
-    public ResourceEnvRef(String resourceEnvRefName, Class resourceEnvRefType) {
+    public ResourceEnvRef(String resourceEnvRefName, final Class resourceEnvRefType) {
         this(resourceEnvRefName, resourceEnvRefType.getName());
     }
 
@@ -122,7 +118,7 @@ public class ResourceEnvRef implements JndiReference {
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(String className, String property) {
+    public ResourceEnvRef injectionTarget(String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.resourceEnvRefName == null) {
@@ -132,7 +128,7 @@ public class ResourceEnvRef implements JndiReference {
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(Class<?> clazz, String property) {
+    public ResourceEnvRef injectionTarget(Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -223,10 +219,10 @@ public class ResourceEnvRef implements JndiReference {
     @Override
     public String toString() {
         return "ResourceEnvRef{" +
-                "name='" + resourceEnvRefName + '\'' +
-                ", type='" + resourceEnvRefType + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + resourceEnvRefName + '\'' +
+            ", type='" + resourceEnvRefType + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for lock-mode-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="lock-mode-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "lock-mode-type")
 @XmlEnum
@@ -59,7 +58,7 @@ public enum LockModeType {
         return name();
     }
 
-    public static LockModeType fromValue(String v) {
+    public static LockModeType fromValue(final String v) {
         return valueOf(v);
     }
 

@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesReferencedBean$JAXB
-        extends JAXBObject<FacesReferencedBean> {
+    extends JAXBObject<FacesReferencedBean> {
 
 
     public FacesReferencedBean$JAXB() {
         super(FacesReferencedBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-referenced-beanType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static FacesReferencedBean readFacesReferencedBean(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesReferencedBean readFacesReferencedBean(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesReferencedBean(XoXMLStreamWriter writer, FacesReferencedBean facesReferencedBean, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesReferencedBean(final XoXMLStreamWriter writer, final FacesReferencedBean facesReferencedBean, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesReferencedBean, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesReferencedBean facesReferencedBean, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesReferencedBean facesReferencedBean, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesReferencedBean, context);
     }
 
-    public final static FacesReferencedBean _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesReferencedBean _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -99,7 +99,7 @@ public class FacesReferencedBean$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 Text descriptionsItem = readText(elementReader, context);
@@ -181,13 +181,13 @@ public class FacesReferencedBean$JAXB
         return facesReferencedBean;
     }
 
-    public final FacesReferencedBean read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesReferencedBean read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesReferencedBean facesReferencedBean, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesReferencedBean facesReferencedBean, RuntimeContext context)
+        throws Exception {
         if (facesReferencedBean == null) {
             writer.writeXsiNil();
             return;
@@ -197,7 +197,7 @@ public class FacesReferencedBean$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesReferencedBean.class != facesReferencedBean.getClass()) {
             context.unexpectedSubclass(writer, facesReferencedBean, FacesReferencedBean.class);
             return;
@@ -207,7 +207,7 @@ public class FacesReferencedBean$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesReferencedBean.id;
+        final String idRaw = facesReferencedBean.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -241,7 +241,7 @@ public class FacesReferencedBean$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesReferencedBean.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesReferencedBean, "displayNames", FacesReferencedBean.class, "getDisplayNames", e);
         }
         if (displayNames != null) {

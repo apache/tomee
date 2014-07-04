@@ -19,9 +19,6 @@ package org.apache.openejb.jee.oejb2;
 
 import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,13 +29,16 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
  * <p>Java class for session-beanType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="session-beanType">
  *   &lt;complexContent>
@@ -59,8 +59,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "session-beanType", propOrder = {
@@ -98,7 +96,7 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     protected Integer cacheSize;
     @XmlElement(name = "tss-link")
     protected String tssLink;
-    @XmlElement(name="tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
 
     @XmlElement(name = "properties")
@@ -108,25 +106,25 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
 
-    @XmlElement(name = "persistence-context-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "persistence-context-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<PersistenceContextRefType> persistenceContextRef;
 
-    @XmlElement(name = "persistence-unit-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "persistence-unit-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<PersistenceUnitRefType> persistenceUnitRef;
 
-    @XmlElement(name = "ejb-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "ejb-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbRefType> ejbRef;
 
-    @XmlElement(name = "ejb-local-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "ejb-local-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<EjbLocalRefType> ejbLocalRef;
 
-    @XmlElement(name = "service-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "service-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ServiceRefType> serviceRef;
 
-    @XmlElement(name = "resource-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "resource-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceRefType> resourceRef;
 
-    @XmlElement(name = "resource-env-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "resource-env-ref", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<ResourceEnvRefType> resourceEnvRef;
 
     @XmlElement(name = "web-service-address")
@@ -145,11 +143,9 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbName() {
         return ejbName;
@@ -157,37 +153,33 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the jndiName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the jndiName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJndiName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getJndiName() {
         if (jndiName == null) {
@@ -198,25 +190,23 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the localJndiName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the localJndiName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocalJndiName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getLocalJndiName() {
         if (localJndiName == null) {
@@ -234,11 +224,9 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the cacheSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getCacheSize() {
         return cacheSize;
@@ -246,23 +234,19 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the cacheSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setCacheSize(Integer value) {
+    public void setCacheSize(final Integer value) {
         this.cacheSize = value;
     }
 
     /**
      * Gets the value of the tssLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTssLink() {
         return tssLink;
@@ -270,23 +254,19 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the tssLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTssLink(String value) {
+    public void setTssLink(final String value) {
         this.tssLink = value;
     }
 
     /**
      * Gets the value of the tss property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getTss() {
         return tss;
@@ -294,13 +274,11 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the tss property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setTss(PatternType value) {
+    public void setTss(final PatternType value) {
         this.tss = value;
     }
 
@@ -312,14 +290,14 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     }
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
-        if (persistenceContextRef == null){
+        if (persistenceContextRef == null) {
             persistenceContextRef = new ArrayList<PersistenceContextRefType>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
-        if (persistenceUnitRef == null){
+        if (persistenceUnitRef == null) {
             persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
         }
         return persistenceUnitRef;
@@ -362,11 +340,9 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the webServiceAddress property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWebServiceAddress() {
         return webServiceAddress;
@@ -374,37 +350,33 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the webServiceAddress property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWebServiceAddress(String value) {
+    public void setWebServiceAddress(final String value) {
         this.webServiceAddress = value;
     }
 
     /**
      * Gets the value of the webServiceVirtualHost property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the webServiceVirtualHost property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWebServiceVirtualHost().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getWebServiceVirtualHost() {
         if (webServiceVirtualHost == null) {
@@ -415,11 +387,9 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the webServiceSecurity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link WebServiceSecurityType }
-     *     
+     *
+     * @return possible object is
+     * {@link WebServiceSecurityType }
      */
     public WebServiceSecurityType getWebServiceSecurity() {
         return webServiceSecurity;
@@ -427,23 +397,19 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the webServiceSecurity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link WebServiceSecurityType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link WebServiceSecurityType }
      */
-    public void setWebServiceSecurity(WebServiceSecurityType value) {
+    public void setWebServiceSecurity(final WebServiceSecurityType value) {
         this.webServiceSecurity = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -451,13 +417,11 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -467,5 +431,5 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
         }
         return properties;
     }
-    
+
 }

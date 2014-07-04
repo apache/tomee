@@ -132,7 +132,7 @@ public class DescriptorDataSourceDefinitionTest {
         assertDataSourceDefinitionValues(yellow.getGiga(), "org.hsqldb.jdbc.JDBCDataSource", "foo2", "bar2");
     }
 
-    private void assertDataSourceDefinitionValues(DataSource dataSource, String clazz, String user, String password) throws Exception {
+    private void assertDataSourceDefinitionValues(final DataSource dataSource, final String clazz, final String user, String password) throws Exception {
         assertNotNull("injection should work", dataSource);
 
         Movies movies = new Movies(dataSource);
@@ -144,7 +144,7 @@ public class DescriptorDataSourceDefinitionTest {
         List<Movie> list = movies.getMovies();
         assertEquals("List.size()", 3, list.size());
 
-        for (Movie movie : list) {
+        for (final Movie movie : list) {
             movies.deleteMovie(movie);
         }
 
@@ -157,17 +157,17 @@ public class DescriptorDataSourceDefinitionTest {
     public static class Movies {
         private final DataSource movieDatabase;
 
-        public Movies(DataSource movieDatabase) throws SQLException {
+        public Movies(final DataSource movieDatabase) throws SQLException {
             this.movieDatabase = movieDatabase;
 
-            Connection connection = movieDatabase.getConnection();
-            PreparedStatement stmt = connection.prepareStatement("CREATE TABLE movie ( director VARCHAR(255), title VARCHAR(255), year integer)");
+            final Connection connection = movieDatabase.getConnection();
+            final PreparedStatement stmt = connection.prepareStatement("CREATE TABLE movie ( director VARCHAR(255), title VARCHAR(255), year integer)");
             stmt.execute();
 
         }
 
-        public void addMovie(Movie movie) throws Exception {
-            Connection conn = movieDatabase.getConnection();
+        public void addMovie(final Movie movie) throws Exception {
+            final Connection conn = movieDatabase.getConnection();
             try {
                 PreparedStatement sql = conn.prepareStatement("INSERT into movie (director, title, year) values (?, ?, ?)");
                 sql.setString(1, movie.getDirector());
@@ -180,10 +180,10 @@ public class DescriptorDataSourceDefinitionTest {
         }
 
 
-        public void deleteMovie(Movie movie) throws Exception {
+        public void deleteMovie(final Movie movie) throws Exception {
             Connection conn = movieDatabase.getConnection();
             try {
-                PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
+                final PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
                 sql.setString(1, movie.getDirector());
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
@@ -194,13 +194,13 @@ public class DescriptorDataSourceDefinitionTest {
         }
 
         public List<Movie> getMovies() throws Exception {
-            ArrayList<Movie> movies = new ArrayList<Movie>();
-            Connection conn = movieDatabase.getConnection();
+            final ArrayList<Movie> movies = new ArrayList<Movie>();
+            final Connection conn = movieDatabase.getConnection();
             try {
                 PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
                 ResultSet set = sql.executeQuery();
                 while (set.next()) {
-                    Movie movie = new Movie();
+                    final Movie movie = new Movie();
                     movie.setDirector(set.getString("director"));
                     movie.setTitle(set.getString("title"));
                     movie.setYear(set.getInt("year"));
@@ -222,7 +222,7 @@ public class DescriptorDataSourceDefinitionTest {
         public Movie() {
         }
 
-        public Movie(String director, String title, int year) {
+        public Movie(final String director, String title, final int year) {
             this.director = director;
             this.title = title;
             this.year = year;
@@ -232,7 +232,7 @@ public class DescriptorDataSourceDefinitionTest {
             return director;
         }
 
-        public void setDirector(String director) {
+        public void setDirector(final String director) {
             this.director = director;
         }
 
@@ -240,7 +240,7 @@ public class DescriptorDataSourceDefinitionTest {
             return title;
         }
 
-        public void setTitle(String title) {
+        public void setTitle(final String title) {
             this.title = title;
         }
 
@@ -248,7 +248,7 @@ public class DescriptorDataSourceDefinitionTest {
             return year;
         }
 
-        public void setYear(int year) {
+        public void setYear(final int year) {
             this.year = year;
         }
     }

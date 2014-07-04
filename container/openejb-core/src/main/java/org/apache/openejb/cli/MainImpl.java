@@ -44,9 +44,8 @@ import java.util.Properties;
  * Entry point for ALL things OpenEJB.  This will use the new service
  * architecture explained here:
  *
- * @link http://docs.codehaus.org/display/OPENEJB/Executables
- * 
  * @version $Rev$ $Date$
+ * @link http://docs.codehaus.org/display/OPENEJB/Executables
  */
 public class MainImpl implements Main {
 
@@ -84,7 +83,7 @@ public class MainImpl implements Main {
 
             // Get and remove the commandName (first arg)
             final List<String> list = line.getArgList();
-            if (list.size() > 0){
+            if (list.size() > 0) {
                 commandName = list.get(0);
                 list.remove(0);
             }
@@ -212,6 +211,7 @@ public class MainImpl implements Main {
     private static void help() {
         help(true);
     }
+
     private static void help(final boolean printHeader) {
 
         // Here we are using commons-cli to create the list of available commands
@@ -239,15 +239,15 @@ public class MainImpl implements Main {
             final String header = "\nAvailable commands:";
 
             final String footer = "\n" +
-                    "Try 'openejb <command> --help' for help on a specific command.\n" +
-                    "For example 'openejb deploy --help'.\n" +
-                    "\n" +
-                    "Apache OpenEJB -- EJB Container System and Server.\n" +
-                    "For additional information, see http://openejb.apache.org\n" +
-                    "Bug Reports to <users@openejb.apache.org>";
+                "Try 'openejb <command> --help' for help on a specific command.\n" +
+                "For example 'openejb deploy --help'.\n" +
+                "\n" +
+                "Apache OpenEJB -- EJB Container System and Server.\n" +
+                "For additional information, see http://openejb.apache.org\n" +
+                "Bug Reports to <users@openejb.apache.org>";
 
 
-            if (!printHeader){
+            if (!printHeader) {
                 pw.append(header).append("\n\n");
                 formatter.printOptions(pw, 74, options, 1, 3);
             } else {
@@ -258,7 +258,7 @@ public class MainImpl implements Main {
 
             // Fix up the commons-cli output to our liking.
             String text = sw.toString().replaceAll("\n -", "\n  ");
-            text = text.replace("\nApache OpenEJB","\n\nApache OpenEJB");
+            text = text.replace("\nApache OpenEJB", "\n\nApache OpenEJB");
             System.out.print(text);
         } catch (final IOException e) {
             e.printStackTrace();

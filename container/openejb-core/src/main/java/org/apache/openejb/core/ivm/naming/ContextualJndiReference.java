@@ -107,7 +107,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             return values.iterator().next();
         } else if (!values.isEmpty()) {
             throw new NameNotFoundException("Ambiguous resource '" + getJndiName()
-                    + "'  for classloader " + Thread.currentThread().getContextClassLoader());
+                + "'  for classloader " + Thread.currentThread().getContextClassLoader());
         }
 
         return defaultValue;
@@ -147,14 +147,14 @@ public class ContextualJndiReference extends IntraVmJndiReference {
         } catch (final NameNotFoundException e) {
             return jndiContext.lookup("java:module/" + Strings.lastPart(getClassName(), '.'));
         } catch (final NamingException e) {
-            throw (NamingException)new NamingException("could not look up " + s).initCause(e);
+            throw (NamingException) new NamingException("could not look up " + s).initCause(e);
         }
     }
 
     @Override
     public String toString() {
         return "ContextualJndiReference{" +
-                    "jndiName='" + getJndiName() + '\'' +
-                '}';
+            "jndiName='" + getJndiName() + '\'' +
+            '}';
     }
 }

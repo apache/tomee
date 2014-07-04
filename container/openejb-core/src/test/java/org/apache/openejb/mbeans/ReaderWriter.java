@@ -23,16 +23,19 @@ import javax.management.ManagedAttribute;
 @MBean
 @Description("descr ;)")
 public class ReaderWriter {
-	private int i = -1;
+    private int i = -1;
 
-	@ManagedAttribute @Description("just a value") public int getValue() {
-		if (i < 0) {
-			return 2;
-		}
-		return i;
-	}
+    @ManagedAttribute
+    @Description("just a value")
+    public int getValue() {
+        if (i < 0) {
+            return 2;
+        }
+        return i;
+    }
 
-	@ManagedAttribute public void setValue(int v) {
-		i = v;
-	}
+    @ManagedAttribute
+    public void setValue(final int v) {
+        i = v;
+    }
 }

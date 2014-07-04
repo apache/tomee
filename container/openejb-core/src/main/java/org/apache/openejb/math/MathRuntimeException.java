@@ -32,14 +32,16 @@ import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 /**
-* Base class for commons-math unchecked exceptions.
-*
-* @version $Revision: 822850 $ $Date: 2009-10-07 11:56:42 -0700 (Wed, 07 Oct 2009) $
-* @since 2.0
-*/
+ * Base class for commons-math unchecked exceptions.
+ *
+ * @version $Revision: 822850 $ $Date: 2009-10-07 11:56:42 -0700 (Wed, 07 Oct 2009) $
+ * @since 2.0
+ */
 public class MathRuntimeException extends RuntimeException {
 
-    /** Serializable version identifier. */
+    /**
+     * Serializable version identifier.
+     */
     private static final long serialVersionUID = -1238983364075381060L;
 
     /**
@@ -56,11 +58,12 @@ public class MathRuntimeException extends RuntimeException {
      * Constructs a new <code>MathRuntimeException</code> with specified
      * formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      */
-    public MathRuntimeException(final String pattern, final Object ... arguments) {
-        this.pattern   = pattern;
+    public MathRuntimeException(final String pattern, final Object... arguments) {
+        this.pattern = pattern;
         this.arguments = arguments == null ? new Object[0] : arguments.clone();
     }
 
@@ -68,12 +71,12 @@ public class MathRuntimeException extends RuntimeException {
      * Constructs a new <code>MathRuntimeException</code> with specified
      * nested <code>Throwable</code> root cause.
      *
-     * @param rootCause  the exception or error that caused this exception
-     *                   to be thrown.
+     * @param rootCause the exception or error that caused this exception
+     *                  to be thrown.
      */
     public MathRuntimeException(final Throwable rootCause) {
         super(rootCause);
-        this.pattern   = getMessage();
+        this.pattern = getMessage();
         this.arguments = new Object[0];
     }
 
@@ -81,21 +84,23 @@ public class MathRuntimeException extends RuntimeException {
      * Constructs a new <code>MathRuntimeException</code> with specified
      * formatted detail message and nested <code>Throwable</code> root cause.
      * Message formatting is delegated to {@link MessageFormat}.
+     *
      * @param rootCause the exception or error that caused this exception
-     * to be thrown.
-     * @param pattern format specifier
+     *                  to be thrown.
+     * @param pattern   format specifier
      * @param arguments format arguments
      */
     public MathRuntimeException(final Throwable rootCause,
-                                final String pattern, final Object ... arguments) {
+                                final String pattern, final Object... arguments) {
         super(rootCause);
-        this.pattern   = pattern;
+        this.pattern = pattern;
         this.arguments = arguments == null ? new Object[0] : arguments.clone();
     }
 
     /**
      * Translate a string to a given locale.
-     * @param s string to translate
+     *
+     * @param s      string to translate
      * @param locale locale into which to translate the string
      * @return translated string or original string
      * for unsupported locales or unknown strings
@@ -103,7 +108,7 @@ public class MathRuntimeException extends RuntimeException {
     private static String translate(final String s, final Locale locale) {
         try {
             final ResourceBundle bundle =
-                    ResourceBundle.getBundle("org.apache.commons.math.MessagesResources", locale);
+                ResourceBundle.getBundle("org.apache.commons.math.MessagesResources", locale);
             if (bundle.getLocale().getLanguage().equals(locale.getLanguage())) {
                 // the value of the resource is the translated string
                 return bundle.getString(s);
@@ -121,17 +126,19 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Builds a message string by from a pattern and its arguments.
-     * @param locale Locale in which the message should be translated
-     * @param pattern format specifier
+     *
+     * @param locale    Locale in which the message should be translated
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return a message string
      */
     private static String buildMessage(final Locale locale, final String pattern,
-                                       final Object ... arguments) {
+                                       final Object... arguments) {
         return pattern == null ? "" : new MessageFormat(translate(pattern, locale), locale).format(arguments);
     }
 
-    /** Gets the pattern used to build the message of this throwable.
+    /**
+     * Gets the pattern used to build the message of this throwable.
      *
      * @return the pattern used to build the message of this throwable
      */
@@ -139,7 +146,8 @@ public class MathRuntimeException extends RuntimeException {
         return pattern;
     }
 
-    /** Gets the arguments used to build the message of this throwable.
+    /**
+     * Gets the arguments used to build the message of this throwable.
      *
      * @return the arguments used to build the message of this throwable
      */
@@ -147,23 +155,27 @@ public class MathRuntimeException extends RuntimeException {
         return arguments.clone();
     }
 
-    /** Gets the message in a specified locale.
+    /**
+     * Gets the message in a specified locale.
      *
      * @param locale Locale in which the message should be translated
-     *
      * @return localized message
      */
     public String getMessage(final Locale locale) {
         return buildMessage(locale, pattern, arguments);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         return getMessage(Locale.US);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getLocalizedMessage() {
         return getMessage(Locale.getDefault());
@@ -180,7 +192,7 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Prints the stack trace of this exception to the specified stream.
      *
-     * @param out  the <code>PrintStream</code> to use for output
+     * @param out the <code>PrintStream</code> to use for output
      */
     @Override
     public void printStackTrace(final PrintStream out) {
@@ -195,12 +207,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>ArithmeticException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static ArithmeticException createArithmeticException(final String pattern,
-                                                                final Object ... arguments) {
+                                                                final Object... arguments) {
         return new ArithmeticException() {
 
             /** Serializable version identifier. */
@@ -224,12 +237,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>ArrayIndexOutOfBoundsException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static ArrayIndexOutOfBoundsException createArrayIndexOutOfBoundsException(final String pattern,
-                                                                                      final Object ... arguments) {
+                                                                                      final Object... arguments) {
         return new ArrayIndexOutOfBoundsException() {
 
             /** Serializable version identifier. */
@@ -253,12 +267,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>EOFException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static EOFException createEOFException(final String pattern,
-                                                  final Object ... arguments) {
+                                                  final Object... arguments) {
         return new EOFException() {
 
             /** Serializable version identifier. */
@@ -286,8 +301,9 @@ public class MathRuntimeException extends RuntimeException {
      * <code>IOException</code> even for Java 5. The constructor for
      * <code>IOException</code> with a cause parameter was introduced only
      * with Java 6.</p>
+     *
      * @param rootCause the exception or error that caused this exception
-     * to be thrown.
+     *                  to be thrown.
      * @return built exception
      */
     public static IOException createIOException(final Throwable rootCause) {
@@ -299,12 +315,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>IllegalArgumentException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static IllegalArgumentException createIllegalArgumentException(final String pattern,
-                                                                          final Object ... arguments) {
+                                                                          final Object... arguments) {
         return new IllegalArgumentException() {
 
             /** Serializable version identifier. */
@@ -328,8 +345,9 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>IllegalArgumentException</code> with specified nested
      * <code>Throwable</code> root cause.
+     *
      * @param rootCause the exception or error that caused this exception
-     * to be thrown.
+     *                  to be thrown.
      * @return built exception
      */
     public static IllegalArgumentException createIllegalArgumentException(final Throwable rootCause) {
@@ -341,12 +359,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>IllegalStateException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static IllegalStateException createIllegalStateException(final String pattern,
-                                                                    final Object ... arguments) {
+                                                                    final Object... arguments) {
         return new IllegalStateException() {
 
             /** Serializable version identifier. */
@@ -370,12 +389,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>ConcurrentModificationException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static ConcurrentModificationException createConcurrentModificationException(final String pattern,
-                                                                                        final Object ... arguments) {
+                                                                                        final Object... arguments) {
         return new ConcurrentModificationException() {
 
             /** Serializable version identifier. */
@@ -399,12 +419,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>NoSuchElementException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static NoSuchElementException createNoSuchElementException(final String pattern,
-                                                                      final Object ... arguments) {
+                                                                      final Object... arguments) {
         return new NoSuchElementException() {
 
             /** Serializable version identifier. */
@@ -428,12 +449,13 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>NullPointerException</code> with specified formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param pattern format specifier
+     *
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static NullPointerException createNullPointerException(final String pattern,
-                                                                  final Object ... arguments) {
+                                                                  final Object... arguments) {
         return new NullPointerException() {
 
             /** Serializable version identifier. */
@@ -454,18 +476,19 @@ public class MathRuntimeException extends RuntimeException {
         };
     }
 
-   /**
+    /**
      * Constructs a new <code>ParseException</code> with specified
      * formatted detail message.
      * Message formatting is delegated to {@link MessageFormat}.
-     * @param offset offset at which error occurred
-     * @param pattern format specifier
+     *
+     * @param offset    offset at which error occurred
+     * @param pattern   format specifier
      * @param arguments format arguments
      * @return built exception
      */
     public static ParseException createParseException(final int offset,
                                                       final String pattern,
-                                                      final Object ... arguments) {
+                                                      final Object... arguments) {
         return new ParseException(null, offset) {
 
             /** Serializable version identifier. */
@@ -486,7 +509,9 @@ public class MathRuntimeException extends RuntimeException {
         };
     }
 
-    /** Create an {@link RuntimeException} for an internal error.
+    /**
+     * Create an {@link RuntimeException} for an internal error.
+     *
      * @param cause underlying cause
      * @return an {@link RuntimeException} for an internal error
      */

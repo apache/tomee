@@ -47,33 +47,33 @@ import static org.apache.openejb.jee.Validator$JAXB.readValidator;
 import static org.apache.openejb.jee.Validator$JAXB.writeValidator;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class TldTaglib$JAXB
-        extends JAXBObject<TldTaglib> {
+    extends JAXBObject<TldTaglib> {
 
 
     public TldTaglib$JAXB() {
         super(TldTaglib.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "taglib".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "tldTaglibType".intern()), Text$JAXB.class, Icon$JAXB.class, Validator$JAXB.class, Listener$JAXB.class, Tag$JAXB.class, TagFile$JAXB.class, Function$JAXB.class, TldExtension$JAXB.class);
     }
 
-    public static TldTaglib readTldTaglib(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static TldTaglib readTldTaglib(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTldTaglib(XoXMLStreamWriter writer, TldTaglib tldTaglib, RuntimeContext context)
-            throws Exception {
+    public static void writeTldTaglib(final XoXMLStreamWriter writer, final TldTaglib tldTaglib, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldTaglib, context);
     }
 
-    public void write(XoXMLStreamWriter writer, TldTaglib tldTaglib, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final TldTaglib tldTaglib, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldTaglib, context);
     }
 
-    public final static TldTaglib _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static TldTaglib _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class TldTaglib$JAXB
             context = new RuntimeContext();
         }
 
-        TldTaglib tldTaglib = new TldTaglib();
+        final TldTaglib tldTaglib = new TldTaglib();
         context.beforeUnmarshal(tldTaglib, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -97,7 +97,7 @@ public class TldTaglib$JAXB
         List<TldExtension> taglibExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("tldTaglibType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, TldTaglib.class);
@@ -105,10 +105,10 @@ public class TldTaglib$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, tldTaglib);
                 tldTaglib.id = id;
             } else if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
@@ -120,24 +120,24 @@ public class TldTaglib$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = tldTaglib.icon;
                     if (icon != null) {
@@ -149,12 +149,12 @@ public class TldTaglib$JAXB
                 icon.add(iconItem);
             } else if (("tlib-version" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tlibVersion
-                String tlibVersionRaw = elementReader.getElementAsString();
+                final String tlibVersionRaw = elementReader.getElementAsString();
 
-                String tlibVersion;
+                final String tlibVersion;
                 try {
                     tlibVersion = Adapters.collapsedStringAdapterAdapter.unmarshal(tlibVersionRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -162,12 +162,12 @@ public class TldTaglib$JAXB
                 tldTaglib.tlibVersion = tlibVersion;
             } else if (("jsp-version" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: jspVersion
-                String jspVersionRaw = elementReader.getElementAsString();
+                final String jspVersionRaw = elementReader.getElementAsString();
 
-                String jspVersion;
+                final String jspVersion;
                 try {
                     jspVersion = Adapters.collapsedStringAdapterAdapter.unmarshal(jspVersionRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -175,12 +175,12 @@ public class TldTaglib$JAXB
                 tldTaglib.jspVersion = jspVersion;
             } else if (("short-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: shortName
-                String shortNameRaw = elementReader.getElementAsString();
+                final String shortNameRaw = elementReader.getElementAsString();
 
-                String shortName;
+                final String shortName;
                 try {
                     shortName = Adapters.collapsedStringAdapterAdapter.unmarshal(shortNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -188,12 +188,12 @@ public class TldTaglib$JAXB
                 tldTaglib.shortName = shortName;
             } else if (("uri" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: uri
-                String uriRaw = elementReader.getElementAsString();
+                final String uriRaw = elementReader.getElementAsString();
 
-                String uri;
+                final String uri;
                 try {
                     uri = Adapters.collapsedStringAdapterAdapter.unmarshal(uriRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -201,11 +201,11 @@ public class TldTaglib$JAXB
                 tldTaglib.uri = uri;
             } else if (("validator" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: validator
-                Validator validator = readValidator(elementReader, context);
+                final Validator validator = readValidator(elementReader, context);
                 tldTaglib.validator = validator;
             } else if (("listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: listener
-                Listener listenerItem = readListener(elementReader, context);
+                final Listener listenerItem = readListener(elementReader, context);
                 if (listener == null) {
                     listener = tldTaglib.listener;
                     if (listener != null) {
@@ -217,7 +217,7 @@ public class TldTaglib$JAXB
                 listener.add(listenerItem);
             } else if (("tag" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tag
-                Tag tagItem = readTag(elementReader, context);
+                final Tag tagItem = readTag(elementReader, context);
                 if (tag == null) {
                     tag = tldTaglib.tag;
                     if (tag != null) {
@@ -229,7 +229,7 @@ public class TldTaglib$JAXB
                 tag.add(tagItem);
             } else if (("tag-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tagFile
-                TagFile tagFileItem = readTagFile(elementReader, context);
+                final TagFile tagFileItem = readTagFile(elementReader, context);
                 if (tagFile == null) {
                     tagFile = tldTaglib.tagFile;
                     if (tagFile != null) {
@@ -241,7 +241,7 @@ public class TldTaglib$JAXB
                 tagFile.add(tagFileItem);
             } else if (("function" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: function
-                Function functionItem = readFunction(elementReader, context);
+                final Function functionItem = readFunction(elementReader, context);
                 if (function == null) {
                     function = tldTaglib.function;
                     if (function != null) {
@@ -253,7 +253,7 @@ public class TldTaglib$JAXB
                 function.add(functionItem);
             } else if (("taglib-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: taglibExtension
-                TldExtension taglibExtensionItem = readTldExtension(elementReader, context);
+                final TldExtension taglibExtensionItem = readTldExtension(elementReader, context);
                 if (taglibExtension == null) {
                     taglibExtension = tldTaglib.taglibExtension;
                     if (taglibExtension != null) {
@@ -270,14 +270,14 @@ public class TldTaglib$JAXB
         if (descriptions != null) {
             try {
                 tldTaglib.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, TldTaglib.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 tldTaglib.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, TldTaglib.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -305,13 +305,13 @@ public class TldTaglib$JAXB
         return tldTaglib;
     }
 
-    public final TldTaglib read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final TldTaglib read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, TldTaglib tldTaglib, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final TldTaglib tldTaglib, RuntimeContext context)
+        throws Exception {
         if (tldTaglib == null) {
             writer.writeXsiNil();
             return;
@@ -321,7 +321,7 @@ public class TldTaglib$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (TldTaglib.class != tldTaglib.getClass()) {
             context.unexpectedSubclass(writer, tldTaglib, TldTaglib.class);
             return;
@@ -331,24 +331,24 @@ public class TldTaglib$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = tldTaglib.id;
+        final String idRaw = tldTaglib.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tldTaglib, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ATTRIBUTE: version
-        String versionRaw = tldTaglib.version;
+        final String versionRaw = tldTaglib.version;
         if (versionRaw != null) {
             String version = null;
             try {
                 version = Adapters.collapsedStringAdapterAdapter.marshal(versionRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tldTaglib, "version", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "version", version);
@@ -358,11 +358,11 @@ public class TldTaglib$JAXB
         Text[] descriptions = null;
         try {
             descriptions = tldTaglib.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tldTaglib, "descriptions", TldTaglib.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -377,11 +377,11 @@ public class TldTaglib$JAXB
         Text[] displayNames = null;
         try {
             displayNames = tldTaglib.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tldTaglib, "displayNames", TldTaglib.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -393,9 +393,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = tldTaglib.icon;
+        final LocalCollection<Icon> icon = tldTaglib.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -407,11 +407,11 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: tlibVersion
-        String tlibVersionRaw = tldTaglib.tlibVersion;
+        final String tlibVersionRaw = tldTaglib.tlibVersion;
         String tlibVersion = null;
         try {
             tlibVersion = Adapters.collapsedStringAdapterAdapter.marshal(tlibVersionRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tldTaglib, "tlibVersion", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (tlibVersion != null) {
@@ -423,11 +423,11 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: jspVersion
-        String jspVersionRaw = tldTaglib.jspVersion;
+        final String jspVersionRaw = tldTaglib.jspVersion;
         String jspVersion = null;
         try {
             jspVersion = Adapters.collapsedStringAdapterAdapter.marshal(jspVersionRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tldTaglib, "jspVersion", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (jspVersion != null) {
@@ -437,11 +437,11 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: shortName
-        String shortNameRaw = tldTaglib.shortName;
+        final String shortNameRaw = tldTaglib.shortName;
         String shortName = null;
         try {
             shortName = Adapters.collapsedStringAdapterAdapter.marshal(shortNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tldTaglib, "shortName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (shortName != null) {
@@ -453,11 +453,11 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: uri
-        String uriRaw = tldTaglib.uri;
+        final String uriRaw = tldTaglib.uri;
         String uri = null;
         try {
             uri = Adapters.collapsedStringAdapterAdapter.marshal(uriRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tldTaglib, "uri", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (uri != null) {
@@ -467,7 +467,7 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: validator
-        Validator validator = tldTaglib.validator;
+        final Validator validator = tldTaglib.validator;
         if (validator != null) {
             writer.writeStartElement(prefix, "validator", "http://java.sun.com/xml/ns/javaee");
             writeValidator(writer, validator, context);
@@ -475,9 +475,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: listener
-        List<Listener> listener = tldTaglib.listener;
+        final List<Listener> listener = tldTaglib.listener;
         if (listener != null) {
-            for (Listener listenerItem : listener) {
+            for (final Listener listenerItem : listener) {
                 writer.writeStartElement(prefix, "listener", "http://java.sun.com/xml/ns/javaee");
                 if (listenerItem != null) {
                     writeListener(writer, listenerItem, context);
@@ -489,9 +489,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: tag
-        List<Tag> tag = tldTaglib.tag;
+        final List<Tag> tag = tldTaglib.tag;
         if (tag != null) {
-            for (Tag tagItem : tag) {
+            for (final Tag tagItem : tag) {
                 writer.writeStartElement(prefix, "tag", "http://java.sun.com/xml/ns/javaee");
                 if (tagItem != null) {
                     writeTag(writer, tagItem, context);
@@ -503,9 +503,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: tagFile
-        List<TagFile> tagFile = tldTaglib.tagFile;
+        final List<TagFile> tagFile = tldTaglib.tagFile;
         if (tagFile != null) {
-            for (TagFile tagFileItem : tagFile) {
+            for (final TagFile tagFileItem : tagFile) {
                 if (tagFileItem != null) {
                     writer.writeStartElement(prefix, "tag-file", "http://java.sun.com/xml/ns/javaee");
                     writeTagFile(writer, tagFileItem, context);
@@ -515,9 +515,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: function
-        List<Function> function = tldTaglib.function;
+        final List<Function> function = tldTaglib.function;
         if (function != null) {
-            for (Function functionItem : function) {
+            for (final Function functionItem : function) {
                 writer.writeStartElement(prefix, "function", "http://java.sun.com/xml/ns/javaee");
                 if (functionItem != null) {
                     writeFunction(writer, functionItem, context);
@@ -529,9 +529,9 @@ public class TldTaglib$JAXB
         }
 
         // ELEMENT: taglibExtension
-        List<TldExtension> taglibExtension = tldTaglib.taglibExtension;
+        final List<TldExtension> taglibExtension = tldTaglib.taglibExtension;
         if (taglibExtension != null) {
-            for (TldExtension taglibExtensionItem : taglibExtension) {
+            for (final TldExtension taglibExtensionItem : taglibExtension) {
                 if (taglibExtensionItem != null) {
                     writer.writeStartElement(prefix, "taglib-extension", "http://java.sun.com/xml/ns/javaee");
                     writeTldExtension(writer, taglibExtensionItem, context);

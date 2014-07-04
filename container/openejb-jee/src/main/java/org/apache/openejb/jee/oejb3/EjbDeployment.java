@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query", "roleMapping", "properties"})
+@XmlType(propOrder = {"jndi", "ejbLink", "resourceLink", "query", "roleMapping", "properties"})
 @XmlRootElement(name = "ejb-deployment")
 public class EjbDeployment {
 
@@ -68,17 +68,17 @@ public class EjbDeployment {
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(PropertiesAdapter.class)
     protected Properties properties;
-    
+
     public EjbDeployment() {
     }
 
-    public EjbDeployment(String containerId, String deploymentId, String ejbName) {
+    public EjbDeployment(final String containerId, String deploymentId, final String ejbName) {
         this.containerId = containerId;
         this.deploymentId = deploymentId;
         this.ejbName = ejbName;
     }
 
-    public EjbDeployment(EnterpriseBean bean) {
+    public EjbDeployment(final EnterpriseBean bean) {
         this.deploymentId = bean.getEjbName();
         this.ejbName = bean.getEjbName();
     }
@@ -91,7 +91,7 @@ public class EjbDeployment {
     }
 
     public List<Jndi> getJndi() {
-        if (jndi == null){
+        if (jndi == null) {
             jndi = new ArrayList<Jndi>();
         }
         return jndi;
@@ -111,25 +111,25 @@ public class EjbDeployment {
         return this.query;
     }
 
-    public ResourceLink getResourceLink(String refName) {
+    public ResourceLink getResourceLink(final String refName) {
         return getResourceLinksMap().get(refName);
     }
 
-    public Map<String,ResourceLink> getResourceLinksMap(){
-        Map<String,ResourceLink> map = new LinkedHashMap<String,ResourceLink>();
+    public Map<String, ResourceLink> getResourceLinksMap() {
+        final Map<String, ResourceLink> map = new LinkedHashMap<String, ResourceLink>();
         for (ResourceLink link : getResourceLink()) {
             map.put(link.getResRefName(), link);
         }
         return map;
     }
 
-    public EjbLink getEjbLink(String refName) {
+    public EjbLink getEjbLink(final String refName) {
         return getEjbLinksMap().get(refName);
     }
 
-    public Map<String,EjbLink> getEjbLinksMap(){
-        Map<String,EjbLink> map = new LinkedHashMap<String,EjbLink>();
-        for (EjbLink link : getEjbLink()) {
+    public Map<String, EjbLink> getEjbLinksMap() {
+        final Map<String, EjbLink> map = new LinkedHashMap<String, EjbLink>();
+        for (final EjbLink link : getEjbLink()) {
             map.put(link.getEjbRefName(), link);
         }
         return map;
@@ -140,7 +140,7 @@ public class EjbDeployment {
         return containerId;
     }
 
-    public void setContainerId(String value) {
+    public void setContainerId(final String value) {
         this.containerId = value;
     }
 
@@ -148,7 +148,7 @@ public class EjbDeployment {
         return deploymentId;
     }
 
-    public void setDeploymentId(String value) {
+    public void setDeploymentId(final String value) {
         this.deploymentId = value;
     }
 
@@ -156,28 +156,28 @@ public class EjbDeployment {
         return ejbName;
     }
 
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
-    public void addResourceLink(ResourceLink resourceLink) {
+    public void addResourceLink(final ResourceLink resourceLink) {
         getResourceLink().add(resourceLink);
     }
 
-    public void removeResourceLink(String resRefName) {
-        for (Iterator<ResourceLink> iterator = resourceLink.iterator(); iterator.hasNext();) {
-            ResourceLink link =  iterator.next();
+    public void removeResourceLink(final String resRefName) {
+        for (final Iterator<ResourceLink> iterator = resourceLink.iterator(); iterator.hasNext(); ) {
+            ResourceLink link = iterator.next();
             if (resRefName.equals(link.getResRefName())) {
                 iterator.remove();
             }
         }
     }
 
-    public void addEjbLink(EjbLink ejbLink) {
+    public void addEjbLink(final EjbLink ejbLink) {
         getEjbLink().add(ejbLink);
     }
 
-    public void addQuery(Query query) {
+    public void addQuery(final Query query) {
         getQuery().add(query);
     }
 
@@ -187,8 +187,8 @@ public class EjbDeployment {
         }
         return properties;
     }
-    
-    public void addProperty(String key, String value) {
+
+    public void addProperty(final String key, String value) {
         getProperties().setProperty(key, value);
     }
 

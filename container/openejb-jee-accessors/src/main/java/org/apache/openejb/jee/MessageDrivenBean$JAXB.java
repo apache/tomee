@@ -74,33 +74,33 @@ import static org.apache.openejb.jee.TransactionType$JAXB.parseTransactionType;
 import static org.apache.openejb.jee.TransactionType$JAXB.toStringTransactionType;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageDrivenBean$JAXB
-        extends JAXBObject<MessageDrivenBean> {
+    extends JAXBObject<MessageDrivenBean> {
 
 
     public MessageDrivenBean$JAXB() {
         super(MessageDrivenBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-driven-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, NamedMethod$JAXB.class, Timer$JAXB.class, TransactionType$JAXB.class, MessageDrivenDestination$JAXB.class, ActivationConfig$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class);
     }
 
-    public static MessageDrivenBean readMessageDrivenBean(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageDrivenBean readMessageDrivenBean(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageDrivenBean(XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageDrivenBean(final XoXMLStreamWriter writer, final MessageDrivenBean messageDrivenBean, RuntimeContext context)
+        throws Exception {
         _write(writer, messageDrivenBean, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, final RuntimeContext context)
+        throws Exception {
         _write(writer, messageDrivenBean, context);
     }
 
-    public final static MessageDrivenBean _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageDrivenBean _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -111,7 +111,7 @@ public class MessageDrivenBean$JAXB
             context = new RuntimeContext();
         }
 
-        MessageDrivenBean messageDrivenBean = new MessageDrivenBean();
+        final MessageDrivenBean messageDrivenBean = new MessageDrivenBean();
         context.beforeUnmarshal(messageDrivenBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -143,7 +143,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -158,7 +158,7 @@ public class MessageDrivenBean$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -172,7 +172,7 @@ public class MessageDrivenBean$JAXB
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = messageDrivenBean.icon;
                     if (icon != null) {
@@ -189,7 +189,7 @@ public class MessageDrivenBean$JAXB
                 String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -225,7 +225,7 @@ public class MessageDrivenBean$JAXB
                 // ELEMENT: messagingType
                 String messagingTypeRaw = elementReader.getElementAsString();
 
-                String messagingType;
+                final String messagingType;
                 try {
                     messagingType = Adapters.collapsedStringAdapterAdapter.unmarshal(messagingTypeRaw);
                 } catch (Exception e) {
@@ -587,13 +587,13 @@ public class MessageDrivenBean$JAXB
         return messageDrivenBean;
     }
 
-    public final MessageDrivenBean read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageDrivenBean read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, MessageDrivenBean messageDrivenBean, RuntimeContext context)
+        throws Exception {
         if (messageDrivenBean == null) {
             writer.writeXsiNil();
             return;
@@ -647,7 +647,7 @@ public class MessageDrivenBean$JAXB
         Text[] displayNames = null;
         try {
             displayNames = messageDrivenBean.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDrivenBean, "displayNames", MessageDrivenBean.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
@@ -663,7 +663,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = messageDrivenBean.icon;
+        final LocalCollection<Icon> icon = messageDrivenBean.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -768,7 +768,7 @@ public class MessageDrivenBean$JAXB
         String messageSelectorRaw = null;
         try {
             messageSelectorRaw = messageDrivenBean.getMessageSelector();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDrivenBean, "messageSelector", MessageDrivenBean.class, "getMessageSelector", e);
         }
         String messageSelector = null;
@@ -920,7 +920,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: serviceRef
-        KeyedCollection<String, ServiceRef> serviceRef = messageDrivenBean.serviceRef;
+        final KeyedCollection<String, ServiceRef> serviceRef = messageDrivenBean.serviceRef;
         if (serviceRef != null) {
             for (ServiceRef serviceRefItem : serviceRef) {
                 if (serviceRefItem != null) {

@@ -66,6 +66,6 @@ public class EnsureRequestScopeThreadLocalIsCleanUpTest {
 
     @Module
     public Class<?>[] clazz() {
-        return new Class<?>[] { EnsureRequestScopeThreadLocalIsCleanUpTest.class };
+        return new Class<?>[]{EnsureRequestScopeThreadLocalIsCleanUpTest.class};
     }
 }

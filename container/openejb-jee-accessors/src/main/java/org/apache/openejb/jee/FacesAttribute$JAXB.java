@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesAttribute$JAXB
-        extends JAXBObject<FacesAttribute> {
+    extends JAXBObject<FacesAttribute> {
 
 
     public FacesAttribute$JAXB() {
         super(FacesAttribute.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-attributeType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttributeExtension$JAXB.class);
     }
 
-    public static FacesAttribute readFacesAttribute(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesAttribute readFacesAttribute(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesAttribute(XoXMLStreamWriter writer, FacesAttribute facesAttribute, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesAttribute(final XoXMLStreamWriter writer, FacesAttribute facesAttribute, RuntimeContext context)
+        throws Exception {
         _write(writer, facesAttribute, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesAttribute facesAttribute, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesAttribute facesAttribute, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAttribute, context);
     }
 
-    public final static FacesAttribute _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesAttribute _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -106,7 +106,7 @@ public class FacesAttribute$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -184,7 +184,7 @@ public class FacesAttribute$JAXB
                 facesAttribute.suggestedValue = suggestedValue;
             } else if (("attribute-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attributeExtension
-                FacesAttributeExtension attributeExtensionItem = readFacesAttributeExtension(elementReader, context);
+                final FacesAttributeExtension attributeExtensionItem = readFacesAttributeExtension(elementReader, context);
                 if (attributeExtension == null) {
                     attributeExtension = facesAttribute.attributeExtension;
                     if (attributeExtension != null) {
@@ -224,13 +224,13 @@ public class FacesAttribute$JAXB
         return facesAttribute;
     }
 
-    public final FacesAttribute read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesAttribute read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesAttribute facesAttribute, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesAttribute facesAttribute, RuntimeContext context)
+        throws Exception {
         if (facesAttribute == null) {
             writer.writeXsiNil();
             return;
@@ -250,7 +250,7 @@ public class FacesAttribute$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesAttribute.id;
+        final String idRaw = facesAttribute.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -269,7 +269,7 @@ public class FacesAttribute$JAXB
             context.getterError(facesAttribute, "descriptions", FacesAttribute.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

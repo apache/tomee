@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.ActivationSpec$JAXB.readActivationSpec;
 import static org.apache.openejb.jee.ActivationSpec$JAXB.writeActivationSpec;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageListener$JAXB
-        extends JAXBObject<MessageListener> {
+    extends JAXBObject<MessageListener> {
 
 
     public MessageListener$JAXB() {
         super(MessageListener.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "messagelistenerType".intern()), ActivationSpec$JAXB.class);
     }
 
-    public static MessageListener readMessageListener(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageListener readMessageListener(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageListener(XoXMLStreamWriter writer, MessageListener messageListener, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageListener(final XoXMLStreamWriter writer, MessageListener messageListener, RuntimeContext context)
+        throws Exception {
         _write(writer, messageListener, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageListener messageListener, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MessageListener messageListener, RuntimeContext context)
+        throws Exception {
         _write(writer, messageListener, context);
     }
 
-    public final static MessageListener _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageListener _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -121,13 +121,13 @@ public class MessageListener$JAXB
         return messageListener;
     }
 
-    public final MessageListener read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageListener read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageListener messageListener, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MessageListener messageListener, RuntimeContext context)
+        throws Exception {
         if (messageListener == null) {
             writer.writeXsiNil();
             return;
@@ -152,7 +152,7 @@ public class MessageListener$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(messageListener, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

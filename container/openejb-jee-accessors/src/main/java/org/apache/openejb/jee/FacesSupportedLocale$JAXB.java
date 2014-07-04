@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesSupportedLocale$JAXB
-        extends JAXBObject<FacesSupportedLocale> {
+    extends JAXBObject<FacesSupportedLocale> {
 
 
     public FacesSupportedLocale$JAXB() {
         super(FacesSupportedLocale.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-supported-localeType".intern()));
     }
 
-    public static FacesSupportedLocale readFacesSupportedLocale(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesSupportedLocale readFacesSupportedLocale(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesSupportedLocale(XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesSupportedLocale(final XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
+        throws Exception {
         _write(writer, facesSupportedLocale, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
+        throws Exception {
         _write(writer, facesSupportedLocale, context);
     }
 
-    public final static FacesSupportedLocale _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesSupportedLocale _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class FacesSupportedLocale$JAXB
             context = new RuntimeContext();
         }
 
-        FacesSupportedLocale facesSupportedLocale = new FacesSupportedLocale();
+        final FacesSupportedLocale facesSupportedLocale = new FacesSupportedLocale();
         context.beforeUnmarshal(facesSupportedLocale, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-supported-localeType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesSupportedLocale.class);
@@ -97,13 +97,13 @@ public class FacesSupportedLocale$JAXB
         return facesSupportedLocale;
     }
 
-    public final FacesSupportedLocale read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesSupportedLocale read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesSupportedLocale facesSupportedLocale, RuntimeContext context)
+        throws Exception {
         if (facesSupportedLocale == null) {
             writer.writeXsiNil();
             return;
@@ -134,7 +134,7 @@ public class FacesSupportedLocale$JAXB
         }
 
         // VALUE: value
-        FacesLocale value = facesSupportedLocale.value;
+        final FacesLocale value = facesSupportedLocale.value;
 
         context.afterMarshal(facesSupportedLocale, LifecycleCallback.NONE);
     }

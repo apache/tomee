@@ -56,7 +56,7 @@ import static org.apache.xbean.asm5.Opcodes.ACC_PRIVATE;
 import static org.apache.xbean.asm5.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
-//    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
+    //    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
     private static final String PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
     private PersistenceUnitTransactionType transactionType;
@@ -89,13 +89,13 @@ public class JpaTest extends TestCase {
     public static class MockInitialContextFactory implements InitialContextFactory {
         private static ImmutableContext immutableContext;
 
-        public static void install(Map bindings) throws NamingException {
+        public static void install(final Map bindings) throws NamingException {
             immutableContext = new ImmutableContext(bindings);
             System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
             new InitialContext();
         }
 
-        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        public Context getInitialContext(final Hashtable<?, ?> environment) throws NamingException {
             return immutableContext;
         }
     }
@@ -106,8 +106,8 @@ public class JpaTest extends TestCase {
         }
 
         if (nonJtaDs != null) {
-            Connection connection = nonJtaDs.getConnection();
-            Statement statement = connection.createStatement();
+            final Connection connection = nonJtaDs.getConnection();
+            final Statement statement = connection.createStatement();
             statement.execute("SHUTDOWN");
             close(statement);
             close(connection);
@@ -123,7 +123,7 @@ public class JpaTest extends TestCase {
         transactionType = PersistenceUnitTransactionType.JTA;
         entityManagerFactory = createEntityManagerFactory();
 
-        Object jpaTestObject = getClass().getClassLoader().loadClass("org.apache.openejb.core.cmp.jpa.JpaTestObject").newInstance();
+        final Object jpaTestObject = getClass().getClassLoader().loadClass("org.apache.openejb.core.cmp.jpa.JpaTestObject").newInstance();
         set(jpaTestObject, "EntityManagerFactory", EntityManagerFactory.class, entityManagerFactory);
         set(jpaTestObject, "TransactionManager", TransactionManager.class, transactionManager);
         set(jpaTestObject, "NonJtaDs", DataSource.class, nonJtaDs);
@@ -141,7 +141,7 @@ public class JpaTest extends TestCase {
         transactionType = PersistenceUnitTransactionType.RESOURCE_LOCAL;
         entityManagerFactory = createEntityManagerFactory();
 
-        Object jpaTestObject = getClass().getClassLoader().loadClass("org.apache.openejb.core.cmp.jpa.JpaTestObject").newInstance();
+        final Object jpaTestObject = getClass().getClassLoader().loadClass("org.apache.openejb.core.cmp.jpa.JpaTestObject").newInstance();
         set(jpaTestObject, "EntityManagerFactory", EntityManagerFactory.class, entityManagerFactory);
         set(jpaTestObject, "NonJtaDs", DataSource.class, nonJtaDs);
 
@@ -155,7 +155,7 @@ public class JpaTest extends TestCase {
     }
 
     private EntityManagerFactory createEntityManagerFactory() throws Exception {
-        PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
+        final PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
 
             public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
                 /*
@@ -184,7 +184,7 @@ public class JpaTest extends TestCase {
         });
         */
 
-        PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
+        final PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
         unitInfo.setPersistenceUnitName("CMP");
         unitInfo.setPersistenceProviderClassName(PERSISTENCE_PROVIDER);
         unitInfo.setClassLoader(getClass().getClassLoader());
@@ -215,11 +215,11 @@ public class JpaTest extends TestCase {
         return emf;
     }
 
-    private static void set(Object instance, String parameterName, Class type, Object value) throws Exception {
+    private static void set(final Object instance, String parameterName, final Class type, Object value) throws Exception {
         try {
             instance.getClass().getMethod("set" + parameterName, type).invoke(instance, value);
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
+            final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             } else if (cause instanceof Error) {
@@ -230,7 +230,7 @@ public class JpaTest extends TestCase {
         }
     }
 
-    private static void invoke(Object instance, String methodName) throws Exception {
+    private static void invoke(final Object instance, String methodName) throws Exception {
         try {
             instance.getClass().getMethod(methodName).invoke(instance);
         } catch (InvocationTargetException e) {
@@ -245,7 +245,7 @@ public class JpaTest extends TestCase {
         }
     }
 
-    private void initializeDatabase(DataSource dataSource) throws SQLException {
+    private void initializeDatabase(final DataSource dataSource) throws SQLException {
         // employee
         createTable(dataSource, "employee", "CREATE TABLE employee ( id IDENTITY PRIMARY KEY, first_name VARCHAR(255), last_name VARCHAR(255))");
         execute(dataSource, "INSERT INTO employee (first_name, last_name) VALUES ('David', 'Blevins')");
@@ -266,7 +266,7 @@ public class JpaTest extends TestCase {
         execute(dataSource, "INSERT INTO OneToOneB(B1, B2, FKA1) VALUES(11, 'value11', 1)");
     }
 
-    private void createTable(DataSource dataSource, String tableName, String create) throws SQLException {
+    private void createTable(final DataSource dataSource, String tableName, String create) throws SQLException {
         try {
             execute(dataSource, "DROP TABLE " + tableName);
         } catch (Exception e) {
@@ -275,7 +275,7 @@ public class JpaTest extends TestCase {
         execute(dataSource, create);
     }
 
-    private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
+    private DataSource createJtaDataSource(final TransactionManager transactionManager) throws Exception {
         BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + "createJtaDs");
         ds.setTransactionManager(transactionManager);
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
@@ -289,7 +289,7 @@ public class JpaTest extends TestCase {
     }
 
     private DataSource createNonJtaDataSource() throws Exception {
-        BasicDataSource ds = new BasicDataSource(getClass().getName() + "createNonJtaDs");
+        final BasicDataSource ds = new BasicDataSource(getClass().getName() + "createNonJtaDs");
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
         ds.setUsername("sa");
@@ -301,7 +301,7 @@ public class JpaTest extends TestCase {
     }
 
 
-    public boolean execute(DataSource ds, String statement) throws SQLException {
+    public boolean execute(final DataSource ds, String statement) throws SQLException {
         boolean retval;
         Connection connection = null;
         try {
@@ -321,17 +321,17 @@ public class JpaTest extends TestCase {
         return retval;
     }
 
-    private static void close(Statement statement) {
+    private static void close(final Statement statement) {
         if (statement == null) {
             return;
         }
         try {
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
-    private static void close(Connection connection) {
+    private static void close(final Connection connection) {
         if (connection == null) {
             return;
         }
@@ -341,25 +341,25 @@ public class JpaTest extends TestCase {
         }
     }
 
-    public static byte[] addNewField(byte[] origBytes) {
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+    public static byte[] addNewField(final byte[] origBytes) {
+        final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
         FieldAdderClassVisitor visitor = new FieldAdderClassVisitor(classWriter);
 
-        ClassReader classReader = new ClassReader(origBytes);
+        final ClassReader classReader = new ClassReader(origBytes);
         classReader.accept(visitor, 0);
 
         return classWriter.toByteArray();
     }
 
     public static class FieldAdderClassVisitor extends ClassVisitor {
-        public FieldAdderClassVisitor(ClassVisitor classVisitor) {
+        public FieldAdderClassVisitor(final ClassVisitor classVisitor) {
             super(Opcodes.ASM5, classVisitor);
         }
 
         public void visitEnd() {
             // add new private transient String newField${System.currentTimeMills()}
-            cv.visitField(ACC_PRIVATE + ACC_TRANSIENT, "newField"  + System.currentTimeMillis(), "Ljava/lang/String;", null, null);
+            cv.visitField(ACC_PRIVATE + ACC_TRANSIENT, "newField" + System.currentTimeMillis(), "Ljava/lang/String;", null, null);
             cv.visitEnd();
         }
     }

@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.Dispatcher$JAXB.parseDispatcher;
 import static org.apache.openejb.jee.Dispatcher$JAXB.toStringDispatcher;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FilterMapping$JAXB
-        extends JAXBObject<FilterMapping> {
+    extends JAXBObject<FilterMapping> {
 
 
     public FilterMapping$JAXB() {
         super(FilterMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "filter-mappingType".intern()), Dispatcher$JAXB.class);
     }
 
-    public static FilterMapping readFilterMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FilterMapping readFilterMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFilterMapping(XoXMLStreamWriter writer, FilterMapping filterMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeFilterMapping(final XoXMLStreamWriter writer, FilterMapping filterMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, filterMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FilterMapping filterMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FilterMapping filterMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, filterMapping, context);
     }
 
-    public final static FilterMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FilterMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class FilterMapping$JAXB
             context = new RuntimeContext();
         }
 
-        FilterMapping filterMapping = new FilterMapping();
+        final FilterMapping filterMapping = new FilterMapping();
         context.beforeUnmarshal(filterMapping, LifecycleCallback.NONE);
 
         List<String> urlPattern = null;
@@ -188,13 +188,13 @@ public class FilterMapping$JAXB
         return filterMapping;
     }
 
-    public final FilterMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FilterMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FilterMapping filterMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FilterMapping filterMapping, RuntimeContext context)
+        throws Exception {
         if (filterMapping == null) {
             writer.writeXsiNil();
             return;
@@ -248,7 +248,7 @@ public class FilterMapping$JAXB
                 String urlPattern = null;
                 try {
                     urlPattern = Adapters.trimStringAdapterAdapter.marshal(urlPatternItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(filterMapping, "urlPattern", TrimStringAdapter.class, List.class, List.class, e);
                 }
                 if (urlPattern != null) {
@@ -278,7 +278,7 @@ public class FilterMapping$JAXB
         }
 
         // ELEMENT: dispatcher
-        List<Dispatcher> dispatcher = filterMapping.dispatcher;
+        final List<Dispatcher> dispatcher = filterMapping.dispatcher;
         if (dispatcher != null) {
             for (Dispatcher dispatcherItem : dispatcher) {
                 writer.writeStartElement(prefix, "dispatcher", "http://java.sun.com/xml/ns/javaee");

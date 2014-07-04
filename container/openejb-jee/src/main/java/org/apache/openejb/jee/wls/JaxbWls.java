@@ -16,32 +16,32 @@
  */
 package org.apache.openejb.jee.wls;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.XMLFilterImpl;
 import org.apache.openejb.jee.JAXBContextFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeSet;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
@@ -49,9 +49,9 @@ import java.io.IOException;
 public class JaxbWls {
     public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
 
-    private static Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<Class<?>,JAXBContext>();
+    private static Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<Class<?>, JAXBContext>();
 
-    public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
+    public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         JaxbWls.marshal(type, object, baos);
@@ -59,7 +59,7 @@ public class JaxbWls {
         return new String(baos.toByteArray());
     }
 
-    public static <T>void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
+    public static <T> void marshal(final Class<T> type, final Object object, OutputStream out) throws JAXBException {
         JAXBContext ctx2 = JaxbWls.getContext(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
@@ -68,7 +68,7 @@ public class JaxbWls {
         marshaller.marshal(object, out);
     }
 
-    private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {
+    private static <T> JAXBContext getContext(final Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = JaxbWls.jaxbContexts.get(type);
         if (jaxbContext == null) {
             jaxbContext = JAXBContextFactory.newInstance(type);
@@ -77,17 +77,17 @@ public class JaxbWls {
         return jaxbContext;
     }
 
-    public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
+    public static <T> Object unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
         JAXBContext ctx = JaxbWls.getContext(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler(new ValidationEventHandler(){
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
             public boolean handleEvent(ValidationEvent validationEvent) {
                 System.out.println(validationEvent);
                 return false;
@@ -111,11 +111,11 @@ public class JaxbWls {
     public static class NamespaceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public NamespaceFilter(XMLReader xmlReader) {
+        public NamespaceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             Set<String> publicIds = JaxbWls.currentPublicId.get();
             if (publicIds != null) {
                 publicIds.add(publicId);
@@ -123,7 +123,7 @@ public class JaxbWls {
             return JaxbWls.NamespaceFilter.EMPTY_INPUT_SOURCE;
         }
 
-        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+        public void startElement(final String uri, String localName, String qname, Attributes atts) throws SAXException {
             super.startElement("http://www.bea.com/ns/weblogic/90", localName, qname, atts);
         }
     }

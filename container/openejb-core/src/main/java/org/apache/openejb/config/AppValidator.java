@@ -117,21 +117,21 @@ public class AppValidator {
     protected ValidationRule[] getValidationRules() {
         // we don't want CheckClassLoading in standalone mode since it doesn't mean anything
         final ValidationRule[] defaultRules = new ValidationRule[]{
-                new CheckClasses(),
-                new CheckMethods(),
-                new CheckCallbacks(),
-                new CheckAssemblyBindings(),
-                new CheckInjectionTargets(),
-                new CheckInjectionPointUsage(),
-                new CheckPersistenceRefs(),
-                new CheckDependsOn(),
-                new CheckUserTransactionRefs(),
-                new CheckAsynchronous(),
-                new CheckDescriptorLocation(),
-                new CheckAnnotations(),
-                new CheckIncorrectPropertyNames(),
-                new CheckRestMethodArePublic(),
-                new CheckCdiEnabled()
+            new CheckClasses(),
+            new CheckMethods(),
+            new CheckCallbacks(),
+            new CheckAssemblyBindings(),
+            new CheckInjectionTargets(),
+            new CheckInjectionPointUsage(),
+            new CheckPersistenceRefs(),
+            new CheckDependsOn(),
+            new CheckUserTransactionRefs(),
+            new CheckAsynchronous(),
+            new CheckDescriptorLocation(),
+            new CheckAnnotations(),
+            new CheckIncorrectPropertyNames(),
+            new CheckRestMethodArePublic(),
+            new CheckCdiEnabled()
         };
         if (additionalValidators == null || additionalValidators.length == 0) {
             return defaultRules;

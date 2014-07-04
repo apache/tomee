@@ -28,25 +28,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         
- * 
  * <p class="changed_added_2_2">Define a return node in a flow graph.</p>
- * 
+ * <p/>
  * <div class="changed_added_2_2">
- * 
+ * <p/>
  * <p>This element must contain exactly one <code>&lt;from-outcome&gt;</code> element.</p>
  * </div>
- * 
- * 
- * 
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-flow-returnType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-returnType">
  *   &lt;complexContent>
@@ -59,8 +55,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-flow-returnType", propOrder = {
@@ -78,11 +72,9 @@ public class FacesConfigFlowDefinitionFlowReturn {
 
     /**
      * Gets the value of the fromOutcome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XmlString }
-     *     
+     *
+     * @return possible object is
+     * {@link XmlString }
      */
     public XmlString getFromOutcome() {
         return fromOutcome;
@@ -90,23 +82,19 @@ public class FacesConfigFlowDefinitionFlowReturn {
 
     /**
      * Sets the value of the fromOutcome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XmlString }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XmlString }
      */
-    public void setFromOutcome(XmlString value) {
+    public void setFromOutcome(final XmlString value) {
         this.fromOutcome = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -114,13 +102,11 @@ public class FacesConfigFlowDefinitionFlowReturn {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

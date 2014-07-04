@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -59,11 +57,9 @@ public class QueryMethod {
 
     /**
      * Gets the value of the methodName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MethodName }
-     *     
+     *
+     * @return possible object is
+     * {@link MethodName }
      */
     public MethodName getMethodName() {
         return methodName;
@@ -71,23 +67,19 @@ public class QueryMethod {
 
     /**
      * Sets the value of the methodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MethodName }
      */
-    public void setMethodName(MethodName value) {
+    public void setMethodName(final MethodName value) {
         this.methodName = value;
     }
 
     /**
      * Gets the value of the methodParams property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MethodParams }
-     *     
+     *
+     * @return possible object is
+     * {@link MethodParams }
      */
     public MethodParams getMethodParams() {
         return methodParams;
@@ -95,13 +87,11 @@ public class QueryMethod {
 
     /**
      * Sets the value of the methodParams property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MethodParams }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MethodParams }
      */
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 

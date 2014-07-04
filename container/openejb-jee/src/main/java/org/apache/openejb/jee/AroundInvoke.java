@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for around-invokeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="around-invokeType">
  *   &lt;complexContent>
@@ -42,16 +42,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "around-invokeType", propOrder = {
-        "clazz",
-        "methodName"
-        })
-public class AroundInvoke implements CallbackMethod{
+    "clazz",
+    "methodName"
+})
+public class AroundInvoke implements CallbackMethod {
 
     @XmlElement(name = "class")
     protected String clazz;
@@ -61,11 +59,11 @@ public class AroundInvoke implements CallbackMethod{
     public AroundInvoke() {
     }
 
-    public AroundInvoke(java.lang.reflect.Method method) {
+    public AroundInvoke(final java.lang.reflect.Method method) {
         this(method.getDeclaringClass().getName(), method.getName());
     }
 
-    public AroundInvoke(String clazz, String methodName) {
+    public AroundInvoke(final String clazz, String methodName) {
         this.clazz = clazz;
         this.methodName = methodName;
     }
@@ -74,7 +72,7 @@ public class AroundInvoke implements CallbackMethod{
         return clazz;
     }
 
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -82,7 +80,7 @@ public class AroundInvoke implements CallbackMethod{
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 

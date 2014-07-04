@@ -33,11 +33,11 @@ import java.util.Map;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for handlerType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="handlerType">
  *   &lt;complexContent>
@@ -56,8 +56,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "port-component_handlerType", propOrder = {
@@ -102,7 +100,7 @@ public class Handler {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -115,7 +113,7 @@ public class Handler {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -145,7 +143,7 @@ public class Handler {
         return handlerName;
     }
 
-    public void setHandlerName(String value) {
+    public void setHandlerName(final String value) {
         this.handlerName = value;
     }
 
@@ -153,7 +151,7 @@ public class Handler {
         return handlerClass;
     }
 
-    public void setHandlerClass(String value) {
+    public void setHandlerClass(final String value) {
         this.handlerClass = value;
     }
 
@@ -189,7 +187,7 @@ public class Handler {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

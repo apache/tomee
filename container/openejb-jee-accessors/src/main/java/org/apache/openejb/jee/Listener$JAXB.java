@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Listener$JAXB
-        extends JAXBObject<Listener> {
+    extends JAXBObject<Listener> {
 
 
     public Listener$JAXB() {
         super(Listener.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "listenerType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static Listener readListener(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Listener readListener(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeListener(XoXMLStreamWriter writer, Listener listener, RuntimeContext context)
-            throws Exception {
+    public static void writeListener(final XoXMLStreamWriter writer, Listener listener, final RuntimeContext context)
+        throws Exception {
         _write(writer, listener, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Listener listener, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Listener listener, RuntimeContext context)
+        throws Exception {
         _write(writer, listener, context);
     }
 
-    public final static Listener _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Listener _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -130,7 +130,7 @@ public class Listener$JAXB
                 // ELEMENT: listenerClass
                 String listenerClassRaw = elementReader.getElementAsString();
 
-                String listenerClass;
+                final String listenerClass;
                 try {
                     listenerClass = Adapters.collapsedStringAdapterAdapter.unmarshal(listenerClassRaw);
                 } catch (Exception e) {
@@ -166,13 +166,13 @@ public class Listener$JAXB
         return listener;
     }
 
-    public final Listener read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Listener read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Listener listener, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Listener listener, RuntimeContext context)
+        throws Exception {
         if (listener == null) {
             writer.writeXsiNil();
             return;
@@ -242,7 +242,7 @@ public class Listener$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = listener.icon;
+        final LocalCollection<Icon> icon = listener.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -256,7 +256,7 @@ public class Listener$JAXB
         }
 
         // ELEMENT: listenerClass
-        String listenerClassRaw = listener.listenerClass;
+        final String listenerClassRaw = listener.listenerClass;
         String listenerClass = null;
         try {
             listenerClass = Adapters.collapsedStringAdapterAdapter.marshal(listenerClassRaw);

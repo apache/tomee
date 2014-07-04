@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRendererExtension$JAXB
-        extends JAXBObject<FacesRendererExtension> {
+    extends JAXBObject<FacesRendererExtension> {
 
 
     public FacesRendererExtension$JAXB() {
         super(FacesRendererExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-renderer-extensionType".intern()));
     }
 
-    public static FacesRendererExtension readFacesRendererExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRendererExtension readFacesRendererExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRendererExtension(XoXMLStreamWriter writer, FacesRendererExtension facesRendererExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRendererExtension(final XoXMLStreamWriter writer, final FacesRendererExtension facesRendererExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRendererExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRendererExtension facesRendererExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesRendererExtension facesRendererExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRendererExtension, context);
     }
 
-    public final static FacesRendererExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRendererExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class FacesRendererExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesRendererExtension facesRendererExtension = new FacesRendererExtension();
+        final FacesRendererExtension facesRendererExtension = new FacesRendererExtension();
         context.beforeUnmarshal(facesRendererExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-renderer-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesRendererExtension.class);
@@ -114,13 +114,13 @@ public class FacesRendererExtension$JAXB
         return facesRendererExtension;
     }
 
-    public final FacesRendererExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRendererExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRendererExtension facesRendererExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesRendererExtension facesRendererExtension, RuntimeContext context)
+        throws Exception {
         if (facesRendererExtension == null) {
             writer.writeXsiNil();
             return;

@@ -17,24 +17,23 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
  * <p>Java class for web-service-securityType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="web-service-securityType">
  *   &lt;complexContent>
@@ -50,8 +49,6 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-service-securityType", propOrder = {
@@ -80,11 +77,9 @@ public class WebServiceSecurityType {
 
     /**
      * Gets the value of the securityRealmName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSecurityRealmName() {
         return securityRealmName;
@@ -92,23 +87,19 @@ public class WebServiceSecurityType {
 
     /**
      * Sets the value of the securityRealmName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSecurityRealmName(String value) {
+    public void setSecurityRealmName(final String value) {
         this.securityRealmName = value;
     }
 
     /**
      * Gets the value of the realmName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRealmName() {
         return realmName;
@@ -116,23 +107,19 @@ public class WebServiceSecurityType {
 
     /**
      * Sets the value of the realmName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRealmName(String value) {
+    public void setRealmName(final String value) {
         this.realmName = value;
     }
 
     /**
      * Gets the value of the transportGuarantee property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransportGuaranteeType }
-     *     
+     *
+     * @return possible object is
+     * {@link TransportGuaranteeType }
      */
     public TransportGuaranteeType getTransportGuarantee() {
         return transportGuarantee;
@@ -140,23 +127,19 @@ public class WebServiceSecurityType {
 
     /**
      * Sets the value of the transportGuarantee property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransportGuaranteeType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransportGuaranteeType }
      */
-    public void setTransportGuarantee(TransportGuaranteeType value) {
+    public void setTransportGuarantee(final TransportGuaranteeType value) {
         this.transportGuarantee = value;
     }
 
     /**
      * Gets the value of the authMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AuthMethodType }
-     *     
+     *
+     * @return possible object is
+     * {@link AuthMethodType }
      */
     public AuthMethodType getAuthMethod() {
         return authMethod;
@@ -164,37 +147,33 @@ public class WebServiceSecurityType {
 
     /**
      * Sets the value of the authMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AuthMethodType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AuthMethodType }
      */
-    public void setAuthMethod(AuthMethodType value) {
+    public void setAuthMethod(final AuthMethodType value) {
         this.authMethod = value;
     }
 
     /**
      * Gets the value of the httpMethod property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the httpMethod property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHttpMethod().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getHttpMethod() {
         if (httpMethod == null) {
@@ -204,15 +183,15 @@ public class WebServiceSecurityType {
     }
 
     public Properties getProperties() {
-	if (null == properties) {
-	    properties = new Properties();
-	}
+        if (null == properties) {
+            properties = new Properties();
+        }
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
-    
+
 
 }

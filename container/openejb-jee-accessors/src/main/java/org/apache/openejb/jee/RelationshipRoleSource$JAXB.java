@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class RelationshipRoleSource$JAXB
-        extends JAXBObject<RelationshipRoleSource> {
+    extends JAXBObject<RelationshipRoleSource> {
 
 
     public RelationshipRoleSource$JAXB() {
         super(RelationshipRoleSource.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "relationship-role-sourceType".intern()), Text$JAXB.class);
     }
 
-    public static RelationshipRoleSource readRelationshipRoleSource(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static RelationshipRoleSource readRelationshipRoleSource(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeRelationshipRoleSource(XoXMLStreamWriter writer, RelationshipRoleSource relationshipRoleSource, RuntimeContext context)
-            throws Exception {
+    public static void writeRelationshipRoleSource(final XoXMLStreamWriter writer, final RelationshipRoleSource relationshipRoleSource, final RuntimeContext context)
+        throws Exception {
         _write(writer, relationshipRoleSource, context);
     }
 
-    public void write(XoXMLStreamWriter writer, RelationshipRoleSource relationshipRoleSource, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final RelationshipRoleSource relationshipRoleSource, final RuntimeContext context)
+        throws Exception {
         _write(writer, relationshipRoleSource, context);
     }
 
-    public final static RelationshipRoleSource _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static RelationshipRoleSource _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class RelationshipRoleSource$JAXB
             context = new RuntimeContext();
         }
 
-        RelationshipRoleSource relationshipRoleSource = new RelationshipRoleSource();
+        final RelationshipRoleSource relationshipRoleSource = new RelationshipRoleSource();
         context.beforeUnmarshal(relationshipRoleSource, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("relationship-role-sourceType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, RelationshipRoleSource.class);
@@ -83,10 +83,10 @@ public class RelationshipRoleSource$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, relationshipRoleSource);
                 relationshipRoleSource.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class RelationshipRoleSource$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("ejb-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbName
-                String ejbNameRaw = elementReader.getElementAsString();
+                final String ejbNameRaw = elementReader.getElementAsString();
 
-                String ejbName;
+                final String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -123,7 +123,7 @@ public class RelationshipRoleSource$JAXB
         if (descriptions != null) {
             try {
                 relationshipRoleSource.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, RelationshipRoleSource.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -133,13 +133,13 @@ public class RelationshipRoleSource$JAXB
         return relationshipRoleSource;
     }
 
-    public final RelationshipRoleSource read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final RelationshipRoleSource read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, RelationshipRoleSource relationshipRoleSource, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final RelationshipRoleSource relationshipRoleSource, RuntimeContext context)
+        throws Exception {
         if (relationshipRoleSource == null) {
             writer.writeXsiNil();
             return;
@@ -149,7 +149,7 @@ public class RelationshipRoleSource$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (RelationshipRoleSource.class != relationshipRoleSource.getClass()) {
             context.unexpectedSubclass(writer, relationshipRoleSource, RelationshipRoleSource.class);
             return;
@@ -159,12 +159,12 @@ public class RelationshipRoleSource$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = relationshipRoleSource.id;
+        final String idRaw = relationshipRoleSource.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(relationshipRoleSource, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -174,11 +174,11 @@ public class RelationshipRoleSource$JAXB
         Text[] descriptions = null;
         try {
             descriptions = relationshipRoleSource.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(relationshipRoleSource, "descriptions", RelationshipRoleSource.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -190,11 +190,11 @@ public class RelationshipRoleSource$JAXB
         }
 
         // ELEMENT: ejbName
-        String ejbNameRaw = relationshipRoleSource.ejbName;
+        final String ejbNameRaw = relationshipRoleSource.ejbName;
         String ejbName = null;
         try {
             ejbName = Adapters.collapsedStringAdapterAdapter.marshal(ejbNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(relationshipRoleSource, "ejbName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbName != null) {

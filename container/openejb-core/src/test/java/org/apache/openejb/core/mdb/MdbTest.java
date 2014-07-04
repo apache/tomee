@@ -57,12 +57,12 @@ public class MdbTest extends JmsTest {
             connection.start();
 
             // create request
-            Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<String, Object>();
             request.put("args", new Object[]{"cheese"});
 
             // create a new temp response queue
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination responseQueue = session.createTemporaryQueue();
+            final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a request messages
             ObjectMessage requestMessage = session.createObjectMessage();
@@ -75,16 +75,16 @@ public class MdbTest extends JmsTest {
 
             // wait for the response message
             consumer = session.createConsumer(responseQueue);
-            Message message = consumer.receive(30000);
+            final Message message = consumer.receive(30000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
             assertTrue("Response message is not an ObjectMessage", message instanceof ObjectMessage);
             ObjectMessage responseMessage = (ObjectMessage) message;
-            Serializable object = responseMessage.getObject();
+            final Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
-            Map<String, String> response = (Map<String, String>) object;
+            final Map<String, String> response = (Map<String, String>) object;
 
             // process results
             String returnValue = (String) response.get("return");
@@ -99,7 +99,7 @@ public class MdbTest extends JmsTest {
 
     private void createListener() throws Exception {
         // create the activation spec
-        ActiveMQActivationSpec activationSpec = new ActiveMQActivationSpec();
+        final ActiveMQActivationSpec activationSpec = new ActiveMQActivationSpec();
         activationSpec.setDestinationType("javax.jms.Queue");
         activationSpec.setDestination(REQUEST_QUEUE_NAME);
 
@@ -119,20 +119,20 @@ public class MdbTest extends JmsTest {
     public class JmsEndpointFactory implements MessageEndpointFactory {
         private final ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
 
-        public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
+        public MessageEndpoint createEndpoint(final XAResource xaResource) throws UnavailableException {
             try {
                 return new JmsEndpoint(connectionFactory);
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
                 e.printStackTrace();
                 throw new UnavailableException(e);
             }
         }
 
-        public MessageEndpoint createEndpoint(XAResource xaResource, long timeout) throws UnavailableException {
+        public MessageEndpoint createEndpoint(final XAResource xaResource, final long timeout) throws UnavailableException {
             return createEndpoint(xaResource);
         }
 
-        public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
+        public boolean isDeliveryTransacted(final Method method) throws NoSuchMethodException {
             return false;
         }
     }
@@ -140,14 +140,14 @@ public class MdbTest extends JmsTest {
     public static class JmsEndpoint implements MessageEndpoint, MessageListener {
         private final Session session;
 
-        public JmsEndpoint(ConnectionFactory connectionFactory) throws JMSException {
-            Connection connection = connectionFactory.createConnection();
+        public JmsEndpoint(final ConnectionFactory connectionFactory) throws JMSException {
+            final Connection connection = connectionFactory.createConnection();
             connection.start();
 
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         }
 
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
             // if we got a dummy (non ObjectMessage) return
             if (!(message instanceof ObjectMessage)) return;
 
@@ -172,14 +172,14 @@ public class MdbTest extends JmsTest {
                 producer = session.createProducer(requestMessage.getJMSReplyTo());
                 producer.send(responseMessage);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 e.printStackTrace();
             } finally {
                 MdbUtil.close(producer);
             }
         }
 
-        public void beforeDelivery(Method method) throws NoSuchMethodException, ResourceException {
+        public void beforeDelivery(final Method method) throws NoSuchMethodException, ResourceException {
         }
 
         public void afterDelivery() throws ResourceException {

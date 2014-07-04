@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InjectionTarget$JAXB
-        extends JAXBObject<InjectionTarget> {
+    extends JAXBObject<InjectionTarget> {
 
 
     public InjectionTarget$JAXB() {
         super(InjectionTarget.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "injection-targetType".intern()));
     }
 
-    public static InjectionTarget readInjectionTarget(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InjectionTarget readInjectionTarget(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInjectionTarget(XoXMLStreamWriter writer, InjectionTarget injectionTarget, RuntimeContext context)
-            throws Exception {
+    public static void writeInjectionTarget(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, RuntimeContext context)
+        throws Exception {
         _write(writer, injectionTarget, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InjectionTarget injectionTarget, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, RuntimeContext context)
+        throws Exception {
         _write(writer, injectionTarget, context);
     }
 
-    public final static InjectionTarget _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InjectionTarget _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class InjectionTarget$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("injection-targetType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InjectionTarget.class);
@@ -78,7 +78,7 @@ public class InjectionTarget$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
@@ -90,7 +90,7 @@ public class InjectionTarget$JAXB
                 // ELEMENT: injectionTargetClass
                 String injectionTargetClassRaw = elementReader.getElementAsString();
 
-                String injectionTargetClass;
+                final String injectionTargetClass;
                 try {
                     injectionTargetClass = Adapters.collapsedStringAdapterAdapter.unmarshal(injectionTargetClassRaw);
                 } catch (Exception e) {
@@ -122,13 +122,13 @@ public class InjectionTarget$JAXB
         return injectionTarget;
     }
 
-    public final InjectionTarget read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InjectionTarget read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InjectionTarget injectionTarget, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final InjectionTarget injectionTarget, RuntimeContext context)
+        throws Exception {
         if (injectionTarget == null) {
             writer.writeXsiNil();
             return;
@@ -138,7 +138,7 @@ public class InjectionTarget$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (InjectionTarget.class != injectionTarget.getClass()) {
             context.unexpectedSubclass(writer, injectionTarget, InjectionTarget.class);
             return;

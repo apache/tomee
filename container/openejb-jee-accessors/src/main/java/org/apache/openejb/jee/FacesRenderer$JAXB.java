@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRenderer$JAXB
-        extends JAXBObject<FacesRenderer> {
+    extends JAXBObject<FacesRenderer> {
 
 
     public FacesRenderer$JAXB() {
         super(FacesRenderer.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-rendererType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesFacet$JAXB.class, FacesAttribute$JAXB.class, FacesRendererExtension$JAXB.class);
     }
 
-    public static FacesRenderer readFacesRenderer(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRenderer readFacesRenderer(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRenderer(XoXMLStreamWriter writer, FacesRenderer facesRenderer, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRenderer(final XoXMLStreamWriter writer, FacesRenderer facesRenderer, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRenderer, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRenderer facesRenderer, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesRenderer facesRenderer, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRenderer, context);
     }
 
-    public final static FacesRenderer _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRenderer _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesRenderer$JAXB
             context = new RuntimeContext();
         }
 
-        FacesRenderer facesRenderer = new FacesRenderer();
+        final FacesRenderer facesRenderer = new FacesRenderer();
         context.beforeUnmarshal(facesRenderer, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -140,7 +140,7 @@ public class FacesRenderer$JAXB
                 // ELEMENT: componentFamily
                 String componentFamilyRaw = elementReader.getElementAsString();
 
-                String componentFamily;
+                final String componentFamily;
                 try {
                     componentFamily = Adapters.collapsedStringAdapterAdapter.unmarshal(componentFamilyRaw);
                 } catch (Exception e) {
@@ -247,13 +247,13 @@ public class FacesRenderer$JAXB
         return facesRenderer;
     }
 
-    public final FacesRenderer read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRenderer read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRenderer facesRenderer, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesRenderer facesRenderer, RuntimeContext context)
+        throws Exception {
         if (facesRenderer == null) {
             writer.writeXsiNil();
             return;
@@ -263,7 +263,7 @@ public class FacesRenderer$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesRenderer.class != facesRenderer.getClass()) {
             context.unexpectedSubclass(writer, facesRenderer, FacesRenderer.class);
             return;
@@ -292,7 +292,7 @@ public class FacesRenderer$JAXB
             context.getterError(facesRenderer, "descriptions", FacesRenderer.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

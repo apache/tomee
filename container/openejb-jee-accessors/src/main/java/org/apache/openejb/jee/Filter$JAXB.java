@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Filter$JAXB
-        extends JAXBObject<Filter> {
+    extends JAXBObject<Filter> {
 
 
     public Filter$JAXB() {
         super(Filter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "filterType".intern()), Text$JAXB.class, Icon$JAXB.class, ParamValue$JAXB.class);
     }
 
-    public static Filter readFilter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Filter readFilter(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFilter(XoXMLStreamWriter writer, Filter filter, RuntimeContext context)
-            throws Exception {
+    public static void writeFilter(final XoXMLStreamWriter writer, Filter filter, RuntimeContext context)
+        throws Exception {
         _write(writer, filter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Filter filter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Filter filter, final RuntimeContext context)
+        throws Exception {
         _write(writer, filter, context);
     }
 
-    public final static Filter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Filter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -91,10 +91,10 @@ public class Filter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, filter);
                 filter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,7 +106,7 @@ public class Filter$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -202,13 +202,13 @@ public class Filter$JAXB
         return filter;
     }
 
-    public final Filter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Filter read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Filter filter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Filter filter, RuntimeContext context)
+        throws Exception {
         if (filter == null) {
             writer.writeXsiNil();
             return;
@@ -218,7 +218,7 @@ public class Filter$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Filter.class != filter.getClass()) {
             context.unexpectedSubclass(writer, filter, Filter.class);
             return;
@@ -228,7 +228,7 @@ public class Filter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = filter.id;
+        final String idRaw = filter.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -292,7 +292,7 @@ public class Filter$JAXB
         }
 
         // ELEMENT: filterName
-        String filterNameRaw = filter.filterName;
+        final String filterNameRaw = filter.filterName;
         String filterName = null;
         try {
             filterName = Adapters.collapsedStringAdapterAdapter.marshal(filterNameRaw);

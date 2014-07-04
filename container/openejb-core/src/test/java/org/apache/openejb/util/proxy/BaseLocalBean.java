@@ -18,21 +18,21 @@ package org.apache.openejb.util.proxy;
 
 public class BaseLocalBean {
 
-	public String hello(String name) {
-	    return "Hello " + name;
-	}
-	
-	public final void finalMethod() {	    
-	}
-		
-	protected String protectedMethod() {
-	    return "protected method";
-	}
-	
-	protected String overriddenMethod() {
-	    return getClass().getName();
-	}
-	
-	public static void staticMethod() {	    
-	}
+    public String hello(final String name) {
+        return "Hello " + name;
+    }
+
+    public final void finalMethod() {
+    }
+
+    protected String protectedMethod() {
+        return "protected method";
+    }
+
+    protected String overriddenMethod() {
+        return getClass().getName();
+    }
+
+    public static void staticMethod() {
+    }
 }

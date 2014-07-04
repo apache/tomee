@@ -23,28 +23,27 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         [
- *         The display-name type contains a short name that is intended
- *         to be displayed by tools. It is used by display-name
- *         elements.  The display name need not be unique.
- * 
- *         Example:
- * 
- *         ...
- *         <display-name xml:lang="en">
- *         Employee Self Service
- *         </display-name>
- * 
- *         The value of the xml:lang attribute is "en" (English) by default.
- * 
- *         
- *       
- * 
+ * [
+ * The display-name type contains a short name that is intended
+ * to be displayed by tools. It is used by display-name
+ * elements.  The display name need not be unique.
+ * <p/>
+ * Example:
+ * <p/>
+ * ...
+ * <display-name xml:lang="en">
+ * Employee Self Service
+ * </display-name>
+ * <p/>
+ * The value of the xml:lang attribute is "en" (English) by default.
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for display-nameType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="display-nameType">
  *   &lt;simpleContent>
@@ -54,8 +53,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "display-nameType")
@@ -67,10 +64,8 @@ public class DisplayName extends XmlString {
     /**
      * Gets the value of the lang property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getLang() {
         return lang;
@@ -79,12 +74,10 @@ public class DisplayName extends XmlString {
     /**
      * Sets the value of the lang property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setLang(java.lang.String value) {
+    public void setLang(final java.lang.String value) {
         this.lang = value;
     }
 

@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface NotificationInfos {
-	NotificationInfo[] value();
+    NotificationInfo[] value();
 }

@@ -38,7 +38,7 @@ public class OptionsLog implements Options.Log {
     public static void install() {
         SystemInstance.get().getOptions().setLogger(new OptionsLog());
     }
-    
+
     public boolean isDebugEnabled() {
         return logger.isDebugEnabled();
     }

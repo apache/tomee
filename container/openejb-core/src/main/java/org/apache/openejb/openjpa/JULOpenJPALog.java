@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class JULOpenJPALog  implements Log {
+public class JULOpenJPALog implements Log {
     private final LoggerCreator logger;
     private final AtomicBoolean debug = new AtomicBoolean(false);
     private final AtomicBoolean info = new AtomicBoolean(true);
@@ -126,7 +126,7 @@ public class JULOpenJPALog  implements Log {
         return record;
     }
 
-    private LogRecord record(final Object o,  final Level level) {
+    private LogRecord record(final Object o, final Level level) {
         final LogRecord record = new JuliLogStream.OpenEJBLogRecord(level, o.toString());
         record.setSourceMethodName(logger().getName());
         return record;

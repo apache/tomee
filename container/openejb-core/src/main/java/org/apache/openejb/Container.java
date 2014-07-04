@@ -28,11 +28,11 @@ public interface Container {
     BeanContext[] getBeanContexts();
 
     void deploy(BeanContext info) throws OpenEJBException;
-        
+
     void start(BeanContext info) throws OpenEJBException;
-    
+
     void stop(BeanContext info) throws OpenEJBException;
-    
+
     void undeploy(BeanContext info) throws OpenEJBException;
-    
+
 }

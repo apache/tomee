@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class SubscriptionDurability$JAXB
-        extends JAXBObject<SubscriptionDurability> {
+    extends JAXBObject<SubscriptionDurability> {
 
 
     public SubscriptionDurability$JAXB() {
         super(SubscriptionDurability.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "subscription-durability".intern()), null);
     }
 
-    public static SubscriptionDurability readSubscriptionDurability(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static SubscriptionDurability readSubscriptionDurability(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeSubscriptionDurability(XoXMLStreamWriter writer, SubscriptionDurability subscriptionDurability, RuntimeContext context)
-            throws Exception {
+    public static void writeSubscriptionDurability(final XoXMLStreamWriter writer, final SubscriptionDurability subscriptionDurability, final RuntimeContext context)
+        throws Exception {
         _write(writer, subscriptionDurability, context);
     }
 
-    public void write(XoXMLStreamWriter writer, SubscriptionDurability subscriptionDurability, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final SubscriptionDurability subscriptionDurability, final RuntimeContext context)
+        throws Exception {
         _write(writer, subscriptionDurability, context);
     }
 
-    public final static SubscriptionDurability _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static SubscriptionDurability _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,21 +65,21 @@ public class SubscriptionDurability$JAXB
             context = new RuntimeContext();
         }
 
-        SubscriptionDurability subscriptionDurability = new SubscriptionDurability();
+        final SubscriptionDurability subscriptionDurability = new SubscriptionDurability();
         context.beforeUnmarshal(subscriptionDurability, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             return context.unexpectedXsiType(reader, SubscriptionDurability.class);
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, subscriptionDurability);
                 subscriptionDurability.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -88,14 +88,14 @@ public class SubscriptionDurability$JAXB
         }
 
         // VALUE: value
-        String valueRaw = reader.getElementText();
+        final String valueRaw = reader.getElementText();
 
         String value = null;
         boolean valueConverted;
         try {
             value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
             valueConverted = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(reader, CollapsedStringAdapter.class, String.class, String.class, e);
             valueConverted = false;
         }
@@ -109,13 +109,13 @@ public class SubscriptionDurability$JAXB
         return subscriptionDurability;
     }
 
-    public final SubscriptionDurability read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final SubscriptionDurability read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, SubscriptionDurability subscriptionDurability, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final SubscriptionDurability subscriptionDurability, RuntimeContext context)
+        throws Exception {
         if (subscriptionDurability == null) {
             writer.writeXsiNil();
             return;
@@ -134,23 +134,23 @@ public class SubscriptionDurability$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = subscriptionDurability.id;
+        final String idRaw = subscriptionDurability.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(subscriptionDurability, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // VALUE: value
-        String valueRaw = subscriptionDurability.value;
+        final String valueRaw = subscriptionDurability.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(subscriptionDurability, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         writer.writeCharacters(value);

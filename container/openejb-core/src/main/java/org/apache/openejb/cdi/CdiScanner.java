@@ -53,6 +53,7 @@ public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
     public static final ThreadLocal<Collection<String>> ADDITIONAL_CLASSES = new ThreadLocal<Collection<String>>();
     private static final Map<String, Collection<String>> CONTAINER_CLASSES = new HashMap<String, Collection<String>>();
+
     static { // load container classes lists
         final Properties props = new Properties();
         try {
@@ -80,7 +81,7 @@ public class CdiScanner implements ScannerService {
         final AppInfo appInfo = startupObject.getAppInfo();
         final ClassLoader classLoader = startupObject.getClassLoader();
         final ClassLoaderComparator comparator;
-        if (classLoader instanceof  ClassLoaderComparator) {
+        if (classLoader instanceof ClassLoaderComparator) {
             comparator = (ClassLoaderComparator) classLoader;
         } else {
             comparator = new DefaultClassLoaderComparator(classLoader);
@@ -109,9 +110,9 @@ public class CdiScanner implements ScannerService {
             // fail fast
             final StringBuilder errors = new StringBuilder("You can't define multiple times the same class in beans.xml: ");
             if (addErrors(errors, "alternative classes", beans.duplicatedAlternativeClasses)
-                    || addErrors(errors, "alternative stereotypes", beans.duplicatedAlternativeStereotypes)
-                    || addErrors(errors, "decorators", beans.duplicatedDecorators)
-                    || addErrors(errors, "interceptors", beans.duplicatedInterceptors)) {
+                || addErrors(errors, "alternative stereotypes", beans.duplicatedAlternativeStereotypes)
+                || addErrors(errors, "decorators", beans.duplicatedDecorators)
+                || addErrors(errors, "interceptors", beans.duplicatedInterceptors)) {
                 throw new WebBeansConfigurationException(errors.toString());
             }
             // no more need of errors so clear them
@@ -249,7 +250,7 @@ public class CdiScanner implements ScannerService {
         // 1. this classloader is the good one
         // 2. the classloader is the appclassloader one and we are in the ear parent
         if (!filterByClassLoader
-                || comparator.isSame(cl) || cl.equals(scl) && startupObject.getWebContext() == null) {
+            || comparator.isSame(cl) || cl.equals(scl) && startupObject.getWebContext() == null) {
             classes.add(clazz);
         } else {
             it.remove();
@@ -278,8 +279,7 @@ public class CdiScanner implements ScannerService {
     }
 
     /**
-     *
-     * @param className  name of class to load
+     * @param className   name of class to load
      * @param classLoader classloader to (try to) load it from
      * @return the loaded class if possible, or null if loading fails.
      */
@@ -310,6 +310,6 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public void release() {
-           classes.clear();
+        classes.clear();
     }
 }

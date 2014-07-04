@@ -23,33 +23,33 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd"
              version="6">
+  <description>String</description>
+  <display-name>token</display-name>
+  <icon xml:lang="en">
+    <small-icon>token</small-icon>
+    <large-icon>token</large-icon>
+  </icon>
+  <module>
+    <connector>token</connector>
+  </module>
+  <module>
+    <ejb>token</ejb>
+  </module>
+  <module>
+    <java>token</java>
+  </module>
+  <module>
+    <web>
+      <web-uri>token</web-uri>
+      <context-root>token</context-root>
+    </web>
+  </module>
+  <module>
+    <alt-dd>token</alt-dd>
+  </module>
+  <security-role>
     <description>String</description>
-    <display-name>token</display-name>
-    <icon xml:lang="en">
-        <small-icon>token</small-icon>
-        <large-icon>token</large-icon>
-    </icon>
-    <module>
-        <connector>token</connector>
-    </module>
-    <module>
-        <ejb>token</ejb>
-    </module>
-    <module>
-        <java>token</java>
-    </module>
-    <module>
-        <web>
-            <web-uri>token</web-uri>
-            <context-root>token</context-root>
-        </web>
-    </module>
-    <module>
-        <alt-dd>token</alt-dd>
-    </module>
-    <security-role>
-        <description>String</description>
-        <role-name>token</role-name>
-    </security-role>
-    <library-directory>token</library-directory>
+    <role-name>token</role-name>
+  </security-role>
+  <library-directory>token</library-directory>
 </application>

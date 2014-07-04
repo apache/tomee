@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MethodPermission$JAXB
-        extends JAXBObject<MethodPermission> {
+    extends JAXBObject<MethodPermission> {
 
 
     public MethodPermission$JAXB() {
         super(MethodPermission.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "method-permissionType".intern()), Text$JAXB.class, Empty$JAXB.class, Method$JAXB.class);
     }
 
-    public static MethodPermission readMethodPermission(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MethodPermission readMethodPermission(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethodPermission(XoXMLStreamWriter writer, MethodPermission methodPermission, RuntimeContext context)
-            throws Exception {
+    public static void writeMethodPermission(final XoXMLStreamWriter writer, MethodPermission methodPermission, RuntimeContext context)
+        throws Exception {
         _write(writer, methodPermission, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MethodPermission methodPermission, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MethodPermission methodPermission, RuntimeContext context)
+        throws Exception {
         _write(writer, methodPermission, context);
     }
 
-    public final static MethodPermission _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MethodPermission _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class MethodPermission$JAXB
             context = new RuntimeContext();
         }
 
-        MethodPermission methodPermission = new MethodPermission();
+        final MethodPermission methodPermission = new MethodPermission();
         context.beforeUnmarshal(methodPermission, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -90,7 +90,7 @@ public class MethodPermission$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -170,13 +170,13 @@ public class MethodPermission$JAXB
         return methodPermission;
     }
 
-    public final MethodPermission read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MethodPermission read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MethodPermission methodPermission, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MethodPermission methodPermission, RuntimeContext context)
+        throws Exception {
         if (methodPermission == null) {
             writer.writeXsiNil();
             return;
@@ -201,7 +201,7 @@ public class MethodPermission$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(methodPermission, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -233,7 +233,7 @@ public class MethodPermission$JAXB
                 String roleName = null;
                 try {
                     roleName = Adapters.collapsedStringAdapterAdapter.marshal(roleNameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(methodPermission, "roleName", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (roleName != null) {

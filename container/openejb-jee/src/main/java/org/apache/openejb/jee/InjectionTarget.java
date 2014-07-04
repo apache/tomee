@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for injection-targetType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="injection-targetType">
  *   &lt;complexContent>
@@ -42,14 +42,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "injection-targetType", propOrder = {
-        "injectionTargetClass",
-        "injectionTargetName"
-        })
+    "injectionTargetClass",
+    "injectionTargetName"
+})
 public class InjectionTarget {
 
     @XmlElement(name = "injection-target-class", required = true)
@@ -60,7 +58,7 @@ public class InjectionTarget {
     public InjectionTarget() {
     }
 
-    public InjectionTarget(String injectionTargetClass, String injectionTargetName) {
+    public InjectionTarget(final String injectionTargetClass, final String injectionTargetName) {
         this.injectionTargetClass = injectionTargetClass;
         this.injectionTargetName = injectionTargetName;
     }
@@ -69,11 +67,11 @@ public class InjectionTarget {
         return injectionTargetClass;
     }
 
-    public void setInjectionTargetClass(String value) {
+    public void setInjectionTargetClass(final String value) {
         this.injectionTargetClass = value;
     }
 
-    public void setInjectionTargetClass(Class clazz) {
+    public void setInjectionTargetClass(final Class clazz) {
         setInjectionTargetClass(clazz.getName());
     }
 
@@ -81,19 +79,21 @@ public class InjectionTarget {
         return injectionTargetName;
     }
 
-    public void setInjectionTargetName(String value) {
+    public void setInjectionTargetName(final String value) {
         this.injectionTargetName = value;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         InjectionTarget that = (InjectionTarget) o;
 
-        if (injectionTargetClass != null ? !injectionTargetClass.equals(that.injectionTargetClass) : that.injectionTargetClass != null) return false;
-        if (injectionTargetName != null ? !injectionTargetName.equals(that.injectionTargetName) : that.injectionTargetName != null) return false;
+        if (injectionTargetClass != null ? !injectionTargetClass.equals(that.injectionTargetClass) : that.injectionTargetClass != null)
+            return false;
+        if (injectionTargetName != null ? !injectionTargetName.equals(that.injectionTargetName) : that.injectionTargetName != null)
+            return false;
 
         return true;
     }

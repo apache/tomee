@@ -18,8 +18,8 @@
 package org.apache.openejb.resource.jdbc;
 
 import junit.framework.TestCase;
-import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.cipher.PlainTextPasswordCipher;
 import org.apache.openejb.cipher.StaticDESPasswordCipher;
 
@@ -30,14 +30,14 @@ public class PasswordCodecTest extends TestCase {
     private static final String PLAIN_PWD = "david";
 
     public void testPlainCodec() {
-        PasswordCipher cipher = new PlainTextPasswordCipher();
+        final PasswordCipher cipher = new PlainTextPasswordCipher();
         assertEquals(PLAIN_PWD, new String(cipher.encrypt(PLAIN_PWD)));
         assertEquals(PLAIN_PWD, cipher.decrypt(PLAIN_PWD.toCharArray()));
     }
 
     public void testStaticDesCodec() {
-        PasswordCipher cipher = new StaticDESPasswordCipher();
-        char[] tmp = cipher.encrypt(PLAIN_PWD);
+        final PasswordCipher cipher = new StaticDESPasswordCipher();
+        final char[] tmp = cipher.encrypt(PLAIN_PWD);
         assertEquals(PLAIN_PWD, cipher.decrypt(tmp));
     }
 
@@ -50,7 +50,7 @@ public class PasswordCodecTest extends TestCase {
         try {
             PasswordCipherFactory.getPasswordCipher(null);
             fail("Should throw an exception when no codec is found.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // OK
         }
 
@@ -58,7 +58,7 @@ public class PasswordCodecTest extends TestCase {
         try {
             PasswordCipherFactory.getPasswordCipher("");
             fail("Should throw an exception when no codec is found.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // OK
         }
 
@@ -66,8 +66,8 @@ public class PasswordCodecTest extends TestCase {
         assertNotNull(PasswordCipherFactory.getPasswordCipher(PlainTextPasswordCipher.class.getName()));
     }
 
-    private void assertPluginClass(String pluginName, Class<? extends PasswordCipher> pluginClass) throws SQLException {
-        PasswordCipher plugin = PasswordCipherFactory.getPasswordCipher(pluginName);
+    private void assertPluginClass(final String pluginName, final Class<? extends PasswordCipher> pluginClass) throws SQLException {
+        final PasswordCipher plugin = PasswordCipherFactory.getPasswordCipher(pluginName);
         assertNotNull(plugin);
         assertTrue(pluginClass.isInstance(plugin));
     }

@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashSet;
@@ -33,11 +33,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for ejb-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-refType">
  *   &lt;complexContent>
@@ -56,22 +56,20 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-refType", propOrder = {
-        "descriptions",
-        "ejbRefName",
-        "ejbRefType",
-        "home",
-        "remote",
-        "ejbLink",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "ejbRefName",
+    "ejbRefType",
+    "home",
+    "remote",
+    "ejbLink",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class EjbRef implements EjbReference {
 
     @XmlTransient
@@ -98,51 +96,51 @@ public class EjbRef implements EjbReference {
     @XmlTransient
     protected Type refType = Type.REMOTE;
 
-    
-    public EjbRef name(String ejbRefName) {
+
+    public EjbRef name(final String ejbRefName) {
         this.ejbRefName = ejbRefName;
         return this;
     }
 
-    public EjbRef type(EjbRefType ejbRefType) {
+    public EjbRef type(final EjbRefType ejbRefType) {
         this.ejbRefType = ejbRefType;
         return this;
     }
 
-    public EjbRef link(String link) {
+    public EjbRef link(final String link) {
         this.ejbLink = link;
         return this;
     }
 
-    public EjbRef remote(String remote) {
+    public EjbRef remote(final String remote) {
         this.remote = remote;
         return this;
     }
 
-    public EjbRef remote(Class<?> remote) {
+    public EjbRef remote(final Class<?> remote) {
         return remote(remote.getName());
     }
 
-    public EjbRef home(String home) {
+    public EjbRef home(final String home) {
         this.home = home;
         return this;
     }
 
-    public EjbRef home(Class<?> home) {
+    public EjbRef home(final Class<?> home) {
         return home(home.getName());
     }
 
-    public EjbRef mappedName(String mappedName) {
+    public EjbRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public EjbRef lookup(String lookupName) {
+    public EjbRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public EjbRef injectionTarget(String className, String property) {
+    public EjbRef injectionTarget(final String className, String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.ejbRefName == null) {
@@ -152,7 +150,7 @@ public class EjbRef implements EjbReference {
         return this;
     }
 
-    public EjbRef injectionTarget(Class<?> clazz, String property) {
+    public EjbRef injectionTarget(Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -276,11 +274,11 @@ public class EjbRef implements EjbReference {
     @Override
     public String toString() {
         return "EjbRef{" +
-                "name='" + ejbRefName + '\'' +
-                ", remote='" + remote + '\'' +
-                ", link='" + ejbLink + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + ejbRefName + '\'' +
+            ", remote='" + remote + '\'' +
+            ", link='" + ejbLink + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

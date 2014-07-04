@@ -23,23 +23,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for message-driven-beanType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="message-driven-beanType">
  *   &lt;complexContent>
@@ -67,44 +67,42 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-beanType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "ejbName",
-        "mappedName",
-        "ejbClass",
-        "messagingType",
-        "timeoutMethod",
-        "timer",
-        "transactionType",
-        "messageSelector",
-        "acknowledgeMode",
-        "messageDrivenDestination",
-        "messageDestinationType",
-        "messageDestinationLink",
-        "activationConfig",
-        "aroundInvoke",
-        "aroundTimeout",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "dataSource",
-        "securityRoleRef",
-        "securityIdentity"
-        })
+    "descriptions",
+    "displayNames",
+    "icon",
+    "ejbName",
+    "mappedName",
+    "ejbClass",
+    "messagingType",
+    "timeoutMethod",
+    "timer",
+    "transactionType",
+    "messageSelector",
+    "acknowledgeMode",
+    "messageDrivenDestination",
+    "messageDestinationType",
+    "messageDestinationLink",
+    "activationConfig",
+    "aroundInvoke",
+    "aroundTimeout",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "dataSource",
+    "securityRoleRef",
+    "securityIdentity"
+})
 public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokable {
 
     @XmlTransient
@@ -138,25 +136,25 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlElement(name = "around-timeout")
     protected List<AroundTimeout> aroundTimeout;
     @XmlElement(name = "env-entry", required = true)
-    protected KeyedCollection<String,EnvEntry> envEntry;
+    protected KeyedCollection<String, EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected KeyedCollection<String,EjbRef> ejbRef;
+    protected KeyedCollection<String, EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String, EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected KeyedCollection<String,ServiceRef> serviceRef;
+    protected KeyedCollection<String, ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected KeyedCollection<String,ResourceRef> resourceRef;
+    protected KeyedCollection<String, ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String, ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "data-source", required = true)
-    protected KeyedCollection<String,DataSource> dataSource;
+    protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -173,20 +171,20 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     public MessageDrivenBean() {
     }
 
-    public MessageDrivenBean(String ejbName) {
+    public MessageDrivenBean(final String ejbName) {
         this.ejbName = ejbName;
     }
 
-    public MessageDrivenBean(String ejbName, String ejbClass) {
+    public MessageDrivenBean(final String ejbName, final String ejbClass) {
         this.ejbName = ejbName;
         this.ejbClass = ejbClass;
     }
 
-    public MessageDrivenBean(Class ejbClass) {
+    public MessageDrivenBean(final Class ejbClass) {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
-    public MessageDrivenBean(String ejbName, Class ejbClass) {
+    public MessageDrivenBean(final String ejbName, final Class ejbClass) {
         this(ejbName, ejbClass.getName());
     }
 
@@ -199,7 +197,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -212,7 +210,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -227,7 +225,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -261,7 +259,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
      * <p/>
      * <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -269,7 +267,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -277,11 +275,11 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return ejbClass;
     }
 
-    public void setEjbClass(String value) {
+    public void setEjbClass(final String value) {
         this.ejbClass = value;
     }
 
-    public void setEjbClass(Class value) {
+    public void setEjbClass(final Class value) {
         this.ejbClass = value.getName();
     }
 
@@ -289,11 +287,11 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return messagingType;
     }
 
-    public void setMessagingType(String value) {
+    public void setMessagingType(final String value) {
         this.messagingType = value;
     }
 
-    public void setMessagingType(Class value) {
+    public void setMessagingType(final Class value) {
         this.messagingType = value.getName();
     }
 
@@ -301,7 +299,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return timeoutMethod;
     }
 
-    public void setTimeoutMethod(NamedMethod value) {
+    public void setTimeoutMethod(final NamedMethod value) {
         this.timeoutMethod = value;
     }
 
@@ -317,9 +315,9 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     }
 
     @XmlElement(name = "message-driven-destination")
-    public void setMessageDrivenDestination(MessageDrivenDestination value) {
+    public void setMessageDrivenDestination(final MessageDrivenDestination value) {
         if (activationConfig == null) activationConfig = new ActivationConfig();
-        DestinationType destinationType = value.getDestinationType();
+        final DestinationType destinationType = value.getDestinationType();
         if (destinationType != null) {
             activationConfig.addProperty("destinationType", destinationType.getvalue());
         }
@@ -334,7 +332,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return null;
     }
 
-    public void setMessageSelector(String messageSelector) {
+    public void setMessageSelector(final String messageSelector) {
         if (messageSelector != null) {
             if (activationConfig == null) activationConfig = new ActivationConfig();
             activationConfig.addProperty("messageSelector", messageSelector);
@@ -346,7 +344,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return null;
     }
 
-    public void setAcknowledgeMode(String acknowledgeMode) {
+    public void setAcknowledgeMode(final String acknowledgeMode) {
         if (acknowledgeMode != null) {
             if (activationConfig == null) activationConfig = new ActivationConfig();
             activationConfig.addProperty("acknowledgeMode", acknowledgeMode);
@@ -357,7 +355,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return transactionType;
     }
 
-    public void setTransactionType(TransactionType value) {
+    public void setTransactionType(final TransactionType value) {
         this.transactionType = value;
     }
 
@@ -365,7 +363,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return messageDestinationType;
     }
 
-    public void setMessageDestinationType(String value) {
+    public void setMessageDestinationType(final String value) {
         this.messageDestinationType = value;
     }
 
@@ -390,7 +388,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return messageDestinationLink;
     }
 
-    public void setMessageDestinationLink(String value) {
+    public void setMessageDestinationLink(final String value) {
         this.messageDestinationLink = value;
     }
 
@@ -398,7 +396,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return activationConfig;
     }
 
-    public void setActivationConfig(ActivationConfig value) {
+    public void setActivationConfig(final ActivationConfig value) {
         this.activationConfig = value;
     }
 
@@ -409,8 +407,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return this.aroundInvoke;
     }
 
-    public void addAroundInvoke(String method){
-        assert ejbClass != null: "Set the ejbClass before calling this method";
+    public void addAroundInvoke(final String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundInvoke().add(new AroundInvoke(ejbClass, method));
     }
 
@@ -423,126 +421,126 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry;
     }
 
-    public Map<String,EnvEntry> getEnvEntryMap() {
+    public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef;
     }
 
-    public Map<String,EjbRef> getEjbRefMap() {
+    public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
-    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+    public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef;
     }
 
-    public Map<String,ServiceRef> getServiceRefMap() {
+    public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef;
     }
 
-    public Map<String,ResourceRef> getResourceRefMap() {
+    public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
-    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+    public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
-    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+    public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
-    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+    public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
     }
 
-    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+    public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -550,14 +548,14 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource;
     }
 
-    public Map<String,DataSource> getDataSourceMap() {
+    public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
     }
@@ -570,8 +568,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return this.postConstruct;
     }
 
-    public void addPostConstruct(String method){
-        assert ejbClass != null: "Set the ejbClass before calling this method";
+    public void addPostConstruct(final String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getPostConstruct().add(new LifecycleCallback(ejbClass, method));
     }
 
@@ -582,8 +580,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return this.preDestroy;
     }
 
-    public void addPreDestroy(String method){
-        assert ejbClass != null: "Set the ejbClass before calling this method";
+    public void addPreDestroy(final String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getPreDestroy().add(new LifecycleCallback(ejbClass, method));
     }
 
@@ -598,7 +596,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return securityIdentity;
     }
 
-    public void setSecurityIdentity(SecurityIdentity value) {
+    public void setSecurityIdentity(final SecurityIdentity value) {
         this.securityIdentity = value;
     }
 
@@ -606,11 +604,11 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public void addAroundTimeout(String method) {
+    public void addAroundTimeout(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }

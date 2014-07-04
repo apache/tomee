@@ -17,59 +17,59 @@
 -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"
-	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 		  http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"
-	      version="2.1">
+         version="2.1">
 
-    <enterprise-beans>
-        <entity>
-            <ejb-name>A</ejb-name>
-            <home>org.apache.openejb.deployment.entity.cmp.ejbql.AHome</home>
-            <remote>org.apache.openejb.deployment.entity.cmp.ejbql.ARemote</remote>
-            <local-home>org.apache.openejb.deployment.entity.cmp.ejbql.ALocalHome</local-home>
-            <local>org.apache.openejb.deployment.entity.cmp.ejbql.ALocal</local>
-            <ejb-class>org.apache.openejb.deployment.entity.cmp.ejbql.ABean</ejb-class>
-            <persistence-type>Container</persistence-type>
-            <prim-key-class>java.lang.Integer</prim-key-class>
-            <reentrant>false</reentrant>
-            <cmp-version>2.x</cmp-version>
-            <abstract-schema-name>AASN</abstract-schema-name>
-            <cmp-field>
-                <field-name>field1</field-name>
-            </cmp-field>
-            <cmp-field>
-                <field-name>field2</field-name>
-            </cmp-field>
-            <primkey-field>field1</primkey-field>
-            <query>
-                <query-method>
-                    <method-name>findTest</method-name>
-                    <method-params>
-                        <method-param>java.lang.String</method-param>
-                    </method-params>
-                </query-method>
-                <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
-            </query>
-            <query>
-                <query-method>
-                    <method-name>ejbSelectTest</method-name>
-                    <method-params>
-                        <method-param>java.lang.String</method-param>
-                    </method-params>
-                </query-method>
-                <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
-            </query>
-        </entity>
-    </enterprise-beans>
-    <assembly-descriptor>
-        <container-transaction>
-            <method>
-                <ejb-name>A</ejb-name>
-                <method-name>*</method-name>
-            </method>
-            <trans-attribute>Required</trans-attribute>
-        </container-transaction>
-    </assembly-descriptor>
+  <enterprise-beans>
+    <entity>
+      <ejb-name>A</ejb-name>
+      <home>org.apache.openejb.deployment.entity.cmp.ejbql.AHome</home>
+      <remote>org.apache.openejb.deployment.entity.cmp.ejbql.ARemote</remote>
+      <local-home>org.apache.openejb.deployment.entity.cmp.ejbql.ALocalHome</local-home>
+      <local>org.apache.openejb.deployment.entity.cmp.ejbql.ALocal</local>
+      <ejb-class>org.apache.openejb.deployment.entity.cmp.ejbql.ABean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>AASN</abstract-schema-name>
+      <cmp-field>
+        <field-name>field1</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>field2</field-name>
+      </cmp-field>
+      <primkey-field>field1</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findTest</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectTest</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(A) FROM AASN A WHERE A.field2=?1</ejb-ql>
+      </query>
+    </entity>
+  </enterprise-beans>
+  <assembly-descriptor>
+    <container-transaction>
+      <method>
+        <ejb-name>A</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+  </assembly-descriptor>
 
 </ejb-jar>

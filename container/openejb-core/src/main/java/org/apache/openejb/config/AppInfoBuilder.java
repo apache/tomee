@@ -257,7 +257,7 @@ class AppInfoBuilder {
 
         // Check for circular references in Singleton @DependsOn
         try {
-            References.sort(beans, new References.Visitor<EnterpriseBeanInfo>(){
+            References.sort(beans, new References.Visitor<EnterpriseBeanInfo>() {
                 @Override
                 public String getName(final EnterpriseBeanInfo bean) {
                     return bean.ejbDeploymentId;
@@ -657,7 +657,7 @@ class AppInfoBuilder {
                 info.jarFiles.addAll(persistenceUnit.getJarFile());
                 info.classes.addAll(persistenceUnit.getClazz());
                 info.mappingFiles.addAll(persistenceUnit.getMappingFile());
-                
+
                 info.persistenceXMLSchemaVersion = persistence.getVersion();
                 info.sharedCacheMode = persistenceUnit.getSharedCacheMode().toString();
                 info.validationMode = persistenceUnit.getValidationMode().toString();
@@ -733,7 +733,7 @@ class AppInfoBuilder {
 
         /**
          * @param classLoader the temp classloader, take care to only use getResource here
-         * @param info the persistence unit info
+         * @param info        the persistence unit info
          */
         private static void apply(final ClassLoader classLoader, final PersistenceUnitInfo info) {
             overrideFromSystemProp(info);
@@ -769,7 +769,7 @@ class AppInfoBuilder {
                     }
                 }
 
-                if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
+                if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")) {
                     // hibernate 4.3
                     String key = HIBERNATE_JTA_PLATFORM;
                     String value = MakeTxLookup.HIBERNATE_NEW_FACTORY2;
@@ -794,7 +794,7 @@ class AppInfoBuilder {
 
                 }
             } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider) ||
-                    "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider) ){
+                "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "toplink");
@@ -809,23 +809,23 @@ class AppInfoBuilder {
 
                 final String className = info.properties.getProperty(lookupProperty);
 
-                if (className == null || className.startsWith("oracle.toplink.transaction")){
+                if (className == null || className.startsWith("oracle.toplink.transaction")) {
                     info.properties.setProperty(lookupProperty, openejbLookupClass);
-                    logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + lookupProperty + "=" + openejbLookupClass);
                 }
-            } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)){
+            } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "eclipselink");
 
                 final String className = info.properties.getProperty(ECLIPSELINK_TARGET_SERVER);
 
-                if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
+                if (className == null || className.startsWith("org.eclipse.persistence.transaction")) {
                     if (classLoader.getResource(ClassLoaderUtil.resourceName(OPENEJB_TARGET_SERVER)) != null) {
                         info.properties.setProperty(ECLIPSELINK_TARGET_SERVER, OPENEJB_TARGET_SERVER);
-                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to " + ECLIPSELINK_TARGET_SERVER + "="+ OPENEJB_TARGET_SERVER);
+                        logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + ECLIPSELINK_TARGET_SERVER + "=" + OPENEJB_TARGET_SERVER);
                     } else {
-                        logger.debug("Can't adjusting PersistenceUnit(name="+info.name+") property to " + ECLIPSELINK_TARGET_SERVER + "=" + OPENEJB_TARGET_SERVER + ", using default one");
+                        logger.debug("Can't adjusting PersistenceUnit(name=" + info.name + ") property to " + ECLIPSELINK_TARGET_SERVER + "=" + OPENEJB_TARGET_SERVER + ", using default one");
                     }
                 }
 
@@ -840,21 +840,21 @@ class AppInfoBuilder {
                         info.properties.setProperty(ECLIPSELINK_SESSION_CUSTOMIZER, PREFIX_SESSION_CUSTOMIZER);
                     }
                 }
-            }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
+            } else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "openjpa");
 
                 final String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
 
-                if (existing == null){
+                if (existing == null) {
                     info.properties.setProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES, DEFAULT_RUNTIME_UNENHANCED_CLASSES);
                     logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to "
                         + OPENJPA_RUNTIME_UNENHANCED_CLASSES + "=" + DEFAULT_RUNTIME_UNENHANCED_CLASSES);
                 } else if (REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES.equals(existing.trim())) {
                     info.properties.remove(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                     logger.info("Adjusting PersistenceUnit(name=" + info.name + ") removing property "
-                                                                    + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
+                        + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                 }
 
                 final String prefix = info.properties.getProperty(TABLE_PREFIX);
@@ -880,7 +880,7 @@ class AppInfoBuilder {
                         final JPAPropertyConverter.Pair pair = JPAPropertyConverter.toOpenJPAValue(key, info.properties.getProperty(key), info.properties);
                         if (pair != null && !info.properties.containsKey(pair.getKey())) {
                             logger.info("Converting PersistenceUnit(name=" + info.name + ") property "
-                                    + key + "=" + info.properties.getProperty(key) +  " to " + pair.toString());
+                                + key + "=" + info.properties.getProperty(key) + " to " + pair.toString());
                             info.properties.remove(key);
                             info.properties.setProperty(pair.getKey(), pair.getValue());
                         }
@@ -926,10 +926,10 @@ class AppInfoBuilder {
                     continue;
                 }
 
-                if (info.properties.containsKey(property)){
-                    logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
+                if (info.properties.containsKey(property)) {
+                    logger.debug("Overriding persistence-unit " + info.name + " property " + property + "=" + value);
                 } else {
-                    logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
+                    logger.debug("Adding persistence-unit " + info.name + " property " + property + "=" + value);
                 }
                 info.properties.put(property, value);
 
@@ -992,22 +992,22 @@ class AppInfoBuilder {
      */
     void configureWebserviceSecurity(final EjbJarInfo ejbJarInfo, final EjbModule ejbModule) {
         final Object altDD = ejbModule.getOpenejbJar();
-    final List<PortInfo> infoList = ejbJarInfo.portInfos;
+        final List<PortInfo> infoList = ejbJarInfo.portInfos;
 
         this.configureWebserviceScurity(infoList, altDD);
     }
-    
+
     private void configureWebserviceScurity(final List<PortInfo> infoList, final Object altDD) {
         if (altDD == null || !(altDD instanceof OpenejbJar)) {
             return;
         }
-        
+
         final OpenejbJar openejbJar = (OpenejbJar) altDD;
         final Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();
-        
+
         for (final PortInfo portInfo : infoList) {
             final EjbDeployment deployment = deploymentsByEjbName.get(portInfo.serviceLink);
-            
+
             if (deployment == null) {
                 continue;
             }
@@ -1027,7 +1027,7 @@ class AppInfoBuilder {
             portInfo.properties = deployment.getProperties();
         }
     }
-    
+
     private static boolean skipMdb(final EnterpriseBeanInfo bean) {
         return bean instanceof MessageDrivenBeanInfo && SystemInstance.get().hasProperty("openejb.geronimo");
     }

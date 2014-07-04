@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesDefaultLocale$JAXB
-        extends JAXBObject<FacesDefaultLocale> {
+    extends JAXBObject<FacesDefaultLocale> {
 
 
     public FacesDefaultLocale$JAXB() {
         super(FacesDefaultLocale.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-default-localeType".intern()));
     }
 
-    public static FacesDefaultLocale readFacesDefaultLocale(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesDefaultLocale readFacesDefaultLocale(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesDefaultLocale(XoXMLStreamWriter writer, FacesDefaultLocale facesDefaultLocale, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesDefaultLocale(final XoXMLStreamWriter writer, FacesDefaultLocale facesDefaultLocale, RuntimeContext context)
+        throws Exception {
         _write(writer, facesDefaultLocale, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesDefaultLocale facesDefaultLocale, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesDefaultLocale facesDefaultLocale, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesDefaultLocale, context);
     }
 
-    public final static FacesDefaultLocale _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesDefaultLocale _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,10 +78,10 @@ public class FacesDefaultLocale$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesDefaultLocale);
                 facesDefaultLocale.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,13 +97,13 @@ public class FacesDefaultLocale$JAXB
         return facesDefaultLocale;
     }
 
-    public final FacesDefaultLocale read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesDefaultLocale read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesDefaultLocale facesDefaultLocale, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesDefaultLocale facesDefaultLocale, RuntimeContext context)
+        throws Exception {
         if (facesDefaultLocale == null) {
             writer.writeXsiNil();
             return;
@@ -134,7 +134,7 @@ public class FacesDefaultLocale$JAXB
         }
 
         // VALUE: value
-        FacesLocale value = facesDefaultLocale.value;
+        final FacesLocale value = facesDefaultLocale.value;
 
         context.afterMarshal(facesDefaultLocale, LifecycleCallback.NONE);
     }

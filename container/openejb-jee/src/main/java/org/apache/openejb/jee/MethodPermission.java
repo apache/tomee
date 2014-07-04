@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for method-permissionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="method-permissionType">
  *   &lt;complexContent>
@@ -55,16 +55,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-permissionType", propOrder = {
-        "descriptions",
-        "roleName",
-        "unchecked",
-        "method"
-        })
+    "descriptions",
+    "roleName",
+    "unchecked",
+    "method"
+})
 public class MethodPermission {
 
     @XmlTransient
@@ -83,15 +81,15 @@ public class MethodPermission {
     public MethodPermission() {
     }
 
-    public MethodPermission(String className, String ejbName, String methodName, String... roles) {
+    public MethodPermission(final String className, String ejbName, String methodName, String... roles) {
         this(new Method(ejbName, className, methodName), roles);
     }
 
-    public MethodPermission(String ejbName, java.lang.reflect.Method method, String... roles) {
+    public MethodPermission(final String ejbName, java.lang.reflect.Method method, String... roles) {
         this(new Method(ejbName, method), roles);
     }
 
-    public MethodPermission(Method method, String... roles) {
+    public MethodPermission(final Method method, String... roles) {
         getMethod().add(method);
         for (String role : roles) {
             getRoleName().add(role);

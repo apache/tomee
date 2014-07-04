@@ -81,15 +81,15 @@ public class ManagedMBean implements DynamicMBean {
             final Method method = this.getClass().getMethod("setAttributesFilter", String.class, String.class);
 
             final String description = "Filters the attributes that show up in the MBeanInfo." +
-                    "  The exclude is applied first, then any attributes that match the " +
-                    "include are re-added.  It may be required to disconnect and reconnect " +
-                    "the JMX console to force a refresh of the MBeanInfo";
+                "  The exclude is applied first, then any attributes that match the " +
+                "include are re-added.  It may be required to disconnect and reconnect " +
+                "the JMX console to force a refresh of the MBeanInfo";
 
             excludeInfo = new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"" + excludes.pattern() + "\"");
             includeInfo = new MBeanParameterInfo("includeRegex", "java.lang.String", "\"" + includes.pattern() + "\"");
             final MBeanOperationInfo filterOperation = new MBeanOperationInfo("FilterAttributes", description, new MBeanParameterInfo[]{
-                    excludeInfo,
-                    includeInfo,
+                excludeInfo,
+                includeInfo,
             }, "void", 3);
             operations.add(filterOperation);
             operationsMap.put(filterOperation.getName(), new MethodMember(method, this, ""));
@@ -212,7 +212,7 @@ public class ManagedMBean implements DynamicMBean {
         try {
             return method.invoke(member.target, args);
         } catch (final InvocationTargetException e) {
-            throw new ReflectionException((Exception)e.getCause());
+            throw new ReflectionException((Exception) e.getCause());
         } catch (final Exception e) {
             throw new ReflectionException(e);
         }
@@ -340,7 +340,7 @@ public class ManagedMBean implements DynamicMBean {
             final String method = getter.getName();
 
             final StringBuilder name = new StringBuilder(method);
-            
+
             // remove 'get'
             if (method.matches("get([A-Z].*|)")) {
                 name.delete(0, 3);

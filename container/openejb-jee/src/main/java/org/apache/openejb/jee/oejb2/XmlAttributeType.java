@@ -17,19 +17,20 @@
 
 package org.apache.openejb.jee.oejb2;
 
+import org.w3c.dom.Element;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.w3c.dom.Element;
 
 
 /**
  * <p>Java class for xml-attributeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="xml-attributeType">
  *   &lt;complexContent>
@@ -42,8 +43,6 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xml-attributeType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -58,12 +57,10 @@ public class XmlAttributeType {
 
     /**
      * Gets the value of the any property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     {@link Element }
-     *     
+     *
+     * @return possible object is
+     * {@link Object }
+     * {@link Element }
      */
     public Object getAny() {
         return any;
@@ -71,24 +68,20 @@ public class XmlAttributeType {
 
     /**
      * Sets the value of the any property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     {@link Element }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Object }
+     *              {@link Element }
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -96,13 +89,11 @@ public class XmlAttributeType {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

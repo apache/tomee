@@ -24,11 +24,10 @@ import java.lang.annotation.Target;
 
 /**
  * Can be used as a marker to specify than an object is internal.
- *
+ * <p/>
  * Used for instance for internal @Mbeans.
- *
  */
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Internal {
 }

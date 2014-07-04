@@ -36,11 +36,11 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for web-appType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="web-appType">
  *   &lt;complexContent>
@@ -55,49 +55,47 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlRootElement(name = "web-app")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-appType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "distributable",
-        "contextParam",
-        "filter",
-        "filterMapping",
-        "listener",
-        "servlet",
-        "servletMapping",
-        "sessionConfig",
-        "mimeMapping",
-        "welcomeFileList",
-        "errorPage",
-        //In web-app-2.3.dtd
-        "taglib",
-        "jspConfig",
-        "securityConstraint",
-        "loginConfig",
-        "securityRole",
-        "localeEncodingMappingList",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "messageDestination",
-        "absoluteOrdering",
-        "dataSource",
-        "moduleName"
+    "descriptions",
+    "displayNames",
+    "icon",
+    "distributable",
+    "contextParam",
+    "filter",
+    "filterMapping",
+    "listener",
+    "servlet",
+    "servletMapping",
+    "sessionConfig",
+    "mimeMapping",
+    "welcomeFileList",
+    "errorPage",
+    //In web-app-2.3.dtd
+    "taglib",
+    "jspConfig",
+    "securityConstraint",
+    "loginConfig",
+    "securityRole",
+    "localeEncodingMappingList",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "messageDestination",
+    "absoluteOrdering",
+    "dataSource",
+    "moduleName"
 
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
@@ -144,25 +142,25 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     protected List<LocaleEncodingMappingList> localeEncodingMappingList;
 
     @XmlElement(name = "env-entry", required = true)
-    protected KeyedCollection<String,EnvEntry> envEntry;
+    protected KeyedCollection<String, EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected KeyedCollection<String,EjbRef> ejbRef;
+    protected KeyedCollection<String, EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String, EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected KeyedCollection<String,ServiceRef> serviceRef;
+    protected KeyedCollection<String, ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected KeyedCollection<String,ResourceRef> resourceRef;
+    protected KeyedCollection<String, ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String, ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "data-source", required = true)
-    protected KeyedCollection<String,DataSource> dataSource;
+    protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -198,7 +196,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setContextRoot(String contextRoot) {
+    public void setContextRoot(final String contextRoot) {
         this.contextRoot = contextRoot;
     }
 
@@ -209,7 +207,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -225,7 +223,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -243,7 +241,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -385,134 +383,134 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry;
     }
 
-    public Map<String,EnvEntry> getEnvEntryMap() {
+    public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef;
     }
 
-    public Map<String,EjbRef> getEjbRefMap() {
+    public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
-    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+    public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef;
     }
 
-    public Map<String,ServiceRef> getServiceRefMap() {
+    public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef;
     }
 
-    public Map<String,ResourceRef> getResourceRefMap() {
+    public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
-    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+    public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
-    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+    public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
-    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+    public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
     }
 
-    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+    public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
     }
 
-    public void addPostConstruct(String method) {
+    public void addPostConstruct(final String method) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
@@ -521,10 +519,10 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return this.postConstruct;
     }
 
-    public void addPreDestroy(String method) {
+    public void addPreDestroy(final String method) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
@@ -547,7 +545,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -557,7 +555,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
@@ -567,20 +565,20 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     @Override
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource;
     }
 
-    public Map<String,DataSource> getDataSourceMap() {
+    public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
     }
@@ -589,7 +587,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return absoluteOrdering;
     }
 
-    public void setAbsoluteOrdering(AbsoluteOrdering absoluteOrdering) {
+    public void setAbsoluteOrdering(final AbsoluteOrdering absoluteOrdering) {
         this.absoluteOrdering = absoluteOrdering;
     }
 
@@ -597,7 +595,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -607,8 +605,8 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return null;
     }
 
-    public void setTaglib(Taglib taglib) {
-        List<JspConfig> jspConfigs = getJspConfig();
+    public void setTaglib(final Taglib taglib) {
+        final List<JspConfig> jspConfigs = getJspConfig();
         if (jspConfigs.isEmpty()) {
             jspConfigs.add(new JspConfig());
         }
@@ -616,9 +614,9 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     public Map<String, String> contextParamsAsMap() {
-        Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<String, String>();
         if (contextParam != null) {
-            for (ParamValue pv : contextParam) {
+            for (final ParamValue pv : contextParam) {
                 map.put(pv.getParamName(), pv.getParamValue());
             }
         }
@@ -629,7 +627,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         if (servletMapping == null || servletName == null) {
             return Collections.emptyList();
         }
-        for (ServletMapping mapping : servletMapping) {
+        for (final ServletMapping mapping : servletMapping) {
             if (servletName.equals(mapping.getServletName())) {
                 return mapping.getUrlPattern();
             }
@@ -641,7 +639,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         if (filterMapping == null || filterName == null) {
             return Collections.emptyList();
         }
-        for (FilterMapping mapping : filterMapping) {
+        for (final FilterMapping mapping : filterMapping) {
             if (filterName.equals(mapping.getFilterName())) {
                 return mapping.getUrlPattern();
             }
@@ -650,7 +648,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     private Servlet findServlet(final String name) {
-        for (Servlet s : getServlet()) {
+        for (final Servlet s : getServlet()) {
             if (name.equals(s.getServletName())) {
                 return s;
             }
@@ -667,7 +665,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             final ServletMapping sm = new ServletMapping();
             sm.setServletName(name);
 
-            for (String mapping : mappings) {
+            for (final String mapping : mappings) {
                 if (servletMapping == null) {
                     servletMapping = new ArrayList<ServletMapping>();
                 }
@@ -683,7 +681,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     public WebApp addServletMapping(final String servletName, final String mapping) {
-        for (ServletMapping s : getServletMapping()) {
+        for (final ServletMapping s : getServletMapping()) {
             if (servletName.equals(s.getServletName())) {
                 s.getUrlPattern().add(mapping);
                 return this;
@@ -716,7 +714,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             final FilterMapping sm = new FilterMapping();
             sm.setFilterName(name);
 
-            for (String mapping : mappings) {
+            for (final String mapping : mappings) {
                 if (filterMapping == null) {
                     filterMapping = new ArrayList<FilterMapping>();
                 }
@@ -742,7 +740,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     private Filter findFilter(final String filterName) {
-        for (Filter s : getFilter()) {
+        for (final Filter s : getFilter()) {
             if (filterName.equals(s.getFilterName())) {
                 return s;
             }

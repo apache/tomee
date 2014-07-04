@@ -29,13 +29,13 @@ public class CheckCdiEnabled extends ValidationBase {
         }
 
         if (ejbModule.getBeans() == null
-                && hasAtInject(ejbModule.getFinder())) {
+            && hasAtInject(ejbModule.getFinder())) {
             warn(ejbModule.getModuleId(), "cdi.notEnabled", ejbModule.getModuleId());
         }
     }
 
     private static boolean hasAtInject(final IAnnotationFinder finder) {
         return !finder.findAnnotatedMethods(Inject.class).isEmpty()
-                || !finder.findAnnotatedFields(Inject.class).isEmpty();
+            || !finder.findAnnotatedFields(Inject.class).isEmpty();
     }
 }

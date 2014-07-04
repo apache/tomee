@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesFacet$JAXB
-        extends JAXBObject<FacesFacet> {
+    extends JAXBObject<FacesFacet> {
 
 
     public FacesFacet$JAXB() {
         super(FacesFacet.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-facetType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesFacetExtension$JAXB.class);
     }
 
-    public static FacesFacet readFacesFacet(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesFacet readFacesFacet(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesFacet(XoXMLStreamWriter writer, FacesFacet facesFacet, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesFacet(final XoXMLStreamWriter writer, final FacesFacet facesFacet, RuntimeContext context)
+        throws Exception {
         _write(writer, facesFacet, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesFacet facesFacet, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesFacet facesFacet, RuntimeContext context)
+        throws Exception {
         _write(writer, facesFacet, context);
     }
 
-    public final static FacesFacet _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesFacet _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class FacesFacet$JAXB
             context = new RuntimeContext();
         }
 
-        FacesFacet facesFacet = new FacesFacet();
+        final FacesFacet facesFacet = new FacesFacet();
         context.beforeUnmarshal(facesFacet, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -162,7 +162,7 @@ public class FacesFacet$JAXB
         if (descriptions != null) {
             try {
                 facesFacet.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesFacet.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -185,13 +185,13 @@ public class FacesFacet$JAXB
         return facesFacet;
     }
 
-    public final FacesFacet read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesFacet read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesFacet facesFacet, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesFacet facesFacet, RuntimeContext context)
+        throws Exception {
         if (facesFacet == null) {
             writer.writeXsiNil();
             return;
@@ -201,7 +201,7 @@ public class FacesFacet$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesFacet.class != facesFacet.getClass()) {
             context.unexpectedSubclass(writer, facesFacet, FacesFacet.class);
             return;
@@ -261,7 +261,7 @@ public class FacesFacet$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesFacet.icon;
+        final LocalCollection<Icon> icon = facesFacet.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {

@@ -48,7 +48,7 @@ public class MessageSecurity {
         return requestProtection;
     }
 
-    public void setRequestProtection(RequestProtection value) {
+    public void setRequestProtection(final RequestProtection value) {
         this.requestProtection = value;
     }
 
@@ -56,7 +56,7 @@ public class MessageSecurity {
         return responseProtection;
     }
 
-    public void setResponseProtection(ResponseProtection value) {
+    public void setResponseProtection(final ResponseProtection value) {
         this.responseProtection = value;
     }
 }

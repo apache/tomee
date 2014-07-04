@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesOrderingOthers$JAXB
-        extends JAXBObject<FacesOrderingOthers> {
+    extends JAXBObject<FacesOrderingOthers> {
 
 
     public FacesOrderingOthers$JAXB() {
         super(FacesOrderingOthers.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-ordering-othersType".intern()));
     }
 
-    public static FacesOrderingOthers readFacesOrderingOthers(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesOrderingOthers readFacesOrderingOthers(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesOrderingOthers(XoXMLStreamWriter writer, FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesOrderingOthers(final XoXMLStreamWriter writer, FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
+        throws Exception {
         _write(writer, facesOrderingOthers, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
+        throws Exception {
         _write(writer, facesOrderingOthers, context);
     }
 
-    public final static FacesOrderingOthers _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesOrderingOthers _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -99,13 +99,13 @@ public class FacesOrderingOthers$JAXB
         return facesOrderingOthers;
     }
 
-    public final FacesOrderingOthers read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesOrderingOthers read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesOrderingOthers facesOrderingOthers, RuntimeContext context)
+        throws Exception {
         if (facesOrderingOthers == null) {
             writer.writeXsiNil();
             return;

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for connection-pool-params complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="connection-pool-params">
  *   &lt;complexContent>
@@ -58,8 +58,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connection-pool-params", propOrder = {
@@ -123,11 +121,9 @@ public class ConnectionPoolParams {
 
     /**
      * Gets the value of the initialCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getInitialCapacity() {
         return initialCapacity;
@@ -135,23 +131,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the initialCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setInitialCapacity(BigInteger value) {
+    public void setInitialCapacity(final BigInteger value) {
         this.initialCapacity = value;
     }
 
     /**
      * Gets the value of the maxCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxCapacity() {
         return maxCapacity;
@@ -159,23 +151,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the maxCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxCapacity(BigInteger value) {
+    public void setMaxCapacity(final BigInteger value) {
         this.maxCapacity = value;
     }
 
     /**
      * Gets the value of the capacityIncrement property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getCapacityIncrement() {
         return capacityIncrement;
@@ -183,23 +171,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the capacityIncrement property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setCapacityIncrement(BigInteger value) {
+    public void setCapacityIncrement(final BigInteger value) {
         this.capacityIncrement = value;
     }
 
     /**
      * Gets the value of the shrinkingEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getShrinkingEnabled() {
         return shrinkingEnabled;
@@ -207,23 +191,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the shrinkingEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setShrinkingEnabled(Boolean value) {
+    public void setShrinkingEnabled(final Boolean value) {
         this.shrinkingEnabled = value;
     }
 
     /**
      * Gets the value of the shrinkFrequencySeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getShrinkFrequencySeconds() {
         return shrinkFrequencySeconds;
@@ -231,23 +211,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the shrinkFrequencySeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setShrinkFrequencySeconds(BigInteger value) {
+    public void setShrinkFrequencySeconds(final BigInteger value) {
         this.shrinkFrequencySeconds = value;
     }
 
     /**
      * Gets the value of the highestNumWaiters property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getHighestNumWaiters() {
         return highestNumWaiters;
@@ -255,23 +231,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the highestNumWaiters property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setHighestNumWaiters(BigInteger value) {
+    public void setHighestNumWaiters(final BigInteger value) {
         this.highestNumWaiters = value;
     }
 
     /**
      * Gets the value of the highestNumUnavailable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getHighestNumUnavailable() {
         return highestNumUnavailable;
@@ -279,23 +251,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the highestNumUnavailable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setHighestNumUnavailable(BigInteger value) {
+    public void setHighestNumUnavailable(final BigInteger value) {
         this.highestNumUnavailable = value;
     }
 
     /**
      * Gets the value of the connectionCreationRetryFrequencySeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getConnectionCreationRetryFrequencySeconds() {
         return connectionCreationRetryFrequencySeconds;
@@ -303,23 +271,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the connectionCreationRetryFrequencySeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setConnectionCreationRetryFrequencySeconds(BigInteger value) {
+    public void setConnectionCreationRetryFrequencySeconds(final BigInteger value) {
         this.connectionCreationRetryFrequencySeconds = value;
     }
 
     /**
      * Gets the value of the connectionReserveTimeoutSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getConnectionReserveTimeoutSeconds() {
         return connectionReserveTimeoutSeconds;
@@ -327,23 +291,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the connectionReserveTimeoutSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setConnectionReserveTimeoutSeconds(BigInteger value) {
+    public void setConnectionReserveTimeoutSeconds(final BigInteger value) {
         this.connectionReserveTimeoutSeconds = value;
     }
 
     /**
      * Gets the value of the testFrequencySeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getTestFrequencySeconds() {
         return testFrequencySeconds;
@@ -351,23 +311,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the testFrequencySeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setTestFrequencySeconds(BigInteger value) {
+    public void setTestFrequencySeconds(final BigInteger value) {
         this.testFrequencySeconds = value;
     }
 
     /**
      * Gets the value of the testConnectionsOnCreate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getTestConnectionsOnCreate() {
         return testConnectionsOnCreate;
@@ -375,23 +331,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the testConnectionsOnCreate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setTestConnectionsOnCreate(Boolean value) {
+    public void setTestConnectionsOnCreate(final Boolean value) {
         this.testConnectionsOnCreate = value;
     }
 
     /**
      * Gets the value of the testConnectionsOnRelease property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getTestConnectionsOnRelease() {
         return testConnectionsOnRelease;
@@ -399,23 +351,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the testConnectionsOnRelease property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setTestConnectionsOnRelease(Boolean value) {
+    public void setTestConnectionsOnRelease(final Boolean value) {
         this.testConnectionsOnRelease = value;
     }
 
     /**
      * Gets the value of the testConnectionsOnReserve property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getTestConnectionsOnReserve() {
         return testConnectionsOnReserve;
@@ -423,23 +371,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the testConnectionsOnReserve property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setTestConnectionsOnReserve(Boolean value) {
+    public void setTestConnectionsOnReserve(final Boolean value) {
         this.testConnectionsOnReserve = value;
     }
 
     /**
      * Gets the value of the profileHarvestFrequencySeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getProfileHarvestFrequencySeconds() {
         return profileHarvestFrequencySeconds;
@@ -447,23 +391,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the profileHarvestFrequencySeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setProfileHarvestFrequencySeconds(BigInteger value) {
+    public void setProfileHarvestFrequencySeconds(final BigInteger value) {
         this.profileHarvestFrequencySeconds = value;
     }
 
     /**
      * Gets the value of the ignoreInUseConnectionsEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getIgnoreInUseConnectionsEnabled() {
         return ignoreInUseConnectionsEnabled;
@@ -471,23 +411,19 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the ignoreInUseConnectionsEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setIgnoreInUseConnectionsEnabled(Boolean value) {
+    public void setIgnoreInUseConnectionsEnabled(final Boolean value) {
         this.ignoreInUseConnectionsEnabled = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -495,13 +431,11 @@ public class ConnectionPoolParams {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

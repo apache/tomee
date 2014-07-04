@@ -69,7 +69,7 @@ public class JMXDeployer {
             }
             return appsNames;
         } catch (final Exception e) {
-            return new String[] { "ERR:" + e.getMessage() };
+            return new String[]{"ERR:" + e.getMessage()};
         }
     }
 

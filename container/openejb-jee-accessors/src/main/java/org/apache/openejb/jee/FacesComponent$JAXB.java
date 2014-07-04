@@ -43,33 +43,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesComponent$JAXB
-        extends JAXBObject<FacesComponent> {
+    extends JAXBObject<FacesComponent> {
 
 
     public FacesComponent$JAXB() {
         super(FacesComponent.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-componentType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesFacet$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesComponentExtension$JAXB.class);
     }
 
-    public static FacesComponent readFacesComponent(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesComponent readFacesComponent(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesComponent(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesComponent(final XoXMLStreamWriter writer, final FacesComponent facesComponent, RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponent, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesComponent facesComponent, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponent, context);
     }
 
-    public final static FacesComponent _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesComponent _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -103,7 +103,7 @@ public class FacesComponent$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesComponent);
                 facesComponent.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -146,7 +146,7 @@ public class FacesComponent$JAXB
                 String componentType;
                 try {
                     componentType = Adapters.collapsedStringAdapterAdapter.unmarshal(componentTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -254,13 +254,13 @@ public class FacesComponent$JAXB
         return facesComponent;
     }
 
-    public final FacesComponent read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesComponent read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
+        throws Exception {
         if (facesComponent == null) {
             writer.writeXsiNil();
             return;
@@ -280,7 +280,7 @@ public class FacesComponent$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesComponent.id;
+        final String idRaw = facesComponent.id;
         if (idRaw != null) {
             String id = null;
             try {

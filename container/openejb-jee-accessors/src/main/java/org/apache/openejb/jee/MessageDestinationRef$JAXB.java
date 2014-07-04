@@ -38,33 +38,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageDestinationRef$JAXB
-        extends JAXBObject<MessageDestinationRef> {
+    extends JAXBObject<MessageDestinationRef> {
 
 
     public MessageDestinationRef$JAXB() {
         super(MessageDestinationRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-destination-refType".intern()), Text$JAXB.class, MessageDestinationUsage$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static MessageDestinationRef readMessageDestinationRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageDestinationRef readMessageDestinationRef(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageDestinationRef(XoXMLStreamWriter writer, MessageDestinationRef messageDestinationRef, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageDestinationRef(final XoXMLStreamWriter writer, final MessageDestinationRef messageDestinationRef, RuntimeContext context)
+        throws Exception {
         _write(writer, messageDestinationRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageDestinationRef messageDestinationRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MessageDestinationRef messageDestinationRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, messageDestinationRef, context);
     }
 
-    public final static MessageDestinationRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageDestinationRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -82,7 +82,7 @@ public class MessageDestinationRef$JAXB
         Set<InjectionTarget> injectionTarget = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("message-destination-refType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MessageDestinationRef.class);
@@ -102,7 +102,7 @@ public class MessageDestinationRef$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 Text descriptionsItem = readText(elementReader, context);
@@ -117,7 +117,7 @@ public class MessageDestinationRef$JAXB
                 String messageDestinationRefName;
                 try {
                     messageDestinationRefName = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationRefNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -213,13 +213,13 @@ public class MessageDestinationRef$JAXB
         return messageDestinationRef;
     }
 
-    public final MessageDestinationRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageDestinationRef read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageDestinationRef messageDestinationRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MessageDestinationRef messageDestinationRef, RuntimeContext context)
+        throws Exception {
         if (messageDestinationRef == null) {
             writer.writeXsiNil();
             return;
@@ -244,7 +244,7 @@ public class MessageDestinationRef$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(messageDestinationRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -290,7 +290,7 @@ public class MessageDestinationRef$JAXB
         String messageDestinationType = null;
         try {
             messageDestinationType = Adapters.collapsedStringAdapterAdapter.marshal(messageDestinationTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(messageDestinationRef, "messageDestinationType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (messageDestinationType != null) {
@@ -300,7 +300,7 @@ public class MessageDestinationRef$JAXB
         }
 
         // ELEMENT: messageDestinationUsage
-        MessageDestinationUsage messageDestinationUsage = messageDestinationRef.messageDestinationUsage;
+        final MessageDestinationUsage messageDestinationUsage = messageDestinationRef.messageDestinationUsage;
         if (messageDestinationUsage != null) {
             writer.writeStartElement(prefix, "message-destination-usage", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringMessageDestinationUsage(messageDestinationRef, null, context, messageDestinationUsage));

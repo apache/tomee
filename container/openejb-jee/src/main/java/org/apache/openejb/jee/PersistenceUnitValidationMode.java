@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * persistence_2_0.xsd
- * 
+ * <p/>
  * <p>Java class for persistence-unit-validation-mode-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="persistence-unit-validation-mode-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "persistence-unit-validation-mode-type", namespace = "http://java.sun.com/xml/ns/persistence")
 @XmlEnum
@@ -50,7 +49,7 @@ public enum PersistenceUnitValidationMode {
         return name();
     }
 
-    public static PersistenceUnitValidationMode fromValue(java.lang.String v) {
+    public static PersistenceUnitValidationMode fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 

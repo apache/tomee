@@ -17,19 +17,19 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for classFilterType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="classFilterType">
  *   &lt;complexContent>
@@ -41,8 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "classFilterType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -50,30 +48,28 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ClassFilterType {
 
-    @XmlElement(name="filter", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "filter", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected List<String> filter;
 
     /**
      * Gets the value of the filter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the filter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFilter().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getFilter() {
         if (filter == null) {

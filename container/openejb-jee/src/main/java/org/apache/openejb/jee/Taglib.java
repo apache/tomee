@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * jsp_2_2.xsd
- *
+ * <p/>
  * <p>Java class for taglibType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="taglibType">
  *   &lt;complexContent>
@@ -46,14 +46,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "taglibType", propOrder = {
-        "taglibUri",
-        "taglibLocation"
+    "taglibUri",
+    "taglibLocation"
 })
 public class Taglib {
 
@@ -70,7 +68,7 @@ public class Taglib {
         return taglibUri;
     }
 
-    public void setTaglibUri(String value) {
+    public void setTaglibUri(final String value) {
         this.taglibUri = value;
     }
 
@@ -78,7 +76,7 @@ public class Taglib {
         return taglibLocation;
     }
 
-    public void setTaglibLocation(String value) {
+    public void setTaglibLocation(final String value) {
         this.taglibLocation = value;
     }
 
@@ -86,7 +84,7 @@ public class Taglib {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

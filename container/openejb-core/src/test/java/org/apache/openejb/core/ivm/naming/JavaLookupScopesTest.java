@@ -46,7 +46,7 @@ public class JavaLookupScopesTest extends TestCase {
 
     public void test() throws Exception {
 
-        AppContext app;
+        final AppContext app;
         {
             ConfigurationFactory config = new ConfigurationFactory();
             Assembler assembler = new Assembler();
@@ -64,12 +64,12 @@ public class JavaLookupScopesTest extends TestCase {
             // are re-declared in a compatible way
             ejbJar.addEnterpriseBean(new SingletonBean("Other", Bean.class));
 
-            EjbModule ejbModule = new EjbModule(ejbJar);
+            final EjbModule ejbModule = new EjbModule(ejbJar);
             AppModule module = new AppModule(ejbModule);
             app = assembler.createApplication(config.configureApplication(module));
         }
 
-        BeanContext bean = app.getBeanContexts().get(0);
+        final BeanContext bean = app.getBeanContexts().get(0);
 
         ModuleContext module = bean.getModuleContext();
 
@@ -169,7 +169,7 @@ public class JavaLookupScopesTest extends TestCase {
         private DataSource yellow;
 
 
-        public Object lookup(String s) throws javax.naming.NamingException {
+        public Object lookup(final String s) throws javax.naming.NamingException {
             InitialContext context = new InitialContext();
             return context.lookup(s);
         }

@@ -58,7 +58,7 @@ public class JndiEncArtifact implements Serializable {
             }
             return obj;
         } catch (final NamingException e) {
-            throw (InvalidObjectException)new InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);
+            throw (InvalidObjectException) new InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);
         }
     }
 

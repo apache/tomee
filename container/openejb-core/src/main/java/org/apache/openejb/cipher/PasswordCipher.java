@@ -33,19 +33,17 @@ public interface PasswordCipher {
 
     /**
      * Encodes a given plain text password and returns the encoded password.
-     * 
-     * @param plainPassword
-     *            The password to encode. May not be <code>null</code>, nor empty.
+     *
+     * @param plainPassword The password to encode. May not be <code>null</code>, nor empty.
      * @return The encoded password.
      */
     char[] encrypt(String plainPassword);
 
     /**
      * Decodes an encoded password and returns a plain text password.
-     * 
-     * @param encryptedPassword
-     *            The ciphered password to decode. May not be <code>null</code>,
-     *            nor empty.
+     *
+     * @param encryptedPassword The ciphered password to decode. May not be <code>null</code>,
+     *                          nor empty.
      * @return The plain text password.
      */
     String decrypt(char[] encryptedPassword);

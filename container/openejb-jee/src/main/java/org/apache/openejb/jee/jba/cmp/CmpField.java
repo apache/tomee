@@ -17,20 +17,20 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -59,8 +59,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -105,11 +103,9 @@ public class CmpField {
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldName }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldName }
      */
     public FieldName getFieldName() {
         return fieldName;
@@ -117,23 +113,19 @@ public class CmpField {
 
     /**
      * Sets the value of the fieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldName }
      */
-    public void setFieldName(FieldName value) {
+    public void setFieldName(final FieldName value) {
         this.fieldName = value;
     }
 
     /**
      * Gets the value of the readOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadOnly }
      */
     public ReadOnly getReadOnly() {
         return readOnly;
@@ -141,23 +133,19 @@ public class CmpField {
 
     /**
      * Sets the value of the readOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadOnly }
      */
-    public void setReadOnly(ReadOnly value) {
+    public void setReadOnly(final ReadOnly value) {
         this.readOnly = value;
     }
 
     /**
      * Gets the value of the readTimeOut property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadTimeOut }
      */
     public ReadTimeOut getReadTimeOut() {
         return readTimeOut;
@@ -165,23 +153,19 @@ public class CmpField {
 
     /**
      * Sets the value of the readTimeOut property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadTimeOut }
      */
-    public void setReadTimeOut(ReadTimeOut value) {
+    public void setReadTimeOut(final ReadTimeOut value) {
         this.readTimeOut = value;
     }
 
     /**
      * Gets the value of the columnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @return possible object is
+     * {@link ColumnName }
      */
     public ColumnName getColumnName() {
         return columnName;
@@ -189,23 +173,19 @@ public class CmpField {
 
     /**
      * Sets the value of the columnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ColumnName }
      */
-    public void setColumnName(ColumnName value) {
+    public void setColumnName(final ColumnName value) {
         this.columnName = value;
     }
 
     /**
      * Gets the value of the notNull property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NotNull }
-     *     
+     *
+     * @return possible object is
+     * {@link NotNull }
      */
     public NotNull getNotNull() {
         return notNull;
@@ -213,23 +193,19 @@ public class CmpField {
 
     /**
      * Sets the value of the notNull property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NotNull }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link NotNull }
      */
-    public void setNotNull(NotNull value) {
+    public void setNotNull(final NotNull value) {
         this.notNull = value;
     }
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -237,23 +213,19 @@ public class CmpField {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -261,37 +233,33 @@ public class CmpField {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 
     /**
      * Gets the value of the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Property }
-     * 
-     * 
      */
     public List<Property> getProperty() {
         if (property == null) {
@@ -302,11 +270,9 @@ public class CmpField {
 
     /**
      * Gets the value of the autoIncrement property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AutoIncrement }
-     *     
+     *
+     * @return possible object is
+     * {@link AutoIncrement }
      */
     public AutoIncrement getAutoIncrement() {
         return autoIncrement;
@@ -314,23 +280,19 @@ public class CmpField {
 
     /**
      * Sets the value of the autoIncrement property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AutoIncrement }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AutoIncrement }
      */
-    public void setAutoIncrement(AutoIncrement value) {
+    public void setAutoIncrement(final AutoIncrement value) {
         this.autoIncrement = value;
     }
 
     /**
      * Gets the value of the dbindex property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Dbindex }
-     *     
+     *
+     * @return possible object is
+     * {@link Dbindex }
      */
     public Dbindex getDbindex() {
         return dbindex;
@@ -338,23 +300,19 @@ public class CmpField {
 
     /**
      * Sets the value of the dbindex property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Dbindex }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Dbindex }
      */
-    public void setDbindex(Dbindex value) {
+    public void setDbindex(final Dbindex value) {
         this.dbindex = value;
     }
 
     /**
      * Gets the value of the checkDirtyAfterGet property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CheckDirtyAfterGet }
-     *     
+     *
+     * @return possible object is
+     * {@link CheckDirtyAfterGet }
      */
     public CheckDirtyAfterGet getCheckDirtyAfterGet() {
         return checkDirtyAfterGet;
@@ -362,23 +320,19 @@ public class CmpField {
 
     /**
      * Sets the value of the checkDirtyAfterGet property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CheckDirtyAfterGet }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CheckDirtyAfterGet }
      */
-    public void setCheckDirtyAfterGet(CheckDirtyAfterGet value) {
+    public void setCheckDirtyAfterGet(final CheckDirtyAfterGet value) {
         this.checkDirtyAfterGet = value;
     }
 
     /**
      * Gets the value of the stateFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StateFactory }
-     *     
+     *
+     * @return possible object is
+     * {@link StateFactory }
      */
     public StateFactory getStateFactory() {
         return stateFactory;
@@ -386,13 +340,11 @@ public class CmpField {
 
     /**
      * Sets the value of the stateFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StateFactory }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StateFactory }
      */
-    public void setStateFactory(StateFactory value) {
+    public void setStateFactory(final StateFactory value) {
         this.stateFactory = value;
     }
 

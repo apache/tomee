@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ApplicationException$JAXB
-        extends JAXBObject<ApplicationException> {
+    extends JAXBObject<ApplicationException> {
 
 
     public ApplicationException$JAXB() {
         super(ApplicationException.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-exceptionType".intern()));
     }
 
-    public static ApplicationException readApplicationException(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ApplicationException readApplicationException(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeApplicationException(XoXMLStreamWriter writer, ApplicationException applicationException, RuntimeContext context)
-            throws Exception {
+    public static void writeApplicationException(final XoXMLStreamWriter writer, final ApplicationException applicationException, RuntimeContext context)
+        throws Exception {
         _write(writer, applicationException, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ApplicationException applicationException, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ApplicationException applicationException, final RuntimeContext context)
+        throws Exception {
         _write(writer, applicationException, context);
     }
 
-    public final static ApplicationException _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ApplicationException _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class ApplicationException$JAXB
             context = new RuntimeContext();
         }
 
-        ApplicationException applicationException = new ApplicationException();
+        final ApplicationException applicationException = new ApplicationException();
         context.beforeUnmarshal(applicationException, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("application-exceptionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ApplicationException.class);
@@ -122,13 +122,13 @@ public class ApplicationException$JAXB
         return applicationException;
     }
 
-    public final ApplicationException read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ApplicationException read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ApplicationException applicationException, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ApplicationException applicationException, RuntimeContext context)
+        throws Exception {
         if (applicationException == null) {
             writer.writeXsiNil();
             return;
@@ -153,7 +153,7 @@ public class ApplicationException$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(applicationException, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

@@ -50,8 +50,8 @@ public class JndiNameTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -75,7 +75,7 @@ public class JndiNameTest extends TestCase {
 
         assembler.createApplication(config.configureApplication(ejbModule));
 
-        InitialContext initialContext = new InitialContext();
+        final InitialContext initialContext = new InitialContext();
         assertName(initialContext, Orange.class, "thename");
         assertName(initialContext, Red.class, "anothername");
         assertName(initialContext, LHYellow.class, "loldstyle");
@@ -85,8 +85,8 @@ public class JndiNameTest extends TestCase {
     public void testOpenejbJar2() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -102,7 +102,7 @@ public class JndiNameTest extends TestCase {
         ejbModule.getEjbJar().addEnterpriseBean(new StatelessBean(FooBean.class));
 
         OpenejbJarType v2 = new OpenejbJarType();
-        SessionBeanType ejbDeployment = new SessionBeanType();
+        final SessionBeanType ejbDeployment = new SessionBeanType();
         ejbDeployment.setEjbName("FooBean");
         ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("thename", "Local"));
         ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("anothername", "Remote"));
@@ -120,7 +120,7 @@ public class JndiNameTest extends TestCase {
         assertName(initialContext, RHGreen.class, "roldstyle");
     }
 
-    private void assertName(InitialContext initialContext, Class<?> clazz, String name) throws NamingException {
+    private void assertName(final InitialContext initialContext, Class<?> clazz, String name) throws NamingException {
         Object o = initialContext.lookup(name);
         assertNotNull(o);
         assertTrue(clazz.isAssignableFrom(o.getClass()));

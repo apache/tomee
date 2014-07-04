@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ActivationConfig$JAXB
-        extends JAXBObject<ActivationConfig> {
+    extends JAXBObject<ActivationConfig> {
 
 
     public ActivationConfig$JAXB() {
         super(ActivationConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "activation-configType".intern()), Text$JAXB.class, ActivationConfigProperty$JAXB.class);
     }
 
-    public static ActivationConfig readActivationConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ActivationConfig readActivationConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeActivationConfig(XoXMLStreamWriter writer, ActivationConfig activationConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeActivationConfig(final XoXMLStreamWriter writer, final ActivationConfig activationConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, activationConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ActivationConfig activationConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ActivationConfig activationConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, activationConfig, context);
     }
 
-    public final static ActivationConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ActivationConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,7 +72,7 @@ public class ActivationConfig$JAXB
             context = new RuntimeContext();
         }
 
-        ActivationConfig activationConfig = new ActivationConfig();
+        final ActivationConfig activationConfig = new ActivationConfig();
         context.beforeUnmarshal(activationConfig, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -99,10 +99,10 @@ public class ActivationConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -139,13 +139,13 @@ public class ActivationConfig$JAXB
         return activationConfig;
     }
 
-    public final ActivationConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ActivationConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ActivationConfig activationConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ActivationConfig activationConfig, RuntimeContext context)
+        throws Exception {
         if (activationConfig == null) {
             writer.writeXsiNil();
             return;

@@ -42,8 +42,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 @RunWith(ApplicationComposer.class)
@@ -68,7 +68,7 @@ public class DataSourceDefinitionGlobalJPATest {
 
     @Module
     public Persistence persistence() {
-        org.apache.openejb.jee.jpa.unit.PersistenceUnit unit = new org.apache.openejb.jee.jpa.unit.PersistenceUnit("jpa-global-dsdef-unit");
+        final org.apache.openejb.jee.jpa.unit.PersistenceUnit unit = new org.apache.openejb.jee.jpa.unit.PersistenceUnit("jpa-global-dsdef-unit");
         unit.addClass(IdEntity.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
@@ -81,11 +81,11 @@ public class DataSourceDefinitionGlobalJPATest {
     }
 
     @DataSourceDefinition(
-            name = "java:app/foo",
-            className = "org.hsqldb.jdbc.JDBCDataSource",
-            user = "sa",
-            password = "",
-            url = "jdbc:hsqldb:mem:dsdjpa"
+        name = "java:app/foo",
+        className = "org.hsqldb.jdbc.JDBCDataSource",
+        user = "sa",
+        password = "",
+        url = "jdbc:hsqldb:mem:dsdjpa"
     )
     @Stateless
     public static class EmfHolder {
@@ -107,7 +107,7 @@ public class DataSourceDefinitionGlobalJPATest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
     }

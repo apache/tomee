@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.readFacesOrderingO
 import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.writeFacesOrderingOthers;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesOrderingOrdering$JAXB
-        extends JAXBObject<FacesOrderingOrdering> {
+    extends JAXBObject<FacesOrderingOrdering> {
 
 
     public FacesOrderingOrdering$JAXB() {
         super(FacesOrderingOrdering.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-ordering-orderingType".intern()), FacesOrderingOthers$JAXB.class);
     }
 
-    public static FacesOrderingOrdering readFacesOrderingOrdering(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesOrderingOrdering readFacesOrderingOrdering(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesOrderingOrdering(XoXMLStreamWriter writer, FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesOrderingOrdering(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+        throws Exception {
         _write(writer, facesOrderingOrdering, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+        throws Exception {
         _write(writer, facesOrderingOrdering, context);
     }
 
-    public final static FacesOrderingOrdering _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesOrderingOrdering _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class FacesOrderingOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        FacesOrderingOrdering facesOrderingOrdering = new FacesOrderingOrdering();
+        final FacesOrderingOrdering facesOrderingOrdering = new FacesOrderingOrdering();
         context.beforeUnmarshal(facesOrderingOrdering, LifecycleCallback.NONE);
 
         List<String> name = null;
@@ -133,13 +133,13 @@ public class FacesOrderingOrdering$JAXB
         return facesOrderingOrdering;
     }
 
-    public final FacesOrderingOrdering read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesOrderingOrdering read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesOrderingOrdering facesOrderingOrdering, RuntimeContext context)
+        throws Exception {
         if (facesOrderingOrdering == null) {
             writer.writeXsiNil();
             return;
@@ -161,7 +161,7 @@ public class FacesOrderingOrdering$JAXB
         // ELEMENT: name
         List<String> nameRaw = facesOrderingOrdering.name;
         if (nameRaw != null) {
-            for (String nameItem : nameRaw) {
+            for (final String nameItem : nameRaw) {
                 String name = null;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.marshal(nameItem);

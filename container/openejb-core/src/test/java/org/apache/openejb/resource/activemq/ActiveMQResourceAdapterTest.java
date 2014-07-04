@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ActiveMQResourceAdapterTest extends TestCase {
     public void test() throws Exception {
-        ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
+        final ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
         resourceAdapter.setServerUrl("vm://localhost?waitForStart=30000&async=false");
 
         String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");

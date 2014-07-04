@@ -118,10 +118,9 @@ public class QueryProxy implements InvocationHandler {
     }
 
     /**
-     *
      * @param method the method
-     * @param args queryName (String) -> first parameter, parameters (Map<String, ?>) or (Object[]), first and max (int) -> max follows first
-     * @param type the query type
+     * @param args   queryName (String) -> first parameter, parameters (Map<String, ?>) or (Object[]), first and max (int) -> max follows first
+     * @param type   the query type
      * @return the expected result
      */
     private Object query(final Method method, final Object[] args, final QueryType type) {
@@ -167,7 +166,7 @@ public class QueryProxy implements InvocationHandler {
                     final int next = i + 1;
                     if (args.length == next || !isInt(args[next].getClass())) {
                         throw new IllegalArgumentException("if you provide a firstResult (first int parameter)" +
-                                "you should provide a maxResult too");
+                            "you should provide a maxResult too");
                     }
                     final int first = (Integer) args[i];
                     final int max = (Integer) args[next];
@@ -179,13 +178,13 @@ public class QueryProxy implements InvocationHandler {
                     i++;
                 } else {
                     throw new IllegalArgumentException("not managed parameter " + args[i]
-                            + " of type " + args[i].getClass());
+                        + " of type " + args[i].getClass());
                 }
             }
 
             if (matched != args.length) {
                 throw new IllegalArgumentException("all argument was not used, please check you signature looks like:" +
-                        " <ReturnType> query(String name, Map<String, ?> parameters, int firstResult, int maxResult)");
+                    " <ReturnType> query(String name, Map<String, ?> parameters, int firstResult, int maxResult)");
             }
         } else {
             throw new IllegalArgumentException("query() needs at least the query name of type String");
@@ -270,7 +269,7 @@ public class QueryProxy implements InvocationHandler {
             return em.merge(args[0]);
         } else {
             throw new IllegalArgumentException(MERGE_NAME + " should have only one parameter and return the same" +
-                    " type than the parameter type");
+                " type than the parameter type");
         }
     }
 
@@ -333,7 +332,7 @@ public class QueryProxy implements InvocationHandler {
         // pagination
         final TypedQuery<?> emQuery = entityManager.createQuery(query);
         if (args != null && args.length == conditions.size() + 2
-                && isInt(args[args.length - 2].getClass()) && isInt(args[args.length - 1].getClass())) {
+            && isInt(args[args.length - 2].getClass()) && isInt(args[args.length - 1].getClass())) {
             final int first = (Integer) args[args.length - 2];
             final int max = (Integer) args[args.length - 1];
 

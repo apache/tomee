@@ -25,16 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for authentication-mechanismType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="authentication-mechanismType">
  *   &lt;complexContent>
@@ -49,8 +47,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +73,7 @@ public class AuthenticationMechanism {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -89,7 +85,7 @@ public class AuthenticationMechanism {
         return authenticationMechanismType;
     }
 
-    public void setAuthenticationMechanismType(String value) {
+    public void setAuthenticationMechanismType(final String value) {
         this.authenticationMechanismType = value;
     }
 
@@ -97,7 +93,7 @@ public class AuthenticationMechanism {
         return credentialInterface;
     }
 
-    public void setCredentialInterface(String value) {
+    public void setCredentialInterface(final String value) {
         this.credentialInterface = value;
     }
 
@@ -105,7 +101,7 @@ public class AuthenticationMechanism {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

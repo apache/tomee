@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class SessionType$JAXB
-        extends JAXBEnum<SessionType> {
+    extends JAXBEnum<SessionType> {
 
 
     public SessionType$JAXB() {
         super(SessionType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "sessionType".intern()));
     }
 
-    public SessionType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public SessionType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseSessionType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, SessionType sessionType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final SessionType sessionType)
+        throws Exception {
         return toStringSessionType(bean, parameterName, context, sessionType);
     }
 
-    public static SessionType parseSessionType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static SessionType parseSessionType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Stateful".equals(value)) {
             return SessionType.STATEFUL;
         } else if ("Stateless".equals(value)) {
@@ -56,8 +56,8 @@ public class SessionType$JAXB
         }
     }
 
-    public static String toStringSessionType(Object bean, String parameterName, RuntimeContext context, SessionType sessionType)
-            throws Exception {
+    public static String toStringSessionType(final Object bean, final String parameterName, final RuntimeContext context, final SessionType sessionType)
+        throws Exception {
         if (SessionType.STATEFUL == sessionType) {
             return "Stateful";
         } else if (SessionType.STATELESS == sessionType) {

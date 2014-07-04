@@ -37,11 +37,11 @@ public class IvmContextTest extends TestCase {
 
     public void testLookups() throws Exception {
         // lookup
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+        for (final Map.Entry<String, Integer> entry : map.entrySet()) {
             String name = entry.getKey();
             final Integer expected = entry.getValue();
             visit(context, name, new Visitor() {
-                public void visit(Context context, String name, String parentName) throws NamingException {
+                public void visit(final Context context, String name, String parentName) throws NamingException {
                     assertLookup("relative lookup " + parentName + " : " + name, context, name, expected);
                 }
             });
@@ -50,8 +50,8 @@ public class IvmContextTest extends TestCase {
 
     public void testList() throws Exception {
         // list
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            String name = entry.getKey();
+        for (final Map.Entry<String, Integer> entry : map.entrySet()) {
+            final String name = entry.getKey();
             visit(context, name, new Visitor() {
                 public void visit(Context context, String name, String parentName) throws NamingException {
 
@@ -83,12 +83,12 @@ public class IvmContextTest extends TestCase {
 
         context = new IvmContext("/");
 
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+        for (final Map.Entry<String, Integer> entry : map.entrySet()) {
             context.bind(entry.getKey(), entry.getValue());
         }
     }
 
-    private Map<String, Object> list(Context context) throws NamingException {
+    private Map<String, Object> list(final Context context) throws NamingException {
         final Map<String, Object> map = Debug.contextToMap(context);
 
         // Prune the context entries out
@@ -101,7 +101,7 @@ public class IvmContextTest extends TestCase {
         return map;
     }
 
-    private void assertLookup(String message, Context context, String name, Object expected) {
+    private void assertLookup(final String message, final Context context, String name, Object expected) {
         try {
             Object actual = context.lookup(name);
             assertNotNull(message, actual);
@@ -113,7 +113,7 @@ public class IvmContextTest extends TestCase {
 
     public void test1() throws Exception {
 
-        IvmContext context = new IvmContext("");
+        final IvmContext context = new IvmContext("");
         context.bind("one", 1);
         context.bind("two", 2);
         context.bind("three", 3);
@@ -142,7 +142,7 @@ public class IvmContextTest extends TestCase {
 
     public void test2() throws Exception {
 
-        IvmContext context = new IvmContext();
+        final IvmContext context = new IvmContext();
         context.bind("one", 1);
         context.bind("two", 2);
         context.bind("three", 3);
@@ -170,7 +170,7 @@ public class IvmContextTest extends TestCase {
 
     public void test3() throws Exception {
 
-        IvmContext context = new IvmContext();
+        final IvmContext context = new IvmContext();
         context.bind("veggies/tomato/roma", 33);
         context.bind("fruit/apple/grannysmith", 22);
         context.bind("fruit/orange/mandarin", 44);
@@ -188,17 +188,17 @@ public class IvmContextTest extends TestCase {
         try {
             context.lookup("fruit/apple/grannysmith");
             fail("name should be unbound");
-        } catch (javax.naming.NameNotFoundException pass) {
+        } catch (final javax.naming.NameNotFoundException pass) {
         }
         try {
             context.lookup("veggies/tomato/roma");
             fail("name should be unbound");
-        } catch (javax.naming.NameNotFoundException pass) {
+        } catch (final javax.naming.NameNotFoundException pass) {
         }
         try {
             context.lookup("veggies/tomato");
             fail("name should be unbound");
-        } catch (javax.naming.NameNotFoundException pass) {
+        } catch (final javax.naming.NameNotFoundException pass) {
         }
 
         try {
@@ -213,12 +213,12 @@ public class IvmContextTest extends TestCase {
 
     public void testAlreadyBound() throws Exception {
 
-        IvmContext context = new IvmContext();
+        final IvmContext context = new IvmContext();
         context.bind("number", 2);
         try {
             context.bind("number", 3);
             fail("A NameAlreadyBoundException should have been thrown");
-        } catch (NameAlreadyBoundException e) {
+        } catch (final NameAlreadyBoundException e) {
             // pass
         }
 
@@ -226,12 +226,12 @@ public class IvmContextTest extends TestCase {
 
     public void test() throws Exception {
 
-        IvmContext context = new IvmContext();
+        final IvmContext context = new IvmContext();
         context.bind("comp/env/rate/work/doc/lot/pop", new Integer(1));
         context.bind("comp/env/rate/work/doc/lot/price", new Integer(2));
         context.bind("comp/env/rate/work/doc/lot/break/story", new Integer(3));
 
-        Object o = context.lookup("comp/env/rate/work/doc/lot/pop");
+        final Object o = context.lookup("comp/env/rate/work/doc/lot/pop");
         assertNotNull(o);
         assertTrue(o instanceof Integer);
         assertEquals(o, new Integer(1));
@@ -249,7 +249,7 @@ public class IvmContextTest extends TestCase {
         assertFalse("name should not appear in bindings list", map.containsKey("comp/env/rate/work/doc/lot/pop"));
     }
 
-    private void assertContextEntry(Context context, String s, Object expected) throws javax.naming.NamingException {
+    private void assertContextEntry(final Context context, final String s, final Object expected) throws javax.naming.NamingException {
         assertLookup(context, s, expected);
     }
 
@@ -257,11 +257,11 @@ public class IvmContextTest extends TestCase {
         public void visit(Context context, String name, String parentName) throws NamingException;
     }
 
-    private void visit(Context context, String name, Visitor visitor) throws NamingException {
+    private void visit(final Context context, final String name, Visitor visitor) throws NamingException {
         visit(context, name, "", visitor);
     }
 
-    private void visit(Context context, String name, String parentName, Visitor visitor) throws NamingException {
+    private void visit(final Context context, final String name, String parentName, final Visitor visitor) throws NamingException {
         visitor.visit(context, name, parentName);
 
         String[] parts = name.split("/");
@@ -275,7 +275,7 @@ public class IvmContextTest extends TestCase {
         }
     }
 
-    private void _visit(Context context, String name, Object expected) throws NamingException {
+    private void _visit(final Context context, String name, Object expected) throws NamingException {
         // bind
 //        try {
 //            context.bind(s, expected);
@@ -303,14 +303,14 @@ public class IvmContextTest extends TestCase {
 //        assertLookup(context, s, expected);
     }
 
-    private void assertLookup(Context context, String s, Object expected) throws NamingException {
+    private void assertLookup(final Context context, final String s, final Object expected) throws NamingException {
         Object actual = context.lookup(s);
         assertNotNull(actual);
         assertEquals(expected, actual);
     }
 
-    private String subpath(String[] strings) {
-        String[] strings2 = new String[strings.length - 1];
+    private String subpath(final String[] strings) {
+        final String[] strings2 = new String[strings.length - 1];
         System.arraycopy(strings, 1, strings2, 0, strings2.length);
 
         String path = Join.join("/", strings2);

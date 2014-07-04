@@ -58,33 +58,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ApplicationClient$JAXB
-        extends JAXBObject<ApplicationClient> {
+    extends JAXBObject<ApplicationClient> {
 
 
     public ApplicationClient$JAXB() {
         super(ApplicationClient.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-client".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-clientType".intern()), Text$JAXB.class, Icon$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, DataSource$JAXB.class);
     }
 
-    public static ApplicationClient readApplicationClient(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ApplicationClient readApplicationClient(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeApplicationClient(XoXMLStreamWriter writer, ApplicationClient applicationClient, RuntimeContext context)
-            throws Exception {
+    public static void writeApplicationClient(final XoXMLStreamWriter writer, ApplicationClient applicationClient, RuntimeContext context)
+        throws Exception {
         _write(writer, applicationClient, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ApplicationClient applicationClient, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ApplicationClient applicationClient, final RuntimeContext context)
+        throws Exception {
         _write(writer, applicationClient, context);
     }
 
-    public final static ApplicationClient _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ApplicationClient _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -95,7 +95,7 @@ public class ApplicationClient$JAXB
             context = new RuntimeContext();
         }
 
-        ApplicationClient applicationClient = new ApplicationClient();
+        final ApplicationClient applicationClient = new ApplicationClient();
         context.beforeUnmarshal(applicationClient, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -233,7 +233,7 @@ public class ApplicationClient$JAXB
                 serviceRef.add(serviceRefItem);
             } else if (("resource-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceRef
-                ResourceRef resourceRefItem = readResourceRef(elementReader, context);
+                final ResourceRef resourceRefItem = readResourceRef(elementReader, context);
                 if (resourceRef == null) {
                     resourceRef = applicationClient.resourceRef;
                     if (resourceRef != null) {
@@ -418,13 +418,13 @@ public class ApplicationClient$JAXB
         return applicationClient;
     }
 
-    public final ApplicationClient read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ApplicationClient read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ApplicationClient applicationClient, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ApplicationClient applicationClient, RuntimeContext context)
+        throws Exception {
         if (applicationClient == null) {
             writer.writeXsiNil();
             return;
@@ -528,7 +528,7 @@ public class ApplicationClient$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = applicationClient.icon;
+        final LocalCollection<Icon> icon = applicationClient.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -556,7 +556,7 @@ public class ApplicationClient$JAXB
         }
 
         // ELEMENT: ejbRef
-        KeyedCollection<String, EjbRef> ejbRef = applicationClient.ejbRef;
+        final KeyedCollection<String, EjbRef> ejbRef = applicationClient.ejbRef;
         if (ejbRef != null) {
             for (EjbRef ejbRefItem : ejbRef) {
                 if (ejbRefItem != null) {
@@ -584,7 +584,7 @@ public class ApplicationClient$JAXB
         }
 
         // ELEMENT: serviceRef
-        KeyedCollection<String, ServiceRef> serviceRef = applicationClient.serviceRef;
+        final KeyedCollection<String, ServiceRef> serviceRef = applicationClient.serviceRef;
         if (serviceRef != null) {
             for (ServiceRef serviceRefItem : serviceRef) {
                 if (serviceRefItem != null) {
@@ -670,7 +670,7 @@ public class ApplicationClient$JAXB
         // ELEMENT: postConstruct
         List<org.apache.openejb.jee.LifecycleCallback> postConstruct = applicationClient.postConstruct;
         if (postConstruct != null) {
-            for (org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
+            for (final org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
                 if (postConstructItem != null) {
                     writer.writeStartElement(prefix, "post-construct", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, postConstructItem, context);
@@ -700,7 +700,7 @@ public class ApplicationClient$JAXB
         String callbackHandler = null;
         try {
             callbackHandler = Adapters.collapsedStringAdapterAdapter.marshal(callbackHandlerRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(applicationClient, "callbackHandler", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (callbackHandler != null) {

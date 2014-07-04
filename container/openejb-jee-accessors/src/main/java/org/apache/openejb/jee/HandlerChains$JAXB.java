@@ -33,32 +33,32 @@ import static org.apache.openejb.jee.HandlerChain$JAXB.readHandlerChain;
 import static org.apache.openejb.jee.HandlerChain$JAXB.writeHandlerChain;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class HandlerChains$JAXB
-        extends JAXBObject<HandlerChains> {
+    extends JAXBObject<HandlerChains> {
 
     public HandlerChains$JAXB() {
         super(HandlerChains.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chains".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chainsType".intern()), HandlerChain$JAXB.class);
     }
 
-    public static HandlerChains readHandlerChains(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static HandlerChains readHandlerChains(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeHandlerChains(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public static void writeHandlerChains(final XoXMLStreamWriter writer, final HandlerChains handlerChains, final RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChains, context);
     }
 
-    public void write(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final HandlerChains handlerChains, final RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChains, context);
     }
 
-    public final static HandlerChains _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static HandlerChains _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class HandlerChains$JAXB
             context = new RuntimeContext();
         }
 
-        HandlerChains handlerChains = new HandlerChains();
+        final HandlerChains handlerChains = new HandlerChains();
         context.beforeUnmarshal(handlerChains, LifecycleCallback.NONE);
 
         List<HandlerChain> handlerChain = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("handler-chainsType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, HandlerChains.class);
@@ -121,13 +121,13 @@ public class HandlerChains$JAXB
         return handlerChains;
     }
 
-    public final HandlerChains read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final HandlerChains read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
+        throws Exception {
         if (handlerChains == null) {
             writer.writeXsiNil();
             return;
@@ -146,7 +146,7 @@ public class HandlerChains$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = handlerChains.id;
+        final String idRaw = handlerChains.id;
         if (idRaw != null) {
             String id = null;
             try {

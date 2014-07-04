@@ -26,8 +26,8 @@ public class JmsProxyTest extends JmsTest {
 
     public void testProxy() throws Exception {
         // create reciever object
-        JmsProxyTest.TestObject testObject = new JmsProxyTest.TestObject("foo");
-        MdbInvoker mdbInvoker = new MdbInvoker(connectionFactory, testObject);
+        final JmsProxyTest.TestObject testObject = new JmsProxyTest.TestObject("foo");
+        final MdbInvoker mdbInvoker = new MdbInvoker(connectionFactory, testObject);
 
         // Create a Session
         Connection connection = connectionFactory.createConnection();
@@ -56,11 +56,11 @@ public class JmsProxyTest extends JmsTest {
         private final String prefix;
 
 
-        public TestObject(String prefix) {
+        public TestObject(final String prefix) {
             this.prefix = prefix;
         }
 
-        public String echo(String msg) {
+        public String echo(final String msg) {
             return prefix + msg;
         }
     }

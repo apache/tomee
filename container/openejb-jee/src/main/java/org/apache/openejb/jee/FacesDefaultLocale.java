@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-default-localeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-default-localeType">
  *   &lt;simpleContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-default-localeType", propOrder = {
@@ -61,17 +59,11 @@ public class FacesDefaultLocale {
     protected java.lang.String id;
 
     /**
-     * 
-     * 
-     *                 The localeType defines valid locale defined by ISO-639-1
-     *                 and ISO-3166.
-     * 
-     *             
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesLocale }
-     *     
+     * The localeType defines valid locale defined by ISO-639-1
+     * and ISO-3166.
+     *
+     * @return possible object is
+     * {@link FacesLocale }
      */
     public FacesLocale getValue() {
         return value;
@@ -79,23 +71,19 @@ public class FacesDefaultLocale {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesLocale }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesLocale }
      */
-    public void setValue(FacesLocale value) {
+    public void setValue(final FacesLocale value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -103,13 +91,11 @@ public class FacesDefaultLocale {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

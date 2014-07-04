@@ -23,21 +23,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         
- * 
- *          <p class="changed_added_2_2">A parameter to pass when calling the method
- *          identified in the "method" element that is a sibling of this element.<p>
- * 
- * 
- * 
- *       
- * 
+ * <p class="changed_added_2_2">A parameter to pass when calling the method
+ * identified in the "method" element that is a sibling of this element.<p>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-flow-call-parameterType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-parameterType">
  *   &lt;complexContent>
@@ -50,8 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-flow-call-parameterType", propOrder = {
@@ -67,11 +61,9 @@ public class FacesConfigFlowDefinitionFlowCallParameter {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -79,23 +71,19 @@ public class FacesConfigFlowDefinitionFlowCallParameter {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesConfigFlowDefinitionParameterValue }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesConfigFlowDefinitionParameterValue }
      */
     public FacesConfigFlowDefinitionParameterValue getValue() {
         return value;
@@ -103,13 +91,11 @@ public class FacesConfigFlowDefinitionFlowCallParameter {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesConfigFlowDefinitionParameterValue }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesConfigFlowDefinitionParameterValue }
      */
-    public void setValue(FacesConfigFlowDefinitionParameterValue value) {
+    public void setValue(final FacesConfigFlowDefinitionParameterValue value) {
         this.value = value;
     }
 

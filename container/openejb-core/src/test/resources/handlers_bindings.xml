@@ -19,25 +19,25 @@
 <!-- $Rev$ $Date$ -->
 
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
-    <jws:handler-chain>
-        <jws:protocol-bindings>##XML_HTTP</jws:protocol-bindings>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
-    <jws:handler-chain>
-        <jws:protocol-bindings>##SOAP11_HTTP</jws:protocol-bindings>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
-    <jws:handler-chain>
-        <jws:protocol-bindings>##SOAP11_HTTP ##SOAP11_HTTP_MTOM</jws:protocol-bindings>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:protocol-bindings>##XML_HTTP</jws:protocol-bindings>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:protocol-bindings>##SOAP11_HTTP</jws:protocol-bindings>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:protocol-bindings>##SOAP11_HTTP ##SOAP11_HTTP_MTOM</jws:protocol-bindings>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
 </jws:handler-chains>

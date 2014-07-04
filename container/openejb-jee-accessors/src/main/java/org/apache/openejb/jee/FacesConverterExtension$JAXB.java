@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesConverterExtension$JAXB
-        extends JAXBObject<FacesConverterExtension> {
+    extends JAXBObject<FacesConverterExtension> {
 
 
     public FacesConverterExtension$JAXB() {
         super(FacesConverterExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-converter-extensionType".intern()));
     }
 
-    public static FacesConverterExtension readFacesConverterExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesConverterExtension readFacesConverterExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesConverterExtension(XoXMLStreamWriter writer, FacesConverterExtension facesConverterExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesConverterExtension(final XoXMLStreamWriter writer, FacesConverterExtension facesConverterExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesConverterExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesConverterExtension facesConverterExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesConverterExtension facesConverterExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesConverterExtension, context);
     }
 
-    public final static FacesConverterExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesConverterExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -93,7 +93,7 @@ public class FacesConverterExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesConverterExtension.any;
@@ -114,13 +114,13 @@ public class FacesConverterExtension$JAXB
         return facesConverterExtension;
     }
 
-    public final FacesConverterExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesConverterExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesConverterExtension facesConverterExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesConverterExtension facesConverterExtension, RuntimeContext context)
+        throws Exception {
         if (facesConverterExtension == null) {
             writer.writeXsiNil();
             return;
@@ -153,7 +153,7 @@ public class FacesConverterExtension$JAXB
         // ELEMENT_REF: any
         List<Object> any = facesConverterExtension.any;
         if (any != null) {
-            for (Object anyItem : any) {
+            for (final Object anyItem : any) {
                 context.writeXmlAny(writer, facesConverterExtension, "any", anyItem);
             }
         }

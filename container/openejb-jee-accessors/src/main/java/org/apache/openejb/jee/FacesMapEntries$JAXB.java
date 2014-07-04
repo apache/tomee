@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesMapEntry$JAXB.readFacesMapEntry;
 import static org.apache.openejb.jee.FacesMapEntry$JAXB.writeFacesMapEntry;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesMapEntries$JAXB
-        extends JAXBObject<FacesMapEntries> {
+    extends JAXBObject<FacesMapEntries> {
 
 
     public FacesMapEntries$JAXB() {
         super(FacesMapEntries.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-map-entriesType".intern()), FacesMapEntry$JAXB.class);
     }
 
-    public static FacesMapEntries readFacesMapEntries(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesMapEntries readFacesMapEntries(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesMapEntries(XoXMLStreamWriter writer, FacesMapEntries facesMapEntries, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesMapEntries(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, RuntimeContext context)
+        throws Exception {
         _write(writer, facesMapEntries, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesMapEntries facesMapEntries, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, RuntimeContext context)
+        throws Exception {
         _write(writer, facesMapEntries, context);
     }
 
-    public final static FacesMapEntries _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesMapEntries _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -76,7 +76,7 @@ public class FacesMapEntries$JAXB
         List<FacesMapEntry> mapEntry = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-map-entriesType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesMapEntries.class);
@@ -148,13 +148,13 @@ public class FacesMapEntries$JAXB
         return facesMapEntries;
     }
 
-    public final FacesMapEntries read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesMapEntries read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesMapEntries facesMapEntries, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesMapEntries facesMapEntries, RuntimeContext context)
+        throws Exception {
         if (facesMapEntries == null) {
             writer.writeXsiNil();
             return;
@@ -164,7 +164,7 @@ public class FacesMapEntries$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesMapEntries.class != facesMapEntries.getClass()) {
             context.unexpectedSubclass(writer, facesMapEntries, FacesMapEntries.class);
             return;
@@ -174,7 +174,7 @@ public class FacesMapEntries$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesMapEntries.id;
+        final String idRaw = facesMapEntries.id;
         if (idRaw != null) {
             String id = null;
             try {

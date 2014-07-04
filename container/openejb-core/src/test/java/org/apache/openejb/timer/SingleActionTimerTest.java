@@ -77,7 +77,7 @@ public class SingleActionTimerTest {
                 this.createTimer();
                 System.out.println("SingleActionTimer: Started initial timer");
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("SingleActionTimer: Failed to start initial timer", e);
             }
 
@@ -89,7 +89,7 @@ public class SingleActionTimerTest {
             if (null != this.timer) {
                 try {
                     this.timer.cancel();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -98,7 +98,7 @@ public class SingleActionTimerTest {
         private void createTimer() {
             try {
                 this.timer = this.timerService.createSingleActionTimer(100, new TimerConfig(TIMER_NAME, false));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("SingleActionTimer: Failed to create timer", e);
             }
         }

@@ -18,14 +18,14 @@
 -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.1" metadata-complete="true">
-    <enterprise-beans>
-        <session>
-            <description>String</description>
-            <ejb-name>A</ejb-name>
-			<stateful-timeout>
-				<timeout>1234</timeout>
-				<unit>Seconds</unit>
-			</stateful-timeout>
-        </session>
-    </enterprise-beans>
+  <enterprise-beans>
+    <session>
+      <description>String</description>
+      <ejb-name>A</ejb-name>
+      <stateful-timeout>
+        <timeout>1234</timeout>
+        <unit>Seconds</unit>
+      </stateful-timeout>
+    </session>
+  </enterprise-beans>
 </ejb-jar>

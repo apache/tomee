@@ -61,33 +61,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Application$JAXB
-        extends JAXBObject<Application> {
+    extends JAXBObject<Application> {
 
 
     public Application$JAXB() {
         super(Application.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "applicationType".intern()), Text$JAXB.class, Icon$JAXB.class, Module$JAXB.class, SecurityRole$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, MessageDestination$JAXB.class, DataSource$JAXB.class);
     }
 
-    public static Application readApplication(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Application readApplication(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeApplication(XoXMLStreamWriter writer, Application application, RuntimeContext context)
-            throws Exception {
+    public static void writeApplication(final XoXMLStreamWriter writer, Application application, RuntimeContext context)
+        throws Exception {
         _write(writer, application, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Application application, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Application application, final RuntimeContext context)
+        throws Exception {
         _write(writer, application, context);
     }
 
-    public final static Application _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Application _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -119,7 +119,7 @@ public class Application$JAXB
         KeyedCollection<String, DataSource> dataSource = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("applicationType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Application.class);
@@ -158,7 +158,7 @@ public class Application$JAXB
                 application.applicationName = applicationName;
             } else if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -369,7 +369,7 @@ public class Application$JAXB
         if (displayNames != null) {
             try {
                 application.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Application.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -421,13 +421,13 @@ public class Application$JAXB
         return application;
     }
 
-    public final Application read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Application read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Application application, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Application application, RuntimeContext context)
+        throws Exception {
         if (application == null) {
             writer.writeXsiNil();
             return;
@@ -464,7 +464,7 @@ public class Application$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(application, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -523,7 +523,7 @@ public class Application$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = application.icon;
+        final LocalCollection<Icon> icon = application.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {

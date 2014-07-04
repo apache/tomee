@@ -26,8 +26,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Classes {
     Class<?>[] value() default {};
+
     Class<?>[] cdiInterceptors() default {};
+
     Class<?>[] cdiDecorators() default {};
+
     Class<?>[] cdiAlternatives() default {};
+
     boolean cdi() default false;
 }

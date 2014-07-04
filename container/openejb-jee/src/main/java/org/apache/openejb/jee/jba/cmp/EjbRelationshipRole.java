@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -71,11 +69,9 @@ public class EjbRelationshipRole {
 
     /**
      * Gets the value of the ejbRelationshipRoleName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRelationshipRoleName }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbRelationshipRoleName }
      */
     public EjbRelationshipRoleName getEjbRelationshipRoleName() {
         return ejbRelationshipRoleName;
@@ -83,23 +79,19 @@ public class EjbRelationshipRole {
 
     /**
      * Sets the value of the ejbRelationshipRoleName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRelationshipRoleName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbRelationshipRoleName }
      */
-    public void setEjbRelationshipRoleName(EjbRelationshipRoleName value) {
+    public void setEjbRelationshipRoleName(final EjbRelationshipRoleName value) {
         this.ejbRelationshipRoleName = value;
     }
 
     /**
      * Gets the value of the fkConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FkConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link FkConstraint }
      */
     public FkConstraint getFkConstraint() {
         return fkConstraint;
@@ -107,23 +99,19 @@ public class EjbRelationshipRole {
 
     /**
      * Sets the value of the fkConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FkConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FkConstraint }
      */
-    public void setFkConstraint(FkConstraint value) {
+    public void setFkConstraint(final FkConstraint value) {
         this.fkConstraint = value;
     }
 
     /**
      * Gets the value of the keyFields property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link KeyFields }
-     *     
+     *
+     * @return possible object is
+     * {@link KeyFields }
      */
     public KeyFields getKeyFields() {
         return keyFields;
@@ -131,23 +119,19 @@ public class EjbRelationshipRole {
 
     /**
      * Sets the value of the keyFields property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link KeyFields }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link KeyFields }
      */
-    public void setKeyFields(KeyFields value) {
+    public void setKeyFields(final KeyFields value) {
         this.keyFields = value;
     }
 
     /**
      * Gets the value of the readAhead property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadAhead }
      */
     public ReadAhead getReadAhead() {
         return readAhead;
@@ -155,23 +139,19 @@ public class EjbRelationshipRole {
 
     /**
      * Sets the value of the readAhead property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadAhead }
      */
-    public void setReadAhead(ReadAhead value) {
+    public void setReadAhead(final ReadAhead value) {
         this.readAhead = value;
     }
 
     /**
      * Gets the value of the batchCascadeDelete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BatchCascadeDelete }
-     *     
+     *
+     * @return possible object is
+     * {@link BatchCascadeDelete }
      */
     public BatchCascadeDelete getBatchCascadeDelete() {
         return batchCascadeDelete;
@@ -179,13 +159,11 @@ public class EjbRelationshipRole {
 
     /**
      * Sets the value of the batchCascadeDelete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BatchCascadeDelete }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BatchCascadeDelete }
      */
-    public void setBatchCascadeDelete(BatchCascadeDelete value) {
+    public void setBatchCascadeDelete(final BatchCascadeDelete value) {
         this.batchCascadeDelete = value;
     }
 

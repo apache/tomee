@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class CookieConfig$JAXB
-        extends JAXBObject<CookieConfig> {
+    extends JAXBObject<CookieConfig> {
 
 
     public CookieConfig$JAXB() {
         super(CookieConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cookie-configType".intern()));
     }
 
-    public static CookieConfig readCookieConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static CookieConfig readCookieConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeCookieConfig(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeCookieConfig(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, cookieConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, cookieConfig, context);
     }
 
-    public final static CookieConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static CookieConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class CookieConfig$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("cookie-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, CookieConfig.class);
@@ -165,13 +165,13 @@ public class CookieConfig$JAXB
         return cookieConfig;
     }
 
-    public final CookieConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final CookieConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, RuntimeContext context)
+        throws Exception {
         if (cookieConfig == null) {
             writer.writeXsiNil();
             return;
@@ -181,7 +181,7 @@ public class CookieConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (CookieConfig.class != cookieConfig.getClass()) {
             context.unexpectedSubclass(writer, cookieConfig, CookieConfig.class);
             return;
@@ -245,7 +245,7 @@ public class CookieConfig$JAXB
         }
 
         // ELEMENT: comment
-        String commentRaw = cookieConfig.comment;
+        final String commentRaw = cookieConfig.comment;
         String comment = null;
         try {
             comment = Adapters.collapsedStringAdapterAdapter.marshal(commentRaw);
@@ -275,7 +275,7 @@ public class CookieConfig$JAXB
         }
 
         // ELEMENT: maxAge
-        Integer maxAge = cookieConfig.maxAge;
+        final Integer maxAge = cookieConfig.maxAge;
         if (maxAge != null) {
             writer.writeStartElement(prefix, "max-age", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxAge));

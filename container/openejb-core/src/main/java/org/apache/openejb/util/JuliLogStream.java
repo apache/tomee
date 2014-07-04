@@ -120,7 +120,7 @@ public class JuliLogStream implements LogStream {
          * @serial
          */
         private String sourceMethodName;
-        
+
         // If the source method and source class has been inited
         private transient boolean sourceInited;
 
@@ -142,8 +142,7 @@ public class JuliLogStream implements LogStream {
         /**
          * Sets the name of the class that issued the logging call.
          *
-         * @param sourceClassName
-         *            the name of the class that issued the logging call
+         * @param sourceClassName the name of the class that issued the logging call
          */
         public void setSourceClassName(final String sourceClassName) {
             sourceInited = true;
@@ -171,7 +170,7 @@ public class JuliLogStream implements LogStream {
         }
 
         /**
-         *  Init the sourceClass and sourceMethod fields.
+         * Init the sourceClass and sourceMethod fields.
          */
         private void initSource() {
             if (!sourceInited) {

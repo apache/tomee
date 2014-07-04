@@ -27,33 +27,33 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class RespectBinding$JAXB
-        extends JAXBObject<RespectBinding> {
+    extends JAXBObject<RespectBinding> {
 
 
     public RespectBinding$JAXB() {
         super(RespectBinding.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "respect-bindingType".intern()));
     }
 
-    public static RespectBinding readRespectBinding(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static RespectBinding readRespectBinding(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeRespectBinding(XoXMLStreamWriter writer, RespectBinding respectBinding, RuntimeContext context)
-            throws Exception {
+    public static void writeRespectBinding(final XoXMLStreamWriter writer, final RespectBinding respectBinding, final RuntimeContext context)
+        throws Exception {
         _write(writer, respectBinding, context);
     }
 
-    public void write(XoXMLStreamWriter writer, RespectBinding respectBinding, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final RespectBinding respectBinding, final RuntimeContext context)
+        throws Exception {
         _write(writer, respectBinding, context);
     }
 
-    public final static RespectBinding _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static RespectBinding _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -64,12 +64,12 @@ public class RespectBinding$JAXB
             context = new RuntimeContext();
         }
 
-        RespectBinding respectBinding = new RespectBinding();
+        final RespectBinding respectBinding = new RespectBinding();
         context.beforeUnmarshal(respectBinding, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("respect-bindingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, RespectBinding.class);
@@ -77,17 +77,17 @@ public class RespectBinding$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("enabled" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enabled
-                Boolean enabled = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean enabled = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 respectBinding.enabled = enabled;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "enabled"));
@@ -99,13 +99,13 @@ public class RespectBinding$JAXB
         return respectBinding;
     }
 
-    public final RespectBinding read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final RespectBinding read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, RespectBinding respectBinding, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final RespectBinding respectBinding, RuntimeContext context)
+        throws Exception {
         if (respectBinding == null) {
             writer.writeXsiNil();
             return;
@@ -124,7 +124,7 @@ public class RespectBinding$JAXB
 
 
         // ELEMENT: enabled
-        Boolean enabled = respectBinding.enabled;
+        final Boolean enabled = respectBinding.enabled;
         if (enabled != null) {
             writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "enabled");
             writer.writeCharacters(Boolean.toString(enabled));

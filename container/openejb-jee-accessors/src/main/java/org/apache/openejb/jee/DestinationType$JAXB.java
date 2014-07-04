@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class DestinationType$JAXB
-        extends JAXBObject<DestinationType> {
+    extends JAXBObject<DestinationType> {
 
 
     public DestinationType$JAXB() {
         super(DestinationType.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "destination-type".intern()), null);
     }
 
-    public static DestinationType readDestinationType(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static DestinationType readDestinationType(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeDestinationType(XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
-            throws Exception {
+    public static void writeDestinationType(final XoXMLStreamWriter writer, final DestinationType destinationType, RuntimeContext context)
+        throws Exception {
         _write(writer, destinationType, context);
     }
 
-    public void write(XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
+        throws Exception {
         _write(writer, destinationType, context);
     }
 
-    public final static DestinationType _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static DestinationType _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,7 +65,7 @@ public class DestinationType$JAXB
             context = new RuntimeContext();
         }
 
-        DestinationType destinationType = new DestinationType();
+        final DestinationType destinationType = new DestinationType();
         context.beforeUnmarshal(destinationType, LifecycleCallback.NONE);
 
 
@@ -76,7 +76,7 @@ public class DestinationType$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -109,13 +109,13 @@ public class DestinationType$JAXB
         return destinationType;
     }
 
-    public final DestinationType read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final DestinationType read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, DestinationType destinationType, RuntimeContext context)
+        throws Exception {
         if (destinationType == null) {
             writer.writeXsiNil();
             return;
@@ -150,7 +150,7 @@ public class DestinationType$JAXB
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(destinationType, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         writer.writeCharacters(value);

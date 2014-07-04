@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for concurrent-lock-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="concurrent-lock-typeType">
  *   &lt;simpleContent>
@@ -37,8 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,14 +44,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ConcurrentLockType {
 
-    @XmlEnumValue("Read") READ("Read"),
-    @XmlEnumValue("Write") WRITE("Write");
+    @XmlEnumValue("Read")READ("Read"),
+    @XmlEnumValue("Write")WRITE("Write");
 
     private final String name;
 
-    ConcurrentLockType(String name) {
-       this.name = name;
-   }
+    ConcurrentLockType(final String name) {
+        this.name = name;
+    }
 
     public String toString() {
         return name;
@@ -63,7 +61,7 @@ public enum ConcurrentLockType {
         return name();
     }
 
-    public static ConcurrentLockType fromValue(java.lang.String v) {
+    public static ConcurrentLockType fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 

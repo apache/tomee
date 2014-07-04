@@ -49,7 +49,6 @@ public class ApplicationScopedTest extends TestCase {
         final Context appContext = beanManager.getContext(ApplicationScoped.class);
 
 
-
         final Green green = createAndMutate(appContext, Green.class);
 
         final Blue blue = createAndMutate(appContext, Blue.class);
@@ -73,7 +72,7 @@ public class ApplicationScopedTest extends TestCase {
         assertSame(greenA, greenB);
     }
 
-    private <T extends Message> T createAndMutate(Context context, Class<T> beanType) {
+    private <T extends Message> T createAndMutate(final Context context, Class<T> beanType) {
 
         final Bean<T> bean = (Bean<T>) beanManager.getBeans(beanType).iterator().next();
 
@@ -151,7 +150,7 @@ public class ApplicationScopedTest extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
 
@@ -177,14 +176,15 @@ public class ApplicationScopedTest extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
+
         @Inject
         private Green green;
 
         @Inject
-        public void setBlue(Blue blue) {
+        public void setBlue(final Blue blue) {
             this.blue = blue;
         }
 
@@ -213,7 +213,7 @@ public class ApplicationScopedTest extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
 
@@ -222,7 +222,7 @@ public class ApplicationScopedTest extends TestCase {
         }
 
         @Inject
-        public void setGreen(Green green) {
+        public void setGreen(final Green green) {
             this.green = green;
         }
     }
@@ -243,7 +243,7 @@ public class ApplicationScopedTest extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
     }

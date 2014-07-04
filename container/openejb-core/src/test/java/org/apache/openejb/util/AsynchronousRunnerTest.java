@@ -30,19 +30,19 @@ import java.util.concurrent.TimeoutException;
 public class AsynchronousRunnerTest extends TestCase {
 
     private static class TestExecutor implements Executor {
-        
-        private CountDownLatch countDownLatch; 
-        
-        public TestExecutor(CountDownLatch countDownLatch) {
+
+        private CountDownLatch countDownLatch;
+
+        public TestExecutor(final CountDownLatch countDownLatch) {
             this.countDownLatch = countDownLatch;
         }
 
         public void execute(final Runnable command) {
-            Runnable runnable = new Runnable() {
+            final Runnable runnable = new Runnable() {
                 public void run() {
                     try {
                         countDownLatch.await();
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         throw new IllegalStateException(e);
                     }
                     command.run();
@@ -51,29 +51,29 @@ public class AsynchronousRunnerTest extends TestCase {
             new Thread(runnable).start();
         }
     }
-    
+
     /**
      * Tests the cancel method
      */
     public void testCancel() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(1);
-        AsynchronousRunner asyncRunner = instantiate(cdl);
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         future.cancel(true);
         assertTrue(future.isCancelled());
         try {
             future.get();
             fail();
-        } catch (CancellationException e) {
+        } catch (final CancellationException e) {
             //Ok
         }
     }
-    
+
     /**
      * A delayed get, sleeping until the result is complete
      */
     public void testDelayedGet() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(1);
+        final CountDownLatch cdl = new CountDownLatch(1);
         AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertFalse(future.isDone());
@@ -83,24 +83,24 @@ public class AsynchronousRunnerTest extends TestCase {
         assertTrue(future.isDone());
         assertEquals(expected(), future.get());
     }
-    
+
     /**
      * A regular get, waiting for result to be complete
      */
     public void testGet() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(0);
-        AsynchronousRunner asyncRunner = instantiate(cdl);
+        final CountDownLatch cdl = new CountDownLatch(0);
+        final AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertEquals(expected(), future.get());
     }
-    
+
     /**
      * A get with max timeout
      */
     public void testTimedGet() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(1);
+        final CountDownLatch cdl = new CountDownLatch(1);
         AsynchronousRunner asyncRunner = instantiate(cdl);
-        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
+        final Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         try {
             future.get(1, TimeUnit.SECONDS);
             fail();
@@ -113,27 +113,27 @@ public class AsynchronousRunnerTest extends TestCase {
         assertTrue(future.isDone());
         assertEquals(expected(), future.get());
     }
-    
+
     private Object[] arguments() {
-        return new Object[] {BigDecimal.ONE};
+        return new Object[]{BigDecimal.ONE};
     }
 
     private BigDecimal expected() {
         return new BigDecimal(11);
     }
-    
+
     private AsynchronousRunner instantiate(final CountDownLatch cdl) {
         return new AsynchronousRunner(new TestExecutor(cdl));
     }
-    
+
     private Method method() {
         try {
             return BigDecimal.class.getMethod("add", BigDecimal.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
-    
+
     private Object object() {
         return BigDecimal.TEN;
     }

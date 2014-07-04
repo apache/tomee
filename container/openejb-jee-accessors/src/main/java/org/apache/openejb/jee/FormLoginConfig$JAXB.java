@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FormLoginConfig$JAXB
-        extends JAXBObject<FormLoginConfig> {
+    extends JAXBObject<FormLoginConfig> {
 
 
     public FormLoginConfig$JAXB() {
         super(FormLoginConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "form-login-configType".intern()));
     }
 
-    public static FormLoginConfig readFormLoginConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FormLoginConfig readFormLoginConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFormLoginConfig(XoXMLStreamWriter writer, FormLoginConfig formLoginConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeFormLoginConfig(final XoXMLStreamWriter writer, final FormLoginConfig formLoginConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, formLoginConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FormLoginConfig formLoginConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FormLoginConfig formLoginConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, formLoginConfig, context);
     }
 
-    public final static FormLoginConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FormLoginConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,7 +65,7 @@ public class FormLoginConfig$JAXB
             context = new RuntimeContext();
         }
 
-        FormLoginConfig formLoginConfig = new FormLoginConfig();
+        final FormLoginConfig formLoginConfig = new FormLoginConfig();
         context.beforeUnmarshal(formLoginConfig, LifecycleCallback.NONE);
 
 
@@ -78,7 +78,7 @@ public class FormLoginConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -127,13 +127,13 @@ public class FormLoginConfig$JAXB
         return formLoginConfig;
     }
 
-    public final FormLoginConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FormLoginConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FormLoginConfig formLoginConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FormLoginConfig formLoginConfig, RuntimeContext context)
+        throws Exception {
         if (formLoginConfig == null) {
             writer.writeXsiNil();
             return;

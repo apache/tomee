@@ -46,76 +46,108 @@ public enum InterfaceType {
     }
 
     public boolean isHome() {
-        switch(this){
-            case EJB_HOME: return true;
-            case EJB_LOCAL_HOME: return true;
-            case BUSINESS_LOCAL_HOME: return true;
-            case BUSINESS_LOCALBEAN_HOME: return true;
-            case BUSINESS_REMOTE_HOME: return true;
+        switch (this) {
+            case EJB_HOME:
+                return true;
+            case EJB_LOCAL_HOME:
+                return true;
+            case BUSINESS_LOCAL_HOME:
+                return true;
+            case BUSINESS_LOCALBEAN_HOME:
+                return true;
+            case BUSINESS_REMOTE_HOME:
+                return true;
         }
         return false;
     }
 
     public boolean isComponent() {
-        switch(this){
-            case EJB_OBJECT: return true;
-            case EJB_LOCAL: return true;
+        switch (this) {
+            case EJB_OBJECT:
+                return true;
+            case EJB_LOCAL:
+                return true;
         }
         return false;
     }
 
     public boolean isBusiness() {
-        switch(this){
-            case BUSINESS_LOCAL: return true;
-            case BUSINESS_REMOTE: return true;
-            case LOCALBEAN: return true;
+        switch (this) {
+            case BUSINESS_LOCAL:
+                return true;
+            case BUSINESS_REMOTE:
+                return true;
+            case LOCALBEAN:
+                return true;
         }
         return false;
     }
 
     public boolean isRemote() {
-        switch(this){
-            case EJB_HOME: return true;
-            case EJB_OBJECT: return true;
-            case BUSINESS_REMOTE: return true;
-            case BUSINESS_REMOTE_HOME: return true;
+        switch (this) {
+            case EJB_HOME:
+                return true;
+            case EJB_OBJECT:
+                return true;
+            case BUSINESS_REMOTE:
+                return true;
+            case BUSINESS_REMOTE_HOME:
+                return true;
         }
         return false;
     }
 
     public boolean isLocal() {
-        switch(this){
-            case EJB_LOCAL_HOME: return true;
-            case EJB_LOCAL: return true;
-            case BUSINESS_LOCAL: return true;
-            case BUSINESS_LOCAL_HOME: return true;
-            case LOCALBEAN: return true;
+        switch (this) {
+            case EJB_LOCAL_HOME:
+                return true;
+            case EJB_LOCAL:
+                return true;
+            case BUSINESS_LOCAL:
+                return true;
+            case BUSINESS_LOCAL_HOME:
+                return true;
+            case LOCALBEAN:
+                return true;
         }
         return false;
     }
 
     public boolean isLocalBean() {
-        switch(this){
-            case LOCALBEAN: return true;
-            case BUSINESS_LOCALBEAN_HOME: return true;
+        switch (this) {
+            case LOCALBEAN:
+                return true;
+            case BUSINESS_LOCALBEAN_HOME:
+                return true;
         }
         return false;
 
     }
 
     public InterfaceType getCounterpart() {
-        switch(this){
-            case EJB_HOME: return InterfaceType.EJB_OBJECT;
-            case EJB_LOCAL_HOME: return InterfaceType.EJB_LOCAL;
-            case BUSINESS_REMOTE_HOME: return InterfaceType.BUSINESS_REMOTE;
-            case BUSINESS_LOCAL_HOME: return InterfaceType.BUSINESS_LOCAL;
-            case EJB_OBJECT: return InterfaceType.EJB_HOME;
-            case EJB_LOCAL: return InterfaceType.EJB_LOCAL_HOME;
-            case BUSINESS_REMOTE: return InterfaceType.BUSINESS_REMOTE_HOME;
-            case BUSINESS_LOCAL: return InterfaceType.BUSINESS_LOCAL_HOME;
-            case BUSINESS_LOCALBEAN_HOME: return InterfaceType.LOCALBEAN;
-            case LOCALBEAN: return InterfaceType.BUSINESS_LOCALBEAN_HOME;
-            default: throw new IllegalArgumentException("InterfaceType has no counterpart: " + this);
+        switch (this) {
+            case EJB_HOME:
+                return InterfaceType.EJB_OBJECT;
+            case EJB_LOCAL_HOME:
+                return InterfaceType.EJB_LOCAL;
+            case BUSINESS_REMOTE_HOME:
+                return InterfaceType.BUSINESS_REMOTE;
+            case BUSINESS_LOCAL_HOME:
+                return InterfaceType.BUSINESS_LOCAL;
+            case EJB_OBJECT:
+                return InterfaceType.EJB_HOME;
+            case EJB_LOCAL:
+                return InterfaceType.EJB_LOCAL_HOME;
+            case BUSINESS_REMOTE:
+                return InterfaceType.BUSINESS_REMOTE_HOME;
+            case BUSINESS_LOCAL:
+                return InterfaceType.BUSINESS_LOCAL_HOME;
+            case BUSINESS_LOCALBEAN_HOME:
+                return InterfaceType.LOCALBEAN;
+            case LOCALBEAN:
+                return InterfaceType.BUSINESS_LOCALBEAN_HOME;
+            default:
+                throw new IllegalArgumentException("InterfaceType has no counterpart: " + this);
         }
     }
 }

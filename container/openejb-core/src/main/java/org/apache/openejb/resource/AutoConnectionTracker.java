@@ -35,13 +35,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class AutoConnectionTracker implements ConnectionTracker {
-    private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo,ProxyPhantomReference>();
+    private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
 
     /**
      * Releases any managed connections held by a garbage collected connection proxy.
+     *
      * @param connectionInfo the connection to be obtained
-     * @param key the unique id of the connection manager
+     * @param key            the unique id of the connection manager
      */
     public void setEnvironment(final ConnectionInfo connectionInfo, final String key) {
         ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
@@ -58,9 +59,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
     /**
      * Proxies new connection handles so we can detect when they have been garbage collected.
      *
-     * @param interceptor the interceptor used to release the managed connection when the handled is garbage collected.
+     * @param interceptor    the interceptor used to release the managed connection when the handled is garbage collected.
      * @param connectionInfo the connection that was obtained
-     * @param reassociate should always be false
+     * @param reassociate    should always be false
      */
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (!reassociate) {
@@ -72,9 +73,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * Removes the released collection from the garbage collection reference tracker, since this
      * connection is being release via a normal close method.
      *
-     * @param interceptor ignored
+     * @param interceptor    ignored
      * @param connectionInfo the connection that was released
-     * @param action ignored
+     * @param action         ignored
      */
     public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
         final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
@@ -144,9 +145,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
         @SuppressWarnings({"unchecked"})
         public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
-                final ManagedConnectionInfo managedConnectionInfo,
-                final ConnectionInvocationHandler handler,
-                final ReferenceQueue referenceQueue) {
+                                     final ManagedConnectionInfo managedConnectionInfo,
+                                     final ConnectionInvocationHandler handler,
+                                     final ReferenceQueue referenceQueue) {
             super(handler, referenceQueue);
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;

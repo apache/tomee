@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for activation-config-propertyType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="activation-config-propertyType">
  *   &lt;complexContent>
@@ -48,15 +48,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-config-propertyType", propOrder = {
-        "activationConfigPropertyName",
-        "activationConfigPropertyValue"
-        })
+    "activationConfigPropertyName",
+    "activationConfigPropertyValue"
+})
 public class ActivationConfigProperty {
 
     @XmlElement(name = "activation-config-property-name", required = true)
@@ -72,7 +70,7 @@ public class ActivationConfigProperty {
     public ActivationConfigProperty() {
     }
 
-    public ActivationConfigProperty(String activationConfigPropertyName, String activationConfigPropertyValue) {
+    public ActivationConfigProperty(final String activationConfigPropertyName, final String activationConfigPropertyValue) {
         this.activationConfigPropertyName = activationConfigPropertyName;
         this.activationConfigPropertyValue = activationConfigPropertyValue;
     }

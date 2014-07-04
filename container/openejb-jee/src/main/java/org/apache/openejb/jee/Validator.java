@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for validatorType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="validatorType">
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "validatorType", propOrder = {
@@ -75,7 +73,7 @@ public class Validator {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -87,7 +85,7 @@ public class Validator {
         return validatorClass;
     }
 
-    public void setValidatorClass(String value) {
+    public void setValidatorClass(final String value) {
         this.validatorClass = value;
     }
 
@@ -102,7 +100,7 @@ public class Validator {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

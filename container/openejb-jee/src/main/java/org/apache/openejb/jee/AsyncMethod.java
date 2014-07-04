@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for async-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="async-methodType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,13 +66,13 @@ public class AsyncMethod {
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
 
-    public AsyncMethod(){
+    public AsyncMethod() {
     }
 
-    public AsyncMethod(java.lang.reflect.Method method) {
+    public AsyncMethod(final java.lang.reflect.Method method) {
         this.methodName = method.getName();
-        MethodParams methodParams = new MethodParams();
-        for (Class<?> type : method.getParameterTypes()) {
+        final MethodParams methodParams = new MethodParams();
+        for (final Class<?> type : method.getParameterTypes()) {
             methodParams.getMethodParam().add(type.getCanonicalName());
         }
         this.methodParams = methodParams;
@@ -84,7 +82,7 @@ public class AsyncMethod {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -92,7 +90,7 @@ public class AsyncMethod {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 
@@ -100,7 +98,7 @@ public class AsyncMethod {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

@@ -77,7 +77,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at, final InjectionTargetFactoryImpl<T> factory) {
         super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
-                BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build()), beanClass, factory);
+            BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build()), beanClass, factory);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
@@ -90,16 +90,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     private static SessionBeanType toSessionType(final BeanType beanType) {
         switch (beanType) {
-        case SINGLETON:
-            return SessionBeanType.SINGLETON;
-        case MESSAGE_DRIVEN: // OWB implementation test stateful or not so do we really care?
-        case STATELESS:
-        case MANAGED: // can't be stateful since it will prevent every integration using ManagedBean to get injections to work + it is never used
-            return SessionBeanType.STATELESS;
-        case STATEFUL:
-            return SessionBeanType.STATEFUL;
-        default:
-            throw new IllegalStateException("Unknown Session BeanType " + beanType);
+            case SINGLETON:
+                return SessionBeanType.SINGLETON;
+            case MESSAGE_DRIVEN: // OWB implementation test stateful or not so do we really care?
+            case STATELESS:
+            case MANAGED: // can't be stateful since it will prevent every integration using ManagedBean to get injections to work + it is never used
+                return SessionBeanType.STATELESS;
+            case STATEFUL:
+                return SessionBeanType.STATEFUL;
+            default:
+                throw new IllegalStateException("Unknown Session BeanType " + beanType);
         }
     }
 
@@ -240,8 +240,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         dependentSFSBToBeRemoved.put(System.identityHashCode(proxy), instance);
     }
 
-    public void initInternals()
-    {
+    public void initInternals() {
         final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         final boolean noLocalInterface = classes.isEmpty();
         if (noLocalInterface && beanContext.isLocalbean()) {
@@ -325,7 +324,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
         protected Set<InjectionPoint> createInjectionPoints(final Bean<T> bean) {
             final Set<InjectionPoint> injectionPoints = new HashSet<InjectionPoint>();
-            for (final InjectionPoint injectionPoint: getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
+            for (final InjectionPoint injectionPoint : getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
                 injectionPoints.add(injectionPoint);
             }
             return injectionPoints;
@@ -346,7 +345,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
         public EjbInjectionTargetImpl(final AnnotatedType<T> annotatedType, final Set<InjectionPoint> points, final WebBeansContext webBeansContext) {
             super(annotatedType, points, webBeansContext,
-                    Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
+                Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
         }
 
         public EjbInjectionTargetImpl(final EjbInjectionTargetImpl<T> original, final InjectionTarget<T> delegate) {

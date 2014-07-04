@@ -19,25 +19,25 @@
 <!-- $Rev$ $Date$ -->
 
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
-    <jws:handler-chain>
-        <jws:protocol-bindings>##XML_HTTP</jws:protocol-bindings>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
-    <jws:handler-chain>
-        <jws:port-name-pattern>jws:Foo*</jws:port-name-pattern>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
-    <jws:handler-chain>
-        <jws:service-name-pattern>jws:Bar</jws:service-name-pattern>
-        <jws:handler>
-            <jws:handler-name>GreeterHandler</jws:handler-name>
-            <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:protocol-bindings>##XML_HTTP</jws:protocol-bindings>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:port-name-pattern>jws:Foo*</jws:port-name-pattern>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:service-name-pattern>jws:Bar</jws:service-name-pattern>
+    <jws:handler>
+      <jws:handler-name>GreeterHandler</jws:handler-name>
+      <jws:handler-class>org.apache.openejb.core.webservices.TestHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
 </jws:handler-chains>

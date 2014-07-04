@@ -19,25 +19,26 @@ package org.apache.openejb.jee;
 
 /**
  * TODO where is this from?
+ *
  * @version $Revision$ $Date$
  */
 public class ManagedBean extends SessionBean {
     private boolean hidden;
 
-    public ManagedBean(String ejbName, String ejbClass) {
+    public ManagedBean(final String ejbName, String ejbClass) {
         super(ejbName, ejbClass, SessionType.MANAGED);
     }
 
-    public ManagedBean(String ejbName, String ejbClass, boolean hidden) {
+    public ManagedBean(final String ejbName, final String ejbClass, boolean hidden) {
         super(ejbName, ejbClass, SessionType.MANAGED);
         this.hidden = hidden;
     }
 
-    public ManagedBean(Class<?> ejbClass) {
+    public ManagedBean(final Class<?> ejbClass) {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
-    public ManagedBean(String name, Class<?> ejbClass) {
+    public ManagedBean(final String name, final Class<?> ejbClass) {
         this(name, ejbClass.getName());
     }
 
@@ -45,7 +46,7 @@ public class ManagedBean extends SessionBean {
         this(null, (String) null);
     }
 
-    public void setSessionType(SessionType value) {
+    public void setSessionType(final SessionType value) {
     }
 
     public boolean isHidden() {

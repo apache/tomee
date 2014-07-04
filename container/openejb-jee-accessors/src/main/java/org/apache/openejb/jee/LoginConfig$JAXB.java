@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.FormLoginConfig$JAXB.readFormLoginConfig;
 import static org.apache.openejb.jee.FormLoginConfig$JAXB.writeFormLoginConfig;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class LoginConfig$JAXB
-        extends JAXBObject<LoginConfig> {
+    extends JAXBObject<LoginConfig> {
 
 
     public LoginConfig$JAXB() {
         super(LoginConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "login-configType".intern()), FormLoginConfig$JAXB.class);
     }
 
-    public static LoginConfig readLoginConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static LoginConfig readLoginConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLoginConfig(XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeLoginConfig(final XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, loginConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final LoginConfig loginConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, loginConfig, context);
     }
 
-    public final static LoginConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static LoginConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -134,13 +134,13 @@ public class LoginConfig$JAXB
         return loginConfig;
     }
 
-    public final LoginConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final LoginConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, LoginConfig loginConfig, RuntimeContext context)
+        throws Exception {
         if (loginConfig == null) {
             writer.writeXsiNil();
             return;
@@ -160,12 +160,12 @@ public class LoginConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = loginConfig.id;
+        final String idRaw = loginConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(loginConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -176,7 +176,7 @@ public class LoginConfig$JAXB
         String authMethod = null;
         try {
             authMethod = Adapters.collapsedStringAdapterAdapter.marshal(authMethodRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(loginConfig, "authMethod", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (authMethod != null) {

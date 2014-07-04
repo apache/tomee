@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +24,15 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for weblogic-ejb-jar complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-ejb-jar">
  *   &lt;complexContent>
@@ -57,8 +57,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-ejb-jar", propOrder = {
@@ -111,11 +109,9 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
+     *
+     * @return possible object is
+     * {@link Description }
      */
     public Description getDescription() {
         return description;
@@ -123,37 +119,33 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Description }
      */
-    public void setDescription(Description value) {
+    public void setDescription(final Description value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the weblogicEnterpriseBean property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the weblogicEnterpriseBean property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWeblogicEnterpriseBean().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link WeblogicEnterpriseBean }
-     * 
-     * 
      */
     public List<WeblogicEnterpriseBean> getWeblogicEnterpriseBean() {
         if (weblogicEnterpriseBean == null) {
@@ -164,25 +156,23 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the securityRoleAssignment property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the securityRoleAssignment property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSecurityRoleAssignment().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SecurityRoleAssignment }
-     * 
-     * 
      */
     public List<SecurityRoleAssignment> getSecurityRoleAssignment() {
         if (securityRoleAssignment == null) {
@@ -193,25 +183,23 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the runAsRoleAssignment property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the runAsRoleAssignment property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRunAsRoleAssignment().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link RunAsRoleAssignment }
-     * 
-     * 
      */
     public List<RunAsRoleAssignment> getRunAsRoleAssignment() {
         if (runAsRoleAssignment == null) {
@@ -222,11 +210,9 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the securityPermission property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityPermission }
-     *     
+     *
+     * @return possible object is
+     * {@link SecurityPermission }
      */
     public SecurityPermission getSecurityPermission() {
         return securityPermission;
@@ -234,37 +220,33 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the securityPermission property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityPermission }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SecurityPermission }
      */
-    public void setSecurityPermission(SecurityPermission value) {
+    public void setSecurityPermission(final SecurityPermission value) {
         this.securityPermission = value;
     }
 
     /**
      * Gets the value of the transactionIsolation property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the transactionIsolation property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTransactionIsolation().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link TransactionIsolation }
-     * 
-     * 
      */
     public List<TransactionIsolation> getTransactionIsolation() {
         if (transactionIsolation == null) {
@@ -275,25 +257,23 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the messageDestinationDescriptor property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the messageDestinationDescriptor property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMessageDestinationDescriptor().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDestinationDescriptor }
-     * 
-     * 
      */
     public List<MessageDestinationDescriptor> getMessageDestinationDescriptor() {
         if (messageDestinationDescriptor == null) {
@@ -304,11 +284,9 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the idempotentMethods property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IdempotentMethods }
-     *     
+     *
+     * @return possible object is
+     * {@link IdempotentMethods }
      */
     public IdempotentMethods getIdempotentMethods() {
         return idempotentMethods;
@@ -316,37 +294,33 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the idempotentMethods property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IdempotentMethods }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IdempotentMethods }
      */
-    public void setIdempotentMethods(IdempotentMethods value) {
+    public void setIdempotentMethods(final IdempotentMethods value) {
         this.idempotentMethods = value;
     }
 
     /**
      * Gets the value of the retryMethodsOnRollback property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the retryMethodsOnRollback property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRetryMethodsOnRollback().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link RetryMethodsOnRollback }
-     * 
-     * 
      */
     public List<RetryMethodsOnRollback> getRetryMethodsOnRollback() {
         if (retryMethodsOnRollback == null) {
@@ -357,11 +331,9 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the enableBeanClassRedeploy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableBeanClassRedeploy() {
         return enableBeanClassRedeploy;
@@ -369,37 +341,33 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the enableBeanClassRedeploy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableBeanClassRedeploy(Boolean value) {
+    public void setEnableBeanClassRedeploy(final Boolean value) {
         this.enableBeanClassRedeploy = value;
     }
 
     /**
      * Gets the value of the disableWarning property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the disableWarning property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisableWarning().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getDisableWarning() {
         if (disableWarning == null) {
@@ -410,25 +378,23 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the workManager property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the workManager property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWorkManager().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link WorkManager }
-     * 
-     * 
      */
     public List<WorkManager> getWorkManager() {
         if (workManager == null) {
@@ -439,11 +405,9 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the weblogicCompatibility property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link WeblogicCompatibility }
-     *     
+     *
+     * @return possible object is
+     * {@link WeblogicCompatibility }
      */
     public WeblogicCompatibility getWeblogicCompatibility() {
         return weblogicCompatibility;
@@ -451,23 +415,19 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the weblogicCompatibility property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link WeblogicCompatibility }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link WeblogicCompatibility }
      */
-    public void setWeblogicCompatibility(WeblogicCompatibility value) {
+    public void setWeblogicCompatibility(final WeblogicCompatibility value) {
         this.weblogicCompatibility = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -475,13 +435,11 @@ public class WeblogicEjbJar {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

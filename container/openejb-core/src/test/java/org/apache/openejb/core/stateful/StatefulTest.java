@@ -42,21 +42,21 @@ public class StatefulTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(MyBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
     public void test() throws Exception {
-        InitialContext context = new InitialContext();
-        MyBean myBean = (MyBean) context.lookup("MyBeanLocalBean");
+        final InitialContext context = new InitialContext();
+        final MyBean myBean = (MyBean) context.lookup("MyBeanLocalBean");
 
         assertEquals("pan", myBean.echo("nap"));
     }
@@ -66,8 +66,8 @@ public class StatefulTest extends TestCase {
     @LocalBean
     public static class MyBean {
 
-        public String echo(String string) {
-            StringBuilder sb = new StringBuilder(string);
+        public String echo(final String string) {
+            final StringBuilder sb = new StringBuilder(string);
             return sb.reverse().toString();
         }
     }

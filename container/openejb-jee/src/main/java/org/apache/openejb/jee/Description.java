@@ -23,27 +23,25 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The description type is used by a description element to
- *         provide text describing the parent element.  The elements
- *         that use this type should include any information that the
- *         Deployment Component's Deployment File file producer wants
- *         to provide to the consumer of the Deployment Component's
- *         Deployment File (i.e., to the Deployer). Typically, the
- *         tools used by such a Deployment File consumer will display
- *         the description when processing the parent element that
- *         contains the description.
- * 
- *         The lang attribute defines the language that the
- *         description is provided in. The default value is "en" (English).
- * 
- *       
- * 
+ * The description type is used by a description element to
+ * provide text describing the parent element.  The elements
+ * that use this type should include any information that the
+ * Deployment Component's Deployment File file producer wants
+ * to provide to the consumer of the Deployment Component's
+ * Deployment File (i.e., to the Deployer). Typically, the
+ * tools used by such a Deployment File consumer will display
+ * the description when processing the parent element that
+ * contains the description.
+ * <p/>
+ * The lang attribute defines the language that the
+ * description is provided in. The default value is "en" (English).
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for descriptionType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="descriptionType">
  *   &lt;simpleContent>
@@ -53,14 +51,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "descriptionType")
 public class Description
-    extends XsdString
-{
+    extends XsdString {
 
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
     protected java.lang.String lang;
@@ -68,10 +63,8 @@ public class Description
     /**
      * Gets the value of the lang property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getLang() {
         return lang;
@@ -80,12 +73,10 @@ public class Description
     /**
      * Sets the value of the lang property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setLang(java.lang.String value) {
+    public void setLang(final java.lang.String value) {
         this.lang = value;
     }
 

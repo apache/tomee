@@ -29,11 +29,11 @@ import java.security.Principal;
 
 public class EjbWsContext implements WebServiceContext {
     private final SessionContext context;
-    
+
     public EjbWsContext(final SessionContext context) {
         this.context = context;
     }
-    
+
     @Override
     public MessageContext getMessageContext() {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
@@ -62,10 +62,10 @@ public class EjbWsContext implements WebServiceContext {
         }
         return wsaSupport;
     }
-    
+
     @Override
     public EndpointReference getEndpointReference(final Element... referenceParameters) {
-        return getAddressingSupport().getEndpointReference(referenceParameters);      
+        return getAddressingSupport().getEndpointReference(referenceParameters);
     }
 
     @Override

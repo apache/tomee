@@ -58,33 +58,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Interceptor$JAXB
-        extends JAXBObject<Interceptor> {
+    extends JAXBObject<Interceptor> {
 
 
     public Interceptor$JAXB() {
         super(Interceptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptorType".intern()), Text$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class);
     }
 
-    public static Interceptor readInterceptor(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Interceptor readInterceptor(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInterceptor(XoXMLStreamWriter writer, Interceptor interceptor, RuntimeContext context)
-            throws Exception {
+    public static void writeInterceptor(final XoXMLStreamWriter writer, Interceptor interceptor, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptor, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Interceptor interceptor, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Interceptor interceptor, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptor, context);
     }
 
-    public final static Interceptor _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Interceptor _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -199,7 +199,7 @@ public class Interceptor$JAXB
                 envEntry.add(envEntryItem);
             } else if (("ejb-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRef
-                EjbRef ejbRefItem = readEjbRef(elementReader, context);
+                final EjbRef ejbRefItem = readEjbRef(elementReader, context);
                 if (ejbRef == null) {
                     ejbRef = interceptor.ejbRef;
                     if (ejbRef != null) {
@@ -463,13 +463,13 @@ public class Interceptor$JAXB
         return interceptor;
     }
 
-    public final Interceptor read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Interceptor read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Interceptor interceptor, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Interceptor interceptor, RuntimeContext context)
+        throws Exception {
         if (interceptor == null) {
             writer.writeXsiNil();
             return;
@@ -552,7 +552,7 @@ public class Interceptor$JAXB
         // ELEMENT: aroundTimeout
         List<AroundTimeout> aroundTimeout = interceptor.aroundTimeout;
         if (aroundTimeout != null) {
-            for (AroundTimeout aroundTimeoutItem : aroundTimeout) {
+            for (final AroundTimeout aroundTimeoutItem : aroundTimeout) {
                 if (aroundTimeoutItem != null) {
                     writer.writeStartElement(prefix, "around-timeout", "http://java.sun.com/xml/ns/javaee");
                     writeAroundTimeout(writer, aroundTimeoutItem, context);
@@ -564,7 +564,7 @@ public class Interceptor$JAXB
         // ELEMENT: envEntry
         KeyedCollection<String, EnvEntry> envEntry = interceptor.envEntry;
         if (envEntry != null) {
-            for (EnvEntry envEntryItem : envEntry) {
+            for (final EnvEntry envEntryItem : envEntry) {
                 if (envEntryItem != null) {
                     writer.writeStartElement(prefix, "env-entry", "http://java.sun.com/xml/ns/javaee");
                     writeEnvEntry(writer, envEntryItem, context);
@@ -690,7 +690,7 @@ public class Interceptor$JAXB
         // ELEMENT: postConstruct
         List<org.apache.openejb.jee.LifecycleCallback> postConstruct = interceptor.postConstruct;
         if (postConstruct != null) {
-            for (org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
+            for (final org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
                 if (postConstructItem != null) {
                     writer.writeStartElement(prefix, "post-construct", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, postConstructItem, context);

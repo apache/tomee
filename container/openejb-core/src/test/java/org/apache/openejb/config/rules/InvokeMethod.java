@@ -57,8 +57,9 @@ public class InvokeMethod extends Statement {
     private Object target;
     // These are all the keys defined in org.apache.openejb.config.rules.Messages.properties
     private static Set<String> allKeys;
+
     static {
-        ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
+        final ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
         allKeys = bundle.keySet();
     }
 
@@ -132,14 +133,15 @@ public class InvokeMethod extends Statement {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
     }
 
-    private void tearDown() {}
+    private void tearDown() {
+    }
 
     /**
      * Tests to see if the keys specified in the @Keys annotation are also available in the org.apache.openejb.config.rules.Messages.properties file. If there are any invalid keys,
      * then it throws an exception and causes the test to error out. If all the keys are valid, then it returns those keys. This list of keys can then be compared with all the Keys
      * in org.apache.openejb.config.rules.Messages.properties and one can then find out the "test coverage" of the keys i.e. this tool can be used to find keys for which tests have
      * not yet been written
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -162,15 +164,15 @@ public class InvokeMethod extends Statement {
             for (Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
                     switch (key.type()) {
-                    case KeyType.FAILURE:
-                        failureKeys.add(key.value());
-                        break;
-                    case KeyType.WARNING:
-                        warningKeys.add(key.value());
-                        break;
-                    case KeyType.ERROR:
-                        errorKeys.add(key.value());
-                        break;
+                        case KeyType.FAILURE:
+                            failureKeys.add(key.value());
+                            break;
+                        case KeyType.WARNING:
+                            warningKeys.add(key.value());
+                            break;
+                        case KeyType.ERROR:
+                            errorKeys.add(key.value());
+                            break;
                     }
                 }
             }
@@ -181,8 +183,8 @@ public class InvokeMethod extends Statement {
         } else {
             String commaDelimitedKeys = Join.join(",", wrongKeys);
             throw new Exception("The following keys listed in the @Keys annotation on the method " + testMethod.getName() + "() of " + testMethod.getMethod().getDeclaringClass()
-                    + " are invalid : " + commaDelimitedKeys
-                    + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
+                + " are invalid : " + commaDelimitedKeys
+                + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
         }
     }
 

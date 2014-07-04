@@ -37,8 +37,8 @@ import javax.interceptor.AroundInvoke;
 public class CheckInvalidTransactionAttributeTest {
     @Keys(@Key(value = "xml.invalidTransactionAttribute", type = KeyType.WARNING))
     public EjbJar xml() throws SecurityException, NoSuchMethodException {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));
         bean.setTransactionType(TransactionType.BEAN);
         ContainerTransaction tx = new ContainerTransaction();
         tx.getMethod().add(new Method(bean.getEjbName(), CheeseEjb.class.getMethod("sayCheesePlease", null)));
@@ -49,26 +49,30 @@ public class CheckInvalidTransactionAttributeTest {
 
     @Keys(@Key(value = "ann.invalidTransactionAttribute", type = KeyType.WARNING))
     public EjbJar annotation() throws SecurityException, NoSuchMethodException {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(AnnotatedCheeseEjb.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(AnnotatedCheeseEjb.class));
         return ejbJar;
     }
 
     private static class CheeseEjb {
         @AroundInvoke
         // need to add this to cause validation to fail. Validation does not fail on warnings, which causes this framework to not work properly
-        public void sayCheese() {}
+        public void sayCheese() {
+        }
 
-        public void sayCheesePlease() {}
+        public void sayCheesePlease() {
+        }
     }
 
     @TransactionManagement(TransactionManagementType.BEAN)
     private static class AnnotatedCheeseEjb {
         @AroundInvoke
         // need to add this to cause validation to fail. Validation does not fail on warnings, which causes this framework to not work properly
-        public void sayCheese() {}
+        public void sayCheese() {
+        }
 
         @TransactionAttribute(TransactionAttributeType.REQUIRED)
-        public void sayCheesePlease() {}
+        public void sayCheesePlease() {
+        }
     }
 }

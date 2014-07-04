@@ -18,20 +18,20 @@
 -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.1" metadata-complete="true">
-    <enterprise-beans>
-        <session>
-            <description>TestBean</description>
-            <ejb-name>TestBean</ejb-name>
-            <around-timeout>
-                <method-name>aroundTimeout</method-name>
-            </around-timeout>
-        </session>
-    </enterprise-beans>
-    <interceptors>
-        <interceptor>
-            <around-timeout>
-                <method-name>aroundTimeout</method-name>
-            </around-timeout>
-        </interceptor>
-    </interceptors>
+  <enterprise-beans>
+    <session>
+      <description>TestBean</description>
+      <ejb-name>TestBean</ejb-name>
+      <around-timeout>
+        <method-name>aroundTimeout</method-name>
+      </around-timeout>
+    </session>
+  </enterprise-beans>
+  <interceptors>
+    <interceptor>
+      <around-timeout>
+        <method-name>aroundTimeout</method-name>
+      </around-timeout>
+    </interceptor>
+  </interceptors>
 </ejb-jar>

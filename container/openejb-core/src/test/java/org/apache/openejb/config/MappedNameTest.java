@@ -39,26 +39,26 @@ public class MappedNameTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(GreenBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(RedBean.class));
 
-        EjbModule ejbModule = new EjbModule(ejbJar, new OpenejbJar());
+        final EjbModule ejbModule = new EjbModule(ejbJar, new OpenejbJar());
 
         ejbModule.getOpenejbJar().addEjbDeployment(new EjbDeployment(null, "foo/bar/baz/Green", "GreenBean"));
         ejbModule.getOpenejbJar().addEjbDeployment(new EjbDeployment(null, "foo/bar/baz/Red", "RedBean"));
 
-        EjbJarInfo info = config.configureApplication(ejbModule);
+        final EjbJarInfo info = config.configureApplication(ejbModule);
         assembler.createApplication(info);
 
         InitialContext initialContext = new InitialContext();
-        Color green = (Color) initialContext.lookup("foo/bar/baz/GreenLocal");
+        final Color green = (Color) initialContext.lookup("foo/bar/baz/GreenLocal");
         Color red = (Color) initialContext.lookup("foo/bar/baz/RedLocal");
 
         red.test();
@@ -79,7 +79,7 @@ public class MappedNameTest extends TestCase {
     public static class RedBean implements Color {
 
         public void test() throws NamingException {
-            InitialContext initialContext = new InitialContext();
+            final InitialContext initialContext = new InitialContext();
             initialContext.lookup("java:comp/env/green");
         }
     }

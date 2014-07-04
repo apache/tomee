@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EnvEntry$JAXB
-        extends JAXBObject<EnvEntry> {
+    extends JAXBObject<EnvEntry> {
 
 
     public EnvEntry$JAXB() {
         super(EnvEntry.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "env-entryType".intern()), Text$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static EnvEntry readEnvEntry(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EnvEntry readEnvEntry(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEnvEntry(XoXMLStreamWriter writer, EnvEntry envEntry, RuntimeContext context)
-            throws Exception {
+    public static void writeEnvEntry(final XoXMLStreamWriter writer, final EnvEntry envEntry, final RuntimeContext context)
+        throws Exception {
         _write(writer, envEntry, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EnvEntry envEntry, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final EnvEntry envEntry, RuntimeContext context)
+        throws Exception {
         _write(writer, envEntry, context);
     }
 
-    public final static EnvEntry _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EnvEntry _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,7 +73,7 @@ public class EnvEntry$JAXB
             context = new RuntimeContext();
         }
 
-        EnvEntry envEntry = new EnvEntry();
+        final EnvEntry envEntry = new EnvEntry();
         context.beforeUnmarshal(envEntry, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -88,7 +88,7 @@ public class EnvEntry$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -205,13 +205,13 @@ public class EnvEntry$JAXB
         return envEntry;
     }
 
-    public final EnvEntry read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EnvEntry read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EnvEntry envEntry, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final EnvEntry envEntry, RuntimeContext context)
+        throws Exception {
         if (envEntry == null) {
             writer.writeXsiNil();
             return;
@@ -282,7 +282,7 @@ public class EnvEntry$JAXB
         String envEntryType = null;
         try {
             envEntryType = Adapters.collapsedStringAdapterAdapter.marshal(envEntryTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(envEntry, "envEntryType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (envEntryType != null) {

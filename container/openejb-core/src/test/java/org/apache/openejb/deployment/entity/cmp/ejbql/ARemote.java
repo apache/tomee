@@ -20,16 +20,17 @@ import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface ARemote extends EJBObject {
 
     // CMP
     public Integer getField1() throws RemoteException;
+
     public void setField1(Integer field1) throws RemoteException;
 
     public String getField2() throws RemoteException;
+
     public void setField2(String field2) throws RemoteException;
-    
+
 }

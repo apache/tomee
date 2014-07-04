@@ -17,6 +17,8 @@
 
 package org.apache.openejb.jee.oejb2;
 
+import org.w3c.dom.Element;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -24,19 +26,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.w3c.dom.Element;
 
 
 /**
- * 
- * 	Mirrors the moduleType defined by application_1_4.xsd and adds an
- * 	optional alt-dd element defining a Geronimo specific deployment descriptor.
- *             
- * 
+ * Mirrors the moduleType defined by application_1_4.xsd and adds an
+ * optional alt-dd element defining a Geronimo specific deployment descriptor.
+ * <p/>
+ * <p/>
  * <p>Java class for ext-moduleType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ext-moduleType">
  *   &lt;complexContent>
@@ -58,8 +58,6 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ext-moduleType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", propOrder = {
@@ -73,13 +71,13 @@ import org.w3c.dom.Element;
 })
 public class ExtModuleType {
 
-    @XmlElement(name="connector", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "connector", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected String connector;
-    @XmlElement(name="ejb", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "ejb", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected String ejb;
-    @XmlElement(name="java", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "java", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected String java;
-    @XmlElement(name="web", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "web", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected String web;
     @XmlElement(name = "internal-path", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -92,11 +90,9 @@ public class ExtModuleType {
 
     /**
      * Gets the value of the connector property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConnector() {
         return connector;
@@ -104,23 +100,19 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the connector property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConnector(String value) {
+    public void setConnector(final String value) {
         this.connector = value;
     }
 
     /**
      * Gets the value of the ejb property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjb() {
         return ejb;
@@ -128,23 +120,19 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the ejb property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjb(String value) {
+    public void setEjb(final String value) {
         this.ejb = value;
     }
 
     /**
      * Gets the value of the java property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJava() {
         return java;
@@ -152,23 +140,19 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the java property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJava(String value) {
+    public void setJava(final String value) {
         this.java = value;
     }
 
     /**
      * Gets the value of the web property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWeb() {
         return web;
@@ -176,23 +160,19 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the web property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWeb(String value) {
+    public void setWeb(final String value) {
         this.web = value;
     }
 
     /**
      * Gets the value of the internalPath property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInternalPath() {
         return internalPath;
@@ -200,23 +180,19 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the internalPath property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInternalPath(String value) {
+    public void setInternalPath(final String value) {
         this.internalPath = value;
     }
 
     /**
      * Gets the value of the externalPath property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExternalPath() {
         return externalPath;
@@ -224,24 +200,20 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the externalPath property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setExternalPath(String value) {
+    public void setExternalPath(final String value) {
         this.externalPath = value;
     }
 
     /**
      * Gets the value of the any property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     {@link Element }
-     *     
+     *
+     * @return possible object is
+     * {@link Object }
+     * {@link Element }
      */
     public Object getAny() {
         return any;
@@ -249,14 +221,12 @@ public class ExtModuleType {
 
     /**
      * Sets the value of the any property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     {@link Element }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Object }
+     *              {@link Element }
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 

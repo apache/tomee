@@ -77,7 +77,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                 }
             }
 //            throw new WebBeansException("Could not look up resource at " + resourceReference.getJndiName(), e);
-       }
+        }
         return null;
     }
 
@@ -180,19 +180,19 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     }
 
     /**
-      * delegation of serialization behavior
-      */
-     public <T> void writeExternal(final Bean<T> bean, final T actualResource, final ObjectOutput out) throws IOException {
-         //do nothing
-     }
+     * delegation of serialization behavior
+     */
+    public <T> void writeExternal(final Bean<T> bean, final T actualResource, final ObjectOutput out) throws IOException {
+        //do nothing
+    }
 
-     /**
-      * delegation of serialization behavior
-      */
-     public <T> T readExternal(final Bean<T> bean, final ObjectInput out) throws IOException,
-             ClassNotFoundException {
-         return (T) ((ResourceBean)bean).getActualInstance();
-     }
-    
+    /**
+     * delegation of serialization behavior
+     */
+    public <T> T readExternal(final Bean<T> bean, final ObjectInput out) throws IOException,
+        ClassNotFoundException {
+        return (T) ((ResourceBean) bean).getActualInstance();
+    }
+
 
 }

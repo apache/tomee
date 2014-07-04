@@ -32,11 +32,11 @@ import java.util.Map;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tagType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tagType">
  *   &lt;complexContent>
@@ -58,8 +58,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tagType", propOrder = {
@@ -109,7 +107,7 @@ public class Tag {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -122,7 +120,7 @@ public class Tag {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -152,7 +150,7 @@ public class Tag {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -160,7 +158,7 @@ public class Tag {
         return tagClass;
     }
 
-    public void setTagClass(String value) {
+    public void setTagClass(final String value) {
         this.tagClass = value;
     }
 
@@ -168,7 +166,7 @@ public class Tag {
         return teiClass;
     }
 
-    public void setTeiClass(String value) {
+    public void setTeiClass(final String value) {
         this.teiClass = value;
     }
 
@@ -176,7 +174,7 @@ public class Tag {
         return bodyContent;
     }
 
-    public void setBodyContent(BodyContent value) {
+    public void setBodyContent(final BodyContent value) {
         this.bodyContent = value;
     }
 
@@ -198,7 +196,7 @@ public class Tag {
         return dynamicAttributes;
     }
 
-    public void setDynamicAttributes(String value) {
+    public void setDynamicAttributes(final String value) {
         this.dynamicAttributes = value;
     }
 
@@ -206,7 +204,7 @@ public class Tag {
         return example;
     }
 
-    public void setExample(String value) {
+    public void setExample(final String value) {
         this.example = value;
     }
 
@@ -221,7 +219,7 @@ public class Tag {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

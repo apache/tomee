@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -67,11 +65,9 @@ public class Audit {
 
     /**
      * Gets the value of the createdBy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CreatedBy }
-     *     
+     *
+     * @return possible object is
+     * {@link CreatedBy }
      */
     public CreatedBy getCreatedBy() {
         return createdBy;
@@ -79,23 +75,19 @@ public class Audit {
 
     /**
      * Sets the value of the createdBy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CreatedBy }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CreatedBy }
      */
-    public void setCreatedBy(CreatedBy value) {
+    public void setCreatedBy(final CreatedBy value) {
         this.createdBy = value;
     }
 
     /**
      * Gets the value of the createdTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CreatedTime }
-     *     
+     *
+     * @return possible object is
+     * {@link CreatedTime }
      */
     public CreatedTime getCreatedTime() {
         return createdTime;
@@ -103,23 +95,19 @@ public class Audit {
 
     /**
      * Sets the value of the createdTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CreatedTime }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CreatedTime }
      */
-    public void setCreatedTime(CreatedTime value) {
+    public void setCreatedTime(final CreatedTime value) {
         this.createdTime = value;
     }
 
     /**
      * Gets the value of the updatedBy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UpdatedBy }
-     *     
+     *
+     * @return possible object is
+     * {@link UpdatedBy }
      */
     public UpdatedBy getUpdatedBy() {
         return updatedBy;
@@ -127,23 +115,19 @@ public class Audit {
 
     /**
      * Sets the value of the updatedBy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UpdatedBy }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UpdatedBy }
      */
-    public void setUpdatedBy(UpdatedBy value) {
+    public void setUpdatedBy(final UpdatedBy value) {
         this.updatedBy = value;
     }
 
     /**
      * Gets the value of the updatedTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UpdatedTime }
-     *     
+     *
+     * @return possible object is
+     * {@link UpdatedTime }
      */
     public UpdatedTime getUpdatedTime() {
         return updatedTime;
@@ -151,13 +135,11 @@ public class Audit {
 
     /**
      * Sets the value of the updatedTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UpdatedTime }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UpdatedTime }
      */
-    public void setUpdatedTime(UpdatedTime value) {
+    public void setUpdatedTime(final UpdatedTime value) {
         this.updatedTime = value;
     }
 

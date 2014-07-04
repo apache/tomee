@@ -33,25 +33,25 @@ import javax.interceptor.InvocationContext;
 @RunWith(ValidationRunner.class)
 public class CheckInvalidAroundTimeoutTest extends TestCase {
 
-    @Keys({@Key(value="aroundInvoke.invalidArguments",count=2),@Key(value="aroundInvoke.badReturnType",count=2)})
+    @Keys({@Key(value = "aroundInvoke.invalidArguments", count = 2), @Key(value = "aroundInvoke.badReturnType", count = 2)})
     public EjbJar testInvalidAroundTimeoutParameter() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutParameterBean", TestInvalidAroundTimeoutParameterBean.class));
         ejbJar.addInterceptor(new Interceptor(TestInvalidAroundTimeoutParameterInterceptor.class));
         return ejbJar;
     }
 
-    @Keys({@Key(value="aroundInvoke.badReturnType",count=2),@Key(value="aroundInvoke.mustThrowException",count=2)})
+    @Keys({@Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.mustThrowException", count = 2)})
     public EjbJar testInvalidAroundTimeoutReturnValue() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutReturnValueBean", TestInvalidAroundTimeoutReturnValueBean.class));
         ejbJar.addInterceptor(new Interceptor(TestInvalidAroundTimeoutReturnValueInterceptor.class));
         return ejbJar;
     }
 
-    @Keys(@Key(value="ignoredMethodAnnotation",type=KeyType.WARNING))
+    @Keys(@Key(value = "ignoredMethodAnnotation", type = KeyType.WARNING))
     public EjbJar testIgnoredAroundTimeout() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean("TestAroundTimeout", TestAroundTimeout.class));
         return ejbJar;
     }
@@ -74,21 +74,21 @@ public class CheckInvalidAroundTimeoutTest extends TestCase {
     public static class TestInvalidAroundTimeoutReturnValueBean {
 
         @AroundTimeout
-        public void aroundTimeout(InvocationContext context) {
+        public void aroundTimeout(final InvocationContext context) {
         }
     }
 
     public static class TestInvalidAroundTimeoutReturnValueInterceptor {
 
         @AroundTimeout
-        public void aroundTimeout(InvocationContext context) {
+        public void aroundTimeout(final InvocationContext context) {
         }
     }
 
     public static class TestAroundTimeout {
 
         @AroundTimeout
-        public void aroundTimeout(InvocationContext context) {
+        public void aroundTimeout(final InvocationContext context) {
         }
     }
 }

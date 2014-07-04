@@ -19,6 +19,7 @@
 
 <!-- $Rev$ -->
 <ServiceJar>
-  <ServiceProvider id="MyResource" service="Resource" type="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource"
-    class-name="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource" />
+  <ServiceProvider id="MyResource" service="Resource"
+                   type="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource"
+                   class-name="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource"/>
 </ServiceJar>

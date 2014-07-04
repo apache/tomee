@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.TldExtension$JAXB.readTldExtension;
 import static org.apache.openejb.jee.TldExtension$JAXB.writeTldExtension;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Function$JAXB
-        extends JAXBObject<Function> {
+    extends JAXBObject<Function> {
 
 
     public Function$JAXB() {
         super(Function.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "functionType".intern()), Text$JAXB.class, Icon$JAXB.class, TldExtension$JAXB.class);
     }
 
-    public static Function readFunction(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Function readFunction(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFunction(XoXMLStreamWriter writer, Function function, RuntimeContext context)
-            throws Exception {
+    public static void writeFunction(final XoXMLStreamWriter writer, Function function, RuntimeContext context)
+        throws Exception {
         _write(writer, function, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Function function, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Function function, final RuntimeContext context)
+        throws Exception {
         _write(writer, function, context);
     }
 
-    public final static Function _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Function _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class Function$JAXB
             context = new RuntimeContext();
         }
 
-        Function function = new Function();
+        final Function function = new Function();
         context.beforeUnmarshal(function, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -83,7 +83,7 @@ public class Function$JAXB
         List<TldExtension> functionExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("functionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Function.class);
@@ -171,7 +171,7 @@ public class Function$JAXB
                 function.functionSignature = functionSignature;
             } else if (("example" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: example
-                String exampleRaw = elementReader.getElementAsString();
+                final String exampleRaw = elementReader.getElementAsString();
 
                 String example;
                 try {
@@ -224,13 +224,13 @@ public class Function$JAXB
         return function;
     }
 
-    public final Function read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Function read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Function function, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Function function, RuntimeContext context)
+        throws Exception {
         if (function == null) {
             writer.writeXsiNil();
             return;
@@ -250,7 +250,7 @@ public class Function$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = function.id;
+        final String idRaw = function.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -265,7 +265,7 @@ public class Function$JAXB
         Text[] descriptions = null;
         try {
             descriptions = function.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(function, "descriptions", Function.class, "getDescriptions", e);
         }
         if (descriptions != null) {
@@ -330,7 +330,7 @@ public class Function$JAXB
         }
 
         // ELEMENT: functionClass
-        String functionClassRaw = function.functionClass;
+        final String functionClassRaw = function.functionClass;
         String functionClass = null;
         try {
             functionClass = Adapters.collapsedStringAdapterAdapter.marshal(functionClassRaw);

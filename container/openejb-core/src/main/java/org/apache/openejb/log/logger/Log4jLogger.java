@@ -37,10 +37,10 @@ import java.util.logging.LogRecord;
 /**
  * java.util.logging.Logger implementation delegating to Log4j.
  * All methods can be used except:
- *   setLevel
- *   addHandler / getHandlers
- *   setParent / getParent
- *   setUseParentHandlers / getUseParentHandlers
+ * setLevel
+ * addHandler / getHandlers
+ * setParent / getParent
+ * setUseParentHandlers / getUseParentHandlers
  *
  * @author gnodet
  */
@@ -55,21 +55,21 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         org.apache.log4j.Level t = org.apache.log4j.Level.DEBUG;
         try {
             final Field f = org.apache.log4j.Level.class.getField("TRACE");
-            t = (org.apache.log4j.Level)f.get(null);
+            t = (org.apache.log4j.Level) f.get(null);
         } catch (final Throwable ex) {
             //ignore, assume old version of log4j
         }
         TRACE = t;
 
-        TO_LOG4J.put(Level.ALL,     org.apache.log4j.Level.ALL);
-        TO_LOG4J.put(Level.SEVERE,  org.apache.log4j.Level.ERROR);
+        TO_LOG4J.put(Level.ALL, org.apache.log4j.Level.ALL);
+        TO_LOG4J.put(Level.SEVERE, org.apache.log4j.Level.ERROR);
         TO_LOG4J.put(Level.WARNING, org.apache.log4j.Level.WARN);
-        TO_LOG4J.put(Level.INFO,    org.apache.log4j.Level.INFO);
-        TO_LOG4J.put(Level.CONFIG,  org.apache.log4j.Level.DEBUG);
-        TO_LOG4J.put(Level.FINE,    org.apache.log4j.Level.DEBUG);
-        TO_LOG4J.put(Level.FINER,   TRACE);
-        TO_LOG4J.put(Level.FINEST,  TRACE);
-        TO_LOG4J.put(Level.OFF,     org.apache.log4j.Level.OFF);
+        TO_LOG4J.put(Level.INFO, org.apache.log4j.Level.INFO);
+        TO_LOG4J.put(Level.CONFIG, org.apache.log4j.Level.DEBUG);
+        TO_LOG4J.put(Level.FINE, org.apache.log4j.Level.DEBUG);
+        TO_LOG4J.put(Level.FINER, TRACE);
+        TO_LOG4J.put(Level.FINEST, TRACE);
+        TO_LOG4J.put(Level.OFF, org.apache.log4j.Level.OFF);
     }
 
     public Log4jLogger(final String name, final String resourceBundleName) {
@@ -92,16 +92,18 @@ public class Log4jLogger extends AbstractDelegatingLogger {
     public synchronized void addHandler(final Handler handler) throws SecurityException {
         log.addAppender(new HandlerWrapper(handler));
     }
+
     public synchronized void removeHandler(final Handler handler) throws SecurityException {
         log.removeAppender("HandlerWrapper-" + handler.hashCode());
     }
+
     public synchronized Handler[] getHandlers() {
         final List<Handler> ret = new ArrayList<Handler>();
         final Enumeration<?> en = log.getAllAppenders();
         while (en.hasMoreElements()) {
-            final Appender ap = (Appender)en.nextElement();
+            final Appender ap = (Appender) en.nextElement();
             if (ap instanceof HandlerWrapper) {
-                ret.add(((HandlerWrapper)ap).getHandler());
+                ret.add(((HandlerWrapper) ap).getHandler());
             }
         }
         return ret.toArray(new Handler[ret.size()]);
@@ -109,9 +111,9 @@ public class Log4jLogger extends AbstractDelegatingLogger {
 
     protected void internalLogFormatted(final String msg, final LogRecord record) {
         log.log(AbstractDelegatingLogger.class.getName(),
-                TO_LOG4J.get(record.getLevel()),
-                msg,
-                record.getThrown());
+            TO_LOG4J.get(record.getLevel()),
+            msg,
+            record.getThrown());
     }
 
 
@@ -163,7 +165,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         @Override
         protected void append(final LoggingEvent event) {
             final LogRecord lr = new LogRecord(fromL4J(event.getLevel()),
-                    event.getMessage().toString());
+                event.getMessage().toString());
             lr.setLoggerName(event.getLoggerName());
             if (event.getThrowableInformation() != null) {
                 lr.setThrown(event.getThrowableInformation().getThrowable());
@@ -189,6 +191,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         public Priority getThreshold() {
             return TO_LOG4J.get(handler.getLevel());
         }
+
         @Override
         public boolean isAsSevereAsThreshold(final Priority priority) {
             final Priority p = getThreshold();

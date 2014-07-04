@@ -45,7 +45,7 @@ public class EntityInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     /**
-     *  The default size of the bean pools. Every bean class gets its own pool of this size
+     * The default size of the bean pools. Every bean class gets its own pool of this size
      */
     private int poolsize;
 
@@ -53,7 +53,7 @@ public class EntityInstanceManager {
      * contains a collection of LinkListStacks indexed by deployment id. Each indexed stack
      * represents the method ready pool of for that class.
      */
-    private Map<Object,LinkedListStack> poolMap;
+    private Map<Object, LinkedListStack> poolMap;
 
 
     private SecurityService securityService;
@@ -61,7 +61,7 @@ public class EntityInstanceManager {
     public EntityInstanceManager(final EntityContainer container, final SecurityService securityService, final int poolSize) {
         this.securityService = securityService;
         this.poolsize = poolSize;
-        poolMap = new HashMap<Object,LinkedListStack>();// put size in later
+        poolMap = new HashMap<Object, LinkedListStack>();// put size in later
 
         final BeanContext[] beanContexts = container.getBeanContexts();
         for (final BeanContext beanContext : beanContexts) {

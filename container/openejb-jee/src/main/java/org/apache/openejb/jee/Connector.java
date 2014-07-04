@@ -33,11 +33,11 @@ import java.util.Map;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for connectorType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="connectorType">
  *   &lt;complexContent>
@@ -59,22 +59,20 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlRootElement(name = "connector")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connectorType", propOrder = {
-        "moduleName",
-        "descriptions",
-        "displayNames",
-        "icon",
-        "vendorName",
-        "eisType",
-        "resourceAdapterVersion",
-        "license",
-        "resourceAdapter",
-        "requiredWorkContext"
+    "moduleName",
+    "descriptions",
+    "displayNames",
+    "icon",
+    "vendorName",
+    "eisType",
+    "resourceAdapterVersion",
+    "license",
+    "resourceAdapter",
+    "requiredWorkContext"
 })
 public class Connector implements NamedModule {
 
@@ -110,11 +108,11 @@ public class Connector implements NamedModule {
     public Connector() {
     }
 
-    public Connector(String id) {
+    public Connector(final String id) {
         this.id = id;
     }
 
-    public static Connector newConnector(Connector10 source) {
+    public static Connector newConnector(final Connector10 source) {
         Connector connector = new Connector();
         connector.setDescriptions(source.getDescriptions());
         connector.setDisplayNames(source.getDisplayNames());
@@ -134,7 +132,7 @@ public class Connector implements NamedModule {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -143,7 +141,7 @@ public class Connector implements NamedModule {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -156,7 +154,7 @@ public class Connector implements NamedModule {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -171,7 +169,7 @@ public class Connector implements NamedModule {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -186,7 +184,7 @@ public class Connector implements NamedModule {
         return vendorName;
     }
 
-    public void setVendorName(String value) {
+    public void setVendorName(final String value) {
         this.vendorName = value;
     }
 
@@ -194,7 +192,7 @@ public class Connector implements NamedModule {
         return eisType;
     }
 
-    public void setEisType(String value) {
+    public void setEisType(final String value) {
         this.eisType = value;
     }
 
@@ -202,7 +200,7 @@ public class Connector implements NamedModule {
         return resourceAdapterVersion;
     }
 
-    public void setResourceAdapterVersion(String value) {
+    public void setResourceAdapterVersion(final String value) {
         this.resourceAdapterVersion = value;
     }
 
@@ -210,7 +208,7 @@ public class Connector implements NamedModule {
         return license;
     }
 
-    public void setLicense(License value) {
+    public void setLicense(final License value) {
         this.license = value;
     }
 
@@ -218,7 +216,7 @@ public class Connector implements NamedModule {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+    public void setResourceAdapter(final ResourceAdapter resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
@@ -233,7 +231,7 @@ public class Connector implements NamedModule {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -245,7 +243,7 @@ public class Connector implements NamedModule {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -253,7 +251,7 @@ public class Connector implements NamedModule {
         return metadataComplete;
     }
 
-    public void setMetadataComplete(Boolean metadataComplete) {
+    public void setMetadataComplete(final Boolean metadataComplete) {
         this.metadataComplete = metadataComplete;
     }
 }

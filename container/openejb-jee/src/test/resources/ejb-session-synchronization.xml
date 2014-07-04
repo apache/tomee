@@ -18,22 +18,22 @@
 -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.1" metadata-complete="true">
-    <enterprise-beans>
-        <session>
-            <description>String</description>
-            <ejb-name>TestBean</ejb-name>
-            <after-begin-method>
-                <method-name>afterBegin</method-name>
-            </after-begin-method>      
-            <before-completion-method>
-                <method-name>beforeCompletion</method-name>
-            </before-completion-method>
-            <after-completion-method>
-                <method-name>afterCompletion</method-name>
-                <method-params>
-                    <method-param>boolean</method-param>
-                </method-params>
-            </after-completion-method>                  
-        </session>
-    </enterprise-beans>
+  <enterprise-beans>
+    <session>
+      <description>String</description>
+      <ejb-name>TestBean</ejb-name>
+      <after-begin-method>
+        <method-name>afterBegin</method-name>
+      </after-begin-method>
+      <before-completion-method>
+        <method-name>beforeCompletion</method-name>
+      </before-completion-method>
+      <after-completion-method>
+        <method-name>afterCompletion</method-name>
+        <method-params>
+          <method-param>boolean</method-param>
+        </method-params>
+      </after-completion-method>
+    </session>
+  </enterprise-beans>
 </ejb-jar>

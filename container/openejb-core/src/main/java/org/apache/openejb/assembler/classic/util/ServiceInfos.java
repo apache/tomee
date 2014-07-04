@@ -150,9 +150,9 @@ public final class ServiceInfos {
                 final Object value = entry.getValue();
                 if (value instanceof String) {
                     final String valueStr = value.toString();
-                    if (valueStr.startsWith("$")){
+                    if (valueStr.startsWith("$")) {
                         serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
-                    } else if (valueStr.startsWith("@")){
+                    } else if (valueStr.startsWith("@")) {
                         final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
                         try {
                             serviceRecipe.setProperty(key, jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + valueStr.substring(1)));

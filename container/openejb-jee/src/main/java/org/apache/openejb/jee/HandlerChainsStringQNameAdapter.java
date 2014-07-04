@@ -33,16 +33,16 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
     private NamespaceContext namespaceContext;
 
     @Override
-    public QName unmarshal(String value) throws Exception {
+    public QName unmarshal(final String value) throws Exception {
         if (value == null || value.isEmpty()) {
             return new QName(XMLConstants.NULL_NS_URI, "");
         }
-        int colonIndex = value.indexOf(":");
+        final int colonIndex = value.indexOf(":");
         if (colonIndex == -1) {
             return new QName(XMLConstants.NULL_NS_URI, value);
         }
-        String prefix = value.substring(0, colonIndex);
-        String localPart = (colonIndex == (value.length() - 1)) ? "" : value.substring(colonIndex + 1);
+        final String prefix = value.substring(0, colonIndex);
+        final String localPart = (colonIndex == (value.length() - 1)) ? "" : value.substring(colonIndex + 1);
 
         String nameSpaceURI = "";
         if (xmlFilter != null) {
@@ -58,8 +58,8 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
     }
 
     @Override
-    public String marshal(QName name) throws Exception {
-        String localPart = name.getLocalPart();
+    public String marshal(final QName name) throws Exception {
+        final String localPart = name.getLocalPart();
         if (localPart == null || localPart.isEmpty()) {
             return "";
         }
@@ -77,7 +77,7 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
         this.xmlFilter = xmlFilter;
     }
 
-    public void setNamespaceContext(NamespaceContext namespaceContext) {
+    public void setNamespaceContext(final NamespaceContext namespaceContext) {
         this.namespaceContext = namespaceContext;
     }
 }

@@ -395,9 +395,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     protected Object getEJBMetaData(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
         final IntraVmMetaData metaData = new IntraVmMetaData(getBeanContext().getHomeInterface(),
-                                                             getBeanContext().getRemoteInterface(),
-                                                             getBeanContext().getPrimaryKeyClass(),
-                                                             getBeanContext().getComponentType());
+            getBeanContext().getRemoteInterface(),
+            getBeanContext().getPrimaryKeyClass(),
+            getBeanContext().getComponentType());
         metaData.setEJBHome((EJBHome) proxy);
         return metaData;
     }

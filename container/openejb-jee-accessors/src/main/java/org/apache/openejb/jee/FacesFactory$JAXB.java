@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesFactoryExtension$JAXB.readFacesFactory
 import static org.apache.openejb.jee.FacesFactoryExtension$JAXB.writeFacesFactoryExtension;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesFactory$JAXB
-        extends JAXBObject<FacesFactory> {
+    extends JAXBObject<FacesFactory> {
 
 
     public FacesFactory$JAXB() {
         super(FacesFactory.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-factoryType".intern()), FacesFactoryExtension$JAXB.class);
     }
 
-    public static FacesFactory readFacesFactory(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesFactory readFacesFactory(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesFactory(XoXMLStreamWriter writer, FacesFactory facesFactory, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesFactory(final XoXMLStreamWriter writer, FacesFactory facesFactory, RuntimeContext context)
+        throws Exception {
         _write(writer, facesFactory, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesFactory facesFactory, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesFactory facesFactory, RuntimeContext context)
+        throws Exception {
         _write(writer, facesFactory, context);
     }
 
-    public final static FacesFactory _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesFactory _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -86,7 +86,7 @@ public class FacesFactory$JAXB
         List<FacesFactoryExtension> factoryExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-factoryType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesFactory.class);
@@ -130,7 +130,7 @@ public class FacesFactory$JAXB
                 applicationFactory.add(applicationFactoryItem);
             } else if (("exception-handler-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: exceptionHandlerFactory
-                String exceptionHandlerFactoryItemRaw = elementReader.getElementAsString();
+                final String exceptionHandlerFactoryItemRaw = elementReader.getElementAsString();
 
                 String exceptionHandlerFactoryItem;
                 try {
@@ -151,7 +151,7 @@ public class FacesFactory$JAXB
                 exceptionHandlerFactory.add(exceptionHandlerFactoryItem);
             } else if (("external-context-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: externalContextFactory
-                String externalContextFactoryItemRaw = elementReader.getElementAsString();
+                final String externalContextFactoryItemRaw = elementReader.getElementAsString();
 
                 String externalContextFactoryItem;
                 try {
@@ -374,13 +374,13 @@ public class FacesFactory$JAXB
         return facesFactory;
     }
 
-    public final FacesFactory read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesFactory read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesFactory facesFactory, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesFactory facesFactory, RuntimeContext context)
+        throws Exception {
         if (facesFactory == null) {
             writer.writeXsiNil();
             return;
@@ -390,7 +390,7 @@ public class FacesFactory$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesFactory.class != facesFactory.getClass()) {
             context.unexpectedSubclass(writer, facesFactory, FacesFactory.class);
             return;
@@ -490,7 +490,7 @@ public class FacesFactory$JAXB
                 String partialViewContextFactory = null;
                 try {
                     partialViewContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(partialViewContextFactoryItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesFactory, "partialViewContextFactory", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (partialViewContextFactory != null) {
@@ -576,7 +576,7 @@ public class FacesFactory$JAXB
         // ELEMENT: visitContextFactory
         List<String> visitContextFactoryRaw = facesFactory.visitContextFactory;
         if (visitContextFactoryRaw != null) {
-            for (String visitContextFactoryItem : visitContextFactoryRaw) {
+            for (final String visitContextFactoryItem : visitContextFactoryRaw) {
                 String visitContextFactory = null;
                 try {
                     visitContextFactory = Adapters.collapsedStringAdapterAdapter.marshal(visitContextFactoryItem);

@@ -44,11 +44,11 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean a = bean("a");
-        Bean b = bean("b", "a");
-        Bean c = bean("c", "b");
+        final Bean a = bean("a");
+        final Bean b = bean("b", "a");
+        final Bean c = bean("c", "b");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
         assertEquals(expected(a, b, c), actual);
     }
 
@@ -56,11 +56,11 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean c = bean("c", "b", "a");
-        Bean b = bean("b", "a");
-        Bean a = bean("a");
+        final Bean c = bean("c", "b", "a");
+        final Bean b = bean("b", "a");
+        final Bean a = bean("a");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
 
         assertEquals(expected(a, b, c), actual);
     }
@@ -69,15 +69,15 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean c = bean("c", "b", "a");
-        Bean b = bean("b", "a");
-        Bean a = bean("a");
+        final Bean c = bean("c", "b", "a");
+        final Bean b = bean("b", "a");
+        final Bean a = bean("a");
 
-        Bean f = bean("f", "e", "d");
-        Bean e = bean("e", "d");
-        Bean d = bean("d");
+        final Bean f = bean("f", "e", "d");
+        final Bean e = bean("e", "d");
+        final Bean d = bean("d");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
 
         //assertEquals(expected(d, a, e, b, f, c), actual);
         assertEquals(expected(a, b, c, d, e, f), actual);
@@ -87,15 +87,15 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean c = bean("c", "b", "a");
-        Bean a = bean("a");
-        Bean b = bean("b", "a", "d");
+        final Bean c = bean("c", "b", "a");
+        final Bean a = bean("a");
+        final Bean b = bean("b", "a", "d");
 
-        Bean f = bean("f", "e", "d", "c", "b", "a");
-        Bean d = bean("d", "a");
-        Bean e = bean("e", "d", "b", "a");
+        final Bean f = bean("f", "e", "d", "c", "b", "a");
+        final Bean d = bean("d", "a");
+        final Bean e = bean("e", "d", "b", "a");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
 
         assertEquals(expected(a, d, b, c, e, f), actual);
     }
@@ -105,14 +105,14 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean a = bean("a", "c");
-        Bean b = bean("b", "a");
-        Bean c = bean("c", "b");
+        final Bean a = bean("a", "c");
+        final Bean b = bean("b", "a");
+        final Bean c = bean("c", "b");
         try {
             sort(beans, visitor);
             fail("Ciruit should have been detected");
-        } catch (CircularReferencesException e) {
-            List<List> circuits = e.getCircuits();
+        } catch (final CircularReferencesException e) {
+            final List<List> circuits = e.getCircuits();
             assertEquals(1, circuits.size());
             assertEquals(expected(a, c, b, a), circuits.get(0));
         }
@@ -123,19 +123,19 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean a = bean("a", "c");
-        Bean b = bean("b", "a");
-        Bean c = bean("c", "b");
+        final Bean a = bean("a", "c");
+        final Bean b = bean("b", "a");
+        final Bean c = bean("c", "b");
 
-        Bean d = bean("d", "f");
-        Bean e = bean("e", "d");
-        Bean f = bean("f", "e");
+        final Bean d = bean("d", "f");
+        final Bean e = bean("e", "d");
+        final Bean f = bean("f", "e");
 
         try {
             sort(beans, visitor);
             fail("Ciruit should have been detected");
-        } catch (CircularReferencesException cre) {
-            List<List> circuits = cre.getCircuits();
+        } catch (final CircularReferencesException cre) {
+            final List<List> circuits = cre.getCircuits();
             assertEquals(2, circuits.size());
             assertEquals(expected(a, c, b, a), circuits.get(0));
             assertEquals(expected(d, f, e, d), circuits.get(1));
@@ -146,17 +146,17 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean a = bean("a", "a", "b", "c");
-        Bean b = bean("b", "a", "b", "c");
-        Bean c = bean("c", "a", "b", "c");
+        final Bean a = bean("a", "a", "b", "c");
+        final Bean b = bean("b", "a", "b", "c");
+        final Bean c = bean("c", "a", "b", "c");
 
         try {
             sort(beans, visitor);
             fail("Ciruit should have been detected");
-        } catch (CircularReferencesException cre) {
-            List<List> circuits = cre.getCircuits();
+        } catch (final CircularReferencesException cre) {
+            final List<List> circuits = cre.getCircuits();
             assertEquals(7, circuits.size());
-            Iterator<List> actual = circuits.listIterator();
+            final Iterator<List> actual = circuits.listIterator();
 
             assertEquals(expected(a, a), actual.next());
             assertEquals(expected(b, b), actual.next());
@@ -173,15 +173,15 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean a = bean("a");
-        Bean b = bean("b", "a");
-        Bean c = bean("c", "b", "z");
+        final Bean a = bean("a");
+        final Bean b = bean("b", "a");
+        final Bean c = bean("c", "b", "z");
 
         List<Bean> actual = null;
         try {
             actual = sort(beans, visitor);
             fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // pass
         }
     }
@@ -192,14 +192,14 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean b = bean("b");
-        Bean a = bean("a");
-        Bean d = bean("d");
-        Bean c = bean("c");
-        Bean f = bean("f");
-        Bean e = bean("e");
+        final Bean b = bean("b");
+        final Bean a = bean("a");
+        final Bean d = bean("d");
+        final Bean c = bean("c");
+        final Bean f = bean("f");
+        final Bean e = bean("e");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
 
         assertEquals(expected(b, a, d, c, f, e), actual);
     }
@@ -210,24 +210,24 @@ public class ReferencesTest extends TestCase {
 
         beans = new ArrayList<Bean>();
 
-        Bean b = bean("b");
-        Bean a = bean("a");
-        Bean d = bean("d","a", "b");
-        Bean c = bean("c");
-        Bean e = bean("e", "f");
-        Bean f = bean("f");
+        final Bean b = bean("b");
+        final Bean a = bean("a");
+        final Bean d = bean("d", "a", "b");
+        final Bean c = bean("c");
+        final Bean e = bean("e", "f");
+        final Bean f = bean("f");
 
-        List<Bean> actual = sort(beans, visitor);
+        final List<Bean> actual = sort(beans, visitor);
 
         assertEquals(expected(b, a, d, c, f, e), actual);
     }
 
-    private List<Bean> expected(Bean... beans){
+    private List<Bean> expected(final Bean... beans) {
         return Arrays.asList(beans);
     }
 
-    private Bean bean(String name, String... refs) {
-        Bean bean = new Bean(name, refs);
+    private Bean bean(final String name, final String... refs) {
+        final Bean bean = new Bean(name, refs);
         beans.add(bean);
         return bean;
     }
@@ -237,10 +237,10 @@ public class ReferencesTest extends TestCase {
         private final String name;
         private final Set<String> refs;
 
-        public Bean(String name, String... refs) {
+        public Bean(final String name, final String... refs) {
             this.name = name;
             this.refs = new LinkedHashSet<String>(refs.length);
-            for (String s : refs) {
+            for (final String s : refs) {
                 this.refs.add(s);
             }
         }
@@ -251,11 +251,11 @@ public class ReferencesTest extends TestCase {
     }
 
     public static class BeanVisitor implements References.Visitor<Bean> {
-        public String getName(Bean t) {
+        public String getName(final Bean t) {
             return t.name;
         }
 
-        public Set<String> getReferences(Bean t) {
+        public Set<String> getReferences(final Bean t) {
             return t.refs;
         }
     }

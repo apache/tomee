@@ -39,33 +39,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesNavigationRule$JAXB
-        extends JAXBObject<FacesNavigationRule> {
+    extends JAXBObject<FacesNavigationRule> {
 
 
     public FacesNavigationRule$JAXB() {
         super(FacesNavigationRule.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-navigation-ruleType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesNavigationCase$JAXB.class, FacesNavigationRuleExtension$JAXB.class);
     }
 
-    public static FacesNavigationRule readFacesNavigationRule(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesNavigationRule readFacesNavigationRule(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNavigationRule(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesNavigationRule(final XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRule, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesNavigationRule facesNavigationRule, RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRule, context);
     }
 
-    public final static FacesNavigationRule _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesNavigationRule _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -76,7 +76,7 @@ public class FacesNavigationRule$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNavigationRule facesNavigationRule = new FacesNavigationRule();
+        final FacesNavigationRule facesNavigationRule = new FacesNavigationRule();
         context.beforeUnmarshal(facesNavigationRule, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -97,7 +97,7 @@ public class FacesNavigationRule$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNavigationRule);
                 facesNavigationRule.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -109,7 +109,7 @@ public class FacesNavigationRule$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -140,7 +140,7 @@ public class FacesNavigationRule$JAXB
                 String fromViewId;
                 try {
                     fromViewId = Adapters.collapsedStringAdapterAdapter.unmarshal(fromViewIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -205,13 +205,13 @@ public class FacesNavigationRule$JAXB
         return facesNavigationRule;
     }
 
-    public final FacesNavigationRule read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesNavigationRule read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesNavigationRule facesNavigationRule, RuntimeContext context)
+        throws Exception {
         if (facesNavigationRule == null) {
             writer.writeXsiNil();
             return;
@@ -221,7 +221,7 @@ public class FacesNavigationRule$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesNavigationRule.class != facesNavigationRule.getClass()) {
             context.unexpectedSubclass(writer, facesNavigationRule, FacesNavigationRule.class);
             return;
@@ -269,7 +269,7 @@ public class FacesNavigationRule$JAXB
             context.getterError(facesNavigationRule, "displayNames", FacesNavigationRule.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -281,7 +281,7 @@ public class FacesNavigationRule$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesNavigationRule.icon;
+        final LocalCollection<Icon> icon = facesNavigationRule.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {

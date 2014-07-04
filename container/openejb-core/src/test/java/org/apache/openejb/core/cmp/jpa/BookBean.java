@@ -34,21 +34,22 @@ import java.util.Set;
 
 public class BookBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
+
     static {
         try {
             deploymentInfo = new BeanContext("book", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext(), null),
-                    BookBean.class,
-                    null,
-                    null,
-                    BookHome.class,
-                    Book.class,
-                    null, null,
-                    null,
-                    null,
-                    String.class,
-                    BeanType.CMP_ENTITY, false);
+                BookBean.class,
+                null,
+                null,
+                BookHome.class,
+                Book.class,
+                null, null,
+                null,
+                null,
+                String.class,
+                BeanType.CMP_ENTITY, false);
             ((BeanContext) deploymentInfo).createMethodMap();
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             throw new RuntimeException(e);
         }
     }

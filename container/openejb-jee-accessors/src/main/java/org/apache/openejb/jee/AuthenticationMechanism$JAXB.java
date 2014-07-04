@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AuthenticationMechanism$JAXB
-        extends JAXBObject<AuthenticationMechanism> {
+    extends JAXBObject<AuthenticationMechanism> {
 
 
     public AuthenticationMechanism$JAXB() {
         super(AuthenticationMechanism.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "authentication-mechanismType".intern()), Text$JAXB.class);
     }
 
-    public static AuthenticationMechanism readAuthenticationMechanism(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AuthenticationMechanism readAuthenticationMechanism(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAuthenticationMechanism(XoXMLStreamWriter writer, AuthenticationMechanism authenticationMechanism, RuntimeContext context)
-            throws Exception {
+    public static void writeAuthenticationMechanism(final XoXMLStreamWriter writer, AuthenticationMechanism authenticationMechanism, RuntimeContext context)
+        throws Exception {
         _write(writer, authenticationMechanism, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AuthenticationMechanism authenticationMechanism, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final AuthenticationMechanism authenticationMechanism, RuntimeContext context)
+        throws Exception {
         _write(writer, authenticationMechanism, context);
     }
 
-    public final static AuthenticationMechanism _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AuthenticationMechanism _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -95,7 +95,7 @@ public class AuthenticationMechanism$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
                 Text descriptionsItem = readText(elementReader, context);
@@ -110,7 +110,7 @@ public class AuthenticationMechanism$JAXB
                 String authenticationMechanismType;
                 try {
                     authenticationMechanismType = Adapters.collapsedStringAdapterAdapter.unmarshal(authenticationMechanismTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -146,13 +146,13 @@ public class AuthenticationMechanism$JAXB
         return authenticationMechanism;
     }
 
-    public final AuthenticationMechanism read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AuthenticationMechanism read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AuthenticationMechanism authenticationMechanism, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final AuthenticationMechanism authenticationMechanism, RuntimeContext context)
+        throws Exception {
         if (authenticationMechanism == null) {
             writer.writeXsiNil();
             return;

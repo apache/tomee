@@ -35,7 +35,7 @@ import java.util.logging.LogRecord;
  * <p>
  * Level mapping inspired by {@link org.slf4j.bridge.SLF4JBridgeHandler}:
  * </p>
- *
+ * <p/>
  * <pre>
  * FINEST  -&gt; TRACE
  * FINER   -&gt; DEBUG
@@ -61,6 +61,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
             locationAwareLogger = (LocationAwareLogger) logger;
         }
     }
+
     @Override
     protected boolean supportsHandlers() {
         return true;

@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ContainerConcurrency$JAXB
-        extends JAXBObject<ContainerConcurrency> {
+    extends JAXBObject<ContainerConcurrency> {
 
 
     public ContainerConcurrency$JAXB() {
         super(ContainerConcurrency.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "container-concurrencyType".intern()), Text$JAXB.class, Method$JAXB.class, ConcurrentLockType$JAXB.class);
     }
 
-    public static ContainerConcurrency readContainerConcurrency(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ContainerConcurrency readContainerConcurrency(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeContainerConcurrency(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
-            throws Exception {
+    public static void writeContainerConcurrency(final XoXMLStreamWriter writer, final ContainerConcurrency containerConcurrency, RuntimeContext context)
+        throws Exception {
         _write(writer, containerConcurrency, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+        throws Exception {
         _write(writer, containerConcurrency, context);
     }
 
-    public final static ContainerConcurrency _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ContainerConcurrency _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -81,7 +81,7 @@ public class ContainerConcurrency$JAXB
         List<Method> method = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("container-concurrencyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ContainerConcurrency.class);
@@ -104,7 +104,7 @@ public class ContainerConcurrency$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -147,13 +147,13 @@ public class ContainerConcurrency$JAXB
         return containerConcurrency;
     }
 
-    public final ContainerConcurrency read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ContainerConcurrency read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ContainerConcurrency containerConcurrency, RuntimeContext context)
+        throws Exception {
         if (containerConcurrency == null) {
             writer.writeXsiNil();
             return;
@@ -163,7 +163,7 @@ public class ContainerConcurrency$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ContainerConcurrency.class != containerConcurrency.getClass()) {
             context.unexpectedSubclass(writer, containerConcurrency, ContainerConcurrency.class);
             return;
@@ -173,12 +173,12 @@ public class ContainerConcurrency$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = containerConcurrency.id;
+        final String idRaw = containerConcurrency.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(containerConcurrency, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -188,7 +188,7 @@ public class ContainerConcurrency$JAXB
         Text[] descriptions = null;
         try {
             descriptions = containerConcurrency.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(containerConcurrency, "descriptions", ContainerConcurrency.class, "getDescriptions", e);
         }
         if (descriptions != null) {

@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.FacesValidator$JAXB.readFacesValidator;
 import static org.apache.openejb.jee.FacesValidator$JAXB.writeFacesValidator;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesApplication$JAXB
-        extends JAXBObject<FacesApplication> {
+    extends JAXBObject<FacesApplication> {
 
 
     public FacesApplication$JAXB() {
         super(FacesApplication.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-applicationType".intern()), FacesSystemEventListener$JAXB.class, FacesLocaleConfig$JAXB.class, FacesApplicationResourceBundle$JAXB.class, FacesApplicationExtension$JAXB.class, FacesValidator$JAXB.class);
     }
 
-    public static FacesApplication readFacesApplication(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesApplication readFacesApplication(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesApplication(XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesApplication(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplication, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplication, context);
     }
 
-    public final static FacesApplication _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesApplication _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -108,7 +108,7 @@ public class FacesApplication$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesApplication);
                 facesApplication.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -117,7 +117,7 @@ public class FacesApplication$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("action-listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: actionListener
                 String actionListenerItemRaw = elementReader.getElementAsString();
@@ -125,7 +125,7 @@ public class FacesApplication$JAXB
                 String actionListenerItem;
                 try {
                     actionListenerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(actionListenerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -146,7 +146,7 @@ public class FacesApplication$JAXB
                 String defaultRenderKitIdItem;
                 try {
                     defaultRenderKitIdItem = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultRenderKitIdItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -311,7 +311,7 @@ public class FacesApplication$JAXB
                 // ELEMENT: resourceHandler
                 String resourceHandlerItemRaw = elementReader.getElementAsString();
 
-                String resourceHandlerItem;
+                final String resourceHandlerItem;
                 try {
                     resourceHandlerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(resourceHandlerItemRaw);
                 } catch (Exception e) {
@@ -434,13 +434,13 @@ public class FacesApplication$JAXB
         return facesApplication;
     }
 
-    public final FacesApplication read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesApplication read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesApplication facesApplication, RuntimeContext context)
+        throws Exception {
         if (facesApplication == null) {
             writer.writeXsiNil();
             return;
@@ -604,7 +604,7 @@ public class FacesApplication$JAXB
                 String propertyResolver = null;
                 try {
                     propertyResolver = Adapters.collapsedStringAdapterAdapter.marshal(propertyResolverItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "propertyResolver", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (propertyResolver != null) {
@@ -618,11 +618,11 @@ public class FacesApplication$JAXB
         // ELEMENT: variableResolver
         List<String> variableResolverRaw = facesApplication.variableResolver;
         if (variableResolverRaw != null) {
-            for (String variableResolverItem : variableResolverRaw) {
+            for (final String variableResolverItem : variableResolverRaw) {
                 String variableResolver = null;
                 try {
                     variableResolver = Adapters.collapsedStringAdapterAdapter.marshal(variableResolverItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesApplication, "variableResolver", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (variableResolver != null) {

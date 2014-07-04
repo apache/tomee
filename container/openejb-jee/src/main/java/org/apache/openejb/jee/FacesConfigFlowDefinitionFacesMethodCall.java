@@ -25,20 +25,17 @@ import java.util.List;
 
 
 /**
- * 
- *         
- * 
- *          <p class="changed_added_2_2">Invoke a method, passing parameters if necessary.
- *          The return from the method is used as the outcome for where to go next in the
- *          flow.  If the method is a void method, the default outcome is used.<p> 
- * 
- * 
- *         
- * 
+ * <p class="changed_added_2_2">Invoke a method, passing parameters if necessary.
+ * The return from the method is used as the outcome for where to go next in the
+ * flow.  If the method is a void method, the default outcome is used.<p>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-faces-method-callType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-faces-method-callType">
  *   &lt;complexContent>
@@ -52,8 +49,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-faces-method-callType", propOrder = {
@@ -71,11 +66,9 @@ public class FacesConfigFlowDefinitionFacesMethodCall {
 
     /**
      * Gets the value of the method property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesConfigFlowDefinitionFacesMethodCallMethod }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesConfigFlowDefinitionFacesMethodCallMethod }
      */
     public FacesConfigFlowDefinitionFacesMethodCallMethod getMethod() {
         return method;
@@ -83,23 +76,19 @@ public class FacesConfigFlowDefinitionFacesMethodCall {
 
     /**
      * Sets the value of the method property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesConfigFlowDefinitionFacesMethodCallMethod }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesConfigFlowDefinitionFacesMethodCallMethod }
      */
-    public void setMethod(FacesConfigFlowDefinitionFacesMethodCallMethod value) {
+    public void setMethod(final FacesConfigFlowDefinitionFacesMethodCallMethod value) {
         this.method = value;
     }
 
     /**
      * Gets the value of the defaultOutcome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDefaultOutcome() {
         return defaultOutcome;
@@ -107,37 +96,33 @@ public class FacesConfigFlowDefinitionFacesMethodCall {
 
     /**
      * Sets the value of the defaultOutcome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDefaultOutcome(String value) {
+    public void setDefaultOutcome(final String value) {
         this.defaultOutcome = value;
     }
 
     /**
      * Gets the value of the parameter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getParameter().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFlowCallParameter }
-     * 
-     * 
      */
     public List<FacesConfigFlowDefinitionFlowCallParameter> getParameter() {
         if (parameter == null) {

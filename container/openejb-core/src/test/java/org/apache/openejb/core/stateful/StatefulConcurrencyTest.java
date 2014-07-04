@@ -98,7 +98,7 @@ public class StatefulConcurrencyTest extends TestCase {
             java.util.logging.Logger.getLogger(this.getClass().getName()).info("Expecting a SEVERE javax.ejb.ConcurrentAccessTimeoutException");
             bean2.callRentrant(bean, 0);
             fail("Expected exception");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e.getCause() instanceof ConcurrentAccessTimeoutException) {
                 // that's what we want
             } else {
@@ -145,7 +145,7 @@ public class StatefulConcurrencyTest extends TestCase {
         public void sleep(final long sleep) {
             try {
                 Thread.sleep(sleep);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }

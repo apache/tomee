@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Collection;
 
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p/>
  * <p>Java class for assembly-descriptorType complex type.
  * <p/>
@@ -63,15 +63,15 @@ import java.util.Collection;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "assembly-descriptorType", propOrder = {
-        "securityRole",
-        "methodPermission",
-        "containerTransaction",
-        //TODO moved out of assembly descriptor in schema
-        "containerConcurrency",
-        "interceptorBinding",
-        "messageDestination",
-        "excludeList",
-        "applicationException"
+    "securityRole",
+    "methodPermission",
+    "containerTransaction",
+    //TODO moved out of assembly descriptor in schema
+    "containerConcurrency",
+    "interceptorBinding",
+    "messageDestination",
+    "excludeList",
+    "applicationException"
 })
 public class AssemblyDescriptor {
 
@@ -118,7 +118,7 @@ public class AssemblyDescriptor {
         return this.containerTransaction;
     }
 
-    public Map<String, List<MethodAttribute>> getMethodTransactionMap(String ejbName) {
+    public Map<String, List<MethodAttribute>> getMethodTransactionMap(final String ejbName) {
         return getMethodAttributes(ejbName, getContainerTransaction());
     }
 
@@ -132,11 +132,11 @@ public class AssemblyDescriptor {
     }
 
     //TODO moved out of assembly descriptor in schema
-    public Map<String, List<MethodAttribute>> getMethodConcurrencyMap(String ejbName) {
+    public Map<String, List<MethodAttribute>> getMethodConcurrencyMap(final String ejbName) {
         return getMethodAttributes(ejbName, getContainerConcurrency());
     }
 
-    private Map<String, List<MethodAttribute>> getMethodAttributes(String ejbName, List<? extends AttributeBinding> bindings) {
+    private Map<String, List<MethodAttribute>> getMethodAttributes(final String ejbName, List<? extends AttributeBinding> bindings) {
 
         Map<String, List<MethodAttribute>> methods = new LinkedHashMap<String, List<MethodAttribute>>();
 
@@ -202,11 +202,11 @@ public class AssemblyDescriptor {
         return this.getApplicationExceptionMap().get(className);
     }
 
-    public ApplicationException getApplicationException(Class clazz) {
+    public ApplicationException getApplicationException(final Class clazz) {
         return getApplicationException(clazz.getName());
     }
 
-    public void addApplicationException(Class clazz, boolean rollback, boolean inherited) {
+    public void addApplicationException(final Class clazz, boolean rollback, boolean inherited) {
         getApplicationException().add(new ApplicationException(clazz, rollback));
     }
 

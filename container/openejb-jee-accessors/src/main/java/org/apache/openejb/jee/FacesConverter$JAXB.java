@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesConverter$JAXB
-        extends JAXBObject<FacesConverter> {
+    extends JAXBObject<FacesConverter> {
 
 
     public FacesConverter$JAXB() {
         super(FacesConverter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-converterType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesConverterExtension$JAXB.class);
     }
 
-    public static FacesConverter readFacesConverter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesConverter readFacesConverter(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesConverter(XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesConverter(final XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
+        throws Exception {
         _write(writer, facesConverter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
+        throws Exception {
         _write(writer, facesConverter, context);
     }
 
-    public final static FacesConverter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesConverter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesConverter$JAXB
             context = new RuntimeContext();
         }
 
-        FacesConverter facesConverter = new FacesConverter();
+        final FacesConverter facesConverter = new FacesConverter();
         context.beforeUnmarshal(facesConverter, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,7 +89,7 @@ public class FacesConverter$JAXB
         List<FacesConverterExtension> converterExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-converterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesConverter.class);
@@ -189,7 +189,7 @@ public class FacesConverter$JAXB
                 attribute1.add(attributeItem);
             } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                FacesProperty propertyItem = readFacesProperty(elementReader, context);
+                final FacesProperty propertyItem = readFacesProperty(elementReader, context);
                 if (property == null) {
                     property = facesConverter.property;
                     if (property != null) {
@@ -249,13 +249,13 @@ public class FacesConverter$JAXB
         return facesConverter;
     }
 
-    public final FacesConverter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesConverter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesConverter facesConverter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesConverter facesConverter, RuntimeContext context)
+        throws Exception {
         if (facesConverter == null) {
             writer.writeXsiNil();
             return;
@@ -275,7 +275,7 @@ public class FacesConverter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesConverter.id;
+        final String idRaw = facesConverter.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -327,7 +327,7 @@ public class FacesConverter$JAXB
         // ELEMENT: icon
         LocalCollection<Icon> icon = facesConverter.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);

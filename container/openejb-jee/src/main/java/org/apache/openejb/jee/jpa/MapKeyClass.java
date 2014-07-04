@@ -24,19 +24,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface MapKeyClass {
- *           Class value();
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface MapKeyClass {
+ * Class value();
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for map-key-class complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="map-key-class">
  *   &lt;complexContent>
@@ -46,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key-class")
@@ -58,11 +54,9 @@ public class MapKeyClass {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -70,13 +64,11 @@ public class MapKeyClass {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 

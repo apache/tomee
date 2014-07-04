@@ -25,16 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for config-propertyType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="config-propertyType">
  *   &lt;complexContent>
@@ -53,19 +51,17 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "config-propertyType", propOrder = {
-        "descriptions",
-        "configPropertyName",
-        "configPropertyType",
-        "configPropertyValue",
-        "configPropertyIgnore",
-        "configPropertySupportsDynamicUpdates",
-        "configPropertyConfidential"
+    "descriptions",
+    "configPropertyName",
+    "configPropertyType",
+    "configPropertyValue",
+    "configPropertyIgnore",
+    "configPropertySupportsDynamicUpdates",
+    "configPropertyConfidential"
 })
 public class ConfigProperty {
 
@@ -94,7 +90,7 @@ public class ConfigProperty {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -106,7 +102,7 @@ public class ConfigProperty {
         return configPropertyName;
     }
 
-    public void setConfigPropertyName(String value) {
+    public void setConfigPropertyName(final String value) {
         this.configPropertyName = value;
     }
 
@@ -114,7 +110,7 @@ public class ConfigProperty {
         return configPropertyType;
     }
 
-    public void setConfigPropertyType(String value) {
+    public void setConfigPropertyType(final String value) {
         this.configPropertyType = value;
     }
 
@@ -122,7 +118,7 @@ public class ConfigProperty {
         return configPropertyValue;
     }
 
-    public void setConfigPropertyValue(String value) {
+    public void setConfigPropertyValue(final String value) {
         this.configPropertyValue = value;
     }
 
@@ -130,7 +126,7 @@ public class ConfigProperty {
         return configPropertyConfidential;
     }
 
-    public void setConfigPropertyConfidential(Boolean configPropertyConfidential) {
+    public void setConfigPropertyConfidential(final Boolean configPropertyConfidential) {
         this.configPropertyConfidential = configPropertyConfidential;
     }
 
@@ -138,7 +134,7 @@ public class ConfigProperty {
         return configPropertyIgnore;
     }
 
-    public void setConfigPropertyIgnore(Boolean configPropertyIgnore) {
+    public void setConfigPropertyIgnore(final Boolean configPropertyIgnore) {
         this.configPropertyIgnore = configPropertyIgnore;
     }
 
@@ -146,7 +142,7 @@ public class ConfigProperty {
         return configPropertySupportsDynamicUpdates;
     }
 
-    public void setConfigPropertySupportsDynamicUpdates(Boolean configPropertySupportsDynamicUpdates) {
+    public void setConfigPropertySupportsDynamicUpdates(final Boolean configPropertySupportsDynamicUpdates) {
         this.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
     }
 
@@ -154,7 +150,7 @@ public class ConfigProperty {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

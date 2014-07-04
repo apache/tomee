@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MultipartConfig$JAXB
-        extends JAXBObject<MultipartConfig> {
+    extends JAXBObject<MultipartConfig> {
 
 
     public MultipartConfig$JAXB() {
         super(MultipartConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "multipart-configType".intern()));
     }
 
-    public static MultipartConfig readMultipartConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MultipartConfig readMultipartConfig(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMultipartConfig(XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeMultipartConfig(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, multipartConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, multipartConfig, context);
     }
 
-    public final static MultipartConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MultipartConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,7 +65,7 @@ public class MultipartConfig$JAXB
             context = new RuntimeContext();
         }
 
-        MultipartConfig multipartConfig = new MultipartConfig();
+        final MultipartConfig multipartConfig = new MultipartConfig();
         context.beforeUnmarshal(multipartConfig, LifecycleCallback.NONE);
 
 
@@ -78,7 +78,7 @@ public class MultipartConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
@@ -121,13 +121,13 @@ public class MultipartConfig$JAXB
         return multipartConfig;
     }
 
-    public final MultipartConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MultipartConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, MultipartConfig multipartConfig, RuntimeContext context)
+        throws Exception {
         if (multipartConfig == null) {
             writer.writeXsiNil();
             return;
@@ -137,7 +137,7 @@ public class MultipartConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MultipartConfig.class != multipartConfig.getClass()) {
             context.unexpectedSubclass(writer, multipartConfig, MultipartConfig.class);
             return;

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-client-behavior-rendererType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-client-behavior-rendererType">
  *   &lt;complexContent>
@@ -41,8 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-client-behavior-rendererType", propOrder = {
@@ -58,11 +56,9 @@ public class FacesClientBehaviorRenderer {
 
     /**
      * Gets the value of the clientBehaviorRendererType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClientBehaviorRendererType() {
         return clientBehaviorRendererType;
@@ -70,23 +66,19 @@ public class FacesClientBehaviorRenderer {
 
     /**
      * Sets the value of the clientBehaviorRendererType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClientBehaviorRendererType(String value) {
+    public void setClientBehaviorRendererType(final String value) {
         this.clientBehaviorRendererType = value;
     }
 
     /**
      * Gets the value of the clientBehaviorRendererClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClientBehaviorRendererClass() {
         return clientBehaviorRendererClass;
@@ -94,13 +86,11 @@ public class FacesClientBehaviorRenderer {
 
     /**
      * Sets the value of the clientBehaviorRendererClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClientBehaviorRendererClass(String value) {
+    public void setClientBehaviorRendererClass(final String value) {
         this.clientBehaviorRendererClass = value;
     }
 

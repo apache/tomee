@@ -19,19 +19,20 @@ package org.apache.openejb.jee;
 
 /**
  * Not in schema
+ *
  * @version $Revision$ $Date$
  */
 public class StatefulBean extends SessionBean {
 
-    public StatefulBean(String ejbName, String ejbClass) {
+    public StatefulBean(final String ejbName, final String ejbClass) {
         super(ejbName, ejbClass, SessionType.STATEFUL);
     }
 
-    public StatefulBean(Class<?> ejbClass) {
+    public StatefulBean(final Class<?> ejbClass) {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
-    public StatefulBean(String name, Class<?> ejbClass) {
+    public StatefulBean(final String name, final Class<?> ejbClass) {
         this(name, ejbClass.getName());
     }
 
@@ -39,6 +40,6 @@ public class StatefulBean extends SessionBean {
         this(null, (String) null);
     }
 
-    public void setSessionType(SessionType value) {
+    public void setSessionType(final SessionType value) {
     }
 }

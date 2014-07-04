@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.OrderingOthers$JAXB.readOrderingOthers;
 import static org.apache.openejb.jee.OrderingOthers$JAXB.writeOrderingOthers;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AbsoluteOrdering$JAXB
-        extends JAXBObject<AbsoluteOrdering> {
+    extends JAXBObject<AbsoluteOrdering> {
 
 
     public AbsoluteOrdering$JAXB() {
         super(AbsoluteOrdering.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "absoluteOrderingType".intern()), OrderingOthers$JAXB.class);
     }
 
-    public static AbsoluteOrdering readAbsoluteOrdering(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AbsoluteOrdering readAbsoluteOrdering(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAbsoluteOrdering(XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public static void writeAbsoluteOrdering(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+        throws Exception {
         _write(writer, absoluteOrdering, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+        throws Exception {
         _write(writer, absoluteOrdering, context);
     }
 
-    public final static AbsoluteOrdering _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AbsoluteOrdering _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,7 +69,7 @@ public class AbsoluteOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        AbsoluteOrdering absoluteOrdering = new AbsoluteOrdering();
+        final AbsoluteOrdering absoluteOrdering = new AbsoluteOrdering();
         context.beforeUnmarshal(absoluteOrdering, LifecycleCallback.NONE);
 
         List<Object> nameOrOthers = null;
@@ -128,13 +128,13 @@ public class AbsoluteOrdering$JAXB
         return absoluteOrdering;
     }
 
-    public final AbsoluteOrdering read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AbsoluteOrdering read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, AbsoluteOrdering absoluteOrdering, RuntimeContext context)
+        throws Exception {
         if (absoluteOrdering == null) {
             writer.writeXsiNil();
             return;
@@ -144,7 +144,7 @@ public class AbsoluteOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (AbsoluteOrdering.class != absoluteOrdering.getClass()) {
             context.unexpectedSubclass(writer, absoluteOrdering, AbsoluteOrdering.class);
             return;
@@ -154,7 +154,7 @@ public class AbsoluteOrdering$JAXB
 
 
         // ELEMENT: nameOrOthers
-        List<Object> nameOrOthers = absoluteOrdering.nameOrOthers;
+        final List<Object> nameOrOthers = absoluteOrdering.nameOrOthers;
         if (nameOrOthers != null) {
             for (Object nameOrOthersItem : nameOrOthers) {
                 if (nameOrOthersItem instanceof org.apache.openejb.jee.OrderingOthers) {
@@ -163,7 +163,7 @@ public class AbsoluteOrdering$JAXB
                     writeOrderingOthers(writer, OrderingOthers, context);
                     writer.writeEndElement();
                 } else if (nameOrOthersItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nameOrOthersItem);
+                    final java.lang.String String = ((java.lang.String) nameOrOthersItem);
                     writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(String);
                     writer.writeEndElement();

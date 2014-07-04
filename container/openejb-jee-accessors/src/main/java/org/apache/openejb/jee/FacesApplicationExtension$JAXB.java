@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesApplicationExtension$JAXB
-        extends JAXBObject<FacesApplicationExtension> {
+    extends JAXBObject<FacesApplicationExtension> {
 
 
     public FacesApplicationExtension$JAXB() {
         super(FacesApplicationExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-application-extensionType".intern()));
     }
 
-    public static FacesApplicationExtension readFacesApplicationExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesApplicationExtension readFacesApplicationExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesApplicationExtension(XoXMLStreamWriter writer, FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesApplicationExtension(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplicationExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplicationExtension, context);
     }
 
-    public final static FacesApplicationExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesApplicationExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class FacesApplicationExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesApplicationExtension facesApplicationExtension = new FacesApplicationExtension();
+        final FacesApplicationExtension facesApplicationExtension = new FacesApplicationExtension();
         context.beforeUnmarshal(facesApplicationExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
@@ -114,13 +114,13 @@ public class FacesApplicationExtension$JAXB
         return facesApplicationExtension;
     }
 
-    public final FacesApplicationExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesApplicationExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesApplicationExtension facesApplicationExtension, RuntimeContext context)
+        throws Exception {
         if (facesApplicationExtension == null) {
             writer.writeXsiNil();
             return;

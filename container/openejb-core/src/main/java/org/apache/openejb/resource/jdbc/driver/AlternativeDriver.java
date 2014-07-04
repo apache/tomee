@@ -54,7 +54,7 @@ public class AlternativeDriver implements Driver {
     private Method getMethod(final Class<? extends Driver> clazz) {
         try {
             return clazz.getMethod("getParentLogger");
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return null;
         }
     }
@@ -149,7 +149,7 @@ public class AlternativeDriver implements Driver {
 
                 return (Logger) getParentLogger.invoke(delegate);
 
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
 
                 throw new SQLFeatureNotSupportedException(e);
 

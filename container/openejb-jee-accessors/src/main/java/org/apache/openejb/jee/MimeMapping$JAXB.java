@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MimeMapping$JAXB
-        extends JAXBObject<MimeMapping> {
+    extends JAXBObject<MimeMapping> {
 
 
     public MimeMapping$JAXB() {
         super(MimeMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "mime-mappingType".intern()));
     }
 
-    public static MimeMapping readMimeMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MimeMapping readMimeMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMimeMapping(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeMimeMapping(final XoXMLStreamWriter writer, final MimeMapping mimeMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, mimeMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MimeMapping mimeMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, mimeMapping, context);
     }
 
-    public final static MimeMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MimeMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -127,13 +127,13 @@ public class MimeMapping$JAXB
         return mimeMapping;
     }
 
-    public final MimeMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MimeMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
+        throws Exception {
         if (mimeMapping == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class MimeMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MimeMapping.class != mimeMapping.getClass()) {
             context.unexpectedSubclass(writer, mimeMapping, MimeMapping.class);
             return;
@@ -153,7 +153,7 @@ public class MimeMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = mimeMapping.id;
+        final String idRaw = mimeMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -169,7 +169,7 @@ public class MimeMapping$JAXB
         String extension = null;
         try {
             extension = Adapters.collapsedStringAdapterAdapter.marshal(extensionRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(mimeMapping, "extension", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (extension != null) {

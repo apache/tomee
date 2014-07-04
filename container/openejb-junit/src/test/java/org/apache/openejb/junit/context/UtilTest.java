@@ -16,16 +16,17 @@
  */
 package org.apache.openejb.junit.context;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class UtilTest {
     /*
@@ -46,7 +47,7 @@ public class UtilTest {
      */
     private String multiParamSetter;
 
-    public void setMultiParamSetter(String s1, String s2) {
+    public void setMultiParamSetter(final String s1, final String s2) {
     }
 
     /**
@@ -54,7 +55,7 @@ public class UtilTest {
      */
     private String notVoidSetter;
 
-    public String setNotVoidSetter(String s) {
+    public String setNotVoidSetter(final String s) {
         return null;
     }
 
@@ -63,7 +64,7 @@ public class UtilTest {
      */
     private int primitiveParamSetter;
 
-    public void setPrimitiveParamSetter(int i) {
+    public void setPrimitiveParamSetter(final int i) {
     }
 
     /**
@@ -71,7 +72,7 @@ public class UtilTest {
      */
     private String wrongInstanceSetter;
 
-    public void setWrongInstanceSetter(Integer i) {
+    public void setWrongInstanceSetter(final Integer i) {
     }
 
     /**
@@ -79,7 +80,7 @@ public class UtilTest {
      */
     private String staticSetterInstanceField;
 
-    private static void setStaticSetterInstanceField(String s) {
+    private static void setStaticSetterInstanceField(final String s) {
     }
 
     private static abstract class AbstractClass {
@@ -93,7 +94,7 @@ public class UtilTest {
     */
     private String privateSetter;
 
-    private void setPrivateSetter(String s) {
+    private void setPrivateSetter(final String s) {
     }
 
     /*
@@ -101,7 +102,7 @@ public class UtilTest {
     */
     private static String staticSetterStaticField;
 
-    public static void setStaticSetterStaticField(String s) {
+    public static void setStaticSetterStaticField(final String s) {
     }
 
     /**
@@ -109,7 +110,7 @@ public class UtilTest {
      */
     private static String instanceSetterStaticField;
 
-    public void setInstanceSetterStaticField(String s) {
+    public void setInstanceSetterStaticField(final String s) {
     }
 
     /**
@@ -117,7 +118,7 @@ public class UtilTest {
      */
     private String instanceField;
 
-    public void setInstanceField(String s) {
+    public void setInstanceField(final String s) {
     }
 
     /**
@@ -125,7 +126,7 @@ public class UtilTest {
      */
     private int primitiveInstanceField;
 
-    public void setPrimitiveInstanceField(int i) {
+    public void setPrimitiveInstanceField(final int i) {
     }
 
     /*
@@ -133,10 +134,10 @@ public class UtilTest {
     */
     private String twoSetter;
 
-    public void setTwoSetter(String s, String s1) {
+    public void setTwoSetter(final String s, final String s1) {
     }
 
-    public void setTwoSetter(String s) {
+    public void setTwoSetter(final String s) {
     }
 
     /**
@@ -144,10 +145,10 @@ public class UtilTest {
      */
     private String twoAccessibleSetter;
 
-    public void setTwoAccessibleSetter(String s) {
+    public void setTwoAccessibleSetter(final String s) {
     }
 
-    public void setTwoAccessibleSetter(Object s) {
+    public void setTwoAccessibleSetter(final Object s) {
     }
 
     /**
@@ -155,13 +156,13 @@ public class UtilTest {
      */
     private IllegalArgumentException threeAccessibleNoExactMatchSetter;
 
-    public void setThreeAccessibleNoExactMatchSetter(Object s) {
+    public void setThreeAccessibleNoExactMatchSetter(final Object s) {
     }
 
-    public void setThreeAccessibleNoExactMatchSetter(Throwable s) {
+    public void setThreeAccessibleNoExactMatchSetter(final Throwable s) {
     }
 
-    public void setThreeAccessibleNoExactMatchSetter(Exception s) {
+    public void setThreeAccessibleNoExactMatchSetter(final Exception s) {
     }
 
 
@@ -170,14 +171,14 @@ public class UtilTest {
      * to the setter name exists. This would be cases where the method doesn't match
      * a method
      */
-    private void findInvalidSetter(String fieldName, Object setValue) throws Exception {
+    private void findInvalidSetter(final String fieldName, final Object setValue) throws Exception {
         // check the field exists
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         // check a method with the correct name exists
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         boolean foundMethod = false;
-        for (Method method : getClass().getDeclaredMethods()) {
+        for (final Method method : getClass().getDeclaredMethods()) {
             if (setterName.equals(method.getName())) {
                 foundMethod = true;
                 break;
@@ -186,7 +187,7 @@ public class UtilTest {
         assertTrue("No Method exists with name: " + setterName, foundMethod);
 
         // now check that the findSetter method returns null
-        Method ret = Util.findSetter(getClass(), field, setValue);
+        final Method ret = Util.findSetter(getClass(), field, setValue);
         assertNull("Invalid setter returned.", ret);
     }
 
@@ -196,14 +197,14 @@ public class UtilTest {
      *
      * @return found setter so further checks can be performed
      */
-    private Method findValidSetter(String fieldName, Object setValue) throws Exception {
+    private Method findValidSetter(final String fieldName, final Object setValue) throws Exception {
         // check the field exists
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         // check a method with the correct name exists
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         Method foundMethod = null;
-        for (Method method : getClass().getDeclaredMethods()) {
+        for (final Method method : getClass().getDeclaredMethods()) {
             if (setterName.equals(method.getName())) {
                 foundMethod = method;
                 break;
@@ -212,7 +213,7 @@ public class UtilTest {
         assertNotNull("No Method exists with name: " + setterName, foundMethod);
 
         // now check that the findSetter method returns the desired valid method
-        Method ret = Util.findSetter(getClass(), field, setValue);
+        final Method ret = Util.findSetter(getClass(), field, setValue);
         assertNotNull("Couldn't find setter.", ret);
         assertEquals(foundMethod, ret);
 
@@ -231,32 +232,31 @@ public class UtilTest {
 
     @Test
     public void testFindSetterNoSetters() throws Exception {
-        String fieldName = "noSetter";
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String fieldName = "noSetter";
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         try {
             getClass().getDeclaredMethod(setterName, String.class);
-        }
-        catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
         }
 
-        Method method = Util.findSetter(getClass(), field, "ValueString");
+        final Method method = Util.findSetter(getClass(), field, "ValueString");
         assertNull("Setter found.", method);
     }
 
     @Test
     public void testFindSetterAbstractSetter() throws Exception {
-        String fieldName = "abstractSetter";
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String fieldName = "abstractSetter";
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 
-        Field field = AbstractClass.class.getDeclaredField(fieldName);
+        final Field field = AbstractClass.class.getDeclaredField(fieldName);
 
         // will fail if the method doesn't exist
         AbstractClass.class.getDeclaredMethod(setterName, String.class);
 
-        Method method = Util.findSetter(AbstractClass.class, field, "ValueString");
+        final Method method = Util.findSetter(AbstractClass.class, field, "ValueString");
         assertNull("Abstract setter returned.", method);
     }
 
@@ -267,61 +267,61 @@ public class UtilTest {
         findValidSetter("instanceField", "ValueString");
         findValidSetter("primitiveInstanceField", 1);
 
-        Method privateMethod = findValidSetter("privateSetter", "ValueString");
+        final Method privateMethod = findValidSetter("privateSetter", "ValueString");
         assertTrue(privateMethod.isAccessible());
     }
 
     @Test
     public void testFindSetterDualValidSetters() throws Exception {
-        String fieldName = "twoSetter";
+        final String fieldName = "twoSetter";
 
         // check the field exists
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         // check a method with the correct name exists
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         getClass().getDeclaredMethod(setterName, String.class, String.class);
-        Method setterMethod = getClass().getDeclaredMethod(setterName, String.class);
+        final Method setterMethod = getClass().getDeclaredMethod(setterName, String.class);
 
         // now check that the findSetter method returns null
-        Method ret = Util.findSetter(getClass(), field, "ValueString");
+        final Method ret = Util.findSetter(getClass(), field, "ValueString");
         assertNotNull("Couldn't find setter.", ret);
         assertEquals(setterMethod, ret);
     }
 
     @Test
     public void testFindSetterBestMatchSetters() throws Exception {
-        String fieldName = "twoAccessibleSetter";
+        final String fieldName = "twoAccessibleSetter";
 
         // check the field exists
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         // check a method with the correct name exists
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         getClass().getDeclaredMethod(setterName, Object.class);
-        Method setterMethod = getClass().getDeclaredMethod(setterName, String.class);
+        final Method setterMethod = getClass().getDeclaredMethod(setterName, String.class);
 
         // now check that the findSetter method returns null
-        Method ret = Util.findSetter(getClass(), field, "ValueString");
+        final Method ret = Util.findSetter(getClass(), field, "ValueString");
         assertNotNull("Couldn't find setter.", ret);
         assertEquals(setterMethod, ret);
     }
 
     @Test
     public void testFindSetterThreeAccessibleNoExactMatchSetter() throws Exception {
-        String fieldName = "threeAccessibleNoExactMatchSetter";
+        final String fieldName = "threeAccessibleNoExactMatchSetter";
 
         // check the field exists
-        Field field = getClass().getDeclaredField(fieldName);
+        final Field field = getClass().getDeclaredField(fieldName);
 
         // check a method with the correct name exists
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        final String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         getClass().getDeclaredMethod(setterName, Object.class);
         getClass().getDeclaredMethod(setterName, Throwable.class);
-        Method setterMethod = getClass().getDeclaredMethod(setterName, Exception.class);
+        final Method setterMethod = getClass().getDeclaredMethod(setterName, Exception.class);
 
         // now check that the findSetter method returns null
-        Method ret = Util.findSetter(getClass(), field, new NumberFormatException());
+        final Method ret = Util.findSetter(getClass(), field, new NumberFormatException());
         assertNotNull("Couldn't find setter.", ret);
         assertEquals(setterMethod, ret);
     }
@@ -354,8 +354,8 @@ public class UtilTest {
      * @param key
      * @param value
      */
-    private void checkAddProperty(String property, String key, String value) {
-        Hashtable<String, String> hashtable = new Hashtable<String, String>();
+    private void checkAddProperty(final String property, final String key, final String value) {
+        final Hashtable<String, String> hashtable = new Hashtable<String, String>();
         Util.addProperty(hashtable, property);
 
         assertEquals(1, hashtable.size());
@@ -369,13 +369,12 @@ public class UtilTest {
      * @param property
      * @param exceptionType the type of failure that should occur
      */
-    private void failAddProperty(String property, Class<?> exceptionType) {
+    private void failAddProperty(final String property, final Class<?> exceptionType) {
         try {
-            Hashtable<String, String> hashtable = new Hashtable<String, String>();
+            final Hashtable<String, String> hashtable = new Hashtable<String, String>();
             Util.addProperty(hashtable, property);
             fail("Add property succeeded where it shouldn't have.");
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals(exceptionType, e.getClass());
         }
     }
@@ -417,10 +416,10 @@ public class UtilTest {
      * @param type
      * @param validInstance
      */
-    private void checkIsInstancePrimitive(Class<?> type, Object validInstance) {
+    private void checkIsInstancePrimitive(final Class<?> type, final Object validInstance) {
         // the invalidPrimitive is an integer in all cases, except against class int.class
         // where we use a long
-        Object invalidPrimitive;
+        final Object invalidPrimitive;
         if (type == int.class) {
             invalidPrimitive = 1L;
         } else {
@@ -439,7 +438,7 @@ public class UtilTest {
      * @param instance
      * @param expected Expected return value
      */
-    private void checkIsInstance(boolean expected, Class<?> type, Object instance) {
+    private void checkIsInstance(final boolean expected, final Class<?> type, final Object instance) {
         assertEquals(expected, Util.isInstance(type, instance));
     }
 
@@ -448,9 +447,9 @@ public class UtilTest {
      */
     @Test
     public void testGetMostSpecificMethod() throws Exception {
-        Method mObject = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Object.class);
-        Method mThrowable = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Throwable.class);
-        Method mException = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Exception.class);
+        final Method mObject = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Object.class);
+        final Method mThrowable = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Throwable.class);
+        final Method mException = getClass().getDeclaredMethod("setThreeAccessibleNoExactMatchSetter", Exception.class);
 
         assertEquals(mThrowable, Util.getMostSpecificMethod(mObject, mThrowable));
         assertEquals(mException, Util.getMostSpecificMethod(mException, mThrowable));

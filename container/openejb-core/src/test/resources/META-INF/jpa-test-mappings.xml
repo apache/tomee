@@ -20,84 +20,84 @@
 <!-- $Rev$ $Date$ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
-    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
-        <attributes>
-            <id name="primaryKey"/>
-            <basic name="firstName"/>
-            <basic name="lastName"/>
-            <transient name="nextId"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
-    </mapped-superclass>
-    <mapped-superclass class="org.apache.openejb.test.entity.cmp.ComplexCmpBean">
-        <id-class class="org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk"/>
-        <attributes>
-            <id name="firstName"/>
-            <id name="lastName"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
-    </mapped-superclass>
-    <mapped-superclass class="org.apache.openejb.test.entity.cmp.UnknownCmpBean">
-        <attributes>
-            <basic name="firstName"/>
-            <basic name="lastName"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
-    </mapped-superclass>
-    <entity class="org.apache.openejb.core.cmp.jpa.BasicCmpBean_Subclass">
-        <table name="BasicCmpBean"/>
-        <attribute-override name="primaryKey">
-            <column name="primaryKey"/>
-        </attribute-override>
-        <attribute-override name="firstName">
-            <column name="firstName"/>
-        </attribute-override>
-        <attribute-override name="lastName">
-            <column name="lastName"/>
-        </attribute-override>
-    </entity>
-    <entity class="org.apache.openejb.core.cmp.jpa.ComplexCmpBean_Subclass">
-        <table name="ComplexCmpBean"/>
-        <attribute-override name="firstName">
-            <column name="firstName"/>
-        </attribute-override>
-        <attribute-override name="lastName">
-            <column name="lastName"/>
-        </attribute-override>
-    </entity>
-    <entity class="org.apache.openejb.core.cmp.jpa.UnknownCmpBean_Subclass">
-        <table name="UnknownCmpBean"/>
-        <attribute-override name="firstName">
-            <column name="firstName"/>
-        </attribute-override>
-        <attribute-override name="lastName">
-            <column name="lastName"/>
-        </attribute-override>
-        <attributes>
-            <id name="OpenEJB_pk">
-              <generated-value strategy="AUTO"/>
-            </id>
-        </attributes>
-    </entity>
+  <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+    <attributes>
+      <id name="primaryKey"/>
+      <basic name="firstName"/>
+      <basic name="lastName"/>
+      <transient name="nextId"/>
+      <transient name="ejbContext"/>
+      <transient name="allowedOperationsTable"/>
+    </attributes>
+  </mapped-superclass>
+  <mapped-superclass class="org.apache.openejb.test.entity.cmp.ComplexCmpBean">
+    <id-class class="org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk"/>
+    <attributes>
+      <id name="firstName"/>
+      <id name="lastName"/>
+      <transient name="ejbContext"/>
+      <transient name="allowedOperationsTable"/>
+    </attributes>
+  </mapped-superclass>
+  <mapped-superclass class="org.apache.openejb.test.entity.cmp.UnknownCmpBean">
+    <attributes>
+      <basic name="firstName"/>
+      <basic name="lastName"/>
+      <transient name="ejbContext"/>
+      <transient name="allowedOperationsTable"/>
+    </attributes>
+  </mapped-superclass>
+  <entity class="org.apache.openejb.core.cmp.jpa.BasicCmpBean_Subclass">
+    <table name="BasicCmpBean"/>
+    <attribute-override name="primaryKey">
+      <column name="primaryKey"/>
+    </attribute-override>
+    <attribute-override name="firstName">
+      <column name="firstName"/>
+    </attribute-override>
+    <attribute-override name="lastName">
+      <column name="lastName"/>
+    </attribute-override>
+  </entity>
+  <entity class="org.apache.openejb.core.cmp.jpa.ComplexCmpBean_Subclass">
+    <table name="ComplexCmpBean"/>
+    <attribute-override name="firstName">
+      <column name="firstName"/>
+    </attribute-override>
+    <attribute-override name="lastName">
+      <column name="lastName"/>
+    </attribute-override>
+  </entity>
+  <entity class="org.apache.openejb.core.cmp.jpa.UnknownCmpBean_Subclass">
+    <table name="UnknownCmpBean"/>
+    <attribute-override name="firstName">
+      <column name="firstName"/>
+    </attribute-override>
+    <attribute-override name="lastName">
+      <column name="lastName"/>
+    </attribute-override>
+    <attributes>
+      <id name="OpenEJB_pk">
+        <generated-value strategy="AUTO"/>
+      </id>
+    </attributes>
+  </entity>
 
   <entity name="Book" class="org.apache.openejb.core.cmp.jpa.BookBean">
-      <attributes>
-          <id name="title"/>
-          <many-to-many name="authors">
-              <cascade>
-                  <cascade-all/>
-              </cascade>
-          </many-to-many>
-      </attributes>
+    <attributes>
+      <id name="title"/>
+      <many-to-many name="authors">
+        <cascade>
+          <cascade-all/>
+        </cascade>
+      </many-to-many>
+    </attributes>
   </entity>
   <entity name="Author" class="org.apache.openejb.core.cmp.jpa.AuthorBean">
-      <attributes>
-          <id name="name"/>
-          <many-to-many name="books" mapped-by="authors"/>
-      </attributes>
+    <attributes>
+      <id name="name"/>
+      <many-to-many name="books" mapped-by="authors"/>
+    </attributes>
   </entity>
 </entity-mappings>
 

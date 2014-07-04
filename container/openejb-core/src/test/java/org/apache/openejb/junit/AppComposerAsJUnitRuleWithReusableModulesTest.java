@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.junit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Properties;
+import org.apache.openejb.jee.Empty;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -41,15 +43,12 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Properties;
 
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class AppComposerAsJUnitRuleWithReusableModulesTest {
     @Rule
@@ -108,7 +107,7 @@ public class AppComposerAsJUnitRuleWithReusableModulesTest {
         private ValidatorFactory validatorFactory;
 
         public void persistValid() {
-            EntityToValidate entity = new EntityToValidate();
+            final EntityToValidate entity = new EntityToValidate();
             entity.setName("name");
             em.persist(entity);
         }
@@ -142,7 +141,7 @@ public class AppComposerAsJUnitRuleWithReusableModulesTest {
             return id;
         }
 
-        public void setId(long i) {
+        public void setId(final long i) {
             id = i;
         }
 
@@ -150,7 +149,7 @@ public class AppComposerAsJUnitRuleWithReusableModulesTest {
             return name;
         }
 
-        public void setName(String n) {
+        public void setName(final String n) {
             name = n;
         }
     }
@@ -165,34 +164,34 @@ public class AppComposerAsJUnitRuleWithReusableModulesTest {
         try {
             persistManager.persistNotValid();
             fail();
-        } catch (EJBException ejbException) {
+        } catch (final EJBException ejbException) {
             assertTrue(ejbException.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException constraintViolationException = (ConstraintViolationException) ejbException.getCause();
+            final ConstraintViolationException constraintViolationException = (ConstraintViolationException) ejbException.getCause();
             assertEquals(1, constraintViolationException.getConstraintViolations().size());
         }
     }
 
     @Test
     public void lookupValidatorFactory() throws Exception {
-        ValidatorFactory validatorFactory = (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
+        final ValidatorFactory validatorFactory = (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
         assertNotNull(validatorFactory);
     }
 
     @Test
     public void lookupValidator() throws Exception {
-        Validator validator = (Validator) new InitialContext().lookup("java:comp/Validator");
+        final Validator validator = (Validator) new InitialContext().lookup("java:comp/Validator");
         assertNotNull(validator);
     }
 
     @Test
     public void injectionValidatorFactory() {
-        ValidatorFactory validatorFactory = persistManager.getValidatorFactory();
+        final ValidatorFactory validatorFactory = persistManager.getValidatorFactory();
         assertNotNull(validatorFactory);
     }
 
     @Test
     public void injectionValidator() {
-        Validator validator = persistManager.getValidator();
+        final Validator validator = persistManager.getValidator();
         assertNotNull(validator);
     }
 

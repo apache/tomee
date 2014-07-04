@@ -896,8 +896,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private static List<CommonInfoObject> listCommonInfoObjectsForAppInfo(final AppInfo appInfo) {
         final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>(
-                                appInfo.clients.size() + appInfo.connectors.size() +
-                                appInfo.ejbJars.size() + appInfo.webApps.size());
+            appInfo.clients.size() + appInfo.connectors.size() +
+                appInfo.ejbJars.size() + appInfo.webApps.size());
         for (final ClientInfo clientInfo : appInfo.clients) {
             vfs.add(clientInfo);
         }
@@ -1081,11 +1081,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
 
                     beanContext.set(
-                            BeanContext.ProxyClass.class,
-                            new BeanContext.ProxyClass(
-                                beanContext,
-                                interfaces.toArray(new Class<?>[interfaces.size()])
-                            ));
+                        BeanContext.ProxyClass.class,
+                        new BeanContext.ProxyClass(
+                            beanContext,
+                            interfaces.toArray(new Class<?>[interfaces.size()])
+                        ));
                 }
             }
             // process application exceptions

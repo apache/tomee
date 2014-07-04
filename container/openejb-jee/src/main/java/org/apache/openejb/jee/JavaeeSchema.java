@@ -17,19 +17,19 @@
 package org.apache.openejb.jee;
 
 public enum JavaeeSchema {
-    
+
     APPLICATION_6("application_6.xsd"),
     APPLICATION_CLIENT_6("application-client_6.xsd"),
     WEB_APP_3_0("web-app_3_0.xsd"),
     EJB_JAR_3_1("ejb-jar_3_1.xsd"),
     CONNECTOR_1_6("connector_1_6.xsd");
-    
+
     private final String schemaFileName;
-    
-    JavaeeSchema(String schemaFileName){
+
+    JavaeeSchema(final String schemaFileName) {
         this.schemaFileName = schemaFileName;
     }
-    
+
     public String getSchemaFileName() {
         return schemaFileName;
     }

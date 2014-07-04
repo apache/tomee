@@ -56,7 +56,7 @@ public class ServiceInterfaceMapping {
         return serviceInterface;
     }
 
-    public void setServiceInterface(String value) {
+    public void setServiceInterface(final String value) {
         this.serviceInterface = value;
     }
 
@@ -64,7 +64,7 @@ public class ServiceInterfaceMapping {
         return wsdlServiceName;
     }
 
-    public void setWsdlServiceName(QName value) {
+    public void setWsdlServiceName(final QName value) {
         this.wsdlServiceName = value;
     }
 
@@ -79,7 +79,7 @@ public class ServiceInterfaceMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

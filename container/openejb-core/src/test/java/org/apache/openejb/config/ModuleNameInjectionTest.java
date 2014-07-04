@@ -40,10 +40,10 @@ import javax.naming.InitialContext;
  */
 public class ModuleNameInjectionTest extends TestCase {
 
-    public void testInjections() throws Exception {       
-        InitialContext ctx = new InitialContext();
+    public void testInjections() throws Exception {
+        final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("WidgetBeanLocal");
+        final Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
@@ -58,7 +58,7 @@ public class ModuleNameInjectionTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
@@ -81,14 +81,14 @@ public class ModuleNameInjectionTest extends TestCase {
         EjbJar ejbJar = new EjbJar();
         ejbJar.setModuleName("myEjbModule");
         ejbJar.addEnterpriseBean(bean);
-                
+
         EnvEntry entry;
-        
+
         entry = new EnvEntry("moduleName", (String) null, null);
         entry.setLookupName("java:module/ModuleName");
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "moduleName")));
         bean.getEnvEntry().add(entry);
-        
+
         entry = new EnvEntry("appName", (String) null, null);
         entry.setLookupName("java:app/AppName");
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "appName")));
@@ -99,9 +99,10 @@ public class ModuleNameInjectionTest extends TestCase {
 
         assembler.createApplication(config.configureApplication(app));
     }
-    
+
     public static interface Widget {
         String getModuleName();
+
         String getAppName();
     }
 
@@ -112,7 +113,7 @@ public class ModuleNameInjectionTest extends TestCase {
     public static class WidgetBean implements Widget, RemoteWidget {
 
         private SessionContext sessionContext;
-        
+
         @Resource
         private String appName;
 
@@ -122,9 +123,9 @@ public class ModuleNameInjectionTest extends TestCase {
         public String getAppName() {
             return appName;
         }
-        
+
         public String getModuleName() {
-            return moduleName;         
+            return moduleName;
         }
     }
 }

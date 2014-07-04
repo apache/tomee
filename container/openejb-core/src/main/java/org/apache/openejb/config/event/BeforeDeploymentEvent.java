@@ -50,7 +50,7 @@ public class BeforeDeploymentEvent {
     @Override
     public String toString() {
         return "BeforeDeploymentEvent{" +
-                "urls=" + Arrays.asList(urls) +
+            "urls=" + Arrays.asList(urls) +
             '}';
     }
 }

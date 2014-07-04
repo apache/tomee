@@ -53,25 +53,25 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
     public void testBusinessLocalInterface() throws Exception {
 
-        InitialContext ctx = new InitialContext();
+        final InitialContext ctx = new InitialContext();
 
         Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
 
         // Do a business method...
-        Stack<Lifecycle> lifecycle = widget.getLifecycle();
+        final Stack<Lifecycle> lifecycle = widget.getLifecycle();
         assertNotNull("lifecycle", lifecycle);
 
         // Check the lifecycle of the bean
-        List expected = Arrays.asList(Lifecycle.values());
+        final List expected = Arrays.asList(Lifecycle.values());
 
         assertEquals(join("\n", expected), join("\n", lifecycle));
     }
 
     public void testBusinessRemoteInterface() throws Exception {
 
-        InitialContext ctx = new InitialContext();
+        final InitialContext ctx = new InitialContext();
 
-        RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
+        final RemoteWidget widget = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
 
         // Do a business method...
         Stack<Lifecycle> lifecycle = widget.getLifecycle();
@@ -79,15 +79,15 @@ public class CrossClassLoaderProxyTest extends TestCase {
         assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
 
         // Check the lifecycle of the bean
-        List expected = Arrays.asList(Lifecycle.values());
+        final List expected = Arrays.asList(Lifecycle.values());
 
         assertEquals(join("\n", expected), join("\n", lifecycle));
     }
 
     public void testRemoteInterface() throws Exception {
 
-        InitialContext ctx = new InitialContext();
-        EJBHome home = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
+        final InitialContext ctx = new InitialContext();
+        final EJBHome home = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
         assertNotNull("home", home);
         assertTrue("home should be an instance of WidgetHome", home instanceof WidgetHome);
         CrossClassLoaderProxyTestObject.widgetHome = (WidgetHome) home;
@@ -96,14 +96,14 @@ public class CrossClassLoaderProxyTest extends TestCase {
     }
 
     public void testCrossClassLoaderRemoteInterface() throws Exception {
-        HackClassLoader loader = new HackClassLoader(getClass().getClassLoader());
+        final HackClassLoader loader = new HackClassLoader(getClass().getClassLoader());
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
-            Class testObjectClass = loader.loadClass(CrossClassLoaderProxyTestObject.class.getName());
+            final Class testObjectClass = loader.loadClass(CrossClassLoaderProxyTestObject.class.getName());
             assertFalse(CrossClassLoaderProxyTestObject.class.equals(testObjectClass));
 
-            Class widgetClass = (Class) testObjectClass.getField("widgetClass").get(null);
+            final Class widgetClass = (Class) testObjectClass.getField("widgetClass").get(null);
             assertEquals(Widget.class, widgetClass);
 
             Class widgetHomeClass = (Class) testObjectClass.getField("widgetHomeClass").get(null);
@@ -112,11 +112,11 @@ public class CrossClassLoaderProxyTest extends TestCase {
             Class widgetRemoteClass = (Class) testObjectClass.getField("widgetRemoteClass").get(null);
             assertFalse(WidgetRemote.class.equals(widgetRemoteClass));
 
-            Object testObject = testObjectClass.newInstance();
+            final Object testObject = testObjectClass.newInstance();
 
             InitialContext ctx = new InitialContext();
             EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
-            
+
             EJBHome home = (EJBHome) copy(rawHome);
             assertNotNull("home", home);
             assertEquals(widgetHomeClass.getClassLoader(), home.getClass().getClassLoader());
@@ -130,7 +130,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         }
     }
 
-    private static Object copy(Object source) throws Exception {
+    private static Object copy(final Object source) throws Exception {
         IntraVmCopyMonitor.preCrossClassLoaderOperation();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
@@ -148,28 +148,28 @@ public class CrossClassLoaderProxyTest extends TestCase {
     }
 
     public static class HackClassLoader extends ClassLoader {
-        protected HackClassLoader(ClassLoader parent) {
+        protected HackClassLoader(final ClassLoader parent) {
             super(parent);
         }
 
-        public Class loadClass(String name) throws ClassNotFoundException {
+        public Class loadClass(final String name) throws ClassNotFoundException {
             return loadClass(name, false);
         }
 
-        protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        protected synchronized Class loadClass(final String name, boolean resolve) throws ClassNotFoundException {
             // see if we've already loaded it
-            Class c = findLoadedClass(name);
+            final Class c = findLoadedClass(name);
             if (c != null) {
                 return c;
             }
 
             if (!name.equals("org.apache.openejb.core.stateless.CrossClassLoaderProxyTest$WidgetHome") &&
-                    !name.equals("org.apache.openejb.core.stateless.CrossClassLoaderProxyTest$WidgetRemote") &&
-                    !name.equals("org.apache.openejb.core.stateless.CrossClassLoaderProxyTestObject")) {
+                !name.equals("org.apache.openejb.core.stateless.CrossClassLoaderProxyTest$WidgetRemote") &&
+                !name.equals("org.apache.openejb.core.stateless.CrossClassLoaderProxyTestObject")) {
                 return super.loadClass(name, resolve);
             }
 
-            String resourceName = name.replace('.', '/') + ".class";
+            final String resourceName = name.replace('.', '/') + ".class";
             InputStream in = getResourceAsStream(resourceName);
             if (in == null) {
                 throw new ClassNotFoundException(name);
@@ -182,11 +182,11 @@ public class CrossClassLoaderProxyTest extends TestCase {
             byte[] bytes = new byte[0];
             try {
                 byte[] buf = new byte[4 * 1024];
-                for (int count = -1; (count = in.read(buf)) >= 0;) {
+                for (int count = -1; (count = in.read(buf)) >= 0; ) {
                     bout.write(buf, 0, count);
                 }
                 bytes = bout.toByteArray();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new ClassNotFoundException(name, e);
             }
 
@@ -202,7 +202,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             // define the class
             try {
                 return defineClass(name, bytes, 0, bytes.length);
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 // possible prohibited package: defer to the parent
                 return super.loadClass(name, resolve);
             }
@@ -217,8 +217,8 @@ public class CrossClassLoaderProxyTest extends TestCase {
         super.setUp();
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -240,7 +240,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         assembler.createApplication(config.configureApplication(ejbJar));
@@ -248,7 +248,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         WidgetBean.lifecycle.clear();
     }
 
-    private static String join(String delimeter, List items) {
+    private static String join(final String delimeter, final List items) {
         StringBuffer sb = new StringBuffer();
         for (Object item : items) {
             sb.append(item.toString()).append(delimeter);
@@ -284,7 +284,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             WidgetBean.lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
 
-        public void setSessionContext(SessionContext sessionContext) {
+        public void setSessionContext(final SessionContext sessionContext) {
             //lifecycle.push(Lifecycle.INJECTION);
         }
 

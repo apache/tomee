@@ -1,20 +1,20 @@
 /**
-*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
 package org.apache.openejb.jee;
 
@@ -26,13 +26,14 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @version $Rev$ $Date$
  */
+
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for around-timeoutType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="around-timeoutType">
  *   &lt;complexContent>
@@ -45,11 +46,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "around-timeoutType", propOrder = { "clazz", "methodName" })
+@XmlType(name = "around-timeoutType", propOrder = {"clazz", "methodName"})
 public class AroundTimeout implements CallbackMethod {
 
     @XmlElement(name = "class")
@@ -61,11 +60,11 @@ public class AroundTimeout implements CallbackMethod {
     public AroundTimeout() {
     }
 
-    public AroundTimeout(java.lang.reflect.Method method) {
+    public AroundTimeout(final java.lang.reflect.Method method) {
         this(method.getDeclaringClass().getName(), method.getName());
     }
 
-    public AroundTimeout(String clazz, String methodName) {
+    public AroundTimeout(final String clazz, String methodName) {
         this.clazz = clazz;
         this.methodName = methodName;
     }
@@ -74,7 +73,7 @@ public class AroundTimeout implements CallbackMethod {
         return clazz;
     }
 
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -82,7 +81,7 @@ public class AroundTimeout implements CallbackMethod {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 

@@ -34,7 +34,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return field1;
     }
 
-    public void setId(Integer field1) {
+    public void setId(final Integer field1) {
         this.field1 = field1;
     }
 
@@ -42,7 +42,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return field2;
     }
 
-    public void setNumber(String field2) {
+    public void setNumber(final String field2) {
         this.field2 = field2;
     }
 
@@ -50,7 +50,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return field3;
     }
 
-    public void setPoints(Integer field3) {
+    public void setPoints(final Integer field3) {
         this.field3 = field3;
     }
 
@@ -58,7 +58,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return field4;
     }
 
-    public void setNotes(String field4) {
+    public void setNotes(final String field4) {
         this.field4 = field4;
     }
 
@@ -66,7 +66,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return aCmr.get(a);
     }
 
-    public void setPerson(PersonLocal person) {
+    public void setPerson(final PersonLocal person) {
         this.a = aCmr.set(this.a, person);
     }
 
@@ -83,12 +83,12 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         aCmr.set(a, null);
     }
 
-    public Object OpenEJB_addCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, Object bean) {
         if (deleted) {
             return null;
         }
 
-        Object oldValue;
+        final Object oldValue;
         if ("a".equals(name)) {
             oldValue = a;
             a = (ExampleABean_ABean) bean;
@@ -98,7 +98,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(String name, Object bean) {
+    public void OpenEJB_removeCmr(final String name, final Object bean) {
         if (deleted) {
             return;
         }

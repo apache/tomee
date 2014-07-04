@@ -44,7 +44,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         try {
             OpenEJB.destroy();
             TestManager.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // do nothing - exception ignored
         }
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());

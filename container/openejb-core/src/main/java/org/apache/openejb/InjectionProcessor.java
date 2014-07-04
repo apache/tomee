@@ -111,7 +111,7 @@ public class InjectionProcessor<T> {
         } else {
             objectRecipe = new ObjectRecipe(clazz);
         }
-        
+
         objectRecipe.allow(Option.FIELD_INJECTION);
         objectRecipe.allow(Option.PRIVATE_PROPERTIES);
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
@@ -183,7 +183,7 @@ public class InjectionProcessor<T> {
         if (injections == null) {
             return;
         }
-        
+
         boolean usePrefix = true;
         try {
             if (beanClass != null) {
@@ -223,7 +223,7 @@ public class InjectionProcessor<T> {
                             if (value instanceof JndiUrlReference) {
                                 try {
                                     value = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
-                                                    .lookup(((JndiUrlReference) value).getJndiName());
+                                        .lookup(((JndiUrlReference) value).getJndiName());
                                 } catch (final NamingException e1) {
                                     value = null;
                                 }

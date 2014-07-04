@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for dependencyType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="dependencyType">
  *   &lt;complexContent>
@@ -39,27 +39,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dependencyType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
     "_import"
 })
 public class DependencyType
-    extends ArtifactType
-{
+    extends ArtifactType {
 
     @XmlElement(name = "import", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ImportType _import;
 
     /**
      * Gets the value of the import property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ImportType }
-     *     
+     *
+     * @return possible object is
+     * {@link ImportType }
      */
     public ImportType getImport() {
         return _import;
@@ -67,13 +62,11 @@ public class DependencyType
 
     /**
      * Sets the value of the import property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ImportType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ImportType }
      */
-    public void setImport(ImportType value) {
+    public void setImport(final ImportType value) {
         this._import = value;
     }
 

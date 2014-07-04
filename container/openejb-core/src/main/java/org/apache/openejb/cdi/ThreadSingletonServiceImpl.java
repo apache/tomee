@@ -89,8 +89,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         final String failoverService = startupObject.getAppInfo().properties.getProperty("org.apache.webbeans.spi.FailOverService",
-                                                                                         SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
-                                                                                                                          null));
+            SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
+                null));
         if (failoverService != null) {
             properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
         }

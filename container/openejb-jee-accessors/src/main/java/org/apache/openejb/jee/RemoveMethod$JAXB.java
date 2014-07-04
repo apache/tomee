@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.NamedMethod$JAXB.readNamedMethod;
 import static org.apache.openejb.jee.NamedMethod$JAXB.writeNamedMethod;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class RemoveMethod$JAXB
-        extends JAXBObject<RemoveMethod> {
+    extends JAXBObject<RemoveMethod> {
 
 
     public RemoveMethod$JAXB() {
         super(RemoveMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "remove-methodType".intern()), NamedMethod$JAXB.class);
     }
 
-    public static RemoveMethod readRemoveMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static RemoveMethod readRemoveMethod(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeRemoveMethod(XoXMLStreamWriter writer, RemoveMethod removeMethod, RuntimeContext context)
-            throws Exception {
+    public static void writeRemoveMethod(final XoXMLStreamWriter writer, final RemoveMethod removeMethod, final RuntimeContext context)
+        throws Exception {
         _write(writer, removeMethod, context);
     }
 
-    public void write(XoXMLStreamWriter writer, RemoveMethod removeMethod, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final RemoveMethod removeMethod, final RuntimeContext context)
+        throws Exception {
         _write(writer, removeMethod, context);
     }
 
-    public final static RemoveMethod _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static RemoveMethod _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,12 +68,12 @@ public class RemoveMethod$JAXB
             context = new RuntimeContext();
         }
 
-        RemoveMethod removeMethod = new RemoveMethod();
+        final RemoveMethod removeMethod = new RemoveMethod();
         context.beforeUnmarshal(removeMethod, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("remove-methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, RemoveMethod.class);
@@ -81,10 +81,10 @@ public class RemoveMethod$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, removeMethod);
                 removeMethod.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,14 +93,14 @@ public class RemoveMethod$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("bean-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: beanMethod
-                NamedMethod beanMethod = readNamedMethod(elementReader, context);
+                final NamedMethod beanMethod = readNamedMethod(elementReader, context);
                 removeMethod.beanMethod = beanMethod;
             } else if (("retain-if-exception" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: retainIfException
-                Boolean retainIfException = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean retainIfException = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 removeMethod.retainIfException = retainIfException;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "bean-method"), new QName("http://java.sun.com/xml/ns/javaee", "retain-if-exception"));
@@ -112,13 +112,13 @@ public class RemoveMethod$JAXB
         return removeMethod;
     }
 
-    public final RemoveMethod read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final RemoveMethod read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, RemoveMethod removeMethod, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final RemoveMethod removeMethod, RuntimeContext context)
+        throws Exception {
         if (removeMethod == null) {
             writer.writeXsiNil();
             return;
@@ -128,7 +128,7 @@ public class RemoveMethod$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (RemoveMethod.class != removeMethod.getClass()) {
             context.unexpectedSubclass(writer, removeMethod, RemoveMethod.class);
             return;
@@ -138,19 +138,19 @@ public class RemoveMethod$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = removeMethod.id;
+        final String idRaw = removeMethod.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(removeMethod, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: beanMethod
-        NamedMethod beanMethod = removeMethod.beanMethod;
+        final NamedMethod beanMethod = removeMethod.beanMethod;
         if (beanMethod != null) {
             writer.writeStartElement(prefix, "bean-method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, beanMethod, context);
@@ -160,7 +160,7 @@ public class RemoveMethod$JAXB
         }
 
         // ELEMENT: retainIfException
-        Boolean retainIfException = removeMethod.retainIfException;
+        final Boolean retainIfException = removeMethod.retainIfException;
         if (retainIfException != null) {
             writer.writeStartElement(prefix, "retain-if-exception", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(retainIfException));

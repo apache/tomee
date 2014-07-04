@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-orderingType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-orderingType">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-orderingType", propOrder = {
@@ -55,11 +53,9 @@ public class FacesOrdering {
 
     /**
      * Gets the value of the after property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesOrderingOrdering }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesOrderingOrdering }
      */
     public FacesOrderingOrdering getAfter() {
         return after;
@@ -67,23 +63,19 @@ public class FacesOrdering {
 
     /**
      * Sets the value of the after property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesOrderingOrdering }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesOrderingOrdering }
      */
-    public void setAfter(FacesOrderingOrdering value) {
+    public void setAfter(final FacesOrderingOrdering value) {
         this.after = value;
     }
 
     /**
      * Gets the value of the before property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesOrderingOrdering }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesOrderingOrdering }
      */
     public FacesOrderingOrdering getBefore() {
         return before;
@@ -91,13 +83,11 @@ public class FacesOrdering {
 
     /**
      * Sets the value of the before property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesOrderingOrdering }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesOrderingOrdering }
      */
-    public void setBefore(FacesOrderingOrdering value) {
+    public void setBefore(final FacesOrderingOrdering value) {
         this.before = value;
     }
 

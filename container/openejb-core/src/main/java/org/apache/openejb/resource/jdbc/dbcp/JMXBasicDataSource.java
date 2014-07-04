@@ -108,35 +108,35 @@ public class JMXBasicDataSource {
 
     @ManagedAttribute
     @Description("The maximum number of active connections that can be allocated from this pool at the same time,"
-            + " or negative for no limit.")
+        + " or negative for no limit.")
     public int getMaxActive() {
         return ds.getMaxActive();
     }
 
     @ManagedAttribute
     @Description("The maximum number of connections that can remain idle in the pool, without extra ones being"
-            + "destroyed, or negative for no limit.")
+        + "destroyed, or negative for no limit.")
     public int getMaxIdle() {
         return ds.getMaxIdle();
     }
 
     @ManagedAttribute
     @Description("The minimum number of active connections that can remain idle in the pool, without extra ones"
-            + " being created when the evictor runs, or 0 to create none.")
+        + " being created when the evictor runs, or 0 to create none.")
     public int getMinIdle() {
         return ds.getMinIdle();
     }
 
     @ManagedAttribute
     @Description("The minimum number of active connections that can remain idle in the pool, without extra ones"
-            + " being created when the evictor runs, or 0 to create none.")
+        + " being created when the evictor runs, or 0 to create none.")
     public int getNumTestsPerEvictionRun() {
         return ds.getNumTestsPerEvictionRun();
     }
 
     @ManagedAttribute
     @Description("The minimum amount of time an object may sit idle in the pool before it is eligible for eviction"
-            + " by the idle object evictor (if any).")
+        + " by the idle object evictor (if any).")
     public long getMinEvictableIdleTimeMillis() {
         return ds.getMinEvictableIdleTimeMillis();
     }
@@ -149,14 +149,14 @@ public class JMXBasicDataSource {
 
     @ManagedAttribute
     @Description("The maximum number of open statements that can be allocated from the statement pool at the same time,"
-            + " or non-positive for no limit.")
+        + " or non-positive for no limit.")
     public int getMaxOpenPreparedStatements() {
         return ds.getMaxOpenPreparedStatements();
     }
 
     @ManagedAttribute
     @Description("The maximum number of milliseconds that the pool will wait (when there are no available connections) "
-            + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
+        + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
     public long getMaxWait() {
         return ds.getMaxWait();
     }
@@ -301,35 +301,35 @@ public class JMXBasicDataSource {
 
     @ManagedAttribute
     @Description("Set the maximum number of active connections that can be allocated from this pool at the same time,"
-            + " or negative for no limit.")
+        + " or negative for no limit.")
     public void setMaxActive(final int max) {
         ds.setMaxActive(max);
     }
 
     @ManagedAttribute
     @Description("Set the maximum number of connections that can remain idle in the pool, without extra ones being"
-            + "destroyed, or negative for no limit.")
+        + "destroyed, or negative for no limit.")
     public void setMaxIdle(final int max) {
         ds.setMaxIdle(max);
     }
 
     @ManagedAttribute
     @Description("Set the minimum number of active connections that can remain idle in the pool, without extra ones"
-            + " being created when the evictor runs, or 0 to create none.")
+        + " being created when the evictor runs, or 0 to create none.")
     public void setMinIdle(final int min) {
         ds.setMinIdle(min);
     }
 
     @ManagedAttribute
     @Description("Set the minimum number of active connections that can remain idle in the pool, without extra ones"
-            + " being created when the evictor runs, or 0 to create none.")
+        + " being created when the evictor runs, or 0 to create none.")
     public void setNumTestsPerEvictionRun(final int num) {
         ds.setNumTestsPerEvictionRun(num);
     }
 
     @ManagedAttribute
     @Description("Set the minimum amount of time an object may sit idle in the pool before it is eligible for eviction"
-            + " by the idle object evictor (if any).")
+        + " by the idle object evictor (if any).")
     public void setMinEvictableIdleTimeMillis(final long time) {
         ds.setMinEvictableIdleTimeMillis(time);
     }
@@ -342,14 +342,14 @@ public class JMXBasicDataSource {
 
     @ManagedAttribute
     @Description("Set the maximum number of open statements that can be allocated from the statement pool at the same time,"
-            + " or non-positive for no limit.")
+        + " or non-positive for no limit.")
     public void setMaxOpenPreparedStatements(final int max) {
         ds.setMaxOpenPreparedStatements(max);
     }
 
     @ManagedAttribute
     @Description("Set the maximum number of milliseconds that the pool will wait (when there are no available connections) "
-            + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
+        + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
     public void setMaxWait(final long max) {
         ds.setMaxWait(max);
     }

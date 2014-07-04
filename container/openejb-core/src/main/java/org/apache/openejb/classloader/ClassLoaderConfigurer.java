@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 public interface ClassLoaderConfigurer {
     URL[] additionalURLs();
+
     boolean accept(final URL url);
 
     final class Helper {

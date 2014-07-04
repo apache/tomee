@@ -19,5 +19,6 @@ package org.apache.openejb.assembler.classic;
 
 public interface DeploymentListener {
     void afterApplicationCreated(AppInfo appInfo);
+
     void beforeApplicationDestroyed(AppInfo appInfo);
 }

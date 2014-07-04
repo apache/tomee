@@ -49,8 +49,8 @@ public class GlobalLookupScopesTest extends TestCase {
 
         SystemInstance.get().setProperty("openejb.deploymentId.format", "{appId}/{moduleId}/{ejbName}");
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -78,10 +78,10 @@ public class GlobalLookupScopesTest extends TestCase {
         }
     }
 
-    private AppContext createApp(String name, ConfigurationFactory config, Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
+    private AppContext createApp(final String name, ConfigurationFactory config, final Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar(name);
+        final EjbJar ejbJar = new EjbJar(name);
         ejbJar.addEnterpriseBean(new SingletonBean(Bean.class));
 
         // Deploy the bean a second time to simulate situations
@@ -90,7 +90,7 @@ public class GlobalLookupScopesTest extends TestCase {
         ejbJar.addEnterpriseBean(new SingletonBean("Other", Bean.class));
 
         EjbModule ejbModule = new EjbModule(ejbJar);
-        AppModule module = new AppModule(ejbModule);
+        final AppModule module = new AppModule(ejbModule);
         return assembler.createApplication(config.configureApplication(module));
     }
 
@@ -112,7 +112,7 @@ public class GlobalLookupScopesTest extends TestCase {
         private DataSource yellow;
 
 
-        public Object lookup(String s) throws javax.naming.NamingException {
+        public Object lookup(final String s) throws javax.naming.NamingException {
             InitialContext context = new InitialContext();
             return context.lookup(s);
         }

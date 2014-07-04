@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class LocaleEncodingMapping$JAXB
-        extends JAXBObject<LocaleEncodingMapping> {
+    extends JAXBObject<LocaleEncodingMapping> {
 
 
     public LocaleEncodingMapping$JAXB() {
         super(LocaleEncodingMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "locale-encoding-mappingType".intern()));
     }
 
-    public static LocaleEncodingMapping readLocaleEncodingMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static LocaleEncodingMapping readLocaleEncodingMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLocaleEncodingMapping(XoXMLStreamWriter writer, LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeLocaleEncodingMapping(final XoXMLStreamWriter writer, LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
+        throws Exception {
         _write(writer, localeEncodingMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
+        throws Exception {
         _write(writer, localeEncodingMapping, context);
     }
 
-    public final static LocaleEncodingMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static LocaleEncodingMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -90,7 +90,7 @@ public class LocaleEncodingMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("locale" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: locale
                 String localeRaw = elementReader.getElementAsString();
@@ -127,13 +127,13 @@ public class LocaleEncodingMapping$JAXB
         return localeEncodingMapping;
     }
 
-    public final LocaleEncodingMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final LocaleEncodingMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final LocaleEncodingMapping localeEncodingMapping, RuntimeContext context)
+        throws Exception {
         if (localeEncodingMapping == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class LocaleEncodingMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (LocaleEncodingMapping.class != localeEncodingMapping.getClass()) {
             context.unexpectedSubclass(writer, localeEncodingMapping, LocaleEncodingMapping.class);
             return;
@@ -153,7 +153,7 @@ public class LocaleEncodingMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = localeEncodingMapping.id;
+        final String idRaw = localeEncodingMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -169,7 +169,7 @@ public class LocaleEncodingMapping$JAXB
         String locale = null;
         try {
             locale = Adapters.collapsedStringAdapterAdapter.marshal(localeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(localeEncodingMapping, "locale", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (locale != null) {

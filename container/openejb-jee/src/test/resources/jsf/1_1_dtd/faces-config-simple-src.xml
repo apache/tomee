@@ -17,8 +17,8 @@
 -->
 
 <!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+    "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
+    "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
 <!-- =========== FULL CONFIGURATION FILE ================================== -->
 
@@ -26,20 +26,20 @@
 
 <faces-config>
 
-    <!-- Managed Beans for sayhello.jsp -->
-    <managed-bean>
-        <managed-bean-name>sayHelloBean</managed-bean-name>
-        <managed-bean-class>org.myorganization.component.example.SayHelloBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+  <!-- Managed Beans for sayhello.jsp -->
+  <managed-bean>
+    <managed-bean-name>sayHelloBean</managed-bean-name>
+    <managed-bean-class>org.myorganization.component.example.SayHelloBean</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
 
-    <!-- NAVIGATION RULES -->
+  <!-- NAVIGATION RULES -->
 
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>go_home</from-outcome>
-            <to-view-id>/home.jsp</to-view-id>
-        </navigation-case>
-    </navigation-rule>
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_home</from-outcome>
+      <to-view-id>/home.jsp</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
 </faces-config>

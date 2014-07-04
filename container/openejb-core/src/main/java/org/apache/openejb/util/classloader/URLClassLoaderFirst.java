@@ -540,8 +540,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // in org.apache.openejb.
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
-                || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.")
-                || openejb.startsWith("arquillian.");
+            || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.")
+            || openejb.startsWith("arquillian.");
     }
 
     @Override
@@ -552,9 +552,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
     public static boolean isFilterableResource(final String name) {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
-                && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
-                || name.startsWith("META-INF/services/org.apache.myfaces.spi")
-                || SLF4J_BINDER_CLASS.equals(name));
+            && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+            || name.startsWith("META-INF/services/org.apache.myfaces.spi")
+            || SLF4J_BINDER_CLASS.equals(name));
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {

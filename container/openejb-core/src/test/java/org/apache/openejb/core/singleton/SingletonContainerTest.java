@@ -41,55 +41,56 @@ import java.util.Stack;
 public class SingletonContainerTest extends TestCase {
 
     public void testPojoStyleBean() throws Exception {
-        List expected = Arrays.asList(Lifecycle.values());
-        InitialContext ctx = new InitialContext();
+        final List expected = Arrays.asList(Lifecycle.values());
+        final InitialContext ctx = new InitialContext();
 
         {
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanLocal");
+            final Object object = ctx.lookup("WidgetBeanLocal");
 
             assertTrue("instanceof widget", object instanceof Widget);
 
-            Widget widget = (Widget) object;
+            final Widget widget = (Widget) object;
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            final Stack<Lifecycle> lifecycle = widget.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
             assertEquals(join("\n", expected), join("\n", lifecycle));
-        }{
+        }
+        {
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanLocalBean");
+            final Object object = ctx.lookup("WidgetBeanLocalBean");
 
             assertTrue("instanceof widget", object instanceof WidgetBean);
 
-            WidgetBean widget = (WidgetBean) object;
+            final WidgetBean widget = (WidgetBean) object;
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            final Stack<Lifecycle> lifecycle = widget.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
-           // Check the lifecycle of the bean
-           // assertEquals(Lifecycle.CONSTRUCTOR + "\n" + Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
-           assertEquals(Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
+            // Check the lifecycle of the bean
+            // assertEquals(Lifecycle.CONSTRUCTOR + "\n" + Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
+            assertEquals(Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
         }
         {
 
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanRemote");
+            final Object object = ctx.lookup("WidgetBeanRemote");
 
             assertTrue("instanceof widget", object instanceof RemoteWidget);
 
-            RemoteWidget remoteWidget = (RemoteWidget) object;
+            final RemoteWidget remoteWidget = (RemoteWidget) object;
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = remoteWidget.getLifecycle();
+            final Stack<Lifecycle> lifecycle = remoteWidget.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertNotSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
@@ -103,8 +104,8 @@ public class SingletonContainerTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -115,23 +116,23 @@ public class SingletonContainerTest extends TestCase {
 
         // Setup the descriptor information
 
-        SingletonBean bean = new SingletonBean(WidgetBean.class);
+        final SingletonBean bean = new SingletonBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
         bean.setLocalBean(new Empty());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         assembler.createApplication(config.configureApplication(ejbJar));
 
     }
 
-    private static String join(String delimeter, List items) {
-        StringBuilder sb = new StringBuilder();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();
@@ -158,7 +159,7 @@ public class SingletonContainerTest extends TestCase {
         }
 
         @Resource
-        public void setSessionContext(SessionContext sessionContext) {
+        public void setSessionContext(final SessionContext sessionContext) {
             WidgetBean.lifecycle.push(Lifecycle.INJECTION);
         }
 

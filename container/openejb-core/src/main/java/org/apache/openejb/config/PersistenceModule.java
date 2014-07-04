@@ -106,8 +106,8 @@ public class PersistenceModule implements DeploymentModule {
     @Override
     public String toString() {
         return "PersistenceModule{" +
-                "rootUrl='" + rootUrl + '\'' +
-                '}';
+            "rootUrl='" + rootUrl + '\'' +
+            '}';
     }
 
     public boolean isStandaloneModule() {
@@ -115,6 +115,6 @@ public class PersistenceModule implements DeploymentModule {
     }
 
     public void setStandaloneModule(final boolean isStandalone) {
-       //do nothing        
+        //do nothing
     }
 }

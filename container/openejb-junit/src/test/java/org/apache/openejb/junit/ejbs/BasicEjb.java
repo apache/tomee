@@ -21,11 +21,11 @@ import javax.ejb.Stateless;
 
 @Stateless
 public class BasicEjb implements BasicEjbLocal {
-    public String concat(String s1, String s2) {
+    public String concat(final String s1, String s2) {
         return s1 + " " + s2;
     }
 
-    public double squareroot(double n) {
+    public double squareroot(final double n) {
         if (n < 0) {
             throw new IllegalArgumentException("Number cannot be negative");
         }

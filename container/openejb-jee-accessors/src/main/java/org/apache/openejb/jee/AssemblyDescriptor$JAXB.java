@@ -47,33 +47,33 @@ import static org.apache.openejb.jee.SecurityRole$JAXB.readSecurityRole;
 import static org.apache.openejb.jee.SecurityRole$JAXB.writeSecurityRole;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AssemblyDescriptor$JAXB
-        extends JAXBObject<AssemblyDescriptor> {
+    extends JAXBObject<AssemblyDescriptor> {
 
 
     public AssemblyDescriptor$JAXB() {
         super(AssemblyDescriptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "assembly-descriptorType".intern()), SecurityRole$JAXB.class, MethodPermission$JAXB.class, ContainerTransaction$JAXB.class, ContainerConcurrency$JAXB.class, InterceptorBinding$JAXB.class, MessageDestination$JAXB.class, ExcludeList$JAXB.class, ApplicationException$JAXB.class);
     }
 
-    public static AssemblyDescriptor readAssemblyDescriptor(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AssemblyDescriptor readAssemblyDescriptor(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAssemblyDescriptor(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public static void writeAssemblyDescriptor(final XoXMLStreamWriter writer, final AssemblyDescriptor assemblyDescriptor, final RuntimeContext context)
+        throws Exception {
         _write(writer, assemblyDescriptor, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, final RuntimeContext context)
+        throws Exception {
         _write(writer, assemblyDescriptor, context);
     }
 
-    public final static AssemblyDescriptor _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AssemblyDescriptor _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -96,7 +96,7 @@ public class AssemblyDescriptor$JAXB
         KeyedCollection<String, ApplicationException> applicationException = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("assembly-descriptorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AssemblyDescriptor.class);
@@ -116,7 +116,7 @@ public class AssemblyDescriptor$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("security-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityRole
                 SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
@@ -179,7 +179,7 @@ public class AssemblyDescriptor$JAXB
                 interceptorBinding.add(interceptorBindingItem);
             } else if (("message-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestination
-                MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
+                final MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
                 if (messageDestination == null) {
                     messageDestination = assemblyDescriptor.messageDestination;
                     if (messageDestination != null) {
@@ -191,7 +191,7 @@ public class AssemblyDescriptor$JAXB
                 messageDestination.add(messageDestinationItem);
             } else if (("exclude-list" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeList
-                ExcludeList excludeList = readExcludeList(elementReader, context);
+                final ExcludeList excludeList = readExcludeList(elementReader, context);
                 assemblyDescriptor.excludeList = excludeList;
             } else if (("application-exception" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: applicationException
@@ -236,13 +236,13 @@ public class AssemblyDescriptor$JAXB
         return assemblyDescriptor;
     }
 
-    public final AssemblyDescriptor read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AssemblyDescriptor read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
+        throws Exception {
         if (assemblyDescriptor == null) {
             writer.writeXsiNil();
             return;
@@ -274,7 +274,7 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: securityRole
-        List<SecurityRole> securityRole = assemblyDescriptor.securityRole;
+        final List<SecurityRole> securityRole = assemblyDescriptor.securityRole;
         if (securityRole != null) {
             for (SecurityRole securityRoleItem : securityRole) {
                 if (securityRoleItem != null) {
@@ -288,7 +288,7 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: methodPermission
-        List<MethodPermission> methodPermission = assemblyDescriptor.methodPermission;
+        final List<MethodPermission> methodPermission = assemblyDescriptor.methodPermission;
         if (methodPermission != null) {
             for (MethodPermission methodPermissionItem : methodPermission) {
                 if (methodPermissionItem != null) {
@@ -302,7 +302,7 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: containerTransaction
-        List<ContainerTransaction> containerTransaction = assemblyDescriptor.containerTransaction;
+        final List<ContainerTransaction> containerTransaction = assemblyDescriptor.containerTransaction;
         if (containerTransaction != null) {
             for (ContainerTransaction containerTransactionItem : containerTransaction) {
                 if (containerTransactionItem != null) {

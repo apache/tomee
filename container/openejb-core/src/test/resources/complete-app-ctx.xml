@@ -16,7 +16,7 @@
       limitations under the License.
   -->
 <AppContext>
-  <Import path="imported-app-ctx.xml" />
+  <Import path="imported-app-ctx.xml"/>
   <Configuration>
     foo.bar = dummy
     <AsynchronousPool>
@@ -81,7 +81,8 @@
     </Pojo>
   </Pojos>
   <Resources>
-    <Service id="wss4j" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory" factory-name="create">
+    <Service id="wss4j" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory"
+             factory-name="create">
       action = UsernameToken
       passwordType = PasswordText
       passwordCallbackClass = org.superbiz.ws.security.PasswordCallbackHandler

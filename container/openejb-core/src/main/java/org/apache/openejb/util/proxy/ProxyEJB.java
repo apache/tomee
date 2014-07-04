@@ -34,10 +34,10 @@ public final class ProxyEJB {
     public static Object subclassProxy(final BeanContext beanContext) {
         try {
             return LocalBeanProxyFactory.newProxyInstance(beanContext.getModuleContext().getClassLoader(), new Handler(beanContext),
-                        beanContext.getBeanClass(), IntraVmProxy.class, Serializable.class);
+                beanContext.getBeanClass(), IntraVmProxy.class, Serializable.class);
         } catch (final InternalError ie) { // try without intravmproxy which is maybe not loadable (in OSGi it can happen)
             return LocalBeanProxyFactory.newProxyInstance(beanContext.getModuleContext().getClassLoader(), new Handler(beanContext),
-                    beanContext.getBeanClass(), Serializable.class);
+                beanContext.getBeanClass(), Serializable.class);
         }
     }
 
@@ -72,14 +72,14 @@ public final class ProxyEJB {
             final RpcContainer container = RpcContainer.class.cast(beanContext.getContainer());
 
             return container.invoke(beanContext.getDeploymentID(),
-                    beanContext.getInterfaceType(method.getDeclaringClass()),
-                    method.getDeclaringClass(), method, args, null);
+                beanContext.getInterfaceType(method.getDeclaringClass()),
+                method.getDeclaringClass(), method, args, null);
         }
 
 
         public BeanContext getBeanContext() {
             final BeanContext beanContext = beanContextRef.get();
-            if (beanContext == null|| beanContext.isDestroyed()){
+            if (beanContext == null || beanContext.isDestroyed()) {
                 beanContextRef.clear();
                 throw new IllegalStateException("Bean '" + deploymentID + "' has been undeployed.");
             }

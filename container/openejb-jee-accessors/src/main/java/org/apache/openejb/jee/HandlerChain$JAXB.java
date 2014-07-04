@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.Handler$JAXB.readHandler;
 import static org.apache.openejb.jee.Handler$JAXB.writeHandler;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class HandlerChain$JAXB
-        extends JAXBObject<HandlerChain> {
+    extends JAXBObject<HandlerChain> {
 
 
     public HandlerChain$JAXB() {
         super(HandlerChain.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chainType".intern()), Handler$JAXB.class);
     }
 
-    public static HandlerChain readHandlerChain(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static HandlerChain readHandlerChain(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeHandlerChain(XoXMLStreamWriter writer, HandlerChain handlerChain, RuntimeContext context)
-            throws Exception {
+    public static void writeHandlerChain(final XoXMLStreamWriter writer, final HandlerChain handlerChain, RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChain, context);
     }
 
-    public void write(XoXMLStreamWriter writer, HandlerChain handlerChain, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, HandlerChain handlerChain, RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChain, context);
     }
 
-    public final static HandlerChain _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static HandlerChain _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class HandlerChain$JAXB
             context = new RuntimeContext();
         }
 
-        HandlerChain handlerChain = new HandlerChain();
+        final HandlerChain handlerChain = new HandlerChain();
         context.beforeUnmarshal(handlerChain, LifecycleCallback.NONE);
 
         List<String> protocolBindings = null;
@@ -126,7 +126,7 @@ public class HandlerChain$JAXB
                 handlerChain.portNamePattern = portNamePattern;
             } else if (("protocol-bindings" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: protocolBindings
-                for (String protocolBindingsItem : elementReader.getElementAsXmlList()) {
+                for (final String protocolBindingsItem : elementReader.getElementAsXmlList()) {
 
                     String protocolBindingsItem1;
                     try {
@@ -174,13 +174,13 @@ public class HandlerChain$JAXB
         return handlerChain;
     }
 
-    public final HandlerChain read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final HandlerChain read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, HandlerChain handlerChain, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final HandlerChain handlerChain, RuntimeContext context)
+        throws Exception {
         if (handlerChain == null) {
             writer.writeXsiNil();
             return;
@@ -200,7 +200,7 @@ public class HandlerChain$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = handlerChain.id;
+        final String idRaw = handlerChain.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -240,7 +240,7 @@ public class HandlerChain$JAXB
         }
 
         // ELEMENT: protocolBindings
-        List<String> protocolBindingsRaw = handlerChain.protocolBindings;
+        final List<String> protocolBindingsRaw = handlerChain.protocolBindings;
         if (protocolBindingsRaw != null) {
             writer.writeStartElement(prefix, "protocol-bindings", "http://java.sun.com/xml/ns/javaee");
             boolean protocolBindingsFirst = true;

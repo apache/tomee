@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +24,15 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for weblogic-rdbms-jar complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-rdbms-jar">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-rdbms-jar", propOrder = {
@@ -96,25 +94,23 @@ public class WeblogicRdbmsJar {
 
     /**
      * Gets the value of the weblogicRdbmsBean property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the weblogicRdbmsBean property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWeblogicRdbmsBean().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link WeblogicRdbmsBean }
-     * 
-     * 
      */
     public List<WeblogicRdbmsBean> getWeblogicRdbmsBean() {
         if (weblogicRdbmsBean == null) {
@@ -125,25 +121,23 @@ public class WeblogicRdbmsJar {
 
     /**
      * Gets the value of the weblogicRdbmsRelation property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the weblogicRdbmsRelation property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWeblogicRdbmsRelation().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link WeblogicRdbmsRelation }
-     * 
-     * 
      */
     public List<WeblogicRdbmsRelation> getWeblogicRdbmsRelation() {
         if (weblogicRdbmsRelation == null) {
@@ -154,11 +148,9 @@ public class WeblogicRdbmsJar {
 
     /**
      * Gets the value of the orderDatabaseOperations property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getOrderDatabaseOperations() {
         return orderDatabaseOperations;
@@ -166,23 +158,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the orderDatabaseOperations property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setOrderDatabaseOperations(Boolean value) {
+    public void setOrderDatabaseOperations(final Boolean value) {
         this.orderDatabaseOperations = value;
     }
 
     /**
      * Gets the value of the enableBatchOperations property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableBatchOperations() {
         return enableBatchOperations;
@@ -190,23 +178,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the enableBatchOperations property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableBatchOperations(Boolean value) {
+    public void setEnableBatchOperations(final Boolean value) {
         this.enableBatchOperations = value;
     }
 
     /**
      * Gets the value of the createDefaultDbmsTables property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCreateDefaultDbmsTables() {
         return createDefaultDbmsTables;
@@ -214,23 +198,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the createDefaultDbmsTables property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCreateDefaultDbmsTables(String value) {
+    public void setCreateDefaultDbmsTables(final String value) {
         this.createDefaultDbmsTables = value;
     }
 
     /**
      * Gets the value of the validateDbSchemaWith property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getValidateDbSchemaWith() {
         return validateDbSchemaWith;
@@ -238,23 +218,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the validateDbSchemaWith property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setValidateDbSchemaWith(String value) {
+    public void setValidateDbSchemaWith(final String value) {
         this.validateDbSchemaWith = value;
     }
 
     /**
      * Gets the value of the databaseType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDatabaseType() {
         return databaseType;
@@ -262,23 +238,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the databaseType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDatabaseType(String value) {
+    public void setDatabaseType(final String value) {
         this.databaseType = value;
     }
 
     /**
      * Gets the value of the defaultDbmsTablesDdl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDefaultDbmsTablesDdl() {
         return defaultDbmsTablesDdl;
@@ -286,23 +258,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the defaultDbmsTablesDdl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDefaultDbmsTablesDdl(String value) {
+    public void setDefaultDbmsTablesDdl(final String value) {
         this.defaultDbmsTablesDdl = value;
     }
 
     /**
      * Gets the value of the compatibility property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Compatibility }
-     *     
+     *
+     * @return possible object is
+     * {@link Compatibility }
      */
     public Compatibility getCompatibility() {
         return compatibility;
@@ -310,23 +278,19 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the compatibility property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Compatibility }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Compatibility }
      */
-    public void setCompatibility(Compatibility value) {
+    public void setCompatibility(final Compatibility value) {
         this.compatibility = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -334,13 +298,11 @@ public class WeblogicRdbmsJar {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

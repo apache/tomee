@@ -38,7 +38,7 @@ public class MdbInvoker implements MessageListener {
     private Session session;
     private ConnectionFactory connectionFactory;
 
-    public MdbInvoker(ConnectionFactory connectionFactory, Object target) throws JMSException {
+    public MdbInvoker(final ConnectionFactory connectionFactory, Object target) throws JMSException {
         this.target = target;
         this.connectionFactory = connectionFactory;
         for (Method method : target.getClass().getMethods()) {
@@ -61,7 +61,7 @@ public class MdbInvoker implements MessageListener {
         return session;
     }
 
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         if (!(message instanceof ObjectMessage)) return;
 
         try {
@@ -69,12 +69,14 @@ public class MdbInvoker implements MessageListener {
             if (session == null) throw new IllegalStateException("Invoker has been destroyed");
 
             if (message == null) throw new NullPointerException("request message is null");
-            if (!(message instanceof ObjectMessage)) throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
+            if (!(message instanceof ObjectMessage))
+                throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
             ObjectMessage objectMessage = (ObjectMessage) message;
             Serializable object = objectMessage.getObject();
             if (object == null) throw new NullPointerException("object in ObjectMessage is null");
             if (!(object instanceof Map)) {
-                if (message instanceof ObjectMessage) throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage request but got a " + object.getClass().getName());
+                if (message instanceof ObjectMessage)
+                    throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage request but got a " + object.getClass().getName());
             }
             Map request = (Map) object;
 
@@ -115,7 +117,7 @@ public class MdbInvoker implements MessageListener {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                MdbUtil.close(producer);        
+                MdbUtil.close(producer);
                 destroy();
             }
         } catch (Throwable e) {

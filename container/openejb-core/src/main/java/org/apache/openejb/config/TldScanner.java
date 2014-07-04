@@ -52,11 +52,11 @@ import static org.apache.openejb.util.URLs.toFile;
 /**
  * TLD file urls cached on a per classloader basis.  Helps with sharing TLD
  * files between webapps by placing them in a parent classloader.
- *
+ * <p/>
  * Each webapp will be able to retrieve the cached version of the URLs and
  * therefore only needs to scan its own libraries, the parent libraries will
  * already have been scanned.
- *
+ * <p/>
  * For a tiny bit of performance, we will scan the StandardClassloader at boot
  * in a separate thread so it should be primed in advance of any deployment.
  *

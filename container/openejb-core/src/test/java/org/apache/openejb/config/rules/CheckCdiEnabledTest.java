@@ -30,9 +30,14 @@ public class CheckCdiEnabledTest {
     @Keys(@Key(value = "cdi.notEnabled", type = KeyType.WARNING))
     public EjbModule cdiShouldBeOn() throws OpenEJBException {
         return new EjbModule(new EjbJar())
-                .finder(new AnnotationFinder(new ClassesArchive(Bean1.class, Bean2.class)));
+            .finder(new AnnotationFinder(new ClassesArchive(Bean1.class, Bean2.class)));
     }
 
-    public static class Bean1 {}
-    public static class Bean2 { @Inject private Bean1 bean1; }
+    public static class Bean1 {
+    }
+
+    public static class Bean2 {
+        @Inject
+        private Bean1 bean1;
+    }
 }

@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for interceptor-bindingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="interceptor-bindingType">
  *   &lt;complexContent>
@@ -59,19 +59,17 @@ import java.util.Arrays;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interceptor-bindingType", propOrder = {
-        "descriptions",
-        "ejbName",
-        "interceptorClass",
-        "interceptorOrder",
-        "excludeDefaultInterceptors",
-        "excludeClassInterceptors",
-        "method"
-        })
+    "descriptions",
+    "ejbName",
+    "interceptorClass",
+    "interceptorOrder",
+    "excludeDefaultInterceptors",
+    "excludeClassInterceptors",
+    "method"
+})
 public class InterceptorBinding {
 
     @XmlTransient
@@ -91,33 +89,33 @@ public class InterceptorBinding {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-    
+
     @XmlTransient
     protected String className;
 
     public InterceptorBinding() {
     }
 
-    public InterceptorBinding(EnterpriseBean bean, Interceptor... interceptors) {
+    public InterceptorBinding(final EnterpriseBean bean, Interceptor... interceptors) {
         this(bean.getEjbName(), interceptors);
         this.className = bean.getEjbClass();
     }
 
-    public InterceptorBinding(String ejbName, Interceptor... interceptors) {
-        this.ejbName = ejbName;        
+    public InterceptorBinding(final String ejbName, Interceptor... interceptors) {
+        this.ejbName = ejbName;
         List<String> interceptorClasses = this.getInterceptorClass();
         for (Interceptor interceptor : interceptors) {
             interceptorClasses.add(interceptor.getInterceptorClass());
         }
     }
 
-    public InterceptorBinding(String ejbName, String... interceptorClasses) {
+    public InterceptorBinding(final String ejbName, String... interceptorClasses) {
         this.ejbName = ejbName;
         this.getInterceptorClass().addAll(Arrays.asList(interceptorClasses));
     }
 
-    public InterceptorBinding(String ejbName) {
-        this.ejbName = ejbName;         
+    public InterceptorBinding(final String ejbName) {
+        this.ejbName = ejbName;
     }
 
     @XmlElement(name = "description", required = true)
@@ -125,7 +123,7 @@ public class InterceptorBinding {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -137,7 +135,7 @@ public class InterceptorBinding {
         return ejbName;
     }
 
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -152,7 +150,7 @@ public class InterceptorBinding {
         return interceptorOrder;
     }
 
-    public InterceptorOrder setInterceptorOrder(InterceptorOrder value) {
+    public InterceptorOrder setInterceptorOrder(final InterceptorOrder value) {
         this.interceptorOrder = value;
         return value;
     }
@@ -161,7 +159,7 @@ public class InterceptorBinding {
         return excludeDefaultInterceptors;
     }
 
-    public void setExcludeDefaultInterceptors(boolean value) {
+    public void setExcludeDefaultInterceptors(final boolean value) {
         this.excludeDefaultInterceptors = value;
     }
 
@@ -169,7 +167,7 @@ public class InterceptorBinding {
         return excludeClassInterceptors;
     }
 
-    public void setExcludeClassInterceptors(boolean value) {
+    public void setExcludeClassInterceptors(final boolean value) {
         this.excludeClassInterceptors = value;
     }
 
@@ -177,7 +175,7 @@ public class InterceptorBinding {
         return method;
     }
 
-    public void setMethod(NamedMethod value) {
+    public void setMethod(final NamedMethod value) {
         this.method = value;
     }
 
@@ -185,7 +183,7 @@ public class InterceptorBinding {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

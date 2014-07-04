@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.VariableMapping$JAXB.readVariableMapping;
 import static org.apache.openejb.jee.VariableMapping$JAXB.writeVariableMapping;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class JavaXmlTypeMapping$JAXB
-        extends JAXBObject<JavaXmlTypeMapping> {
+    extends JAXBObject<JavaXmlTypeMapping> {
 
 
     public JavaXmlTypeMapping$JAXB() {
         super(JavaXmlTypeMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "java-xml-type-mappingType".intern()), VariableMapping$JAXB.class);
     }
 
-    public static JavaXmlTypeMapping readJavaXmlTypeMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static JavaXmlTypeMapping readJavaXmlTypeMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeJavaXmlTypeMapping(XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeJavaXmlTypeMapping(final XoXMLStreamWriter writer, final JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
+        throws Exception {
         _write(writer, javaXmlTypeMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, javaXmlTypeMapping, context);
     }
 
-    public final static JavaXmlTypeMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static JavaXmlTypeMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -76,7 +76,7 @@ public class JavaXmlTypeMapping$JAXB
         List<VariableMapping> variableMapping = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("java-xml-type-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, JavaXmlTypeMapping.class);
@@ -84,7 +84,7 @@ public class JavaXmlTypeMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -104,7 +104,7 @@ public class JavaXmlTypeMapping$JAXB
                 String javaType;
                 try {
                     javaType = Adapters.collapsedStringAdapterAdapter.unmarshal(javaTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -118,7 +118,7 @@ public class JavaXmlTypeMapping$JAXB
                 // ELEMENT: anonymousTypeQname
                 String anonymousTypeQnameRaw = elementReader.getElementAsString();
 
-                String anonymousTypeQname;
+                final String anonymousTypeQname;
                 try {
                     anonymousTypeQname = Adapters.collapsedStringAdapterAdapter.unmarshal(anonymousTypeQnameRaw);
                 } catch (Exception e) {
@@ -165,13 +165,13 @@ public class JavaXmlTypeMapping$JAXB
         return javaXmlTypeMapping;
     }
 
-    public final JavaXmlTypeMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final JavaXmlTypeMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, JavaXmlTypeMapping javaXmlTypeMapping, RuntimeContext context)
+        throws Exception {
         if (javaXmlTypeMapping == null) {
             writer.writeXsiNil();
             return;
@@ -196,7 +196,7 @@ public class JavaXmlTypeMapping$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(javaXmlTypeMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -245,7 +245,7 @@ public class JavaXmlTypeMapping$JAXB
         String qnameScope = null;
         try {
             qnameScope = Adapters.collapsedStringAdapterAdapter.marshal(qnameScopeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(javaXmlTypeMapping, "qnameScope", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (qnameScope != null) {

@@ -19,22 +19,21 @@ package org.apache.openejb.jee.jpa;
 
 
 import junit.framework.TestCase;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.custommonkey.xmlunit.Diff;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.Marshaller;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.JAXBContextFactory;
-import org.custommonkey.xmlunit.Diff;
 
 /**
  * @version $Revision$ $Date$
@@ -45,70 +44,70 @@ public class PersistenceXmlTest extends TestCase {
      * @throws Exception
      */
     public void testPersistenceVersion1() throws Exception {
-        JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        URL resource = this.getClass().getClassLoader().getResource("persistence-example.xml");
-        InputStream in = resource.openStream();
-        java.lang.String expected = readContent(in);
+        final URL resource = this.getClass().getClassLoader().getResource("persistence-example.xml");
+        final InputStream in = resource.openStream();
+        final java.lang.String expected = readContent(in);
 
-        Persistence element =  (Persistence) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        final Persistence element = (Persistence) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
         unmarshaller.setEventHandler(new TestValidationEventHandler());
         System.out.println("unmarshalled");
 
-        Marshaller marshaller = ctx.createMarshaller();
+        final Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(element, baos);
 
-        String actual = new String(baos.toByteArray());
+        final String actual = new String(baos.toByteArray());
 
-        Diff myDiff = new Diff(expected, actual);
+        final Diff myDiff = new Diff(expected, actual);
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
-    
+
     /**
      * @throws Exception
      */
     public void testPersistenceVersion2() throws Exception {
-        JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        URL resource = this.getClass().getClassLoader().getResource("persistence_2.0-example.xml");
-        InputStream in = resource.openStream();
-        java.lang.String expected = readContent(in);
+        final URL resource = this.getClass().getClassLoader().getResource("persistence_2.0-example.xml");
+        final InputStream in = resource.openStream();
+        final java.lang.String expected = readContent(in);
 
-        Persistence element =  (Persistence) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        final Persistence element = (Persistence) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
         unmarshaller.setEventHandler(new TestValidationEventHandler());
         System.out.println("unmarshalled");
 
-        Marshaller marshaller = ctx.createMarshaller();
+        final Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(element, baos);
 
-        String actual = new String(baos.toByteArray());
+        final String actual = new String(baos.toByteArray());
 
-        Diff myDiff = new Diff(expected, actual);
+        final Diff myDiff = new Diff(expected, actual);
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {
-            sb.append((char)i);
+            sb.append((char) i);
             i = in.read();
         }
-        java.lang.String content = sb.toString();
+        final java.lang.String content = sb.toString();
         return content;
     }
 
     private static class TestValidationEventHandler implements ValidationEventHandler {
-        public boolean handleEvent(ValidationEvent validationEvent) {
+        public boolean handleEvent(final ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
             return true;
         }

@@ -16,24 +16,22 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.String;
-
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.DetailedDiff;
 
 /**
  * @version $Revision$ $Date$
  */
 public class OpenejbJarTest extends TestCase {
 
-//    public void test() throws Exception {
+    //    public void test() throws Exception {
 //        WebServiceBindingType binding = new WebServiceBindingType();
 //        binding.setEjbName("FooBean");
 //        binding.setWebServiceAddress("/foo/bean");
@@ -71,11 +69,11 @@ public class OpenejbJarTest extends TestCase {
 //        unmarshalAndMarshal(OpenejbJarType.class, "daytrader-original.xml", "daytrader-corrected.xml");
     }
 
-    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {
+    private <T> void unmarshalAndMarshal(final Class<T> type, final java.lang.String xmlFileName) throws Exception {
         unmarshalAndMarshal(type, xmlFileName, xmlFileName);
     }
 
-    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
+    private <T> void unmarshalAndMarshal(final Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
         InputStream in = getInputStream(xmlFileName);
         assertNotNull(in);
         Object object = JaxbOpenejbJar2.unmarshal(type, in);
@@ -92,19 +90,19 @@ public class OpenejbJarTest extends TestCase {
         try {
             Diff myDiff = new DetailedDiff(new Diff(expected, actual));
             assertTrue("Files are not similar " + myDiff, myDiff.similar());
-        } catch (AssertionFailedError e) {
+        } catch (final AssertionFailedError e) {
             e.printStackTrace();
             assertEquals(expected, actual);
             throw e;
         }
     }
 
-    private InputStream getInputStream(String xmlFileName) {
+    private InputStream getInputStream(final String xmlFileName) {
         return getClass().getClassLoader().getResourceAsStream(xmlFileName);
     }
 
     private String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {

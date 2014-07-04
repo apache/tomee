@@ -33,11 +33,11 @@ import java.util.Properties;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for port-component-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="port-component-refType">
  *   &lt;complexContent>
@@ -55,18 +55,16 @@ import java.util.Properties;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "port-component-refType", propOrder = {
-        "serviceEndpointInterface",
-        "enableMtom",
-        "mtomThreshold",
-        "addressing",
-        "respectBinding",
-        "portComponentLink"
-        })
+    "serviceEndpointInterface",
+    "enableMtom",
+    "mtomThreshold",
+    "addressing",
+    "respectBinding",
+    "portComponentLink"
+})
 public class PortComponentRef {
 
     @XmlElement(name = "service-endpoint-interface", required = true)
@@ -93,7 +91,7 @@ public class PortComponentRef {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String value) {
+    public void setServiceEndpointInterface(final String value) {
         this.serviceEndpointInterface = value;
     }
 
@@ -105,7 +103,7 @@ public class PortComponentRef {
         return enableMtom;
     }
 
-    public void setEnableMtom(boolean value) {
+    public void setEnableMtom(final boolean value) {
         this.enableMtom = value;
     }
 
@@ -113,7 +111,7 @@ public class PortComponentRef {
         return mtomThreshold;
     }
 
-    public void setMtomThreshold(Integer value) {
+    public void setMtomThreshold(final Integer value) {
         this.mtomThreshold = value;
     }
 
@@ -121,7 +119,7 @@ public class PortComponentRef {
         return addressing;
     }
 
-    public void setAddressing(Addressing value) {
+    public void setAddressing(final Addressing value) {
         this.addressing = value;
     }
 
@@ -129,7 +127,7 @@ public class PortComponentRef {
         return respectBinding;
     }
 
-    public void setRespectBinding(RespectBinding value) {
+    public void setRespectBinding(final RespectBinding value) {
         this.respectBinding = value;
     }
 
@@ -137,7 +135,7 @@ public class PortComponentRef {
         return portComponentLink;
     }
 
-    public void setPortComponentLink(String value) {
+    public void setPortComponentLink(final String value) {
         this.portComponentLink = value;
     }
 
@@ -145,7 +143,7 @@ public class PortComponentRef {
         return qname;
     }
 
-    public void setQName(QName qname) {
+    public void setQName(final QName qname) {
         this.qname = qname;
     }
 
@@ -160,7 +158,7 @@ public class PortComponentRef {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

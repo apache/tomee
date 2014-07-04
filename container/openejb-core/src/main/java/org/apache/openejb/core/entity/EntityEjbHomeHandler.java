@@ -69,7 +69,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         }
 
         if (retValue instanceof Collection) {
-            final Object [] proxyInfos = ((Collection) retValue).toArray();
+            final Object[] proxyInfos = ((Collection) retValue).toArray();
             final Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
                 final ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
@@ -142,7 +142,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    private static String lcfirst(final String s){
+    private static String lcfirst(final String s) {
         if (s == null || s.length() < 1) {
             return s;
         }

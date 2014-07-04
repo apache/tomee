@@ -73,7 +73,7 @@ public class PropertiesLoginModule implements LoginModule {
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
 
-        if (debug){
+        if (debug) {
             log.debug("Users file: " + usersUrl.toExternalForm());
             log.debug("Groups file: " + groupsUrl.toExternalForm());
         }
@@ -122,7 +122,7 @@ public class PropertiesLoginModule implements LoginModule {
         users.clear();
 
         if (debug) {
-            log.debug("Logged in as '" + user+"'");
+            log.debug("Logged in as '" + user + "'");
         }
         return true;
     }
@@ -130,7 +130,7 @@ public class PropertiesLoginModule implements LoginModule {
     public boolean commit() throws LoginException {
         principals.add(new UserPrincipal(user));
 
-        for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
+        for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements(); ) {
             final String name = (String) enumeration.nextElement();
             final String[] userList = String.valueOf(groups.getProperty(name)).split(",");
             for (int i = 0; i < userList.length; i++) {

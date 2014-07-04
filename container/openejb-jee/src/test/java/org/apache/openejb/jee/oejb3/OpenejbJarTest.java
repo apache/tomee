@@ -17,25 +17,23 @@
  */
 package org.apache.openejb.jee.oejb3;
 
-import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
-
+import junit.framework.TestCase;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.apache.openejb.jee.JAXBContextFactory;
 
-import java.io.InputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 /**
  * @version $Revision$ $Date$
@@ -43,30 +41,30 @@ import java.io.BufferedInputStream;
 public class OpenejbJarTest extends TestCase {
 
     public void testAll() throws Exception {
-        JAXBContext ctx = JAXBContextFactory.newInstance(OpenejbJar.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(OpenejbJar.class);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("openejb-jar.xml");
-        String expected = readContent(in);
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream("openejb-jar.xml");
+        final String expected = readContent(in);
 
         unmarshaller.setEventHandler(new TestValidationEventHandler());
-        Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        final Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
 
         assertTrue(object instanceof OpenejbJar);
 
-        Marshaller marshaller = ctx.createMarshaller();
+        final Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-        String actual = new String(baos.toByteArray());
+        final String actual = new String(baos.toByteArray());
 
         XMLUnit.setIgnoreWhitespace(true);
         try {
-            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            final Diff myDiff = new DetailedDiff(new Diff(expected, actual));
             assertTrue("Files are not similar " + myDiff, myDiff.similar());
-        } catch (AssertionFailedError e) {
+        } catch (final AssertionFailedError e) {
             e.printStackTrace();
             assertEquals(expected, actual);
             throw e;
@@ -74,19 +72,19 @@ public class OpenejbJarTest extends TestCase {
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {
-            sb.append((char)i);
+            sb.append((char) i);
             i = in.read();
         }
-        java.lang.String content = sb.toString();
+        final java.lang.String content = sb.toString();
         return content;
     }
 
     private static class TestValidationEventHandler implements ValidationEventHandler {
-        public boolean handleEvent(ValidationEvent validationEvent) {
+        public boolean handleEvent(final ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
             return true;
         }

@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.NamedMethod$JAXB.readNamedMethod;
 import static org.apache.openejb.jee.NamedMethod$JAXB.writeNamedMethod;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InitMethod$JAXB
-        extends JAXBObject<InitMethod> {
+    extends JAXBObject<InitMethod> {
 
 
     public InitMethod$JAXB() {
         super(InitMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "init-methodType".intern()), NamedMethod$JAXB.class);
     }
 
-    public static InitMethod readInitMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InitMethod readInitMethod(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInitMethod(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public static void writeInitMethod(final XoXMLStreamWriter writer, final InitMethod initMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, initMethod, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InitMethod initMethod, RuntimeContext context)
+        throws Exception {
         _write(writer, initMethod, context);
     }
 
-    public final static InitMethod _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InitMethod _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,7 +68,7 @@ public class InitMethod$JAXB
             context = new RuntimeContext();
         }
 
-        InitMethod initMethod = new InitMethod();
+        final InitMethod initMethod = new InitMethod();
         context.beforeUnmarshal(initMethod, LifecycleCallback.NONE);
 
 
@@ -112,13 +112,13 @@ public class InitMethod$JAXB
         return initMethod;
     }
 
-    public final InitMethod read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InitMethod read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
+        throws Exception {
         if (initMethod == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class InitMethod$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(initMethod, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRedirectViewParam$JAXB
-        extends JAXBObject<FacesRedirectViewParam> {
+    extends JAXBObject<FacesRedirectViewParam> {
 
 
     public FacesRedirectViewParam$JAXB() {
         super(FacesRedirectViewParam.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-redirect-viewParamType".intern()));
     }
 
-    public static FacesRedirectViewParam readFacesRedirectViewParam(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRedirectViewParam readFacesRedirectViewParam(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRedirectViewParam(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRedirectViewParam(final XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirectViewParam, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirectViewParam, context);
     }
 
-    public final static FacesRedirectViewParam _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRedirectViewParam _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -95,7 +95,7 @@ public class FacesRedirectViewParam$JAXB
                 // ELEMENT: name
                 String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
                 } catch (Exception e) {
@@ -127,13 +127,13 @@ public class FacesRedirectViewParam$JAXB
         return facesRedirectViewParam;
     }
 
-    public final FacesRedirectViewParam read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRedirectViewParam read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
+        throws Exception {
         if (facesRedirectViewParam == null) {
             writer.writeXsiNil();
             return;

@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 public class AgentTest extends TestCase {
     public void test() {
         try {
-            Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+            final Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
             vmClass.getMethod("attach", String.class);
             vmClass.getMethod("loadAgent", String.class);
         } catch (Exception e) {

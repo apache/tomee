@@ -26,7 +26,7 @@ public class BillPk {
 
     }
 
-    public BillPk(long number, long version, long revision) {
+    public BillPk(final long number, long version, final long revision) {
         this.billNumber = number;
         this.billVersion = version;
         this.billRevision = revision;
@@ -36,7 +36,7 @@ public class BillPk {
         return this.billNumber;
     }
 
-    public void setBillNumber(long number) {
+    public void setBillNumber(final long number) {
         this.billNumber = number;
     }
 
@@ -44,7 +44,7 @@ public class BillPk {
         return this.billVersion;
     }
 
-    public void setBillVersion(long version) {
+    public void setBillVersion(final long version) {
         this.billVersion = version;
     }
 
@@ -52,18 +52,18 @@ public class BillPk {
         return this.billRevision;
     }
 
-    public void setBillRevision(long revision) {
+    public void setBillRevision(final long revision) {
         this.billRevision = revision;
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
 
         if (!(obj instanceof BillPk))
             return false;
 
-        BillPk pk = (BillPk)obj;
+        final BillPk pk = (BillPk) obj;
 
         if (billNumber != pk.billNumber)
             return false;

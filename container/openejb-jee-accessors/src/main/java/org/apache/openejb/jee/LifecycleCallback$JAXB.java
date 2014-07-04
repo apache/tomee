@@ -27,33 +27,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class LifecycleCallback$JAXB
-        extends JAXBObject<org.apache.openejb.jee.LifecycleCallback> {
+    extends JAXBObject<org.apache.openejb.jee.LifecycleCallback> {
 
 
     public LifecycleCallback$JAXB() {
         super(org.apache.openejb.jee.LifecycleCallback.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "lifecycle-callbackType".intern()));
     }
 
-    public static org.apache.openejb.jee.LifecycleCallback readLifecycleCallback(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static org.apache.openejb.jee.LifecycleCallback readLifecycleCallback(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLifecycleCallback(XoXMLStreamWriter writer, org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
-            throws Exception {
+    public static void writeLifecycleCallback(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
+        throws Exception {
         _write(writer, lifecycleCallback, context);
     }
 
-    public void write(XoXMLStreamWriter writer, org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
+        throws Exception {
         _write(writer, lifecycleCallback, context);
     }
 
-    public final static org.apache.openejb.jee.LifecycleCallback _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static org.apache.openejb.jee.LifecycleCallback _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,7 +69,7 @@ public class LifecycleCallback$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("lifecycle-callbackType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, org.apache.openejb.jee.LifecycleCallback.class);
@@ -102,7 +102,7 @@ public class LifecycleCallback$JAXB
                 // ELEMENT: lifecycleCallbackMethod
                 String lifecycleCallbackMethodRaw = elementReader.getElementAsString();
 
-                String lifecycleCallbackMethod;
+                final String lifecycleCallbackMethod;
                 try {
                     lifecycleCallbackMethod = Adapters.collapsedStringAdapterAdapter.unmarshal(lifecycleCallbackMethodRaw);
                 } catch (Exception e) {
@@ -121,13 +121,13 @@ public class LifecycleCallback$JAXB
         return lifecycleCallback;
     }
 
-    public final org.apache.openejb.jee.LifecycleCallback read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final org.apache.openejb.jee.LifecycleCallback read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final org.apache.openejb.jee.LifecycleCallback lifecycleCallback, RuntimeContext context)
+        throws Exception {
         if (lifecycleCallback == null) {
             writer.writeXsiNil();
             return;
@@ -137,7 +137,7 @@ public class LifecycleCallback$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (org.apache.openejb.jee.LifecycleCallback.class != lifecycleCallback.getClass()) {
             context.unexpectedSubclass(writer, lifecycleCallback, org.apache.openejb.jee.LifecycleCallback.class);
             return;
@@ -161,7 +161,7 @@ public class LifecycleCallback$JAXB
         }
 
         // ELEMENT: lifecycleCallbackMethod
-        String lifecycleCallbackMethodRaw = lifecycleCallback.lifecycleCallbackMethod;
+        final String lifecycleCallbackMethodRaw = lifecycleCallback.lifecycleCallbackMethod;
         String lifecycleCallbackMethod = null;
         try {
             lifecycleCallbackMethod = Adapters.collapsedStringAdapterAdapter.marshal(lifecycleCallbackMethodRaw);

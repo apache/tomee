@@ -10,43 +10,43 @@
     <xsd:documentation>
 
       DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-      
+
       Copyright 2003-2009 Sun Microsystems, Inc. All rights reserved.
-      
+
       The contents of this file are subject to the terms of either the
       GNU General Public License Version 2 only ("GPL") or the Common
       Development and Distribution License("CDDL") (collectively, the
-      "License").  You may not use this file except in compliance with
+      "License"). You may not use this file except in compliance with
       the License. You can obtain a copy of the License at
       https://glassfish.dev.java.net/public/CDDL+GPL.html or
-      glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+      glassfish/bootstrap/legal/LICENSE.txt. See the License for the
       specific language governing permissions and limitations under the
       License.
-      
+
       When distributing the software, include this License Header
       Notice in each file and include the License file at
-      glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+      glassfish/bootstrap/legal/LICENSE.txt. Sun designates this
       particular file as subject to the "Classpath" exception as
       provided by Sun in the GPL Version 2 section of the License file
-      that accompanied this code.  If applicable, add the following
+      that accompanied this code. If applicable, add the following
       below the License Header, with the fields enclosed by brackets []
       replaced by your own identifying information:
       "Portions Copyrighted [year] [name of copyright owner]"
-      
+
       Contributor(s):
-      
+
       If you wish your version of this file to be governed by only the
       CDDL or only the GPL Version 2, indicate your decision by adding
       "[Contributor] elects to include this software in this
-      distribution under the [CDDL or GPL Version 2] license."  If you
+      distribution under the [CDDL or GPL Version 2] license." If you
       don't indicate a single choice of license, a recipient has the
       option to distribute your version of this file under either the
       CDDL, the GPL Version 2 or to extend the choice of license to its
-      licensees as provided above.  However, if you add GPL Version 2
+      licensees as provided above. However, if you add GPL Version 2
       code and therefore, elected the GPL Version 2 license, then the
       option applies only if the new code is made subject to such
       option by the copyright holder.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
@@ -86,23 +86,23 @@
 
       The following conventions apply to all Java EE
       deployment descriptor elements unless indicated otherwise.
-      
+
       - In elements that specify a pathname to a file within the
       same JAR file, relative filenames (i.e., those not
       starting with "/") are considered relative to the root of
-      the JAR file's namespace.  Absolute filenames (i.e., those
+      the JAR file's namespace. Absolute filenames (i.e., those
       starting with "/") also specify names in the root of the
-      JAR file's namespace.  In general, relative names are
-      preferred.  The exception is .war files where absolute
+      JAR file's namespace. In general, relative names are
+      preferred. The exception is .war files where absolute
       names are preferred for consistency with the Servlet API.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
   <xsd:include schemaLocation="javaee_6.xsd"/>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:element name="ejb-jar"
                type="javaee:ejb-jarType">
@@ -110,7 +110,7 @@
       <xsd:documentation>
 
         This is the root of the ejb-jar deployment descriptor.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:key name="ejb-name-key">
@@ -120,7 +120,7 @@
           The ejb-name element contains the name of an enterprise
           bean. The name must be unique within the ejb-jar or
           .war file.
-          
+
         </xsd:documentation>
       </xsd:annotation>
       <xsd:selector xpath="javaee:enterprise-beans/*"/>
@@ -133,8 +133,8 @@
 
           The keyref indicates the references from
           relationship-role-source must be to a specific ejb-name
-          defined within the scope of enterprise-beans element. 
-          
+          defined within the scope of enterprise-beans element.
+
         </xsd:documentation>
       </xsd:annotation>
       <xsd:selector xpath=".//javaee:ejb-relationship-role/javaee:relationship-role-source"/>
@@ -146,7 +146,7 @@
 
           A role-name-key is specified to allow the references
           from the security-role-refs.
-          
+
         </xsd:documentation>
       </xsd:annotation>
       <xsd:selector xpath="javaee:assembly-descriptor/javaee:security-role"/>
@@ -159,7 +159,7 @@
 
           The keyref indicates the references from
           security-role-ref to a specified role-name.
-          
+
         </xsd:documentation>
       </xsd:annotation>
       <xsd:selector xpath="javaee:enterprise-beans/*/javaee:security-role-ref"/>
@@ -168,7 +168,7 @@
   </xsd:element>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="access-timeoutType">
     <xsd:annotation>
@@ -178,11 +178,11 @@
         time (in a given time unit) that the container should wait for
         a concurrency lock before throwing a timeout exception to the
         client.
-        
+
         A timeout value of 0 means concurrent access is not permitted.
-        
+
         A timeout value of -1 means wait indefinitely to acquire a lock.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -196,7 +196,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="async-methodType">
     <xsd:annotation>
@@ -204,7 +204,7 @@
 
         The async-methodType element specifies that a session
         bean method has asynchronous invocation semantics.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -219,7 +219,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="activation-configType">
     <xsd:annotation>
@@ -230,13 +230,13 @@
         in its operational environment. This may include information
         about message acknowledgement, message selector, expected
         destination type, etc.
-        
+
         The configuration information is expressed in terms of
         name/value configuration properties.
-        
+
         The properties that are recognized for a particular
         message-driven bean are determined by the messaging type.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -253,7 +253,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="activation-config-propertyType">
     <xsd:annotation>
@@ -261,10 +261,10 @@
 
         The activation-config-propertyType contains a name/value
         configuration property pair for a message-driven bean.
-        
+
         The properties that are recognized for a particular
         message-driven bean are determined by the messaging type.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -276,11 +276,11 @@
             The activation-config-property-name element contains
             the name for an activation configuration property of
             a message-driven bean.
-            
+
             For JMS message-driven beans, the following property
             names are recognized: acknowledgeMode,
             messageSelector, destinationType, subscriptionDurability
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -292,7 +292,7 @@
             The activation-config-property-value element
             contains the value for an activation configuration
             property of a message-driven bean.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -302,24 +302,24 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="around-invokeType">
     <xsd:annotation>
       <xsd:documentation>
 
         The around-invoke type specifies a method on a
-        class to be called during the around invoke portion of an 
-        ejb invocation.  Note that each class may have only one
+        class to be called during the around invoke portion of an
+        ejb invocation. Note that each class may have only one
         around invoke method and that the method may not be
         overloaded.
-        
+
         If the class element is missing then
         the class defining the callback is assumed to be the
         interceptor class or component class in scope at the
         location in the descriptor in which the around invoke
         definition appears.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -332,7 +332,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="around-timeoutType">
     <xsd:annotation>
@@ -340,16 +340,16 @@
 
         The around-timeout type specifies a method on a
         class to be called during the around-timeout portion of
-        a timer timeout callback.  Note that each class may have 
-        only one around-timeout method and that the method may not 
+        a timer timeout callback. Note that each class may have
+        only one around-timeout method and that the method may not
         be overloaded.
-        
+
         If the class element is missing then
         the class defining the callback is assumed to be the
         interceptor class or component class in scope at the
         location in the descriptor in which the around-timeout
         definition appears.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -362,7 +362,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="assembly-descriptorType">
     <xsd:annotation>
@@ -370,7 +370,7 @@
 
         The assembly-descriptorType defines
         application-assembly information.
-        
+
         The application-assembly information consists of the
         following parts: the definition of security roles, the
         definition of method permissions, the definition of
@@ -379,13 +379,13 @@
         of interceptor bindings, a list of
         methods to be excluded from being invoked, and a list of
         exception types that should be treated as application exceptions.
-        
+
         All the parts are optional in the sense that they are
         omitted if the lists represented by them are empty.
-        
+
         Providing an assembly-descriptor in the deployment
         descriptor is optional for the ejb-jar or .war file producer.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -422,7 +422,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="cmp-fieldType">
     <xsd:annotation>
@@ -431,7 +431,7 @@
         The cmp-fieldType describes a container-managed field. The
         cmp-fieldType contains an optional description of the field,
         and the name of the field.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -446,18 +446,18 @@
 
             The field-name element specifies the name of a
             container managed field.
-            
+
             The name of the cmp-field of an entity bean with
             cmp-version 2.x must begin with a lowercase
             letter. This field is accessed by methods whose
             names consists of the name of the field specified by
             field-name in which the first letter is uppercased,
             prefixed by "get" or "set".
-            
+
             The name of the cmp-field of an entity bean with
             cmp-version 1.x must denote a public field of the
             enterprise bean class or one of its superclasses.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -467,7 +467,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="cmp-versionType">
     <xsd:annotation>
@@ -476,12 +476,12 @@
         The cmp-versionType specifies the version of an entity bean
         with container-managed persistence. It is used by
         cmp-version elements.
-        
+
         The value must be one of the two following:
-        
+
         1.x
         2.x
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -493,7 +493,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="cmr-fieldType">
     <xsd:annotation>
@@ -507,7 +507,7 @@
         methods for the relationship. The cmr-field-type element is
         used only for collection-valued cmr-fields. It specifies the
         type of the collection that is used.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -527,7 +527,7 @@
             whose names consist of the name of the field
             specified by cmr-field-name in which the first
             letter is uppercased, prefixed by "get" or "set".
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -540,7 +540,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="cmr-field-typeType">
     <xsd:annotation>
@@ -550,7 +550,7 @@
         collection-valued logical relationship field in the entity
         bean class. The value of an element using cmr-field-typeType
         must be either: java.util.Collection or java.util.Set.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -562,22 +562,22 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="concurrency-management-typeType">
     <xsd:annotation>
       <xsd:documentation>
 
         The concurrency-management-typeType specifies the way concurrency
-        is managed for a singleton or stateful session bean.  
-        
+        is managed for a singleton or stateful session bean.
+
         The concurrency management type must be one of the following:
-        
+
         Bean
         Container
-        
+
         Bean managed concurrency can only be specified for a singleton bean.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -589,22 +589,22 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="concurrent-lock-typeType">
     <xsd:annotation>
       <xsd:documentation>
 
         The concurrent-lock-typeType specifies how the container must
-        manage concurrent access to a method of a Singleton bean 
+        manage concurrent access to a method of a Singleton bean
         with container-managed concurrency.
-        
-        The container managed concurrency lock type must be one 
+
+        The container managed concurrency lock type must be one
         of the following :
-        
+
         Read
         Write
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -616,7 +616,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="concurrent-methodType">
     <xsd:annotation>
@@ -624,14 +624,14 @@
 
         The concurrent-methodType specifies information about a method
         of a bean with container managed concurrency.
-        
-        The optional lock element specifies the kind of concurrency 
+
+        The optional lock element specifies the kind of concurrency
         lock asssociated with the method.
-        
+
         The optional access-timeout element specifies the amount of
         time (in a given time unit) the container should wait for a
         concurrency lock before throwing an exception to the client.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -649,7 +649,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="container-transactionType">
     <xsd:annotation>
@@ -661,7 +661,7 @@
         list of method elements, and a transaction attribute. The
         transaction attribute is to be applied to all the specified
         methods.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -680,24 +680,24 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="depends-onType">
     <xsd:annotation>
       <xsd:documentation>
 
-        The depends-onType is used to express initialization 
+        The depends-onType is used to express initialization
         ordering dependencies between Singleton components.
         The depends-onType specifies the names of one or more
         Singleton beans in the same application as the referring
         Singleton, each of which must be initialized before
-        the referring bean.  
-        
+        the referring bean.
+
         Each dependent bean is expressed using ejb-link syntax.
-        The order in which dependent beans are initialized at 
+        The order in which dependent beans are initialized at
         runtime is not guaranteed to match the order in which
         they are listed.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -711,7 +711,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="ejb-classType">
     <xsd:annotation>
@@ -733,7 +733,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="ejb-jarType">
     <xsd:annotation>
@@ -741,7 +741,7 @@
 
         The ejb-jarType defines the root element of the EJB
         deployment descriptor. It contains
-        
+
         - an optional description of the ejb-jar file
         - an optional display name
         - an optional icon that contains a small and a large
@@ -754,12 +754,12 @@
         enterprise beans that is not specified through
         annotations
         - structural information about interceptor classes
-        - a descriptor for container managed relationships, 
-        if any. 
+        - a descriptor for container managed relationships,
+        if any.
         - an optional application-assembly descriptor
-        - an optional name of an ejb-client-jar file for the 
+        - an optional name of an ejb-client-jar file for the
         ejb-jar.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -783,7 +783,7 @@
               The ejb-relation-name contains the name of a
               relation. The name must be unique within
               relationships.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-relation"/>
@@ -799,7 +799,7 @@
             Providing an assembly-descriptor in the deployment
             descriptor is optional for the ejb-jar or .war file
             producer.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -832,12 +832,12 @@
         <xsd:documentation>
 
           The version specifies the version of the
-          EJB specification that the instance document must 
+          EJB specification that the instance document must
           comply with. This information enables deployment tools
           to validate a particular EJB Deployment
           Descriptor with respect to a specific version of the EJB
-          schema. 
-          
+          schema.
+
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -853,17 +853,17 @@
           files available to this module and packaged with
           this application should be examined for annotations
           that specify deployment information.
-          
+
           If metadata-complete is set to "true", the deployment
           tool must ignore any annotations that specify deployment
           information, which might be present in the class files
           of the application.
-          
+
           If metadata-complete is not specified or is set to
           "false", the deployment tool must examine the class
           files of the application for annotations, as
           specified by the specifications.
-          
+
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -872,7 +872,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="ejb-nameType">
     <xsd:annotation>
@@ -905,21 +905,21 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="ejb-relationType">
     <xsd:annotation>
       <xsd:documentation>
 
         The ejb-relationType describes a relationship between two
-        entity beans with container-managed persistence.  It is used
+        entity beans with container-managed persistence. It is used
         by ejb-relation elements. It contains a description; an
         optional ejb-relation-name element; and exactly two
         relationship role declarations, defined by the
         ejb-relationship-role elements. The name of the
         relationship, if specified, is unique within the ejb-jar
         file.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -935,7 +935,7 @@
 
             The ejb-relation-name element provides a unique name
             within the ejb-jar file for a relationship.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -949,7 +949,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="ejb-relationship-roleType">
     <xsd:annotation>
@@ -1010,7 +1010,7 @@
             name for a role that is unique within an
             ejb-relation. Different relationships can use the
             same name for a role.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1030,7 +1030,7 @@
             element contained in an ejb-relation element in
             which the other ejb-relationship-role
             element specifies a multiplicity of One.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1045,7 +1045,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="enterprise-beansType">
     <xsd:annotation>
@@ -1054,7 +1054,7 @@
         The enterprise-beansType declares one or more enterprise
         beans. Each bean can be a session, entity or message-driven
         bean.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice maxOccurs="unbounded">
@@ -1067,11 +1067,11 @@
               The ejb-ref-name element contains the name of
               an EJB reference. The EJB reference is an entry in
               the component's environment and is relative to the
-              java:comp/env context.  The name must be unique within
+              java:comp/env context. The name must be unique within
               the component.
-              
+
               It is recommended that name be prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-local-ref"/>
@@ -1086,9 +1086,9 @@
               component's environment and is relative to the
               java:comp/env context. The name must be unique
               within the component.
-              
+
               It is recommended that name is prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-ref"/>
@@ -1104,7 +1104,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-env-ref"/>
@@ -1120,7 +1120,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:message-destination-ref"/>
@@ -1131,10 +1131,10 @@
             <xsd:documentation>
 
               The res-ref-name element specifies the name of a
-              resource manager connection factory reference.  The name
+              resource manager connection factory reference. The name
               is a JNDI name relative to the java:comp/env context.
               The name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-ref"/>
@@ -1145,10 +1145,10 @@
             <xsd:documentation>
 
               The env-entry-name element contains the name of a
-              component's environment entry.  The name is a JNDI
-              name relative to the java:comp/env context.  The
+              component's environment entry. The name is a JNDI
+              name relative to the java:comp/env context. The
               name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:env-entry"/>
@@ -1164,11 +1164,11 @@
               The ejb-ref-name element contains the name of
               an EJB reference. The EJB reference is an entry in
               the component's environment and is relative to the
-              java:comp/env context.  The name must be unique within
+              java:comp/env context. The name must be unique within
               the component.
-              
+
               It is recommended that name be prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-local-ref"/>
@@ -1183,9 +1183,9 @@
               component's environment and is relative to the
               java:comp/env context. The name must be unique
               within the component.
-              
+
               It is recommended that name is prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-ref"/>
@@ -1201,7 +1201,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-env-ref"/>
@@ -1217,7 +1217,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:message-destination-ref"/>
@@ -1228,10 +1228,10 @@
             <xsd:documentation>
 
               The res-ref-name element specifies the name of a
-              resource manager connection factory reference.  The name
+              resource manager connection factory reference. The name
               is a JNDI name relative to the java:comp/env context.
               The name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-ref"/>
@@ -1242,10 +1242,10 @@
             <xsd:documentation>
 
               The env-entry-name element contains the name of a
-              component's environment entry.  The name is a JNDI
-              name relative to the java:comp/env context.  The
+              component's environment entry. The name is a JNDI
+              name relative to the java:comp/env context. The
               name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:env-entry"/>
@@ -1261,11 +1261,11 @@
               The ejb-ref-name element contains the name of
               an EJB reference. The EJB reference is an entry in
               the component's environment and is relative to the
-              java:comp/env context.  The name must be unique within
+              java:comp/env context. The name must be unique within
               the component.
-              
+
               It is recommended that name be prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-local-ref"/>
@@ -1280,9 +1280,9 @@
               component's environment and is relative to the
               java:comp/env context. The name must be unique
               within the component.
-              
+
               It is recommended that name is prefixed with "ejb/".
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:ejb-ref"/>
@@ -1298,7 +1298,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-env-ref"/>
@@ -1314,7 +1314,7 @@
               code. The name is a JNDI name relative to the
               java:comp/env context and must be unique within an
               component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:message-destination-ref"/>
@@ -1325,10 +1325,10 @@
             <xsd:documentation>
 
               The res-ref-name element specifies the name of a
-              resource manager connection factory reference.  The name
+              resource manager connection factory reference. The name
               is a JNDI name relative to the java:comp/env context.
               The name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:resource-ref"/>
@@ -1339,10 +1339,10 @@
             <xsd:documentation>
 
               The env-entry-name element contains the name of a
-              component's environment entry.  The name is a JNDI
-              name relative to the java:comp/env context.  The
+              component's environment entry. The name is a JNDI
+              name relative to the java:comp/env context. The
               name must be unique within an component.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:env-entry"/>
@@ -1355,7 +1355,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="entity-beanType">
     <xsd:annotation>
@@ -1363,94 +1363,94 @@
 
         The entity-beanType declares an entity bean. The declaration
         consists of:
-        
+
         - an optional description
         - an optional display name
-        - an optional icon element that contains a small and a large 
+        - an optional icon element that contains a small and a large
         icon file name
         - a unique name assigned to the enterprise bean
         in the deployment descriptor
         - an optional mapped-name element that can be used to provide
         vendor-specific deployment information such as the physical
-        jndi-name of the entity bean's remote home interface. This 
+        jndi-name of the entity bean's remote home interface. This
         element is not required to be supported by all implementations.
         Any use of this element is non-portable.
-        - the names of the entity bean's remote home 
+        - the names of the entity bean's remote home
         and remote interfaces, if any
         - the names of the entity bean's local home and local
         interfaces, if any
         - the entity bean's implementation class
-        - the optional entity bean's persistence management type. If 
+        - the optional entity bean's persistence management type. If
         this element is not specified it is defaulted to Container.
         - the entity bean's primary key class name
         - an indication of the entity bean's reentrancy
-        - an optional specification of the 
+        - an optional specification of the
         entity bean's cmp-version
         - an optional specification of the entity bean's
         abstract schema name
         - an optional list of container-managed fields
-        - an optional specification of the primary key 
+        - an optional specification of the primary key
         field
-        - an optional declaration of the bean's environment 
+        - an optional declaration of the bean's environment
         entries
-        - an optional declaration of the bean's EJB 
+        - an optional declaration of the bean's EJB
         references
-        - an optional declaration of the bean's local 
+        - an optional declaration of the bean's local
         EJB references
-        - an optional declaration of the bean's web 
+        - an optional declaration of the bean's web
         service references
-        - an optional declaration of the security role 
+        - an optional declaration of the security role
         references
         - an optional declaration of the security identity
         to be used for the execution of the bean's methods
-        - an optional declaration of the bean's 
+        - an optional declaration of the bean's
         resource manager connection factory references
         - an optional declaration of the bean's
         resource environment references
-        - an optional declaration of the bean's message 
+        - an optional declaration of the bean's message
         destination references
         - an optional set of query declarations
         for finder and select methods for an entity
         bean with cmp-version 2.x.
-        
+
         The optional abstract-schema-name element must be specified
         for an entity bean with container-managed persistence and
         cmp-version 2.x.
-        
+
         The optional primkey-field may be present in the descriptor
         if the entity's persistence-type is Container.
-        
+
         The optional cmp-version element may be present in the
         descriptor if the entity's persistence-type is Container. If
         the persistence-type is Container and the cmp-version
         element is not specified, its value defaults to 2.x.
-        
+
         The optional home and remote elements must be specified if
         the entity bean cmp-version is 1.x.
-        
+
         The optional home and remote elements must be specified if
         the entity bean has a remote home and remote interface.
-        
+
         The optional local-home and local elements must be specified
         if the entity bean has a local home and local interface.
-        
+
         Either both the local-home and the local elements or both
         the home and the remote elements must be specified.
-        
+
         The optional query elements must be present if the
         persistence-type is Container and the cmp-version is 2.x and
         query methods other than findByPrimaryKey have been defined
         for the entity bean.
-        
+
         The other elements that are optional are "optional" in the
         sense that they are omitted if the lists represented by them
         are empty.
-        
+
         At least one cmp-field element must be present in the
         descriptor if the entity's persistence-type is Container and
         the cmp-version is 1.x, and none must not be present if the
         entity's persistence-type is Bean.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1484,11 +1484,11 @@
             The prim-key-class element contains the
             fully-qualified name of an
             entity bean's primary key class.
-            
+
             If the definition of the primary key class is
-            deferred to deployment time, the prim-key-class 
+            deferred to deployment time, the prim-key-class
             element should specify java.lang.Object.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1499,10 +1499,10 @@
 
             The reentrant element specifies whether an entity
             bean is reentrant or not.
-            
+
             The reentrant element must be one of the two
             following: true or false
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1516,13 +1516,13 @@
           <xsd:documentation>
 
             The abstract-schema-name element specifies the name
-            of the abstract schema type of an entity bean with 
-            cmp-version 2.x. It is used in EJB QL queries. 
-            
-            For example, the abstract-schema-name for an entity 
-            bean whose local interface is 
-            com.acme.commerce.Order might be Order. 
-            
+            of the abstract schema type of an entity bean with
+            cmp-version 2.x. It is used in EJB QL queries.
+
+            For example, the abstract-schema-name for an entity
+            bean whose local interface is
+            com.acme.commerce.Order might be Order.
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1539,18 +1539,18 @@
             The primkey-field element is used to specify the
             name of the primary key field for an entity with
             container-managed persistence.
-            
+
             The primkey-field must be one of the fields declared
             in the cmp-field element, and the type of the field
             must be the same as the primary key type.
-            
+
             The primkey-field element is not used if the primary
             key maps to multiple container-managed fields
             (i.e. the key is a compound key). In this case, the
             fields of the primary key class must be public, and
             their names must correspond to the field names of
             the entity bean class that comprise the key.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1572,7 +1572,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="exclude-listType">
     <xsd:annotation>
@@ -1580,11 +1580,11 @@
 
         The exclude-listType specifies one or more methods which
         the Assembler marks to be uncallable.
-        
+
         If the method permission relation contains methods that are
         in the exclude list, the Deployer should consider those
         methods to be uncallable.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1601,7 +1601,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="application-exceptionType">
     <xsd:annotation>
@@ -1609,25 +1609,25 @@
 
         The application-exceptionType declares an application
         exception. The declaration consists of:
-        
+
         - the exception class. When the container receives
-        an exception of this type, it is required to 
-        forward this exception as an applcation exception 
+        an exception of this type, it is required to
+        forward this exception as an applcation exception
         to the client regardless of whether it is a checked
         or unchecked exception.
-        - an optional rollback element. If this element is 
-        set to true, the container must rollback the current 
+        - an optional rollback element. If this element is
+        set to true, the container must rollback the current
         transaction before forwarding the exception to the
-        client.  If not specified, it defaults to false.
-        - an optional inherited element. If this element is 
+        client. If not specified, it defaults to false.
+        - an optional inherited element. If this element is
         set to true, subclasses of the exception class type
-        are also automatically considered application 
+        are also automatically considered application
         exceptions (unless overriden at a lower level).
         If set to false, only the exception class type is
         considered an application-exception, not its
         exception subclasses. If not specified, this
         value defaults to true.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1645,19 +1645,19 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="interceptorsType">
     <xsd:annotation>
       <xsd:documentation>
 
         The interceptorsType element declares one or more interceptor
-        classes used by components within this ejb-jar or .war.  The declaration
+        classes used by components within this ejb-jar or .war. The declaration
         consists of :
-        
+
         - An optional description.
         - One or more interceptor elements.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1674,15 +1674,15 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="interceptorType">
     <xsd:annotation>
       <xsd:documentation>
 
         The interceptorType element declares information about a single
-        interceptor class.  It consists of :
-        
+        interceptor class. It consists of :
+
         - An optional description.
         - The fully-qualified name of the interceptor class.
         - An optional list of around invoke methods declared on the
@@ -1695,7 +1695,7 @@
         interceptor class and/or its super-classes.
         - An optional list of pre-passivate methods declared on the
         interceptor class and/or its super-classes.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1728,7 +1728,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="interceptor-bindingType">
     <xsd:annotation>
@@ -1862,7 +1862,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="interceptor-orderType">
     <xsd:annotation>
@@ -1870,7 +1870,7 @@
 
         The interceptor-orderType element describes a total ordering
         of interceptor classes.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1884,7 +1884,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="named-methodType">
     <xsd:sequence>
@@ -1899,7 +1899,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="init-methodType">
     <xsd:sequence>
@@ -1913,7 +1913,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="remove-methodType">
     <xsd:sequence>
@@ -1928,7 +1928,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="message-driven-beanType">
     <xsd:annotation>
@@ -1936,30 +1936,30 @@
 
         The message-driven element declares a message-driven
         bean. The declaration consists of:
-        
+
         - an optional description
         - an optional display name
-        - an optional icon element that contains a small and a large 
-        icon file name. 
+        - an optional icon element that contains a small and a large
+        icon file name.
         - a name assigned to the enterprise bean in
         the deployment descriptor
         - an optional mapped-name element that can be used to provide
         vendor-specific deployment information such as the physical
         jndi-name of destination from which this message-driven bean
-        should consume.  This element is not required to be supported 
-        by all implementations.  Any use of this element is non-portable.
+        should consume. This element is not required to be supported
+        by all implementations. Any use of this element is non-portable.
         - the message-driven bean's implementation class
-        - an optional declaration of the bean's messaging 
-        type 
+        - an optional declaration of the bean's messaging
+        type
         - an optional declaration of the bean's timeout method for
         handling programmatically created timers
         - an optional declaration of timers to be automatically created at
         deployment time
-        - the optional message-driven bean's transaction management 
+        - the optional message-driven bean's transaction management
         type. If it is not defined, it is defaulted to Container.
-        - an optional declaration of the bean's 
+        - an optional declaration of the bean's
         message-destination-type
-        - an optional declaration of the bean's 
+        - an optional declaration of the bean's
         message-destination-link
         - an optional declaration of the message-driven bean's
         activation configuration properties
@@ -1974,19 +1974,19 @@
         references
         - an optional declaration of the bean's web service
         references
-        - an optional declaration of the security role 
+        - an optional declaration of the security role
         references
         - an optional declaration of the security
         identity to be used for the execution of the bean's
         methods
-        - an optional declaration of the bean's 
-        resource manager connection factory 
+        - an optional declaration of the bean's
+        resource manager connection factory
         references
         - an optional declaration of the bean's resource
         environment references.
-        - an optional declaration of the bean's message 
+        - an optional declaration of the bean's message
         destination references
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2003,10 +2003,10 @@
           <xsd:documentation>
 
             The ejb-class element specifies the fully qualified name
-            of the bean class for this ejb.  It is required unless
+            of the bean class for this ejb. It is required unless
             there is a component-defining annotation for the same
             ejb-name.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2017,8 +2017,8 @@
           <xsd:documentation>
 
             The messaging-type element specifies the message
-            listener interface of the message-driven bean. 
-            
+            listener interface of the message-driven bean.
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2031,7 +2031,7 @@
             The timeout-method element specifies the method that
             will receive callbacks for programmatically
             created timers.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2074,7 +2074,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="methodType">
     <xsd:annotation>
@@ -2280,7 +2280,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="method-intfType">
     <xsd:annotation>
@@ -2292,24 +2292,24 @@
         component interfaces (e.g, in both an enterprise bean's
         remote and local interfaces or in both an enterprise bean's
         home and remote interfaces, etc.); the component and web
-        service endpoint interfaces, and so on. 
-        
-        Local applies to the local component interface, local business 
-        interfaces, and the no-interface view. 
-        
-        Remote applies to both remote component interface and the remote 
-        business interfaces.  
-        
+        service endpoint interfaces, and so on.
+
+        Local applies to the local component interface, local business
+        interfaces, and the no-interface view.
+
+        Remote applies to both remote component interface and the remote
+        business interfaces.
+
         ServiceEndpoint refers to methods exposed through a web service
         endpoint.
-        
+
         Timer refers to the bean's timeout callback methods.
-        
+
         MessageEndpoint refers to the methods of a message-driven bean's
         message-listener interface.
-        
+
         The method-intf element must be one of the following:
-        
+
         Home
         Remote
         LocalHome
@@ -2317,7 +2317,7 @@
         ServiceEndpoint
         Timer
         MessageEndpoint
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -2334,7 +2334,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="method-nameType">
     <xsd:annotation>
@@ -2344,7 +2344,7 @@
         bean method or the asterisk (*) character. The asterisk is
         used when the element denotes all the methods of an
         enterprise bean's client view interfaces.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -2353,7 +2353,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="method-paramsType">
     <xsd:annotation>
@@ -2361,7 +2361,7 @@
 
         The method-paramsType defines a list of the
         fully-qualified Java type names of the method parameters.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2375,7 +2375,7 @@
             The method-param element contains a primitive
             or a fully-qualified Java type name of a method
             parameter.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2385,7 +2385,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="method-permissionType">
     <xsd:annotation>
@@ -2397,13 +2397,13 @@
         optional description, a list of security role names or an
         indicator to state that the method is unchecked for
         authorization, and a list of method elements.
-        
+
         The security roles used in the method-permissionType
         must be defined in the security-role elements of the
         deployment descriptor, and the methods must be methods
-        defined in the enterprise bean's business, home, component 
+        defined in the enterprise bean's business, home, component
         and/or web service endpoint interfaces.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2423,7 +2423,7 @@
               The unchecked element specifies that a method is
               not checked for authorization by the container
               prior to invocation of the method.
-              
+
             </xsd:documentation>
           </xsd:annotation>
         </xsd:element>
@@ -2437,7 +2437,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="multiplicityType">
     <xsd:annotation>
@@ -2445,12 +2445,12 @@
 
         The multiplicityType describes the multiplicity of the
         role that participates in a relation.
-        
+
         The value must be one of the two following:
-        
+
         One
         Many
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -2462,7 +2462,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="persistence-typeType">
     <xsd:annotation>
@@ -2470,12 +2470,12 @@
 
         The persistence-typeType specifies an entity bean's persistence
         management type.
-        
+
         The persistence-type element must be one of the two following:
-        
+
         Bean
         Container
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -2487,7 +2487,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="queryType">
     <xsd:annotation>
@@ -2498,22 +2498,22 @@
         - an optional description of the query
         - the specification of the finder or select
         method it is used by
-        	- an optional specification of the result type 
-        	  mapping, if the query is for a select method 
-        	  and entity objects are returned.
-        	- the EJB QL query string that defines the query.
-        
+        - an optional specification of the result type
+        mapping, if the query is for a select method
+        and entity objects are returned.
+        - the EJB QL query string that defines the query.
+
         Queries that are expressible in EJB QL must use the ejb-ql
         element to specify the query. If a query is not expressible
         in EJB QL, the description element should be used to
         describe the semantics of the query and the ejb-ql element
         should be empty.
-        
+
         The result-type-mapping is an optional element. It can only
         be present if the query-method specifies a select method
-        that returns entity objects.  The default value for the
+        that returns entity objects. The default value for the
         result-type-mapping element is "Local".
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2533,7 +2533,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="query-methodType">
     <xsd:annotation>
@@ -2578,7 +2578,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="relationship-role-sourceType">
     <xsd:annotation>
@@ -2589,7 +2589,7 @@
         relationship-role-sourceType is used by
         relationship-role-source elements to uniquely identify an
         entity bean.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2605,7 +2605,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="relationshipsType">
     <xsd:annotation>
@@ -2616,7 +2616,7 @@
         participate. The relationshipsType contains an optional
         description; and a list of ejb-relation elements, which
         specify the container managed relationships.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2632,10 +2632,10 @@
             <xsd:documentation>
 
               The ejb-relationship-role-name contains the name of a
-              relationship role. The name must be unique within 
+              relationship role. The name must be unique within
               a relationship, but can be reused in different
               relationships.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath=".//javaee:ejb-relationship-role-name"/>
@@ -2648,7 +2648,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="result-type-mappingType">
     <xsd:annotation>
@@ -2658,12 +2658,12 @@
         specify whether an abstract schema type returned by a query
         for a select method is to be mapped to an EJBLocalObject or
         EJBObject type.
-        
+
         The value must be one of the following:
-        
+
         Local
         Remote
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -2675,7 +2675,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="security-identityType">
     <xsd:annotation>
@@ -2686,7 +2686,7 @@
         methods of the enterprise bean or whether a specific run-as
         identity is to be used. It contains an optional description
         and a specification of the security identity to be used.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2704,7 +2704,7 @@
               the caller's security identity be used as the
               security identity for the execution of the
               enterprise bean's methods.
-              
+
             </xsd:documentation>
           </xsd:annotation>
         </xsd:element>
@@ -2717,7 +2717,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="session-beanType">
     <xsd:annotation>
@@ -2725,19 +2725,19 @@
 
         The session-beanType declares an session bean. The
         declaration consists of:
-        
+
         - an optional description
         - an optional display name
-        - an optional icon element that contains a small and a large 
+        - an optional icon element that contains a small and a large
         icon file name
         - a name assigned to the enterprise bean
         in the deployment description
         - an optional mapped-name element that can be used to provide
         vendor-specific deployment information such as the physical
-        jndi-name of the session bean's remote home/business interface. 
-        This element is not required to be supported by all 
+        jndi-name of the session bean's remote home/business interface.
+        This element is not required to be supported by all
         implementations. Any use of this element is non-portable.
-        - the names of all the remote or local business interfaces, 
+        - the names of all the remote or local business interfaces,
         if any
         - the names of the session bean's remote home and
         remote interfaces, if any
@@ -2756,47 +2756,47 @@
         deployment time
         - an optional declaration that a Singleton bean has eager
         initialization
-        - an optional declaration of a Singleton/Stateful bean's concurrency 
+        - an optional declaration of a Singleton/Stateful bean's concurrency
         management type
         - an optional declaration of the method locking metadata
         for a Singleton with container managed concurrency
         - an optional declaration of the other Singleton beans in the
         application that must be initialized before this bean
-        - an optional declaration of the session bean's asynchronous 
+        - an optional declaration of the session bean's asynchronous
         methods
-        - the optional session bean's transaction management type. 
+        - the optional session bean's transaction management type.
         If it is not present, it is defaulted to Container.
-        - an optional declaration of a stateful session bean's 
+        - an optional declaration of a stateful session bean's
         afterBegin, beforeCompletion, and/or afterCompletion methods
         - an optional list of the session bean class and/or
         superclass around-invoke methods.
         - an optional list of the session bean class and/or
         superclass around-timeout methods.
-        - an optional declaration of the bean's 
+        - an optional declaration of the bean's
         environment entries
         - an optional declaration of the bean's EJB references
-        - an optional declaration of the bean's local 
+        - an optional declaration of the bean's local
         EJB references
-        - an optional declaration of the bean's web 
+        - an optional declaration of the bean's web
         service references
-        - an optional declaration of the security role 
+        - an optional declaration of the security role
         references
-        - an optional declaration of the security identity 
+        - an optional declaration of the security identity
         to be used for the execution of the bean's methods
-        - an optional declaration of the bean's resource 
+        - an optional declaration of the bean's resource
         manager connection factory references
-        - an optional declaration of the bean's resource 
+        - an optional declaration of the bean's resource
         environment references.
-        - an optional declaration of the bean's message 
+        - an optional declaration of the bean's message
         destination references
-        
+
         The elements that are optional are "optional" in the sense
         that they are omitted when if lists represented by them are
         empty.
-        
+
         The service-endpoint element may only be specified if the
         bean is a stateless session bean.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -2834,7 +2834,7 @@
 
             The local-bean element declares that this
             session bean exposes a no-interface Local client view.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2850,7 +2850,7 @@
             element may only be specified for a stateless
             session bean. The specified interface must be a
             valid JAX-RPC service endpoint interface.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2861,10 +2861,10 @@
           <xsd:documentation>
 
             The ejb-class element specifies the fully qualified name
-            of the bean class for this ejb.  It is required unless
+            of the bean class for this ejb. It is required unless
             there is a component-defining annotation for the same
             ejb-name.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2883,7 +2883,7 @@
             The timeout-method element specifies the method that
             will receive callbacks for programmatically
             created timers.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2901,7 +2901,7 @@
             bean has eager initialization.
             This element can only be specified for singleton session
             beans.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2924,9 +2924,9 @@
 
             The init-method element specifies the mappings for
             EJB 2.x style create methods for an EJB 3.x bean.
-            This element can only be specified for stateful 
-            session beans. 
-            
+            This element can only be specified for stateful
+            session beans.
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2939,9 +2939,9 @@
 
             The remove-method element specifies the mappings for
             EJB 2.x style remove methods for an EJB 3.x bean.
-            This element can only be specified for stateful 
-            session beans. 
-            
+            This element can only be specified for stateful
+            session beans.
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -2993,7 +2993,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="session-typeType">
     <xsd:annotation>
@@ -3002,13 +3002,13 @@
         The session-typeType describes whether the session bean is a
         singleton, stateful or stateless session. It is used by
         session-type elements.
-        
+
         The value must be one of the three following:
-        
+
         Singleton
         Stateful
         Stateless
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -3021,7 +3021,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="stateful-timeoutType">
     <xsd:annotation>
@@ -3030,11 +3030,11 @@
         The stateful-timeoutType represents the amount of time
         a stateful session bean can be idle(not receive any client
         invocations) before it is eligible for removal by the container.
-        
+
         A timeout value of 0 means the bean is immediately eligible for removal.
-        
+
         A timeout value of -1 means the bean will never be removed due to timeout.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -3048,17 +3048,17 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="time-unit-typeType">
     <xsd:annotation>
       <xsd:documentation>
 
         The time-unit-typeType represents a time duration at a given
-        unit of granularity.  
-        
+        unit of granularity.
+
         The time unit type must be one of the following :
-        
+
         Days
         Hours
         Minutes
@@ -3066,7 +3066,7 @@
         Milliseconds
         Microseconds
         Nanoseconds
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -3083,7 +3083,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="timer-scheduleType">
     <xsd:sequence>
@@ -3114,46 +3114,46 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="timerType">
     <xsd:annotation>
       <xsd:documentation>
 
-        The timerType specifies an enterprise bean timer.  Each
+        The timerType specifies an enterprise bean timer. Each
         timer is automatically created by the container upon
-        deployment.  Timer callbacks occur based on the 
-        schedule attributes.  All callbacks are made to the
-        timeout-method associated with the timer.  
-        
+        deployment. Timer callbacks occur based on the
+        schedule attributes. All callbacks are made to the
+        timeout-method associated with the timer.
+
         A timer can have an optional start and/or end date. If
         a start date is specified, it takes precedence over the
         associated timer schedule such that any matching
         expirations prior to the start time will not occur.
         Likewise, no matching expirations will occur after any
-        end date.   Start/End dates are specified using the
+        end date. Start/End dates are specified using the
         XML Schema dateTime type, which follows the ISO-8601
-        standard for date(and optional time-within-the-day) 
+        standard for date(and optional time-within-the-day)
         representation.
-        
+
         An optional flag can be used to control whether
         this timer has persistent(true) delivery semantics or
-        non-persistent(false) delivery semantics.  If not specified,
+        non-persistent(false) delivery semantics. If not specified,
         the value defaults to persistent(true).
-        
+
         A time zone can optionally be associated with a timer.
         If specified, the timer's schedule is evaluated in the context
         of that time zone, regardless of the default time zone in which
-        the container is executing.   Time zones are specified as an
-        ID string.  The set of required time zone IDs is defined by
+        the container is executing. Time zones are specified as an
+        ID string. The set of required time zone IDs is defined by
         the Zone Name(TZ) column of the public domain zoneinfo database.
-        
-        An optional info string can be assigned to the timer and 
+
+        An optional info string can be assigned to the timer and
         retrieved at runtime through the Timer.getInfo() method.
-        
+
         The timerType can only be specified on stateless session
         beans, singleton session beans, and message-driven beans.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -3186,25 +3186,25 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="trans-attributeType">
     <xsd:annotation>
       <xsd:documentation>
 
         The trans-attributeType specifies how the container must
-        manage the transaction boundaries when delegating a method 
-        invocation to an enterprise bean's business method. 
-        
-        The value must be one of the following: 
-        
-        NotSupported 
-        Supports 
-        Required  
-        RequiresNew 
-        Mandatory 
-        Never 
-        
+        manage the transaction boundaries when delegating a method
+        invocation to an enterprise bean's business method.
+
+        The value must be one of the following:
+
+        NotSupported
+        Supports
+        Required
+        RequiresNew
+        Mandatory
+        Never
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -3220,7 +3220,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="transaction-typeType">
     <xsd:annotation>
@@ -3228,12 +3228,12 @@
 
         The transaction-typeType specifies an enterprise bean's
         transaction management type.
-        
+
         The transaction-type must be one of the two following:
-        
+
         Bean
         Container
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>

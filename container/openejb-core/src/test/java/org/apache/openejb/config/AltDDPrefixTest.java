@@ -43,32 +43,32 @@ public class AltDDPrefixTest extends TestCase {
      */
     public void testTestOnlyModule() throws Exception {
         System.out.println("*** testTestOnlyModule ***");
-        Assembler assmbler = new Assembler();
+        final Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "test");
         DeploymentLoader.reloadAltDD();
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp1");
         File file = URLs.toFile(resource);
-        AppInfo appInfo = factory.configureApplication(file);
+        final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
     }
 
     public void testMultitplePrefixes() throws Exception {
         System.out.println("*** testMultitplePrefixes ***");
-        Assembler assmbler = new Assembler();
+        final Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
         DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp2");
         File file = URLs.toFile(resource);
-        AppInfo appInfo = factory.configureApplication(file);
+        final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
 
-        EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
+        final EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
 
         // was the footest.ejb-jar.xml picked up
         assertEquals("EjbJar.enterpriseBeans", 1, ejbJar.enterpriseBeans.size());
@@ -89,14 +89,14 @@ public class AltDDPrefixTest extends TestCase {
      */
     public void testPersistenceUnit() throws Exception {
         System.out.println("*** testPersistenceUnit ***");
-        Assembler assmbler = new Assembler();
+        final Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
         DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
         File file = URLs.toFile(resource);
-        AppInfo appInfo = factory.configureApplication(file);
+        final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(0, appInfo.ejbJars.size());
         assertEquals(1, appInfo.persistenceUnits.size());
@@ -115,11 +115,11 @@ public class AltDDPrefixTest extends TestCase {
      */
     public void testPersistenceUnitWithAllDD() throws Exception {
         System.out.println("*** testPersistenceUnitWithAllDD ***");
-        Assembler assmbler = new Assembler();
+        final Assembler assmbler = new Assembler();
         // TODO should be better to add a remove property method
         SystemInstance.get().getProperties().remove("openejb.altdd.prefix");
         DeploymentLoader.reloadAltDD();
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
         File file = URLs.toFile(resource);
@@ -134,7 +134,7 @@ public class AltDDPrefixTest extends TestCase {
 
     public class OrangeBean implements OrangeLocal {
 
-        public int echo(int i) {
+        public int echo(final int i) {
             return i;
         }
     }
@@ -145,7 +145,7 @@ public class AltDDPrefixTest extends TestCase {
 
     public static class FooTestInterceptor {
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             return context.proceed();
         }
     }

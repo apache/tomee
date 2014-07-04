@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class Module {
     private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
-    
+
     private boolean isStandaloneModule = true;
 
     private ClassLoader classLoader;
@@ -71,14 +71,14 @@ public class Module {
     public String getUniqueId() {
         return uniqueId;
     }
-    
+
     public boolean isStandaloneModule() {
         return isStandaloneModule;
     }
-    
+
     public void setStandaloneModule(final boolean isStandalone) {
         isStandaloneModule = isStandalone;
-    }    
+    }
 
     public ClassLoader getClassLoader() {
         return classLoader;

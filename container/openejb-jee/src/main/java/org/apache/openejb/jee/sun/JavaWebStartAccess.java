@@ -37,7 +37,7 @@ public class JavaWebStartAccess {
         return contextRoot;
     }
 
-    public void setContextRoot(String value) {
+    public void setContextRoot(final String value) {
         this.contextRoot = value;
     }
 
@@ -45,7 +45,7 @@ public class JavaWebStartAccess {
         return eligible;
     }
 
-    public void setEligible(String value) {
+    public void setEligible(final String value) {
         this.eligible = value;
     }
 
@@ -53,7 +53,7 @@ public class JavaWebStartAccess {
         return vendor;
     }
 
-    public void setVendor(String value) {
+    public void setVendor(final String value) {
         this.vendor = value;
     }
 }

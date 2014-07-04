@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -71,11 +69,9 @@ public class UserTypeMapping {
 
     /**
      * Gets the value of the javaType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaType }
-     *     
+     *
+     * @return possible object is
+     * {@link JavaType }
      */
     public JavaType getJavaType() {
         return javaType;
@@ -83,23 +79,19 @@ public class UserTypeMapping {
 
     /**
      * Sets the value of the javaType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JavaType }
      */
-    public void setJavaType(JavaType value) {
+    public void setJavaType(final JavaType value) {
         this.javaType = value;
     }
 
     /**
      * Gets the value of the mappedType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MappedType }
-     *     
+     *
+     * @return possible object is
+     * {@link MappedType }
      */
     public MappedType getMappedType() {
         return mappedType;
@@ -107,23 +99,19 @@ public class UserTypeMapping {
 
     /**
      * Sets the value of the mappedType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MappedType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MappedType }
      */
-    public void setMappedType(MappedType value) {
+    public void setMappedType(final MappedType value) {
         this.mappedType = value;
     }
 
     /**
      * Gets the value of the mapper property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Mapper }
-     *     
+     *
+     * @return possible object is
+     * {@link Mapper }
      */
     public Mapper getMapper() {
         return mapper;
@@ -131,23 +119,19 @@ public class UserTypeMapping {
 
     /**
      * Sets the value of the mapper property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Mapper }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Mapper }
      */
-    public void setMapper(Mapper value) {
+    public void setMapper(final Mapper value) {
         this.mapper = value;
     }
 
     /**
      * Gets the value of the checkDirtyAfterGet property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CheckDirtyAfterGet }
-     *     
+     *
+     * @return possible object is
+     * {@link CheckDirtyAfterGet }
      */
     public CheckDirtyAfterGet getCheckDirtyAfterGet() {
         return checkDirtyAfterGet;
@@ -155,23 +139,19 @@ public class UserTypeMapping {
 
     /**
      * Sets the value of the checkDirtyAfterGet property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CheckDirtyAfterGet }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CheckDirtyAfterGet }
      */
-    public void setCheckDirtyAfterGet(CheckDirtyAfterGet value) {
+    public void setCheckDirtyAfterGet(final CheckDirtyAfterGet value) {
         this.checkDirtyAfterGet = value;
     }
 
     /**
      * Gets the value of the stateFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StateFactory }
-     *     
+     *
+     * @return possible object is
+     * {@link StateFactory }
      */
     public StateFactory getStateFactory() {
         return stateFactory;
@@ -179,13 +159,11 @@ public class UserTypeMapping {
 
     /**
      * Sets the value of the stateFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StateFactory }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StateFactory }
      */
-    public void setStateFactory(StateFactory value) {
+    public void setStateFactory(final StateFactory value) {
         this.stateFactory = value;
     }
 

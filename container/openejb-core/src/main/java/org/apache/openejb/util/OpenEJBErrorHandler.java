@@ -89,7 +89,7 @@ public class OpenEJBErrorHandler {
     }
 
     public static void classNotIntantiateableFromCodebaseForUnknownReason(final String systemLocation, final String className, final String codebase, final String exceptionClassName, final String message)
-            throws OpenEJBException {
+        throws OpenEJBException {
         throw new OpenEJBException(_messages.format("ge0012", systemLocation, className, codebase, exceptionClassName, message));
     }
 

@@ -19,25 +19,29 @@ package org.apache.openejb.deployment.entity.cmp.cmr.onetomany;
 import javax.ejb.EJBLocalObject;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface BLocal extends EJBLocalObject {
 
     // CMP
     public Integer getField1();
+
     public void setField1(Integer field1);
 
     public String getField2();
+
     public void setField2(String field2);
 
     public Integer getField3();
+
     public void setField3(Integer field3);
 
     public String getField4();
+
     public void setField4(String field4);
 
     // CMR
     public ALocal getA();
+
     public void setA(ALocal a);
 }

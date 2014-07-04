@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class License$JAXB
-        extends JAXBObject<License> {
+    extends JAXBObject<License> {
 
 
     public License$JAXB() {
         super(License.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "licenseType".intern()), Text$JAXB.class);
     }
 
-    public static License readLicense(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static License readLicense(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeLicense(XoXMLStreamWriter writer, License license, RuntimeContext context)
-            throws Exception {
+    public static void writeLicense(final XoXMLStreamWriter writer, License license, RuntimeContext context)
+        throws Exception {
         _write(writer, license, context);
     }
 
-    public void write(XoXMLStreamWriter writer, License license, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, License license, final RuntimeContext context)
+        throws Exception {
         _write(writer, license, context);
     }
 
-    public final static License _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static License _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -75,7 +75,7 @@ public class License$JAXB
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("licenseType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, License.class);
@@ -83,7 +83,7 @@ public class License$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -105,7 +105,7 @@ public class License$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("license-required" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: licenseRequired
-                Boolean licenseRequired = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean licenseRequired = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 license.licenseRequired = licenseRequired;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "license-required"));
@@ -124,13 +124,13 @@ public class License$JAXB
         return license;
     }
 
-    public final License read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final License read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, License license, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, License license, RuntimeContext context)
+        throws Exception {
         if (license == null) {
             writer.writeXsiNil();
             return;
@@ -140,7 +140,7 @@ public class License$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (License.class != license.getClass()) {
             context.unexpectedSubclass(writer, license, License.class);
             return;
@@ -181,7 +181,7 @@ public class License$JAXB
         }
 
         // ELEMENT: licenseRequired
-        Boolean licenseRequired = license.licenseRequired;
+        final Boolean licenseRequired = license.licenseRequired;
         writer.writeStartElement(prefix, "license-required", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Boolean.toString(licenseRequired));
         writer.writeEndElement();

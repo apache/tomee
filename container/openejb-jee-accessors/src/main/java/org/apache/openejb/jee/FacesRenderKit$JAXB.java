@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRenderKit$JAXB
-        extends JAXBObject<FacesRenderKit> {
+    extends JAXBObject<FacesRenderKit> {
 
 
     public FacesRenderKit$JAXB() {
         super(FacesRenderKit.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-render-kitType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesRenderer$JAXB.class, FacesClientBehaviorRenderer$JAXB.class, FacesRenderKitExtension$JAXB.class);
     }
 
-    public static FacesRenderKit readFacesRenderKit(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRenderKit readFacesRenderKit(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRenderKit(XoXMLStreamWriter writer, FacesRenderKit facesRenderKit, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRenderKit(final XoXMLStreamWriter writer, final FacesRenderKit facesRenderKit, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesRenderKit, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRenderKit facesRenderKit, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesRenderKit facesRenderKit, RuntimeContext context)
+        throws Exception {
         _write(writer, facesRenderKit, context);
     }
 
-    public final static FacesRenderKit _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRenderKit _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesRenderKit$JAXB
             context = new RuntimeContext();
         }
 
-        FacesRenderKit facesRenderKit = new FacesRenderKit();
+        final FacesRenderKit facesRenderKit = new FacesRenderKit();
         context.beforeUnmarshal(facesRenderKit, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,7 +89,7 @@ public class FacesRenderKit$JAXB
         List<FacesRenderKitExtension> renderKitExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-render-kitType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesRenderKit.class);
@@ -151,7 +151,7 @@ public class FacesRenderKit$JAXB
                 facesRenderKit.renderKitId = renderKitId;
             } else if (("render-kit-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: renderKitClass
-                String renderKitClassRaw = elementReader.getElementAsString();
+                final String renderKitClassRaw = elementReader.getElementAsString();
 
                 String renderKitClass;
                 try {
@@ -207,7 +207,7 @@ public class FacesRenderKit$JAXB
         if (descriptions != null) {
             try {
                 facesRenderKit.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesRenderKit.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -236,13 +236,13 @@ public class FacesRenderKit$JAXB
         return facesRenderKit;
     }
 
-    public final FacesRenderKit read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRenderKit read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRenderKit facesRenderKit, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesRenderKit facesRenderKit, RuntimeContext context)
+        throws Exception {
         if (facesRenderKit == null) {
             writer.writeXsiNil();
             return;
@@ -267,7 +267,7 @@ public class FacesRenderKit$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesRenderKit, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -281,7 +281,7 @@ public class FacesRenderKit$JAXB
             context.getterError(facesRenderKit, "descriptions", FacesRenderKit.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -312,9 +312,9 @@ public class FacesRenderKit$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesRenderKit.icon;
+        final LocalCollection<Icon> icon = facesRenderKit.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);

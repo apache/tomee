@@ -23,19 +23,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="methodType">
  *   &lt;complexContent>
@@ -52,17 +52,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "methodType", propOrder = {
-        "descriptions",
-        "ejbName",
-        "methodIntf",
-        "methodName",
-        "methodParams"
-        })
+    "descriptions",
+    "ejbName",
+    "methodIntf",
+    "methodName",
+    "methodParams"
+})
 public class Method {
 
     @XmlTransient
@@ -86,7 +84,7 @@ public class Method {
     protected String id;
 
 
-    public Method(String ejbName, java.lang.reflect.Method method) {
+    public Method(final String ejbName, java.lang.reflect.Method method) {
         this.ejbName = ejbName;
         this.methodName = method.getName();
         this.className = method.getDeclaringClass().getName();
@@ -97,16 +95,16 @@ public class Method {
         this.methodParams = methodParams;
     }
 
-    public Method(String ejbName, String methodName, String... parameters) {
+    public Method(final String ejbName, String methodName, String... parameters) {
         this(ejbName, null, methodName, parameters);
     }
 
-    public Method(String ejbName, String className, String methodName, String... parameters) {
+    public Method(String ejbName, final String className, String methodName, String... parameters) {
         this.ejbName = ejbName;
         this.methodName = methodName;
         this.className = className;
 
-        if (parameters.length > 0){
+        if (parameters.length > 0) {
             MethodParams params = new MethodParams();
             for (String paramName : parameters) {
                 params.getMethodParam().add(paramName);
@@ -118,11 +116,11 @@ public class Method {
     public Method() {
     }
 
-    public Method(String ejbName, String methodName) {
+    public Method(String ejbName, final String methodName) {
         this(ejbName, null, methodName);
     }
 
-    public Method(String ejbName, String className, String methodName) {
+    public Method(final String ejbName, String className, String methodName) {
         this.ejbName = ejbName;
         this.methodName = methodName;
         this.className = className;

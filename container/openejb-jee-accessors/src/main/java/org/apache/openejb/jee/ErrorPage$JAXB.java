@@ -29,33 +29,33 @@ import javax.xml.namespace.QName;
 import java.math.BigInteger;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ErrorPage$JAXB
-        extends JAXBObject<ErrorPage> {
+    extends JAXBObject<ErrorPage> {
 
 
     public ErrorPage$JAXB() {
         super(ErrorPage.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "error-pageType".intern()));
     }
 
-    public static ErrorPage readErrorPage(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ErrorPage readErrorPage(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeErrorPage(XoXMLStreamWriter writer, ErrorPage errorPage, RuntimeContext context)
-            throws Exception {
+    public static void writeErrorPage(final XoXMLStreamWriter writer, ErrorPage errorPage, final RuntimeContext context)
+        throws Exception {
         _write(writer, errorPage, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ErrorPage errorPage, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ErrorPage errorPage, final RuntimeContext context)
+        throws Exception {
         _write(writer, errorPage, context);
     }
 
-    public final static ErrorPage _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ErrorPage _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -71,7 +71,7 @@ public class ErrorPage$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("error-pageType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ErrorPage.class);
@@ -91,7 +91,7 @@ public class ErrorPage$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("error-code" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: errorCode
                 BigInteger errorCode = new BigInteger(elementReader.getElementAsString());
@@ -100,7 +100,7 @@ public class ErrorPage$JAXB
                 // ELEMENT: exceptionType
                 String exceptionTypeRaw = elementReader.getElementAsString();
 
-                String exceptionType;
+                final String exceptionType;
                 try {
                     exceptionType = Adapters.collapsedStringAdapterAdapter.unmarshal(exceptionTypeRaw);
                 } catch (Exception e) {
@@ -132,13 +132,13 @@ public class ErrorPage$JAXB
         return errorPage;
     }
 
-    public final ErrorPage read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ErrorPage read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ErrorPage errorPage, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ErrorPage errorPage, RuntimeContext context)
+        throws Exception {
         if (errorPage == null) {
             writer.writeXsiNil();
             return;

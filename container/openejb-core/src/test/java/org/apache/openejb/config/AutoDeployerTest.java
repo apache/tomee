@@ -307,7 +307,7 @@ public class AutoDeployerTest {
             lock.lock();
             try {
                 condition.await(time, unit);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
             } finally {
                 lock.unlock();

@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesValidatorExtension$JAXB
-        extends JAXBObject<FacesValidatorExtension> {
+    extends JAXBObject<FacesValidatorExtension> {
 
 
     public FacesValidatorExtension$JAXB() {
         super(FacesValidatorExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-validator-extensionType".intern()));
     }
 
-    public static FacesValidatorExtension readFacesValidatorExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesValidatorExtension readFacesValidatorExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesValidatorExtension(XoXMLStreamWriter writer, FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesValidatorExtension(final XoXMLStreamWriter writer, FacesValidatorExtension facesValidatorExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidatorExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidatorExtension, context);
     }
 
-    public final static FacesValidatorExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesValidatorExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class FacesValidatorExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesValidatorExtension facesValidatorExtension = new FacesValidatorExtension();
+        final FacesValidatorExtension facesValidatorExtension = new FacesValidatorExtension();
         context.beforeUnmarshal(facesValidatorExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
@@ -114,13 +114,13 @@ public class FacesValidatorExtension$JAXB
         return facesValidatorExtension;
     }
 
-    public final FacesValidatorExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesValidatorExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesValidatorExtension facesValidatorExtension, RuntimeContext context)
+        throws Exception {
         if (facesValidatorExtension == null) {
             writer.writeXsiNil();
             return;

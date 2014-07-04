@@ -43,15 +43,15 @@ public class ScopedProducerTest extends TestCase {
 
     @Test
     public void test() {
-        ColorProducerLocal colorProducerLocal = getInstance(ColorProducerLocal.class);
-        ColorProducerLocal colorProducerLocalB = getInstance(ColorProducerLocal.class);
+        final ColorProducerLocal colorProducerLocal = getInstance(ColorProducerLocal.class);
+        final ColorProducerLocal colorProducerLocalB = getInstance(ColorProducerLocal.class);
 
         colorProducerLocal.setColorClass(Blue.class);
 
         assertEquals(colorProducerLocal.getColorClass(), colorProducerLocalB.getColorClass());
     }
 
-    private <T> T getInstance(Class<T> beanType) {
+    private <T> T getInstance(final Class<T> beanType) {
         final Bean<T> bean = (Bean<T>) beanManager.getBeans(beanType).iterator().next();
 
         // This should create the instance and put it in the context
@@ -66,8 +66,11 @@ public class ScopedProducerTest extends TestCase {
 
     public static interface ColorProducerLocal {
         public Class<? extends Color> getColorClass();
+
         public void setColorClass(Class<? extends Color> colorClass);
+
         public Color createColor();
+
         public void destroyColor(@Disposes Color color);
 
     }
@@ -82,7 +85,7 @@ public class ScopedProducerTest extends TestCase {
             return colorClass;
         }
 
-        public void setColorClass(Class<? extends Color> colorClass) {
+        public void setColorClass(final Class<? extends Color> colorClass) {
             this.colorClass = colorClass;
         }
 
@@ -92,7 +95,7 @@ public class ScopedProducerTest extends TestCase {
         }
 
 
-        public void destroyColor(@Disposes Color color) {
+        public void destroyColor(@Disposes final Color color) {
 
         }
     }

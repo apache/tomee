@@ -45,16 +45,16 @@ public class FullyInterceptedTest extends TestCase {
 
     @Module
     public EjbJar module() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FullyInterceptedBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FullyInterceptedBean.class));
 
-        AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
+        final AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
 
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorOne.class)));
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorTwo.class)));
 
-        InterceptorBinding b = assembly.addInterceptorBinding(new InterceptorBinding(bean));
+        final InterceptorBinding b = assembly.addInterceptorBinding(new InterceptorBinding(bean));
         b.setExcludeDefaultInterceptors(true);
         b.setMethod(new NamedMethod("methodWithDefaultInterceptorsExcluded"));
 
@@ -65,7 +65,7 @@ public class FullyInterceptedTest extends TestCase {
     public void testBusinessMethod() throws Exception {
         assert fullyIntercepted != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("DefaultInterceptorOne");
         expected.add("DefaultInterceptorTwo");
         expected.add("ClassLevelInterceptorSuperClassOne");
@@ -85,7 +85,7 @@ public class FullyInterceptedTest extends TestCase {
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         assert fullyIntercepted != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("ClassLevelInterceptorSuperClassOne");
         expected.add("ClassLevelInterceptorSuperClassTwo");
         expected.add("ClassLevelInterceptorOne");

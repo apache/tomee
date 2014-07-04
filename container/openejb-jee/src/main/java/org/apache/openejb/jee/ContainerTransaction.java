@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for container-transactionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="container-transactionType">
  *   &lt;complexContent>
@@ -51,16 +51,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "container-transactionType", propOrder = {
-        "descriptions",
-        "method",
-        "transAttribute"
-        })
+    "descriptions",
+    "method",
+    "transAttribute"
+})
 public class ContainerTransaction implements AttributeBinding<TransAttribute> {
 
     @XmlElement(required = true)
@@ -83,20 +81,20 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
     public ContainerTransaction() {
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, String className, String ejbName, String methodName) {
+    public ContainerTransaction(final TransAttribute transAttribute, String className, String ejbName, final String methodName) {
         this(transAttribute, new Method(ejbName, className, methodName));
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
+    public ContainerTransaction(final TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
         this(transAttribute, new Method(ejbName, method));
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, Method method) {
+    public ContainerTransaction(final TransAttribute transAttribute, final Method method) {
         this.transAttribute = transAttribute;
         getMethod().add(method);
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -119,7 +117,7 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
         return transAttribute;
     }
 
-    public void setTransAttribute(TransAttribute value) {
+    public void setTransAttribute(final TransAttribute value) {
         this.transAttribute = value;
     }
 
@@ -127,7 +125,7 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -20,7 +20,7 @@
 
 <openejb-jar>
   <properties>
-     openejb.deploymentId.format = {ejbName}
-     openejb.jndiname.format = {deploymentId}{interfaceType.openejbLegacyName}
+    openejb.deploymentId.format = {ejbName}
+    openejb.jndiname.format = {deploymentId}{interfaceType.openejbLegacyName}
   </properties>
 </openejb-jar>

@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for trans-attributeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="trans-attributeType">
  *   &lt;simpleContent>
@@ -36,22 +36,20 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum TransAttribute {
-    @XmlEnumValue("NotSupported") NOT_SUPPORTED("NotSupported"),
-    @XmlEnumValue("Supports") SUPPORTS("Supports"),
-    @XmlEnumValue("Required") REQUIRED("Required"),
-    @XmlEnumValue("RequiresNew") REQUIRES_NEW("RequiresNew"),
-    @XmlEnumValue("Mandatory") MANDATORY("Mandatory"),
-    @XmlEnumValue("Never") NEVER("Never");
+    @XmlEnumValue("NotSupported")NOT_SUPPORTED("NotSupported"),
+    @XmlEnumValue("Supports")SUPPORTS("Supports"),
+    @XmlEnumValue("Required")REQUIRED("Required"),
+    @XmlEnumValue("RequiresNew")REQUIRES_NEW("RequiresNew"),
+    @XmlEnumValue("Mandatory")MANDATORY("Mandatory"),
+    @XmlEnumValue("Never")NEVER("Never");
 
     private final String name;
 
-    TransAttribute(String name) {
-       this.name = name;
-   }
+    TransAttribute(final String name) {
+        this.name = name;
+    }
 
     public String toString() {
         return name;

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class MemorySettingsTest extends TestCase {
 
     public void test() {
-        Runtime runtime = Runtime.getRuntime();
+        final Runtime runtime = Runtime.getRuntime();
 
         System.out.println("maxMemory = " + runtime.maxMemory());
 

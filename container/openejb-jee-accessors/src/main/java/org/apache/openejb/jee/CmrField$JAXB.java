@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class CmrField$JAXB
-        extends JAXBObject<CmrField> {
+    extends JAXBObject<CmrField> {
 
 
     public CmrField$JAXB() {
         super(CmrField.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmr-fieldType".intern()), Text$JAXB.class, CmrFieldType$JAXB.class);
     }
 
-    public static CmrField readCmrField(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static CmrField readCmrField(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeCmrField(XoXMLStreamWriter writer, CmrField cmrField, RuntimeContext context)
-            throws Exception {
+    public static void writeCmrField(final XoXMLStreamWriter writer, CmrField cmrField, RuntimeContext context)
+        throws Exception {
         _write(writer, cmrField, context);
     }
 
-    public void write(XoXMLStreamWriter writer, CmrField cmrField, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final CmrField cmrField, RuntimeContext context)
+        throws Exception {
         _write(writer, cmrField, context);
     }
 
-    public final static CmrField _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static CmrField _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -77,7 +77,7 @@ public class CmrField$JAXB
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("cmr-fieldType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, CmrField.class);
@@ -107,12 +107,12 @@ public class CmrField$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("cmr-field-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: cmrFieldName
-                String cmrFieldNameRaw = elementReader.getElementAsString();
+                final String cmrFieldNameRaw = elementReader.getElementAsString();
 
                 String cmrFieldName;
                 try {
                     cmrFieldName = Adapters.collapsedStringAdapterAdapter.unmarshal(cmrFieldNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -131,7 +131,7 @@ public class CmrField$JAXB
         if (descriptions != null) {
             try {
                 cmrField.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, CmrField.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -141,13 +141,13 @@ public class CmrField$JAXB
         return cmrField;
     }
 
-    public final CmrField read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final CmrField read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, CmrField cmrField, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, CmrField cmrField, RuntimeContext context)
+        throws Exception {
         if (cmrField == null) {
             writer.writeXsiNil();
             return;
@@ -167,12 +167,12 @@ public class CmrField$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = cmrField.id;
+        final String idRaw = cmrField.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(cmrField, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -182,11 +182,11 @@ public class CmrField$JAXB
         Text[] descriptions = null;
         try {
             descriptions = cmrField.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(cmrField, "descriptions", CmrField.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

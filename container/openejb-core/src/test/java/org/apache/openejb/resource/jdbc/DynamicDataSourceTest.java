@@ -69,16 +69,16 @@ public class DynamicDataSourceTest {
     public void route() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // resources
         for (int i = 1; i <= 3; i++) {
-            String dbName = "database" + i;
+            final String dbName = "database" + i;
             Resource resourceDs = new Resource(dbName, "DataSource");
             Properties p = resourceDs.getProperties();
             p.put("JdbcDriver", "org.hsqldb.jdbcDriver");
@@ -145,7 +145,7 @@ public class DynamicDataSourceTest {
         RoutedEJB ejb = (RoutedEJB) ctx.lookup("RoutedEJBBeanLocal");
         for (int i = 0; i < 18; i++) {
             String name = "record " + i;
-            String db = databases.get(i % 3);
+            final String db = databases.get(i % 3);
             ejb.persist(i, name, db);
         }
 
@@ -170,7 +170,7 @@ public class DynamicDataSourceTest {
         @javax.annotation.Resource(name = "My Router", type = DeterminedRouter.class)
         private DeterminedRouter router;
 
-        public void persist(int id, String name, String ds) {
+        public void persist(final int id, final String name, String ds) {
             router.setDataSource(ds);
             em.persist(new Person(id, name));
         }
@@ -214,7 +214,7 @@ public class DynamicDataSourceTest {
             // no-op
         }
 
-        public Person(int i, String n) {
+        public Person(final int i, String n) {
             id = i;
             name = n;
         }
@@ -223,7 +223,7 @@ public class DynamicDataSourceTest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
 
@@ -231,7 +231,7 @@ public class DynamicDataSourceTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
     }
@@ -245,7 +245,7 @@ public class DynamicDataSourceTest {
         /**
          * @param datasourceList datasource resource name, separator is a space
          */
-        public void setDataSourceNames(String datasourceList) {
+        public void setDataSourceNames(final String datasourceList) {
             dataSourceNames = datasourceList;
         }
 
@@ -254,11 +254,11 @@ public class DynamicDataSourceTest {
          */
         private void init() {
             dataSources = new ConcurrentHashMap<String, DataSource>();
-            for (String ds : dataSourceNames.split(" ")) {
+            for (final String ds : dataSourceNames.split(" ")) {
                 ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
                 Object o = null;
-                Context ctx = containerSystem.getJNDIContext();
+                final Context ctx = containerSystem.getJNDIContext();
                 try {
                     o = ctx.lookup("openejb:Resource/" + ds);
                     if (o instanceof DataSource) {
@@ -271,8 +271,8 @@ public class DynamicDataSourceTest {
 
         /**
          * @return the user selected data source if it is set
-         *         or the default one
-         *  @throws IllegalArgumentException if the data source is not found
+         * or the default one
+         * @throws IllegalArgumentException if the data source is not found
          */
         public DataSource getDataSource() {
             // lazy init of routed datasources
@@ -295,17 +295,16 @@ public class DynamicDataSourceTest {
         }
 
         /**
-         *
          * @param datasourceName data source name
          */
-        public void setDataSource(String datasourceName) {
+        public void setDataSource(final String datasourceName) {
             if (dataSources == null) {
                 init();
             }
             if (!dataSources.containsKey(datasourceName)) {
                 throw new IllegalArgumentException("data source called " + datasourceName + " can't be found.");
             }
-            DataSource ds = dataSources.get(datasourceName);
+            final DataSource ds = dataSources.get(datasourceName);
             currentDataSource.set(ds);
         }
 
@@ -316,7 +315,7 @@ public class DynamicDataSourceTest {
             currentDataSource.remove();
         }
 
-        public void setDefaultDataSourceName(String name) {
+        public void setDefaultDataSourceName(final String name) {
             this.defaultDataSourceName = name;
         }
     }

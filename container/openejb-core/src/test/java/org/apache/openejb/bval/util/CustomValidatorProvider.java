@@ -40,40 +40,40 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
     public static ValidationProvider provider = new ApacheValidationProvider();
 
     @Override
-    public ApacheValidatorConfiguration createSpecializedConfiguration(BootstrapState state) {
+    public ApacheValidatorConfiguration createSpecializedConfiguration(final BootstrapState state) {
         return (ApacheValidatorConfiguration) provider.createSpecializedConfiguration(state);
     }
 
     @Override
-    public javax.validation.Configuration<?> createGenericConfiguration(BootstrapState state) {
+    public javax.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
         return provider.createGenericConfiguration(state);
     }
 
     @Override
-    public ValidatorFactory buildValidatorFactory(ConfigurationState configurationState) {
+    public ValidatorFactory buildValidatorFactory(final ConfigurationState configurationState) {
         return provider.buildValidatorFactory(configurationState);
     }
 
     public static class NullValidatorProvider implements ValidationProvider<ApacheValidatorConfiguration> {
         @Override
-        public ApacheValidatorConfiguration createSpecializedConfiguration(BootstrapState state) {
+        public ApacheValidatorConfiguration createSpecializedConfiguration(final BootstrapState state) {
             return new NullConfig(state, provider);
         }
 
         @Override
-        public javax.validation.Configuration<?> createGenericConfiguration(BootstrapState state) {
+        public javax.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
             return new NullConfig(state, provider);
         }
 
         @Override
-        public ValidatorFactory buildValidatorFactory(ConfigurationState configurationState) {
+        public ValidatorFactory buildValidatorFactory(final ConfigurationState configurationState) {
             return null;
         }
     }
 
 
     public static class NullConfig extends ConfigurationImpl {
-        public NullConfig(BootstrapState aState, ValidationProvider<?> aProvider) {
+        public NullConfig(final BootstrapState aState, final ValidationProvider<?> aProvider) {
             super(aState, aProvider);
         }
 
@@ -83,27 +83,27 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         }
 
         @Override
-        public NullConfig messageInterpolator(MessageInterpolator interpolator) {
+        public NullConfig messageInterpolator(final MessageInterpolator interpolator) {
             return null;
         }
 
         @Override
-        public NullConfig traversableResolver(TraversableResolver resolver) {
+        public NullConfig traversableResolver(final TraversableResolver resolver) {
             return null;
         }
 
         @Override
-        public NullConfig constraintValidatorFactory(ConstraintValidatorFactory constraintValidatorFactory) {
+        public NullConfig constraintValidatorFactory(final ConstraintValidatorFactory constraintValidatorFactory) {
             return null;
         }
 
         @Override
-        public NullConfig addMapping(InputStream stream) {
+        public NullConfig addMapping(final InputStream stream) {
             return null;
         }
 
         @Override
-        public NullConfig addProperty(String name, String value) {
+        public NullConfig addProperty(final String name, final String value) {
             return null;
         }
 
@@ -155,24 +155,24 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         }
 
         @Override
-        public <T> T unwrap(Class<T> type) {
+        public <T> T unwrap(final Class<T> type) {
             return null;
         }
     }
 
     public static class CustomValidatorContext implements ValidatorContext {
         @Override
-        public ValidatorContext messageInterpolator(MessageInterpolator messageInterpolator) {
+        public ValidatorContext messageInterpolator(final MessageInterpolator messageInterpolator) {
             return null;
         }
 
         @Override
-        public ValidatorContext traversableResolver(TraversableResolver traversableResolver) {
+        public ValidatorContext traversableResolver(final TraversableResolver traversableResolver) {
             return null;
         }
 
         @Override
-        public ValidatorContext constraintValidatorFactory(ConstraintValidatorFactory factory) {
+        public ValidatorContext constraintValidatorFactory(final ConstraintValidatorFactory factory) {
             return null;
         }
 
@@ -184,27 +184,27 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
 
     public static class CustomValidator implements Validator {
         @Override
-        public <T> Set<ConstraintViolation<T>> validate(T object, Class<?>... groups) {
+        public <T> Set<ConstraintViolation<T>> validate(final T object, final Class<?>... groups) {
             return null;
         }
 
         @Override
-        public <T> Set<ConstraintViolation<T>> validateProperty(T object, String propertyName, Class<?>... groups) {
+        public <T> Set<ConstraintViolation<T>> validateProperty(final T object, String propertyName, Class<?>... groups) {
             return null;
         }
 
         @Override
-        public <T> Set<ConstraintViolation<T>> validateValue(Class<T> beanType, String propertyName, Object value, Class<?>... groups) {
+        public <T> Set<ConstraintViolation<T>> validateValue(final Class<T> beanType, final String propertyName, Object value, Class<?>... groups) {
             return null;
         }
 
         @Override
-        public BeanDescriptor getConstraintsForClass(Class<?> clazz) {
+        public BeanDescriptor getConstraintsForClass(final Class<?> clazz) {
             return null;
         }
 
         @Override
-        public <T> T unwrap(Class<T> type) {
+        public <T> T unwrap(final Class<T> type) {
             return null;
         }
     }

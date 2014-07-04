@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class BodyContent$JAXB
-        extends JAXBEnum<BodyContent> {
+    extends JAXBEnum<BodyContent> {
 
 
     public BodyContent$JAXB() {
         super(BodyContent.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "bodyContent".intern()));
     }
 
-    public BodyContent parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public BodyContent parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+        throws Exception {
         return parseBodyContent(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
-            throws Exception {
+    public String toString(final Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
+        throws Exception {
         return toStringBodyContent(bean, parameterName, context, bodyContent);
     }
 
-    public static BodyContent parseBodyContent(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static BodyContent parseBodyContent(final XoXMLStreamReader reader, RuntimeContext context, String value)
+        throws Exception {
         if ("tagdependent".equalsIgnoreCase(value)) {
             return BodyContent.TAGDEPENDENT;
         } else if ("JSP".equalsIgnoreCase(value)) {
@@ -56,8 +56,8 @@ public class BodyContent$JAXB
         }
     }
 
-    public static String toStringBodyContent(Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
-            throws Exception {
+    public static String toStringBodyContent(final Object bean, String parameterName, RuntimeContext context, BodyContent bodyContent)
+        throws Exception {
         if (BodyContent.TAGDEPENDENT == bodyContent) {
             return "tagdependent";
         } else if (BodyContent.JSP == bodyContent) {

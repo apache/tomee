@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,15 +25,17 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-applicationType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-applicationType">
  *   &lt;complexContent>
@@ -62,8 +62,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-applicationType", propOrder = {
@@ -123,25 +121,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the actionListener property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the actionListener property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getActionListener().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getActionListener() {
         if (actionListener == null) {
@@ -152,25 +148,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the defaultRenderKitId property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the defaultRenderKitId property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDefaultRenderKitId().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getDefaultRenderKitId() {
         if (defaultRenderKitId == null) {
@@ -181,25 +175,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the messageBundle property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the messageBundle property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMessageBundle().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getMessageBundle() {
         if (messageBundle == null) {
@@ -210,25 +202,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the navigationHandler property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the navigationHandler property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNavigationHandler().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getNavigationHandler() {
         if (navigationHandler == null) {
@@ -239,25 +229,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the viewHandler property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the viewHandler property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getViewHandler().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getViewHandler() {
         if (viewHandler == null) {
@@ -268,25 +256,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the stateManager property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the stateManager property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStateManager().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getStateManager() {
         if (stateManager == null) {
@@ -297,25 +283,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the elResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the elResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getElResolver().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getElResolver() {
         if (elResolver == null) {
@@ -326,25 +310,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the propertyResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the propertyResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPropertyResolver().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getPropertyResolver() {
         if (propertyResolver == null) {
@@ -355,25 +337,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the variableResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the variableResolver property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVariableResolver().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getVariableResolver() {
         if (variableResolver == null) {
@@ -399,25 +379,23 @@ public class FacesApplication {
 
     /**
      * Gets the value of the localeConfig property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the localeConfig property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocaleConfig().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesLocaleConfig }
-     * 
-     * 
      */
     public List<FacesLocaleConfig> getLocaleConfig() {
         if (localeConfig == null) {
@@ -428,11 +406,9 @@ public class FacesApplication {
 
     /**
      * Gets the value of the resourceBundle property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesApplicationResourceBundle }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesApplicationResourceBundle }
      */
     public FacesApplicationResourceBundle getResourceBundle() {
         return resourceBundle;
@@ -440,37 +416,33 @@ public class FacesApplication {
 
     /**
      * Sets the value of the resourceBundle property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesApplicationResourceBundle }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesApplicationResourceBundle }
      */
-    public void setResourceBundle(FacesApplicationResourceBundle value) {
+    public void setResourceBundle(final FacesApplicationResourceBundle value) {
         this.resourceBundle = value;
     }
 
     /**
      * Gets the value of the applicationExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the applicationExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getApplicationExtension().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesApplicationExtension }
-     * 
-     * 
      */
     public List<FacesApplicationExtension> getApplicationExtension() {
         if (applicationExtension == null) {
@@ -488,11 +460,9 @@ public class FacesApplication {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -500,13 +470,11 @@ public class FacesApplication {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

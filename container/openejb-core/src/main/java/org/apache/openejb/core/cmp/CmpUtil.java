@@ -24,10 +24,9 @@ public class CmpUtil {
         // we have a package, pull that out and add "openejb." in front of the package
         if (packageEnd != -1) {
             return "openejb." + ejbClass.substring(0, packageEnd + 1) + abstractSchemaName;
-        }
-        else {
+        } else {
             // no package, construct this from just "openejb." and the schema name 
-            return "openejb." + abstractSchemaName; 
+            return "openejb." + abstractSchemaName;
         }
     }
 }

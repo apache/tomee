@@ -25,7 +25,7 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class XADataSourceResource {
-    private static final Class<?>[] XA_DATASOURCE_API = new Class<?>[]{ XADataSource.class };
+    private static final Class<?>[] XA_DATASOURCE_API = new Class<?>[]{XADataSource.class};
 
     public static XADataSource proxy(final ClassLoader loader, final String xaDataSource) {
         return XADataSource.class.cast(Proxy.newProxyInstance(loader, XA_DATASOURCE_API, new LazyXADataSourceHandler(xaDataSource)));

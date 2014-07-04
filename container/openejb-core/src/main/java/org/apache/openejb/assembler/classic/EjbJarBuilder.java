@@ -59,7 +59,7 @@ public class EjbJarBuilder {
         final InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
         final MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
-        
+
         for (final EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(moduleContext.getClassLoader());

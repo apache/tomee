@@ -40,33 +40,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EjbRelationshipRole$JAXB
-        extends JAXBObject<EjbRelationshipRole> {
+    extends JAXBObject<EjbRelationshipRole> {
 
 
     public EjbRelationshipRole$JAXB() {
         super(EjbRelationshipRole.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relationship-roleType".intern()), Text$JAXB.class, Multiplicity$JAXB.class, Empty$JAXB.class, RelationshipRoleSource$JAXB.class, CmrField$JAXB.class);
     }
 
-    public static EjbRelationshipRole readEjbRelationshipRole(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EjbRelationshipRole readEjbRelationshipRole(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbRelationshipRole(XoXMLStreamWriter writer, EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
-            throws Exception {
+    public static void writeEjbRelationshipRole(final XoXMLStreamWriter writer, final EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRelationshipRole, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRelationshipRole, context);
     }
 
-    public final static EjbRelationshipRole _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EjbRelationshipRole _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -113,7 +113,7 @@ public class EjbRelationshipRole$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("ejb-relationship-role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRelationshipRoleName
-                String ejbRelationshipRoleNameRaw = elementReader.getElementAsString();
+                final String ejbRelationshipRoleNameRaw = elementReader.getElementAsString();
 
                 String ejbRelationshipRoleName;
                 try {
@@ -159,13 +159,13 @@ public class EjbRelationshipRole$JAXB
         return ejbRelationshipRole;
     }
 
-    public final EjbRelationshipRole read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EjbRelationshipRole read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, EjbRelationshipRole ejbRelationshipRole, RuntimeContext context)
+        throws Exception {
         if (ejbRelationshipRole == null) {
             writer.writeXsiNil();
             return;
@@ -175,7 +175,7 @@ public class EjbRelationshipRole$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (EjbRelationshipRole.class != ejbRelationshipRole.getClass()) {
             context.unexpectedSubclass(writer, ejbRelationshipRole, EjbRelationshipRole.class);
             return;

@@ -69,7 +69,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         if (suspendedTransaction == null) {
             throw new NullPointerException("suspendedTransaction is null");
         }
-        
+
         final Transaction beanTransaction = ((JtaSuspendedTransaction) suspendedTransaction).transaction;
         if (beanTransaction == null) {
             throw new SystemException("Bean transaction has already been resumed or destroyed");

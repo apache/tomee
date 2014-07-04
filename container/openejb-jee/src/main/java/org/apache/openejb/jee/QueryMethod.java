@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for query-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="query-methodType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "query-methodType", propOrder = {
-        "methodName",
-        "methodParams"
-        })
+    "methodName",
+    "methodParams"
+})
 public class QueryMethod {
 
     @XmlElement(name = "method-name", required = true)
@@ -70,7 +68,7 @@ public class QueryMethod {
     public QueryMethod() {
     }
 
-    public QueryMethod(String methodName, String... params) {
+    public QueryMethod(final String methodName, String... params) {
         this.methodName = methodName;
         this.methodParams = new MethodParams(params);
     }
@@ -93,7 +91,7 @@ public class QueryMethod {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 
@@ -101,7 +99,7 @@ public class QueryMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

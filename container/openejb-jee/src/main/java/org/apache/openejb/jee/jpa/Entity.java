@@ -18,38 +18,36 @@ package org.apache.openejb.jee.jpa;
 
 import org.apache.openejb.jee.Keyable;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- *         Defines the settings and mappings for an entity. Is allowed to be
- *         sparsely populated and used in conjunction with the annotations.
- *         Alternatively, the metadata-complete attribute can be used to 
- *         indicate that no annotations on the entity class (and its fields
- *         or properties) are to be processed. If this is the case then 
- *         the defaulting rules for the entity and its subelements will 
- *         be recursively applied.
- * 
- *         @Target(TYPE) @Retention(RUNTIME)
- *           public @interface Entity {
- *           String name() default "";
- *         }
- * 
- *       
- * 
+ * Defines the settings and mappings for an entity. Is allowed to be
+ * sparsely populated and used in conjunction with the annotations.
+ * Alternatively, the metadata-complete attribute can be used to
+ * indicate that no annotations on the entity class (and its fields
+ * or properties) are to be processed. If this is the case then
+ * the defaulting rules for the entity and its subelements will
+ * be recursively applied.
+ *
+ * @Target(TYPE) @Retention(RUNTIME)
+ * public @interface Entity {
+ * String name() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for entity complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity">
  *   &lt;complexContent>
@@ -91,8 +89,6 @@ import javax.xml.bind.annotation.XmlTransient;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity", propOrder = {
@@ -193,17 +189,15 @@ public class Entity implements Mapping, Keyable<String> {
     public Entity() {
     }
 
-    public Entity(String clazz) {
+    public Entity(final String clazz) {
         this.clazz = clazz;
     }
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -211,23 +205,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the table property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Table }
-     *     
+     *
+     * @return possible object is
+     * {@link Table }
      */
     public Table getTable() {
         return table;
@@ -235,37 +225,33 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the table property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Table }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Table }
      */
-    public void setTable(Table value) {
+    public void setTable(final Table value) {
         this.table = value;
     }
 
     /**
      * Gets the value of the secondaryTable property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the secondaryTable property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSecondaryTable().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SecondaryTable }
-     * 
-     * 
      */
     public List<SecondaryTable> getSecondaryTable() {
         if (secondaryTable == null) {
@@ -276,25 +262,23 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the primaryKeyJoinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the primaryKeyJoinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPrimaryKeyJoinColumn().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link PrimaryKeyJoinColumn }
-     * 
-     * 
      */
     public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
         if (primaryKeyJoinColumn == null) {
@@ -305,11 +289,9 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the idClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IdClass }
-     *     
+     *
+     * @return possible object is
+     * {@link IdClass }
      */
     public IdClass getIdClass() {
         return idClass;
@@ -317,23 +299,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the idClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IdClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IdClass }
      */
-    public void setIdClass(IdClass value) {
+    public void setIdClass(final IdClass value) {
         this.idClass = value;
     }
 
     /**
      * Gets the value of the inheritance property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Inheritance }
-     *     
+     *
+     * @return possible object is
+     * {@link Inheritance }
      */
     public Inheritance getInheritance() {
         return inheritance;
@@ -341,23 +319,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the inheritance property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Inheritance }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Inheritance }
      */
-    public void setInheritance(Inheritance value) {
+    public void setInheritance(final Inheritance value) {
         this.inheritance = value;
     }
 
     /**
      * Gets the value of the discriminatorValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDiscriminatorValue() {
         return discriminatorValue;
@@ -365,23 +339,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the discriminatorValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDiscriminatorValue(String value) {
+    public void setDiscriminatorValue(final String value) {
         this.discriminatorValue = value;
     }
 
     /**
      * Gets the value of the discriminatorColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DiscriminatorColumn }
-     *     
+     *
+     * @return possible object is
+     * {@link DiscriminatorColumn }
      */
     public DiscriminatorColumn getDiscriminatorColumn() {
         return discriminatorColumn;
@@ -389,23 +359,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the discriminatorColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DiscriminatorColumn }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DiscriminatorColumn }
      */
-    public void setDiscriminatorColumn(DiscriminatorColumn value) {
+    public void setDiscriminatorColumn(final DiscriminatorColumn value) {
         this.discriminatorColumn = value;
     }
 
     /**
      * Gets the value of the sequenceGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SequenceGenerator }
-     *     
+     *
+     * @return possible object is
+     * {@link SequenceGenerator }
      */
     public SequenceGenerator getSequenceGenerator() {
         return sequenceGenerator;
@@ -413,23 +379,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the sequenceGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SequenceGenerator }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SequenceGenerator }
      */
-    public void setSequenceGenerator(SequenceGenerator value) {
+    public void setSequenceGenerator(final SequenceGenerator value) {
         this.sequenceGenerator = value;
     }
 
     /**
      * Gets the value of the tableGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TableGenerator }
-     *     
+     *
+     * @return possible object is
+     * {@link TableGenerator }
      */
     public TableGenerator getTableGenerator() {
         return tableGenerator;
@@ -437,37 +399,33 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the tableGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TableGenerator }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TableGenerator }
      */
-    public void setTableGenerator(TableGenerator value) {
+    public void setTableGenerator(final TableGenerator value) {
         this.tableGenerator = value;
     }
 
     /**
      * Gets the value of the namedQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedQuery }
-     * 
-     * 
      */
     public List<NamedQuery> getNamedQuery() {
         if (namedQuery == null) {
@@ -478,25 +436,23 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the namedNativeQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedNativeQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedNativeQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedNativeQuery }
-     * 
-     * 
      */
     public List<NamedNativeQuery> getNamedNativeQuery() {
         if (namedNativeQuery == null) {
@@ -507,25 +463,23 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the sqlResultSetMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sqlResultSetMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSqlResultSetMapping().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SqlResultSetMapping }
-     * 
-     * 
      */
     public List<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
@@ -536,11 +490,9 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the excludeDefaultListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isExcludeDefaultListeners() {
         return excludeDefaultListeners != null;
@@ -548,23 +500,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the excludeDefaultListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setExcludeDefaultListeners(boolean value) {
+    public void setExcludeDefaultListeners(final boolean value) {
         this.excludeDefaultListeners = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the excludeSuperclassListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isExcludeSuperclassListeners() {
         return excludeSuperclassListeners != null;
@@ -572,23 +520,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the excludeSuperclassListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setExcludeSuperclassListeners(boolean value) {
+    public void setExcludeSuperclassListeners(final boolean value) {
         this.excludeSuperclassListeners = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the entityListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityListeners }
      */
     public EntityListeners getEntityListeners() {
         return entityListeners;
@@ -596,23 +540,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the entityListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityListeners }
      */
-    public void setEntityListeners(EntityListeners value) {
+    public void setEntityListeners(final EntityListeners value) {
         this.entityListeners = value;
     }
 
     /**
      * Gets the value of the prePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @return possible object is
+     * {@link PrePersist }
      */
     public PrePersist getPrePersist() {
         return prePersist;
@@ -620,23 +560,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the prePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PrePersist }
      */
-    public void setPrePersist(PrePersist value) {
+    public void setPrePersist(final PrePersist value) {
         this.prePersist = value;
     }
 
     /**
      * Gets the value of the postPersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @return possible object is
+     * {@link PostPersist }
      */
     public PostPersist getPostPersist() {
         return postPersist;
@@ -644,23 +580,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postPersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostPersist }
      */
-    public void setPostPersist(PostPersist value) {
+    public void setPostPersist(final PostPersist value) {
         this.postPersist = value;
     }
 
     /**
      * Gets the value of the preRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @return possible object is
+     * {@link PreRemove }
      */
     public PreRemove getPreRemove() {
         return preRemove;
@@ -668,23 +600,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the preRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreRemove }
      */
-    public void setPreRemove(PreRemove value) {
+    public void setPreRemove(final PreRemove value) {
         this.preRemove = value;
     }
 
     /**
      * Gets the value of the postRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @return possible object is
+     * {@link PostRemove }
      */
     public PostRemove getPostRemove() {
         return postRemove;
@@ -692,23 +620,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostRemove }
      */
-    public void setPostRemove(PostRemove value) {
+    public void setPostRemove(final PostRemove value) {
         this.postRemove = value;
     }
 
     /**
      * Gets the value of the preUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @return possible object is
+     * {@link PreUpdate }
      */
     public PreUpdate getPreUpdate() {
         return preUpdate;
@@ -716,23 +640,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the preUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreUpdate }
      */
-    public void setPreUpdate(PreUpdate value) {
+    public void setPreUpdate(final PreUpdate value) {
         this.preUpdate = value;
     }
 
     /**
      * Gets the value of the postUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @return possible object is
+     * {@link PostUpdate }
      */
     public PostUpdate getPostUpdate() {
         return postUpdate;
@@ -740,23 +660,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostUpdate }
      */
-    public void setPostUpdate(PostUpdate value) {
+    public void setPostUpdate(final PostUpdate value) {
         this.postUpdate = value;
     }
 
     /**
      * Gets the value of the postLoad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @return possible object is
+     * {@link PostLoad }
      */
     public PostLoad getPostLoad() {
         return postLoad;
@@ -764,37 +680,33 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postLoad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostLoad }
      */
-    public void setPostLoad(PostLoad value) {
+    public void setPostLoad(final PostLoad value) {
         this.postLoad = value;
     }
 
     /**
      * Gets the value of the attributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the attributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAttributeOverride().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link AttributeOverride }
-     * 
-     * 
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
@@ -805,25 +717,23 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the associationOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the associationOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAssociationOverride().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link AssociationOverride }
-     * 
-     * 
      */
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
@@ -834,11 +744,9 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Gets the value of the attributes property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Attributes }
-     *     
+     *
+     * @return possible object is
+     * {@link Attributes }
      */
     public Attributes getAttributes() {
         return attributes;
@@ -846,23 +754,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the attributes property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Attributes }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Attributes }
      */
-    public void setAttributes(Attributes value) {
+    public void setAttributes(final Attributes value) {
         this.attributes = value;
     }
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -870,23 +774,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -894,23 +794,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the cacheable property.
      *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isCacheable() {
         return cacheable;
@@ -919,22 +815,18 @@ public class Entity implements Mapping, Keyable<String> {
     /**
      * Sets the value of the cacheable property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setCacheable(Boolean value) {
+    public void setCacheable(final Boolean value) {
         this.cacheable = value;
     }
 
     /**
      * Gets the value of the metadataComplete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isMetadataComplete() {
         return metadataComplete;
@@ -942,23 +834,19 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the metadataComplete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -966,13 +854,11 @@ public class Entity implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -980,7 +866,7 @@ public class Entity implements Mapping, Keyable<String> {
         return ejbName;
     }
 
-    public void setEjbName(String ejbName) {
+    public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
@@ -988,11 +874,11 @@ public class Entity implements Mapping, Keyable<String> {
         return xmlMetadataComplete;
     }
 
-    public void setXmlMetadataComplete(boolean xmlMetadataComplete) {
+    public void setXmlMetadataComplete(final boolean xmlMetadataComplete) {
         this.xmlMetadataComplete = xmlMetadataComplete;
     }
 
-    public void addField(Field field) {
+    public void addField(final Field field) {
         if (field == null) throw new NullPointerException("field is null");
         if (field instanceof Id) {
             if (attributes == null) attributes = new Attributes();

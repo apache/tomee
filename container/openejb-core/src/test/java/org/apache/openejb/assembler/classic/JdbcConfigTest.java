@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class JdbcConfigTest extends TestCase {
     public void test() throws Exception {
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
         // System services
@@ -49,7 +49,7 @@ public class JdbcConfigTest extends TestCase {
         // unmanaged JDBC
         assembler.createResource(config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class));
 
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
         DataSource managedDS = (DataSource) containerSystem.getJNDIContext().lookup("openejb/Resource/Default JDBC Database");
         assertNotNull("managedDS is null", managedDS);
@@ -63,7 +63,7 @@ public class JdbcConfigTest extends TestCase {
         verifyUnmanagedConnections(unmanagedDS);
 
         // test in the context of a transaction
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         transactionManager.begin();
         try {
             verifyManagedConnections(managedDS);
@@ -74,7 +74,7 @@ public class JdbcConfigTest extends TestCase {
         }
     }
 
-    private void verifyManagedConnections(DataSource dataSource) throws SQLException {
+    private void verifyManagedConnections(final DataSource dataSource) throws SQLException {
         List<Connection> managedConnections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 4; i++) {
@@ -95,13 +95,13 @@ public class JdbcConfigTest extends TestCase {
                 }
             }
         } finally {
-            for (Connection connection : managedConnections) {
+            for (final Connection connection : managedConnections) {
                 close(connection);
             }
         }
     }
 
-    private void verifyUnmanagedConnections(DataSource dataSource) throws SQLException {
+    private void verifyUnmanagedConnections(final DataSource dataSource) throws SQLException {
         List<Connection> unmanagedConnections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 4; i++) {
@@ -109,7 +109,7 @@ public class JdbcConfigTest extends TestCase {
                 unmanagedConnections.add(connection);
                 assertTrue("Expected connection.getAutoCommit() to be true", connection.getAutoCommit());
                 connection.setAutoCommit(true);
-                Statement statement = connection.createStatement();
+                final Statement statement = connection.createStatement();
                 try {
                     statement.getQueryTimeout();
                 } finally {
@@ -125,12 +125,12 @@ public class JdbcConfigTest extends TestCase {
         }
     }
 
-    private static void close(Connection connection) {
+    private static void close(final Connection connection) {
         if (connection == null) return;
 
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 }

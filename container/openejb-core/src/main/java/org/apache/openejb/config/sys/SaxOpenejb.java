@@ -283,9 +283,9 @@ class SaxOpenejb extends StackHandler {
                 }
             }
             if (importedOpenEJB.securityService != null
-                    || importedOpenEJB.transactionManager != null
-                    || importedOpenEJB.connectionManager != null
-                    || importedOpenEJB.proxyFactory != null) { //NOPMD
+                || importedOpenEJB.transactionManager != null
+                || importedOpenEJB.connectionManager != null
+                || importedOpenEJB.proxyFactory != null) { //NOPMD
                 // do nothing, these are unique so i don't think importing it is a good idea
             }
             if (importedOpenEJB.connector != null) {

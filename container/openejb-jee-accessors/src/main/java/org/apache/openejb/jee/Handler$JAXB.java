@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Handler$JAXB
-        extends JAXBObject<Handler> {
+    extends JAXBObject<Handler> {
 
 
     public Handler$JAXB() {
         super(Handler.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handlerType".intern()), Text$JAXB.class, Icon$JAXB.class, ParamValue$JAXB.class);
     }
 
-    public static Handler readHandler(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Handler readHandler(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeHandler(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public static void writeHandler(final XoXMLStreamWriter writer, final Handler handler, RuntimeContext context)
+        throws Exception {
         _write(writer, handler, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Handler handler, RuntimeContext context)
+        throws Exception {
         _write(writer, handler, context);
     }
 
-    public final static Handler _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Handler _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class Handler$JAXB
             context = new RuntimeContext();
         }
 
-        Handler handler = new Handler();
+        final Handler handler = new Handler();
         context.beforeUnmarshal(handler, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -86,7 +86,7 @@ public class Handler$JAXB
         List<String> portName = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("handlerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Handler.class);
@@ -161,7 +161,7 @@ public class Handler$JAXB
                 handler.handlerClass = handlerClass;
             } else if (("init-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initParam
-                ParamValue initParamItem = readParamValue(elementReader, context);
+                final ParamValue initParamItem = readParamValue(elementReader, context);
                 if (initParam == null) {
                     initParam = handler.initParam;
                     if (initParam != null) {
@@ -187,7 +187,7 @@ public class Handler$JAXB
                 // ELEMENT: soapRole
                 String soapRoleItemRaw = elementReader.getElementAsString();
 
-                String soapRoleItem;
+                final String soapRoleItem;
                 try {
                     soapRoleItem = Adapters.collapsedStringAdapterAdapter.unmarshal(soapRoleItemRaw);
                 } catch (Exception e) {
@@ -232,7 +232,7 @@ public class Handler$JAXB
         if (descriptions != null) {
             try {
                 handler.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Handler.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -264,13 +264,13 @@ public class Handler$JAXB
         return handler;
     }
 
-    public final Handler read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Handler read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Handler handler, RuntimeContext context)
+        throws Exception {
         if (handler == null) {
             writer.writeXsiNil();
             return;
@@ -410,7 +410,7 @@ public class Handler$JAXB
         // ELEMENT: soapRole
         List<String> soapRoleRaw = handler.soapRole;
         if (soapRoleRaw != null) {
-            for (String soapRoleItem : soapRoleRaw) {
+            for (final String soapRoleItem : soapRoleRaw) {
                 String soapRole = null;
                 try {
                     soapRole = Adapters.collapsedStringAdapterAdapter.marshal(soapRoleItem);

@@ -21,18 +21,17 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.apache.openejb.jee.sun package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.apache.openejb.jee.sun package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -40,14 +39,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.sun
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link CmpFieldMapping }
-     * 
      */
     public CmpFieldMapping createCmpFieldMapping() {
         return new CmpFieldMapping();
@@ -55,7 +52,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ColumnPair }
-     * 
      */
     public ColumnPair createColumnPair() {
         return new ColumnPair();
@@ -63,7 +59,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityMapping }
-     * 
      */
     public EntityMapping createEntityMapping() {
         return new EntityMapping();
@@ -71,7 +66,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedGroup }
-     * 
      */
     public NamedGroup createNamedGroup() {
         return new NamedGroup();
@@ -79,7 +73,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CheckVersionOfAccessedInstances }
-     * 
      */
     public CheckVersionOfAccessedInstances createCheckVersionOfAccessedInstances() {
         return new CheckVersionOfAccessedInstances();
@@ -87,7 +80,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockWhenModified }
-     * 
      */
     public LockWhenModified createLockWhenModified() {
         return new LockWhenModified();
@@ -95,7 +87,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecondaryTable }
-     * 
      */
     public SecondaryTable createSecondaryTable() {
         return new SecondaryTable();
@@ -103,7 +94,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Level }
-     * 
      */
     public Level createLevel() {
         return new Level();
@@ -111,7 +101,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CheckModifiedAtCommit }
-     * 
      */
     public CheckModifiedAtCommit createCheckModifiedAtCommit() {
         return new CheckModifiedAtCommit();
@@ -119,7 +108,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Consistency }
-     * 
      */
     public Consistency createConsistency() {
         return new Consistency();
@@ -127,7 +115,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReadOnly }
-     * 
      */
     public ReadOnly createReadOnly() {
         return new ReadOnly();
@@ -135,7 +122,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockWhenLoaded }
-     * 
      */
     public LockWhenLoaded createLockWhenLoaded() {
         return new LockWhenLoaded();
@@ -143,7 +129,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Default }
-     * 
      */
     public Default createDefault() {
         return new Default();
@@ -151,7 +136,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CheckAllAtCommit }
-     * 
      */
     public CheckAllAtCommit createCheckAllAtCommit() {
         return new CheckAllAtCommit();
@@ -159,7 +143,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SunCmpMapping }
-     * 
      */
     public SunCmpMapping createSunCmpMapping() {
         return new SunCmpMapping();
@@ -167,7 +150,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SunEjbJar }
-     *
      */
     public SunEjbJar createSunEjbJar() {
         return new SunEjbJar();
@@ -175,7 +157,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link None }
-     * 
      */
     public None createNone() {
         return new None();
@@ -183,7 +164,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmrFieldMapping }
-     * 
      */
     public CmrFieldMapping createCmrFieldMapping() {
         return new CmrFieldMapping();
@@ -191,7 +171,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FetchedWith }
-     * 
      */
     public FetchedWith createFetchedWith() {
         return new FetchedWith();
@@ -199,7 +178,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ColumnName }
-     * 
      */
     public ColumnName createColumnName() {
         return new ColumnName();
@@ -207,7 +185,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SunCmpMappings }
-     * 
      */
     public SunCmpMappings createSunCmpMappings() {
         return new SunCmpMappings();

@@ -30,18 +30,18 @@ import javax.interceptor.AroundInvoke;
 // START SNIPPET : code
 @RunWith(ValidationRunner.class)
 public class CheckInjectionTargetsTest {
-    @Keys(@Key(value="injectionTarget.nameContainsSet",count=2,type=KeyType.WARNING))
+    @Keys(@Key(value = "injectionTarget.nameContainsSet", count = 2, type = KeyType.WARNING))
     public EjbJar test() {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));  
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));
         // Valid
         EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
-        envEntry.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(),CheeseEjb.class.getName()+"/count"));
+        envEntry.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), CheeseEjb.class.getName() + "/count"));
         bean.getEnvEntry().add(envEntry);
 
         // Invalid - can't specify setColor, just color as a target and its setter will be calculated
         EnvEntry envEntry2 = new EnvEntry("color", String.class.getName(), "yellow");
-        envEntry2.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(),CheeseEjb.class.getName()+"/setColor"));
+        envEntry2.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), CheeseEjb.class.getName() + "/setColor"));
         bean.getEnvEntry().add(envEntry2);
 
         // Invalid - see the comment above
@@ -51,9 +51,12 @@ public class CheckInjectionTargetsTest {
 
         return ejbJar;
     }
-    private static class CheeseEjb{
-        @AroundInvoke // need to add this to cause validation to fail. Validation does not fail on warnings, which causes this framework to not work properly
-        public void sayCheese(){}
+
+    private static class CheeseEjb {
+        @AroundInvoke
+        // need to add this to cause validation to fail. Validation does not fail on warnings, which causes this framework to not work properly
+        public void sayCheese() {
+        }
     }
 }
 // END SNIPPET : code

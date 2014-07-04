@@ -40,8 +40,8 @@ import javax.interceptor.AroundInvoke;
 public class InvalidInterfacesTest {
     @Keys
     public EjbJar testCorrectInterfaces() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         bean.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
         bean.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         bean.addBusinessLocal(FooLocal.class.getName());
@@ -70,13 +70,13 @@ public class InvalidInterfacesTest {
     }
 
     @Keys({@Key("xml.remote.ejbLocalHome"), @Key("xml.home.ejbLocalHome"), @Key("xml.local.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalHome"),
-            @Key("xml.businessRemote.ejbLocalHome")})
+        @Key("xml.businessRemote.ejbLocalHome")})
     public EjbJar testEJBLocalHome() throws Exception {
         return validate(FooEJBLocalHome.class);
     }
 
     @Keys({@Key("xml.remote.ejbLocalObject"), @Key("xml.home.ejbLocalObject"), @Key("xml.localHome.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalObject"),
-            @Key("xml.businessRemote.ejbLocalObject")})
+        @Key("xml.businessRemote.ejbLocalObject")})
     public EjbJar testEJBLocalObject() throws Exception {
         return validate(FooEJBLocalObject.class);
     }
@@ -88,23 +88,23 @@ public class InvalidInterfacesTest {
     }
 
     @Keys({@Key("xml.remote.beanClass"), @Key("xml.home.beanClass"), @Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"),
-            @Key("xml.businessLocal.beanClass")})
+        @Key("xml.businessLocal.beanClass")})
     public EjbJar testBeanClass() throws Exception {
         return validate(FooBean.class);
     }
 
     @Keys({@Key("xml.remote.notInterface"), @Key("xml.home.notInterface"), @Key("xml.localHome.notInterface"), @Key("xml.local.notInterface"),
-            @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface")})
+        @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface")})
     public EjbJar testNotInterface() throws Exception {
         return validate(FooClass.class);
     }
 
     @Keys({@Key("ann.notAnInterface"), @Key("xml.businessLocal.notInterface"), @Key("ann.localRemote.conflict"), @Key("ann.remoteOrLocal.ejbHome"),
-            @Key("xml.businessRemote.ejbHome"), @Key("ann.remoteOrLocal.ejbObject"), @Key("xml.businessRemote.ejbObject"), @Key(value = "ann.remoteOrLocal.ejbLocalHome"),
-            @Key(value = "ann.remoteOrLocal.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalObject")})
+        @Key("xml.businessRemote.ejbHome"), @Key("ann.remoteOrLocal.ejbObject"), @Key("xml.businessRemote.ejbObject"), @Key(value = "ann.remoteOrLocal.ejbLocalHome"),
+        @Key(value = "ann.remoteOrLocal.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalObject")})
     public EjbJar test() throws OpenEJBException {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(BBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(CBean.class));
         StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
@@ -114,7 +114,7 @@ public class InvalidInterfacesTest {
     @Keys({@Key(value = "interface.beanOnlyAnnotation", type = KeyType.WARNING), @Key(value = "interfaceMethod.beanOnlyAnnotation", type = KeyType.WARNING), @Key("aroundInvoke.invalidArguments")})
     public EjbJar test1() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(DBean.class));
         return ejbJar;
 
@@ -123,7 +123,7 @@ public class InvalidInterfacesTest {
     @Keys({@Key(value = "ann.remoteOrLocal.converse.parent", count = 2)})
     public EjbJar test2() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FBean.class));
         return ejbJar;
@@ -135,9 +135,9 @@ public class InvalidInterfacesTest {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "false");
     }
 
-    private EjbJar validate(Class interfaceClass) throws OpenEJBException {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+    private EjbJar validate(final Class interfaceClass) throws OpenEJBException {
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         bean.setHomeAndLocal(interfaceClass, interfaceClass);
         bean.setHomeAndRemote(interfaceClass, interfaceClass);
         bean.addBusinessLocal(interfaceClass);

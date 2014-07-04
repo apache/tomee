@@ -49,7 +49,7 @@ public class EventSpeedTest extends Assert {
         assertTrue(seconds < 60);
     }
 
-    private Stats time(int observerCount) {
+    private Stats time(final int observerCount) {
         final ObserverManager observers = new ObserverManager();
         for (int i = observerCount; i > 0; i--) {
             observers.addObserver(new One());
@@ -74,7 +74,7 @@ public class EventSpeedTest extends Assert {
         private final long events;
         private final long observers;
 
-        public Stats(long total, long events, long observers) {
+        public Stats(final long total, long events, long observers) {
             this.total = total;
             this.events = events;
             this.observers = observers;
@@ -105,13 +105,13 @@ public class EventSpeedTest extends Assert {
             return String.format("%10s %10s %10s %10s", events, observers, eventAverage(), observerAverage());
         }
 
-        public String compare(Stats previous) {
+        public String compare(final Stats previous) {
             final double change = change(previous);
 
             return String.format(format, events, observers, eventAverage(), change);
         }
 
-        private double change(Stats previous) {
+        private double change(final Stats previous) {
             if (previous == null) return 0;
             final double thisAverage = this.eventAverage();
             final double thatAverage = previous.eventAverage();
@@ -120,43 +120,43 @@ public class EventSpeedTest extends Assert {
     }
 
     public static class One {
-        public void observe(@Observes Object event) {
+        public void observe(@Observes final Object event) {
         }
 
-        public void observe(@Observes Color event) {
+        public void observe(@Observes final Color event) {
         }
 
-        public void observe(@Observes Green event) {
+        public void observe(@Observes final Green event) {
         }
 
-        public void observe(@Observes Emerald event) {
+        public void observe(@Observes final Emerald event) {
         }
 
-        public void observe(@Observes Integer event) {
+        public void observe(@Observes final Integer event) {
         }
     }
 
     public static class Two {
-        public void observe(@Observes Color event) {
+        public void observe(@Observes final Color event) {
         }
 
-        public void observe(@Observes Green event) {
+        public void observe(@Observes final Green event) {
         }
     }
 
     public static class Three {
-        public void observe(@Observes Green event) {
+        public void observe(@Observes final Green event) {
         }
 
-        public void observe(@Observes Emerald event) {
+        public void observe(@Observes final Emerald event) {
         }
 
-        public void observe(@Observes Integer event) {
+        public void observe(@Observes final Integer event) {
         }
     }
 
     public static class Four {
-        public void observe(@Observes Object event) {
+        public void observe(@Observes final Object event) {
 //            System.out.println(event);
         }
     }

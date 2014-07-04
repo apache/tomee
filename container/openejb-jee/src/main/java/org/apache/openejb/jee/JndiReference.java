@@ -21,12 +21,15 @@ package org.apache.openejb.jee;
  */
 public interface JndiReference extends Injectable, Keyable<String> {
     String getName();
+
     void setName(String name);
 
     String getType();
+
     void setType(String type);
 
     String getMappedName();
+
     void setMappedName(String mappedName);
 
     String getLookupName();

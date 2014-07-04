@@ -37,7 +37,7 @@ public class ObserverAdded {
     @Override
     public String toString() {
         return "ObserverAdded{" +
-                "observer=" + observer.getClass().getName() +
-                '}';
+            "observer=" + observer.getClass().getName() +
+            '}';
     }
 }

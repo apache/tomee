@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p>
+ * <p/>
  * Java class for TransactionType.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * <pre>
  * &lt;simpleType name="TransactionType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
@@ -36,31 +36,30 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum TransactionEnum {
 
-	@XmlEnumValue("Bean")
-	BEAN("Bean"), @XmlEnumValue("Container")
-	CONTAINER("Container");
-	private final String value;
+    @XmlEnumValue("Bean")
+    BEAN("Bean"), @XmlEnumValue("Container")
+    CONTAINER("Container");
+    private final String value;
 
-	TransactionEnum(String v) {
-		value = v;
-	}
+    TransactionEnum(final String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static TransactionEnum fromValue(String v) {
-		for (TransactionEnum c : TransactionEnum.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v.toString());
-	}
+    public static TransactionEnum fromValue(final String v) {
+        for (final TransactionEnum c : TransactionEnum.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v.toString());
+    }
 
 }

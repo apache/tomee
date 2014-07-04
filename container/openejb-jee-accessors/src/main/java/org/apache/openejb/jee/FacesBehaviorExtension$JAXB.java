@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesBehaviorExtension$JAXB
-        extends JAXBObject<FacesBehaviorExtension> {
+    extends JAXBObject<FacesBehaviorExtension> {
 
 
     public FacesBehaviorExtension$JAXB() {
         super(FacesBehaviorExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-behavior-extensionType".intern()));
     }
 
-    public static FacesBehaviorExtension readFacesBehaviorExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesBehaviorExtension readFacesBehaviorExtension(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesBehaviorExtension(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesBehaviorExtension(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehaviorExtension, context);
     }
 
-    public final static FacesBehaviorExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesBehaviorExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class FacesBehaviorExtension$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesBehaviorExtension);
                 facesBehaviorExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class FacesBehaviorExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             // ELEMENT_REF: any
             if (any == null) {
                 any = facesBehaviorExtension.any;
@@ -114,13 +114,13 @@ public class FacesBehaviorExtension$JAXB
         return facesBehaviorExtension;
     }
 
-    public final FacesBehaviorExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesBehaviorExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesBehaviorExtension facesBehaviorExtension, RuntimeContext context)
+        throws Exception {
         if (facesBehaviorExtension == null) {
             writer.writeXsiNil();
             return;

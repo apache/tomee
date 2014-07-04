@@ -23,16 +23,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Retention(value=RetentionPolicy.RUNTIME)
-@Target(value={
-		ElementType.CONSTRUCTOR,
-		ElementType.FIELD,
-		ElementType.METHOD,
-		ElementType.PARAMETER,
-		ElementType.TYPE
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = {
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.METHOD,
+    ElementType.PARAMETER,
+    ElementType.TYPE
 })
 public @interface Description {
-	String value() default "";
-	String bundleBaseName() default "";
-	String key() default "";
+    String value() default "";
+
+    String bundleBaseName() default "";
+
+    String key() default "";
 }

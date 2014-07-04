@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Interceptors$JAXB
-        extends JAXBObject<Interceptors> {
+    extends JAXBObject<Interceptors> {
 
 
     public Interceptors$JAXB() {
         super(Interceptors.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptorsType".intern()), Text$JAXB.class, Interceptor$JAXB.class);
     }
 
-    public static Interceptors readInterceptors(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Interceptors readInterceptors(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInterceptors(XoXMLStreamWriter writer, Interceptors interceptors, RuntimeContext context)
-            throws Exception {
+    public static void writeInterceptors(final XoXMLStreamWriter writer, final Interceptors interceptors, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptors, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Interceptors interceptors, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, Interceptors interceptors, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptors, context);
     }
 
-    public final static Interceptors _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Interceptors _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -71,14 +71,14 @@ public class Interceptors$JAXB
             context = new RuntimeContext();
         }
 
-        Interceptors interceptors = new Interceptors();
+        final Interceptors interceptors = new Interceptors();
         context.beforeUnmarshal(interceptors, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         ArrayList<Interceptor> interceptor = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("interceptorsType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Interceptors.class);
@@ -137,13 +137,13 @@ public class Interceptors$JAXB
         return interceptors;
     }
 
-    public final Interceptors read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Interceptors read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Interceptors interceptors, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Interceptors interceptors, RuntimeContext context)
+        throws Exception {
         if (interceptors == null) {
             writer.writeXsiNil();
             return;

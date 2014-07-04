@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MethodParams$JAXB
-        extends JAXBObject<MethodParams> {
+    extends JAXBObject<MethodParams> {
 
 
     public MethodParams$JAXB() {
         super(MethodParams.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "method-paramsType".intern()));
     }
 
-    public static MethodParams readMethodParams(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MethodParams readMethodParams(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethodParams(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public static void writeMethodParams(final XoXMLStreamWriter writer, MethodParams methodParams, final RuntimeContext context)
+        throws Exception {
         _write(writer, methodParams, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MethodParams methodParams, RuntimeContext context)
+        throws Exception {
         _write(writer, methodParams, context);
     }
 
-    public final static MethodParams _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MethodParams _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -128,13 +128,13 @@ public class MethodParams$JAXB
         return methodParams;
     }
 
-    public final MethodParams read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MethodParams read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MethodParams methodParams, RuntimeContext context)
+        throws Exception {
         if (methodParams == null) {
             writer.writeXsiNil();
             return;

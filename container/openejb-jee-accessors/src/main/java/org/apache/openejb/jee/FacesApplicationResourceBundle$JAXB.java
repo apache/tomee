@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesApplicationResourceBundle$JAXB
-        extends JAXBObject<FacesApplicationResourceBundle> {
+    extends JAXBObject<FacesApplicationResourceBundle> {
 
 
     public FacesApplicationResourceBundle$JAXB() {
         super(FacesApplicationResourceBundle.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-application-resource-bundleType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static FacesApplicationResourceBundle readFacesApplicationResourceBundle(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesApplicationResourceBundle readFacesApplicationResourceBundle(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesApplicationResourceBundle(XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesApplicationResourceBundle(final XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplicationResourceBundle, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
+        throws Exception {
         _write(writer, facesApplicationResourceBundle, context);
     }
 
-    public final static FacesApplicationResourceBundle _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesApplicationResourceBundle _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -71,7 +71,7 @@ public class FacesApplicationResourceBundle$JAXB
             context = new RuntimeContext();
         }
 
-        FacesApplicationResourceBundle facesApplicationResourceBundle = new FacesApplicationResourceBundle();
+        final FacesApplicationResourceBundle facesApplicationResourceBundle = new FacesApplicationResourceBundle();
         context.beforeUnmarshal(facesApplicationResourceBundle, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -79,7 +79,7 @@ public class FacesApplicationResourceBundle$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-application-resource-bundleType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesApplicationResourceBundle.class);
@@ -116,7 +116,7 @@ public class FacesApplicationResourceBundle$JAXB
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesApplicationResourceBundle.icon;
                     if (icon != null) {
@@ -128,7 +128,7 @@ public class FacesApplicationResourceBundle$JAXB
                 icon.add(iconItem);
             } else if (("base-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: baseName
-                String baseNameRaw = elementReader.getElementAsString();
+                final String baseNameRaw = elementReader.getElementAsString();
 
                 String baseName;
                 try {
@@ -159,7 +159,7 @@ public class FacesApplicationResourceBundle$JAXB
         if (descriptions != null) {
             try {
                 facesApplicationResourceBundle.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesApplicationResourceBundle.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -179,13 +179,13 @@ public class FacesApplicationResourceBundle$JAXB
         return facesApplicationResourceBundle;
     }
 
-    public final FacesApplicationResourceBundle read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesApplicationResourceBundle read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesApplicationResourceBundle facesApplicationResourceBundle, RuntimeContext context)
+        throws Exception {
         if (facesApplicationResourceBundle == null) {
             writer.writeXsiNil();
             return;
@@ -195,7 +195,7 @@ public class FacesApplicationResourceBundle$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesApplicationResourceBundle.class != facesApplicationResourceBundle.getClass()) {
             context.unexpectedSubclass(writer, facesApplicationResourceBundle, FacesApplicationResourceBundle.class);
             return;
@@ -205,7 +205,7 @@ public class FacesApplicationResourceBundle$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesApplicationResourceBundle.id;
+        final String idRaw = facesApplicationResourceBundle.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -269,7 +269,7 @@ public class FacesApplicationResourceBundle$JAXB
         }
 
         // ELEMENT: baseName
-        String baseNameRaw = facesApplicationResourceBundle.baseName;
+        final String baseNameRaw = facesApplicationResourceBundle.baseName;
         String baseName = null;
         try {
             baseName = Adapters.collapsedStringAdapterAdapter.marshal(baseNameRaw);

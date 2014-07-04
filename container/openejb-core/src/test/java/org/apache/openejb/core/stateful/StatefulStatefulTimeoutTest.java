@@ -48,7 +48,8 @@ public class StatefulStatefulTimeoutTest {
     @Stateful
     @StatefulTimeout(value = 3, unit = TimeUnit.SECONDS)
     public static class TimedOutStateful {
-        public void foo() {}
+        public void foo() {
+        }
     }
 
     @Configuration
@@ -66,13 +67,13 @@ public class StatefulStatefulTimeoutTest {
     @Test
     public void checkBeanIsCleaned() throws Exception {
         assertNotNull(context);
-        TimedOutStateful stateful = (TimedOutStateful) context.lookup("global/StatefulStatefulTimeoutTest/stateful/TimedOutStateful");
+        final TimedOutStateful stateful = (TimedOutStateful) context.lookup("global/StatefulStatefulTimeoutTest/stateful/TimedOutStateful");
         stateful.foo();
         Thread.sleep(6000);
         try {
             stateful.foo();
             fail();
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
             // ok
         }
     }

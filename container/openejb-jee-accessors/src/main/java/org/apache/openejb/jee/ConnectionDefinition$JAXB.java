@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.ConfigProperty$JAXB.readConfigProperty;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.writeConfigProperty;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ConnectionDefinition$JAXB
-        extends JAXBObject<ConnectionDefinition> {
+    extends JAXBObject<ConnectionDefinition> {
 
 
     public ConnectionDefinition$JAXB() {
         super(ConnectionDefinition.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "connection-definitionType".intern()), ConfigProperty$JAXB.class);
     }
 
-    public static ConnectionDefinition readConnectionDefinition(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ConnectionDefinition readConnectionDefinition(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConnectionDefinition(XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
-            throws Exception {
+    public static void writeConnectionDefinition(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+        throws Exception {
         _write(writer, connectionDefinition, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+        throws Exception {
         _write(writer, connectionDefinition, context);
     }
 
-    public final static ConnectionDefinition _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ConnectionDefinition _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class ConnectionDefinition$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -187,13 +187,13 @@ public class ConnectionDefinition$JAXB
         return connectionDefinition;
     }
 
-    public final ConnectionDefinition read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ConnectionDefinition read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ConnectionDefinition connectionDefinition, RuntimeContext context)
+        throws Exception {
         if (connectionDefinition == null) {
             writer.writeXsiNil();
             return;
@@ -203,7 +203,7 @@ public class ConnectionDefinition$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ConnectionDefinition.class != connectionDefinition.getClass()) {
             context.unexpectedSubclass(writer, connectionDefinition, ConnectionDefinition.class);
             return;
@@ -253,7 +253,7 @@ public class ConnectionDefinition$JAXB
         }
 
         // ELEMENT: connectionFactoryInterface
-        String connectionFactoryInterfaceRaw = connectionDefinition.connectionFactoryInterface;
+        final String connectionFactoryInterfaceRaw = connectionDefinition.connectionFactoryInterface;
         String connectionFactoryInterface = null;
         try {
             connectionFactoryInterface = Adapters.collapsedStringAdapterAdapter.marshal(connectionFactoryInterfaceRaw);
@@ -273,7 +273,7 @@ public class ConnectionDefinition$JAXB
         String connectionFactoryImplClass = null;
         try {
             connectionFactoryImplClass = Adapters.collapsedStringAdapterAdapter.marshal(connectionFactoryImplClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(connectionDefinition, "connectionFactoryImplClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (connectionFactoryImplClass != null) {

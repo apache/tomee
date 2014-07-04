@@ -44,8 +44,8 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     public void testStatelessBeanPooling() throws Exception {
 
-        InitialContext ctx = new InitialContext();            
-        Object object = ctx.lookup("CounterBeanLocal");
+        final InitialContext ctx = new InitialContext();
+        final Object object = ctx.lookup("CounterBeanLocal");
         assertTrue("instanceof counter", object instanceof Counter);
 
         final CountDownLatch startPistol = new CountDownLatch(1);
@@ -54,9 +54,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         final Counter counter = (Counter) object;
         // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
-        		counter.race(startingLine, startPistol);
+        final Runnable r = new Runnable() {
+            public void run() {
+                counter.race(startingLine, startPistol);
                 finishingLine.countDown();
             }
         };
@@ -65,7 +65,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
         for (int i = 0; i < 30; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -87,29 +87,29 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         assertEquals(10, CounterBean.instances.get());
 
     }
-    
+
     public void testStatelessBeanRelease() throws Exception {
-    	
-    	
-    	final CountDownLatch invocations = new CountDownLatch(30);
-        final InitialContext ctx = new InitialContext(); 
+
+
+        final CountDownLatch invocations = new CountDownLatch(30);
+        final InitialContext ctx = new InitialContext();
         final AtomicInteger instances = new AtomicInteger();
         // Do a business method...
-        Runnable r = new Runnable(){        	
-        	public void run(){
+        final Runnable r = new Runnable() {
+            public void run() {
                 Object object = null;
-				try {
-					object = ctx.lookup("CounterBeanLocal");
-				} catch (NamingException e) {					
-					assertTrue(false);
-				}                                
-                Counter counter = (Counter) object;
+                try {
+                    object = ctx.lookup("CounterBeanLocal");
+                } catch (final NamingException e) {
+                    assertTrue(false);
+                }
+                final Counter counter = (Counter) object;
                 assertNotNull(counter);
-                try{                
-        		    counter.explode(invocations);        	
-                }catch(Exception e){
-                	
-                }        	   
+                try {
+                    counter.explode(invocations);
+                } catch (final Exception e) {
+
+                }
             }
         };
 
@@ -117,11 +117,11 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         // 30 instances should be created and discarded.
         for (int i = 0; i < 30; i++) {
-            Thread t = new Thread(r);
-            t.start();            
+            final Thread t = new Thread(r);
+            t.start();
         }
 
-        boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
+        final boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
@@ -129,11 +129,11 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     }
 
-    
+
     public void testStatelessBeanTimeout() throws Exception {
 
-        InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("CounterBeanLocal");
+        final InitialContext ctx = new InitialContext();
+        final Object object = ctx.lookup("CounterBeanLocal");
         assertTrue("instanceof counter", object instanceof Counter);
 
         final CountDownLatch timeouts = new CountDownLatch(10);
@@ -143,22 +143,22 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         final Counter counter = (Counter) object;
 
         // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
-        		try{
+        final Runnable r = new Runnable() {
+            public void run() {
+                try {
                     counter.race(startingLine, startPistol);
-                }catch (ConcurrentAccessTimeoutException ex){
+                } catch (final ConcurrentAccessTimeoutException ex) {
                     comment("Leap Start");
                     timeouts.countDown();
-        		}
-        	}
+                }
+            }
         };
 
 
         comment("On your mark!");
 
         for (int i = 0; i < 20; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -178,7 +178,8 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     }
 
     public static Object lock = new Object[]{};
-    private static void comment(String x) {
+
+    private static void comment(final String x) {
 //        synchronized(lock){
 //            System.out.println(x);
 //            System.out.flush();
@@ -190,15 +191,15 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
         statelessContainerInfo.properties.setProperty("MaxSize", "10");
         statelessContainerInfo.properties.setProperty("MinSize", "2");
@@ -207,13 +208,13 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(CounterBean.class);
+        final StatelessBean bean = new StatelessBean(CounterBean.class);
         bean.addBusinessLocal(Counter.class.getName());
         bean.addBusinessRemote(RemoteCounter.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         CounterBean.instances.set(0);
@@ -221,13 +222,15 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     }
 
- 
+
     public static interface Counter {
         int count();
+
         void race(CountDownLatch ready, CountDownLatch go);
+
         void explode(CountDownLatch invocations);
     }
-    
+
     @Remote
     public static interface RemoteCounter extends Counter {
 
@@ -248,41 +251,41 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         public CounterBean() {
             count = instances.incrementAndGet();
         }
-        
-        public int count(){
-        	return instances.get();
-        }
-        
-        public int discardCount(){
-        	return discardedInstances.get();
-        }
-        
-        public void explode(CountDownLatch invocations){
-        	try{
-        	    discardedInstances.incrementAndGet();
-        	    throw new NullPointerException("Test expected this null pointer");
-        	}finally{
-        		invocations.countDown();
-        	}
+
+        public int count() {
+            return instances.get();
         }
 
-        public void race(CountDownLatch ready, CountDownLatch go){
+        public int discardCount() {
+            return discardedInstances.get();
+        }
+
+        public void explode(final CountDownLatch invocations) {
+            try {
+                discardedInstances.incrementAndGet();
+                throw new NullPointerException("Test expected this null pointer");
+            } finally {
+                invocations.countDown();
+            }
+        }
+
+        public void race(final CountDownLatch ready, final CountDownLatch go) {
             comment("ready = " + count);
             ready.countDown();
             try {
                 go.await();
                 comment("running = " + count);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
             }
         }
-        
-        public void init(){
-        	
+
+        public void init() {
+
         }
-        
-        public void destroy(){
-        	
+
+        public void destroy() {
+
         }
     }
 }

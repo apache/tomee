@@ -62,7 +62,7 @@ public class Container extends AbstractService {
      * Gets the value of the ctype property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      * @deprecated use getType instead
      */
     public String getCtype() {

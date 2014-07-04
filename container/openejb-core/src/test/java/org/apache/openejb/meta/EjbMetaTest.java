@@ -77,7 +77,7 @@ public class EjbMetaTest {
         private Bean red;
 
         @EJB(name = "yellow")
-        public void setYellow(Bean yellow) {
+        public void setYellow(final Bean yellow) {
 
         }
     }
@@ -92,7 +92,7 @@ public class EjbMetaTest {
         private Bean red;
 
         @EJB(name = "yellow")
-        public void setYellow(Bean yellow) {
+        public void setYellow(final Bean yellow) {
         }
     }
 

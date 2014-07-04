@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class TldDeferredValue$JAXB
-        extends JAXBObject<TldDeferredValue> {
+    extends JAXBObject<TldDeferredValue> {
 
 
     public TldDeferredValue$JAXB() {
         super(TldDeferredValue.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "tld-deferred-valueType".intern()));
     }
 
-    public static TldDeferredValue readTldDeferredValue(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static TldDeferredValue readTldDeferredValue(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTldDeferredValue(XoXMLStreamWriter writer, TldDeferredValue tldDeferredValue, RuntimeContext context)
-            throws Exception {
+    public static void writeTldDeferredValue(final XoXMLStreamWriter writer, final TldDeferredValue tldDeferredValue, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldDeferredValue, context);
     }
 
-    public void write(XoXMLStreamWriter writer, TldDeferredValue tldDeferredValue, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final TldDeferredValue tldDeferredValue, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldDeferredValue, context);
     }
 
-    public final static TldDeferredValue _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static TldDeferredValue _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class TldDeferredValue$JAXB
             context = new RuntimeContext();
         }
 
-        TldDeferredValue tldDeferredValue = new TldDeferredValue();
+        final TldDeferredValue tldDeferredValue = new TldDeferredValue();
         context.beforeUnmarshal(tldDeferredValue, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("tld-deferred-valueType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, TldDeferredValue.class);
@@ -78,10 +78,10 @@ public class TldDeferredValue$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, tldDeferredValue);
                 tldDeferredValue.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class TldDeferredValue$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: type
-                String typeRaw = elementReader.getElementAsString();
+                final String typeRaw = elementReader.getElementAsString();
 
-                String type;
+                final String type;
                 try {
                     type = Adapters.collapsedStringAdapterAdapter.unmarshal(typeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -114,13 +114,13 @@ public class TldDeferredValue$JAXB
         return tldDeferredValue;
     }
 
-    public final TldDeferredValue read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final TldDeferredValue read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, TldDeferredValue tldDeferredValue, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final TldDeferredValue tldDeferredValue, RuntimeContext context)
+        throws Exception {
         if (tldDeferredValue == null) {
             writer.writeXsiNil();
             return;
@@ -139,23 +139,23 @@ public class TldDeferredValue$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = tldDeferredValue.id;
+        final String idRaw = tldDeferredValue.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tldDeferredValue, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: type
-        String typeRaw = tldDeferredValue.type;
+        final String typeRaw = tldDeferredValue.type;
         String type = null;
         try {
             type = Adapters.collapsedStringAdapterAdapter.marshal(typeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tldDeferredValue, "type", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (type != null) {

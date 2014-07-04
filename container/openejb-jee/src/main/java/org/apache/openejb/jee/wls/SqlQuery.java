@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for sql-query complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="sql-query">
  *   &lt;complexContent>
@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sql-query", propOrder = {
@@ -61,11 +59,9 @@ public class SqlQuery {
 
     /**
      * Gets the value of the sqlShapeName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSqlShapeName() {
         return sqlShapeName;
@@ -73,23 +69,19 @@ public class SqlQuery {
 
     /**
      * Sets the value of the sqlShapeName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSqlShapeName(String value) {
+    public void setSqlShapeName(final String value) {
         this.sqlShapeName = value;
     }
 
     /**
      * Gets the value of the sql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSql() {
         return sql;
@@ -97,37 +89,33 @@ public class SqlQuery {
 
     /**
      * Sets the value of the sql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSql(String value) {
+    public void setSql(final String value) {
         this.sql = value;
     }
 
     /**
      * Gets the value of the databaseSpecificSql property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the databaseSpecificSql property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDatabaseSpecificSql().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link DatabaseSpecificSql }
-     * 
-     * 
      */
     public List<DatabaseSpecificSql> getDatabaseSpecificSql() {
         if (databaseSpecificSql == null) {

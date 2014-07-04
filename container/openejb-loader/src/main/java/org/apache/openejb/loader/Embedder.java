@@ -39,8 +39,10 @@ public class Embedder {
     public Embedder(final String className) {
         this.className = className;
     }
+
     /**
      * Loads the Class object for the className.
+     *
      * @return
      * @throws Exception
      */
@@ -56,8 +58,10 @@ public class Embedder {
         }
         return loaderClass;
     }
+
     /**
      * Uses reflection to invoke the init(Properties props) method on the loaderClass field
+     *
      * @param properties
      * @return
      * @throws Exception
@@ -92,7 +96,7 @@ public class Embedder {
             final File libsDir;
 
             final String libsPath = SystemInstance.get().getProperty("openejb.libs");
-            if (libsPath != null){
+            if (libsPath != null) {
                 libsDir = new File(libsPath);
             } else {
                 checkOpenEjbHome(SystemInstance.get().getHome().getDirectory());
@@ -106,7 +110,7 @@ public class Embedder {
 
         try {
             final File additionalLib = SystemInstance.get().getBase().getDirectory(ADDITIONAL_LIB_FOLDER);
-            if (additionalLib.exists()){
+            if (additionalLib.exists()) {
                 classPath.addJarsToPath(additionalLib);
             }
         } catch (final Exception e2) {

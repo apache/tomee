@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class MessageDestinationUsage$JAXB
-        extends JAXBEnum<MessageDestinationUsage> {
+    extends JAXBEnum<MessageDestinationUsage> {
 
 
     public MessageDestinationUsage$JAXB() {
         super(MessageDestinationUsage.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "messageDestinationUsage".intern()));
     }
 
-    public MessageDestinationUsage parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public MessageDestinationUsage parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+        throws Exception {
         return parseMessageDestinationUsage(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, MessageDestinationUsage messageDestinationUsage)
-            throws Exception {
+    public String toString(final Object bean, String parameterName, RuntimeContext context, MessageDestinationUsage messageDestinationUsage)
+        throws Exception {
         return toStringMessageDestinationUsage(bean, parameterName, context, messageDestinationUsage);
     }
 
-    public static MessageDestinationUsage parseMessageDestinationUsage(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static MessageDestinationUsage parseMessageDestinationUsage(final XoXMLStreamReader reader, RuntimeContext context, String value)
+        throws Exception {
         if ("Consumes".equals(value)) {
             return MessageDestinationUsage.CONSUMES;
         } else if ("Produces".equals(value)) {
@@ -54,8 +54,8 @@ public class MessageDestinationUsage$JAXB
         }
     }
 
-    public static String toStringMessageDestinationUsage(Object bean, String parameterName, RuntimeContext context, MessageDestinationUsage messageDestinationUsage)
-            throws Exception {
+    public static String toStringMessageDestinationUsage(final Object bean, final String parameterName, final RuntimeContext context, MessageDestinationUsage messageDestinationUsage)
+        throws Exception {
         if (MessageDestinationUsage.CONSUMES == messageDestinationUsage) {
             return "Consumes";
         } else if (MessageDestinationUsage.PRODUCES == messageDestinationUsage) {

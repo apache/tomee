@@ -43,10 +43,10 @@ public class ProviderWrapperTest extends TestCase {
             provider = Provider.provider();
             assertNotNull("provider is null", provider);
             assertTrue("provider should be an instance of ProviderWrapper", provider instanceof ProviderWrapper);
-            ProviderWrapper providerWrapper = (ProviderWrapper)provider;
+            final ProviderWrapper providerWrapper = (ProviderWrapper) provider;
 
             // check delegate
-            Provider delegate = providerWrapper.getDelegate();
+            final Provider delegate = providerWrapper.getDelegate();
             assertNotNull("providerWrapper delegate is null", delegate);
             assertFalse("providerWrapper delegate should not be an instance of ProviderWrapper", delegate instanceof ProviderWrapper);
         } finally {
@@ -56,27 +56,27 @@ public class ProviderWrapperTest extends TestCase {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public static class MockProvider extends Provider {
-        public ServiceDelegate createServiceDelegate(URL url, QName qName, Class aClass) {
+        public ServiceDelegate createServiceDelegate(final URL url, final QName qName, final Class aClass) {
             return null;
         }
 
-        public Endpoint createEndpoint(String string, Object object) {
+        public Endpoint createEndpoint(final String string, final Object object) {
             return null;
         }
 
-        public Endpoint createAndPublishEndpoint(String string, Object object) {
+        public Endpoint createAndPublishEndpoint(final String string, final Object object) {
             return null;
         }
 
-        public W3CEndpointReference createW3CEndpointReference(String address, QName serviceName, QName portName, List<Element> metadata, String wsdlDocumentLocation, List<Element> referenceParameters) {
+        public W3CEndpointReference createW3CEndpointReference(final String address, final QName serviceName, final QName portName, final List<Element> metadata, final String wsdlDocumentLocation, final List<Element> referenceParameters) {
             return null;
         }
 
-        public EndpointReference readEndpointReference(Source source){
+        public EndpointReference readEndpointReference(final Source source) {
             return null;
         }
 
-        public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
             return null;
         }
     }

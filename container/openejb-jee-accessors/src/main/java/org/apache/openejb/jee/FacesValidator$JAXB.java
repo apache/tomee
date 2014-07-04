@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesValidator$JAXB
-        extends JAXBObject<FacesValidator> {
+    extends JAXBObject<FacesValidator> {
 
 
     public FacesValidator$JAXB() {
         super(FacesValidator.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-validatorType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesValidatorExtension$JAXB.class);
     }
 
-    public static FacesValidator readFacesValidator(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesValidator readFacesValidator(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesValidator(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesValidator(final XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidator, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidator, context);
     }
 
-    public final static FacesValidator _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesValidator _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesValidator$JAXB
             context = new RuntimeContext();
         }
 
-        FacesValidator facesValidator = new FacesValidator();
+        final FacesValidator facesValidator = new FacesValidator();
         context.beforeUnmarshal(facesValidator, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,7 +89,7 @@ public class FacesValidator$JAXB
         List<FacesValidatorExtension> validatorExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-validatorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesValidator.class);
@@ -140,7 +140,7 @@ public class FacesValidator$JAXB
                 // ELEMENT: validatorId
                 String validatorIdRaw = elementReader.getElementAsString();
 
-                String validatorId;
+                final String validatorId;
                 try {
                     validatorId = Adapters.collapsedStringAdapterAdapter.unmarshal(validatorIdRaw);
                 } catch (Exception e) {
@@ -236,13 +236,13 @@ public class FacesValidator$JAXB
         return facesValidator;
     }
 
-    public final FacesValidator read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesValidator read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesValidator facesValidator, RuntimeContext context)
+        throws Exception {
         if (facesValidator == null) {
             writer.writeXsiNil();
             return;
@@ -281,7 +281,7 @@ public class FacesValidator$JAXB
             context.getterError(facesValidator, "descriptions", FacesValidator.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);

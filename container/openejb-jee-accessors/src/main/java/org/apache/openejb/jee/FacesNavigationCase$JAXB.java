@@ -38,33 +38,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesNavigationCase$JAXB
-        extends JAXBObject<FacesNavigationCase> {
+    extends JAXBObject<FacesNavigationCase> {
 
 
     public FacesNavigationCase$JAXB() {
         super(FacesNavigationCase.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-navigation-caseType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesFromAction$JAXB.class, FacesRedirect$JAXB.class);
     }
 
-    public static FacesNavigationCase readFacesNavigationCase(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesNavigationCase readFacesNavigationCase(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNavigationCase(XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesNavigationCase(final XoXMLStreamWriter writer, final FacesNavigationCase facesNavigationCase, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationCase, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationCase, context);
     }
 
-    public final static FacesNavigationCase _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesNavigationCase _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -75,7 +75,7 @@ public class FacesNavigationCase$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNavigationCase facesNavigationCase = new FacesNavigationCase();
+        final FacesNavigationCase facesNavigationCase = new FacesNavigationCase();
         context.beforeUnmarshal(facesNavigationCase, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -83,7 +83,7 @@ public class FacesNavigationCase$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-navigation-caseType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesNavigationCase.class);
@@ -91,7 +91,7 @@ public class FacesNavigationCase$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -204,13 +204,13 @@ public class FacesNavigationCase$JAXB
         return facesNavigationCase;
     }
 
-    public final FacesNavigationCase read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesNavigationCase read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesNavigationCase facesNavigationCase, RuntimeContext context)
+        throws Exception {
         if (facesNavigationCase == null) {
             writer.writeXsiNil();
             return;
@@ -220,7 +220,7 @@ public class FacesNavigationCase$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesNavigationCase.class != facesNavigationCase.getClass()) {
             context.unexpectedSubclass(writer, facesNavigationCase, FacesNavigationCase.class);
             return;
@@ -235,7 +235,7 @@ public class FacesNavigationCase$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesNavigationCase, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -268,7 +268,7 @@ public class FacesNavigationCase$JAXB
             context.getterError(facesNavigationCase, "displayNames", FacesNavigationCase.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -330,7 +330,7 @@ public class FacesNavigationCase$JAXB
         }
 
         // ELEMENT: toViewId
-        String toViewIdRaw = facesNavigationCase.toViewId;
+        final String toViewIdRaw = facesNavigationCase.toViewId;
         String toViewId = null;
         try {
             toViewId = Adapters.collapsedStringAdapterAdapter.marshal(toViewIdRaw);

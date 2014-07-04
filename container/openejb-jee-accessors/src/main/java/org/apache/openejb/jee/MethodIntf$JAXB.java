@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class MethodIntf$JAXB
-        extends JAXBEnum<MethodIntf> {
+    extends JAXBEnum<MethodIntf> {
 
 
     public MethodIntf$JAXB() {
         super(MethodIntf.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "methodIntf".intern()));
     }
 
-    public MethodIntf parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public MethodIntf parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+        throws Exception {
         return parseMethodIntf(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, MethodIntf methodIntf)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, RuntimeContext context, MethodIntf methodIntf)
+        throws Exception {
         return toStringMethodIntf(bean, parameterName, context, methodIntf);
     }
 
-    public static MethodIntf parseMethodIntf(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static MethodIntf parseMethodIntf(final XoXMLStreamReader reader, RuntimeContext context, String value)
+        throws Exception {
         if ("Home".equals(value)) {
             return MethodIntf.HOME;
         } else if ("Remote".equals(value)) {
@@ -62,8 +62,8 @@ public class MethodIntf$JAXB
         }
     }
 
-    public static String toStringMethodIntf(Object bean, String parameterName, RuntimeContext context, MethodIntf methodIntf)
-            throws Exception {
+    public static String toStringMethodIntf(final Object bean, final String parameterName, RuntimeContext context, final MethodIntf methodIntf)
+        throws Exception {
         if (MethodIntf.HOME == methodIntf) {
             return "Home";
         } else if (MethodIntf.REMOTE == methodIntf) {

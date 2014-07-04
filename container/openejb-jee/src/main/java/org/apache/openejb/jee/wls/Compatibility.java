@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for compatibility complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="compatibility">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "compatibility", propOrder = {
@@ -82,11 +80,9 @@ public class Compatibility {
 
     /**
      * Gets the value of the serializeByteArrayToOracleBlob property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getSerializeByteArrayToOracleBlob() {
         return serializeByteArrayToOracleBlob;
@@ -94,23 +90,19 @@ public class Compatibility {
 
     /**
      * Sets the value of the serializeByteArrayToOracleBlob property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setSerializeByteArrayToOracleBlob(Boolean value) {
+    public void setSerializeByteArrayToOracleBlob(final Boolean value) {
         this.serializeByteArrayToOracleBlob = value;
     }
 
     /**
      * Gets the value of the serializeCharArrayToBytes property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getSerializeCharArrayToBytes() {
         return serializeCharArrayToBytes;
@@ -118,23 +110,19 @@ public class Compatibility {
 
     /**
      * Sets the value of the serializeCharArrayToBytes property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setSerializeCharArrayToBytes(Boolean value) {
+    public void setSerializeCharArrayToBytes(final Boolean value) {
         this.serializeCharArrayToBytes = value;
     }
 
     /**
      * Gets the value of the allowReadonlyCreateAndRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getAllowReadonlyCreateAndRemove() {
         return allowReadonlyCreateAndRemove;
@@ -142,23 +130,19 @@ public class Compatibility {
 
     /**
      * Sets the value of the allowReadonlyCreateAndRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setAllowReadonlyCreateAndRemove(Boolean value) {
+    public void setAllowReadonlyCreateAndRemove(final Boolean value) {
         this.allowReadonlyCreateAndRemove = value;
     }
 
     /**
      * Gets the value of the disableStringTrimming property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getDisableStringTrimming() {
         return disableStringTrimming;
@@ -166,23 +150,19 @@ public class Compatibility {
 
     /**
      * Sets the value of the disableStringTrimming property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDisableStringTrimming(Boolean value) {
+    public void setDisableStringTrimming(final Boolean value) {
         this.disableStringTrimming = value;
     }
 
     /**
      * Gets the value of the findersReturnNulls property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getFindersReturnNulls() {
         return findersReturnNulls;
@@ -190,23 +170,19 @@ public class Compatibility {
 
     /**
      * Sets the value of the findersReturnNulls property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setFindersReturnNulls(Boolean value) {
+    public void setFindersReturnNulls(final Boolean value) {
         this.findersReturnNulls = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -214,13 +190,11 @@ public class Compatibility {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

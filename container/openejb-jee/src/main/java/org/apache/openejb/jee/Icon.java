@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for iconType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="iconType">
  *   &lt;complexContent>
@@ -49,14 +49,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "iconType", propOrder = {
-        "smallIcon",
-        "largeIcon"
-        })
+    "smallIcon",
+    "largeIcon"
+})
 public class Icon implements Keyable<String> {
 
     @XmlElement(name = "small-icon")
@@ -74,7 +72,7 @@ public class Icon implements Keyable<String> {
         return smallIcon;
     }
 
-    public void setSmallIcon(String value) {
+    public void setSmallIcon(final String value) {
         this.smallIcon = value;
     }
 
@@ -82,7 +80,7 @@ public class Icon implements Keyable<String> {
         return largeIcon;
     }
 
-    public void setLargeIcon(String value) {
+    public void setLargeIcon(final String value) {
         this.largeIcon = value;
     }
 
@@ -90,7 +88,7 @@ public class Icon implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -98,7 +96,7 @@ public class Icon implements Keyable<String> {
         return lang;
     }
 
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 

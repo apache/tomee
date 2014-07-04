@@ -74,18 +74,18 @@ public class FailOverRouterTest {
 
     @Configuration
     public Properties configuration() {
-            // datasources
+        // datasources
         return datasource(datasource(datasource(new PropertiesBuilder(), "fo1"), "fo2"), "fo3")
 
-                // router
-                .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
-                .property("router.datasourceNames", "fo1,fo2,fo3")
+            // router
+            .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
+            .property("router.datasourceNames", "fo1,fo2,fo3")
 
                 // routed DS
-                .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
-                .property("routedDs.router", "router")
+            .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
+            .property("routedDs.router", "router")
 
-                .build();
+            .build();
     }
 
     @Module

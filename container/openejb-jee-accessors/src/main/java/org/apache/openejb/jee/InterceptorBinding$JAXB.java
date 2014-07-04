@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InterceptorBinding$JAXB
-        extends JAXBObject<InterceptorBinding> {
+    extends JAXBObject<InterceptorBinding> {
 
 
     public InterceptorBinding$JAXB() {
         super(InterceptorBinding.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptor-bindingType".intern()), Text$JAXB.class, InterceptorOrder$JAXB.class, NamedMethod$JAXB.class);
     }
 
-    public static InterceptorBinding readInterceptorBinding(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InterceptorBinding readInterceptorBinding(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInterceptorBinding(XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
-            throws Exception {
+    public static void writeInterceptorBinding(final XoXMLStreamWriter writer, final InterceptorBinding interceptorBinding, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptorBinding, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
+        throws Exception {
         _write(writer, interceptorBinding, context);
     }
 
-    public final static InterceptorBinding _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InterceptorBinding _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -179,13 +179,13 @@ public class InterceptorBinding$JAXB
         return interceptorBinding;
     }
 
-    public final InterceptorBinding read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InterceptorBinding read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, InterceptorBinding interceptorBinding, RuntimeContext context)
+        throws Exception {
         if (interceptorBinding == null) {
             writer.writeXsiNil();
             return;
@@ -210,7 +210,7 @@ public class InterceptorBinding$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(interceptorBinding, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -220,7 +220,7 @@ public class InterceptorBinding$JAXB
         Text[] descriptions = null;
         try {
             descriptions = interceptorBinding.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(interceptorBinding, "descriptions", InterceptorBinding.class, "getDescriptions", e);
         }
         if (descriptions != null) {

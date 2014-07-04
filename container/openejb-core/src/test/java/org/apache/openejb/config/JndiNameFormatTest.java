@@ -36,30 +36,30 @@ import java.util.Properties;
 
 public class JndiNameFormatTest extends TestCase {
 
-	private Assembler assembler;
+    private Assembler assembler;
 
-	private void deploy(String format) throws OpenEJBException, IOException, NamingException {
-		SystemInstance.get().setProperty("openejb.jndiname.format", format);
+    private void deploy(final String format) throws OpenEJBException, IOException, NamingException {
+        SystemInstance.get().setProperty("openejb.jndiname.format", format);
 
-		ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
         assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EchoImpl.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
         assembler.createApplication(config.configureApplication(app));
-	}
+    }
 
     public void testShouldLookupDeployBeanWithLowercaseInterfaceName() throws Exception {
         deploy("{ejbName}/{interfaceType.annotationName.lc}");
-    	
-    	Properties p = new Properties();
+
+        final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
@@ -71,12 +71,12 @@ public class JndiNameFormatTest extends TestCase {
 
     public void testShouldLookupDeployBeanWithUppercaseInterfaceName() throws Exception {
         deploy("{ejbName}/{interfaceType.annotationName.uc}");
-    	
-    	Properties p = new Properties();
+
+        final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
-        Echo echo = (Echo) context.lookup("EchoImpl/REMOTE");
+        final Echo echo = (Echo) context.lookup("EchoImpl/REMOTE");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
         assembler.destroy();
@@ -84,12 +84,12 @@ public class JndiNameFormatTest extends TestCase {
 
     public void testShouldLookupDeployBeanWithCamelCaseInterfaceName() throws Exception {
         deploy("{ejbName}/{interfaceType.annotationName.cc}");
-    	
-    	Properties p = new Properties();
+
+        final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
-        Echo echo = (Echo) context.lookup("EchoImpl/Remote");
+        final Echo echo = (Echo) context.lookup("EchoImpl/Remote");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
         assembler.destroy();
@@ -97,18 +97,18 @@ public class JndiNameFormatTest extends TestCase {
 
     public void testShouldLookupDeployBeanLowerCaseClassNameAndUpperCaseInterfaceName() throws Exception {
         deploy("{ejbName.lc}/{interfaceType.annotationName.uc}");
-    	
-    	Properties p = new Properties();
+
+        final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
-        Echo echo = (Echo) context.lookup("echoimpl/REMOTE");
+        final Echo echo = (Echo) context.lookup("echoimpl/REMOTE");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
         assembler.destroy();
     }
 
-    
+
     @Remote
     public static interface Echo {
         String echo(String input);
@@ -120,7 +120,7 @@ public class JndiNameFormatTest extends TestCase {
         public EchoImpl() {
         }
 
-        public String echo(String input) {
+        public String echo(final String input) {
             return "Echoing: " + input;
         }
     }

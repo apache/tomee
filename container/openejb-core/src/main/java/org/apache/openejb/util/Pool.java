@@ -149,8 +149,8 @@ public class Pool<T> {
 
     private Executor createExecutor() {
         return new ThreadPoolExecutor(3, 10,
-                60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
     }
 
     private void greater(final String maxName, final long max, final String minName, final long min) {
@@ -172,8 +172,7 @@ public class Pool<T> {
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
-     * @throws TimeoutException
-     *                               if no instance could be obtained within the timeout
+     * @throws TimeoutException      if no instance could be obtained within the timeout
      */
     public Entry pop(final long timeout, final TimeUnit unit) throws InterruptedException, TimeoutException {
         return pop(timeout, unit, true);
@@ -498,8 +497,8 @@ public class Pool<T> {
             }
             final Instance instance = new Instance(obj);
             this.soft = garbageCollection ?
-                    new SoftReference<Instance>(instance) :
-                    new HardReference<Instance>(instance);
+                new SoftReference<Instance>(instance) :
+                new HardReference<Instance>(instance);
             this.version = poolVersion.get();
             this.active.set(instance);
             this.created = now() + offset;
@@ -539,11 +538,11 @@ public class Pool<T> {
         public String toString() {
             final long now = now();
             return "Entry{" +
-                    "min=" + (hard.get() != null) +
-                    ", age=" + (now - created) +
-                    ", idle=" + (now - used) +
-                    ", bean=" + soft.get() +
-                    '}';
+                "min=" + (hard.get() != null) +
+                ", age=" + (now - created) +
+                ", idle=" + (now - used) +
+                ", bean=" + soft.get() +
+                '}';
         }
 
         private class Discarded implements Runnable {

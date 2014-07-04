@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for logging complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="logging">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "logging", propOrder = {
@@ -101,11 +99,9 @@ public class Logging {
 
     /**
      * Gets the value of the logFilename property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLogFilename() {
         return logFilename;
@@ -113,23 +109,19 @@ public class Logging {
 
     /**
      * Sets the value of the logFilename property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLogFilename(String value) {
+    public void setLogFilename(final String value) {
         this.logFilename = value;
     }
 
     /**
      * Gets the value of the loggingEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getLoggingEnabled() {
         return loggingEnabled;
@@ -137,23 +129,19 @@ public class Logging {
 
     /**
      * Sets the value of the loggingEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setLoggingEnabled(Boolean value) {
+    public void setLoggingEnabled(final Boolean value) {
         this.loggingEnabled = value;
     }
 
     /**
      * Gets the value of the rotationType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRotationType() {
         return rotationType;
@@ -161,23 +149,19 @@ public class Logging {
 
     /**
      * Sets the value of the rotationType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRotationType(String value) {
+    public void setRotationType(final String value) {
         this.rotationType = value;
     }
 
     /**
      * Gets the value of the numberOfFilesLimited property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getNumberOfFilesLimited() {
         return numberOfFilesLimited;
@@ -185,23 +169,19 @@ public class Logging {
 
     /**
      * Sets the value of the numberOfFilesLimited property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setNumberOfFilesLimited(Boolean value) {
+    public void setNumberOfFilesLimited(final Boolean value) {
         this.numberOfFilesLimited = value;
     }
 
     /**
      * Gets the value of the fileCount property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getFileCount() {
         return fileCount;
@@ -209,23 +189,19 @@ public class Logging {
 
     /**
      * Sets the value of the fileCount property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setFileCount(BigInteger value) {
+    public void setFileCount(final BigInteger value) {
         this.fileCount = value;
     }
 
     /**
      * Gets the value of the fileSizeLimit property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getFileSizeLimit() {
         return fileSizeLimit;
@@ -233,23 +209,19 @@ public class Logging {
 
     /**
      * Sets the value of the fileSizeLimit property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setFileSizeLimit(BigInteger value) {
+    public void setFileSizeLimit(final BigInteger value) {
         this.fileSizeLimit = value;
     }
 
     /**
      * Gets the value of the rotateLogOnStartup property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getRotateLogOnStartup() {
         return rotateLogOnStartup;
@@ -257,23 +229,19 @@ public class Logging {
 
     /**
      * Sets the value of the rotateLogOnStartup property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setRotateLogOnStartup(Boolean value) {
+    public void setRotateLogOnStartup(final Boolean value) {
         this.rotateLogOnStartup = value;
     }
 
     /**
      * Gets the value of the logFileRotationDir property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLogFileRotationDir() {
         return logFileRotationDir;
@@ -281,23 +249,19 @@ public class Logging {
 
     /**
      * Sets the value of the logFileRotationDir property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLogFileRotationDir(String value) {
+    public void setLogFileRotationDir(final String value) {
         this.logFileRotationDir = value;
     }
 
     /**
      * Gets the value of the rotationTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRotationTime() {
         return rotationTime;
@@ -305,23 +269,19 @@ public class Logging {
 
     /**
      * Sets the value of the rotationTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRotationTime(String value) {
+    public void setRotationTime(final String value) {
         this.rotationTime = value;
     }
 
     /**
      * Gets the value of the fileTimeSpan property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getFileTimeSpan() {
         return fileTimeSpan;
@@ -329,23 +289,19 @@ public class Logging {
 
     /**
      * Sets the value of the fileTimeSpan property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setFileTimeSpan(BigInteger value) {
+    public void setFileTimeSpan(final BigInteger value) {
         this.fileTimeSpan = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -353,13 +309,11 @@ public class Logging {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

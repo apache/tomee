@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.MessageAdapter$JAXB.readMessageAdapter;
 import static org.apache.openejb.jee.MessageAdapter$JAXB.writeMessageAdapter;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InboundResourceadapter$JAXB
-        extends JAXBObject<InboundResourceadapter> {
+    extends JAXBObject<InboundResourceadapter> {
 
 
     public InboundResourceadapter$JAXB() {
         super(InboundResourceadapter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "inbound-resourceadapterType".intern()), MessageAdapter$JAXB.class);
     }
 
-    public static InboundResourceadapter readInboundResourceadapter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InboundResourceadapter readInboundResourceadapter(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInboundResourceadapter(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public static void writeInboundResourceadapter(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+        throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+        throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
 
-    public final static InboundResourceadapter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InboundResourceadapter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,12 +68,12 @@ public class InboundResourceadapter$JAXB
             context = new RuntimeContext();
         }
 
-        InboundResourceadapter inboundResourceadapter = new InboundResourceadapter();
+        final InboundResourceadapter inboundResourceadapter = new InboundResourceadapter();
         context.beforeUnmarshal(inboundResourceadapter, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("inbound-resourceadapterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InboundResourceadapter.class);
@@ -108,13 +108,13 @@ public class InboundResourceadapter$JAXB
         return inboundResourceadapter;
     }
 
-    public final InboundResourceadapter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InboundResourceadapter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+        throws Exception {
         if (inboundResourceadapter == null) {
             writer.writeXsiNil();
             return;

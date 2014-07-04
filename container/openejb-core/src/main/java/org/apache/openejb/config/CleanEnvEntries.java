@@ -93,7 +93,7 @@ public class CleanEnvEntries implements DynamicDeployer {
         return Collections.emptyMap();
     }
 
-    private void removeUnsetEnvEntries(final Map<String,EnvEntry> appEntries, final JndiConsumer consumer) {
+    private void removeUnsetEnvEntries(final Map<String, EnvEntry> appEntries, final JndiConsumer consumer) {
         final Iterator<EnvEntry> entries = consumer.getEnvEntry().iterator();
         while (entries.hasNext()) {
             final EnvEntry entry = entries.next();

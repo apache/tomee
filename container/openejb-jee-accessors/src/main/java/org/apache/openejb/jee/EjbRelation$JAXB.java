@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EjbRelation$JAXB
-        extends JAXBObject<EjbRelation> {
+    extends JAXBObject<EjbRelation> {
 
 
     public EjbRelation$JAXB() {
         super(EjbRelation.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relationType".intern()), Text$JAXB.class, EjbRelationshipRole$JAXB.class);
     }
 
-    public static EjbRelation readEjbRelation(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EjbRelation readEjbRelation(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEjbRelation(XoXMLStreamWriter writer, EjbRelation ejbRelation, RuntimeContext context)
-            throws Exception {
+    public static void writeEjbRelation(final XoXMLStreamWriter writer, EjbRelation ejbRelation, final RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRelation, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EjbRelation ejbRelation, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final EjbRelation ejbRelation, RuntimeContext context)
+        throws Exception {
         _write(writer, ejbRelation, context);
     }
 
-    public final static EjbRelation _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EjbRelation _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -87,7 +87,7 @@ public class EjbRelation$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -122,7 +122,7 @@ public class EjbRelation$JAXB
                 ejbRelation.ejbRelationName = ejbRelationName;
             } else if (("ejb-relationship-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRelationshipRole
-                EjbRelationshipRole ejbRelationshipRoleItem = readEjbRelationshipRole(elementReader, context);
+                final EjbRelationshipRole ejbRelationshipRoleItem = readEjbRelationshipRole(elementReader, context);
                 if (ejbRelationshipRole == null) {
                     ejbRelationshipRole = ejbRelation.ejbRelationshipRole;
                     if (ejbRelationshipRole != null) {
@@ -152,13 +152,13 @@ public class EjbRelation$JAXB
         return ejbRelation;
     }
 
-    public final EjbRelation read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EjbRelation read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EjbRelation ejbRelation, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final EjbRelation ejbRelation, RuntimeContext context)
+        throws Exception {
         if (ejbRelation == null) {
             writer.writeXsiNil();
             return;
@@ -183,7 +183,7 @@ public class EjbRelation$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(ejbRelation, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

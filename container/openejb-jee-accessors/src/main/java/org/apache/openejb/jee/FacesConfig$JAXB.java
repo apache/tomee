@@ -59,33 +59,33 @@ import static org.apache.openejb.jee.FacesValidator$JAXB.readFacesValidator;
 import static org.apache.openejb.jee.FacesValidator$JAXB.writeFacesValidator;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesConfig$JAXB
-        extends JAXBObject<FacesConfig> {
+    extends JAXBObject<FacesConfig> {
 
 
     public FacesConfig$JAXB() {
         super(FacesConfig.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-configType".intern()), FacesApplication$JAXB.class, FacesOrdering$JAXB.class, FacesAbsoluteOrdering$JAXB.class, FacesFactory$JAXB.class, FacesComponent$JAXB.class, FacesConverter$JAXB.class, FacesManagedBean$JAXB.class, FacesNavigationRule$JAXB.class, FacesReferencedBean$JAXB.class, FacesRenderKit$JAXB.class, FacesLifecycle$JAXB.class, FacesValidator$JAXB.class, FacesBehavior$JAXB.class, FacesExtension$JAXB.class);
     }
 
-    public static FacesConfig readFacesConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesConfig readFacesConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesConfig(XoXMLStreamWriter writer, FacesConfig facesConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesConfig(final XoXMLStreamWriter writer, final FacesConfig facesConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesConfig facesConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesConfig facesConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, facesConfig, context);
     }
 
-    public final static FacesConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -96,7 +96,7 @@ public class FacesConfig$JAXB
             context = new RuntimeContext();
         }
 
-        FacesConfig facesConfig = new FacesConfig();
+        final FacesConfig facesConfig = new FacesConfig();
         context.beforeUnmarshal(facesConfig, LifecycleCallback.NONE);
 
         List<FacesApplication> application = null;
@@ -127,7 +127,7 @@ public class FacesConfig$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesConfig);
                 facesConfig.id = id;
             } else if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
@@ -394,13 +394,13 @@ public class FacesConfig$JAXB
         return facesConfig;
     }
 
-    public final FacesConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesConfig facesConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesConfig facesConfig, RuntimeContext context)
+        throws Exception {
         if (facesConfig == null) {
             writer.writeXsiNil();
             return;
@@ -410,7 +410,7 @@ public class FacesConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesConfig.class != facesConfig.getClass()) {
             context.unexpectedSubclass(writer, facesConfig, FacesConfig.class);
             return;
@@ -437,7 +437,7 @@ public class FacesConfig$JAXB
             String version = null;
             try {
                 version = Adapters.collapsedStringAdapterAdapter.marshal(versionRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesConfig, "version", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "version", version);
@@ -450,7 +450,7 @@ public class FacesConfig$JAXB
         }
 
         // ELEMENT: application
-        List<FacesApplication> application = facesConfig.application;
+        final List<FacesApplication> application = facesConfig.application;
         if (application != null) {
             for (FacesApplication applicationItem : application) {
                 writer.writeStartElement(prefix, "application", "http://java.sun.com/xml/ns/javaee");
@@ -478,7 +478,7 @@ public class FacesConfig$JAXB
         }
 
         // ELEMENT: absoluteOrdering
-        List<FacesAbsoluteOrdering> absoluteOrdering = facesConfig.absoluteOrdering;
+        final List<FacesAbsoluteOrdering> absoluteOrdering = facesConfig.absoluteOrdering;
         if (absoluteOrdering != null) {
             for (FacesAbsoluteOrdering absoluteOrderingItem : absoluteOrdering) {
                 if (absoluteOrderingItem != null) {

@@ -31,11 +31,11 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class ContextServiceImpl implements ContextService {
-    private static final HashMap<String,String> EMPTY_PROPS = new HashMap<String, String>();
+    private static final HashMap<String, String> EMPTY_PROPS = new HashMap<String, String>();
 
     @Override
     public <T> T createContextualProxy(final T instance, final Class<T> intf) {
-        return intf.cast(createContextualProxy(instance, new Class<?>[] { intf }));
+        return intf.cast(createContextualProxy(instance, new Class<?>[]{intf}));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public <T> T createContextualProxy(final T instance, final Map<String, String> executionProperties, final Class<T> intf) {
-        return intf.cast(createContextualProxy(instance, executionProperties, new Class<?>[] { intf }));
+        return intf.cast(createContextualProxy(instance, executionProperties, new Class<?>[]{intf}));
     }
 
     @Override

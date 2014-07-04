@@ -48,22 +48,22 @@ public class ResourcesJsonTest {
 
     @Before
     public void setUp() throws OpenEJBException, NamingException, IOException {
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        AppModule app = new AppModule(ResourcesJsonTest.class.getClassLoader(), ResourcesJsonTest.class.getSimpleName());
+        final AppModule app = new AppModule(ResourcesJsonTest.class.getClassLoader(), ResourcesJsonTest.class.getSimpleName());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(ConfiguredThroughJSonBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
         app.getEjbModules().iterator().next().getAltDDs().put("resources.json", getClass().getClassLoader().getResource("appresource.resources.json"));
 
         assembler.createApplication(config.configureApplication(app));
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         properties.setProperty("openejb.embedded.initialcontext.close", "destroy");
 
@@ -85,7 +85,7 @@ public class ResourcesJsonTest {
     public void test() throws Exception {
         assertNotNull(bean.datasource());
         assertTrue(bean.datasource() instanceof BasicDataSource);
-        BasicDataSource ds = (BasicDataSource) bean.datasource();
+        final BasicDataSource ds = (BasicDataSource) bean.datasource();
         assertEquals("org.hsqldb.jdbcDriver", ds.getDriverClassName());
         assertEquals("not:used:url", ds.getUrl());
         assertEquals("foo", ds.getUsername());

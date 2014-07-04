@@ -44,7 +44,7 @@ public class DeploymentContext {
 
     @SuppressWarnings({"unchecked"})
     public <T> T get(final Class<T> type) {
-        return (T)data.get(type);
+        return (T) data.get(type);
     }
 
     @SuppressWarnings({"unchecked"})

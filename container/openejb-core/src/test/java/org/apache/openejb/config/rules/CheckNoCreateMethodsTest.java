@@ -39,16 +39,16 @@ import java.rmi.RemoteException;
 
 @RunWith(ValidationRunner.class)
 public class CheckNoCreateMethodsTest {
-    @Keys( { @Key(value = "no.home.create", count = 4), @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
-            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create"),@Key(value="session.no.ejb.create",count=2) })
+    @Keys({@Key(value = "no.home.create", count = 4), @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
+        @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING), @Key("entity.no.ejb.create"), @Key(value = "session.no.ejb.create", count = 2)})
     public EjbJar noCreateMethod() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         StatelessBean stateless = new StatelessBean(FooStateless.class);
         stateless.setHomeAndRemote(FooStatelessHome.class, FooStatelessRemote.class);
         stateless.setHomeAndLocal(FooStatelessLocalHome.class, FooStatelessLocal.class);
         ejbJar.addEnterpriseBean(stateless);
-        StatefulBean stateful = new StatefulBean(FooStateful.class);
+        final StatefulBean stateful = new StatefulBean(FooStateful.class);
         stateful.setHomeAndRemote(FooStatefulHome.class, FooStatefulRemote.class);
         stateful.setHomeAndLocal(FooStatefulLocalHome.class, FooStatefulLocal.class);
         ejbJar.addEnterpriseBean(stateful);
@@ -68,52 +68,70 @@ public class CheckNoCreateMethodsTest {
         return ejbJar;
     }
 
-    private static interface FooStatelessHome extends javax.ejb.EJBHome {}
-
-    private static interface FooStatelessRemote extends javax.ejb.EJBObject {}
-
-    private static interface FooStatelessLocalHome extends javax.ejb.EJBLocalHome {}
-
-    private static interface FooStatelessLocal extends javax.ejb.EJBLocalObject {}
-
-    private static class FooStateless implements SessionBean {
-        public void ejbCreate() {}
-
-        @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
-
-        @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
-
-        @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+    private static interface FooStatelessHome extends javax.ejb.EJBHome {
     }
 
-    private static interface FooStatefulHome extends javax.ejb.EJBHome {}
+    private static interface FooStatelessRemote extends javax.ejb.EJBObject {
+    }
 
-    private static interface FooStatefulRemote extends javax.ejb.EJBObject {}
+    private static interface FooStatelessLocalHome extends javax.ejb.EJBLocalHome {
+    }
 
-    private static interface FooStatefulLocalHome extends javax.ejb.EJBLocalHome {}
+    private static interface FooStatelessLocal extends javax.ejb.EJBLocalObject {
+    }
 
-    private static interface FooStatefulLocal extends javax.ejb.EJBLocalObject {}
+    private static class FooStateless implements SessionBean {
+        public void ejbCreate() {
+        }
+
+        @Override
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
+    }
+
+    private static interface FooStatefulHome extends javax.ejb.EJBHome {
+    }
+
+    private static interface FooStatefulRemote extends javax.ejb.EJBObject {
+    }
+
+    private static interface FooStatefulLocalHome extends javax.ejb.EJBLocalHome {
+    }
+
+    private static interface FooStatefulLocal extends javax.ejb.EJBLocalObject {
+    }
 
     private static class FooStateful implements SessionBean {
-        public void ejbCreate() {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static interface MyLocalHome extends EJBLocalHome {
@@ -122,36 +140,46 @@ public class CheckNoCreateMethodsTest {
         public MyLocal findByPrimaryKey(Integer pk) throws FinderException;
     }
 
-    private static interface MyLocal extends EJBLocalObject {}
+    private static interface MyLocal extends EJBLocalObject {
+    }
 
     private static class MyEntity implements EntityBean {
-        public Integer ejbCreate(Integer pk) throws CreateException {
+        public Integer ejbCreate(final Integer pk) throws CreateException {
             return null;
         }
 
-        public void ejbPostCreate(String str) {}
+        public void ejbPostCreate(final String str) {
+        }
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbLoad() throws EJBException, RemoteException {}
+        public void ejbLoad() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws RemoveException, EJBException, RemoteException {}
+        public void ejbRemove() throws RemoveException, EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbStore() throws EJBException, RemoteException {}
+        public void ejbStore() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setEntityContext(EntityContext arg0) throws EJBException, RemoteException {}
+        public void setEntityContext(final EntityContext arg0) throws EJBException, RemoteException {
+        }
 
         @Override
-        public void unsetEntityContext() throws EJBException, RemoteException {}
+        public void unsetEntityContext() throws EJBException, RemoteException {
+        }
     }
+
     private static class YourEntity implements EntityBean {
 //        public Integer ejbCreate(Integer pk) throws CreateException {
 //            return null;
@@ -160,73 +188,93 @@ public class CheckNoCreateMethodsTest {
 //        public void ejbPostCreate(Integer pk) {}
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbLoad() throws EJBException, RemoteException {}
+        public void ejbLoad() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws RemoveException, EJBException, RemoteException {}
+        public void ejbRemove() throws RemoveException, EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbStore() throws EJBException, RemoteException {}
+        public void ejbStore() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setEntityContext(EntityContext arg0) throws EJBException, RemoteException {}
+        public void setEntityContext(final EntityContext arg0) throws EJBException, RemoteException {
+        }
 
         @Override
-        public void unsetEntityContext() throws EJBException, RemoteException {}
+        public void unsetEntityContext() throws EJBException, RemoteException {
+        }
     }
- 
+
     private static interface BarStatelessHome extends javax.ejb.EJBHome {
-        public BarStatelessRemote create() throws CreateException,RemoteException;
+        public BarStatelessRemote create() throws CreateException, RemoteException;
     }
 
-    private static interface BarStatelessRemote extends javax.ejb.EJBObject {}
+    private static interface BarStatelessRemote extends javax.ejb.EJBObject {
+    }
+
     private static class BarStateless implements SessionBean {
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static interface BazStatefulHome extends javax.ejb.EJBHome {
-        public BazStatefulRemote create() throws CreateException,RemoteException;
+        public BazStatefulRemote create() throws CreateException, RemoteException;
     }
 
-    private static interface BazStatefulRemote extends javax.ejb.EJBObject {}
+    private static interface BazStatefulRemote extends javax.ejb.EJBObject {
+    }
 
     private static interface BazStatefulLocalHome extends javax.ejb.EJBLocalHome {
         public BazStatefulLocal create() throws CreateException;
     }
 
-    private static interface BazStatefulLocal extends javax.ejb.EJBLocalObject {}
+    private static interface BazStatefulLocal extends javax.ejb.EJBLocalObject {
+    }
+
     @RemoteHome(BazStatefulHome.class)
     @LocalHome(BazStatefulLocalHome.class)
     private static class BazStateful implements SessionBean {
-       // missing ejbCreate method
+        // missing ejbCreate method
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 }

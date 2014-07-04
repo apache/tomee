@@ -36,17 +36,17 @@ public class EjbJarInfo extends CommonInfoObject {
     public boolean webapp;
 
     @XmlElements({ // needed for unmarshalling
-            @XmlElement(name = "stateless", type = StatelessBeanInfo.class),
-            @XmlElement(name = "entity", type = EntityBeanInfo.class),
-            @XmlElement(name = "stateful", type = StatefulBeanInfo.class),
-            @XmlElement(name = "singleton", type = SingletonBeanInfo.class),
-            @XmlElement(name = "message-driven", type = MessageDrivenBeanInfo.class),
-            @XmlElement(name = "managed-bean", type = ManagedBeanInfo.class)
+        @XmlElement(name = "stateless", type = StatelessBeanInfo.class),
+        @XmlElement(name = "entity", type = EntityBeanInfo.class),
+        @XmlElement(name = "stateful", type = StatefulBeanInfo.class),
+        @XmlElement(name = "singleton", type = SingletonBeanInfo.class),
+        @XmlElement(name = "message-driven", type = MessageDrivenBeanInfo.class),
+        @XmlElement(name = "managed-bean", type = ManagedBeanInfo.class)
     })
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 
     public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
-    public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
+    public final List<MethodPermissionInfo> methodPermissions = new ArrayList<MethodPermissionInfo>();
     public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
     public final List<MethodConcurrencyInfo> methodConcurrency = new ArrayList<MethodConcurrencyInfo>();
     public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();

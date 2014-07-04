@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for port-completionType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="port-completionType">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "port-completionType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -57,11 +55,9 @@ public class PortCompletionType {
 
     /**
      * Gets the value of the port property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PortType }
-     *     
+     *
+     * @return possible object is
+     * {@link PortType }
      */
     public PortType getPort() {
         return port;
@@ -69,23 +65,19 @@ public class PortCompletionType {
 
     /**
      * Sets the value of the port property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PortType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PortType }
      */
-    public void setPort(PortType value) {
+    public void setPort(final PortType value) {
         this.port = value;
     }
 
     /**
      * Gets the value of the bindingName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getBindingName() {
         return bindingName;
@@ -93,13 +85,11 @@ public class PortCompletionType {
 
     /**
      * Sets the value of the bindingName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setBindingName(String value) {
+    public void setBindingName(final String value) {
         this.bindingName = value;
     }
 

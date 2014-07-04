@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AuthConstraint$JAXB
-        extends JAXBObject<AuthConstraint> {
+    extends JAXBObject<AuthConstraint> {
 
 
     public AuthConstraint$JAXB() {
         super(AuthConstraint.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "auth-constraintType".intern()), Text$JAXB.class);
     }
 
-    public static AuthConstraint readAuthConstraint(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AuthConstraint readAuthConstraint(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAuthConstraint(XoXMLStreamWriter writer, AuthConstraint authConstraint, RuntimeContext context)
-            throws Exception {
+    public static void writeAuthConstraint(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, RuntimeContext context)
+        throws Exception {
         _write(writer, authConstraint, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AuthConstraint authConstraint, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final AuthConstraint authConstraint, RuntimeContext context)
+        throws Exception {
         _write(writer, authConstraint, context);
     }
 
-    public final static AuthConstraint _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AuthConstraint _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -100,7 +100,7 @@ public class AuthConstraint$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -146,13 +146,13 @@ public class AuthConstraint$JAXB
         return authConstraint;
     }
 
-    public final AuthConstraint read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AuthConstraint read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AuthConstraint authConstraint, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, AuthConstraint authConstraint, RuntimeContext context)
+        throws Exception {
         if (authConstraint == null) {
             writer.writeXsiNil();
             return;
@@ -203,13 +203,13 @@ public class AuthConstraint$JAXB
         }
 
         // ELEMENT: roleName
-        List<String> roleNameRaw = authConstraint.roleName;
+        final List<String> roleNameRaw = authConstraint.roleName;
         if (roleNameRaw != null) {
-            for (String roleNameItem : roleNameRaw) {
+            for (final String roleNameItem : roleNameRaw) {
                 String roleName = null;
                 try {
                     roleName = Adapters.collapsedStringAdapterAdapter.marshal(roleNameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(authConstraint, "roleName", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (roleName != null) {

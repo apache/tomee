@@ -17,18 +17,18 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for openejb-clustering-wadiType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="openejb-clustering-wadiType">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "openejb-clustering-wadiType", propOrder = {
@@ -58,8 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "backingStrategyFactory"
 }, namespace = "http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2")
 public class OpenejbClusteringWadiType
-    extends AbstractClusteringType
-{
+    extends AbstractClusteringType {
 
     protected BigInteger sweepInterval;
     protected BigInteger numPartitions;
@@ -71,11 +68,9 @@ public class OpenejbClusteringWadiType
 
     /**
      * Gets the value of the sweepInterval property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getSweepInterval() {
         return sweepInterval;
@@ -83,23 +78,19 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the sweepInterval property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setSweepInterval(BigInteger value) {
+    public void setSweepInterval(final BigInteger value) {
         this.sweepInterval = value;
     }
 
     /**
      * Gets the value of the numPartitions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getNumPartitions() {
         return numPartitions;
@@ -107,23 +98,19 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the numPartitions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setNumPartitions(BigInteger value) {
+    public void setNumPartitions(final BigInteger value) {
         this.numPartitions = value;
     }
 
     /**
      * Gets the value of the cluster property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getCluster() {
         return cluster;
@@ -131,23 +118,19 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the cluster property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setCluster(PatternType value) {
+    public void setCluster(final PatternType value) {
         this.cluster = value;
     }
 
     /**
      * Gets the value of the disableReplication property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isDisableReplication() {
         return disableReplication;
@@ -155,23 +138,19 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the disableReplication property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDisableReplication(Boolean value) {
+    public void setDisableReplication(final Boolean value) {
         this.disableReplication = value;
     }
 
     /**
      * Gets the value of the deltaReplication property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isDeltaReplication() {
         return deltaReplication;
@@ -179,23 +158,19 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the deltaReplication property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDeltaReplication(Boolean value) {
+    public void setDeltaReplication(final Boolean value) {
         this.deltaReplication = value;
     }
 
     /**
      * Gets the value of the backingStrategyFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getBackingStrategyFactory() {
         return backingStrategyFactory;
@@ -203,13 +178,11 @@ public class OpenejbClusteringWadiType
 
     /**
      * Sets the value of the backingStrategyFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setBackingStrategyFactory(PatternType value) {
+    public void setBackingStrategyFactory(final PatternType value) {
         this.backingStrategyFactory = value;
     }
 

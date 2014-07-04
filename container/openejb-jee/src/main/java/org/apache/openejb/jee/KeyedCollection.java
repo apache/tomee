@@ -28,31 +28,31 @@ import java.util.Map;
  * When a value is added using the add method of this class a key is obtained for
  * the value using either the provided KeyExtractor, or if no KeyExtractor was
  * provided, the value is cast to Keyable and the getKey() method is called.
- *
+ * <p/>
  * The underlying Map can be obtainded with the toMap method.  Any changes to this
  * map are directly reflected in this collection.  Additions to the map do not
  * need to implement Keyable, nor do the values need to be keyed using the key
  * returned from the KeyExtractor.getKey(value) or the key returned from the
  * Keyable.getKey() Method.
  */
-public class KeyedCollection<K,V> extends AbstractCollection<V> {
+public class KeyedCollection<K, V> extends AbstractCollection<V> {
     private final KeyExtractor<? extends K, ? super V> keyExtractor;
-    private final LinkedHashMap<K,V> map;
+    private final LinkedHashMap<K, V> map;
 
     @SuppressWarnings({"unchecked"})
     public KeyedCollection() {
         // NOTE: V must implement Keyable or class cast exception will be thrown on add
         keyExtractor = null;
-        map = new LinkedHashMap<K,V>();
+        map = new LinkedHashMap<K, V>();
     }
 
-    public KeyedCollection(KeyExtractor<? extends K, ? super V> keyExtractor) {
+    public KeyedCollection(final KeyExtractor<? extends K, ? super V> keyExtractor) {
         this.keyExtractor = keyExtractor;
-        map = new LinkedHashMap<K,V>();
+        map = new LinkedHashMap<K, V>();
     }
 
     @SuppressWarnings({"unchecked"})
-    public KeyedCollection(Collection<? extends V> c) {
+    public KeyedCollection(final Collection<? extends V> c) {
         if (c instanceof KeyedCollection) {
             KeyedCollection keyedCollection = (KeyedCollection) c;
             // NOTE: if types don't match bad things could happen
@@ -61,32 +61,33 @@ public class KeyedCollection<K,V> extends AbstractCollection<V> {
             // NOTE: V must implement Keyable or class cast exception will be thrown on add
             keyExtractor = null;
         }
-        map = new LinkedHashMap<K,V>();
+        map = new LinkedHashMap<K, V>();
         addAll(c);
     }
 
     @SuppressWarnings({"unchecked"})
-    public KeyedCollection(int initialCapacity) {
+    public KeyedCollection(final int initialCapacity) {
         // NOTE: V must implement Keyable or class cast exception will be thrown on add
         keyExtractor = null;
-        map = new LinkedHashMap<K,V>(initialCapacity);
+        map = new LinkedHashMap<K, V>(initialCapacity);
     }
 
     /**
      * Get the underlying map used by this collection.
-     *
+     * <p/>
      * Any changes to this
      * map are directly reflected in this collection.  Additions to the map do not
      * need to implement Keyable, nor do the values need to be keyed using the key
      * returned from the KeyExtractor.getKey(value) or the key returned from the
      * Keyable.getKey() Method.
+     *
      * @return the indexed contents of this collection
      */
-    public Map<K,V> toMap() {
+    public Map<K, V> toMap() {
         return map;
     }
 
-    public boolean add(V value) {
+    public boolean add(final V value) {
         K key = getKey(value);
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -116,9 +117,9 @@ public class KeyedCollection<K,V> extends AbstractCollection<V> {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected K getKey(V value) {
+    protected K getKey(final V value) {
         if (keyExtractor == null) {
-            return ((Keyable<? extends K>)value).getKey();
+            return ((Keyable<? extends K>) value).getKey();
         } else {
             return keyExtractor.getKey(value);
         }

@@ -42,9 +42,9 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
 
     @Module
     public EjbJar module() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(MethodLevelInterceptorOnlySLSBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(MethodLevelInterceptorOnlySLSBean.class));
 
         AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
 
@@ -59,7 +59,7 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
 
         assert bean != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("MethodLevelInterceptorOne");
         expected.add("makePersistent");
 

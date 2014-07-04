@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesProperty$JAXB
-        extends JAXBObject<FacesProperty> {
+    extends JAXBObject<FacesProperty> {
 
 
     public FacesProperty$JAXB() {
         super(FacesProperty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-propertyType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesPropertyExtension$JAXB.class);
     }
 
-    public static FacesProperty readFacesProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesProperty readFacesProperty(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesProperty(XoXMLStreamWriter writer, FacesProperty facesProperty, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesProperty(final XoXMLStreamWriter writer, final FacesProperty facesProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesProperty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesProperty facesProperty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesProperty facesProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesProperty, context);
     }
 
-    public final static FacesProperty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesProperty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -163,7 +163,7 @@ public class FacesProperty$JAXB
                 String defaultValue;
                 try {
                     defaultValue = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultValueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -224,13 +224,13 @@ public class FacesProperty$JAXB
         return facesProperty;
     }
 
-    public final FacesProperty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesProperty read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesProperty facesProperty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesProperty facesProperty, RuntimeContext context)
+        throws Exception {
         if (facesProperty == null) {
             writer.writeXsiNil();
             return;
@@ -240,7 +240,7 @@ public class FacesProperty$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesProperty.class != facesProperty.getClass()) {
             context.unexpectedSubclass(writer, facesProperty, FacesProperty.class);
             return;
@@ -300,7 +300,7 @@ public class FacesProperty$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesProperty.icon;
+        final LocalCollection<Icon> icon = facesProperty.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {
@@ -350,7 +350,7 @@ public class FacesProperty$JAXB
         String defaultValue = null;
         try {
             defaultValue = Adapters.collapsedStringAdapterAdapter.marshal(defaultValueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesProperty, "defaultValue", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (defaultValue != null) {

@@ -67,7 +67,7 @@ public class ServiceEndpointInterfaceMapping implements Keyable<String> {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String value) {
+    public void setServiceEndpointInterface(final String value) {
         this.serviceEndpointInterface = value;
     }
 
@@ -75,7 +75,7 @@ public class ServiceEndpointInterfaceMapping implements Keyable<String> {
         return wsdlPortType;
     }
 
-    public void setWsdlPortType(QName value) {
+    public void setWsdlPortType(final QName value) {
         this.wsdlPortType = value;
     }
 
@@ -83,7 +83,7 @@ public class ServiceEndpointInterfaceMapping implements Keyable<String> {
         return wsdlBinding;
     }
 
-    public void setWsdlBinding(QName value) {
+    public void setWsdlBinding(final QName value) {
         this.wsdlBinding = value;
     }
 
@@ -98,7 +98,7 @@ public class ServiceEndpointInterfaceMapping implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

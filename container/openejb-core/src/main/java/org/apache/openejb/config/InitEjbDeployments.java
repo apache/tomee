@@ -75,7 +75,7 @@ public class InitEjbDeployments implements DynamicDeployer {
     }
 
     public EjbModule deploy(final EjbModule ejbModule) throws OpenEJBException {
-        return deploy(ejbModule, new HashMap<String,String>(), new HashSet<String>());
+        return deploy(ejbModule, new HashMap<String, String>(), new HashSet<String>());
     }
 
     private EjbModule deploy(final EjbModule ejbModule, final Map<String, String> contextData, final Set<String> abstractSchemaNames) throws OpenEJBException {
@@ -144,7 +144,7 @@ public class InitEjbDeployments implements DynamicDeployer {
                     if (abstractSchemaNames.contains(abstractSchemaName)) {
                         int i = 2;
                         while (abstractSchemaNames.contains(abstractSchemaName + i)) {
-                             i++;
+                            i++;
                         }
                         abstractSchemaName = abstractSchemaName + i;
                     }

@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Taglib$JAXB.readTaglib;
 import static org.apache.openejb.jee.Taglib$JAXB.writeTaglib;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class JspConfig$JAXB
-        extends JAXBObject<JspConfig> {
+    extends JAXBObject<JspConfig> {
 
 
     public JspConfig$JAXB() {
         super(JspConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "jsp-configType".intern()), Taglib$JAXB.class, JspPropertyGroup$JAXB.class);
     }
 
-    public static JspConfig readJspConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static JspConfig readJspConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeJspConfig(XoXMLStreamWriter writer, JspConfig jspConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeJspConfig(final XoXMLStreamWriter writer, JspConfig jspConfig, RuntimeContext context)
+        throws Exception {
         _write(writer, jspConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, JspConfig jspConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final JspConfig jspConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, jspConfig, context);
     }
 
-    public final static JspConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static JspConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -79,7 +79,7 @@ public class JspConfig$JAXB
         List<JspPropertyGroup> jspPropertyGroup = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("jsp-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, JspConfig.class);
@@ -87,10 +87,10 @@ public class JspConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, jspConfig);
                 jspConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -140,13 +140,13 @@ public class JspConfig$JAXB
         return jspConfig;
     }
 
-    public final JspConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final JspConfig read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, JspConfig jspConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final JspConfig jspConfig, RuntimeContext context)
+        throws Exception {
         if (jspConfig == null) {
             writer.writeXsiNil();
             return;
@@ -156,7 +156,7 @@ public class JspConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (JspConfig.class != jspConfig.getClass()) {
             context.unexpectedSubclass(writer, jspConfig, JspConfig.class);
             return;
@@ -166,7 +166,7 @@ public class JspConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = jspConfig.id;
+        final String idRaw = jspConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -194,7 +194,7 @@ public class JspConfig$JAXB
         // ELEMENT: jspPropertyGroup
         List<JspPropertyGroup> jspPropertyGroup = jspConfig.jspPropertyGroup;
         if (jspPropertyGroup != null) {
-            for (JspPropertyGroup jspPropertyGroupItem : jspPropertyGroup) {
+            for (final JspPropertyGroup jspPropertyGroupItem : jspPropertyGroup) {
                 if (jspPropertyGroupItem != null) {
                     writer.writeStartElement(prefix, "jsp-property-group", "http://java.sun.com/xml/ns/javaee");
                     writeJspPropertyGroup(writer, jspPropertyGroupItem, context);

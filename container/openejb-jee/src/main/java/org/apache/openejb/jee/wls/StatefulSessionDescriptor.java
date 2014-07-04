@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for stateful-session-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="stateful-session-descriptor">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "stateful-session-descriptor", propOrder = {
@@ -79,11 +77,9 @@ public class StatefulSessionDescriptor {
 
     /**
      * Gets the value of the statefulSessionCache property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatefulSessionCache }
-     *     
+     *
+     * @return possible object is
+     * {@link StatefulSessionCache }
      */
     public StatefulSessionCache getStatefulSessionCache() {
         return statefulSessionCache;
@@ -91,23 +87,19 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the statefulSessionCache property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatefulSessionCache }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StatefulSessionCache }
      */
-    public void setStatefulSessionCache(StatefulSessionCache value) {
+    public void setStatefulSessionCache(final StatefulSessionCache value) {
         this.statefulSessionCache = value;
     }
 
     /**
      * Gets the value of the persistentStoreDir property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistentStoreDir() {
         return persistentStoreDir;
@@ -115,23 +107,19 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the persistentStoreDir property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistentStoreDir(String value) {
+    public void setPersistentStoreDir(final String value) {
         this.persistentStoreDir = value;
     }
 
     /**
      * Gets the value of the statefulSessionClustering property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatefulSessionClustering }
-     *     
+     *
+     * @return possible object is
+     * {@link StatefulSessionClustering }
      */
     public StatefulSessionClustering getStatefulSessionClustering() {
         return statefulSessionClustering;
@@ -139,23 +127,19 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the statefulSessionClustering property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatefulSessionClustering }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StatefulSessionClustering }
      */
-    public void setStatefulSessionClustering(StatefulSessionClustering value) {
+    public void setStatefulSessionClustering(final StatefulSessionClustering value) {
         this.statefulSessionClustering = value;
     }
 
     /**
      * Gets the value of the allowConcurrentCalls property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getAllowConcurrentCalls() {
         return allowConcurrentCalls;
@@ -163,23 +147,19 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the allowConcurrentCalls property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setAllowConcurrentCalls(Boolean value) {
+    public void setAllowConcurrentCalls(final Boolean value) {
         this.allowConcurrentCalls = value;
     }
 
     /**
      * Gets the value of the allowRemoveDuringTransaction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getAllowRemoveDuringTransaction() {
         return allowRemoveDuringTransaction;
@@ -187,23 +167,19 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the allowRemoveDuringTransaction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setAllowRemoveDuringTransaction(Boolean value) {
+    public void setAllowRemoveDuringTransaction(final Boolean value) {
         this.allowRemoveDuringTransaction = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -211,13 +187,11 @@ public class StatefulSessionDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

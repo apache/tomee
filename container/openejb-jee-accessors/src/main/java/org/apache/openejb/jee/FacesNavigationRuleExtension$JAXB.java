@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesNavigationRuleExtension$JAXB
-        extends JAXBObject<FacesNavigationRuleExtension> {
+    extends JAXBObject<FacesNavigationRuleExtension> {
 
 
     public FacesNavigationRuleExtension$JAXB() {
         super(FacesNavigationRuleExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-navigation-rule-extensionType".intern()));
     }
 
-    public static FacesNavigationRuleExtension readFacesNavigationRuleExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesNavigationRuleExtension readFacesNavigationRuleExtension(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNavigationRuleExtension(XoXMLStreamWriter writer, FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesNavigationRuleExtension(final XoXMLStreamWriter writer, final FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRuleExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRuleExtension, context);
     }
 
-    public final static FacesNavigationRuleExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesNavigationRuleExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class FacesNavigationRuleExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNavigationRuleExtension facesNavigationRuleExtension = new FacesNavigationRuleExtension();
+        final FacesNavigationRuleExtension facesNavigationRuleExtension = new FacesNavigationRuleExtension();
         context.beforeUnmarshal(facesNavigationRuleExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
@@ -84,7 +84,7 @@ public class FacesNavigationRuleExtension$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNavigationRuleExtension);
                 facesNavigationRuleExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -114,13 +114,13 @@ public class FacesNavigationRuleExtension$JAXB
         return facesNavigationRuleExtension;
     }
 
-    public final FacesNavigationRuleExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesNavigationRuleExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesNavigationRuleExtension facesNavigationRuleExtension, RuntimeContext context)
+        throws Exception {
         if (facesNavigationRuleExtension == null) {
             writer.writeXsiNil();
             return;
@@ -139,7 +139,7 @@ public class FacesNavigationRuleExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesNavigationRuleExtension.id;
+        final String idRaw = facesNavigationRuleExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
@@ -151,7 +151,7 @@ public class FacesNavigationRuleExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesNavigationRuleExtension.any;
+        final List<Object> any = facesNavigationRuleExtension.any;
         if (any != null) {
             for (Object anyItem : any) {
                 context.writeXmlAny(writer, facesNavigationRuleExtension, "any", anyItem);

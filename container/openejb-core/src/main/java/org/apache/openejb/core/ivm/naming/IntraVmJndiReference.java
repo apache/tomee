@@ -43,14 +43,14 @@ public class IntraVmJndiReference extends Reference {
         } catch (final NameNotFoundException e) { // EE.5.18: try using java:module/<shortName> prefix
             return containerSystem.getJNDIContext().lookup("java:module/" + Strings.lastPart(getClassName(), '.'));
         } catch (final NamingException e) {
-            throw (NamingException)new NamingException("could not look up " + jndiName).initCause(e);
+            throw (NamingException) new NamingException("could not look up " + jndiName).initCause(e);
         }
     }
 
     @Override
     public String toString() {
         return "IntraVmJndiReference{" +
-                "jndiName='" + jndiName + '\'' +
-                '}';
+            "jndiName='" + jndiName + '\'' +
+            '}';
     }
 }

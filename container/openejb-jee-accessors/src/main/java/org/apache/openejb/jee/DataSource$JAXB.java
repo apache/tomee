@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class DataSource$JAXB
-        extends JAXBObject<DataSource> {
+    extends JAXBObject<DataSource> {
 
 
     public DataSource$JAXB() {
         super(DataSource.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "data-sourceType".intern()), Text$JAXB.class, Property$JAXB.class, IsolationLevel$JAXB.class);
     }
 
-    public static DataSource readDataSource(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static DataSource readDataSource(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeDataSource(XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
-            throws Exception {
+    public static void writeDataSource(final XoXMLStreamWriter writer, final DataSource dataSource, RuntimeContext context)
+        throws Exception {
         _write(writer, dataSource, context);
     }
 
-    public void write(XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
+        throws Exception {
         _write(writer, dataSource, context);
     }
 
-    public final static DataSource _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static DataSource _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class DataSource$JAXB
             context = new RuntimeContext();
         }
 
-        DataSource dataSource = new DataSource();
+        final DataSource dataSource = new DataSource();
         context.beforeUnmarshal(dataSource, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -92,7 +92,7 @@ public class DataSource$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, dataSource);
                 dataSource.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -104,7 +104,7 @@ public class DataSource$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
@@ -154,7 +154,7 @@ public class DataSource$JAXB
                 dataSource.portNumber = portNumber;
             } else if (("database-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: databaseName
-                String databaseNameRaw = elementReader.getElementAsString();
+                final String databaseNameRaw = elementReader.getElementAsString();
 
                 String databaseName;
                 try {
@@ -270,13 +270,13 @@ public class DataSource$JAXB
         return dataSource;
     }
 
-    public final DataSource read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final DataSource read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, DataSource dataSource, RuntimeContext context)
+        throws Exception {
         if (dataSource == null) {
             writer.writeXsiNil();
             return;
@@ -301,7 +301,7 @@ public class DataSource$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(dataSource, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

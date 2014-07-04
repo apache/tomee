@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.SubscriptionDurability$JAXB.readSubscriptio
 import static org.apache.openejb.jee.SubscriptionDurability$JAXB.writeSubscriptionDurability;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageDrivenDestination$JAXB
-        extends JAXBObject<MessageDrivenDestination> {
+    extends JAXBObject<MessageDrivenDestination> {
 
 
     public MessageDrivenDestination$JAXB() {
         super(MessageDrivenDestination.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-driven-destination".intern()), null, DestinationType$JAXB.class, SubscriptionDurability$JAXB.class);
     }
 
-    public static MessageDrivenDestination readMessageDrivenDestination(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageDrivenDestination readMessageDrivenDestination(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageDrivenDestination(XoXMLStreamWriter writer, MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageDrivenDestination(final XoXMLStreamWriter writer, MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
+        throws Exception {
         _write(writer, messageDrivenDestination, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
+        throws Exception {
         _write(writer, messageDrivenDestination, context);
     }
 
-    public final static MessageDrivenDestination _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageDrivenDestination _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -81,7 +81,7 @@ public class MessageDrivenDestination$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -96,7 +96,7 @@ public class MessageDrivenDestination$JAXB
         for (XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("destination-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: destinationType
-                DestinationType destinationType = readDestinationType(elementReader, context);
+                final DestinationType destinationType = readDestinationType(elementReader, context);
                 messageDrivenDestination.destinationType = destinationType;
             } else if (("subscription-durability" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: subscriptionDurability
@@ -112,13 +112,13 @@ public class MessageDrivenDestination$JAXB
         return messageDrivenDestination;
     }
 
-    public final MessageDrivenDestination read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageDrivenDestination read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, MessageDrivenDestination messageDrivenDestination, RuntimeContext context)
+        throws Exception {
         if (messageDrivenDestination == null) {
             writer.writeXsiNil();
             return;
@@ -128,7 +128,7 @@ public class MessageDrivenDestination$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MessageDrivenDestination.class != messageDrivenDestination.getClass()) {
             context.unexpectedSubclass(writer, messageDrivenDestination, MessageDrivenDestination.class);
             return;
@@ -150,7 +150,7 @@ public class MessageDrivenDestination$JAXB
         }
 
         // ELEMENT: destinationType
-        DestinationType destinationType = messageDrivenDestination.destinationType;
+        final DestinationType destinationType = messageDrivenDestination.destinationType;
         if (destinationType != null) {
             writer.writeStartElement(prefix, "destination-type", "http://java.sun.com/xml/ns/javaee");
             writeDestinationType(writer, destinationType, context);

@@ -38,7 +38,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         return field1;
     }
 
-    public void setId(Integer field1) {
+    public void setId(final Integer field1) {
         this.field1 = field1;
     }
 
@@ -46,7 +46,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         return field2;
     }
 
-    public void setName(String field2) {
+    public void setName(final String field2) {
         this.field2 = field2;
     }
 
@@ -54,7 +54,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         return bCmr.get(b);
     }
 
-    public void setPerformed(Set b) {
+    public void setPerformed(final Set b) {
         bCmr.set(this.b, b);
     }
 
@@ -62,7 +62,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         return bNonCascadeCmr.get(bNonCascade);
     }
 
-    public void setComposed(Set bNonCascade) {
+    public void setComposed(final Set bNonCascade) {
         bNonCascadeCmr.set(this.bNonCascade, bNonCascade);
     }
 
@@ -78,7 +78,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         bNonCascadeCmr.deleted(bNonCascade);
     }
 
-    public Object OpenEJB_addCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) return null;
 
         if ("b".equals(name)) {
@@ -94,7 +94,7 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
         throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 
-    public void OpenEJB_removeCmr(String name, Object value) {
+    public void OpenEJB_removeCmr(final String name, final Object value) {
         if (deleted) return;
 
         if ("b".equals(name)) {

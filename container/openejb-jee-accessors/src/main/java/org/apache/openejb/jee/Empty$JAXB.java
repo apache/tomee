@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Empty$JAXB
-        extends JAXBObject<Empty> {
+    extends JAXBObject<Empty> {
 
 
     public Empty$JAXB() {
         super(Empty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "emptyType".intern()));
     }
 
-    public static Empty readEmpty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Empty readEmpty(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEmpty(XoXMLStreamWriter writer, Empty empty, RuntimeContext context)
-            throws Exception {
+    public static void writeEmpty(final XoXMLStreamWriter writer, final Empty empty, RuntimeContext context)
+        throws Exception {
         _write(writer, empty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Empty empty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Empty empty, RuntimeContext context)
+        throws Exception {
         _write(writer, empty, context);
     }
 
-    public final static Empty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Empty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,7 +65,7 @@ public class Empty$JAXB
             context = new RuntimeContext();
         }
 
-        Empty empty = new Empty();
+        final Empty empty = new Empty();
         context.beforeUnmarshal(empty, LifecycleCallback.NONE);
 
 
@@ -99,13 +99,13 @@ public class Empty$JAXB
         return empty;
     }
 
-    public final Empty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Empty read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Empty empty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Empty empty, RuntimeContext context)
+        throws Exception {
         if (empty == null) {
             writer.writeXsiNil();
             return;

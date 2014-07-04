@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.FacesNullValue$JAXB.readFacesNullValue;
 import static org.apache.openejb.jee.FacesNullValue$JAXB.writeFacesNullValue;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesMapEntry$JAXB
-        extends JAXBObject<FacesMapEntry> {
+    extends JAXBObject<FacesMapEntry> {
 
 
     public FacesMapEntry$JAXB() {
         super(FacesMapEntry.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-map-entryType".intern()), FacesNullValue$JAXB.class);
     }
 
-    public static FacesMapEntry readFacesMapEntry(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesMapEntry readFacesMapEntry(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesMapEntry(XoXMLStreamWriter writer, FacesMapEntry facesMapEntry, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesMapEntry(final XoXMLStreamWriter writer, FacesMapEntry facesMapEntry, RuntimeContext context)
+        throws Exception {
         _write(writer, facesMapEntry, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesMapEntry facesMapEntry, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesMapEntry facesMapEntry, RuntimeContext context)
+        throws Exception {
         _write(writer, facesMapEntry, context);
     }
 
-    public final static FacesMapEntry _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesMapEntry _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -134,13 +134,13 @@ public class FacesMapEntry$JAXB
         return facesMapEntry;
     }
 
-    public final FacesMapEntry read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesMapEntry read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesMapEntry facesMapEntry, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesMapEntry facesMapEntry, RuntimeContext context)
+        throws Exception {
         if (facesMapEntry == null) {
             writer.writeXsiNil();
             return;

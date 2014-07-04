@@ -50,7 +50,7 @@ public class PersistenceUnitFragment {
         // no-op
     }
 
-    public PersistenceUnitFragment(String unitName) {
+    public PersistenceUnitFragment(final String unitName) {
         this.name = unitName;
     }
 
@@ -58,7 +58,7 @@ public class PersistenceUnitFragment {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -76,11 +76,11 @@ public class PersistenceUnitFragment {
         return this.clazz;
     }
 
-    public boolean addClass(String s) {
+    public boolean addClass(final String s) {
         return getClazz().add(s);
     }
 
-    public boolean addClass(Class<?> clazz) {
+    public boolean addClass(final Class<?> clazz) {
         return addClass(clazz.getName());
     }
 
@@ -88,7 +88,7 @@ public class PersistenceUnitFragment {
         return excludeUnlistedClasses;
     }
 
-    public void setExcludeUnlistedClasses(boolean value) {
+    public void setExcludeUnlistedClasses(final boolean value) {
         this.excludeUnlistedClasses = value;
     }
 
@@ -96,7 +96,7 @@ public class PersistenceUnitFragment {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

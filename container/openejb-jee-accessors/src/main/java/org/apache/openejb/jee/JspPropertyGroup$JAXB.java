@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class JspPropertyGroup$JAXB
-        extends JAXBObject<JspPropertyGroup> {
+    extends JAXBObject<JspPropertyGroup> {
 
 
     public JspPropertyGroup$JAXB() {
         super(JspPropertyGroup.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "jsp-property-groupType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static JspPropertyGroup readJspPropertyGroup(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static JspPropertyGroup readJspPropertyGroup(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeJspPropertyGroup(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public static void writeJspPropertyGroup(final XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
+        throws Exception {
         _write(writer, jspPropertyGroup, context);
     }
 
-    public void write(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
+        throws Exception {
         _write(writer, jspPropertyGroup, context);
     }
 
-    public final static JspPropertyGroup _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static JspPropertyGroup _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -228,7 +228,7 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.trimDirectiveWhitespaces = trimDirectiveWhitespaces;
             } else if (("default-content-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultContentType
-                String defaultContentTypeRaw = elementReader.getElementAsString();
+                final String defaultContentTypeRaw = elementReader.getElementAsString();
 
                 String defaultContentType;
                 try {
@@ -292,13 +292,13 @@ public class JspPropertyGroup$JAXB
         return jspPropertyGroup;
     }
 
-    public final JspPropertyGroup read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final JspPropertyGroup read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
+        throws Exception {
         if (jspPropertyGroup == null) {
             writer.writeXsiNil();
             return;
@@ -323,7 +323,7 @@ public class JspPropertyGroup$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(jspPropertyGroup, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -333,7 +333,7 @@ public class JspPropertyGroup$JAXB
         Text[] descriptions = null;
         try {
             descriptions = jspPropertyGroup.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(jspPropertyGroup, "descriptions", JspPropertyGroup.class, "getDescriptions", e);
         }
         if (descriptions != null) {

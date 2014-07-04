@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesComponentExtension$JAXB
-        extends JAXBObject<FacesComponentExtension> {
+    extends JAXBObject<FacesComponentExtension> {
 
 
     public FacesComponentExtension$JAXB() {
         super(FacesComponentExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-component-extensionType".intern()));
     }
 
-    public static FacesComponentExtension readFacesComponentExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesComponentExtension readFacesComponentExtension(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesComponentExtension(XoXMLStreamWriter writer, FacesComponentExtension facesComponentExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesComponentExtension(final XoXMLStreamWriter writer, FacesComponentExtension facesComponentExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponentExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesComponentExtension facesComponentExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesComponentExtension facesComponentExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponentExtension, context);
     }
 
-    public final static FacesComponentExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesComponentExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class FacesComponentExtension$JAXB
             context = new RuntimeContext();
         }
 
-        FacesComponentExtension facesComponentExtension = new FacesComponentExtension();
+        final FacesComponentExtension facesComponentExtension = new FacesComponentExtension();
         context.beforeUnmarshal(facesComponentExtension, LifecycleCallback.NONE);
 
         List<Object> any = null;
@@ -84,7 +84,7 @@ public class FacesComponentExtension$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesComponentExtension);
                 facesComponentExtension.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -114,13 +114,13 @@ public class FacesComponentExtension$JAXB
         return facesComponentExtension;
     }
 
-    public final FacesComponentExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesComponentExtension read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesComponentExtension facesComponentExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesComponentExtension facesComponentExtension, RuntimeContext context)
+        throws Exception {
         if (facesComponentExtension == null) {
             writer.writeXsiNil();
             return;
@@ -151,7 +151,7 @@ public class FacesComponentExtension$JAXB
         }
 
         // ELEMENT_REF: any
-        List<Object> any = facesComponentExtension.any;
+        final List<Object> any = facesComponentExtension.any;
         if (any != null) {
             for (Object anyItem : any) {
                 context.writeXmlAny(writer, facesComponentExtension, "any", anyItem);

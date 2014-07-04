@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -71,11 +69,9 @@ public class Select {
 
     /**
      * Gets the value of the distinct property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Distinct }
-     *     
+     *
+     * @return possible object is
+     * {@link Distinct }
      */
     public Distinct getDistinct() {
         return distinct;
@@ -83,23 +79,19 @@ public class Select {
 
     /**
      * Sets the value of the distinct property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Distinct }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Distinct }
      */
-    public void setDistinct(Distinct value) {
+    public void setDistinct(final Distinct value) {
         this.distinct = value;
     }
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbName }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbName }
      */
     public EjbName getEjbName() {
         return ejbName;
@@ -107,23 +99,19 @@ public class Select {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbName }
      */
-    public void setEjbName(EjbName value) {
+    public void setEjbName(final EjbName value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldName }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldName }
      */
     public FieldName getFieldName() {
         return fieldName;
@@ -131,23 +119,19 @@ public class Select {
 
     /**
      * Sets the value of the fieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldName }
      */
-    public void setFieldName(FieldName value) {
+    public void setFieldName(final FieldName value) {
         this.fieldName = value;
     }
 
     /**
      * Gets the value of the alias property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Alias }
-     *     
+     *
+     * @return possible object is
+     * {@link Alias }
      */
     public Alias getAlias() {
         return alias;
@@ -155,23 +139,19 @@ public class Select {
 
     /**
      * Sets the value of the alias property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Alias }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Alias }
      */
-    public void setAlias(Alias value) {
+    public void setAlias(final Alias value) {
         this.alias = value;
     }
 
     /**
      * Gets the value of the additionalColumns property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AdditionalColumns }
-     *     
+     *
+     * @return possible object is
+     * {@link AdditionalColumns }
      */
     public AdditionalColumns getAdditionalColumns() {
         return additionalColumns;
@@ -179,13 +159,11 @@ public class Select {
 
     /**
      * Sets the value of the additionalColumns property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AdditionalColumns }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AdditionalColumns }
      */
-    public void setAdditionalColumns(AdditionalColumns value) {
+    public void setAdditionalColumns(final AdditionalColumns value) {
         this.additionalColumns = value;
     }
 

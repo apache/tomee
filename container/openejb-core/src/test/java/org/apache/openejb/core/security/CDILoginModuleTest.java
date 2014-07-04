@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.core.security;
 
-import org.apache.openejb.core.security.jaas.GroupPrincipal;
-import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -102,7 +100,7 @@ public class CDILoginModuleTest {
                                final Map<String, ?> sharedState, final Map<String, ?> options) {
             final NameCallback nameCallback = new NameCallback("whatever");
             try {
-                callbackHandler.handle(new Callback[] {nameCallback});
+                callbackHandler.handle(new Callback[]{nameCallback});
             } catch (final Exception e) {
                 // no-op
             }

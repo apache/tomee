@@ -27,15 +27,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="param-valueType">
  *   &lt;complexContent>
@@ -50,15 +48,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "param-valueType", propOrder = {
-        "descriptions",
-        "paramName",
-        "paramValue"
-        })
+    "descriptions",
+    "paramName",
+    "paramValue"
+})
 public class ParamValue {
 
     @XmlTransient
@@ -78,7 +74,7 @@ public class ParamValue {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -86,7 +82,7 @@ public class ParamValue {
         return description.get();
     }
 
-    public void addDescription(Text text) {
+    public void addDescription(final Text text) {
         description.add(text);
     }
 
@@ -94,7 +90,7 @@ public class ParamValue {
         return paramName;
     }
 
-    public void setParamName(String value) {
+    public void setParamName(final String value) {
         this.paramName = value;
     }
 
@@ -102,7 +98,7 @@ public class ParamValue {
         return paramValue;
     }
 
-    public void setParamValue(String value) {
+    public void setParamValue(final String value) {
         this.paramValue = value;
     }
 
@@ -110,7 +106,7 @@ public class ParamValue {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

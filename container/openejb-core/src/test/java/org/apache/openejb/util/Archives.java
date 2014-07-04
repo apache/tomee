@@ -58,7 +58,7 @@ public class Archives {
         File classpath;
         try {
             classpath = File.createTempFile("test", "archive");
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final File tmp = new File("tmp");
             if (!tmp.exists() && !tmp.mkdirs()) {
                 throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -117,7 +117,7 @@ public class Archives {
         File classpath;
         try {
             classpath = File.createTempFile(archiveNamePrefix, ".jar");
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final File tmp = new File("tmp");
             if (!tmp.exists() && !tmp.mkdirs()) {
                 throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());

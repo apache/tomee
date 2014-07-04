@@ -30,11 +30,11 @@ import java.util.Map;
 
 /**
  * javaee_web_services_1_3.xsd
- * 
+ * <p/>
  * <p>Java class for webservice-descriptionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="webservice-descriptionType">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webservice-descriptionType", propOrder = {
@@ -95,7 +93,7 @@ public class WebserviceDescription implements Keyable<String> {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -103,7 +101,7 @@ public class WebserviceDescription implements Keyable<String> {
         return displayName;
     }
 
-    public void setDisplayName(String value) {
+    public void setDisplayName(final String value) {
         this.displayName = value;
     }
 
@@ -111,7 +109,7 @@ public class WebserviceDescription implements Keyable<String> {
         return icon;
     }
 
-    public void setIcon(Icon value) {
+    public void setIcon(final Icon value) {
         this.icon = value;
     }
 
@@ -119,7 +117,7 @@ public class WebserviceDescription implements Keyable<String> {
         return webserviceDescriptionName;
     }
 
-    public void setWebserviceDescriptionName(String value) {
+    public void setWebserviceDescriptionName(final String value) {
         this.webserviceDescriptionName = value;
     }
 
@@ -127,7 +125,7 @@ public class WebserviceDescription implements Keyable<String> {
         return wsdlFile;
     }
 
-    public void setWsdlFile(String value) {
+    public void setWsdlFile(final String value) {
         this.wsdlFile = value;
     }
 
@@ -135,7 +133,7 @@ public class WebserviceDescription implements Keyable<String> {
         return jaxrpcMappingFile;
     }
 
-    public void setJaxrpcMappingFile(String value) {
+    public void setJaxrpcMappingFile(final String value) {
         this.jaxrpcMappingFile = value;
     }
 
@@ -143,20 +141,20 @@ public class WebserviceDescription implements Keyable<String> {
         return jaxrpcMapping;
     }
 
-    public void setJaxrpcMapping(JavaWsdlMapping jaxrpcMapping) {
+    public void setJaxrpcMapping(final JavaWsdlMapping jaxrpcMapping) {
         this.jaxrpcMapping = jaxrpcMapping;
     }
 
     public Collection<PortComponent> getPortComponent() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String,PortComponent>();
+            portComponent = new KeyedCollection<String, PortComponent>();
         }
         return this.portComponent;
     }
 
-    public Map<String,PortComponent> getPortComponentMap() {
+    public Map<String, PortComponent> getPortComponentMap() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String,PortComponent>();
+            portComponent = new KeyedCollection<String, PortComponent>();
         }
         return this.portComponent.toMap();
     }
@@ -165,7 +163,7 @@ public class WebserviceDescription implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

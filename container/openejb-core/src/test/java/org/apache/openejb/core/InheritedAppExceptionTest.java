@@ -40,23 +40,29 @@ public class InheritedAppExceptionTest {
 
     public static class AE1 extends RuntimeException {
     }
+
     public static class AE2 extends AE1 {
     }
+
     public static class AE3 extends AE2 {
     }
+
     public static class AE4 extends AE3 {
     }
+
     public static class AE5 extends AE4 {
     }
+
     public static class AE6 extends AE5 {
     }
+
     public static class AE7 extends AE6 {
     }
 
     @Test
     public void testRollback() throws Exception {
         SystemInstance.init(new Properties());
-        BeanContext cdi = new BeanContext("foo", null, new ModuleContext("foo",null, "bar", new AppContext("foo", SystemInstance.get(), null, null, null, false), null, null), Object.class, null, new HashMap<String, String>());
+        final BeanContext cdi = new BeanContext("foo", null, new ModuleContext("foo", null, "bar", new AppContext("foo", SystemInstance.get(), null, null, null, false), null, null), Object.class, null, new HashMap<String, String>());
         cdi.addApplicationException(AE1.class, true, true);
         cdi.addApplicationException(AE3.class, true, false);
         cdi.addApplicationException(AE6.class, false, true);

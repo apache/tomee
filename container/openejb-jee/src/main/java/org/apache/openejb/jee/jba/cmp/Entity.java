@@ -17,20 +17,20 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -65,8 +65,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -146,11 +144,9 @@ public class Entity {
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbName }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbName }
      */
     public EjbName getEjbName() {
         return ejbName;
@@ -158,23 +154,19 @@ public class Entity {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbName }
      */
-    public void setEjbName(EjbName value) {
+    public void setEjbName(final EjbName value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the datasource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Datasource }
-     *     
+     *
+     * @return possible object is
+     * {@link Datasource }
      */
     public Datasource getDatasource() {
         return datasource;
@@ -182,23 +174,19 @@ public class Entity {
 
     /**
      * Sets the value of the datasource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Datasource }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Datasource }
      */
-    public void setDatasource(Datasource value) {
+    public void setDatasource(final Datasource value) {
         this.datasource = value;
     }
 
     /**
      * Gets the value of the datasourceMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link DatasourceMapping }
      */
     public DatasourceMapping getDatasourceMapping() {
         return datasourceMapping;
@@ -206,23 +194,19 @@ public class Entity {
 
     /**
      * Sets the value of the datasourceMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DatasourceMapping }
      */
-    public void setDatasourceMapping(DatasourceMapping value) {
+    public void setDatasourceMapping(final DatasourceMapping value) {
         this.datasourceMapping = value;
     }
 
     /**
      * Gets the value of the createTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @return possible object is
+     * {@link CreateTable }
      */
     public CreateTable getCreateTable() {
         return createTable;
@@ -230,23 +214,19 @@ public class Entity {
 
     /**
      * Sets the value of the createTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CreateTable }
      */
-    public void setCreateTable(CreateTable value) {
+    public void setCreateTable(final CreateTable value) {
         this.createTable = value;
     }
 
     /**
      * Gets the value of the removeTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @return possible object is
+     * {@link RemoveTable }
      */
     public RemoveTable getRemoveTable() {
         return removeTable;
@@ -254,23 +234,19 @@ public class Entity {
 
     /**
      * Sets the value of the removeTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RemoveTable }
      */
-    public void setRemoveTable(RemoveTable value) {
+    public void setRemoveTable(final RemoveTable value) {
         this.removeTable = value;
     }
 
     /**
      * Gets the value of the postTableCreate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @return possible object is
+     * {@link PostTableCreate }
      */
     public PostTableCreate getPostTableCreate() {
         return postTableCreate;
@@ -278,23 +254,19 @@ public class Entity {
 
     /**
      * Sets the value of the postTableCreate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostTableCreate }
      */
-    public void setPostTableCreate(PostTableCreate value) {
+    public void setPostTableCreate(final PostTableCreate value) {
         this.postTableCreate = value;
     }
 
     /**
      * Gets the value of the readOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadOnly }
      */
     public ReadOnly getReadOnly() {
         return readOnly;
@@ -302,23 +274,19 @@ public class Entity {
 
     /**
      * Sets the value of the readOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadOnly }
      */
-    public void setReadOnly(ReadOnly value) {
+    public void setReadOnly(final ReadOnly value) {
         this.readOnly = value;
     }
 
     /**
      * Gets the value of the readTimeOut property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadTimeOut }
      */
     public ReadTimeOut getReadTimeOut() {
         return readTimeOut;
@@ -326,23 +294,19 @@ public class Entity {
 
     /**
      * Sets the value of the readTimeOut property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadTimeOut }
      */
-    public void setReadTimeOut(ReadTimeOut value) {
+    public void setReadTimeOut(final ReadTimeOut value) {
         this.readTimeOut = value;
     }
 
     /**
      * Gets the value of the rowLocking property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @return possible object is
+     * {@link RowLocking }
      */
     public RowLocking getRowLocking() {
         return rowLocking;
@@ -350,23 +314,19 @@ public class Entity {
 
     /**
      * Sets the value of the rowLocking property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RowLocking }
      */
-    public void setRowLocking(RowLocking value) {
+    public void setRowLocking(final RowLocking value) {
         this.rowLocking = value;
     }
 
     /**
      * Gets the value of the pkConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link PkConstraint }
      */
     public PkConstraint getPkConstraint() {
         return pkConstraint;
@@ -374,23 +334,19 @@ public class Entity {
 
     /**
      * Sets the value of the pkConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PkConstraint }
      */
-    public void setPkConstraint(PkConstraint value) {
+    public void setPkConstraint(final PkConstraint value) {
         this.pkConstraint = value;
     }
 
     /**
      * Gets the value of the readAhead property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadAhead }
      */
     public ReadAhead getReadAhead() {
         return readAhead;
@@ -398,23 +354,19 @@ public class Entity {
 
     /**
      * Sets the value of the readAhead property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadAhead }
      */
-    public void setReadAhead(ReadAhead value) {
+    public void setReadAhead(final ReadAhead value) {
         this.readAhead = value;
     }
 
     /**
      * Gets the value of the listCacheMax property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ListCacheMax }
-     *     
+     *
+     * @return possible object is
+     * {@link ListCacheMax }
      */
     public ListCacheMax getListCacheMax() {
         return listCacheMax;
@@ -422,23 +374,19 @@ public class Entity {
 
     /**
      * Sets the value of the listCacheMax property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ListCacheMax }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ListCacheMax }
      */
-    public void setListCacheMax(ListCacheMax value) {
+    public void setListCacheMax(final ListCacheMax value) {
         this.listCacheMax = value;
     }
 
     /**
      * Gets the value of the cleanReadAheadOnLoad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CleanReadAheadOnLoad }
-     *     
+     *
+     * @return possible object is
+     * {@link CleanReadAheadOnLoad }
      */
     public CleanReadAheadOnLoad getCleanReadAheadOnLoad() {
         return cleanReadAheadOnLoad;
@@ -446,23 +394,19 @@ public class Entity {
 
     /**
      * Sets the value of the cleanReadAheadOnLoad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CleanReadAheadOnLoad }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CleanReadAheadOnLoad }
      */
-    public void setCleanReadAheadOnLoad(CleanReadAheadOnLoad value) {
+    public void setCleanReadAheadOnLoad(final CleanReadAheadOnLoad value) {
         this.cleanReadAheadOnLoad = value;
     }
 
     /**
      * Gets the value of the fetchSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FetchSize }
-     *     
+     *
+     * @return possible object is
+     * {@link FetchSize }
      */
     public FetchSize getFetchSize() {
         return fetchSize;
@@ -470,23 +414,19 @@ public class Entity {
 
     /**
      * Sets the value of the fetchSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FetchSize }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FetchSize }
      */
-    public void setFetchSize(FetchSize value) {
+    public void setFetchSize(final FetchSize value) {
         this.fetchSize = value;
     }
 
     /**
      * Gets the value of the tableName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TableName }
-     *     
+     *
+     * @return possible object is
+     * {@link TableName }
      */
     public TableName getTableName() {
         return tableName;
@@ -494,37 +434,33 @@ public class Entity {
 
     /**
      * Sets the value of the tableName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TableName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TableName }
      */
-    public void setTableName(TableName value) {
+    public void setTableName(final TableName value) {
         this.tableName = value;
     }
 
     /**
      * Gets the value of the cmpField property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cmpField property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCmpField().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link CmpField }
-     * 
-     * 
      */
     public List<CmpField> getCmpField() {
         if (cmpField == null) {
@@ -535,11 +471,9 @@ public class Entity {
 
     /**
      * Gets the value of the loadGroups property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LoadGroups }
-     *     
+     *
+     * @return possible object is
+     * {@link LoadGroups }
      */
     public LoadGroups getLoadGroups() {
         return loadGroups;
@@ -547,23 +481,19 @@ public class Entity {
 
     /**
      * Sets the value of the loadGroups property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LoadGroups }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LoadGroups }
      */
-    public void setLoadGroups(LoadGroups value) {
+    public void setLoadGroups(final LoadGroups value) {
         this.loadGroups = value;
     }
 
     /**
      * Gets the value of the eagerLoadGroup property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EagerLoadGroup }
-     *     
+     *
+     * @return possible object is
+     * {@link EagerLoadGroup }
      */
     public EagerLoadGroup getEagerLoadGroup() {
         return eagerLoadGroup;
@@ -571,23 +501,19 @@ public class Entity {
 
     /**
      * Sets the value of the eagerLoadGroup property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EagerLoadGroup }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EagerLoadGroup }
      */
-    public void setEagerLoadGroup(EagerLoadGroup value) {
+    public void setEagerLoadGroup(final EagerLoadGroup value) {
         this.eagerLoadGroup = value;
     }
 
     /**
      * Gets the value of the lazyLoadGroups property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LazyLoadGroups }
-     *     
+     *
+     * @return possible object is
+     * {@link LazyLoadGroups }
      */
     public LazyLoadGroups getLazyLoadGroups() {
         return lazyLoadGroups;
@@ -595,37 +521,33 @@ public class Entity {
 
     /**
      * Sets the value of the lazyLoadGroups property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LazyLoadGroups }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LazyLoadGroups }
      */
-    public void setLazyLoadGroups(LazyLoadGroups value) {
+    public void setLazyLoadGroups(final LazyLoadGroups value) {
         this.lazyLoadGroups = value;
     }
 
     /**
      * Gets the value of the query property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the query property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Query }
-     * 
-     * 
      */
     public List<Query> getQuery() {
         if (query == null) {
@@ -636,11 +558,9 @@ public class Entity {
 
     /**
      * Gets the value of the unknownPk property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UnknownPk }
-     *     
+     *
+     * @return possible object is
+     * {@link UnknownPk }
      */
     public UnknownPk getUnknownPk() {
         return unknownPk;
@@ -648,23 +568,19 @@ public class Entity {
 
     /**
      * Sets the value of the unknownPk property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UnknownPk }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UnknownPk }
      */
-    public void setUnknownPk(UnknownPk value) {
+    public void setUnknownPk(final UnknownPk value) {
         this.unknownPk = value;
     }
 
     /**
      * Gets the value of the entityCommand property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityCommand }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityCommand }
      */
     public EntityCommand getEntityCommand() {
         return entityCommand;
@@ -672,23 +588,19 @@ public class Entity {
 
     /**
      * Sets the value of the entityCommand property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityCommand }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityCommand }
      */
-    public void setEntityCommand(EntityCommand value) {
+    public void setEntityCommand(final EntityCommand value) {
         this.entityCommand = value;
     }
 
     /**
      * Gets the value of the optimisticLocking property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OptimisticLocking }
-     *     
+     *
+     * @return possible object is
+     * {@link OptimisticLocking }
      */
     public OptimisticLocking getOptimisticLocking() {
         return optimisticLocking;
@@ -696,23 +608,19 @@ public class Entity {
 
     /**
      * Sets the value of the optimisticLocking property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OptimisticLocking }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link OptimisticLocking }
      */
-    public void setOptimisticLocking(OptimisticLocking value) {
+    public void setOptimisticLocking(final OptimisticLocking value) {
         this.optimisticLocking = value;
     }
 
     /**
      * Gets the value of the audit property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Audit }
-     *     
+     *
+     * @return possible object is
+     * {@link Audit }
      */
     public Audit getAudit() {
         return audit;
@@ -720,13 +628,11 @@ public class Entity {
 
     /**
      * Sets the value of the audit property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Audit }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Audit }
      */
-    public void setAudit(Audit value) {
+    public void setAudit(final Audit value) {
         this.audit = value;
     }
 

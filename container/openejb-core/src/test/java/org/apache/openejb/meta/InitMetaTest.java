@@ -43,7 +43,8 @@ public class InitMetaTest {
 
             @Create
             @Init
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

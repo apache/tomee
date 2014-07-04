@@ -34,11 +34,11 @@ import java.util.Map;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tagFileType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tagFileType">
  *   &lt;complexContent>
@@ -55,8 +55,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tagFileType", propOrder = {
@@ -93,7 +91,7 @@ public class TagFile {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -106,7 +104,7 @@ public class TagFile {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -136,7 +134,7 @@ public class TagFile {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -144,7 +142,7 @@ public class TagFile {
         return path;
     }
 
-    public void setPath(String value) {
+    public void setPath(final String value) {
         this.path = value;
     }
 
@@ -152,7 +150,7 @@ public class TagFile {
         return example;
     }
 
-    public void setExample(String value) {
+    public void setExample(final String value) {
         this.example = value;
     }
 
@@ -167,7 +165,7 @@ public class TagFile {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

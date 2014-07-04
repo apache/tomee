@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for filterType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="filterType">
  *   &lt;complexContent>
@@ -54,19 +54,17 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "filterType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "filterName",
-        "filterClass",
-        "asyncSupported",
-        "initParam"
+    "descriptions",
+    "displayNames",
+    "icon",
+    "filterName",
+    "filterClass",
+    "asyncSupported",
+    "initParam"
 })
 public class Filter {
 
@@ -95,7 +93,7 @@ public class Filter {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -103,7 +101,7 @@ public class Filter {
         return description.get();
     }
 
-    public void addDescription(Text text) {
+    public void addDescription(final Text text) {
         description.add(text);
     }
 
@@ -112,7 +110,7 @@ public class Filter {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -120,7 +118,7 @@ public class Filter {
         return displayName.get();
     }
 
-    public void addDisplayName(Text text) {
+    public void addDisplayName(final Text text) {
         displayName.add(text);
     }
 
@@ -131,7 +129,7 @@ public class Filter {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -146,7 +144,7 @@ public class Filter {
         return filterName;
     }
 
-    public void setFilterName(String value) {
+    public void setFilterName(final String value) {
         this.filterName = value;
     }
 
@@ -154,7 +152,7 @@ public class Filter {
         return filterClass;
     }
 
-    public void setFilterClass(String value) {
+    public void setFilterClass(final String value) {
         this.filterClass = value;
     }
 
@@ -162,7 +160,7 @@ public class Filter {
         return asyncSupported;
     }
 
-    public void setAsyncSupported(boolean asyncSupported) {
+    public void setAsyncSupported(final boolean asyncSupported) {
         this.asyncSupported = asyncSupported;
     }
 
@@ -177,7 +175,7 @@ public class Filter {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

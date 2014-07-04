@@ -60,14 +60,14 @@ public class EJBCronTriggerPersistenceDelegate extends CronTriggerPersistenceDel
                 final String[] parts = cronExpr.split(EJBCronTrigger.DELIMITER);
                 try {
                     final EJBCronTrigger cb = new EJBCronTrigger(new ScheduleExpression()
-                            .year(parts[0])
-                            .month(parts[1])
-                            .dayOfMonth(parts[2])
-                            .dayOfWeek(parts[3])
-                            .hour(parts[4])
-                            .minute(parts[5])
-                            .second(parts[6])
-                            .timezone(timeZoneId));
+                        .year(parts[0])
+                        .month(parts[1])
+                        .dayOfMonth(parts[2])
+                        .dayOfWeek(parts[3])
+                        .hour(parts[4])
+                        .minute(parts[5])
+                        .second(parts[6])
+                        .timezone(timeZoneId));
                     return new TriggerPropertyBundle(new EJBCronTriggerSceduleBuilder(cb), null, null);
                 } catch (final EJBCronTrigger.ParseException e) {
                     throw new IllegalStateException("Can't build the Trigger with key: '" + triggerKey + "' and statement: " + Util.rtp(SELECT_CRON_TRIGGER, tablePrefix, schedNameLiteral));

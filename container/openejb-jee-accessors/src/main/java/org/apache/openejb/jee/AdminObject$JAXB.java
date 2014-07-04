@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.ConfigProperty$JAXB.readConfigProperty;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.writeConfigProperty;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AdminObject$JAXB
-        extends JAXBObject<AdminObject> {
+    extends JAXBObject<AdminObject> {
 
 
     public AdminObject$JAXB() {
         super(AdminObject.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "adminobjectType".intern()), ConfigProperty$JAXB.class);
     }
 
-    public static AdminObject readAdminObject(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AdminObject readAdminObject(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAdminObject(XoXMLStreamWriter writer, AdminObject adminObject, RuntimeContext context)
-            throws Exception {
+    public static void writeAdminObject(final XoXMLStreamWriter writer, final AdminObject adminObject, final RuntimeContext context)
+        throws Exception {
         _write(writer, adminObject, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AdminObject adminObject, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final AdminObject adminObject, final RuntimeContext context)
+        throws Exception {
         _write(writer, adminObject, context);
     }
 
-    public final static AdminObject _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AdminObject _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class AdminObject$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -101,7 +101,7 @@ public class AdminObject$JAXB
                 // ELEMENT: adminObjectInterface
                 String adminObjectInterfaceRaw = elementReader.getElementAsString();
 
-                String adminObjectInterface;
+                final String adminObjectInterface;
                 try {
                     adminObjectInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(adminObjectInterfaceRaw);
                 } catch (Exception e) {
@@ -125,7 +125,7 @@ public class AdminObject$JAXB
                 adminObject.adminObjectClass = adminObjectClass;
             } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configProperty
-                ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
+                final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {
                     configProperty = adminObject.configProperty;
                     if (configProperty != null) {
@@ -148,13 +148,13 @@ public class AdminObject$JAXB
         return adminObject;
     }
 
-    public final AdminObject read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AdminObject read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AdminObject adminObject, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, AdminObject adminObject, RuntimeContext context)
+        throws Exception {
         if (adminObject == null) {
             writer.writeXsiNil();
             return;
@@ -190,7 +190,7 @@ public class AdminObject$JAXB
         String adminObjectInterface = null;
         try {
             adminObjectInterface = Adapters.collapsedStringAdapterAdapter.marshal(adminObjectInterfaceRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(adminObject, "adminObjectInterface", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (adminObjectInterface != null) {

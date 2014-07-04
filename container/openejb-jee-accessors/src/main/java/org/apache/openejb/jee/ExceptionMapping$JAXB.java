@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.ConstructorParameterOrder$JAXB.readConstruc
 import static org.apache.openejb.jee.ConstructorParameterOrder$JAXB.writeConstructorParameterOrder;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ExceptionMapping$JAXB
-        extends JAXBObject<ExceptionMapping> {
+    extends JAXBObject<ExceptionMapping> {
 
 
     public ExceptionMapping$JAXB() {
         super(ExceptionMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "exception-mappingType".intern()), ConstructorParameterOrder$JAXB.class);
     }
 
-    public static ExceptionMapping readExceptionMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ExceptionMapping readExceptionMapping(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeExceptionMapping(XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeExceptionMapping(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, exceptionMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
+        throws Exception {
         _write(writer, exceptionMapping, context);
     }
 
-    public final static ExceptionMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ExceptionMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class ExceptionMapping$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, exceptionMapping);
                 exceptionMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -138,13 +138,13 @@ public class ExceptionMapping$JAXB
         return exceptionMapping;
     }
 
-    public final ExceptionMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ExceptionMapping read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ExceptionMapping exceptionMapping, RuntimeContext context)
+        throws Exception {
         if (exceptionMapping == null) {
             writer.writeXsiNil();
             return;
@@ -206,7 +206,7 @@ public class ExceptionMapping$JAXB
         String wsdlMessagePartName = null;
         try {
             wsdlMessagePartName = Adapters.collapsedStringAdapterAdapter.marshal(wsdlMessagePartNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(exceptionMapping, "wsdlMessagePartName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (wsdlMessagePartName != null) {

@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ExcludeList$JAXB
-        extends JAXBObject<ExcludeList> {
+    extends JAXBObject<ExcludeList> {
 
 
     public ExcludeList$JAXB() {
         super(ExcludeList.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "exclude-listType".intern()), Text$JAXB.class, Method$JAXB.class);
     }
 
-    public static ExcludeList readExcludeList(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ExcludeList readExcludeList(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeExcludeList(XoXMLStreamWriter writer, ExcludeList excludeList, RuntimeContext context)
-            throws Exception {
+    public static void writeExcludeList(final XoXMLStreamWriter writer, ExcludeList excludeList, final RuntimeContext context)
+        throws Exception {
         _write(writer, excludeList, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ExcludeList excludeList, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ExcludeList excludeList, RuntimeContext context)
+        throws Exception {
         _write(writer, excludeList, context);
     }
 
-    public final static ExcludeList _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ExcludeList _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -79,7 +79,7 @@ public class ExcludeList$JAXB
         List<Method> method = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("exclude-listType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ExcludeList.class);
@@ -87,7 +87,7 @@ public class ExcludeList$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -139,13 +139,13 @@ public class ExcludeList$JAXB
         return excludeList;
     }
 
-    public final ExcludeList read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ExcludeList read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ExcludeList excludeList, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ExcludeList excludeList, RuntimeContext context)
+        throws Exception {
         if (excludeList == null) {
             writer.writeXsiNil();
             return;
@@ -165,12 +165,12 @@ public class ExcludeList$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = excludeList.id;
+        final String idRaw = excludeList.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(excludeList, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -198,7 +198,7 @@ public class ExcludeList$JAXB
         // ELEMENT: method
         List<Method> method = excludeList.method;
         if (method != null) {
-            for (Method methodItem : method) {
+            for (final Method methodItem : method) {
                 if (methodItem != null) {
                     writer.writeStartElement(prefix, "method", "http://java.sun.com/xml/ns/javaee");
                     writeMethod(writer, methodItem, context);

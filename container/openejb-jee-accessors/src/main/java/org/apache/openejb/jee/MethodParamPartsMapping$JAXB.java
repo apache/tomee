@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.WsdlMessageMapping$JAXB.readWsdlMessageMapp
 import static org.apache.openejb.jee.WsdlMessageMapping$JAXB.writeWsdlMessageMapping;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MethodParamPartsMapping$JAXB
-        extends JAXBObject<MethodParamPartsMapping> {
+    extends JAXBObject<MethodParamPartsMapping> {
 
 
     public MethodParamPartsMapping$JAXB() {
         super(MethodParamPartsMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "method-param-parts-mappingType".intern()), WsdlMessageMapping$JAXB.class);
     }
 
-    public static MethodParamPartsMapping readMethodParamPartsMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MethodParamPartsMapping readMethodParamPartsMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethodParamPartsMapping(XoXMLStreamWriter writer, MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeMethodParamPartsMapping(final XoXMLStreamWriter writer, final MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
+        throws Exception {
         _write(writer, methodParamPartsMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, MethodParamPartsMapping methodParamPartsMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, methodParamPartsMapping, context);
     }
 
-    public final static MethodParamPartsMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MethodParamPartsMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -103,7 +103,7 @@ public class MethodParamPartsMapping$JAXB
                 // ELEMENT: paramType
                 String paramTypeRaw = elementReader.getElementAsString();
 
-                String paramType;
+                final String paramType;
                 try {
                     paramType = Adapters.collapsedStringAdapterAdapter.unmarshal(paramTypeRaw);
                 } catch (Exception e) {
@@ -126,13 +126,13 @@ public class MethodParamPartsMapping$JAXB
         return methodParamPartsMapping;
     }
 
-    public final MethodParamPartsMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MethodParamPartsMapping read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MethodParamPartsMapping methodParamPartsMapping, RuntimeContext context)
+        throws Exception {
         if (methodParamPartsMapping == null) {
             writer.writeXsiNil();
             return;

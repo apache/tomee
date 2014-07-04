@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,23 +16,24 @@
  */
 package org.apache.openejb.jee.was.v6.java;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.openejb.jee.was.v6.ecore.ETypedElement;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.openejb.jee.was.v6.ecore.ETypedElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * <p>
+ * <p/>
  * Java class for Field complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Field">
  *   &lt;complexContent>
@@ -49,158 +50,139 @@ import org.apache.openejb.jee.was.v6.ecore.ETypedElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Field", propOrder = { "initializers" })
+@XmlType(name = "Field", propOrder = {"initializers"})
 public class Field extends ETypedElement {
 
-	@XmlElement(name = "initializer")
-	protected List<Block> initializers;
-	@XmlAttribute(name = "final")
-	protected Boolean isFinal;
-	@XmlAttribute
-	protected JavaVisibilityEnum javaVisibility;
-	@XmlAttribute(name = "static")
-	protected Boolean isStatic;
-	@XmlAttribute(name = "transient")
-	protected Boolean isTransient;
-	@XmlAttribute(name = "volatile")
-	protected Boolean isVolatile;
+    @XmlElement(name = "initializer")
+    protected List<Block> initializers;
+    @XmlAttribute(name = "final")
+    protected Boolean isFinal;
+    @XmlAttribute
+    protected JavaVisibilityEnum javaVisibility;
+    @XmlAttribute(name = "static")
+    protected Boolean isStatic;
+    @XmlAttribute(name = "transient")
+    protected Boolean isTransient;
+    @XmlAttribute(name = "volatile")
+    protected Boolean isVolatile;
 
-	/**
-	 * Gets the value of the initializers property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the initializers property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getInitializers().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link Block }
-	 * 
-	 * 
-	 */
-	public List<Block> getInitializers() {
-		if (initializers == null) {
-			initializers = new ArrayList<Block>();
-		}
-		return this.initializers;
-	}
+    /**
+     * Gets the value of the initializers property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the initializers property.
+     * <p/>
+     * <p/>
+     * For example, to add a new item, do as follows:
+     * <p/>
+     * <pre>
+     * getInitializers().add(newItem);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link Block }
+     */
+    public List<Block> getInitializers() {
+        if (initializers == null) {
+            initializers = new ArrayList<Block>();
+        }
+        return this.initializers;
+    }
 
-	/**
-	 * Gets the value of the isFinal property.
-	 * 
-	 * @return possible object is {@link Boolean }
-	 * 
-	 */
-	public Boolean isIsFinal() {
-		return isFinal;
-	}
+    /**
+     * Gets the value of the isFinal property.
+     *
+     * @return possible object is {@link Boolean }
+     */
+    public Boolean isIsFinal() {
+        return isFinal;
+    }
 
-	/**
-	 * Sets the value of the isFinal property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
-	 */
-	public void setIsFinal(Boolean value) {
-		this.isFinal = value;
-	}
+    /**
+     * Sets the value of the isFinal property.
+     *
+     * @param value allowed object is {@link Boolean }
+     */
+    public void setIsFinal(final Boolean value) {
+        this.isFinal = value;
+    }
 
-	/**
-	 * Gets the value of the javaVisibility property.
-	 * 
-	 * @return possible object is {@link JavaVisibilityEnum }
-	 * 
-	 */
-	public JavaVisibilityEnum getJavaVisibility() {
-		return javaVisibility;
-	}
+    /**
+     * Gets the value of the javaVisibility property.
+     *
+     * @return possible object is {@link JavaVisibilityEnum }
+     */
+    public JavaVisibilityEnum getJavaVisibility() {
+        return javaVisibility;
+    }
 
-	/**
-	 * Sets the value of the javaVisibility property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link JavaVisibilityEnum }
-	 * 
-	 */
-	public void setJavaVisibility(JavaVisibilityEnum value) {
-		this.javaVisibility = value;
-	}
+    /**
+     * Sets the value of the javaVisibility property.
+     *
+     * @param value allowed object is {@link JavaVisibilityEnum }
+     */
+    public void setJavaVisibility(final JavaVisibilityEnum value) {
+        this.javaVisibility = value;
+    }
 
-	/**
-	 * Gets the value of the isStatic property.
-	 * 
-	 * @return possible object is {@link Boolean }
-	 * 
-	 */
-	public Boolean isIsStatic() {
-		return isStatic;
-	}
+    /**
+     * Gets the value of the isStatic property.
+     *
+     * @return possible object is {@link Boolean }
+     */
+    public Boolean isIsStatic() {
+        return isStatic;
+    }
 
-	/**
-	 * Sets the value of the isStatic property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
-	 */
-	public void setIsStatic(Boolean value) {
-		this.isStatic = value;
-	}
+    /**
+     * Sets the value of the isStatic property.
+     *
+     * @param value allowed object is {@link Boolean }
+     */
+    public void setIsStatic(final Boolean value) {
+        this.isStatic = value;
+    }
 
-	/**
-	 * Gets the value of the isTransient property.
-	 * 
-	 * @return possible object is {@link Boolean }
-	 * 
-	 */
-	public Boolean isIsTransient() {
-		return isTransient;
-	}
+    /**
+     * Gets the value of the isTransient property.
+     *
+     * @return possible object is {@link Boolean }
+     */
+    public Boolean isIsTransient() {
+        return isTransient;
+    }
 
-	/**
-	 * Sets the value of the isTransient property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
-	 */
-	public void setIsTransient(Boolean value) {
-		this.isTransient = value;
-	}
+    /**
+     * Sets the value of the isTransient property.
+     *
+     * @param value allowed object is {@link Boolean }
+     */
+    public void setIsTransient(final Boolean value) {
+        this.isTransient = value;
+    }
 
-	/**
-	 * Gets the value of the isVolatile property.
-	 * 
-	 * @return possible object is {@link Boolean }
-	 * 
-	 */
-	public Boolean isIsVolatile() {
-		return isVolatile;
-	}
+    /**
+     * Gets the value of the isVolatile property.
+     *
+     * @return possible object is {@link Boolean }
+     */
+    public Boolean isIsVolatile() {
+        return isVolatile;
+    }
 
-	/**
-	 * Sets the value of the isVolatile property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
-	 */
-	public void setIsVolatile(Boolean value) {
-		this.isVolatile = value;
-	}
+    /**
+     * Sets the value of the isVolatile property.
+     *
+     * @param value allowed object is {@link Boolean }
+     */
+    public void setIsVolatile(final Boolean value) {
+        this.isVolatile = value;
+    }
 
 }

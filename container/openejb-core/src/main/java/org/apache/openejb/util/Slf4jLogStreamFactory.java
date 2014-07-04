@@ -18,8 +18,7 @@
 package org.apache.openejb.util;
 
 /**
- * Simple Slf4jLogStream, not much configuration needed, as slf4j is just a facade 
- *
+ * Simple Slf4jLogStream, not much configuration needed, as slf4j is just a facade
  */
 
 public class Slf4jLogStreamFactory implements LogStreamFactory {

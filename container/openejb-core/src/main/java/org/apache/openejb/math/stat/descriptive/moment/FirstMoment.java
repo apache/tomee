@@ -34,10 +34,10 @@ import java.io.Serializable;
  * <ol>
  * <li>Initialize <code>m = </code> the first value</li>
  * <li>For each additional value, update using <br>
- *   <code>m = m + (new value - m) / (number of observations)</code></li>
+ * <code>m = m + (new value - m) / (number of observations)</code></li>
  * </ol></p>
  * <p>
- *  Returns <code>Double.NaN</code> if the dataset is empty.</p>
+ * Returns <code>Double.NaN</code> if the dataset is empty.</p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
@@ -49,14 +49,20 @@ import java.io.Serializable;
 public class FirstMoment extends AbstractStorelessUnivariateStatistic
     implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1232755307178490473L;
 
 
-    /** Count of values that have been added */
+    /**
+     * Count of values that have been added
+     */
     protected long n;
 
-    /** First moment of values that have been added */
+    /**
+     * First moment of values that have been added
+     */
     protected double m1;
 
     /**
@@ -88,15 +94,15 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      *
      * @param original the {@code FirstMoment} instance to copy
      */
-     public FirstMoment(final FirstMoment original) {
-         super();
-         copy(original, this);
-     }
+    public FirstMoment(final FirstMoment original) {
+        super();
+        copy(original, this);
+    }
 
     /**
      * {@inheritDoc}
      */
-     @Override
+    @Override
     public void increment(final double d) {
         if (n == 0) {
             m1 = 0.0;
@@ -149,7 +155,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source FirstMoment to copy
-     * @param dest FirstMoment to copy to
+     * @param dest   FirstMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final FirstMoment source, final FirstMoment dest) {

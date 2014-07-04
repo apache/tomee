@@ -22,7 +22,6 @@ import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.PrettyPrintXMLStreamWriter;
 import org.metatype.sxc.util.RuntimeXMLStreamException;
-import org.metatype.sxc.util.XmlFactories;
 import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 import org.metatype.sxc.util.XoXMLStreamWriter;
@@ -50,26 +49,26 @@ import java.net.URL;
  * @version $Rev$ $Date$
  */
 public class Sxc {
-    public static void marshall(final JAXBObject objectType, Object object, OutputStream outputStream) throws JAXBException {
+    public static void marshall(final JAXBObject objectType, final Object object, final OutputStream outputStream) throws JAXBException {
         final Result result = new StreamResult(outputStream);
 
         marshal(objectType, object, result);
     }
 
-    public static void marshal(JAXBObject objectType, Object object, Result result) throws JAXBException {
+    public static void marshal(final JAXBObject objectType, final Object object, final Result result) throws JAXBException {
         if (result == null) throw new IllegalArgumentException("result is null");
         if (!(result instanceof StreamResult)) throw new IllegalArgumentException("result is null");
         if (object == null) throw new IllegalArgumentException("object is null");
         if (objectType == null) throw new IllegalArgumentException("jaxbObject is null");
 
-        StreamResult streamResult = (StreamResult) result;
+        final StreamResult streamResult = (StreamResult) result;
 
         XMLStreamWriter writer = null;
         try {
             final XMLOutputFactory xof = getXmOutputFactory();
             writer = xof.createXMLStreamWriter(streamResult.getOutputStream(), "UTF-8");
             writer = new PrettyPrintXMLStreamWriter(writer);
-            XoXMLStreamWriter w = new XoXMLStreamWriterImpl(writer);
+            final XoXMLStreamWriter w = new XoXMLStreamWriterImpl(writer);
 
             try {
                 w.writeStartDocument("UTF-8", null);
@@ -80,7 +79,7 @@ public class Sxc {
 
                 try {
 
-                    QName name = objectType.getXmlRootElement();
+                    final QName name = objectType.getXmlRootElement();
 
                     // open element
                     w.writeStartElementWithAutoPrefix(name.getNamespaceURI(), name.getLocalPart());
@@ -99,7 +98,7 @@ public class Sxc {
                     }
 
                     if (e instanceof XMLStreamException) {
-                        Throwable cause = e.getCause();
+                        final Throwable cause = e.getCause();
                         if (cause instanceof JAXBException) {
                             throw (JAXBException) e;
                         }
@@ -110,41 +109,41 @@ public class Sxc {
                 }
 
                 w.writeEndDocument();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new MarshalException(e);
             }
 
 
-        } catch (XMLStreamException e) {
+        } catch (final XMLStreamException e) {
             throw new JAXBException("Could not close XMLStreamWriter.", e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (XMLStreamException ignored) {
+                } catch (final XMLStreamException ignored) {
                 }
             }
         }
     }
 
-    public static <T> T unmarshalJavaee(URL resource, JAXBObject<T> jaxbType) throws Exception {
+    public static <T> T unmarshalJavaee(final URL resource, final JAXBObject<T> jaxbType) throws Exception {
         final InputStream inputStream = resource.openStream();
         try {
             return unmarshalJavaee(jaxbType, inputStream);
         } finally {
             try {
                 inputStream.close();
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
             }
         }
     }
 
-    public static <T> T unmarshalJavaee(JAXBObject<T> jaxbType, InputStream inputStream) throws Exception {
+    public static <T> T unmarshalJavaee(final JAXBObject<T> jaxbType, final InputStream inputStream) throws Exception {
         final XMLStreamReader filter = prepareReader(inputStream);
         return unmarhsal(jaxbType, filter);
     }
 
-    public static XMLStreamReader prepareReader(InputStream inputStream) throws XMLStreamException {
+    public static XMLStreamReader prepareReader(final InputStream inputStream) throws XMLStreamException {
         final Source source = new StreamSource(inputStream);
 
         final XMLStreamReader streamReader = getXmlInputFactory().createXMLStreamReader(source);
@@ -152,14 +151,14 @@ public class Sxc {
         return new JavaeeNamespaceFilter(streamReader);
     }
 
-    public static <T> T unmarhsal(JAXBObject<T> jaxbType, XMLStreamReader xmlStreamReader) throws Exception {
+    public static <T> T unmarhsal(final JAXBObject<T> jaxbType, final XMLStreamReader xmlStreamReader) throws Exception {
 
         final XoXMLStreamReader reader = new XoXMLStreamReaderImpl(xmlStreamReader);
 
         return unmarshall(jaxbType, reader);
     }
 
-    public static <T> T unmarshall(JAXBObject<T> jaxbType, XoXMLStreamReader reader) throws Exception {
+    public static <T> T unmarshall(final JAXBObject<T> jaxbType, final XoXMLStreamReader reader) throws Exception {
         int event = reader.getEventType();
         while (event != XMLStreamConstants.START_ELEMENT && reader.hasNext()) {
             event = reader.next();
@@ -176,9 +175,9 @@ public class Sxc {
             XMLInputFactory factory = null;
             try { // 1) trying to force jvm one, 2) skipping classloading/SPI mecanism, 3) setting specific property
                 factory = (XMLInputFactory) Sxc.class.getClassLoader()
-                        .loadClass("com.sun.xml.internal.stream.XMLInputFactoryImpl").newInstance();
+                    .loadClass("com.sun.xml.internal.stream.XMLInputFactoryImpl").newInstance();
                 factory.setProperty("http://java.sun.com/xml/stream/properties/ignore-external-dtd", Boolean.TRUE);
-            } catch (Exception e) { // not a big deal, using the default one
+            } catch (final Exception e) { // not a big deal, using the default one
                 factory = XMLInputFactory.newInstance();
             }
             factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);

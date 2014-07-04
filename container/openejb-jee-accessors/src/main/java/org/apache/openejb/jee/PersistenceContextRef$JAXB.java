@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class PersistenceContextRef$JAXB
-        extends JAXBObject<PersistenceContextRef> {
+    extends JAXBObject<PersistenceContextRef> {
 
 
     public PersistenceContextRef$JAXB() {
         super(PersistenceContextRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "persistence-context-refType".intern()), Text$JAXB.class, PersistenceContextType$JAXB.class, Property$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static PersistenceContextRef readPersistenceContextRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static PersistenceContextRef readPersistenceContextRef(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writePersistenceContextRef(XoXMLStreamWriter writer, PersistenceContextRef persistenceContextRef, RuntimeContext context)
-            throws Exception {
+    public static void writePersistenceContextRef(final XoXMLStreamWriter writer, final PersistenceContextRef persistenceContextRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, persistenceContextRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, PersistenceContextRef persistenceContextRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final PersistenceContextRef persistenceContextRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, persistenceContextRef, context);
     }
 
-    public final static PersistenceContextRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static PersistenceContextRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class PersistenceContextRef$JAXB
             context = new RuntimeContext();
         }
 
-        PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
+        final PersistenceContextRef persistenceContextRef = new PersistenceContextRef();
         context.beforeUnmarshal(persistenceContextRef, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -86,7 +86,7 @@ public class PersistenceContextRef$JAXB
         Set<InjectionTarget> injectionTarget = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("persistence-context-refType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, PersistenceContextRef.class);
@@ -94,10 +94,10 @@ public class PersistenceContextRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, persistenceContextRef);
                 persistenceContextRef.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,22 +106,22 @@ public class PersistenceContextRef$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("persistence-context-ref-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextRefName
-                String persistenceContextRefNameRaw = elementReader.getElementAsString();
+                final String persistenceContextRefNameRaw = elementReader.getElementAsString();
 
-                String persistenceContextRefName;
+                final String persistenceContextRefName;
                 try {
                     persistenceContextRefName = Adapters.collapsedStringAdapterAdapter.unmarshal(persistenceContextRefNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -129,12 +129,12 @@ public class PersistenceContextRef$JAXB
                 persistenceContextRef.persistenceContextRefName = persistenceContextRefName;
             } else if (("persistence-unit-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceUnitName
-                String persistenceUnitNameRaw = elementReader.getElementAsString();
+                final String persistenceUnitNameRaw = elementReader.getElementAsString();
 
-                String persistenceUnitName;
+                final String persistenceUnitName;
                 try {
                     persistenceUnitName = Adapters.collapsedStringAdapterAdapter.unmarshal(persistenceUnitNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -142,13 +142,13 @@ public class PersistenceContextRef$JAXB
                 persistenceContextRef.persistenceUnitName = persistenceUnitName;
             } else if (("persistence-context-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextType
-                PersistenceContextType persistenceContextType = parsePersistenceContextType(elementReader, context, elementReader.getElementAsString());
+                final PersistenceContextType persistenceContextType = parsePersistenceContextType(elementReader, context, elementReader.getElementAsString());
                 if (persistenceContextType != null) {
                     persistenceContextRef.persistenceContextType = persistenceContextType;
                 }
             } else if (("persistence-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceProperty
-                Property persistencePropertyItem = readProperty(elementReader, context);
+                final Property persistencePropertyItem = readProperty(elementReader, context);
                 if (persistenceProperty == null) {
                     persistenceProperty = persistenceContextRef.persistenceProperty;
                     if (persistenceProperty != null) {
@@ -160,12 +160,12 @@ public class PersistenceContextRef$JAXB
                 persistenceProperty.add(persistencePropertyItem);
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -173,7 +173,7 @@ public class PersistenceContextRef$JAXB
                 persistenceContextRef.mappedName = mappedName;
             } else if (("injection-target" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTarget
-                InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
+                final InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
                 if (injectionTarget == null) {
                     injectionTarget = persistenceContextRef.injectionTarget;
                     if (injectionTarget != null) {
@@ -185,12 +185,12 @@ public class PersistenceContextRef$JAXB
                 injectionTarget.add(injectionTargetItem);
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
-                String lookupName;
+                final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -203,7 +203,7 @@ public class PersistenceContextRef$JAXB
         if (descriptions != null) {
             try {
                 persistenceContextRef.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, PersistenceContextRef.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -219,13 +219,13 @@ public class PersistenceContextRef$JAXB
         return persistenceContextRef;
     }
 
-    public final PersistenceContextRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final PersistenceContextRef read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, PersistenceContextRef persistenceContextRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final PersistenceContextRef persistenceContextRef, RuntimeContext context)
+        throws Exception {
         if (persistenceContextRef == null) {
             writer.writeXsiNil();
             return;
@@ -235,7 +235,7 @@ public class PersistenceContextRef$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (PersistenceContextRef.class != persistenceContextRef.getClass()) {
             context.unexpectedSubclass(writer, persistenceContextRef, PersistenceContextRef.class);
             return;
@@ -245,12 +245,12 @@ public class PersistenceContextRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = persistenceContextRef.id;
+        final String idRaw = persistenceContextRef.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(persistenceContextRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -260,11 +260,11 @@ public class PersistenceContextRef$JAXB
         Text[] descriptions = null;
         try {
             descriptions = persistenceContextRef.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(persistenceContextRef, "descriptions", PersistenceContextRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -276,11 +276,11 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: persistenceContextRefName
-        String persistenceContextRefNameRaw = persistenceContextRef.persistenceContextRefName;
+        final String persistenceContextRefNameRaw = persistenceContextRef.persistenceContextRefName;
         String persistenceContextRefName = null;
         try {
             persistenceContextRefName = Adapters.collapsedStringAdapterAdapter.marshal(persistenceContextRefNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(persistenceContextRef, "persistenceContextRefName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (persistenceContextRefName != null) {
@@ -292,11 +292,11 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: persistenceUnitName
-        String persistenceUnitNameRaw = persistenceContextRef.persistenceUnitName;
+        final String persistenceUnitNameRaw = persistenceContextRef.persistenceUnitName;
         String persistenceUnitName = null;
         try {
             persistenceUnitName = Adapters.collapsedStringAdapterAdapter.marshal(persistenceUnitNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(persistenceContextRef, "persistenceUnitName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (persistenceUnitName != null) {
@@ -306,7 +306,7 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: persistenceContextType
-        PersistenceContextType persistenceContextType = persistenceContextRef.persistenceContextType;
+        final PersistenceContextType persistenceContextType = persistenceContextRef.persistenceContextType;
         if (persistenceContextType != null) {
             writer.writeStartElement(prefix, "persistence-context-type", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringPersistenceContextType(persistenceContextRef, null, context, persistenceContextType));
@@ -314,9 +314,9 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: persistenceProperty
-        List<Property> persistenceProperty = persistenceContextRef.persistenceProperty;
+        final List<Property> persistenceProperty = persistenceContextRef.persistenceProperty;
         if (persistenceProperty != null) {
-            for (Property persistencePropertyItem : persistenceProperty) {
+            for (final Property persistencePropertyItem : persistenceProperty) {
                 if (persistencePropertyItem != null) {
                     writer.writeStartElement(prefix, "persistence-property", "http://java.sun.com/xml/ns/javaee");
                     writeProperty(writer, persistencePropertyItem, context);
@@ -328,11 +328,11 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = persistenceContextRef.mappedName;
+        final String mappedNameRaw = persistenceContextRef.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(persistenceContextRef, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {
@@ -342,9 +342,9 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: injectionTarget
-        Set<InjectionTarget> injectionTarget = persistenceContextRef.injectionTarget;
+        final Set<InjectionTarget> injectionTarget = persistenceContextRef.injectionTarget;
         if (injectionTarget != null) {
-            for (InjectionTarget injectionTargetItem : injectionTarget) {
+            for (final InjectionTarget injectionTargetItem : injectionTarget) {
                 if (injectionTargetItem != null) {
                     writer.writeStartElement(prefix, "injection-target", "http://java.sun.com/xml/ns/javaee");
                     writeInjectionTarget(writer, injectionTargetItem, context);
@@ -356,11 +356,11 @@ public class PersistenceContextRef$JAXB
         }
 
         // ELEMENT: lookupName
-        String lookupNameRaw = persistenceContextRef.lookupName;
+        final String lookupNameRaw = persistenceContextRef.lookupName;
         String lookupName = null;
         try {
             lookupName = Adapters.collapsedStringAdapterAdapter.marshal(lookupNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(persistenceContextRef, "lookupName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lookupName != null) {

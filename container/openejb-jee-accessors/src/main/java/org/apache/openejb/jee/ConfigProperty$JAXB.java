@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ConfigProperty$JAXB
-        extends JAXBObject<ConfigProperty> {
+    extends JAXBObject<ConfigProperty> {
 
 
     public ConfigProperty$JAXB() {
         super(ConfigProperty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "config-propertyType".intern()), Text$JAXB.class);
     }
 
-    public static ConfigProperty readConfigProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ConfigProperty readConfigProperty(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConfigProperty(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public static void writeConfigProperty(final XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
+        throws Exception {
         _write(writer, configProperty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ConfigProperty configProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, configProperty, context);
     }
 
-    public final static ConfigProperty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ConfigProperty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -75,7 +75,7 @@ public class ConfigProperty$JAXB
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("config-propertyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ConfigProperty.class);
@@ -83,7 +83,7 @@ public class ConfigProperty$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
@@ -136,7 +136,7 @@ public class ConfigProperty$JAXB
                 String configPropertyValue;
                 try {
                     configPropertyValue = Adapters.collapsedStringAdapterAdapter.unmarshal(configPropertyValueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -148,7 +148,7 @@ public class ConfigProperty$JAXB
                 configProperty.configPropertyIgnore = configPropertyIgnore;
             } else if (("config-property-supports-dynamic-updates" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertySupportsDynamicUpdates
-                Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 configProperty.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
             } else if (("config-property-confidential" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyConfidential
@@ -171,13 +171,13 @@ public class ConfigProperty$JAXB
         return configProperty;
     }
 
-    public final ConfigProperty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ConfigProperty read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ConfigProperty configProperty, RuntimeContext context)
+        throws Exception {
         if (configProperty == null) {
             writer.writeXsiNil();
             return;
@@ -187,7 +187,7 @@ public class ConfigProperty$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ConfigProperty.class != configProperty.getClass()) {
             context.unexpectedSubclass(writer, configProperty, ConfigProperty.class);
             return;
@@ -202,7 +202,7 @@ public class ConfigProperty$JAXB
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(configProperty, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -232,7 +232,7 @@ public class ConfigProperty$JAXB
         String configPropertyName = null;
         try {
             configPropertyName = Adapters.collapsedStringAdapterAdapter.marshal(configPropertyNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(configProperty, "configPropertyName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (configPropertyName != null) {
@@ -244,11 +244,11 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyType
-        String configPropertyTypeRaw = configProperty.configPropertyType;
+        final String configPropertyTypeRaw = configProperty.configPropertyType;
         String configPropertyType = null;
         try {
             configPropertyType = Adapters.collapsedStringAdapterAdapter.marshal(configPropertyTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(configProperty, "configPropertyType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (configPropertyType != null) {

@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.Web$JAXB.readWeb;
 import static org.apache.openejb.jee.Web$JAXB.writeWeb;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Module$JAXB
-        extends JAXBObject<Module> {
+    extends JAXBObject<Module> {
 
 
     public Module$JAXB() {
         super(Module.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "moduleType".intern()), Web$JAXB.class);
     }
 
-    public static Module readModule(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Module readModule(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeModule(XoXMLStreamWriter writer, Module module, RuntimeContext context)
-            throws Exception {
+    public static void writeModule(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+        throws Exception {
         _write(writer, module, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Module module, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+        throws Exception {
         _write(writer, module, context);
     }
 
-    public final static Module _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Module _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,7 +73,7 @@ public class Module$JAXB
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("moduleType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Module.class);
@@ -84,7 +84,7 @@ public class Module$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, module);
                 module.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,7 +93,7 @@ public class Module$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("connector" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connector
                 String connectorRaw = elementReader.getElementAsString();
@@ -160,13 +160,13 @@ public class Module$JAXB
         return module;
     }
 
-    public final Module read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Module read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Module module, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Module module, RuntimeContext context)
+        throws Exception {
         if (module == null) {
             writer.writeXsiNil();
             return;

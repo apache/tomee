@@ -34,33 +34,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageDestination$JAXB
-        extends JAXBObject<MessageDestination> {
+    extends JAXBObject<MessageDestination> {
 
 
     public MessageDestination$JAXB() {
         super(MessageDestination.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-destinationType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static MessageDestination readMessageDestination(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageDestination readMessageDestination(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageDestination(XoXMLStreamWriter writer, MessageDestination messageDestination, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageDestination(final XoXMLStreamWriter writer, final MessageDestination messageDestination, RuntimeContext context)
+        throws Exception {
         _write(writer, messageDestination, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageDestination messageDestination, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MessageDestination messageDestination, final RuntimeContext context)
+        throws Exception {
         _write(writer, messageDestination, context);
     }
 
-    public final static MessageDestination _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageDestination _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -71,7 +71,7 @@ public class MessageDestination$JAXB
             context = new RuntimeContext();
         }
 
-        MessageDestination messageDestination = new MessageDestination();
+        final MessageDestination messageDestination = new MessageDestination();
         context.beforeUnmarshal(messageDestination, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -79,7 +79,7 @@ public class MessageDestination$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("message-destinationType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MessageDestination.class);
@@ -130,10 +130,10 @@ public class MessageDestination$JAXB
                 // ELEMENT: messageDestinationName
                 String messageDestinationNameRaw = elementReader.getElementAsString();
 
-                String messageDestinationName;
+                final String messageDestinationName;
                 try {
                     messageDestinationName = Adapters.collapsedStringAdapterAdapter.unmarshal(messageDestinationNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -154,7 +154,7 @@ public class MessageDestination$JAXB
                 messageDestination.mappedName = mappedName;
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
                 String lookupName;
                 try {
@@ -192,13 +192,13 @@ public class MessageDestination$JAXB
         return messageDestination;
     }
 
-    public final MessageDestination read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageDestination read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageDestination messageDestination, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, MessageDestination messageDestination, RuntimeContext context)
+        throws Exception {
         if (messageDestination == null) {
             writer.writeXsiNil();
             return;
@@ -208,7 +208,7 @@ public class MessageDestination$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MessageDestination.class != messageDestination.getClass()) {
             context.unexpectedSubclass(writer, messageDestination, MessageDestination.class);
             return;
@@ -252,7 +252,7 @@ public class MessageDestination$JAXB
         Text[] displayNames = null;
         try {
             displayNames = messageDestination.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(messageDestination, "displayNames", MessageDestination.class, "getDisplayNames", e);
         }
         if (displayNames != null) {

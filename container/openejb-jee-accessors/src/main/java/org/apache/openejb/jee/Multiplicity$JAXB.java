@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class Multiplicity$JAXB
-        extends JAXBEnum<Multiplicity> {
+    extends JAXBEnum<Multiplicity> {
 
 
     public Multiplicity$JAXB() {
         super(Multiplicity.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "multiplicity".intern()));
     }
 
-    public Multiplicity parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public Multiplicity parse(final XoXMLStreamReader reader, final RuntimeContext context, String value)
+        throws Exception {
         return parseMultiplicity(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, Multiplicity multiplicity)
-            throws Exception {
+    public String toString(final Object bean, String parameterName, RuntimeContext context, final Multiplicity multiplicity)
+        throws Exception {
         return toStringMultiplicity(bean, parameterName, context, multiplicity);
     }
 
-    public static Multiplicity parseMultiplicity(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static Multiplicity parseMultiplicity(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("One".equals(value)) {
             return Multiplicity.ONE;
         } else if ("Many".equals(value)) {
@@ -52,8 +52,8 @@ public class Multiplicity$JAXB
         }
     }
 
-    public static String toStringMultiplicity(Object bean, String parameterName, RuntimeContext context, Multiplicity multiplicity)
-            throws Exception {
+    public static String toStringMultiplicity(final Object bean, String parameterName, final RuntimeContext context, final Multiplicity multiplicity)
+        throws Exception {
         if (Multiplicity.ONE == multiplicity) {
             return "One";
         } else if (Multiplicity.MANY == multiplicity) {

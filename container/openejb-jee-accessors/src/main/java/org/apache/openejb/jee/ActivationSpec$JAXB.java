@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.RequiredConfigProperty$JAXB.readRequiredCon
 import static org.apache.openejb.jee.RequiredConfigProperty$JAXB.writeRequiredConfigProperty;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ActivationSpec$JAXB
-        extends JAXBObject<ActivationSpec> {
+    extends JAXBObject<ActivationSpec> {
 
 
     public ActivationSpec$JAXB() {
         super(ActivationSpec.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "activationspecType".intern()), RequiredConfigProperty$JAXB.class, ConfigProperty$JAXB.class);
     }
 
-    public static ActivationSpec readActivationSpec(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ActivationSpec readActivationSpec(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeActivationSpec(XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
-            throws Exception {
+    public static void writeActivationSpec(final XoXMLStreamWriter writer, final ActivationSpec activationSpec, RuntimeContext context)
+        throws Exception {
         _write(writer, activationSpec, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
+        throws Exception {
         _write(writer, activationSpec, context);
     }
 
-    public final static ActivationSpec _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ActivationSpec _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,7 +72,7 @@ public class ActivationSpec$JAXB
             context = new RuntimeContext();
         }
 
-        ActivationSpec activationSpec = new ActivationSpec();
+        final ActivationSpec activationSpec = new ActivationSpec();
         context.beforeUnmarshal(activationSpec, LifecycleCallback.NONE);
 
         List<RequiredConfigProperty> requiredConfigProperty = null;
@@ -115,7 +115,7 @@ public class ActivationSpec$JAXB
                 activationSpec.activationSpecClass = activationSpecClass;
             } else if (("required-config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: requiredConfigProperty
-                RequiredConfigProperty requiredConfigPropertyItem = readRequiredConfigProperty(elementReader, context);
+                final RequiredConfigProperty requiredConfigPropertyItem = readRequiredConfigProperty(elementReader, context);
                 if (requiredConfigProperty == null) {
                     requiredConfigProperty = activationSpec.requiredConfigProperty;
                     if (requiredConfigProperty != null) {
@@ -153,13 +153,13 @@ public class ActivationSpec$JAXB
         return activationSpec;
     }
 
-    public final ActivationSpec read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ActivationSpec read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, ActivationSpec activationSpec, RuntimeContext context)
+        throws Exception {
         if (activationSpec == null) {
             writer.writeXsiNil();
             return;

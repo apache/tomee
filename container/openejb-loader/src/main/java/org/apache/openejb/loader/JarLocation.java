@@ -88,7 +88,7 @@ public class JarLocation {
         final StringBuilder result = new StringBuilder(fileName.length());
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        for (int i = 0; i < fileName.length();) {
+        for (int i = 0; i < fileName.length(); ) {
             final char c = fileName.charAt(i);
 
             if (c == '%') {

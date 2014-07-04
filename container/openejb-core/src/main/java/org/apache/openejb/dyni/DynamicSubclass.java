@@ -176,8 +176,8 @@ public class DynamicSubclass implements Opcodes {
                 final int modifiers = method.getModifiers();
 
                 if (Modifier.isFinal(modifiers)
-                        || Modifier.isPrivate(modifiers)
-                        || Modifier.isStatic(modifiers)) {
+                    || Modifier.isPrivate(modifiers)
+                    || Modifier.isStatic(modifiers)) {
                     continue;
                 }
 

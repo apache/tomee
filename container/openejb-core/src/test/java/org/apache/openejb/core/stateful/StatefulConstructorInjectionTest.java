@@ -40,11 +40,11 @@ import javax.naming.InitialContext;
 public class StatefulConstructorInjectionTest extends TestCase {
 
     public void test() throws Exception {
-        InitialContext ctx = new InitialContext();
+        final InitialContext ctx = new InitialContext();
 
-        Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
+        final Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
 
-        Foo foo = (Foo) ctx.lookup("FooBeanLocal");
+        final Foo foo = (Foo) ctx.lookup("FooBeanLocal");
 
 //        assertEquals("Widget.getCount()", 10, widget.getCount());
         assertEquals("Widget.getFoo()", foo, widget.getFoo());
@@ -55,19 +55,19 @@ public class StatefulConstructorInjectionTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
 
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(WidgetBean.class));
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(WidgetBean.class));
         bean.getEnvEntry().add(new EnvEntry("count", Integer.class.getName(), "10"));
 
         final EjbModule module = new EjbModule(ejbJar);
@@ -97,11 +97,11 @@ public class StatefulConstructorInjectionTest extends TestCase {
         @Resource(name = "count")
         private int count;
 
-//        @Resource
+        //        @Resource
 //        private final DataSource ds;
         //TODO OPENEJB-1578 use producer fields or methods to inject count and datasource
         @Inject
-        public WidgetBean(/*Integer count,*/ Foo foo/*, DataSource ds*/) {
+        public WidgetBean(/*Integer count,*/ final Foo foo/*, DataSource ds*/) {
 //            this.count = count;
             this.foo = foo;
 //            this.ds = ds;

@@ -30,33 +30,33 @@ import static org.apache.openejb.jee.AddressingResponses$JAXB.parseAddressingRes
 import static org.apache.openejb.jee.AddressingResponses$JAXB.toStringAddressingResponses;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Addressing$JAXB
-        extends JAXBObject<Addressing> {
+    extends JAXBObject<Addressing> {
 
 
     public Addressing$JAXB() {
         super(Addressing.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "addressingType".intern()), AddressingResponses$JAXB.class);
     }
 
-    public static Addressing readAddressing(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Addressing readAddressing(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAddressing(XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
-            throws Exception {
+    public static void writeAddressing(final XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
+        throws Exception {
         _write(writer, addressing, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
+        throws Exception {
         _write(writer, addressing, context);
     }
 
-    public final static Addressing _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Addressing _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,7 +67,7 @@ public class Addressing$JAXB
             context = new RuntimeContext();
         }
 
-        Addressing addressing = new Addressing();
+        final Addressing addressing = new Addressing();
         context.beforeUnmarshal(addressing, LifecycleCallback.NONE);
 
 
@@ -80,7 +80,7 @@ public class Addressing$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
@@ -112,13 +112,13 @@ public class Addressing$JAXB
         return addressing;
     }
 
-    public final Addressing read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Addressing read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, Addressing addressing, RuntimeContext context)
+        throws Exception {
         if (addressing == null) {
             writer.writeXsiNil();
             return;

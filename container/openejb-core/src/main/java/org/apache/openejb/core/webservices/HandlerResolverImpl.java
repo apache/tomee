@@ -17,14 +17,13 @@
 
 package org.apache.openejb.core.webservices;
 
-import static org.apache.openejb.InjectionProcessor.unwrap;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Bean;
@@ -35,14 +34,14 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.apache.openejb.Injection;
-import org.apache.openejb.InjectionProcessor;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.context.creational.CreationalContextImpl;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 
 public class HandlerResolverImpl implements HandlerResolver {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, HandlerResolverImpl.class);
@@ -79,8 +78,8 @@ public class HandlerResolverImpl implements HandlerResolver {
 
     private List<Handler> buildHandlers(final PortInfo portInfo, final HandlerChainData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) ||
-                !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
-                !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
+            !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
+            !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
             return Collections.emptyList();
         }
 
@@ -119,10 +118,10 @@ public class HandlerResolverImpl implements HandlerResolver {
             try { // old way
                 final Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
                 final InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
-                        injections,
-                        handler.getPostConstruct(),
-                        handler.getPreDestroy(),
-                        unwrap(context));
+                    injections,
+                    handler.getPostConstruct(),
+                    handler.getPreDestroy(),
+                    unwrap(context));
                 processor.createInstance();
                 processor.postConstruct();
                 final Handler handlerInstance = processor.getInstance();

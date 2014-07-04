@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.readFacesOrderingO
 import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.writeFacesOrderingOthers;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesAbsoluteOrdering$JAXB
-        extends JAXBObject<FacesAbsoluteOrdering> {
+    extends JAXBObject<FacesAbsoluteOrdering> {
 
 
     public FacesAbsoluteOrdering$JAXB() {
         super(FacesAbsoluteOrdering.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-absoluteOrderingType".intern()), FacesOrderingOthers$JAXB.class);
     }
 
-    public static FacesAbsoluteOrdering readFacesAbsoluteOrdering(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesAbsoluteOrdering readFacesAbsoluteOrdering(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesAbsoluteOrdering(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesAbsoluteOrdering(final XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAbsoluteOrdering, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
+        throws Exception {
         _write(writer, facesAbsoluteOrdering, context);
     }
 
-    public final static FacesAbsoluteOrdering _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesAbsoluteOrdering _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,7 +69,7 @@ public class FacesAbsoluteOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        FacesAbsoluteOrdering facesAbsoluteOrdering = new FacesAbsoluteOrdering();
+        final FacesAbsoluteOrdering facesAbsoluteOrdering = new FacesAbsoluteOrdering();
         context.beforeUnmarshal(facesAbsoluteOrdering, LifecycleCallback.NONE);
 
         List<Object> nameOrOthers = null;
@@ -130,13 +130,13 @@ public class FacesAbsoluteOrdering$JAXB
         return facesAbsoluteOrdering;
     }
 
-    public final FacesAbsoluteOrdering read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesAbsoluteOrdering read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
+        throws Exception {
         if (facesAbsoluteOrdering == null) {
             writer.writeXsiNil();
             return;

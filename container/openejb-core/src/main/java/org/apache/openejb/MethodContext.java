@@ -82,7 +82,7 @@ public class MethodContext {
     }
 
     public LockType getLockType() {
-        return lockType != null? lockType: beanContext.getLockType();
+        return lockType != null ? lockType : beanContext.getLockType();
     }
 
     public void setLockType(final LockType lockType) {
@@ -90,7 +90,7 @@ public class MethodContext {
     }
 
     public TransactionType getTransactionType() {
-        return transactionType != null? transactionType: beanContext.getTransactionType();
+        return transactionType != null ? transactionType : beanContext.getTransactionType();
     }
 
     public void setTransactionType(final TransactionType transactionType) {

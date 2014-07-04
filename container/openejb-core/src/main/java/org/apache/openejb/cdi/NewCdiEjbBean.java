@@ -31,8 +31,8 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
     private static final Set<Annotation> QUALIFIERS = Collections.singleton(Annotation.class.cast(new NewLiteral()));
 

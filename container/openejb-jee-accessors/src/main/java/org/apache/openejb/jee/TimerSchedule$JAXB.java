@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class TimerSchedule$JAXB
-        extends JAXBObject<TimerSchedule> {
+    extends JAXBObject<TimerSchedule> {
 
 
     public TimerSchedule$JAXB() {
         super(TimerSchedule.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "timer-scheduleType".intern()));
     }
 
-    public static TimerSchedule readTimerSchedule(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static TimerSchedule readTimerSchedule(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTimerSchedule(XoXMLStreamWriter writer, TimerSchedule timerSchedule, RuntimeContext context)
-            throws Exception {
+    public static void writeTimerSchedule(final XoXMLStreamWriter writer, final TimerSchedule timerSchedule, final RuntimeContext context)
+        throws Exception {
         _write(writer, timerSchedule, context);
     }
 
-    public void write(XoXMLStreamWriter writer, TimerSchedule timerSchedule, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final TimerSchedule timerSchedule, final RuntimeContext context)
+        throws Exception {
         _write(writer, timerSchedule, context);
     }
 
-    public final static TimerSchedule _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static TimerSchedule _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class TimerSchedule$JAXB
             context = new RuntimeContext();
         }
 
-        TimerSchedule timerSchedule = new TimerSchedule();
+        final TimerSchedule timerSchedule = new TimerSchedule();
         context.beforeUnmarshal(timerSchedule, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("timer-scheduleType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, TimerSchedule.class);
@@ -78,10 +78,10 @@ public class TimerSchedule$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, timerSchedule);
                 timerSchedule.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class TimerSchedule$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("second" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: second
-                String secondRaw = elementReader.getElementAsString();
+                final String secondRaw = elementReader.getElementAsString();
 
-                String second;
+                final String second;
                 try {
                     second = Adapters.collapsedStringAdapterAdapter.unmarshal(secondRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.second = second;
             } else if (("minute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: minute
-                String minuteRaw = elementReader.getElementAsString();
+                final String minuteRaw = elementReader.getElementAsString();
 
-                String minute;
+                final String minute;
                 try {
                     minute = Adapters.collapsedStringAdapterAdapter.unmarshal(minuteRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -119,12 +119,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.minute = minute;
             } else if (("hour" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: hour
-                String hourRaw = elementReader.getElementAsString();
+                final String hourRaw = elementReader.getElementAsString();
 
-                String hour;
+                final String hour;
                 try {
                     hour = Adapters.collapsedStringAdapterAdapter.unmarshal(hourRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -132,12 +132,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.hour = hour;
             } else if (("day-of-month" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dayOfMonth
-                String dayOfMonthRaw = elementReader.getElementAsString();
+                final String dayOfMonthRaw = elementReader.getElementAsString();
 
-                String dayOfMonth;
+                final String dayOfMonth;
                 try {
                     dayOfMonth = Adapters.collapsedStringAdapterAdapter.unmarshal(dayOfMonthRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -145,12 +145,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.dayOfMonth = dayOfMonth;
             } else if (("month" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: month
-                String monthRaw = elementReader.getElementAsString();
+                final String monthRaw = elementReader.getElementAsString();
 
-                String month;
+                final String month;
                 try {
                     month = Adapters.collapsedStringAdapterAdapter.unmarshal(monthRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -158,12 +158,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.month = month;
             } else if (("day-of-week" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dayOfWeek
-                String dayOfWeekRaw = elementReader.getElementAsString();
+                final String dayOfWeekRaw = elementReader.getElementAsString();
 
-                String dayOfWeek;
+                final String dayOfWeek;
                 try {
                     dayOfWeek = Adapters.collapsedStringAdapterAdapter.unmarshal(dayOfWeekRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -171,12 +171,12 @@ public class TimerSchedule$JAXB
                 timerSchedule.dayOfWeek = dayOfWeek;
             } else if (("year" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: year
-                String yearRaw = elementReader.getElementAsString();
+                final String yearRaw = elementReader.getElementAsString();
 
-                String year;
+                final String year;
                 try {
                     year = Adapters.collapsedStringAdapterAdapter.unmarshal(yearRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -192,13 +192,13 @@ public class TimerSchedule$JAXB
         return timerSchedule;
     }
 
-    public final TimerSchedule read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final TimerSchedule read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, TimerSchedule timerSchedule, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final TimerSchedule timerSchedule, RuntimeContext context)
+        throws Exception {
         if (timerSchedule == null) {
             writer.writeXsiNil();
             return;
@@ -208,7 +208,7 @@ public class TimerSchedule$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (TimerSchedule.class != timerSchedule.getClass()) {
             context.unexpectedSubclass(writer, timerSchedule, TimerSchedule.class);
             return;
@@ -218,23 +218,23 @@ public class TimerSchedule$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = timerSchedule.id;
+        final String idRaw = timerSchedule.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(timerSchedule, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: second
-        String secondRaw = timerSchedule.second;
+        final String secondRaw = timerSchedule.second;
         String second = null;
         try {
             second = Adapters.collapsedStringAdapterAdapter.marshal(secondRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "second", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (second != null) {
@@ -244,11 +244,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: minute
-        String minuteRaw = timerSchedule.minute;
+        final String minuteRaw = timerSchedule.minute;
         String minute = null;
         try {
             minute = Adapters.collapsedStringAdapterAdapter.marshal(minuteRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "minute", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (minute != null) {
@@ -258,11 +258,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: hour
-        String hourRaw = timerSchedule.hour;
+        final String hourRaw = timerSchedule.hour;
         String hour = null;
         try {
             hour = Adapters.collapsedStringAdapterAdapter.marshal(hourRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "hour", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (hour != null) {
@@ -272,11 +272,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: dayOfMonth
-        String dayOfMonthRaw = timerSchedule.dayOfMonth;
+        final String dayOfMonthRaw = timerSchedule.dayOfMonth;
         String dayOfMonth = null;
         try {
             dayOfMonth = Adapters.collapsedStringAdapterAdapter.marshal(dayOfMonthRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "dayOfMonth", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (dayOfMonth != null) {
@@ -286,11 +286,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: month
-        String monthRaw = timerSchedule.month;
+        final String monthRaw = timerSchedule.month;
         String month = null;
         try {
             month = Adapters.collapsedStringAdapterAdapter.marshal(monthRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "month", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (month != null) {
@@ -300,11 +300,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: dayOfWeek
-        String dayOfWeekRaw = timerSchedule.dayOfWeek;
+        final String dayOfWeekRaw = timerSchedule.dayOfWeek;
         String dayOfWeek = null;
         try {
             dayOfWeek = Adapters.collapsedStringAdapterAdapter.marshal(dayOfWeekRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "dayOfWeek", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (dayOfWeek != null) {
@@ -314,11 +314,11 @@ public class TimerSchedule$JAXB
         }
 
         // ELEMENT: year
-        String yearRaw = timerSchedule.year;
+        final String yearRaw = timerSchedule.year;
         String year = null;
         try {
             year = Adapters.collapsedStringAdapterAdapter.marshal(yearRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timerSchedule, "year", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (year != null) {

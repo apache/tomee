@@ -25,14 +25,14 @@ import javax.xml.ws.WebServiceContext;
 
 /**
  * This interface defines the WS-Addressing functions of {@link WebServiceContext WebServiceContext}
- * that must be implemented by each JAX-WS provider. This interface is used within 
+ * that must be implemented by each JAX-WS provider. This interface is used within
  * {@link EjbWsContext EjbWsContext} and its implementation can be passed to
- * the stateless or singleton container on Web Service invocations. 
+ * the stateless or singleton container on Web Service invocations.
  */
 public interface AddressingSupport {
-    
+
     EndpointReference getEndpointReference(Element... referenceParameters);
 
     <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters);
-    
+
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for message-driven-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-driven-descriptor">
  *   &lt;complexContent>
@@ -73,8 +73,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-descriptor", propOrder = {
@@ -143,11 +141,9 @@ public class MessageDrivenDescriptor {
 
     /**
      * Gets the value of the pool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Pool }
-     *     
+     *
+     * @return possible object is
+     * {@link Pool }
      */
     public Pool getPool() {
         return pool;
@@ -155,23 +151,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the pool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Pool }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Pool }
      */
-    public void setPool(Pool value) {
+    public void setPool(final Pool value) {
         this.pool = value;
     }
 
     /**
      * Gets the value of the timerDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link TimerDescriptor }
      */
     public TimerDescriptor getTimerDescriptor() {
         return timerDescriptor;
@@ -179,23 +171,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the timerDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TimerDescriptor }
      */
-    public void setTimerDescriptor(TimerDescriptor value) {
+    public void setTimerDescriptor(final TimerDescriptor value) {
         this.timerDescriptor = value;
     }
 
     /**
      * Gets the value of the resourceAdapterJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResourceAdapterJndiName() {
         return resourceAdapterJndiName;
@@ -203,23 +191,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the resourceAdapterJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResourceAdapterJndiName(String value) {
+    public void setResourceAdapterJndiName(final String value) {
         this.resourceAdapterJndiName = value;
     }
 
     /**
      * Gets the value of the destinationJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationJndiName() {
         return destinationJndiName;
@@ -227,23 +211,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the destinationJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationJndiName(String value) {
+    public void setDestinationJndiName(final String value) {
         this.destinationJndiName = value;
     }
 
     /**
      * Gets the value of the initialContextFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInitialContextFactory() {
         return initialContextFactory;
@@ -251,23 +231,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the initialContextFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInitialContextFactory(String value) {
+    public void setInitialContextFactory(final String value) {
         this.initialContextFactory = value;
     }
 
     /**
      * Gets the value of the providerUrl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getProviderUrl() {
         return providerUrl;
@@ -275,23 +251,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the providerUrl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setProviderUrl(String value) {
+    public void setProviderUrl(final String value) {
         this.providerUrl = value;
     }
 
     /**
      * Gets the value of the connectionFactoryJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConnectionFactoryJndiName() {
         return connectionFactoryJndiName;
@@ -299,23 +271,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the connectionFactoryJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConnectionFactoryJndiName(String value) {
+    public void setConnectionFactoryJndiName(final String value) {
         this.connectionFactoryJndiName = value;
     }
 
     /**
      * Gets the value of the destinationResourceLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationResourceLink() {
         return destinationResourceLink;
@@ -323,23 +291,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the destinationResourceLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationResourceLink(String value) {
+    public void setDestinationResourceLink(final String value) {
         this.destinationResourceLink = value;
     }
 
     /**
      * Gets the value of the connectionFactoryResourceLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConnectionFactoryResourceLink() {
         return connectionFactoryResourceLink;
@@ -347,23 +311,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the connectionFactoryResourceLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConnectionFactoryResourceLink(String value) {
+    public void setConnectionFactoryResourceLink(final String value) {
         this.connectionFactoryResourceLink = value;
     }
 
     /**
      * Gets the value of the jmsPollingIntervalSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getJmsPollingIntervalSeconds() {
         return jmsPollingIntervalSeconds;
@@ -371,23 +331,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the jmsPollingIntervalSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setJmsPollingIntervalSeconds(BigInteger value) {
+    public void setJmsPollingIntervalSeconds(final BigInteger value) {
         this.jmsPollingIntervalSeconds = value;
     }
 
     /**
      * Gets the value of the jmsClientId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJmsClientId() {
         return jmsClientId;
@@ -395,23 +351,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the jmsClientId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJmsClientId(String value) {
+    public void setJmsClientId(final String value) {
         this.jmsClientId = value;
     }
 
     /**
      * Gets the value of the generateUniqueJmsClientId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getGenerateUniqueJmsClientId() {
         return generateUniqueJmsClientId;
@@ -419,23 +371,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the generateUniqueJmsClientId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setGenerateUniqueJmsClientId(Boolean value) {
+    public void setGenerateUniqueJmsClientId(final Boolean value) {
         this.generateUniqueJmsClientId = value;
     }
 
     /**
      * Gets the value of the durableSubscriptionDeletion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getDurableSubscriptionDeletion() {
         return durableSubscriptionDeletion;
@@ -443,23 +391,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the durableSubscriptionDeletion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDurableSubscriptionDeletion(Boolean value) {
+    public void setDurableSubscriptionDeletion(final Boolean value) {
         this.durableSubscriptionDeletion = value;
     }
 
     /**
      * Gets the value of the maxMessagesInTransaction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxMessagesInTransaction() {
         return maxMessagesInTransaction;
@@ -467,23 +411,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the maxMessagesInTransaction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxMessagesInTransaction(BigInteger value) {
+    public void setMaxMessagesInTransaction(final BigInteger value) {
         this.maxMessagesInTransaction = value;
     }
 
     /**
      * Gets the value of the distributedDestinationConnection property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DistributedDestinationConnection }
-     *     
+     *
+     * @return possible object is
+     * {@link DistributedDestinationConnection }
      */
     public DistributedDestinationConnection getDistributedDestinationConnection() {
         return distributedDestinationConnection;
@@ -491,23 +431,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the distributedDestinationConnection property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DistributedDestinationConnection }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DistributedDestinationConnection }
      */
-    public void setDistributedDestinationConnection(DistributedDestinationConnection value) {
+    public void setDistributedDestinationConnection(final DistributedDestinationConnection value) {
         this.distributedDestinationConnection = value;
     }
 
     /**
      * Gets the value of the initSuspendSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getInitSuspendSeconds() {
         return initSuspendSeconds;
@@ -515,23 +451,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the initSuspendSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setInitSuspendSeconds(BigInteger value) {
+    public void setInitSuspendSeconds(final BigInteger value) {
         this.initSuspendSeconds = value;
     }
 
     /**
      * Gets the value of the maxSuspendSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxSuspendSeconds() {
         return maxSuspendSeconds;
@@ -539,23 +471,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the maxSuspendSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxSuspendSeconds(BigInteger value) {
+    public void setMaxSuspendSeconds(final BigInteger value) {
         this.maxSuspendSeconds = value;
     }
 
     /**
      * Gets the value of the securityPlugin property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityPlugin }
-     *     
+     *
+     * @return possible object is
+     * {@link SecurityPlugin }
      */
     public SecurityPlugin getSecurityPlugin() {
         return securityPlugin;
@@ -563,23 +491,19 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the securityPlugin property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityPlugin }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SecurityPlugin }
      */
-    public void setSecurityPlugin(SecurityPlugin value) {
+    public void setSecurityPlugin(final SecurityPlugin value) {
         this.securityPlugin = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -587,13 +511,11 @@ public class MessageDrivenDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesBehavior$JAXB
-        extends JAXBObject<FacesBehavior> {
+    extends JAXBObject<FacesBehavior> {
 
 
     public FacesBehavior$JAXB() {
         super(FacesBehavior.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-behaviorType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesBehaviorExtension$JAXB.class);
     }
 
-    public static FacesBehavior readFacesBehavior(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesBehavior readFacesBehavior(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesBehavior(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesBehavior(final XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehavior, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, FacesBehavior facesBehavior, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehavior, context);
     }
 
-    public final static FacesBehavior _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesBehavior _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -133,7 +133,7 @@ public class FacesBehavior$JAXB
                 icon.add(iconItem);
             } else if (("behavior-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: behaviorId
-                String behaviorIdRaw = elementReader.getElementAsString();
+                final String behaviorIdRaw = elementReader.getElementAsString();
 
                 String behaviorId;
                 try {
@@ -202,7 +202,7 @@ public class FacesBehavior$JAXB
         if (descriptions != null) {
             try {
                 facesBehavior.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesBehavior.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -231,13 +231,13 @@ public class FacesBehavior$JAXB
         return facesBehavior;
     }
 
-    public final FacesBehavior read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesBehavior read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesBehavior facesBehavior, RuntimeContext context)
+        throws Exception {
         if (facesBehavior == null) {
             writer.writeXsiNil();
             return;
@@ -264,7 +264,7 @@ public class FacesBehavior$JAXB
             context.getterError(facesBehavior, "descriptions", FacesBehavior.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -295,7 +295,7 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesBehavior.icon;
+        final LocalCollection<Icon> icon = facesBehavior.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {

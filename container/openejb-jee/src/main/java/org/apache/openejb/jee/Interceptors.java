@@ -18,22 +18,26 @@
 
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for interceptorsType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="interceptorsType">
  *   &lt;complexContent>
@@ -47,21 +51,19 @@ import java.util.LinkedHashMap;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interceptorsType", propOrder = {
-        "descriptions",
-        "interceptor"
-        })
+    "descriptions",
+    "interceptor"
+})
 public class Interceptors {
 
     @XmlTransient
     protected TextMap description = new TextMap();
 
     @XmlTransient
-    protected Map<String,Interceptor> interceptors = new LinkedHashMap<String,Interceptor>();
+    protected Map<String, Interceptor> interceptors = new LinkedHashMap<String, Interceptor>();
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -73,7 +75,7 @@ public class Interceptors {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -85,7 +87,7 @@ public class Interceptors {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -94,17 +96,17 @@ public class Interceptors {
         return interceptors.values().toArray(new Interceptor[]{});
     }
 
-    public void setInterceptor(Interceptor[] v) {
+    public void setInterceptor(final Interceptor[] v) {
         interceptors.clear();
         for (Interceptor e : v) addInterceptor(e);
     }
 
-    public Interceptor addInterceptor(Interceptor interceptor){
+    public Interceptor addInterceptor(final Interceptor interceptor) {
         interceptors.put(interceptor.getInterceptorClass(), interceptor);
         return interceptor;
     }
 
-    public Interceptor getInterceptor(String className){
+    public Interceptor getInterceptor(final String className) {
         return interceptors.get(className);
     }
 }

@@ -27,5 +27,6 @@ import java.util.List;
 public interface ProviderLoader {
 
     ServiceProvider load(ID id);
+
     List<ServiceProvider> load(String namespace);
 }

@@ -54,13 +54,13 @@ public final class JndiTreeBrowser {
             worker.doWork(path, current.getName(), obj);
             if (obj instanceof Context) {
                 runOnJndiTree((Context) obj, worker,
-                        path + '/' + current.getName());
+                    path + '/' + current.getName());
             }
         }
     }
 
     private void runOnJndiTree(final Context ctx, final JndiNodeWorker worker, final String prefix)
-            throws NamingException {
+        throws NamingException {
         new JndiTreeBrowser(ctx, prefix).runOnTree(worker);
     }
 

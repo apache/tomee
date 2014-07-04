@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class TransactionType$JAXB
-        extends JAXBEnum<TransactionType> {
+    extends JAXBEnum<TransactionType> {
 
 
     public TransactionType$JAXB() {
         super(TransactionType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "transactionType".intern()));
     }
 
-    public TransactionType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public TransactionType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseTransactionType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, TransactionType transactionType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final TransactionType transactionType)
+        throws Exception {
         return toStringTransactionType(bean, parameterName, context, transactionType);
     }
 
-    public static TransactionType parseTransactionType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static TransactionType parseTransactionType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Bean".equals(value)) {
             return TransactionType.BEAN;
         } else if ("Container".equals(value)) {
@@ -52,8 +52,8 @@ public class TransactionType$JAXB
         }
     }
 
-    public static String toStringTransactionType(Object bean, String parameterName, RuntimeContext context, TransactionType transactionType)
-            throws Exception {
+    public static String toStringTransactionType(final Object bean, final String parameterName, final RuntimeContext context, final TransactionType transactionType)
+        throws Exception {
         if (TransactionType.BEAN == transactionType) {
             return "Bean";
         } else if (TransactionType.CONTAINER == transactionType) {

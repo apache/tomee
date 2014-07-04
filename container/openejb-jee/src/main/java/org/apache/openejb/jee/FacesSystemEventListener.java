@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- * 
+ * <p/>
  * <p>Java class for faces-config-system-event-listenerType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-system-event-listenerType">
  *   &lt;complexContent>
@@ -48,8 +48,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-system-event-listenerType", propOrder = {
@@ -73,11 +71,9 @@ public class FacesSystemEventListener {
 
     /**
      * Gets the value of the systemEventListenerClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSystemEventListenerClass() {
         return systemEventListenerClass;
@@ -85,23 +81,19 @@ public class FacesSystemEventListener {
 
     /**
      * Sets the value of the systemEventListenerClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSystemEventListenerClass(String value) {
+    public void setSystemEventListenerClass(final String value) {
         this.systemEventListenerClass = value;
     }
 
     /**
      * Gets the value of the systemEventClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSystemEventClass() {
         return systemEventClass;
@@ -109,23 +101,19 @@ public class FacesSystemEventListener {
 
     /**
      * Sets the value of the systemEventClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSystemEventClass(String value) {
+    public void setSystemEventClass(final String value) {
         this.systemEventClass = value;
     }
 
     /**
      * Gets the value of the sourceClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSourceClass() {
         return sourceClass;
@@ -133,23 +121,19 @@ public class FacesSystemEventListener {
 
     /**
      * Sets the value of the sourceClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSourceClass(String value) {
+    public void setSourceClass(final String value) {
         this.sourceClass = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -157,13 +141,11 @@ public class FacesSystemEventListener {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

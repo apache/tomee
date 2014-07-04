@@ -50,12 +50,14 @@ public interface RelationField extends Keyable {
     /**
      * This is only used for xml converters and will normally return null.
      * Gets the field on the target entity for this relationship.
+     *
      * @return the field on the target entity for this relationship.
      */
     RelationField getRelatedField();
 
     /**
      * Gets the field on the target entity for this relationship.
+     *
      * @param value field on the target entity for this relationship.
      */
     void setRelatedField(RelationField value);
@@ -63,6 +65,7 @@ public interface RelationField extends Keyable {
     /**
      * This is only used for xml converters and will normally return false.
      * A true value indicates that this field was generated for CMR back references.
+     *
      * @return true if this field was generated for CMR back references.
      */
     boolean isSyntheticField();
@@ -70,6 +73,7 @@ public interface RelationField extends Keyable {
     /**
      * This is only used for xml converters and will normally return false.
      * A true value indicates that this field was generated for CMR back references.
+     *
      * @return true if this field was generated for CMR back references.
      */
     void setSyntheticField(boolean syntheticField);

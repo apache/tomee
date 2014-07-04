@@ -50,6 +50,6 @@ public class AssemblerAfterApplicationCreated {
 
     @Override
     public String toString() {
-        return "AssemblerAfterApplicationCreated{app=" + app.appId +"}";
+        return "AssemblerAfterApplicationCreated{app=" + app.appId + "}";
     }
 }

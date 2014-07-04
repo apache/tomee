@@ -35,7 +35,7 @@ public class SecondaryTable {
         return tableName;
     }
 
-    public void setTableName(String value) {
+    public void setTableName(final String value) {
         this.tableName = value;
     }
 

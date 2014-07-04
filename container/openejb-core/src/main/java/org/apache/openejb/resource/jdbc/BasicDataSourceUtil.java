@@ -42,7 +42,7 @@ public final class BasicDataSourceUtil {
         String pluginClassName = null;
         try {
             final ResourceFinder finder = new ResourceFinder("META-INF");
-            final Map<String,String> plugins = finder.mapAvailableStrings(DataSourcePlugin.class.getName());
+            final Map<String, String> plugins = finder.mapAvailableStrings(DataSourcePlugin.class.getName());
             pluginClassName = plugins.get(vendor);
         } catch (final IOException ignored) {
             // couldn't determine the plugins, which isn't fatal
@@ -56,7 +56,7 @@ public final class BasicDataSourceUtil {
         // create the plugin
         try {
             final Class pluginClass = Class.forName(pluginClassName);
-            return  (DataSourcePlugin) pluginClass.newInstance();
+            return (DataSourcePlugin) pluginClass.newInstance();
         } catch (final ClassNotFoundException e) {
             throw new SQLException("Unable to load data source helper class '" + pluginClassName + "' for database '" + vendor + "'");
         } catch (final Exception e) {
@@ -69,7 +69,7 @@ public final class BasicDataSourceUtil {
         if (jdbcUrl == null) {
             return null;
         }
-        
+
         // strip off "jdbc:"
         if (!jdbcUrl.startsWith("jdbc:")) {
             return null;
@@ -86,5 +86,5 @@ public final class BasicDataSourceUtil {
 
         return jdbcUrl;
     }
-    
+
 }

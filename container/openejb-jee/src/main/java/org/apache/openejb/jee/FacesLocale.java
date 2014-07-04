@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-localeType simple type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;simpleType name="faces-config-localeType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -36,8 +36,6 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-localeType", propOrder = {
@@ -49,17 +47,11 @@ public class FacesLocale {
     protected java.lang.String value;
 
     /**
-     * 
-     * 
-     *                 The localeType defines valid locale defined by ISO-639-1
-     *                 and ISO-3166.
-     * 
-     *             
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     * The localeType defines valid locale defined by ISO-639-1
+     * and ISO-3166.
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -67,13 +59,11 @@ public class FacesLocale {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 

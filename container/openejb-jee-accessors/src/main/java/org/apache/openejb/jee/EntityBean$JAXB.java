@@ -68,33 +68,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class EntityBean$JAXB
-        extends JAXBObject<EntityBean> {
+    extends JAXBObject<EntityBean> {
 
 
     public EntityBean$JAXB() {
         super(EntityBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "entity-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, PersistenceType$JAXB.class, CmpVersion$JAXB.class, CmpField$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class, Query$JAXB.class);
     }
 
-    public static EntityBean readEntityBean(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static EntityBean readEntityBean(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeEntityBean(XoXMLStreamWriter writer, EntityBean entityBean, RuntimeContext context)
-            throws Exception {
+    public static void writeEntityBean(final XoXMLStreamWriter writer, final EntityBean entityBean, RuntimeContext context)
+        throws Exception {
         _write(writer, entityBean, context);
     }
 
-    public void write(XoXMLStreamWriter writer, EntityBean entityBean, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, EntityBean entityBean, RuntimeContext context)
+        throws Exception {
         _write(writer, entityBean, context);
     }
 
-    public final static EntityBean _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static EntityBean _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -105,7 +105,7 @@ public class EntityBean$JAXB
             context = new RuntimeContext();
         }
 
-        EntityBean entityBean = new EntityBean();
+        final EntityBean entityBean = new EntityBean();
         context.beforeUnmarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -128,7 +128,7 @@ public class EntityBean$JAXB
         List<Query> query = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("entity-beanType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, EntityBean.class);
@@ -139,7 +139,7 @@ public class EntityBean$JAXB
         for (Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, entityBean);
                 entityBean.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -158,7 +158,7 @@ public class EntityBean$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
@@ -182,7 +182,7 @@ public class EntityBean$JAXB
                 String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -192,7 +192,7 @@ public class EntityBean$JAXB
                 // ELEMENT: mappedName
                 String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
                 } catch (Exception e) {
@@ -203,7 +203,7 @@ public class EntityBean$JAXB
                 entityBean.mappedName = mappedName;
             } else if (("home" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: home
-                String homeRaw = elementReader.getElementAsString();
+                final String homeRaw = elementReader.getElementAsString();
 
                 String home;
                 try {
@@ -586,13 +586,13 @@ public class EntityBean$JAXB
         return entityBean;
     }
 
-    public final EntityBean read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final EntityBean read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, EntityBean entityBean, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final EntityBean entityBean, RuntimeContext context)
+        throws Exception {
         if (entityBean == null) {
             writer.writeXsiNil();
             return;
@@ -612,12 +612,12 @@ public class EntityBean$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = entityBean.id;
+        final String idRaw = entityBean.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(entityBean, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -627,11 +627,11 @@ public class EntityBean$JAXB
         Text[] descriptions = null;
         try {
             descriptions = entityBean.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(entityBean, "descriptions", EntityBean.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -662,7 +662,7 @@ public class EntityBean$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = entityBean.icon;
+        final LocalCollection<Icon> icon = entityBean.icon;
         if (icon != null) {
             for (Icon iconItem : icon) {
                 if (iconItem != null) {

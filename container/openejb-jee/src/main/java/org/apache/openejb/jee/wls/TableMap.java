@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,13 +24,16 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for table-map complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="table-map">
  *   &lt;complexContent>
@@ -52,8 +52,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "table-map", propOrder = {
@@ -89,11 +87,9 @@ public class TableMap {
 
     /**
      * Gets the value of the tableName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTableName() {
         return tableName;
@@ -101,37 +97,33 @@ public class TableMap {
 
     /**
      * Sets the value of the tableName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTableName(String value) {
+    public void setTableName(final String value) {
         this.tableName = value;
     }
 
     /**
      * Gets the value of the fieldMap property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the fieldMap property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFieldMap().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldMap }
-     * 
-     * 
      */
     public List<FieldMap> getFieldMap() {
         if (fieldMap == null) {
@@ -142,11 +134,9 @@ public class TableMap {
 
     /**
      * Gets the value of the verifyRows property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVerifyRows() {
         return verifyRows;
@@ -154,23 +144,19 @@ public class TableMap {
 
     /**
      * Sets the value of the verifyRows property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setVerifyRows(String value) {
+    public void setVerifyRows(final String value) {
         this.verifyRows = value;
     }
 
     /**
      * Gets the value of the verifyColumns property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVerifyColumns() {
         return verifyColumns;
@@ -178,23 +164,19 @@ public class TableMap {
 
     /**
      * Sets the value of the verifyColumns property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setVerifyColumns(String value) {
+    public void setVerifyColumns(final String value) {
         this.verifyColumns = value;
     }
 
     /**
      * Gets the value of the optimisticColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getOptimisticColumn() {
         return optimisticColumn;
@@ -202,23 +184,19 @@ public class TableMap {
 
     /**
      * Sets the value of the optimisticColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setOptimisticColumn(String value) {
+    public void setOptimisticColumn(final String value) {
         this.optimisticColumn = value;
     }
 
     /**
      * Gets the value of the triggerUpdatesOptimisticColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getTriggerUpdatesOptimisticColumn() {
         return triggerUpdatesOptimisticColumn;
@@ -226,23 +204,19 @@ public class TableMap {
 
     /**
      * Sets the value of the triggerUpdatesOptimisticColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setTriggerUpdatesOptimisticColumn(Boolean value) {
+    public void setTriggerUpdatesOptimisticColumn(final Boolean value) {
         this.triggerUpdatesOptimisticColumn = value;
     }
 
     /**
      * Gets the value of the versionColumnInitialValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getVersionColumnInitialValue() {
         return versionColumnInitialValue;
@@ -250,23 +224,19 @@ public class TableMap {
 
     /**
      * Sets the value of the versionColumnInitialValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setVersionColumnInitialValue(BigInteger value) {
+    public void setVersionColumnInitialValue(final BigInteger value) {
         this.versionColumnInitialValue = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -274,13 +244,11 @@ public class TableMap {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
