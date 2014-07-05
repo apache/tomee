@@ -45,6 +45,7 @@
       javax.ejb,
       javax.ejb.embeddable,
       javax.ejb.spi,
+      javax.enterprise.concurrent,
       javax.enterprise.context,
       javax.enterprise.context.spi,
       javax.enterprise.deploy.model;resolution:=optional,
@@ -415,6 +416,11 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
+    </dependency>
+    <dependency> <!-- TODO: remove it when javaee-api 7 will be done -->
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-concurrent_1.0_spec</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <!-- required for endorsed dir support -->
     <dependency>
