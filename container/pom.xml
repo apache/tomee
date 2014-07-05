@@ -38,6 +38,5 @@
     <module>openejb-jee-accessors</module>
     <module>openejb-junit</module>
     <module>openejb-jpa-integration</module>
-    <module>openejb-concurrency-utilities-ee</module>
   </modules>
 </project>
