@@ -745,7 +745,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      */
     private void checkState() throws IllegalStateException {
         final BaseContext context = (BaseContext) deployment.get(EJBContext.class);
-        context.check(BaseContext.Call.timerMethod);
+        context.doCheck(BaseContext.Call.timerMethod);
     }
 
     /**

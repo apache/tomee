@@ -37,12 +37,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     protected final AtomicReference<Future<T>> futureRef;
 
     protected LastExecution lastExecution;
-    protected volatile boolean skipped = false;
+    protected volatile boolean skipped;
 
-    protected volatile boolean done = false;
+    protected volatile boolean done;
 
     private final AtomicBoolean running = new AtomicBoolean(true);
-    private volatile T result = null;
+    private volatile T result;
 
     protected TriggerTask(final Object original, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
                           final Date taskScheduledTime, final String id, final AtomicReference<Future<T>> ref) {

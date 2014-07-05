@@ -42,7 +42,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        check(Call.getEJBLocalObject);
+        doCheck(Call.getEJBLocalObject);
 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -62,7 +62,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
-        check(Call.getEJBObject);
+        doCheck(Call.getEJBObject);
 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -81,13 +81,13 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
     }
 
     public Object getPrimaryKey() throws IllegalStateException {
-        check(Call.getPrimaryKey);
+        doCheck(Call.getPrimaryKey);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         return threadContext.getPrimaryKey();
     }
 
-    public void check(final Call call) {
-        final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
+    public void check(final ThreadContext context, final Call call) {
+        final Operation operation = context.getCurrentOperation();
         switch (call) {
             case getUserTransaction:
             case getContextData:

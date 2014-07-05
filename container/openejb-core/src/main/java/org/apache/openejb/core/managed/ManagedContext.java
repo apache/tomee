@@ -36,13 +36,8 @@ public class ManagedContext extends BaseSessionContext {
     }
 
     @Override
-    public void check(final Call call) {
-        final ThreadContext threadContext = ThreadContext.getThreadContext();
-        final Operation operation = threadContext.getCurrentOperation();
-        if (operation == null) {
-            return; // concurrency utilities or similar
-        }
-
+    public void check(final ThreadContext context, final Call call) {
+        final Operation operation = context.getCurrentOperation();
         switch (call) {
             case getCallerPrincipal:
             case isCallerInRole:
