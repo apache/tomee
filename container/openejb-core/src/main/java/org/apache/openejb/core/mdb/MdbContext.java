@@ -46,8 +46,8 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
     }
 
     @Override
-    public void check(final Call call) {
-        final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
+    public void check(final ThreadContext context, final Call call) {
+        final Operation operation = context.getCurrentOperation();
 
         switch (call) {
             case getUserTransaction:

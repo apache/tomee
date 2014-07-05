@@ -26,17 +26,13 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -310,31 +306,20 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         final BeanContext beanContext = getBeanContext();
 
         if (beanContext.isAsynchronous(method)) {
-
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            Object stateTmp = securityService.currentState();
-            final boolean associate;
-            if (stateTmp == null) {
-                stateTmp = ClientSecurity.getIdentity();
-                associate = stateTmp != null;
-            } else {
-                associate = false;
-            }
-            final Object securityState = stateTmp;
-            final ThreadContext currentCtx = ThreadContext.getThreadContext();
-            final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
-
-            return asynchronousPool.invoke(new CUCallable<Object>(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    try {
-                        return homeMethodInvoke(interfce, method, args);
-                    } catch (final ApplicationException ae) {
-                        logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-                        throw ae;
-                    }
-                }
-            }), method.getReturnType() == Void.TYPE);
+            return beanContext.getModuleContext()
+                    .getAppContext()
+                    .getAsynchronousPool()
+                    .invoke(new CUCallable<Object>(new Callable<Object>() {
+                        @Override
+                        public Object call() throws Exception {
+                            try {
+                                return homeMethodInvoke(interfce, method, args);
+                            } catch (final ApplicationException ae) {
+                                logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                                throw ae;
+                            }
+                        }
+                    }), method.getReturnType() == Void.TYPE);
         } else {
             return homeMethodInvoke(interfce, method, args);
         }

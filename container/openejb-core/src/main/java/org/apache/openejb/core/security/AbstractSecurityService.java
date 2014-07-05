@@ -367,7 +367,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public static final class ProvidedSecurityContext {
         public final SecurityContext context;
 
-        public ProvidedSecurityContext(SecurityContext context) {
+        public ProvidedSecurityContext(final SecurityContext context) {
             this.context = context;
         }
     }

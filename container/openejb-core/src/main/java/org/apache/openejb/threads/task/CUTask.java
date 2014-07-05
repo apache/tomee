@@ -75,7 +75,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         throw new OpenEJBRuntimeException(t.getMessage(), t);
     }
 
-    private static class Context {
+    public static class Context {
         /*
         private static final Class<?>[] THREAD_SCOPES = new Class<?>[] {
                 RequestScoped.class, SessionScoped.class, ConversationScoped.class
@@ -93,9 +93,9 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         private final CdiAppContextsService.State cdiState;
         */
 
-        private Context currentContext = null;
+        private Context currentContext;
 
-        private Context(boolean associate, final Object initialSecurityServiceState,
+        private Context(final boolean associate, final Object initialSecurityServiceState,
                         final AbstractSecurityService.SecurityContext securityContext, final ThreadContext initialThreadContext,
                         final ClassLoader initialLoader) {
             this.associate = associate;
@@ -139,6 +139,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             final ThreadContext oldCtx;
             if (threadContext != null) {
                 final ThreadContext newContext = new ThreadContext(threadContext);
+                newContext.set(Context.class, this);
                 if (securityContext != null) {
                     newContext.set(AbstractSecurityService.ProvidedSecurityContext.class, new AbstractSecurityService.ProvidedSecurityContext(securityContext));
                 }

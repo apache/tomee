@@ -26,6 +26,7 @@ import org.apache.openejb.core.transaction.EjbUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.task.CUTask;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
@@ -70,15 +71,30 @@ public abstract class BaseContext implements EJBContext, Serializable {
         this.userTransaction = new UserTransactionWrapper(userTransaction);
     }
 
-    public abstract void check(Call call);
+    private boolean isAsyncOperation(final ThreadContext threadContext) {
+        if (threadContext.getCurrentOperation() == null
+                && threadContext.get(CUTask.Context.class) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    protected abstract void check(ThreadContext context, Call call);
 
     protected IllegalStateException illegal(final Call call, final Operation operation) {
         return new IllegalStateException(call + " cannot be called in " + operation);
     }
 
     public Map<String, Object> getContextData() {
-        check(Call.getContextData);
+        doCheck(Call.getContextData);
         return ThreadContext.getThreadContext().get(InvocationContext.class).getContextData();
+    }
+
+    public void doCheck(final Call call) {
+        final ThreadContext context = ThreadContext.getThreadContext();
+        if (!isAsyncOperation(context)) {
+            check(context, call);
+        }
     }
 
     public EJBHome getEJBHome() {
@@ -96,7 +112,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Principal getCallerPrincipal() {
-        check(Call.getCallerPrincipal);
+        doCheck(Call.getCallerPrincipal);
         Principal callerPrincipal = getCallerPrincipal(securityService);
         if (callerPrincipal == null) {
             callerPrincipal = UnauthenticatedPrincipal.INSTANCE;
@@ -110,12 +126,12 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     @Override
     public boolean isCallerInRole(final String s) {
-        check(Call.isCallerInRole);
+        doCheck(Call.isCallerInRole);
         return isCallerInRole(securityService, s);
     }
 
     protected boolean isCallerInRole(final SecurityService securityService, final String roleName) {
-        check(Call.isCallerInRole);
+        doCheck(Call.isCallerInRole);
         
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -126,7 +142,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     @Override
     public UserTransaction getUserTransaction() throws IllegalStateException {
-        check(Call.getUserTransaction);
+        doCheck(Call.getUserTransaction);
         return getUserTransaction(userTransaction);
     }
 
@@ -143,7 +159,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public void setRollbackOnly() throws IllegalStateException {
-        check(Call.setRollbackOnly);
+        doCheck(Call.setRollbackOnly);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
 
@@ -164,7 +180,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public boolean getRollbackOnly() throws IllegalStateException {
-        check(Call.getRollbackOnly);
+        doCheck(Call.getRollbackOnly);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
 
@@ -185,7 +201,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public TimerService getTimerService() throws IllegalStateException {
-        check(Call.getTimerService);
+        doCheck(Call.getTimerService);
 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext beanContext = threadContext.getBeanContext();
@@ -212,7 +228,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
 
-        check(Call.UserTransactionMethod);
+        doCheck(Call.UserTransactionMethod);
         return di.isBeanManagedTransaction();
     }
 

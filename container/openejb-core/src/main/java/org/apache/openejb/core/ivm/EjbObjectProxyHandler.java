@@ -25,12 +25,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -246,32 +242,20 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         final BeanContext beanContext = getBeanContext();
 
         if (beanContext.isAsynchronous(method)) {
-
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            Object stateTmp = securityService.currentState();
-            final boolean associate;
-            if (stateTmp == null) {
-                stateTmp = ClientSecurity.getIdentity();
-                associate = stateTmp != null;
-            } else {
-                associate = false;
-            }
-            final Object securityState = stateTmp;
-
-            final ThreadContext threadContext = ThreadContext.getThreadContext();
-            final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
-
-            return asynchronousPool.invoke(new CUCallable<Object>(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    try {
-                        return synchronizedBusinessMethod(interfce, method, args);
-                    } catch (final ApplicationException ae) {
-                        logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-                        throw ae;
-                    }
-                }
-            }), method.getReturnType() == Void.TYPE);
+            return beanContext.getModuleContext()
+                    .getAppContext()
+                    .getAsynchronousPool()
+                    .invoke(new CUCallable<Object>(new Callable<Object>() {
+                        @Override
+                        public Object call() throws Exception {
+                            try {
+                                return synchronizedBusinessMethod(interfce, method, args);
+                            } catch (final ApplicationException ae) {
+                                logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                                throw ae;
+                            }
+                        }
+                    }), method.getReturnType() == Void.TYPE);
         } else {
             return synchronizedBusinessMethod(interfce, method, args);
         }

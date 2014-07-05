@@ -99,7 +99,7 @@ public class TimerImpl implements Timer, Serializable {
     private void checkState() throws IllegalStateException, NoSuchObjectLocalException {
         final BeanContext beanContext = ThreadContext.getThreadContext().getBeanContext();
         final BaseContext context = (BaseContext) beanContext.get(EJBContext.class);
-        context.check(BaseContext.Call.timerMethod);
+        context.doCheck(BaseContext.Call.timerMethod);
 
         if (timerData.isCancelled() && !timerData.isStopped()) {
             throw new NoSuchObjectLocalException("Timer has been cancelled");

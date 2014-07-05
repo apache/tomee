@@ -70,7 +70,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        check(Call.getEJBLocalObject);
+        doCheck(Call.getEJBLocalObject);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
 
@@ -82,7 +82,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
-        check(Call.getEJBObject);
+        doCheck(Call.getEJBObject);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
         if (di.getHomeInterface() == null) {
@@ -93,7 +93,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public MessageContext getMessageContext() throws IllegalStateException {
-        check(Call.getMessageContext);
+        doCheck(Call.getMessageContext);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final MessageContext messageContext = threadContext.get(MessageContext.class);
         if (messageContext == null) {
@@ -103,7 +103,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public Object getBusinessObject(final Class interfce) {
-        check(Call.getBusinessObject);
+        doCheck(Call.getBusinessObject);
         if (interfce == null) {
             throw new IllegalStateException("Interface argument cannot me null.");
         }
@@ -162,7 +162,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public Class getInvokedBusinessInterface() {
-        check(Call.getInvokedBusinessInterface);
+        doCheck(Call.getInvokedBusinessInterface);
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final Class invokedInterface = threadContext.getInvokedInterface();
         final InterfaceType type = threadContext.getBeanContext().getInterfaceType(invokedInterface);
