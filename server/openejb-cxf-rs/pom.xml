@@ -27,6 +27,15 @@
   <name>OpenEJB :: Server :: CXF RS</name>
 
   <dependencies>
+    <!-- TODO: remove when using javaee-api 7 -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-json_1.0_spec</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -75,11 +84,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
       <version>${cxf.version}</version>
     </dependency>
@@ -99,6 +103,16 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency> <!-- JAXBElementProvider -->
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
+      <version>${cxf.version}</version>
+    </dependency>
+    <dependency> <!-- FleeceProvider and JsrProvider -->
+      <groupId>org.apache.fleece</groupId>
+      <artifactId>fleece-jaxrs</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
     <!--
     <dependency>
       <groupId>xalan</groupId>
@@ -113,7 +127,7 @@
       <artifactId>xml-resolver</artifactId>
     </dependency>
     -->
-    <dependency>
+    <dependency> <!-- TODO: when upgrading cxf check we still need it -> org.apache.cxf.jaxrs.model.wadl.WadlGenerator.handleRequest -->
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
       <version>1.3.4</version>
