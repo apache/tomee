@@ -37,6 +37,7 @@ import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
@@ -323,44 +324,17 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             final ThreadContext currentCtx = ThreadContext.getThreadContext();
             final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
 
-            return asynchronousPool.invoke(new Callable<Object>() {
+            return asynchronousPool.invoke(new CUCallable<Object>(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    final Object threadState;
-                    if (associate) {
-                        //noinspection unchecked
-                        securityService.associate(securityState);
-                        threadState = null;
-                    } else {
-                        threadState = securityService.currentState();
-                        securityService.setState(securityState);
-                    }
-
-                    final ThreadContext oldCtx; // ensure context is the same as for the caller
-                    if (currentCtx != null) {
-                        oldCtx = ThreadContext.enter(new ThreadContext(currentCtx));
-                    } else {
-                        oldCtx = null;
-                    }
                     try {
                         return homeMethodInvoke(interfce, method, args);
                     } catch (final ApplicationException ae) {
-
                         logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-
                         throw ae;
-                    } finally {
-                        if (oldCtx != null) {
-                            ThreadContext.exit(oldCtx);
-                        }
-                        if (!associate) {
-                            securityService.setState(threadState);
-                        } else {
-                            securityService.disassociate();
-                        }
                     }
                 }
-            }, method.getReturnType() == Void.TYPE);
+            }), method.getReturnType() == Void.TYPE);
         } else {
             return homeMethodInvoke(interfce, method, args);
         }

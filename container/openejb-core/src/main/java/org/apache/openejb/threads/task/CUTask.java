@@ -139,7 +139,9 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             final ThreadContext oldCtx;
             if (threadContext != null) {
                 final ThreadContext newContext = new ThreadContext(threadContext);
-                newContext.set(AbstractSecurityService.ProvidedSecurityContext.class, new AbstractSecurityService.ProvidedSecurityContext(securityContext));
+                if (securityContext != null) {
+                    newContext.set(AbstractSecurityService.ProvidedSecurityContext.class, new AbstractSecurityService.ProvidedSecurityContext(securityContext));
+                }
                 oldCtx = ThreadContext.enter(newContext);
             } else {
                 oldCtx = null;

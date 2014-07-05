@@ -31,6 +31,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -260,45 +261,17 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             final ThreadContext threadContext = ThreadContext.getThreadContext();
             final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
 
-            return asynchronousPool.invoke(new Callable<Object>() {
+            return asynchronousPool.invoke(new CUCallable<Object>(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    final Object threadState;
-                    if (associate) {
-                        //noinspection unchecked
-                        securityService.associate(securityState);
-                        threadState = null;
-                    } else {
-                        threadState = securityService.currentState();
-                        securityService.setState(securityState);
-                    }
-
-                    final ThreadContext oldCtx; // ensure context is the same as for the caller
-                    if (threadContext != null) {
-                        oldCtx = ThreadContext.enter(new ThreadContext(threadContext));
-                    } else {
-                        oldCtx = null;
-                    }
-
                     try {
                         return synchronizedBusinessMethod(interfce, method, args);
                     } catch (final ApplicationException ae) {
-
                         logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-
                         throw ae;
-                    } finally {
-                        if (oldCtx != null) {
-                            ThreadContext.exit(oldCtx);
-                        }
-                        if (!associate) {
-                            securityService.setState(threadState);
-                        } else {
-                            securityService.disassociate();
-                        }
                     }
                 }
-            }, method.getReturnType() == Void.TYPE);
+            }), method.getReturnType() == Void.TYPE);
         } else {
             return synchronizedBusinessMethod(interfce, method, args);
         }
