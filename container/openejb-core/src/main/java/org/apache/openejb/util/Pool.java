@@ -324,7 +324,7 @@ public class Pool<T> {
 
         try {
             if (entry == null) {
-                return added;
+                return false;
             }
 
             if (!sweeper) {
@@ -424,9 +424,14 @@ public class Pool<T> {
         while (instances.tryAcquire()) {
             Thread.yield();
         }
+
+        instances.drainPermits();
+
         while (minimum.tryAcquire()) {
             Thread.yield();
         }
+
+        minimum.drainPermits();
 
         // flush and sweep
         flush();
@@ -444,6 +449,8 @@ public class Pool<T> {
             while (available.tryAcquire()) {
                 Thread.yield();
             }
+
+            available.drainPermits();
         }
 
         // Wait for any pending discards
