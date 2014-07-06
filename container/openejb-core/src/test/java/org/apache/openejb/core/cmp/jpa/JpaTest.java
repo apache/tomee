@@ -19,6 +19,7 @@ package org.apache.openejb.core.cmp.jpa;
 
 import junit.framework.TestCase;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
@@ -42,6 +43,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,6 +58,18 @@ import static org.apache.xbean.asm5.Opcodes.ACC_PRIVATE;
 import static org.apache.xbean.asm5.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
+
+    static {
+        try {
+            final Class<?> classRedefinerClass = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openjpa.enhance.ClassRedefiner");
+            final Field field = classRedefinerClass.getDeclaredField("_canRedefine");
+            field.setAccessible(true);
+            field.set(null, Boolean.FALSE);
+        } catch (final Exception e) {
+//Ignore
+        }
+    }
+
     //    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
     private static final String PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
@@ -89,6 +103,7 @@ public class JpaTest extends TestCase {
     public static class MockInitialContextFactory implements InitialContextFactory {
         private static ImmutableContext immutableContext;
 
+        @SuppressWarnings("unchecked")
         public static void install(final Map bindings) throws NamingException {
             immutableContext = new ImmutableContext(bindings);
             System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
@@ -210,9 +225,8 @@ public class JpaTest extends TestCase {
         unitInfo.getManagedClassNames().add("org.apache.openejb.core.cmp.jpa.Employee");
 
         final PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
-        final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
-        return emf;
+        return persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
     }
 
     private static void set(final Object instance, final String parameterName, final Class type, final Object value) throws Exception {
@@ -328,6 +342,7 @@ public class JpaTest extends TestCase {
         try {
             statement.close();
         } catch (final SQLException e) {
+            //Ignore
         }
     }
 
@@ -338,9 +353,11 @@ public class JpaTest extends TestCase {
         try {
             connection.close();
         } catch (final SQLException e) {
+            //Ignore
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static byte[] addNewField(final byte[] origBytes) {
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
