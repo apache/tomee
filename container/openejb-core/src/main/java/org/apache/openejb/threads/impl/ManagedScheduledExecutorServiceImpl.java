@@ -115,7 +115,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         return null;
     }
 
-    private static class ScheduledFutureFacade<V> implements InvocationHandler {
+    private static final class ScheduledFutureFacade<V> implements InvocationHandler {
         private final AtomicReference<ScheduledFuture<V>> delegate;
 
         private ScheduledFutureFacade(final AtomicReference<ScheduledFuture<V>> delegate) {

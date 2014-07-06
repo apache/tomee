@@ -75,7 +75,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         throw new OpenEJBRuntimeException(t.getMessage(), t);
     }
 
-    public static class Context {
+    public static final class Context {
         /*
         private static final Class<?>[] THREAD_SCOPES = new Class<?>[] {
                 RequestScoped.class, SessionScoped.class, ConversationScoped.class

@@ -58,7 +58,7 @@ public class ContextServiceImpl implements ContextService {
         return CUHandler.class.cast(Proxy.getInvocationHandler(contextualProxy)).properties;
     }
 
-    private static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
+    private static final class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
         private final boolean suspendTx;
