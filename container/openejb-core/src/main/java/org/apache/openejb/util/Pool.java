@@ -99,6 +99,7 @@ public class Pool<T> {
         this(max, min, strict, 0, 0, 0, null, null, false, -1, false, false);
     }
 
+    @SuppressWarnings("unchecked")
     public Pool(final int max, final int min, final boolean strict, final long maxAge, final long idleTimeout, long sweepInterval, final Executor executor, final Supplier<T> supplier, final boolean replaceAged, final double maxAgeOffset, final boolean garbageCollection, final boolean replaceFlushed) {
         if (min > max) {
             greater("max", max, "min", min);
@@ -291,7 +292,7 @@ public class Pool<T> {
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj    object to push onto the pool
-     * @param offset
+     * @param offset long
      * @return false if the pool max size was exceeded
      */
     private boolean push(final T obj, final long offset) {
@@ -421,10 +422,10 @@ public class Pool<T> {
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
-            //NOPMD
+            Thread.yield();
         }
         while (minimum.tryAcquire()) {
-            //NOPMD
+            Thread.yield();
         }
 
         // flush and sweep
@@ -441,7 +442,7 @@ public class Pool<T> {
         // Drain all leases
         if (!(available instanceof Overdraft)) {
             while (available.tryAcquire()) {
-                //NOPMD
+                Thread.yield();
             }
         }
 
@@ -1192,6 +1193,11 @@ public class Pool<T> {
         public HardReference(final T referent) {
             super(referent);
             this.hard = referent;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public T getHard() {
+            return hard;
         }
     }
 
