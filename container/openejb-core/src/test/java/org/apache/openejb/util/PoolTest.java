@@ -1367,7 +1367,7 @@ public class PoolTest extends TestCase {
 
         public static AtomicInteger instances = new AtomicInteger();
 
-        private int count;
+        private final int count;
         private final long created;
         private long accessed;
         private long discarded;
