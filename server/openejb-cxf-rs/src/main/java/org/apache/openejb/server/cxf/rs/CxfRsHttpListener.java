@@ -39,6 +39,7 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.fleece.jaxrs.FleeceProvider;
 import org.apache.fleece.jaxrs.JsrProvider;
+import org.apache.fleece.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.api.internal.Internal;
@@ -648,7 +649,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        return Arrays.asList((Object) jaxb, new OpenEJBJsonProvider(), new JsrProvider());
+        return Arrays.asList((Object) new WadlDocumentMessageBodyWriter(), new FleeceProvider<>(), new JsrProvider(), jaxb);
     }
 
     private static class ProviderFactory implements ServiceInfos.Factory {
@@ -688,52 +689,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 return instance;
             }
             return clazz.newInstance();
-        }
-    }
-
-    @Provider
-    @Produces("*/*")
-    @Consumes("*/*") // Use fleece but allows _wadl query (cxf returns a Document in this case :()
-    public static class OpenEJBJsonProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
-        private final FleeceProvider fleece = new FleeceProvider<>();
-        private final JSONProvider<Object> wadlProvider = new JSONProvider<>();
-
-        @Override
-        public boolean isReadable(final Class<?> rawType, final Type genericType,
-                                  final Annotation[] annotations, final MediaType mediaType) {
-            return fleece.isReadable(rawType, genericType, annotations, mediaType);
-        }
-
-        @Override
-        public Object readFrom(final Class<Object> rawType, final Type genericType,
-                               final Annotation[] annotations, final MediaType mediaType,
-                               final MultivaluedMap<String, String> httpHeaders,
-                               final InputStream entityStream) throws IOException {
-            return fleece.readFrom(rawType, genericType, annotations, mediaType, httpHeaders, entityStream);
-        }
-
-        @Override
-        public long getSize(final Object o, final Class<?> rawType,
-                            final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-            return fleece.getSize(o, rawType, genericType, annotations, mediaType);
-        }
-
-        @Override
-        public boolean isWriteable(final Class<?> rawType, final Type genericType,
-                                   final Annotation[] annotations, final MediaType mediaType) {
-            return fleece.isWriteable(rawType, genericType, annotations, mediaType)
-                    || Document.class.isAssignableFrom(rawType); // avoid wadlProvider.isWriteable(rawType, genericType, annotations, mediaType) which can be long
-        }
-
-        @Override
-        public void writeTo(final Object o, final Class<?> rawType, final Type genericType,
-                            final Annotation[] annotations, final MediaType mediaType,
-                            final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
-            if (!Document.class.isAssignableFrom(rawType)) {
-                fleece.writeTo(o, rawType, genericType, annotations, mediaType, httpHeaders, entityStream);
-            } else {
-                wadlProvider.writeTo(o, rawType, genericType, annotations, mediaType, httpHeaders, entityStream);
-            }
         }
     }
 
