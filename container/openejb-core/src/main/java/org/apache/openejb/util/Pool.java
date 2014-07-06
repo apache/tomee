@@ -420,12 +420,8 @@ public class Pool<T> {
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
         // drain all keys so no new instances will be accepted into the pool
-        while (instances.tryAcquire()) {
-            //NOPMD
-        }
-        while (minimum.tryAcquire()) {
-            //NOPMD
-        }
+        instances.drainPermits();
+        minimum.drainPermits();
 
         // flush and sweep
         flush();
@@ -440,9 +436,7 @@ public class Pool<T> {
 
         // Drain all leases
         if (!(available instanceof Overdraft)) {
-            while (available.tryAcquire()) {
-                //NOPMD
-            }
+            available.drainPermits();
         }
 
         // Wait for any pending discards
