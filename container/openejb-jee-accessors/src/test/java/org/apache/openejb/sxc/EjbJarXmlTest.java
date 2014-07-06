@@ -19,10 +19,16 @@ package org.apache.openejb.sxc;
 import junit.framework.TestCase;
 import org.apache.openejb.jee.EjbJar$JAXB;
 import org.apache.openejb.loader.IO;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision$ $Date$
@@ -61,22 +67,28 @@ public class EjbJarXmlTest extends TestCase {
         marshall.stop();
 
         final String result = new String(baos.toByteArray(), "UTF-8");
-        assertEquals(expected.trim().replace("<!--\n" +
-            "  Licensed to the Apache Software Foundation (ASF) under one or more\n" +
-            "  contributor license agreements.  See the NOTICE file distributed with\n" +
-            "  this work for additional information regarding copyright ownership.\n" +
-            "  The ASF licenses this file to You under the Apache License, Version 2.0\n" +
-            "  (the \"License\"); you may not use this file except in compliance with\n" +
-            "  the License.  You may obtain a copy of the License at\n" +
-            "\n" +
-            "      http://www.apache.org/licenses/LICENSE-2.0\n" +
-            "\n" +
-            "  Unless required by applicable law or agreed to in writing, software\n" +
-            "  distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-            "  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-            "  See the License for the specific language governing permissions and\n" +
-            "  limitations under the License.\n" +
-            "-->\n", ""), result.trim());
+
+        XMLUnit.setIgnoreComments(Boolean.TRUE);
+        XMLUnit.setIgnoreWhitespace(Boolean.TRUE);
+        XMLUnit.setIgnoreAttributeOrder(Boolean.TRUE);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(Boolean.TRUE);
+
+        final Diff diff = new Diff(expected.trim(), result.trim());
+        final Diff myDiff = new DetailedDiff(diff);
+
+        final AtomicInteger differenceNumber = new AtomicInteger(0); // just to get an int wrapper for the test
+        myDiff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener(){
+            @Override
+            public int differenceFound(final Difference difference) {
+                if (!difference.isRecoverable()) {
+                    differenceNumber.incrementAndGet();
+                    System.err.println(">>> " + difference.toString());
+                }
+                return 0;
+            }
+        });
+
+        assertTrue("Files are not identical", myDiff.identical());
         test.stop();
     }
 
