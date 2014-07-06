@@ -71,6 +71,11 @@ public class SimpleApplicationTest {
             }
         }
 
+        /*
+        XML value:
+
+        <application xmlns="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema"><grammars></grammars><resources base="http://localhost:4204/foo/my-app/"><resource path="/first"><doc>MyFirstRestClass service</doc><resource path="/hi"><method name="GET"><response><representation mediaType="application/octet-stream"><param name="result" style="plain" type="xs:string"/></representation></response></method></resource></resource></resources></application>
+         */
         final String wadl = sb.toString();
         assertTrue("Failed to get WADL", wadl.startsWith("<application xmlns"));
     }
@@ -98,7 +103,7 @@ public class SimpleApplicationTest {
         }
 
         final String wadl = sb.toString();
-        assertTrue("Failed to get WADL", wadl.startsWith("{\"application\":"));
+        assertTrue("Failed to get WADL: " + wadl, wadl.startsWith("{\"application\":"));
     }
 
     @Test
