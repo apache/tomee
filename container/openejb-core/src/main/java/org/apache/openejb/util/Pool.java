@@ -425,13 +425,9 @@ public class Pool<T> {
             Thread.yield();
         }
 
-        instances.drainPermits();
-
         while (minimum.tryAcquire()) {
             Thread.yield();
         }
-
-        minimum.drainPermits();
 
         // flush and sweep
         flush();
@@ -452,6 +448,9 @@ public class Pool<T> {
 
             available.drainPermits();
         }
+
+        instances.drainPermits();
+        minimum.drainPermits();
 
         // Wait for any pending discards
         return out.await(timeout, unit);
