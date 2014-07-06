@@ -1935,7 +1935,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // try to get the app BM from the AppClassLoader having stored it in a map).
         // since we don't really need to create a classloader here when starting from classpath just let skip this step
         if (skipLoaderIfPossible) { // TODO: maybe use a boolean to know if all urls comes from the classpath to avoid this validation
-            final Collection<File> urls = new ArrayList<File>();
+            final Collection<File> urls = new HashSet<>();
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
                     urls.add(URLs.toFile(url));
@@ -1958,9 +1958,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             if (allIsIntheClasspath) {
+                logger.info("Not creating another application classloader for " + appInfo.appId);
                 return parent;
             }
         }
+
+        logger.info("Creating dedicated application classloader for " + appInfo.appId);
 
         if (!appInfo.delegateFirst) {
             return ClassLoaderUtil.createClassLoader(appInfo.path, filtered, parent);
