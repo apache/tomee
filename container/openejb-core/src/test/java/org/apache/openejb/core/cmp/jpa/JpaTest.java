@@ -19,6 +19,7 @@ package org.apache.openejb.core.cmp.jpa;
 
 import junit.framework.TestCase;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
@@ -42,6 +43,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,6 +58,17 @@ import static org.apache.xbean.asm5.Opcodes.ACC_PRIVATE;
 import static org.apache.xbean.asm5.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
+    static {
+        try {
+            final Class<?> classRedefinerClass = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openjpa.enhance.ClassRedefiner");
+            final Field field = classRedefinerClass.getDeclaredField("_canRedefine");
+            field.setAccessible(true);
+            field.set(null, Boolean.FALSE);
+        } catch (final Exception e) {
+
+        }
+    }
+
 //    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
     private static final String PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 

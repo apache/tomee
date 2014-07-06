@@ -185,6 +185,7 @@ import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
@@ -208,6 +209,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
@@ -2698,6 +2700,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
+        static {
+            final boolean hack = "true".equalsIgnoreCase(System.getProperty("openejb.openjpa.canRedefine", "false"));
+            if (!hack) {
+                try { // hack for java 7 (was fine before)
+                    final Class<?> classRedefinerClass = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openjpa.enhance.ClassRedefiner");
+                    final Field field = classRedefinerClass.getDeclaredField("_canRedefine");
+                    field.setAccessible(true);
+                    field.set(null, Boolean.FALSE);
+                } catch (final Throwable e) {
+                    // use JUL and not openejb Logger
+                    java.util.logging.Logger.getLogger(PersistenceClassLoaderHandlerImpl.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+                }
+            }
+        }
 
         private static final AtomicBoolean logged = new AtomicBoolean(false);
 
