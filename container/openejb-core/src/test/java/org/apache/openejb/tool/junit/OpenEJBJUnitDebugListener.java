@@ -27,10 +27,14 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class OpenEJBJUnitDebugListener extends RunListener {
-    private static final boolean UNIX = !System.getProperty("os.name", "unknown")
-                                            .toLowerCase(Locale.ENGLISH).startsWith("windows");
+    private static final String OS = System.getProperty("os.name", "unknown");
+    private static final boolean UNIX = !OS.toLowerCase(Locale.ENGLISH).startsWith("windows");
+    static {
+        System.out.println(">>> will debug - unix? " + UNIX + " (" + OS + ")");
+    }
 
     private MonitoringThread thread;
 
@@ -75,13 +79,18 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     }
 
     public static class MonitoringThread extends Thread {
+        private static final long TIMEOUT = TimeUnit.MINUTES.toMillis(5);
+        private static final long PAUSE = 50; // ms
+        private static final long ITERATIONS = TIMEOUT / PAUSE;
+
         private volatile boolean done = false;
+
         @Override
         public void run() {
-            int i = 15000;
+            long i = ITERATIONS;
             while (!done) {
                 try {
-                    sleep(20);
+                    sleep(PAUSE);
                 } catch (InterruptedException e) {
                     Thread.interrupted();
                     break;
@@ -91,7 +100,7 @@ public class OpenEJBJUnitDebugListener extends RunListener {
                     makeSpace();
                     kill3UNIX();
                     makeSpace();
-                    i = 15000;
+                    i = ITERATIONS;
                 }
             }
         }
