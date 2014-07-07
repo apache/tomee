@@ -100,28 +100,25 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     }
 
     public static class MonitoringThread extends Thread {
-        private static final long TIMEOUT = TimeUnit.MINUTES.toMillis(5);
-        private static final long PAUSE = 50; // ms
-        private static final long ITERATIONS = TIMEOUT / PAUSE;
-
         private volatile boolean done = false;
 
         @Override
         public void run() {
-            long i = ITERATIONS;
+            long lastCheckpoint = System.currentTimeMillis();
             while (!done) {
                 try {
-                    sleep(PAUSE);
+                    sleep(50);
                 } catch (InterruptedException e) {
                     Thread.interrupted();
                     break;
                 }
-                i--;
-                if (i == 0) {
+
+                final long now = System.currentTimeMillis();
+                if (now - lastCheckpoint > TimeUnit.MINUTES.toMillis(1)) {
                     makeSpace();
                     kill3UNIX();
                     makeSpace();
-                    i = ITERATIONS;
+                    lastCheckpoint = now;
                 }
             }
         }
@@ -133,10 +130,13 @@ public class OpenEJBJUnitDebugListener extends RunListener {
             System.out.flush();
         }
 
-        public static void kill3UNIX() { // debug purpose only
+        public static void kill3UNIX() {
             try {
                 final int pid = getPid();
-                Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
+                final Runtime runtime = Runtime.getRuntime();
+                final Process exec = runtime.exec("kill -3 " + pid);
+                Pipe.pipe(exec);
+                exec.waitFor();
             } catch (final Exception e1) {
                 e1.printStackTrace();
             }
