@@ -115,8 +115,10 @@ public class NumberedTestCase extends Assert implements Test{
                 runTestMethod(testMethod);
             }
         };
+        System.out.println(">>" + NumberedTestCase.class.getName() + "> started: " + testMethod.toGenericString());
         result.runProtected(test, p);
         result.endTest(test);
+        System.out.println(">>" + NumberedTestCase.class.getName() + "> done: " + testMethod.toGenericString());
     }
     
 
