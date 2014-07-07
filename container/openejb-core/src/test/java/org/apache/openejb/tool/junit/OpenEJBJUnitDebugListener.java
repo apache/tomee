@@ -44,7 +44,9 @@ public class OpenEJBJUnitDebugListener extends RunListener {
             return;
         }
 
-        System.out.println(">>OpenEJBJUnitDebugListener> will monitor " + description.getDisplayName());
+        if (description != null) {
+            System.out.println(">>OpenEJBJUnitDebugListener> will monitor " + description.getDisplayName());
+        }
         thread = new MonitoringThread();
         thread.start();
     }
@@ -56,17 +58,23 @@ public class OpenEJBJUnitDebugListener extends RunListener {
 
     @Override
     public void testStarted(final Description description) throws Exception {
-        System.out.println(">>OpenEJBJUnitDebugListener> started " + description.getDisplayName());
+        if (description != null) {
+            System.out.println(">>OpenEJBJUnitDebugListener> started " + description.getDisplayName());
+        }
     }
 
     @Override
     public void testFinished(final Description description) throws Exception {
-        System.out.println(">>OpenEJBJUnitDebugListener> finished " + description.getDisplayName());
+        if (description != null) {
+            System.out.println(">>OpenEJBJUnitDebugListener> finished " + description.getDisplayName());
+        }
     }
 
     @Override
     public void testFailure(final Failure failure) throws Exception {
-        System.out.println(">>OpenEJBJUnitDebugListener> got failure " + failure.getTestHeader());
+        if (failure != null) {
+            System.out.println(">>OpenEJBJUnitDebugListener> got failure " + failure.getTestHeader());
+        }
         doStop();
     }
 
