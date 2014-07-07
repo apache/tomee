@@ -2700,21 +2700,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
-        static {
-            final boolean hack = "true".equalsIgnoreCase(System.getProperty("openejb.openjpa.canRedefine", "false"));
-            if (!hack) {
-                try { // hack for java 7 (was fine before)
-                    final Class<?> classRedefinerClass = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openjpa.enhance.ClassRedefiner");
-                    final Field field = classRedefinerClass.getDeclaredField("_canRedefine");
-                    field.setAccessible(true);
-                    field.set(null, Boolean.FALSE);
-                } catch (final Throwable e) {
-                    // use JUL and not openejb Logger
-                    java.util.logging.Logger.getLogger(PersistenceClassLoaderHandlerImpl.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-                }
-            }
-        }
-
         private static final AtomicBoolean logged = new AtomicBoolean(false);
 
         private final Map<String, List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>>();
