@@ -33,7 +33,7 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     private static final String OS = System.getProperty("os.name", "unknown");
     private static final boolean UNIX = !OS.toLowerCase(Locale.ENGLISH).startsWith("windows");
     static {
-        System.out.println(">>> will debug - unix? " + UNIX + " (" + OS + ")");
+        System.out.println(">>OpenEJBJUnitDebugListener> will debug - unix? " + UNIX + " (" + OS + ")");
     }
 
     private MonitoringThread thread;
@@ -43,6 +43,8 @@ public class OpenEJBJUnitDebugListener extends RunListener {
         if (!UNIX) {
             return;
         }
+
+        System.out.println(">>OpenEJBJUnitDebugListener> will monitor " + description.getDisplayName());
         thread = new MonitoringThread();
         thread.start();
     }
@@ -53,7 +55,18 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     }
 
     @Override
+    public void testStarted(final Description description) throws Exception {
+        System.out.println(">>OpenEJBJUnitDebugListener> started " + description.getDisplayName());
+    }
+
+    @Override
+    public void testFinished(final Description description) throws Exception {
+        System.out.println(">>OpenEJBJUnitDebugListener> finished " + description.getDisplayName());
+    }
+
+    @Override
     public void testFailure(final Failure failure) throws Exception {
+        System.out.println(">>OpenEJBJUnitDebugListener> got failure " + failure.getTestHeader());
         doStop();
     }
 
