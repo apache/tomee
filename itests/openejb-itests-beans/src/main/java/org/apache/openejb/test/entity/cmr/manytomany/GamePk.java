@@ -25,16 +25,16 @@ public class GamePk {
     public GamePk() {
     }
 
-    public GamePk(Integer id, String name) {
+    public GamePk(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GamePk that = (GamePk) o;
+        final GamePk that = (GamePk) o;
 
         return id.equals(that.id) && name.equals(that.name);
     }

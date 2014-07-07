@@ -21,7 +21,7 @@ public abstract class UnknownCmpTestClient extends CmpTestClient {
     protected UnknownCmpHome ejbHome;
     protected UnknownCmpObject ejbObject;
 
-    public UnknownCmpTestClient(String name) {
+    public UnknownCmpTestClient(final String name) {
         super(name);
     }
 }

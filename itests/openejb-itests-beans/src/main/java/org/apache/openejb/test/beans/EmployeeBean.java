@@ -31,25 +31,25 @@ public class EmployeeBean implements javax.ejb.EntityBean {
 
     EntityContext ejbContext;
 
-    public int ejbHomeSum(int one, int two) {
+    public int ejbHomeSum(final int one, final int two) {
         return one + two;
     }
 
-    public Integer ejbFindByPrimaryKey(Integer primaryKey)
-            throws javax.ejb.FinderException {
+    public Integer ejbFindByPrimaryKey(final Integer primaryKey)
+        throws javax.ejb.FinderException {
         boolean found = false;
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            Connection con = ds.getConnection();
+            final Connection con = ds.getConnection();
 
             try {
-                PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
+                final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
                 try {
                     stmt.setInt(1, primaryKey.intValue());
-                    ResultSet rs = stmt.executeQuery();
+                    final ResultSet rs = stmt.executeQuery();
                     found = rs.next();
                 } finally {
                     stmt.close();
@@ -57,7 +57,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
             } finally {
                 con.close();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new FinderException("FindByPrimaryKey failed");
         }
@@ -72,17 +72,17 @@ public class EmployeeBean implements javax.ejb.EntityBean {
 
     public java.util.Collection ejbFindAll() throws FinderException {
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            Connection con = ds.getConnection();
+            final Connection con = ds.getConnection();
 
             java.util.Vector keys;
             try {
-                Statement stmt = con.createStatement();
+                final Statement stmt = con.createStatement();
                 try {
-                    ResultSet rs = stmt.executeQuery("select EmployeeID from Employees");
+                    final ResultSet rs = stmt.executeQuery("select EmployeeID from Employees");
                     keys = new java.util.Vector();
                     while (rs.next()) {
                         keys.addElement(new Integer(rs.getInt("EmployeeID")));
@@ -94,23 +94,23 @@ public class EmployeeBean implements javax.ejb.EntityBean {
                 con.close();
             }
             return keys;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new FinderException("FindAll failed");
         }
     }
 
-    public Integer ejbCreate(String fname, String lname)
-            throws javax.ejb.CreateException {
+    public Integer ejbCreate(final String fname, final String lname)
+        throws javax.ejb.CreateException {
         try {
             lastName = lname;
             firstName = fname;
 
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            Connection con = ds.getConnection();
+            final Connection con = ds.getConnection();
 
             try {
                 PreparedStatement stmt = con.prepareStatement("insert into Employees (FirstName, LastName) values (?,?)");
@@ -122,7 +122,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
                     stmt = con.prepareStatement("select EmployeeID from Employees where FirstName = ? AND LastName = ?");
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
-                    ResultSet set = stmt.executeQuery();
+                    final ResultSet set = stmt.executeQuery();
                     while (set.next())
                         id = set.getInt("EmployeeID");
                 } finally {
@@ -134,7 +134,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
 
             return new Integer(id);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new javax.ejb.CreateException("can't create");
         }
@@ -148,27 +148,27 @@ public class EmployeeBean implements javax.ejb.EntityBean {
         return firstName;
     }
 
-    public void setLastName(String lname) {
+    public void setLastName(final String lname) {
         lastName = lname;
     }
 
-    public void setFirstName(String fname) {
+    public void setFirstName(final String fname) {
         firstName = fname;
     }
 
     public void ejbLoad() {
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            Connection con = ds.getConnection();
+            final Connection con = ds.getConnection();
             try {
-                PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
+                final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
                 try {
-                    Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
+                    final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey.intValue());
-                    ResultSet rs = stmt.executeQuery();
+                    final ResultSet rs = stmt.executeQuery();
                     while (rs.next()) {
                         lastName = rs.getString("LastName");
                         firstName = rs.getString("FirstName");
@@ -180,7 +180,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
                 con.close();
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
@@ -188,13 +188,13 @@ public class EmployeeBean implements javax.ejb.EntityBean {
 
     public void ejbStore() {
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
-            Connection con = ds.getConnection();
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final Connection con = ds.getConnection();
 
             try {
-                PreparedStatement stmt = con.prepareStatement("update Employees set FirstName = ?, LastName = ? where EmployeeID = ?");
+                final PreparedStatement stmt = con.prepareStatement("update Employees set FirstName = ?, LastName = ? where EmployeeID = ?");
                 try {
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
@@ -206,7 +206,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
             } finally {
                 con.close();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
@@ -221,17 +221,17 @@ public class EmployeeBean implements javax.ejb.EntityBean {
     public void ejbRemove() {
 
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            javax.sql.DataSource ds =
-                    (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds =
+                (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            Connection con = ds.getConnection();
+            final Connection con = ds.getConnection();
 
             try {
-                PreparedStatement stmt = con.prepareStatement("delete from Employees where EmployeeID = ?");
+                final PreparedStatement stmt = con.prepareStatement("delete from Employees where EmployeeID = ?");
                 try {
-                    Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
+                    final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey.intValue());
                     stmt.executeUpdate();
                 } finally {
@@ -241,12 +241,12 @@ public class EmployeeBean implements javax.ejb.EntityBean {
                 con.close();
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void setEntityContext(javax.ejb.EntityContext cntx) {
+    public void setEntityContext(final javax.ejb.EntityContext cntx) {
         ejbContext = cntx;
     }
 

@@ -34,12 +34,12 @@ public class EjbServlet extends HttpServlet {
     @EJB
     private BasicStatelessBusinessLocal statelessBusinessLocal;
 
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
         PrintStream printStream = new PrintStream(out);
 
-        String methodName = request.getParameter("method");
+        final String methodName = request.getParameter("method");
         if (methodName == null) {
             testAll(printStream);
         } else {
@@ -55,8 +55,8 @@ public class EjbServlet extends HttpServlet {
         printStream.flush();
     }
 
-    public void testAll(PrintStream printStream) {
-        for (Method method : EjbServlet.class.getMethods()) {
+    public void testAll(final PrintStream printStream) {
+        for (final Method method : EjbServlet.class.getMethods()) {
             if (!method.getName().startsWith("invoke")) continue;
             
             try {

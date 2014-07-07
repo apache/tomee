@@ -24,7 +24,7 @@ package org.apache.openejb.test.singleton;
  */
 public abstract class AnnotatedFieldInjectionSingletonTestClient extends BasicSingletonTestClient {
 
-    public AnnotatedFieldInjectionSingletonTestClient(String name) {
+    public AnnotatedFieldInjectionSingletonTestClient(final String name) {
         super("AnnotatedFieldInjectionSingletonTestClient." + name);
     }
     

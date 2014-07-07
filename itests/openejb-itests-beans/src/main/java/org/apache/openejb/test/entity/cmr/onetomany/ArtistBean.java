@@ -31,36 +31,40 @@ import org.apache.openejb.test.entity.cmr.CompoundPK;
 public abstract class ArtistBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getName();
+
     public abstract void setName(String name);
-    
+
     // CMR
     public abstract Set<SongLocal> getPerformed();
+
     public abstract void setPerformed(Set<SongLocal> songs);
 
     public abstract Set<SongLocal> getComposed();
+
     public abstract void setComposed(Set<SongLocal> desserts);
 
-    public Integer ejbCreate(Integer id)  throws CreateException {
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public CompoundPK ejbCreate(ArtistPk primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final ArtistPk primaryKey) throws CreateException {
         setId(primaryKey.id);
         setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(ArtistPk primaryKey) {
+    public void ejbPostCreate(final ArtistPk primaryKey) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

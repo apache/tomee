@@ -71,10 +71,10 @@ public class StatefulPojoEjbLocalHomeTests extends BasicStatefulLocalTestClient 
     public void test03_removeByPrimaryKey(){
         try{
             ejbLocalHome.remove("primaryKey");
-        } catch (RemoveException e){
+        } catch (final RemoveException e){
             assertTrue( true );
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
         }
         assertTrue("javax.ejb.RemoveException should have been thrown", false );

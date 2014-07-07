@@ -60,17 +60,17 @@ public class RiTestServer implements TestServer {
         
     public RiTestServer(){}
 
-    public void init(Properties props){
+    public void init(final Properties props){
         try{
             /* [DMB] Temporary fix  */
             try{
                 System.setSecurityManager(new TestSecurityManager());
-            } catch (Exception e){
+            } catch (final Exception e){
                 e.printStackTrace();
             }
             /* [DMB] Temporary fix  */
             
-            String tmp = props.getProperty(START_SERVER_PROCESS, "true").trim();
+            final String tmp = props.getProperty(START_SERVER_PROCESS, "true").trim();
             startServerProcess = "true".equalsIgnoreCase(tmp);
                         
             /* If we will not be starting process for the 
@@ -90,7 +90,7 @@ public class RiTestServer implements TestServer {
             testHomePath = testHome.getAbsolutePath();
 
             prepareServerClasspath();
-        }catch (Exception e){
+        }catch (final Exception e){
             e.printStackTrace ();
             System.exit(-1);
         }
@@ -110,47 +110,47 @@ public class RiTestServer implements TestServer {
         
         if (!startServerProcess) return;
         
-        String command = "java -classpath "+classPath+" "+serverClassName +" "+configFile;
+        final String command = "java -classpath "+classPath+" "+serverClassName +" "+configFile;
         try{
             server = Runtime.getRuntime().exec( command );
             in = new DataInputStream( server.getInputStream());
             err = new DataInputStream( server.getErrorStream());
             while(true){
                 try{
-                    String line = in.readLine();
+                    final String line = in.readLine();
                         System.out.println(line);
                     if (line == null || "[RI Server] Ready!".equals(line)) break;
                     
-                } catch (Exception e){ break; }
+                } catch (final Exception e){ break; }
             }
 
-            Thread t = new Thread(new Runnable(){
+            final Thread t = new Thread(new Runnable(){
                 public void run(){
                     while(true){
                         try{
-                            String line = in.readLine();
+                            final String line = in.readLine();
                             if ( line == null ) break;
                                 System.out.println(line);
-                        } catch (Exception e){ break; }
+                        } catch (final Exception e){ break; }
                     }
                 
                 }
             });
             t.start();
-            Thread t2 = new Thread(new Runnable(){
+            final Thread t2 = new Thread(new Runnable(){
                 public void run(){
                     while(true){
                         try{
-                            String line = err.readLine();
+                            final String line = err.readLine();
                             if ( line == null ) break;
 //                                System.out.println(line);
-                        } catch (Exception e){ break; }
+                        } catch (final Exception e){ break; }
                     }
                 
                 }
             });
             t2.start();
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
         }
     }
@@ -163,16 +163,16 @@ public class RiTestServer implements TestServer {
         try{
             in.close();
             err.close();
-        } catch (Exception e){}
+        } catch (final Exception e){}
     }
     
     public Properties getContextEnvironment(){
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.ri.server.RiInitCtxFactory");
 
         try{
         properties.put(Context.PROVIDER_URL, new URL("http","127.0.0.1",1098,""));
-        } catch (Exception e){}
+        } catch (final Exception e){}
         
         //properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_TEST_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_TEST_CLIENT");
@@ -184,12 +184,12 @@ public class RiTestServer implements TestServer {
     //  Methods supporting this implementation
     //  of the TestServer interface
     // 
-    private String getConfFilePath(String confFileName){
-        String str = getConfFile(confFileName).getAbsolutePath();
+    private String getConfFilePath(final String confFileName){
+        final String str = getConfFile(confFileName).getAbsolutePath();
         return str;
     }
 
-    private File getConfFile(String confFileName){
+    private File getConfFile(final String confFileName){
         return new File(testHome, confFileName);
     }
     
@@ -205,10 +205,10 @@ public class RiTestServer implements TestServer {
     }
 
     private void prepareServerClasspath(){
-        char PS = File.pathSeparatorChar;
-        char FS = File.separatorChar;
+        final char PS = File.pathSeparatorChar;
+        final char FS = File.separatorChar;
 
-        String javaTools = System.getProperty("java.home")+FS+"lib"+FS+"tools.jar";
+        final String javaTools = System.getProperty("java.home")+FS+"lib"+FS+"tools.jar";
         classPath = classPath.replace('/', FS);
         classPath = classPath.replace(':', PS);
         classPath+= PS + javaTools;

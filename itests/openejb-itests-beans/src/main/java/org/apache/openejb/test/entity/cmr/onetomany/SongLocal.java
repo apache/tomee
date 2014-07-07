@@ -24,21 +24,27 @@ import javax.ejb.EJBLocalObject;
 public interface SongLocal extends EJBLocalObject {
     // CMP
     public Integer getId();
+
     public void setId(Integer id);
 
     public String getName();
+
     public void setName(String name);
 
     public Integer getBpm();
+
     public void setBpm(Integer bpm);
 
     public String getDescription();
+
     public void setDescription(String description);
 
     // CMR
     public ArtistLocal getPerformer();
+
     public void setPerformer(ArtistLocal performer);
 
     public ArtistLocal getComposer();
+
     public void setComposer(ArtistLocal composer);
 }

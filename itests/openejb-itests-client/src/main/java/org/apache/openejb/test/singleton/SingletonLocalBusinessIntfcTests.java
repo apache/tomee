@@ -31,7 +31,7 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
     // Test remote interface methods
     //
     public void test00_lookupBusinessInterface() throws Exception {
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeBusinessLocal");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeBusinessLocal");
         assertNotNull(obj);
         assertTrue("instance of BasicSingletonBusinessLocal", obj instanceof BasicSingletonBusinessLocal);
         businessLocal = (BasicSingletonBusinessLocal) obj;
@@ -39,18 +39,18 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
 
     public void test01_businessMethod(){
         try{
-            String expected = "Success";
-            String actual = businessLocal.businessMethod("sseccuS");
+            final String expected = "Success";
+            final String actual = businessLocal.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
 
         try{
-            Integer expected = new Integer(42);
-            Object actual = businessLocal.echo(expected);
+            final Integer expected = new Integer(42);
+            final Object actual = businessLocal.echo(expected);
             assertSame("pass by reference", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -62,10 +62,10 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
     public void test02_throwApplicationException(){
         try{
             businessLocal.throwApplicationException();
-        } catch (org.apache.openejb.test.ApplicationException e){
+        } catch (final org.apache.openejb.test.ApplicationException e){
             //Good.  This is the correct behaviour
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
@@ -77,10 +77,10 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
      */
     public void test03_invokeAfterApplicationException(){
         try{
-            String expected = "Success";
-            String actual   = businessLocal.businessMethod("sseccuS");
+            final String expected = "Success";
+            final String actual   = businessLocal.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -89,13 +89,13 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
     public void _test04_throwSystemException(){
         try{
             businessLocal.throwSystemException_NullPointer();
-        } catch (Exception e){
+        } catch (final Exception e){
             //Good, so far.
-            Throwable n = e.getCause();
+            final Throwable n = e.getCause();
             assertNotNull("Nested exception should not be is null", n );
             assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
@@ -123,7 +123,7 @@ public class SingletonLocalBusinessIntfcTests extends SingletonTestClient {
     //=================================
     
     public void test06_testRemove(){
-        Object obj = businessLocal.remove();
+        final Object obj = businessLocal.remove();
         assertNotNull(obj);
     }
 }

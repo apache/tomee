@@ -20,5 +20,5 @@ package org.apache.openejb.test.singleton;
 public interface RmiIiopSingletonHome extends javax.ejb.EJBHome {
 
     public RmiIiopSingletonObject create()
-    throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws javax.ejb.CreateException, java.rmi.RemoteException;
 }

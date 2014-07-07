@@ -30,7 +30,7 @@ import java.util.Properties;
 
 public abstract class UnknownCmp2Bean implements EntityBean {
     public EntityContext ejbContext;
-    public Map<String,OperationsPolicy> allowedOperationsTable = new HashMap<String,OperationsPolicy>();
+    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
 
     public abstract String getFirstName();
 
@@ -47,10 +47,10 @@ public abstract class UnknownCmp2Bean implements EntityBean {
 
     /**
      * Maps to BasicCmpHome.sum
-     *
+     * <p/>
      * Adds x and y and returns the result.
      */
-    public int ejbHomeSum(int x, int y) {
+    public int ejbHomeSum(final int x, final int y) {
         testAllowedOperations("ejbHome");
         return x + y;
     }
@@ -58,14 +58,14 @@ public abstract class UnknownCmp2Bean implements EntityBean {
     /**
      * Maps to BasicCmpHome.create(String name)
      */
-    public Object ejbCreateObject(String name) throws CreateException {
-        StringTokenizer st = new StringTokenizer(name, " ");
+    public Object ejbCreateObject(final String name) throws CreateException {
+        final StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
         return null;
     }
 
-    public void ejbPostCreateObject(String name) {
+    public void ejbPostCreateObject(final String name) {
     }
 
     //
@@ -80,9 +80,9 @@ public abstract class UnknownCmp2Bean implements EntityBean {
     /**
      * Maps to BasicCmpObject.businessMethod
      */
-    public String businessMethod(String text) {
+    public String businessMethod(final String text) {
         testAllowedOperations("businessMethod");
-        StringBuffer b = new StringBuffer(text);
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
@@ -107,7 +107,7 @@ public abstract class UnknownCmp2Bean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getPermissionsReport
-     *
+     * <p/>
      * Returns a report of the bean's
      * runtime permissions
      */
@@ -118,13 +118,13 @@ public abstract class UnknownCmp2Bean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getAllowedOperationsReport
-     *
+     * <p/>
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *
      * @param methodName The method for which to get the allowed opperations report
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName) {
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return allowedOperationsTable.get(methodName);
     }
 
@@ -149,7 +149,7 @@ public abstract class UnknownCmp2Bean implements EntityBean {
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         ejbContext = ctx;
         testAllowedOperations("setEntityContext");
     }
@@ -204,63 +204,63 @@ public abstract class UnknownCmp2Bean implements EntityBean {
     // EntityBean interface methods
     //================================
 
-    protected void testAllowedOperations(String methodName) {
-        OperationsPolicy policy = new OperationsPolicy();
+    protected void testAllowedOperations(final String methodName) {
+        final OperationsPolicy policy = new OperationsPolicy();
 
         /*[1] Test getEJBHome /////////////////*/
         try {
             ejbContext.getEJBHome();
             policy.allow(OperationsPolicy.Context_getEJBHome);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[2] Test getCallerPrincipal /////////*/
         try {
             ejbContext.getCallerPrincipal();
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[3] Test isCallerInRole /////////////*/
         try {
             ejbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[4] Test getRollbackOnly ////////////*/
         try {
             ejbContext.getRollbackOnly();
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[5] Test setRollbackOnly ////////////*/
         try {
             ejbContext.setRollbackOnly();
             policy.allow(OperationsPolicy.Context_setRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[6] Test getUserTransaction /////////*/
         try {
             ejbContext.getUserTransaction();
             policy.allow(OperationsPolicy.Context_getUserTransaction);
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
 
         /*[7] Test getEJBObject ///////////////*/
         try {
             ejbContext.getEJBObject();
             policy.allow(OperationsPolicy.Context_getEJBObject);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[8] Test getPrimaryKey //////////////*/
         try {
             ejbContext.getPrimaryKey();
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /* TO DO:

@@ -54,9 +54,9 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(1);
+            final PersonLocal person = findPerson(1);
             assertNotNull("person is null", person);
-            LicenseLocal license = person.getLicense();
+            final LicenseLocal license = person.getLicense();
             assertNotNull("license is null", license);
             assertEquals(new Integer(11), license.getId());
             assertEquals("value11", license.getNumber());
@@ -69,8 +69,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            LicenseLocal license = findLicense(11);
-            PersonLocal person = license.getPerson();
+            final LicenseLocal license = findLicense(11);
+            final PersonLocal person = license.getPerson();
             assertNotNull(person);
             assertEquals(new Integer(1), person.getId());
             assertEquals("value1", person.getName());
@@ -83,7 +83,7 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(1);
+            final PersonLocal person = findPerson(1);
             person.setLicense(null);
         } finally {
             completeTransaction();
@@ -96,7 +96,7 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            LicenseLocal license = findLicense(11);
+            final LicenseLocal license = findLicense(11);
             license.setPerson(null);
         } finally {
             completeTransaction();
@@ -109,8 +109,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(2);
-            LicenseLocal license = createLicense(22);
+            final PersonLocal person = findPerson(2);
+            final LicenseLocal license = createLicense(22);
             person.setLicense(license);
         } finally {
             completeTransaction();
@@ -123,8 +123,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(2);
-            LicenseLocal license = createLicense(22);
+            final PersonLocal person = findPerson(2);
+            final LicenseLocal license = createLicense(22);
             license.setPerson(person);
         } finally {
             completeTransaction();
@@ -137,8 +137,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(2);
-            LicenseLocal license = findLicense(11);
+            final PersonLocal person = findPerson(2);
+            final LicenseLocal license = findLicense(11);
             person.setLicense(license);
         } finally {
             completeTransaction();
@@ -151,8 +151,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = createPerson(3);
-            LicenseLocal license = findLicense(11);
+            final PersonLocal person = createPerson(3);
+            final LicenseLocal license = findLicense(11);
             license.setPerson(person);
         } finally {
             completeTransaction();
@@ -164,8 +164,8 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(1);
-            LicenseLocal license = createLicense(22);
+            final PersonLocal person = findPerson(1);
+            final LicenseLocal license = createLicense(22);
             license.setPerson(person);
         } finally {
             completeTransaction();
@@ -177,14 +177,14 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PersonLocal person = findPerson(1);
+            final PersonLocal person = findPerson(1);
             person.remove();
         } finally {
             completeTransaction();
         }
 
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense");
         assertTrue(rs.next());
         assertEquals(1, rs.getInt(1));
@@ -201,15 +201,15 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            LicenseLocal license = findLicense(11);
+            final LicenseLocal license = findLicense(11);
             license.remove();
         } finally {
             completeTransaction();
         }
 
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexPerson WHERE id = 1");
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
+        final ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexPerson WHERE id = 1");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -222,9 +222,9 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            LicenseLocal license = findLicense(11);
+            final LicenseLocal license = findLicense(11);
 
-            Integer field3 = license.getPoints();
+            final Integer field3 = license.getPoints();
             assertEquals(license.getPerson().getPrimaryKey(), field3);
         } finally {
             completeTransaction();
@@ -236,11 +236,11 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            LicenseLocal license = findLicense(11);
+            final LicenseLocal license = findLicense(11);
 
             license.setPoints(new Integer(2));
 
-            PersonLocal person = license.getPerson();
+            final PersonLocal person = license.getPerson();
             assertEquals(new Integer(2), person.getId());
             assertEquals("value2", person.getName());
         } finally {
@@ -248,26 +248,26 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         }
     }
 
-    private PersonLocal createPerson(int personId) throws CreateException {
-        PersonLocal person = personLocalHome.create(new PersonPk(personId, "value" + personId));
+    private PersonLocal createPerson(final int personId) throws CreateException {
+        final PersonLocal person = personLocalHome.create(new PersonPk(personId, "value" + personId));
         return person;
     }
 
-    private PersonLocal findPerson(int personId) throws FinderException {
+    private PersonLocal findPerson(final int personId) throws FinderException {
         return personLocalHome.findByPrimaryKey(new PersonPk(personId, "value" + personId));
     }
 
-    private LicenseLocal createLicense(int licenseId) throws CreateException {
-        LicenseLocal license = licenseLocalHome.create(new LicensePk(licenseId, "value" + licenseId));
+    private LicenseLocal createLicense(final int licenseId) throws CreateException {
+        final LicenseLocal license = licenseLocalHome.create(new LicensePk(licenseId, "value" + licenseId));
         return license;
     }
-    private LicenseLocal findLicense(int licenseId) throws FinderException {
+    private LicenseLocal findLicense(final int licenseId) throws FinderException {
         return licenseLocalHome.findByPrimaryKey(new LicensePk(licenseId, "value" + licenseId));
     }
 
-    private void assertLinked(int personId, int licenseId) throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
+    private void assertLinked(final int personId, final int licenseId) throws Exception {
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT name FROM ComplexPerson WHERE id = " + personId);
         assertTrue(rs.next());
         assertEquals("value" + personId, rs.getString("name"));
@@ -282,10 +282,10 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         close(c);
     }
 
-    private void assertUnlinked(int personId) throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense WHERE person_id = " + personId);
+    private void assertUnlinked(final int personId) throws Exception {
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
+        final ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM ComplexLicense WHERE person_id = " + personId);
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         close(rs);
@@ -295,28 +295,28 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
 
 
     private void resetDB() throws Exception {
-        Connection connection = ds.getConnection();
+        final Connection connection = ds.getConnection();
         Statement statement = null;
         try {
             statement = connection.createStatement();
 
             try {
                 statement.execute("DELETE FROM ComplexPerson");
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
             }
             try {
                 statement.execute("DELETE FROM ComplexLicense");
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
             }
         } finally {
             close(statement);
             close(connection);
         }
 
-        PersonLocal person1 = createPerson(1);
+        final PersonLocal person1 = createPerson(1);
         createPerson(2);
 
-        LicenseLocal license = createLicense(11);
+        final LicenseLocal license = createLicense(11);
         license.setPerson(person1);
     }
 

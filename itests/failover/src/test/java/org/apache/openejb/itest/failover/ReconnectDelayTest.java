@@ -55,7 +55,7 @@ public class ReconnectDelayTest {
         // To run in an IDE, uncomment and update this line
         System.setProperty("version", OpenEjbVersion.get().getVersion());
 
-        Duration reconnectDelay = new Duration("1 second");
+        final Duration reconnectDelay = new Duration("1 second");
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
@@ -66,7 +66,7 @@ public class ReconnectDelayTest {
 
         final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
 
-        for (String name : new String[]{"red", "green", "blue"}) {
+        for (final String name : new String[]{"red", "green", "blue"}) {
             final File home = new File(dir, name);
             Files.mkdir(home);
             Zips.unzip(zip, home, true);
@@ -103,14 +103,14 @@ public class ReconnectDelayTest {
         final StandaloneServer red = servers.get("red");
 
         // Set all the initialServers to point to RED
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final StandaloneServer server = entry.getValue();
             final StandaloneServer.ServerService multipoint = server.getServerService(MULTIPOINT);
             multipoint.set("initialServers", "localhost:" + red.getServerService(MULTIPOINT).getPort());
         }
 
         // Start all the servers except RED
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             if (entry.getKey().equals("red")) continue;
             entry.getValue().start(1, TimeUnit.MINUTES);
         }
@@ -140,7 +140,7 @@ public class ReconnectDelayTest {
             try {
                 bean.name();
                 Assert.fail("Server should be down and failover not hooked up");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // pass
             }
         }
@@ -178,13 +178,13 @@ public class ReconnectDelayTest {
         }
     }
 
-    private long invoke(Calculator bean, int max, String expectedName) {
+    private long invoke(final Calculator bean, final int max, final String expectedName) {
 
         long total = 0;
 
         for (int i = 0; i < max; i++) {
             final long start = System.nanoTime();
-            String name = bean.name();
+            final String name = bean.name();
             System.out.println(name);
             Assert.assertEquals(expectedName, name);
             total += System.nanoTime() - start;

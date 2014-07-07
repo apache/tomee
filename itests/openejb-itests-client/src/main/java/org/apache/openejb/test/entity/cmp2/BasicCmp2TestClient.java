@@ -23,7 +23,7 @@ public abstract class BasicCmp2TestClient extends Cmp2TestClient {
     protected BasicCmpHome ejbHome;
     protected BasicCmpObject ejbObject;
 
-    public BasicCmp2TestClient(String name) {
+    public BasicCmp2TestClient(final String name) {
         super(name);
     }
 }

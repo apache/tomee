@@ -49,11 +49,11 @@ public class DerbyTestDatabase implements TestDatabase{
         try{
             try{
                 database.execute(DerbyTestDatabase._dropEntity);
-            } catch (Exception e){
+            } catch (final Exception e){
                 // not concerned
             }
             database.execute(DerbyTestDatabase._createEntity);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -64,7 +64,7 @@ public class DerbyTestDatabase implements TestDatabase{
     public void dropEntityTable() throws java.sql.SQLException {
         try {
             database.execute(DerbyTestDatabase._dropEntity);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -78,11 +78,11 @@ public class DerbyTestDatabase implements TestDatabase{
         try{
             try{
                 database.execute(DerbyTestDatabase._dropAccount);
-            } catch (Exception e){
+            } catch (final Exception e){
                 // not concerned
             }
             database.execute(DerbyTestDatabase._createAccount);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -94,7 +94,7 @@ public class DerbyTestDatabase implements TestDatabase{
     public void dropAccountTable() throws java.sql.SQLException {
         try {
             database.execute(DerbyTestDatabase._dropAccount);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -105,9 +105,9 @@ public class DerbyTestDatabase implements TestDatabase{
 
     public void start() throws IllegalStateException {
         try {
-            Properties properties = TestManager.getServer().getContextEnvironment();
+            final Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
-        } catch (Exception e){
+        } catch (final Exception e){
             throw (IllegalStateException) new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage()).initCause(e);
         }
 
@@ -117,12 +117,12 @@ public class DerbyTestDatabase implements TestDatabase{
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
             databaseHome = (DatabaseHome)javax.rmi.PortableRemoteObject.narrow( obj, DatabaseHome.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': "+e.getClass().getName()+" "+e.getMessage());
         }
         try {
             database = databaseHome.create();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw new IllegalStateException("Cannot start database: "+e.getClass().getName()+" "+e.getMessage());
         }
     }
@@ -131,6 +131,6 @@ public class DerbyTestDatabase implements TestDatabase{
     public void stop() throws IllegalStateException {
     }
 
-    public void init(Properties props) throws IllegalStateException {
+    public void init(final Properties props) throws IllegalStateException {
     }
 }

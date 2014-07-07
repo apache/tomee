@@ -34,7 +34,7 @@ public class StatefulPojoLocalJndiTests extends BasicStatefulLocalTestClient {
         	// Here we use the Java casting as what is done while looking-up a local bean
         	ejbLocalHome = (BasicStatefulLocalHome) initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
             assertNotNull("The EJBLocalHome is null", ejbLocalHome);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

@@ -34,7 +34,7 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/EncBean");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp2/EncBean");
         ejbHome = (EncCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, EncCmpHome.class);
         ejbObject = ejbHome.create("Enc Bean");
     }
@@ -42,7 +42,7 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     protected void tearDown() throws Exception {
         try {
             //ejbObject.remove();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -52,9 +52,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test01_lookupStringEntry() {
         try {
             ejbObject.lookupStringEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -62,9 +62,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test02_lookupDoubleEntry() {
         try {
             ejbObject.lookupDoubleEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -72,9 +72,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test03_lookupLongEntry() {
         try {
             ejbObject.lookupLongEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -82,9 +82,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test04_lookupFloatEntry() {
         try {
             ejbObject.lookupFloatEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -92,9 +92,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test05_lookupIntegerEntry() {
         try {
             ejbObject.lookupIntegerEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -102,9 +102,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test06_lookupShortEntry() {
         try {
             ejbObject.lookupShortEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -112,9 +112,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test07_lookupBooleanEntry() {
         try {
             ejbObject.lookupBooleanEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -122,9 +122,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test08_lookupByteEntry() {
         try {
             ejbObject.lookupByteEntry();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -132,9 +132,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test09_lookupEntityBean() {
         try {
             ejbObject.lookupEntityBean();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -142,9 +142,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test10_lookupStatefulBean() {
         try {
             ejbObject.lookupStatefulBean();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -152,9 +152,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test11_lookupStatelessBean() {
         try {
             ejbObject.lookupStatelessBean();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -162,9 +162,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test12_lookupResource() {
         try {
             ejbObject.lookupResource();
-        } catch (TestFailureException e) {
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -172,9 +172,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test13_lookupPersistenceUnit() {
         try{
             ejbObject.lookupPersistenceUnit();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -182,9 +182,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test14_lookupPersistenceContext() {
         try{
             ejbObject.lookupPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -192,9 +192,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test19_lookupStatelessBusinessLocal() {
         try{
             ejbObject.lookupStatelessBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -202,9 +202,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test20_lookupStatelessBusinessRemote() {
         try{
             ejbObject.lookupStatelessBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -212,9 +212,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test21_lookupStatefulBusinessLocal() {
         try{
             ejbObject.lookupStatefulBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -222,9 +222,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test22_lookupStatefulBusinessRemote() {
         try{
             ejbObject.lookupStatefulBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -232,9 +232,9 @@ public class Cmp2JndiEncTests extends Cmp2TestClient {
     public void test23_lookupJMSConnectionFactory() {
         try{
             ejbObject.lookupJMSConnectionFactory();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

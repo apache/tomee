@@ -29,11 +29,11 @@ public abstract class BasicSingletonLocalTestClient extends SingletonTestClient 
 	protected BasicSingletonLocalHome ejbLocalHome = null;
     protected BasicSingletonLocalObject ejbLocalObject = null;
 
-    public BasicSingletonLocalTestClient(String name){
+    public BasicSingletonLocalTestClient(final String name){
         super(name);
     }
     
-    protected Object cast(Object object, Class type) {
+    protected Object cast(final Object object, final Class type) {
     	return type.cast(object);
     }
     

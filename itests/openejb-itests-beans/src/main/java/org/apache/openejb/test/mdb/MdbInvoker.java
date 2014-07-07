@@ -83,7 +83,7 @@ public class MdbInvoker implements MessageListener {
         try {
             new InitialContext().lookup("java:comp/UserTransaction");
             isBeanManagedTransaction = true;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             //Ignore - Not transacted
         }
 
@@ -112,7 +112,8 @@ public class MdbInvoker implements MessageListener {
             if (session == null) throw new IllegalStateException("Invoker has been destroyed");
 
             if (message == null) throw new NullPointerException("request message is null");
-            if (!(message instanceof ObjectMessage)) throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
+            if (!(message instanceof ObjectMessage))
+                throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
             final Serializable object = ((ObjectMessage) message).getObject();
             if (object == null) throw new NullPointerException("object in ObjectMessage is null");
             if (!(object instanceof Map)) {
@@ -124,21 +125,22 @@ public class MdbInvoker implements MessageListener {
             final String signature = (String) request.get("method");
             if (signature == null) throw new NullPointerException("method property is null");
             final Method method = signatures.get(signature);
-            if (method == null) throw new IllegalArgumentException("no such method " + signature + "; known methods are " + signatures.keySet());
+            if (method == null)
+                throw new IllegalArgumentException("no such method " + signature + "; known methods are " + signatures.keySet());
             final Object[] args = (Object[]) request.get("args");
 
             boolean exception = false;
             Object result;
             try {
                 result = method.invoke(target, args);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 result = e;
                 exception = true;
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 result = e.getCause();
                 if (result == null) result = e;
                 exception = true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 result = e.getCause();
                 if (result == null) result = e;
                 exception = true;
@@ -160,10 +162,10 @@ public class MdbInvoker implements MessageListener {
                 // send response message
                 replyProducer.send(message.getJMSReplyTo(), resMessage);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         } finally {
             this.destroy();

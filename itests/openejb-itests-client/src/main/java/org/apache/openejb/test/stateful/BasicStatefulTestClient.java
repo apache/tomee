@@ -30,7 +30,7 @@ public abstract class BasicStatefulTestClient extends StatefulTestClient {
 	protected BasicStatefulHome ejbHome = null;
 	protected BasicStatefulObject ejbObject = null;
 
-    public BasicStatefulTestClient(String name){
+    public BasicStatefulTestClient(final String name){
         super(name);
     }
 }

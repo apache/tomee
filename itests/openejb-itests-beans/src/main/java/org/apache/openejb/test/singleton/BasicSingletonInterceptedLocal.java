@@ -20,15 +20,14 @@ import java.util.Map;
 import java.util.List;
 
 /**
- *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public interface BasicSingletonInterceptedLocal {
-    
+
     public String reverse(String str);
-    
+
     public String concat(String str1, String str2);
-    
+
     public Map<String, Object> getContextData();
 
 }

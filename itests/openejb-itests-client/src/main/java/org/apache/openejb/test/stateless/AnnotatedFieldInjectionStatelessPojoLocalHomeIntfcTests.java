@@ -42,7 +42,7 @@ public class AnnotatedFieldInjectionStatelessPojoLocalHomeIntfcTests extends Ann
         try{
             ejbLocalObject = ejbLocalHome.create();
             assertNotNull( "The EJBObject is null", ejbLocalObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }        
     }

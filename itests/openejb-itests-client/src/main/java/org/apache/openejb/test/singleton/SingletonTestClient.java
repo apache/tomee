@@ -24,7 +24,7 @@ import java.util.Properties;
 
 public abstract class SingletonTestClient extends TestClient {
 
-    public SingletonTestClient(String name) {
+    public SingletonTestClient(final String name) {
         super("Singleton." + name);
     }
 
@@ -34,7 +34,7 @@ public abstract class SingletonTestClient extends TestClient {
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "SINGLETON_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, toString() );
         initialContext = new InitialContext(properties);

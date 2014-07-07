@@ -22,7 +22,7 @@ public class CorbaTestServer implements TestServer {
         
     Properties props;
 
-    public void init(Properties props){
+    public void init(final Properties props){
         /* TO DO:
          * Perform some test to see if the OpenEJB CORBA Server
          * is started.  If not, display the followding message
@@ -42,7 +42,7 @@ public class CorbaTestServer implements TestServer {
         this.props = props;
     }
     
-    public void log(String s){
+    public void log(final String s){
         System.out.println("[NOTE] "+s);
     }
     public void destroy(){

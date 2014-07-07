@@ -131,4 +131,5 @@ public interface QueryLocalHome extends EJBLocalHome {
     /**
      * Select a collection remote ejb
      */
-    public abstract Collection ejbSelectCollectionRemoteEjb(String test) throws FinderException;}
+    public abstract Collection ejbSelectCollectionRemoteEjb(String test) throws FinderException;
+}

@@ -29,10 +29,10 @@ public class TestSecurityManager extends SecurityManager {
     public TestSecurityManager() {
     }
 
-    public void checkPermission(Permission perm) {
+    public void checkPermission(final Permission perm) {
     }
     
-    public void checkPermission(Permission perm, Object context) {
+    public void checkPermission(final Permission perm, final Object context) {
     }
 
 }

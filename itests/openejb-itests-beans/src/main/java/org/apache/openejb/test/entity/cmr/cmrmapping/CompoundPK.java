@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public class CompoundPK implements Serializable {
@@ -28,22 +27,23 @@ public class CompoundPK implements Serializable {
     public Integer id;
     public Integer field1;
 
-    public CompoundPK() {}
-    
-    public CompoundPK(Integer id, Integer field1) {
+    public CompoundPK() {
+    }
+
+    public CompoundPK(final Integer id, final Integer field1) {
         this.id = id;
         this.field1 = field1;
     }
-    
-    public boolean equals(Object other) {
-      if (!(other instanceof CompoundPK) ) {
-          return false;
-      }
-      CompoundPK otherPK = (CompoundPK) other;
-      return field1.equals(otherPK.field1) && id.equals(otherPK.id);
+
+    public boolean equals(final Object other) {
+        if (!(other instanceof CompoundPK)) {
+            return false;
+        }
+        final CompoundPK otherPK = (CompoundPK) other;
+        return field1.equals(otherPK.field1) && id.equals(otherPK.id);
     }
-    
+
     public int hashCode() {
-      return field1.hashCode() ^ id.hashCode();
+        return field1.hashCode() ^ id.hashCode();
     }
 }

@@ -41,8 +41,8 @@ import javax.jms.Session;
 
 @Interceptors({MdbInterceptor.class})
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "InterceptorMdbBean")})
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+    @ActivationConfigProperty(propertyName = "destination", propertyValue = "InterceptorMdbBean")})
 public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
 
     private boolean classLevelBusinessMethodInterception = false;
@@ -63,11 +63,11 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
             methodLevelBusinessMethodInterception = msg.getBooleanProperty("MethodLevelBusinessMethodInterception");
             try {
                 msg.acknowledge();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
                 e.printStackTrace();
             }
             mdbInvoker.onMessage(msg);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }
@@ -90,7 +90,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     public void checkMethodLevelBusinessMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Method Level Business Method Interception failed for Mdb", methodLevelBusinessMethodInterception);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -98,7 +98,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     public void checkMethodLevelCreateMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Method Level Business Method Interception failed for Mdb", methodLevelCreateMethodInterception);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -107,7 +107,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     public void checkClassLevelBusinessMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Class Level Business Method Interception failed for Mdb", classLevelBusinessMethodInterception);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -115,7 +115,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     public void checkClassLevelCreateMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Class Level Business Method Interception failed for Mdb", classLevelCreateMethodInterception);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -135,7 +135,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
         this.mdbContext = ctx;
         try {
             mdbInvoker = new MdbInvoker(connectionFactory, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }

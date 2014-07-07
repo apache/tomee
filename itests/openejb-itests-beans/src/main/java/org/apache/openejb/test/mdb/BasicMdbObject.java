@@ -32,7 +32,6 @@ public interface BasicMdbObject {
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     void throwApplicationException() throws ApplicationException;
 
@@ -41,7 +40,6 @@ public interface BasicMdbObject {
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     void throwSystemException_NullPointer();
 

@@ -30,10 +30,10 @@ public class Cmp2JndiTests extends BasicCmp2TestClient {
 
     public void test01_Jndi_lookupHome() {
         try {
-            Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
+            final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
             ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

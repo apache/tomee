@@ -32,7 +32,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
         ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
         ejbObject = ejbHome.createObject();
     }
@@ -40,7 +40,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
     protected void tearDown() throws Exception {
         try {
             //ejbObject.remove();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw e;
         } finally {
             super.tearDown();
@@ -54,7 +54,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
         try{
             ejbHandle = ejbObject.getHandle();
             assertNotNull( "The Handle is null", ejbHandle );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -62,16 +62,16 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
     public void test02_isIdentical(){
         try{
             assertTrue( "The EJBObjects are not identical", ejbObject.isIdentical(ejbObject) );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test03_getEjbHome(){
         try{
-            EJBHome home = ejbObject.getEJBHome();
+            final EJBHome home = ejbObject.getEJBHome();
             assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -91,11 +91,11 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
      */
     public void test04_getPrimaryKey(){
         try{
-            Object key = ejbObject.getPrimaryKey();
-        } catch (java.rmi.RemoteException e){
+            final Object key = ejbObject.getPrimaryKey();
+        } catch (final java.rmi.RemoteException e){
             assertTrue(true);
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("A RuntimeException should have been thrown.  Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A RuntimeException should have been thrown.");
@@ -106,7 +106,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
             ejbObject.remove();
             // you can't really remove a singleton handle
             ejbObject.businessMethod("Should not throw an exception");
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -117,7 +117,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
         String str = null;
         try {
             str = ejbObject.remove("Hello");
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

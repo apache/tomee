@@ -31,7 +31,7 @@ public class StatelessPojoHomeIntfcTests extends BasicStatelessTestClient {
     
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
+        final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
         ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
     }
     
@@ -42,7 +42,7 @@ public class StatelessPojoHomeIntfcTests extends BasicStatelessTestClient {
         try{
             ejbObject = ejbHome.createObject();
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

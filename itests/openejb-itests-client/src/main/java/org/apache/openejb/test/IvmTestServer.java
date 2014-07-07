@@ -29,19 +29,19 @@ public class IvmTestServer implements TestServer {
 
     private Properties properties;
 
-    public void init(Properties props){
+    public void init(final Properties props){
         
         properties = props;
         
         try{
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            Properties p = new Properties();
+            final Properties p = new Properties();
             p.putAll(props);
             p.put("openejb.loader", "embed");
             new InitialContext( p );    // initialize openejb via constructing jndi tree
             
         //OpenEJB.init(properties);
-        }catch(Exception oe){
+        }catch(final Exception oe){
             System.out.println("=========================");
             System.out.println(""+oe.getMessage());
             System.out.println("=========================");

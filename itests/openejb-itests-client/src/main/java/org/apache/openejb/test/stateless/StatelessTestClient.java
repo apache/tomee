@@ -24,7 +24,7 @@ import java.util.Properties;
 
 public abstract class StatelessTestClient extends TestClient {
 
-    public StatelessTestClient(String name) {
+    public StatelessTestClient(final String name) {
         super("Stateless." + name);
     }
 
@@ -34,7 +34,7 @@ public abstract class StatelessTestClient extends TestClient {
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "STATELESS_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, toString() );
         initialContext = new InitialContext(properties);

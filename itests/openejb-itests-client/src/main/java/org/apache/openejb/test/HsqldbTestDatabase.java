@@ -100,15 +100,15 @@ public class HsqldbTestDatabase implements TestDatabase {
         clearTables(AUTO_CREATED_TABLES);
     }
 
-    private void createTable(String create, String drop) throws java.sql.SQLException {
+    private void createTable(final String create, final String drop) throws java.sql.SQLException {
         try {
             try {
                 database.execute(drop);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // not concerned
             }
             database.execute(create);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -117,20 +117,20 @@ public class HsqldbTestDatabase implements TestDatabase {
         }
     }
 
-    private void clearTables(String... autoCreatedTables) {
-        for (String tableName : autoCreatedTables) {
+    private void clearTables(final String... autoCreatedTables) {
+        for (final String tableName : autoCreatedTables) {
             try {
                 database.execute("DELETE FROM " + tableName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // not concerned
             }
         }
     }
 
-    private void dropTable(String drop) throws java.sql.SQLException {
+    private void dropTable(final String drop) throws java.sql.SQLException {
         try {
             database.execute(drop);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -143,11 +143,11 @@ public class HsqldbTestDatabase implements TestDatabase {
         try {
             try {
                 database.execute(_dropAccount);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // not concerned
             }
             database.execute(_createAccount);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -159,7 +159,7 @@ public class HsqldbTestDatabase implements TestDatabase {
     public void dropAccountTable() throws java.sql.SQLException {
         try {
             database.execute(_dropAccount);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -170,10 +170,10 @@ public class HsqldbTestDatabase implements TestDatabase {
 
     public void start() throws IllegalStateException {
         try {
-            TestServer server = TestManager.getServer();
-            Properties properties = server.getContextEnvironment();
+            final TestServer server = TestManager.getServer();
+            final Properties properties = server.getContextEnvironment();
             initialContext = new InitialContext(properties);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw (IllegalStateException) new IllegalStateException("Cannot create initial context: " + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
@@ -185,12 +185,12 @@ public class HsqldbTestDatabase implements TestDatabase {
             /* Create database */
             obj = initialContext.lookup(databaseHomeJndiName);
             databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Cannot find " + databaseHomeJndiName + ": " + e.getClass().getName() + " " + e.getMessage());
         }
         try {
             database = databaseHome.create();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Cannot start database: " + e.getClass().getName() + " " + e.getMessage());
         }
     }
@@ -199,6 +199,6 @@ public class HsqldbTestDatabase implements TestDatabase {
     public void stop() throws IllegalStateException {
     }
 
-    public void init(Properties props) throws IllegalStateException {
+    public void init(final Properties props) throws IllegalStateException {
     }
 }

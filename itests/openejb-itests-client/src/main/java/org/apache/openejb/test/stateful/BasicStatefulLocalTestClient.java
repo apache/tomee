@@ -29,7 +29,7 @@ public abstract class BasicStatefulLocalTestClient extends StatefulTestClient {
 	protected BasicStatefulLocalHome ejbLocalHome = null;
 	protected BasicStatefulLocalObject ejbLocalObject = null;
 
-    public BasicStatefulLocalTestClient(String name){
+    public BasicStatefulLocalTestClient(final String name){
         super(name);
     }
 }

@@ -43,21 +43,21 @@ public class TestRunner extends junit.textui.TestRunner {
     /**
      * Constructs a TestRunner using the given stream for all the output
      */
-    public TestRunner(PrintStream writer) {
+    public TestRunner(final PrintStream writer) {
         this(new ResultPrinter(writer));
     }
 
     /**
      * Constructs a TestRunner using the given ResultPrinter all the output
      */
-    public TestRunner(ResultPrinter printer) {
+    public TestRunner(final ResultPrinter printer) {
         super(printer);
     }
 
     /**
      * main entry point.
      */
-    public static void main(String args[]) {
+    public static void main(final String[] args) {
         if (args.length == 0) {
             printHelp();
         } else {
@@ -80,17 +80,17 @@ public class TestRunner extends junit.textui.TestRunner {
             }
 
             try {
-                TestRunner aTestRunner = new TestRunner();
-                TestResult r = aTestRunner.start(new String[]{"org.apache.openejb.test.ClientTestSuite"});
+                final TestRunner aTestRunner = new TestRunner();
+                final TestResult r = aTestRunner.start(new String[]{"org.apache.openejb.test.ClientTestSuite"});
 
                 System.out.println("");
                 System.out.println("_________________________________________________");
                 System.out.println("CLIENT JNDI PROPERTIES");
-                Properties env = TestManager.getServer().getContextEnvironment();
-                for (Iterator iterator = env.entrySet().iterator(); iterator.hasNext();) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    String key = (String) entry.getKey();
-                    Object value = entry.getValue();
+                final Properties env = TestManager.getServer().getContextEnvironment();
+                for (final Iterator iterator = env.entrySet().iterator(); iterator.hasNext();) {
+                    final Map.Entry entry = (Map.Entry) iterator.next();
+                    final String key = (String) entry.getKey();
+                    final Object value = entry.getValue();
                     System.out.println(key+" = "+value);
                 }
                 System.out.println("_________________________________________________");
@@ -98,7 +98,7 @@ public class TestRunner extends junit.textui.TestRunner {
                 if (!r.wasSuccessful())
                     System.exit(FAILURE_EXIT);
                 System.exit(SUCCESS_EXIT);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 System.err.println(e.getMessage());
                 System.exit(EXCEPTION_EXIT);
             }
@@ -115,7 +115,7 @@ public class TestRunner extends junit.textui.TestRunner {
         System.out.println("_________________________________________________");
     }
 
-    private static void setDefault(String key, String value) {
+    private static void setDefault(final String key, String value) {
         value = System.getProperty(key, value);
         System.setProperty(key, value);
     }
@@ -157,34 +157,34 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void printHelp() {
         String header = "OpenEJB Compliance Tests ";
         try {
-            InputStream is = TestRunner.class.getResourceAsStream("/META-INF/openejb-version.properties");
-            Properties versionInfo = new Properties();
+            final InputStream is = TestRunner.class.getResourceAsStream("/META-INF/openejb-version.properties");
+            final Properties versionInfo = new Properties();
             versionInfo.load(is);
             header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
+        } catch (final java.io.IOException e) {
         }
 
         System.out.println(header);
 
         // Internationalize this
         try {
-            InputStream in = TestRunner.class.getResourceAsStream(helpBase + "test.help");
+            final InputStream in = TestRunner.class.getResourceAsStream(helpBase + "test.help");
             int b = in.read();
             while (b != -1) {
                 System.out.write(b);
                 b = in.read();
             }
-        } catch (java.io.IOException e) {
+        } catch (final java.io.IOException e) {
         }
     }
 
-    public TestResult start(String args[]) throws Exception {
+    public TestResult start(final String[] args) throws Exception {
         TestResult result = null;
         try {
 
             TestManager.init(null);
             TestManager.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.out.println("Cannot initialize the test environment: "
                     + e.getClass().getName() + " " + e.getMessage());
              e.printStackTrace();
@@ -194,11 +194,11 @@ public class TestRunner extends junit.textui.TestRunner {
 
         try {
             result = super.start(args);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
         } finally {
             try {
                 TestManager.stop();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 ; // ignore it
             }
         }
@@ -212,7 +212,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
         private final OutputStream out;
 
-        private Pipe(InputStream is, OutputStream out) {
+        private Pipe(final InputStream is, final OutputStream out) {
 
             super();
 
@@ -238,7 +238,7 @@ public class TestRunner extends junit.textui.TestRunner {
 
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 e.printStackTrace();
 

@@ -25,7 +25,7 @@ public abstract class BasicStatelessTestClient extends StatelessTestClient{
     protected BasicStatelessHome ejbHome = null;
     protected BasicStatelessObject ejbObject = null;
 
-    public BasicStatelessTestClient(String name){
+    public BasicStatelessTestClient(final String name){
         super(name);
     }
 }

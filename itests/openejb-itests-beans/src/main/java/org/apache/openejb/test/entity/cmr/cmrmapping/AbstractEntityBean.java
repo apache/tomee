@@ -28,7 +28,7 @@ public abstract class AbstractEntityBean implements EntityBean {
     public void ejbLoad() {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         this.ctx = ctx;
     }
 

@@ -36,7 +36,7 @@ public class StatelessJndiEncTests extends StatelessTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/EncBean");
+        final Object obj = initialContext.lookup("client/tests/stateless/EncBean");
         ejbHome = (EncStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, EncStatelessHome.class);
         ejbObject = ejbHome.create();
         
@@ -52,7 +52,7 @@ public class StatelessJndiEncTests extends StatelessTestClient{
         try {
             /*[1] Drop database table */
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw e;
         } finally {
             super.tearDown();
@@ -62,9 +62,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test01_lookupStringEntry() {
         try{
             ejbObject.lookupStringEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -72,9 +72,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test02_lookupDoubleEntry() { 
         try{
             ejbObject.lookupDoubleEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -82,9 +82,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test03_lookupLongEntry() {   
         try{
             ejbObject.lookupLongEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -92,9 +92,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test04_lookupFloatEntry() {  
         try{
             ejbObject.lookupFloatEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -102,9 +102,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test05_lookupIntegerEntry() {
         try{
             ejbObject.lookupIntegerEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -112,9 +112,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test06_lookupShortEntry() {  
         try{
             ejbObject.lookupShortEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -122,9 +122,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test07_lookupBooleanEntry() {
         try{
             ejbObject.lookupBooleanEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -132,9 +132,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test08_lookupByteEntry() {   
         try{
             ejbObject.lookupByteEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -142,9 +142,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test09_lookupCharacterEntry() {
         try{
             ejbObject.lookupCharacterEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -152,9 +152,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test10_lookupEntityBean() {
         try{
             ejbObject.lookupEntityBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -162,9 +162,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test11_lookupStatefulBean() {
         try{
             ejbObject.lookupStatefulBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -172,9 +172,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test12_lookupStatelessBean() {
         try{
             ejbObject.lookupStatelessBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -182,9 +182,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test13_lookupResource() {
         try{
             ejbObject.lookupResource();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -192,9 +192,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test14_lookupPersistenceUnit() {
         try{
             ejbObject.lookupPersistenceUnit();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -202,18 +202,18 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test15_lookupSessionContext() {
         try{
             ejbObject.lookupSessionContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
     public void test16_lookupPersistenceContext() {
         try{
             ejbObject.lookupPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -221,9 +221,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test18_lookupSessionContext() {
         try{
             ejbObject.lookupSessionContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -231,9 +231,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test19_lookupStatelessBusinessLocal() {
         try{
             ejbObject.lookupStatelessBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -241,9 +241,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test20_lookupStatelessBusinessRemote() {
         try{
             ejbObject.lookupStatelessBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -251,9 +251,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test21_lookupStatefulBusinessLocal() {
         try{
             ejbObject.lookupStatefulBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -261,9 +261,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test22_lookupStatefulBusinessRemote() {
         try{
             ejbObject.lookupStatefulBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -271,9 +271,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test23_lookupJMSConnectionFactory() {
         try{
             ejbObject.lookupJMSConnectionFactory();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -281,9 +281,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test24_lookupStatelessBusinessLocalBean() {
         try{
             ejbObject.lookupStatelessBusinessLocalBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -291,9 +291,9 @@ public class StatelessJndiEncTests extends StatelessTestClient{
     public void test25_lookupStatefulBusinessLocalBean() {
         try{
             ejbObject.lookupStatefulBusinessLocalBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

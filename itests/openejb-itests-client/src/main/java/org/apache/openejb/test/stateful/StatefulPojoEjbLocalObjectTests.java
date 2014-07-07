@@ -27,7 +27,7 @@ public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClien
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
         ejbLocalHome = (BasicStatefulLocalHome)obj;
         ejbLocalObject = ejbLocalHome.create("StatefulEjbLocalObject Test Bean");
     }
@@ -40,16 +40,16 @@ public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClien
     public void test01_isIdentical(){
         try{
             assertTrue( "The EJBObjects are not equal", ejbLocalObject.isIdentical(ejbLocalObject) );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_getEjbLocalHome(){
         try{
-            EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
+            final EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
             assertNotNull( "The EJBHome is null", localHome );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -69,11 +69,11 @@ public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClien
      */
     public void test03_getPrimaryKey(){
         try{
-            Object key = ejbLocalObject.getPrimaryKey();
-        } catch (javax.ejb.EJBException e){
+            final Object key = ejbLocalObject.getPrimaryKey();
+        } catch (final javax.ejb.EJBException e){
             assertTrue(true);
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("A RuntimeException should have been thrown.  Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A RuntimeException should have been thrown.");
@@ -85,11 +85,11 @@ public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClien
             	ejbLocalObject.remove();
                 ejbLocalObject.businessMethod("Should throw an exception");
                 assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
+            } catch (final Exception e){
                 assertTrue( true );
                 return;
             }
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

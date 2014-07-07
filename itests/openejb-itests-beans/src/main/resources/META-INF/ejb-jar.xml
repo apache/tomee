@@ -1536,7 +1536,7 @@
         <field-name>field1</field-name>
       </cmp-field>
       <primkey-field>id</primkey-field>
-        <!-- suppresses testing -->
+      <!-- suppresses testing -->
       <persistence-context-ref>
         <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -1557,21 +1557,21 @@
         <field-name>id</field-name>
       </cmp-field>
       <primkey-field>id</primkey-field>
-        <!-- suppresses testing -->
-        <!-- incorrect mapping generated -->
-        <!--
-    <entity name="Order2" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.Order2">
-        <description>openejb-itests-beans-4.0.0-SNAPSHOT.jar#OneInverseSideBean</description>
-        <attributes>
-            <id name="id"/>
-            <one-to-many name="manyOwningSide" mapped-by="oneInverseSide"/>
-            <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
-        </attributes>
-    </entity>
-        -->
-        <!-- error message:
-        The type of field "openejb.org.apache.openejb.test.entity.cmr.cmrmapping.Order2.manyOwningSide" isn't supported by declared persistence strategy "OneToMany".  Please choose a different strategy.
-        -->
+      <!-- suppresses testing -->
+      <!-- incorrect mapping generated -->
+      <!--
+  <entity name="Order2" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.Order2">
+      <description>openejb-itests-beans-4.0.0-SNAPSHOT.jar#OneInverseSideBean</description>
+      <attributes>
+          <id name="id"/>
+          <one-to-many name="manyOwningSide" mapped-by="oneInverseSide"/>
+          <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
+      </attributes>
+  </entity>
+      -->
+      <!-- error message:
+      The type of field "openejb.org.apache.openejb.test.entity.cmr.cmrmapping.Order2.manyOwningSide" isn't supported by declared persistence strategy "OneToMany".  Please choose a different strategy.
+      -->
       <persistence-context-ref>
         <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -1605,7 +1605,7 @@
         </query-method>
         <ejb-ql>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</ejb-ql>
       </query>
-        <!-- suppresses testing -->
+      <!-- suppresses testing -->
       <persistence-context-ref>
         <persistence-context-ref-name>openejb/cmp</persistence-context-ref-name>
         <persistence-unit-name>cmp</persistence-unit-name>
@@ -1929,8 +1929,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -2185,8 +2185,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -3174,8 +3174,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -3430,8 +3430,9 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -3439,7 +3440,8 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>striing</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3448,7 +3450,8 @@
         <env-entry-type>java.lang.Double</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>doouble</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3457,7 +3460,8 @@
         <env-entry-type>java.lang.Long</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>loong</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3466,7 +3470,8 @@
         <env-entry-type>java.lang.Float</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>flooat</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3475,7 +3480,8 @@
         <env-entry-type>java.lang.Integer</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>inteeger</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3484,7 +3490,8 @@
         <env-entry-type>java.lang.Short</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>shoort</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3493,7 +3500,8 @@
         <env-entry-type>java.lang.Byte</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>byyte</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3502,7 +3510,8 @@
         <env-entry-type>java.lang.Character</env-entry-type>
         <env-entry-value>D</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>chaaracter</injection-target-name>
         </injection-target>
       </env-entry>
@@ -3513,7 +3522,8 @@
         <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
         <ejb-link>BasicBmpBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>bmpHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -3524,7 +3534,8 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
         <ejb-link>BasicStatefulBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statefulHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -3535,7 +3546,8 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -3545,7 +3557,8 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -3555,7 +3568,8 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -3565,7 +3579,8 @@
         <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statelessBusinessLocal</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -3575,7 +3590,8 @@
         <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statelessBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -3585,7 +3601,8 @@
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -3595,7 +3612,8 @@
         <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -3604,7 +3622,8 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>daataSource</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -3613,7 +3632,8 @@
         <res-type>javax.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>coonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -3622,7 +3642,8 @@
         <res-type>javax.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>queueCoonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -3631,7 +3652,8 @@
         <res-type>javax.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>topicCoonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -3639,7 +3661,8 @@
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
@@ -3650,7 +3673,8 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
@@ -3661,7 +3685,8 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
+          </injection-target-class>
           <injection-target-name>emf</injection-target-name>
         </injection-target>
       </persistence-unit-ref>
@@ -4976,8 +5001,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -5217,8 +5242,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -5515,7 +5540,7 @@
       <local>org.apache.openejb.test.singleton.BasicSingletonLocalObject</local>
       <business-local>org.apache.openejb.test.singleton.BasicSingletonBusinessLocal</business-local>
       <business-remote>org.apache.openejb.test.singleton.BasicSingletonBusinessRemote</business-remote>
-      <local-bean/>  
+      <local-bean/>
       <ejb-class>org.apache.openejb.test.singleton.BasicSingletonPojoBean</ejb-class>
       <session-type>Singleton</session-type>
       <transaction-type>Container</transaction-type>
@@ -5819,8 +5844,8 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -6075,8 +6100,9 @@
         <env-entry-type>java.lang.Boolean</env-entry-type>
         <env-entry-value>true</env-entry-value>
         <injection-target>
-            <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
-            <injection-target-name>booolean</injection-target-name>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
+          <injection-target-name>booolean</injection-target-name>
         </injection-target>
       </env-entry>
       <env-entry>
@@ -6084,7 +6110,8 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>striing</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6093,7 +6120,8 @@
         <env-entry-type>java.lang.Double</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>doouble</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6102,7 +6130,8 @@
         <env-entry-type>java.lang.Long</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>loong</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6111,7 +6140,8 @@
         <env-entry-type>java.lang.Float</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>flooat</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6120,7 +6150,8 @@
         <env-entry-type>java.lang.Integer</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>inteeger</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6129,7 +6160,8 @@
         <env-entry-type>java.lang.Short</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>shoort</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6138,7 +6170,8 @@
         <env-entry-type>java.lang.Byte</env-entry-type>
         <env-entry-value>1</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>byyte</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6147,7 +6180,8 @@
         <env-entry-type>java.lang.Character</env-entry-type>
         <env-entry-value>D</env-entry-value>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>chaaracter</injection-target-name>
         </injection-target>
       </env-entry>
@@ -6158,7 +6192,8 @@
         <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
         <ejb-link>BasicBmpBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>bmpHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -6169,7 +6204,8 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
         <ejb-link>BasicStatefulBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>statefulHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -6180,7 +6216,8 @@
         <remote>org.apache.openejb.test.singleton.BasicSingletonObject</remote>
         <ejb-link>BasicSingletonBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>singletonHome</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -6190,7 +6227,8 @@
         <remote>org.apache.openejb.test.singleton.BasicSingletonBusinessRemote</remote>
         <ejb-link>BasicSingletonPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>singletonBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -6200,7 +6238,8 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
@@ -6210,7 +6249,8 @@
         <local>org.apache.openejb.test.singleton.BasicSingletonBusinessLocal</local>
         <ejb-link>BasicSingletonPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>singletonBusinessLocal</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -6220,17 +6260,19 @@
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
         </injection-target>
       </ejb-local-ref>
-        <ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>singleton/beanReferences/singleton-business-localbean</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.singleton.BasicSingletonPojoBean</local>
         <ejb-link>BasicSingletonPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>singletonBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -6240,7 +6282,8 @@
         <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
@@ -6249,7 +6292,8 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>daataSource</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -6258,7 +6302,8 @@
         <res-type>javax.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>coonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -6267,7 +6312,8 @@
         <res-type>javax.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>queueCoonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -6276,7 +6322,8 @@
         <res-type>javax.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>topicCoonnectionFactory</injection-target-name>
         </injection-target>
       </resource-ref>
@@ -6284,7 +6331,8 @@
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
@@ -6295,7 +6343,8 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
@@ -6306,7 +6355,8 @@
         <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
         <injection-target>
-          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
+          </injection-target-class>
           <injection-target-name>emf</injection-target-name>
         </injection-target>
       </persistence-unit-ref>
@@ -6894,8 +6944,8 @@
       </ejb-relationship-role>
     </ejb-relation>
   </relationships>
-  
-  
+
+
   <assembly-descriptor>
     <security-role>
       <description>The description</description>

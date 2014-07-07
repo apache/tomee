@@ -27,7 +27,7 @@ public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestCli
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext
+        final Object obj = initialContext
                 .lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
         ejbLocalHome = (BasicSingletonLocalHome) javax.rmi.PortableRemoteObject
                 .narrow(obj, BasicSingletonLocalHome.class);
@@ -44,16 +44,16 @@ public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestCli
     public void test01_isIdentical() {
         try {
             assertTrue("The EJBLocalObjects are not equal", ejbLocalObject.isIdentical(ejbLocalObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test02_getEjbLocalHome() {
         try {
-            EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
+            final EJBLocalHome localHome = ejbLocalObject.getEJBLocalHome();
             assertNotNull("The EJBLocalHome is null", localHome);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -73,11 +73,11 @@ public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestCli
      */
     public void test03_getPrimaryKey() {
         try {
-            Object key = ejbLocalObject.getPrimaryKey();
-        } catch (javax.ejb.EJBException e) {
+            final Object key = ejbLocalObject.getPrimaryKey();
+        } catch (final javax.ejb.EJBException e) {
             assertTrue(true);
             return;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("A RuntimeException should have been thrown.  Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("A RuntimeException should have been thrown.");
@@ -88,7 +88,7 @@ public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestCli
             ejbLocalObject.remove();
             // you can't really remove a singleton handle
             ejbLocalObject.businessMethod("Should not throw an exception");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

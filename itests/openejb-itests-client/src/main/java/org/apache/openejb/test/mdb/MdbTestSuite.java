@@ -24,12 +24,12 @@ import org.apache.openejb.test.FilteredTestSuite;
  * @version $Rev$ $Date$
  */
 public class MdbTestSuite extends junit.framework.TestCase {
-    public MdbTestSuite(String name) {
+    public MdbTestSuite(final String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
+        final TestSuite suite = new FilteredTestSuite();
 
         // Verify the famework is working
         suite.addTest(new MdbConnectionFactoryTests());
