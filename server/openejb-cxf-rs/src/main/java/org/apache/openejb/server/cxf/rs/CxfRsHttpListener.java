@@ -333,7 +333,14 @@ public class CxfRsHttpListener implements RsHttpListener {
                 instances.add(o);
             }
         }
+
         return instances;
+    }
+
+    private static void addMandatoryProviders(final Collection<Object> instances) {
+        instances.add(new JsrProvider()); // is this one really mandatory?
+        instances.add(new WadlDocumentMessageBodyWriter());
+        instances.add(EJBAccessExceptionMapper.INSTANCE);
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
@@ -558,7 +565,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         return factory;
     }
 
-    private void configureFactory(final Collection<Object> additionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
+    private void configureFactory(final Collection<Object> givenAdditionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -617,6 +624,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
+        // another property to configure the scanning of providers but this one is consistent with current cxf config
+        // the other one is more generic but need another file
+        final boolean ignoreAutoProviders = "false".equalsIgnoreCase(serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "skip-provider-scanning"));
+        final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
         List<Object> providers = null;
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
@@ -625,7 +636,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         if (providers == null) {
-            providers = new ArrayList<Object>();
+            providers = new ArrayList<Object>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             } else {
@@ -633,12 +644,13 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
-        // add the EJB access exception mapper
-        providers.add(EJBAccessExceptionMapper.INSTANCE);
+        if (!ignoreAutoProviders) {
+            addMandatoryProviders(providers);
+        }
 
         LOGGER.info("Using providers:");
         for (final Object provider : providers) {
-            LOGGER.info("  " + provider);
+            LOGGER.info("     " + provider);
         }
         factory.setProviders(providers);
     }
@@ -649,7 +661,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        return Arrays.asList((Object) new WadlDocumentMessageBodyWriter(), new FleeceProvider<>(), new JsrProvider(), jaxb);
+        final List<Object> providers = new ArrayList<>(4);
+        providers.add(jaxb);
+        providers.add(new FleeceProvider<>());
+        return providers;
     }
 
     private static class ProviderFactory implements ServiceInfos.Factory {
