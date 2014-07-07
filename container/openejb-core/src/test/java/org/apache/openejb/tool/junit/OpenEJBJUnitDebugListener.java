@@ -48,6 +48,7 @@ public class OpenEJBJUnitDebugListener extends RunListener {
             System.out.println(">>OpenEJBJUnitDebugListener> will monitor " + description.getDisplayName());
         }
         thread = new MonitoringThread();
+        thread.setName(MonitoringThread.class.getSimpleName() + "-" + thread.hashCode());
         thread.start();
     }
 

@@ -125,20 +125,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
             context = webContext.getAppContext().getAppJndiContext();
         }
 
-        final Collection<Object> additionalProviders = new HashSet<Object>();
-        if (useDiscoveredProviders()) {
-            for (final String name : webApp.jaxRsProviders) {
-                try {
-                    additionalProviders.add(classLoader.loadClass(name));
-                } catch (final ClassNotFoundException e) {
-                    LOGGER.warning("can't load '" + name + "'", e);
-                }
-            }
-            additionalProviders.addAll(appProviders(appInfo, classLoader));
-        }
-
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
+
+        final Collection<Object> additionalProviders = new HashSet<Object>();
+        addAppProvidersIfNeeded(appInfo, webApp, classLoader, additionalProviders);
 
         Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
         try {
@@ -292,6 +283,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
+        }
+    }
+
+    private void addAppProvidersIfNeeded(AppInfo appInfo, WebAppInfo webApp, ClassLoader classLoader, Collection<Object> additionalProviders) {
+        if (useDiscoveredProviders(appInfo)) {
+            for (final String name : webApp.jaxRsProviders) {
+                try {
+                    additionalProviders.add(classLoader.loadClass(name));
+                } catch (final ClassNotFoundException e) {
+                    LOGGER.warning("can't load '" + name + "'", e);
+                }
+            }
+            additionalProviders.addAll(appProviders(appInfo, classLoader));
         }
     }
 
@@ -535,8 +539,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return restEjbs.containsKey(clazz) && !BeanType.MANAGED.equals(restEjbs.get(clazz).context.getComponentType());
     }
 
-    private boolean useDiscoveredProviders() {
-        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, false);
+    private boolean useDiscoveredProviders(final AppInfo appInfo) {
+        final String value = appInfo.properties.getProperty(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP);
+        if (value != null) {
+            return "true".equalsIgnoreCase(value.trim());
+        }
+        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, true);
     }
 
     private Collection<Object> appProviders(final AppInfo appInfo, final ClassLoader classLoader) {
@@ -575,7 +583,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
 
                     final Collection<Object> providers;
-                    if (useDiscoveredProviders()) {
+                    if (useDiscoveredProviders(appInfo)) {
                         providers = appProviders(appInfo, appClassLoader);
                     } else {
                         providers = new ArrayList<Object>();
