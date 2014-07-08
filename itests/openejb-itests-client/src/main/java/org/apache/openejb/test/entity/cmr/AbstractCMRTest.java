@@ -58,6 +58,8 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
             transactionManager.commit();
         } else if (status != Status.STATUS_NO_TRANSACTION) {
             transactionManager.rollback();
+        } else {
+            throw new IllegalStateException("tx status: " + status);
         }
     }
 
