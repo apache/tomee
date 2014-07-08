@@ -24,16 +24,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Handles a user-provided generator.  You deploy any old generator
- *                 as a GBean, and then point to that GBean here.  The generator
- *                 should implement org.tranql.pkgenerator.PrimaryKeyGenerator.
- *             
- * 
+ * Handles a user-provided generator.  You deploy any old generator
+ * as a GBean, and then point to that GBean here.  The generator
+ * should implement org.tranql.pkgenerator.PrimaryKeyGenerator.
+ * <p/>
+ * <p/>
  * <p>Java class for custom-generatorType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="custom-generatorType">
  *   &lt;complexContent>
@@ -46,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "custom-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -63,11 +60,9 @@ public class CustomGeneratorType {
 
     /**
      * Gets the value of the generatorName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGeneratorName() {
         return generatorName;
@@ -75,23 +70,19 @@ public class CustomGeneratorType {
 
     /**
      * Sets the value of the generatorName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGeneratorName(String value) {
+    public void setGeneratorName(final String value) {
         this.generatorName = value;
     }
 
     /**
      * Gets the value of the primaryKeyClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPrimaryKeyClass() {
         return primaryKeyClass;
@@ -99,13 +90,11 @@ public class CustomGeneratorType {
 
     /**
      * Sets the value of the primaryKeyClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPrimaryKeyClass(String value) {
+    public void setPrimaryKeyClass(final String value) {
         this.primaryKeyClass = value;
     }
 

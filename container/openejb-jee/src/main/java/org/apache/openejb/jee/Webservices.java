@@ -21,23 +21,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
  * javaee_web_services_1_3.xsd
- * 
+ * <p/>
  * <p>Java class for webservicesType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="webservicesType">
  *   &lt;complexContent>
@@ -52,8 +50,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlRootElement(name = "webservices")
@@ -85,7 +81,7 @@ public class Webservices {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -98,7 +94,7 @@ public class Webservices {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -113,7 +109,7 @@ public class Webservices {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -142,7 +138,7 @@ public class Webservices {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -154,7 +150,7 @@ public class Webservices {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 }

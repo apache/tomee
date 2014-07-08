@@ -16,26 +16,27 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import java.util.List;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.List;
+
 //TODO not part of schema?  replaced by concurrent-method?
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "container-concurrencyType", propOrder = {
-        "descriptions",
-        //replaced by a NamedMethod which doesn't need the ejb-name because it's attached to an ejb already.
-        "method",
-        "lock"
-        })
-public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType>{
+    "descriptions",
+    //replaced by a NamedMethod which doesn't need the ejb-name because it's attached to an ejb already.
+    "method",
+    "lock"
+})
+public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType> {
 
     @XmlTransient
     protected TextMap description = new TextMap();
@@ -59,20 +60,20 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
     public ContainerConcurrency() {
     }
 
-    public ContainerConcurrency(ConcurrentLockType lock, String className, String ejbName, String methodName) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final String className, final String ejbName, final String methodName) {
         this(lock, new Method(ejbName, className, methodName));
     }
 
-    public ContainerConcurrency(ConcurrentLockType lock, String ejbName, java.lang.reflect.Method method) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final String ejbName, final java.lang.reflect.Method method) {
         this(lock, new Method(ejbName, method));
     }
 
-    public ContainerConcurrency(ConcurrentLockType lock, Method method) {
+    public ContainerConcurrency(final ConcurrentLockType lock, final Method method) {
         this.lock = lock;
         getMethod().add(method);
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -95,7 +96,7 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
         return lock;
     }
 
-    public void setLock(ConcurrentLockType value) {
+    public void setLock(final ConcurrentLockType value) {
         this.lock = value;
     }
 
@@ -103,15 +104,15 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
         return accessTimeout;
     }
 
-    public void setAccessTimeout(Timeout value) {
+    public void setAccessTimeout(final Timeout value) {
         this.accessTimeout = value;
     }
-    
+
     public String getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

@@ -34,13 +34,11 @@ public interface BasicStatelessBusinessLocal {
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     public void throwApplicationException() throws ApplicationException;
 
     /**
      * Throws an Annotated ApplicationException when invoked
-     *
      */
     public void throwAnnotatedApplicationException();
 
@@ -49,7 +47,6 @@ public interface BasicStatelessBusinessLocal {
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     public void throwSystemException_NullPointer();
 
@@ -69,10 +66,10 @@ public interface BasicStatelessBusinessLocal {
      * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
-    
+
     /**
      * Verify if we can invoke remove() on a stateless session bean as a business method
-     */    
+     */
     public Object remove();
 
 }

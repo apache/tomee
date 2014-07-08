@@ -237,7 +237,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
                 }
             }
-            
+
             txLogger.debug("TX {0}: setRollbackOnly() on transaction {1}", transactionType, tx);
 
         } catch (final Exception e) {

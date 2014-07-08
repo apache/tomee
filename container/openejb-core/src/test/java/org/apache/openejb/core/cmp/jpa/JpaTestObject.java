@@ -51,7 +51,7 @@ public class JpaTestObject extends org.junit.Assert {
         return entityManagerFactory;
     }
 
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+    public void setEntityManagerFactory(final EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
@@ -59,7 +59,7 @@ public class JpaTestObject extends org.junit.Assert {
         return transactionManager;
     }
 
-    public void setTransactionManager(TransactionManager transactionManager) {
+    public void setTransactionManager(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -67,7 +67,7 @@ public class JpaTestObject extends org.junit.Assert {
         return nonJtaDs;
     }
 
-    public void setNonJtaDs(DataSource nonJtaDs) {
+    public void setNonJtaDs(final DataSource nonJtaDs) {
         this.nonJtaDs = nonJtaDs;
     }
 
@@ -83,7 +83,7 @@ public class JpaTestObject extends org.junit.Assert {
                     } else {
                         entityManager.getTransaction().commit();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -91,7 +91,7 @@ public class JpaTestObject extends org.junit.Assert {
                     if (transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION) {
                         transactionManager.rollback();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -178,7 +178,7 @@ public class JpaTestObject extends org.junit.Assert {
 
         commitTx();
     }
-    
+
     private void employeeTest() throws Exception {
         // get the pk for the inserted row
         int davidPk = -1;
@@ -188,7 +188,7 @@ public class JpaTestObject extends org.junit.Assert {
             try {
                 connection = nonJtaDs.getConnection();
                 statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("select * from employee");
+                final ResultSet resultSet = statement.executeQuery("select * from employee");
                 resultSet.next();
                 davidPk = resultSet.getInt("id");
             } finally {
@@ -249,7 +249,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         dain = entityManager.merge(dain);
-        int dainId = dain.getId();
+        final int dainId = dain.getId();
 
         assertTrue(entityManager.contains(dain));
 
@@ -288,7 +288,7 @@ public class JpaTestObject extends org.junit.Assert {
             try {
                 connection = nonJtaDs.getConnection();
                 statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("select * from bill");
+                final ResultSet resultSet = statement.executeQuery("select * from bill");
                 resultSet.next();
 
                 basicPk = new BillPk(resultSet.getLong("billNumber"), resultSet.getLong("billVersion"), resultSet.getLong("billRevision"));
@@ -349,7 +349,7 @@ public class JpaTestObject extends org.junit.Assert {
         entityManager.flush();
         advanced = entityManager.merge(advanced);
 
-        BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
+        final BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
 
         assertTrue(entityManager.contains(advanced));
 
@@ -392,7 +392,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         basicCmpBean = entityManager.merge(basicCmpBean);
-        int joeId = basicCmpBean.getPrimaryKey();
+        final int joeId = basicCmpBean.getPrimaryKey();
 
         assertTrue(entityManager.contains(basicCmpBean));
 
@@ -408,7 +408,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         basicCmpBean = entityManager.merge(basicCmpBean);
-        int lloydId = basicCmpBean.getPrimaryKey();
+        final int lloydId = basicCmpBean.getPrimaryKey();
 
         assertTrue(entityManager.contains(basicCmpBean));
         commitTx();
@@ -416,14 +416,14 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
+        final BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getPrimaryKey(), joeId);
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
+        final BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -467,13 +467,13 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        ComplexCmpBean joe = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
+        final ComplexCmpBean joe = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        ComplexCmpBean lloyd = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        final ComplexCmpBean lloyd = (ComplexCmpBean) entityManager.createQuery("select e from ComplexCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getFirstName(), "Lloyd");
@@ -494,7 +494,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         unknownCmpBean = entityManager.merge(unknownCmpBean);
-        Object joeId = unknownCmpBean.getPrimaryKey();
+        final Object joeId = unknownCmpBean.getPrimaryKey();
 
         assertTrue(entityManager.contains(unknownCmpBean));
 
@@ -510,7 +510,7 @@ public class JpaTestObject extends org.junit.Assert {
         // extract primary key seems to require a flush followed by a merge
         entityManager.flush();
         unknownCmpBean = entityManager.merge(unknownCmpBean);
-        Object lloydId = unknownCmpBean.getPrimaryKey();
+        final Object lloydId = unknownCmpBean.getPrimaryKey();
 
         assertTrue(entityManager.contains(unknownCmpBean));
         commitTx();
@@ -518,14 +518,14 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        UnknownCmpBean joe = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
+        final UnknownCmpBean joe = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Joe'").getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getPrimaryKey(), joeId);
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        UnknownCmpBean lloyd = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        final UnknownCmpBean lloyd = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -538,13 +538,13 @@ public class JpaTestObject extends org.junit.Assert {
     private void manytoMany() throws Exception {
         beginTx();
 
-        AuthorBean mcLaughlin = new AuthorBean(MCLAUGHLIN);
-        AuthorBean flanagan = new AuthorBean(FLANAGAN);
+        final AuthorBean mcLaughlin = new AuthorBean(MCLAUGHLIN);
+        final AuthorBean flanagan = new AuthorBean(FLANAGAN);
 
-        BookBean tiger = new BookBean(TIGER);
-        BookBean javaScript = new BookBean(JAVASCRIPT);
+        final BookBean tiger = new BookBean(TIGER);
+        final BookBean javaScript = new BookBean(JAVASCRIPT);
 
-        BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
+        final BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
 
         entityManager.persist(mcLaughlin);
         entityManager.persist(flanagan);
@@ -561,22 +561,22 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        BookBean book = entityManager.find(BookBean.class, TIGER);
+        final BookBean book = entityManager.find(BookBean.class, TIGER);
         assertTrue(entityManager.contains(book));
 
         assertEquals(book.getTitle(), TIGER);
-        Set<AuthorBean> authors = book.getAuthors();
+        final Set<AuthorBean> authors = book.getAuthors();
         assertEquals(authors.size(), 2);
 
         commitTx();
     }
 
-    private void link(String authorName, String title) throws Exception {
+    private void link(final String authorName, final String title) throws Exception {
         beginTx();
-        AuthorBean author = entityManager.find(AuthorBean.class, authorName);
+        final AuthorBean author = entityManager.find(AuthorBean.class, authorName);
         assertNotNull("Author not found " + authorName, author);
 
-        BookBean book = entityManager.find(BookBean.class, title);
+        final BookBean book = entityManager.find(BookBean.class, title);
         assertNotNull("Book not found " + title, book);
 
         book.OpenEJB_addCmr("authors", author);
@@ -594,7 +594,7 @@ public class JpaTestObject extends org.junit.Assert {
     private void beginTx() throws Exception {
         createEntityManager();
 
-        String msg = "BEGIN_TX";
+        final String msg = "BEGIN_TX";
         log(msg);
         if (transactionManager != null) {
             transactionManager.begin();
@@ -605,7 +605,7 @@ public class JpaTestObject extends org.junit.Assert {
         }
     }
 
-    public void log(String msg) {
+    public void log(final String msg) {
 //        System.out.println(msg);
     }
 
@@ -722,7 +722,7 @@ public class JpaTestObject extends org.junit.Assert {
         JpaTestObject.dumpTable(nonJtaDs, "OneToOneB");
     }
 
-    public static void dumpTable(DataSource ds, String table) throws SQLException {
+    public static void dumpTable(final DataSource ds, final String table) throws SQLException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -730,16 +730,16 @@ public class JpaTestObject extends org.junit.Assert {
             connection = ds.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM " + table);
-            ResultSetMetaData setMetaData = resultSet.getMetaData();
-            int columnCount = setMetaData.getColumnCount();
-            while(resultSet.next()) {
-                StringBuilder row = new StringBuilder();
+            final ResultSetMetaData setMetaData = resultSet.getMetaData();
+            final int columnCount = setMetaData.getColumnCount();
+            while (resultSet.next()) {
+                final StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= columnCount; i++) {
                     if (i > 1) {
                         row.append(", ");
                     }
-                    String name = setMetaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
+                    final String name = setMetaData.getColumnName(i);
+                    final Object value = resultSet.getObject(i);
                     row.append(name).append("=").append(value);
                 }
                 System.out.println(row);
@@ -751,27 +751,27 @@ public class JpaTestObject extends org.junit.Assert {
         }
     }
 
-    private static void close(ResultSet resultSet) {
+    private static void close(final ResultSet resultSet) {
         if (resultSet == null) return;
         try {
             resultSet.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
-    private static void close(Statement statement) {
+    private static void close(final Statement statement) {
         if (statement == null) return;
         try {
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
-    private static void close(Connection connection) {
+    private static void close(final Connection connection) {
         if (connection == null) return;
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 }

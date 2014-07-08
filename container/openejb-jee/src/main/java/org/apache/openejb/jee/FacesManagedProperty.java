@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,15 +26,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-managed-propertyType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-managed-propertyType">
  *   &lt;complexContent>
@@ -59,8 +57,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-managed-propertyType", propOrder = {
@@ -104,7 +100,7 @@ public class FacesManagedProperty {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -117,7 +113,7 @@ public class FacesManagedProperty {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -132,7 +128,7 @@ public class FacesManagedProperty {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -145,11 +141,9 @@ public class FacesManagedProperty {
 
     /**
      * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getPropertyName() {
         return propertyName;
@@ -157,23 +151,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setPropertyName(java.lang.String value) {
+    public void setPropertyName(final java.lang.String value) {
         this.propertyName = value;
     }
 
     /**
      * Gets the value of the propertyClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getPropertyClass() {
         return propertyClass;
@@ -181,23 +171,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the propertyClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setPropertyClass(java.lang.String value) {
+    public void setPropertyClass(final java.lang.String value) {
         this.propertyClass = value;
     }
 
     /**
      * Gets the value of the mapEntries property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesMapEntries }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesMapEntries }
      */
     public FacesMapEntries getMapEntries() {
         return mapEntries;
@@ -205,23 +191,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the mapEntries property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesMapEntries }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesMapEntries }
      */
-    public void setMapEntries(FacesMapEntries value) {
+    public void setMapEntries(final FacesMapEntries value) {
         this.mapEntries = value;
     }
 
     /**
      * Gets the value of the nullValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesNullValue }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesNullValue }
      */
     public FacesNullValue getNullValue() {
         return nullValue;
@@ -229,23 +211,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the nullValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesNullValue }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesNullValue }
      */
-    public void setNullValue(FacesNullValue value) {
+    public void setNullValue(final FacesNullValue value) {
         this.nullValue = value;
     }
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -253,23 +231,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the listEntries property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesListEntries }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesListEntries }
      */
     public FacesListEntries getListEntries() {
         return listEntries;
@@ -277,23 +251,19 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the listEntries property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesListEntries }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesListEntries }
      */
-    public void setListEntries(FacesListEntries value) {
+    public void setListEntries(final FacesListEntries value) {
         this.listEntries = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -301,13 +271,11 @@ public class FacesManagedProperty {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

@@ -35,11 +35,11 @@ public class MailSessionFactory {
             final String protocol = properties.getProperty("mail.transport.protocol", "smtp");
 
             String user = properties.getProperty("mail." + protocol + ".user");
-            if(user == null) {
+            if (user == null) {
                 user = properties.getProperty("mail.user");
             }
 
-            if(user != null) {
+            if (user != null) {
                 final PasswordAuthentication pa = new PasswordAuthentication(user, password);
                 auth = new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {

@@ -17,20 +17,20 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -64,11 +62,9 @@ public class LoadGroup {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
+     *
+     * @return possible object is
+     * {@link Description }
      */
     public Description getDescription() {
         return description;
@@ -76,23 +72,19 @@ public class LoadGroup {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Description }
      */
-    public void setDescription(Description value) {
+    public void setDescription(final Description value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the loadGroupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LoadGroupName }
-     *     
+     *
+     * @return possible object is
+     * {@link LoadGroupName }
      */
     public LoadGroupName getLoadGroupName() {
         return loadGroupName;
@@ -100,37 +92,33 @@ public class LoadGroup {
 
     /**
      * Sets the value of the loadGroupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LoadGroupName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LoadGroupName }
      */
-    public void setLoadGroupName(LoadGroupName value) {
+    public void setLoadGroupName(final LoadGroupName value) {
         this.loadGroupName = value;
     }
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the fieldName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFieldName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldName }
-     * 
-     * 
      */
     public List<FieldName> getFieldName() {
         if (fieldName == null) {

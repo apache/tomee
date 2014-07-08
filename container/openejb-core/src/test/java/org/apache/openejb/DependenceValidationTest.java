@@ -95,7 +95,7 @@ public class DependenceValidationTest extends TestCase {
                         final int references = deps.get(referredPackage);
                         assertEquals(packageName + " should have no dependencies on " + referredPackage + " - #ref " + references, 0, references);
                     }
-                } catch (AssertionFailedError e) {
+                } catch (final AssertionFailedError e) {
                     results.addFailure(this, e);
                 }
             }
@@ -124,7 +124,7 @@ public class DependenceValidationTest extends TestCase {
             } finally {
                 IO.close(in);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }

@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for method-paramsType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="method-paramsType">
  *   &lt;complexContent>
@@ -50,13 +50,11 @@ import java.util.Arrays;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-paramsType", propOrder = {
-        "methodParam"
-        })
+    "methodParam"
+})
 public class MethodParams {
 
     @XmlElement(name = "method-param", required = true)
@@ -69,11 +67,11 @@ public class MethodParams {
     public MethodParams() {
     }
 
-    public MethodParams(List<String> methodParam) {
+    public MethodParams(final List<String> methodParam) {
         this.methodParam = methodParam;
     }
 
-    public MethodParams(String... params) {
+    public MethodParams(final String... params) {
         this(Arrays.asList(params));
     }
 
@@ -88,11 +86,11 @@ public class MethodParams {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

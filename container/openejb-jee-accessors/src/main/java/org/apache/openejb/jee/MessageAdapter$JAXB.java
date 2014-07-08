@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.MessageListener$JAXB.readMessageListener;
 import static org.apache.openejb.jee.MessageListener$JAXB.writeMessageListener;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MessageAdapter$JAXB
-        extends JAXBObject<MessageAdapter> {
+    extends JAXBObject<MessageAdapter> {
 
 
     public MessageAdapter$JAXB() {
         super(MessageAdapter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "messageadapterType".intern()), MessageListener$JAXB.class);
     }
 
-    public static MessageAdapter readMessageAdapter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MessageAdapter readMessageAdapter(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMessageAdapter(XoXMLStreamWriter writer, MessageAdapter messageAdapter, RuntimeContext context)
-            throws Exception {
+    public static void writeMessageAdapter(final XoXMLStreamWriter writer, final MessageAdapter messageAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, messageAdapter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MessageAdapter messageAdapter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MessageAdapter messageAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, messageAdapter, context);
     }
 
-    public final static MessageAdapter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MessageAdapter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,13 +70,13 @@ public class MessageAdapter$JAXB
             context = new RuntimeContext();
         }
 
-        MessageAdapter messageAdapter = new MessageAdapter();
+        final MessageAdapter messageAdapter = new MessageAdapter();
         context.beforeUnmarshal(messageAdapter, LifecycleCallback.NONE);
 
         List<MessageListener> messageListener = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("messageadapterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MessageAdapter.class);
@@ -84,10 +84,10 @@ public class MessageAdapter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, messageAdapter);
                 messageAdapter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,10 +96,10 @@ public class MessageAdapter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("messagelistener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageListener
-                MessageListener messageListenerItem = readMessageListener(elementReader, context);
+                final MessageListener messageListenerItem = readMessageListener(elementReader, context);
                 if (messageListener == null) {
                     messageListener = messageAdapter.messageListener;
                     if (messageListener != null) {
@@ -122,13 +122,13 @@ public class MessageAdapter$JAXB
         return messageAdapter;
     }
 
-    public final MessageAdapter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MessageAdapter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MessageAdapter messageAdapter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MessageAdapter messageAdapter, RuntimeContext context)
+        throws Exception {
         if (messageAdapter == null) {
             writer.writeXsiNil();
             return;
@@ -147,21 +147,21 @@ public class MessageAdapter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = messageAdapter.id;
+        final String idRaw = messageAdapter.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(messageAdapter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: messageListener
-        List<MessageListener> messageListener = messageAdapter.messageListener;
+        final List<MessageListener> messageListener = messageAdapter.messageListener;
         if (messageListener != null) {
-            for (MessageListener messageListenerItem : messageListener) {
+            for (final MessageListener messageListenerItem : messageListener) {
                 if (messageListenerItem != null) {
                     writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "messagelistener");
                     writeMessageListener(writer, messageListenerItem, context);

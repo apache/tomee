@@ -30,7 +30,7 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
         ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
         ejbMetaData = ejbHome.getEJBMetaData();
     }
@@ -40,19 +40,19 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
     //
     public void test01_getEJBHome(){
         try{
-        EJBHome home = ejbMetaData.getEJBHome();
+        final EJBHome home = ejbMetaData.getEJBHome();
         assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_getHomeInterfaceClass(){
         try{
-        Class clazz = ejbMetaData.getHomeInterfaceClass();
+        final Class clazz = ejbMetaData.getHomeInterfaceClass();
         assertNotNull( "The Home Interface class is null", clazz );
         assertEquals(clazz , BasicStatefulHome.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -72,12 +72,12 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
      */
     public void test03_getPrimaryKeyClass(){
         try{
-            Class clazz = ejbMetaData.getPrimaryKeyClass();
+            final Class clazz = ejbMetaData.getPrimaryKeyClass();
             assertNull("Should not return a primary key.  Method should throw an java.lang.RuntimeException", clazz );
-        } catch (UnsupportedOperationException e){
+        } catch (final UnsupportedOperationException e){
             assertTrue( true );
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         assertTrue( "Method should throw an java.lang.RuntimeException", false );
@@ -85,10 +85,10 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
 
     public void test04_getRemoteInterfaceClass(){
         try{
-        Class clazz = ejbMetaData.getRemoteInterfaceClass();
+        final Class clazz = ejbMetaData.getRemoteInterfaceClass();
         assertNotNull( "The Remote Interface class is null", clazz );
         assertEquals(clazz , BasicStatefulObject.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -96,7 +96,7 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
     public void test05_isSession(){
         try{
         assertTrue( "EJBMetaData says this is not a session bean", ejbMetaData.isSession() );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -104,7 +104,7 @@ public class StatefulEjbMetaDataTests extends BasicStatefulTestClient{
     public void test06_isStatelessSession(){
         try{
         assertTrue( "EJBMetaData says this is a stateless session bean", !ejbMetaData.isStatelessSession() );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

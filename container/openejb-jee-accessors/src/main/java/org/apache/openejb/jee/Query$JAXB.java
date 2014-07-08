@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Query$JAXB
-        extends JAXBObject<Query> {
+    extends JAXBObject<Query> {
 
 
     public Query$JAXB() {
         super(Query.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "queryType".intern()), Text$JAXB.class, QueryMethod$JAXB.class, ResultTypeMapping$JAXB.class);
     }
 
-    public static Query readQuery(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Query readQuery(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeQuery(XoXMLStreamWriter writer, Query query, RuntimeContext context)
-            throws Exception {
+    public static void writeQuery(final XoXMLStreamWriter writer, final Query query, final RuntimeContext context)
+        throws Exception {
         _write(writer, query, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Query query, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Query query, final RuntimeContext context)
+        throws Exception {
         _write(writer, query, context);
     }
 
-    public final static Query _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Query _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,12 +72,12 @@ public class Query$JAXB
             context = new RuntimeContext();
         }
 
-        Query query = new Query();
+        final Query query = new Query();
         context.beforeUnmarshal(query, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("queryType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Query.class);
@@ -85,10 +85,10 @@ public class Query$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, query);
                 query.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,29 +97,29 @@ public class Query$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: description
-                Text description = readText(elementReader, context);
+                final Text description = readText(elementReader, context);
                 query.description = description;
             } else if (("query-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: queryMethod
-                QueryMethod queryMethod = readQueryMethod(elementReader, context);
+                final QueryMethod queryMethod = readQueryMethod(elementReader, context);
                 query.queryMethod = queryMethod;
             } else if (("result-type-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resultTypeMapping
-                ResultTypeMapping resultTypeMapping = parseResultTypeMapping(elementReader, context, elementReader.getElementAsString());
+                final ResultTypeMapping resultTypeMapping = parseResultTypeMapping(elementReader, context, elementReader.getElementAsString());
                 if (resultTypeMapping != null) {
                     query.resultTypeMapping = resultTypeMapping;
                 }
             } else if (("ejb-ql" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbQl
-                String ejbQlRaw = elementReader.getElementAsString();
+                final String ejbQlRaw = elementReader.getElementAsString();
 
-                String ejbQl;
+                final String ejbQl;
                 try {
                     ejbQl = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbQlRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -135,13 +135,13 @@ public class Query$JAXB
         return query;
     }
 
-    public final Query read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Query read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Query query, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Query query, RuntimeContext context)
+        throws Exception {
         if (query == null) {
             writer.writeXsiNil();
             return;
@@ -151,7 +151,7 @@ public class Query$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Query.class != query.getClass()) {
             context.unexpectedSubclass(writer, query, Query.class);
             return;
@@ -161,19 +161,19 @@ public class Query$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = query.id;
+        final String idRaw = query.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(query, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: description
-        Text description = query.description;
+        final Text description = query.description;
         if (description != null) {
             writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
             writeText(writer, description, context);
@@ -181,7 +181,7 @@ public class Query$JAXB
         }
 
         // ELEMENT: queryMethod
-        QueryMethod queryMethod = query.queryMethod;
+        final QueryMethod queryMethod = query.queryMethod;
         if (queryMethod != null) {
             writer.writeStartElement(prefix, "query-method", "http://java.sun.com/xml/ns/javaee");
             writeQueryMethod(writer, queryMethod, context);
@@ -191,7 +191,7 @@ public class Query$JAXB
         }
 
         // ELEMENT: resultTypeMapping
-        ResultTypeMapping resultTypeMapping = query.resultTypeMapping;
+        final ResultTypeMapping resultTypeMapping = query.resultTypeMapping;
         if (resultTypeMapping != null) {
             writer.writeStartElement(prefix, "result-type-mapping", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringResultTypeMapping(query, null, context, resultTypeMapping));
@@ -199,11 +199,11 @@ public class Query$JAXB
         }
 
         // ELEMENT: ejbQl
-        String ejbQlRaw = query.ejbQl;
+        final String ejbQlRaw = query.ejbQl;
         String ejbQl = null;
         try {
             ejbQl = Adapters.collapsedStringAdapterAdapter.marshal(ejbQlRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(query, "ejbQl", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbQl != null) {

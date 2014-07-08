@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * connector_1_6.xsd 
- *
+ * connector_1_6.xsd
+ * <p/>
  * <p>Java class for outbound-resourceadapterType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="outbound-resourceadapterType">
  *   &lt;complexContent>
@@ -49,15 +49,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "outbound-resourceadapterType", propOrder = {
-        "connectionDefinition",
-        "transactionSupport",
-        "authenticationMechanism",
-        "reauthenticationSupport"
+    "connectionDefinition",
+    "transactionSupport",
+    "authenticationMechanism",
+    "reauthenticationSupport"
 })
 public class OutboundResourceAdapter {
 
@@ -85,7 +83,7 @@ public class OutboundResourceAdapter {
         return transactionSupport;
     }
 
-    public void setTransactionSupport(TransactionSupportType value) {
+    public void setTransactionSupport(final TransactionSupportType value) {
         this.transactionSupport = value;
     }
 
@@ -106,7 +104,7 @@ public class OutboundResourceAdapter {
     /**
      * Sets the value of the reauthenticationSupport property.
      */
-    public void setReauthenticationSupport(Boolean value) {
+    public void setReauthenticationSupport(final Boolean value) {
         this.reauthenticationSupport = value;
     }
 
@@ -114,7 +112,7 @@ public class OutboundResourceAdapter {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

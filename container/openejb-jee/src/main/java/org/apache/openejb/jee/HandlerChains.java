@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for handler-chainsType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="handler-chainsType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlRootElement(name = "handler-chains")
@@ -73,7 +71,7 @@ public class HandlerChains {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

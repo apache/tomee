@@ -36,7 +36,9 @@ import java.io.Serializable;
  */
 public class SumOfSquares extends AbstractStorelessUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1230986908574398008L;
 
     /** */
@@ -110,14 +112,14 @@ public class SumOfSquares extends AbstractStorelessUnivariateStatistic implement
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the sum of the squares of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                  parameters are not valid
      */
     @Override
-    public double evaluate(final double[] values,final int begin, final int length) {
+    public double evaluate(final double[] values, final int begin, final int length) {
         double sumSq = Double.NaN;
         if (test(values, begin, length)) {
             sumSq = 0.0;
@@ -143,7 +145,7 @@ public class SumOfSquares extends AbstractStorelessUnivariateStatistic implement
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source SumOfSquares to copy
-     * @param dest SumOfSquares to copy to
+     * @param dest   SumOfSquares to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final SumOfSquares source, final SumOfSquares dest) {

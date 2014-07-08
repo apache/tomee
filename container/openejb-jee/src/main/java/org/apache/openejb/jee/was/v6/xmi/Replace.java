@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,22 +16,22 @@
  */
 package org.apache.openejb.jee.was.v6.xmi;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * <p>
+ * <p/>
  * Java class for Replace complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Replace">
  *   &lt;complexContent>
@@ -42,67 +42,60 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Replace")
 public class Replace extends Difference {
 
-	@XmlAttribute
-	protected String position;
-	@XmlAttribute(name = "replacement")
-	@XmlIDREF
-	protected List<Object> replacements;
+    @XmlAttribute
+    protected String position;
+    @XmlAttribute(name = "replacement")
+    @XmlIDREF
+    protected List<Object> replacements;
 
-	/**
-	 * Gets the value of the position property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getPosition() {
-		return position;
-	}
+    /**
+     * Gets the value of the position property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getPosition() {
+        return position;
+    }
 
-	/**
-	 * Sets the value of the position property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setPosition(String value) {
-		this.position = value;
-	}
+    /**
+     * Sets the value of the position property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setPosition(final String value) {
+        this.position = value;
+    }
 
-	/**
-	 * Gets the value of the replacements property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the replacements property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getReplacements().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link Object }
-	 * 
-	 * 
-	 */
-	public List<Object> getReplacements() {
-		if (replacements == null) {
-			replacements = new ArrayList<Object>();
-		}
-		return this.replacements;
-	}
+    /**
+     * Gets the value of the replacements property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the replacements property.
+     * <p/>
+     * <p/>
+     * For example, to add a new item, do as follows:
+     * <p/>
+     * <pre>
+     * getReplacements().add(newItem);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link Object }
+     */
+    public List<Object> getReplacements() {
+        if (replacements == null) {
+            replacements = new ArrayList<Object>();
+        }
+        return this.replacements;
+    }
 
 }

@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.jee.was.v6.ejb;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.openejb.jee.was.v6.java.JavaClass;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.openejb.jee.was.v6.java.JavaClass;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 
  * The entity element declares an entity bean. The declaration consists of: an
  * optional description; optional display name; optional small icon file name;
  * optional large icon file name; a unique name assigned to the enterprise bean
@@ -63,15 +63,15 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * descriptor if the entity's persistence-type is Container and the cmp-version
  * is 1.x, and none must not be present if the entity's persistence-type is
  * Bean.
- * 
- * 
- * <p>
+ * <p/>
+ * <p/>
+ * <p/>
  * Java class for Entity complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Entity">
  *   &lt;complexContent>
@@ -85,90 +85,80 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Entity", propOrder = { "primaryKeys" })
+@XmlType(name = "Entity", propOrder = {"primaryKeys"})
 public class Entity extends EnterpriseBean {
 
-	@XmlElement(name = "primaryKey")
-	protected List<JavaClass> primaryKeys;
-	@XmlAttribute
-	protected String primaryKey;
-	@XmlAttribute
-	protected Boolean reentrant;
+    @XmlElement(name = "primaryKey")
+    protected List<JavaClass> primaryKeys;
+    @XmlAttribute
+    protected String primaryKey;
+    @XmlAttribute
+    protected Boolean reentrant;
 
-	/**
-	 * Gets the value of the primaryKeys property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the primaryKeys property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getPrimaryKeys().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link JavaClass }
-	 * 
-	 * 
-	 */
-	public List<JavaClass> getPrimaryKeys() {
-		if (primaryKeys == null) {
-			primaryKeys = new ArrayList<JavaClass>();
-		}
-		return this.primaryKeys;
-	}
+    /**
+     * Gets the value of the primaryKeys property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the primaryKeys property.
+     * <p/>
+     * <p/>
+     * For example, to add a new item, do as follows:
+     * <p/>
+     * <pre>
+     * getPrimaryKeys().add(newItem);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list
+     * {@link JavaClass }
+     */
+    public List<JavaClass> getPrimaryKeys() {
+        if (primaryKeys == null) {
+            primaryKeys = new ArrayList<JavaClass>();
+        }
+        return this.primaryKeys;
+    }
 
-	/**
-	 * Gets the value of the primaryKey property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getPrimaryKey() {
-		return primaryKey;
-	}
+    /**
+     * Gets the value of the primaryKey property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
 
-	/**
-	 * Sets the value of the primaryKey property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setPrimaryKey(String value) {
-		this.primaryKey = value;
-	}
+    /**
+     * Sets the value of the primaryKey property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setPrimaryKey(final String value) {
+        this.primaryKey = value;
+    }
 
-	/**
-	 * Gets the value of the reentrant property.
-	 * 
-	 * @return possible object is {@link Boolean }
-	 * 
-	 */
-	public Boolean isReentrant() {
-		return reentrant;
-	}
+    /**
+     * Gets the value of the reentrant property.
+     *
+     * @return possible object is {@link Boolean }
+     */
+    public Boolean isReentrant() {
+        return reentrant;
+    }
 
-	/**
-	 * Sets the value of the reentrant property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
-	 */
-	public void setReentrant(Boolean value) {
-		this.reentrant = value;
-	}
+    /**
+     * Sets the value of the reentrant property.
+     *
+     * @param value allowed object is {@link Boolean }
+     */
+    public void setReentrant(final Boolean value) {
+        this.reentrant = value;
+    }
 
 }

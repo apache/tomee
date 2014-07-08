@@ -39,11 +39,9 @@ public class CacheInvalidationConfig {
 
     /**
      * Gets the value of the invalidationGroupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInvalidationGroupName() {
         return invalidationGroupName;
@@ -51,23 +49,19 @@ public class CacheInvalidationConfig {
 
     /**
      * Sets the value of the invalidationGroupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInvalidationGroupName(String value) {
+    public void setInvalidationGroupName(final String value) {
         this.invalidationGroupName = value;
     }
 
     /**
      * Gets the value of the invalidationManagerName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInvalidationManagerName() {
         return invalidationManagerName;
@@ -75,13 +69,11 @@ public class CacheInvalidationConfig {
 
     /**
      * Sets the value of the invalidationManagerName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInvalidationManagerName(String value) {
+    public void setInvalidationManagerName(final String value) {
         this.invalidationManagerName = value;
     }
 

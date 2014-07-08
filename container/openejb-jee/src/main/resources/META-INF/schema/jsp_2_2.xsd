@@ -10,43 +10,43 @@
     <xsd:documentation>
 
       DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-      
+
       Copyright 2003-2009 Sun Microsystems, Inc. All rights reserved.
-      
+
       The contents of this file are subject to the terms of either the
       GNU General Public License Version 2 only ("GPL") or the Common
       Development and Distribution License("CDDL") (collectively, the
-      "License").  You may not use this file except in compliance with
+      "License"). You may not use this file except in compliance with
       the License. You can obtain a copy of the License at
       https://glassfish.dev.java.net/public/CDDL+GPL.html or
-      glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+      glassfish/bootstrap/legal/LICENSE.txt. See the License for the
       specific language governing permissions and limitations under the
       License.
-      
+
       When distributing the software, include this License Header
       Notice in each file and include the License file at
-      glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+      glassfish/bootstrap/legal/LICENSE.txt. Sun designates this
       particular file as subject to the "Classpath" exception as
       provided by Sun in the GPL Version 2 section of the License file
-      that accompanied this code.  If applicable, add the following
+      that accompanied this code. If applicable, add the following
       below the License Header, with the fields enclosed by brackets []
       replaced by your own identifying information:
       "Portions Copyrighted [year] [name of copyright owner]"
-      
+
       Contributor(s):
-      
+
       If you wish your version of this file to be governed by only the
       CDDL or only the GPL Version 2, indicate your decision by adding
       "[Contributor] elects to include this software in this
-      distribution under the [CDDL or GPL Version 2] license."  If you
+      distribution under the [CDDL or GPL Version 2] license." If you
       don't indicate a single choice of license, a recipient has the
       option to distribute your version of this file under either the
       CDDL, the GPL Version 2 or to extend the choice of license to its
-      licensees as provided above.  However, if you add GPL Version 2
+      licensees as provided above. However, if you add GPL Version 2
       code and therefore, elected the GPL Version 2 license, then the
       option applies only if the new code is made subject to such
       option by the copyright holder.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
@@ -54,13 +54,13 @@
     <xsd:documentation>
 
       This is the XML Schema for the JSP 2.2 deployment descriptor
-      types.  The JSP 2.2 schema contains all the special
+      types. The JSP 2.2 schema contains all the special
       structures and datatypes that are necessary to use JSP files
-      from a web application. 
-      
-      The contents of this schema is used by the web-common_3_0.xsd 
-      file to define JSP specific content. 
-      
+      from a web application.
+
+      The contents of this schema is used by the web-common_3_0.xsd
+      file to define JSP specific content.
+
     </xsd:documentation>
   </xsd:annotation>
 
@@ -69,23 +69,23 @@
 
       The following conventions apply to all Java EE
       deployment descriptor elements unless indicated otherwise.
-      
+
       - In elements that specify a pathname to a file within the
       same JAR file, relative filenames (i.e., those not
       starting with "/") are considered relative to the root of
-      the JAR file's namespace.  Absolute filenames (i.e., those
+      the JAR file's namespace. Absolute filenames (i.e., those
       starting with "/") also specify names in the root of the
-      JAR file's namespace.  In general, relative names are
-      preferred.  The exception is .war files where absolute
+      JAR file's namespace. In general, relative names are
+      preferred. The exception is .war files where absolute
       names are preferred for consistency with the Servlet API.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
   <xsd:include schemaLocation="javaee_6.xsd"/>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="jsp-configType">
     <xsd:annotation>
@@ -94,7 +94,7 @@
         The jsp-configType is used to provide global configuration
         information for the JSP files in a web application. It has
         two subelements, taglib and jsp-property-group.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -112,7 +112,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="jsp-fileType">
     <xsd:annotation>
@@ -120,7 +120,7 @@
 
         The jsp-file element contains the full path to a JSP file
         within the web application beginning with a `/'.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -129,7 +129,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="jsp-property-groupType">
     <xsd:annotation>
@@ -137,9 +137,9 @@
 
         The jsp-property-groupType is used to group a number of
         files so they can be given global property information.
-        All files so described are deemed to be JSP files.  The
+        All files so described are deemed to be JSP files. The
         following additional properties can be described:
-        
+
         - Control whether EL is ignored.
         - Control whether scripting elements are invalid.
         - Indicate pageEncoding information.
@@ -153,7 +153,7 @@
         - Indicate the default buffering model for JspWriter
         - Control whether error should be raised for the use of
         undeclared namespaces in a JSP page.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -168,11 +168,11 @@
           <xsd:documentation>
 
             Can be used to easily set the isELIgnored
-            property of a group of JSP pages.  By default, the
+            property of a group of JSP pages. By default, the
             EL evaluation is enabled for Web Applications using
             a Servlet 2.4 or greater web.xml, and disabled
             otherwise.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -183,17 +183,17 @@
           <xsd:documentation>
 
             The valid values of page-encoding are those of the
-            pageEncoding page directive.  It is a
+            pageEncoding page directive. It is a
             translation-time error to name different encodings
             in the pageEncoding attribute of the page directive
             of a JSP page and in a JSP configuration element
-            matching the page.  It is also a translation-time
+            matching the page. It is also a translation-time
             error to name different encodings in the prolog
             or text declaration of a document in XML syntax and
             in a JSP configuration element matching the document.
             It is legal to name the same encoding through
             mulitple mechanisms.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -204,9 +204,9 @@
           <xsd:documentation>
 
             Can be used to easily disable scripting in a
-            group of JSP pages.  By default, scripting is
+            group of JSP pages. By default, scripting is
             enabled.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -222,7 +222,7 @@
             If false, the resources are assumed to not
             be JSP documents, unless there is another
             property group that indicates otherwise.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -235,11 +235,11 @@
 
             The include-prelude element is a context-relative
             path that must correspond to an element in the
-            Web Application.  When the element is present,
+            Web Application. When the element is present,
             the given path will be automatically included (as
             in an include directive) at the beginning of each
             JSP page in this jsp-property-group.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -252,11 +252,11 @@
 
             The include-coda element is a context-relative
             path that must correspond to an element in the
-            Web Application.  When the element is present,
+            Web Application. When the element is present,
             the given path will be automatically included (as
             in an include directive) at the end of each
             JSP page in this jsp-property-group.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -271,7 +271,7 @@
             character sequence is used as a String literal, unless
             this element is enabled (true). Disabled (false) by
             default.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -285,7 +285,7 @@
             must be removed from the response output. It has no
             effect on JSP documents (XML syntax). Disabled (false)
             by default.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -296,10 +296,10 @@
           <xsd:documentation>
 
             The valid values of default-content-type are those of the
-            contentType page directive.  It specifies the default
+            contentType page directive. It specifies the default
             response contentType if the page directive does not include
             a contentType attribute.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -310,10 +310,10 @@
           <xsd:documentation>
 
             The valid values of buffer are those of the
-            buffer page directive.  It specifies if buffering should be
+            buffer page directive. It specifies if buffering should be
             used for the output to response, and if so, the size of the
             buffer to use.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -324,11 +324,11 @@
           <xsd:documentation>
 
             The default behavior when a tag with unknown namespace is used
-            in a JSP page (regular syntax) is to silently ignore it.  If
+            in a JSP page (regular syntax) is to silently ignore it. If
             set to true, then an error must be raised during the translation
-            time when an undeclared tag is used in a JSP page.  Disabled
+            time when an undeclared tag is used in a JSP page. Disabled
             (false) by default.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -338,7 +338,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="taglibType">
     <xsd:annotation>
@@ -346,10 +346,10 @@
 
         The taglibType defines the syntax for declaring in
         the deployment descriptor that a tag library is
-        available to the application.  This can be done
+        available to the application. This can be done
         to override implicit map entries from TLD files and
         from the container.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -359,12 +359,12 @@
           <xsd:documentation>
 
             A taglib-uri element describes a URI identifying a
-            tag library used in the web application.  The body
+            tag library used in the web application. The body
             of the taglib-uri element may be either an
             absolute URI specification, or a relative URI.
             There should be no entries in web.xml with the
             same taglib-uri value.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -377,7 +377,7 @@
             (as a resource relative to the root of the web
             application) where to find the Tag Library
             Description file for the tag library.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>

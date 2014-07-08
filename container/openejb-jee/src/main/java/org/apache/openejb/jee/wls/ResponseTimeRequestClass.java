@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for response-time-request-class complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="response-time-request-class">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "response-time-request-class", propOrder = {
@@ -66,11 +64,9 @@ public class ResponseTimeRequestClass {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -78,23 +74,19 @@ public class ResponseTimeRequestClass {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the goalMs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getGoalMs() {
         return goalMs;
@@ -102,23 +94,19 @@ public class ResponseTimeRequestClass {
 
     /**
      * Sets the value of the goalMs property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setGoalMs(BigInteger value) {
+    public void setGoalMs(final BigInteger value) {
         this.goalMs = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -126,13 +114,11 @@ public class ResponseTimeRequestClass {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

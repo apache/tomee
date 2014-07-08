@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ObjectFactory$JAXB
-        extends JAXBObjectFactory<ObjectFactory> {
+    extends JAXBObjectFactory<ObjectFactory> {
 
     public final static ObjectFactory$JAXB INSTANCE = new ObjectFactory$JAXB();
     private final Map<QName, Class<? extends JAXBObject>> rootElements = new HashMap<QName, Class<? extends JAXBObject>>();

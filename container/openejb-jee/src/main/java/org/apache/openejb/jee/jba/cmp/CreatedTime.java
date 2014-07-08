@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -69,11 +67,9 @@ public class CreatedTime {
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldName }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldName }
      */
     public FieldName getFieldName() {
         return fieldName;
@@ -81,23 +77,19 @@ public class CreatedTime {
 
     /**
      * Sets the value of the fieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldName }
      */
-    public void setFieldName(FieldName value) {
+    public void setFieldName(final FieldName value) {
         this.fieldName = value;
     }
 
     /**
      * Gets the value of the columnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @return possible object is
+     * {@link ColumnName }
      */
     public ColumnName getColumnName() {
         return columnName;
@@ -105,23 +97,19 @@ public class CreatedTime {
 
     /**
      * Sets the value of the columnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ColumnName }
      */
-    public void setColumnName(ColumnName value) {
+    public void setColumnName(final ColumnName value) {
         this.columnName = value;
     }
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -129,23 +117,19 @@ public class CreatedTime {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -153,13 +137,11 @@ public class CreatedTime {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 

@@ -17,30 +17,28 @@
 
 package org.apache.openejb.jee.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface ElementCollection {
- *           Class targetClass() default void.class;
- *           FetchType fetch() default LAZY;
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface ElementCollection {
+ * Class targetClass() default void.class;
+ * FetchType fetch() default LAZY;
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for element-collection complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="element-collection">
  *   &lt;complexContent>
@@ -89,8 +87,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "element-collection", propOrder = {
@@ -152,11 +148,9 @@ public class ElementCollection {
 
     /**
      * Gets the value of the orderBy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getOrderBy() {
         return orderBy;
@@ -164,23 +158,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the orderBy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setOrderBy(String value) {
+    public void setOrderBy(final String value) {
         this.orderBy = value;
     }
 
     /**
      * Gets the value of the orderColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OrderColumn }
-     *     
+     *
+     * @return possible object is
+     * {@link OrderColumn }
      */
     public OrderColumn getOrderColumn() {
         return orderColumn;
@@ -188,23 +178,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the orderColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OrderColumn }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link OrderColumn }
      */
-    public void setOrderColumn(OrderColumn value) {
+    public void setOrderColumn(final OrderColumn value) {
         this.orderColumn = value;
     }
 
     /**
      * Gets the value of the mapKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.MapKey }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.MapKey }
      */
     public MapKey getMapKey() {
         return mapKey;
@@ -212,23 +198,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the mapKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.MapKey }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.MapKey }
      */
-    public void setMapKey(MapKey value) {
+    public void setMapKey(final MapKey value) {
         this.mapKey = value;
     }
 
     /**
      * Gets the value of the mapKeyClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MapKeyClass }
-     *     
+     *
+     * @return possible object is
+     * {@link MapKeyClass }
      */
     public MapKeyClass getMapKeyClass() {
         return mapKeyClass;
@@ -236,23 +218,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the mapKeyClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MapKeyClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MapKeyClass }
      */
-    public void setMapKeyClass(MapKeyClass value) {
+    public void setMapKeyClass(final MapKeyClass value) {
         this.mapKeyClass = value;
     }
 
     /**
      * Gets the value of the mapKeyTemporal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.TemporalType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.TemporalType }
      */
     public TemporalType getMapKeyTemporal() {
         return mapKeyTemporal;
@@ -260,23 +238,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the mapKeyTemporal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.TemporalType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.TemporalType }
      */
-    public void setMapKeyTemporal(TemporalType value) {
+    public void setMapKeyTemporal(final TemporalType value) {
         this.mapKeyTemporal = value;
     }
 
     /**
      * Gets the value of the mapKeyEnumerated property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.EnumType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.EnumType }
      */
     public EnumType getMapKeyEnumerated() {
         return mapKeyEnumerated;
@@ -284,37 +258,33 @@ public class ElementCollection {
 
     /**
      * Sets the value of the mapKeyEnumerated property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.EnumType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.EnumType }
      */
-    public void setMapKeyEnumerated(EnumType value) {
+    public void setMapKeyEnumerated(final EnumType value) {
         this.mapKeyEnumerated = value;
     }
 
     /**
      * Gets the value of the mapKeyAttributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapKeyAttributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapKeyAttributeOverride().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link org.apache.openejb.jee.jpa.AttributeOverride }
-     * 
-     * 
      */
     public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
@@ -325,11 +295,9 @@ public class ElementCollection {
 
     /**
      * Gets the value of the mapKeyColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MapKeyColumn }
-     *     
+     *
+     * @return possible object is
+     * {@link MapKeyColumn }
      */
     public MapKeyColumn getMapKeyColumn() {
         return mapKeyColumn;
@@ -337,37 +305,33 @@ public class ElementCollection {
 
     /**
      * Sets the value of the mapKeyColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MapKeyColumn }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MapKeyColumn }
      */
-    public void setMapKeyColumn(MapKeyColumn value) {
+    public void setMapKeyColumn(final MapKeyColumn value) {
         this.mapKeyColumn = value;
     }
 
     /**
      * Gets the value of the mapKeyJoinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapKeyJoinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapKeyJoinColumn().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link MapKeyJoinColumn }
-     * 
-     * 
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
@@ -378,11 +342,9 @@ public class ElementCollection {
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.Column }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.Column }
      */
     public Column getColumn() {
         return column;
@@ -390,23 +352,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.Column }
      */
-    public void setColumn(Column value) {
+    public void setColumn(final Column value) {
         this.column = value;
     }
 
     /**
      * Gets the value of the temporal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.TemporalType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.TemporalType }
      */
     public TemporalType getTemporal() {
         return temporal;
@@ -414,23 +372,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the temporal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.TemporalType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.TemporalType }
      */
-    public void setTemporal(TemporalType value) {
+    public void setTemporal(final TemporalType value) {
         this.temporal = value;
     }
 
     /**
      * Gets the value of the enumerated property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.EnumType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.EnumType }
      */
     public EnumType getEnumerated() {
         return enumerated;
@@ -438,23 +392,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the enumerated property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.EnumType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.EnumType }
      */
-    public void setEnumerated(EnumType value) {
+    public void setEnumerated(final EnumType value) {
         this.enumerated = value;
     }
 
     /**
      * Gets the value of the lob property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.Lob }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.Lob }
      */
     public Lob getLob() {
         return lob;
@@ -462,37 +412,33 @@ public class ElementCollection {
 
     /**
      * Sets the value of the lob property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.Lob }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.Lob }
      */
-    public void setLob(Lob value) {
+    public void setLob(final Lob value) {
         this.lob = value;
     }
 
     /**
      * Gets the value of the attributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the attributeOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAttributeOverride().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link org.apache.openejb.jee.jpa.AttributeOverride }
-     * 
-     * 
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
@@ -503,25 +449,23 @@ public class ElementCollection {
 
     /**
      * Gets the value of the associationOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the associationOverride property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAssociationOverride().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link org.apache.openejb.jee.jpa.AssociationOverride }
-     * 
-     * 
      */
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
@@ -532,11 +476,9 @@ public class ElementCollection {
 
     /**
      * Gets the value of the collectionTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CollectionTable }
-     *     
+     *
+     * @return possible object is
+     * {@link CollectionTable }
      */
     public CollectionTable getCollectionTable() {
         return collectionTable;
@@ -544,23 +486,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the collectionTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CollectionTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CollectionTable }
      */
-    public void setCollectionTable(CollectionTable value) {
+    public void setCollectionTable(final CollectionTable value) {
         this.collectionTable = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -568,23 +506,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the targetClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTargetClass() {
         return targetClass;
@@ -592,23 +526,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the targetClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTargetClass(String value) {
+    public void setTargetClass(final String value) {
         this.targetClass = value;
     }
 
     /**
      * Gets the value of the fetch property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.FetchType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.FetchType }
      */
     public FetchType getFetch() {
         return fetch;
@@ -616,23 +546,19 @@ public class ElementCollection {
 
     /**
      * Sets the value of the fetch property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.FetchType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.FetchType }
      */
-    public void setFetch(FetchType value) {
+    public void setFetch(final FetchType value) {
         this.fetch = value;
     }
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.openejb.jee.jpa.AccessType }
-     *     
+     *
+     * @return possible object is
+     * {@link org.apache.openejb.jee.jpa.AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -640,13 +566,11 @@ public class ElementCollection {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.openejb.jee.jpa.AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link org.apache.openejb.jee.jpa.AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 

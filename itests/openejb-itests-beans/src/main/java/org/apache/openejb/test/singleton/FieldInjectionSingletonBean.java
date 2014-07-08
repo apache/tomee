@@ -78,7 +78,7 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -86,7 +86,7 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statefulHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -94,155 +94,155 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupSingletonBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", singletonHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupSingletonBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", singletonBusinessLocal );
-        } catch (AssertionFailedError afe){
+    public void lookupSingletonBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", singletonBusinessLocal);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupSingletonBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", singletonBusinessLocalBean );
-        } catch (AssertionFailedError afe){
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", singletonBusinessLocalBean);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupSingletonBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", singletonBusinessRemote );
-        } catch (AssertionFailedError afe){
+    public void lookupSingletonBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", singletonBusinessRemote);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
-    
+
     public void lookupStringEntry() throws TestFailureException {
         try {
-            String expected = new String("1");
+            final String expected = new String("1");
             Assert.assertNotNull("The String looked up is null", striing);
             Assert.assertEquals(expected, striing);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            Double expected = new Double(1.0D);
+            final Double expected = new Double(1.0D);
 
             Assert.assertNotNull("The Double looked up is null", doouble);
             Assert.assertEquals(expected, doouble);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupLongEntry() throws TestFailureException {
         try {
-            Long expected = new Long(1L);
+            final Long expected = new Long(1L);
 
             Assert.assertNotNull("The Long looked up is null", loong);
             Assert.assertEquals(expected, loong);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            Float expected = new Float(1.0F);
+            final Float expected = new Float(1.0F);
 
             Assert.assertNotNull("The Float looked up is null", flooat);
             Assert.assertEquals(expected, flooat);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            Integer expected = new Integer(1);
+            final Integer expected = new Integer(1);
 
             Assert.assertNotNull("The Integer looked up is null", inteeger);
             Assert.assertEquals(expected, inteeger);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupShortEntry() throws TestFailureException {
         try {
-            Short expected = new Short((short) 1);
+            final Short expected = new Short((short) 1);
 
             Assert.assertNotNull("The Short looked up is null", shoort);
             Assert.assertEquals(expected, shoort);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            Boolean expected = new Boolean(true);
+            final Boolean expected = new Boolean(true);
 
             Assert.assertNotNull("The Boolean looked up is null", booolean);
             Assert.assertEquals(expected, booolean);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupByteEntry() throws TestFailureException {
         try {
-            Byte expected = new Byte((byte) 1);
+            final Byte expected = new Byte((byte) 1);
 
             Assert.assertNotNull("The Byte looked up is null", byyte);
             Assert.assertEquals(expected, byyte);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            Character expected = new Character('D');
+            final Character expected = new Character('D');
 
             Assert.assertNotNull("The Character looked up is null", chaaracter);
             Assert.assertEquals(expected, chaaracter);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -250,30 +250,30 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupResource() throws TestFailureException {
         try {
             Assert.assertNotNull("The DataSource is null", daataSource);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
@@ -283,7 +283,7 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManagerFactory is null", emf);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -295,10 +295,10 @@ public class FieldInjectionSingletonBean implements SessionBean {
             try {
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -307,7 +307,7 @@ public class FieldInjectionSingletonBean implements SessionBean {
         try {
 // TODO: DMB: Can't seem to find where to make this work
 //            Assert.assertNotNull("The SessionContext is null", ejbContext);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
 
@@ -322,10 +322,10 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void ejbRemove() throws EJBException, RemoteException {
     }
 
-    public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
+    public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
     }
 }

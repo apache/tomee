@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.test;
 
-public class ApplicationException extends Exception{
+public class ApplicationException extends Exception {
 
-    public ApplicationException(String message){
+    public ApplicationException(final String message) {
         super(message);
     }
 
-    public ApplicationException(){
+    public ApplicationException() {
         super();
     }
 }

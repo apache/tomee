@@ -62,8 +62,8 @@ public class CdiDecoratorTest extends TestCase {
     @Before
     public void setUp() throws Exception {
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -71,23 +71,23 @@ public class CdiDecoratorTest extends TestCase {
 
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("HelloOne", RedBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean("HelloTwo", RedBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(OrangeBean.class));
 
-        Beans beans = new Beans();
+        final Beans beans = new Beans();
         beans.addInterceptor(OrangeCdiInterceptor.class);
         beans.addDecorator(OrangeOneDecorator.class);
         beans.addDecorator(OrangeTwoDecorator.class);
         beans.addManagedClass(YellowBean.class);
 
-        EjbModule module = new EjbModule(ejbJar);
+        final EjbModule module = new EjbModule(ejbJar);
         module.setBeans(beans);
 
         assembler.createApplication(config.configureApplication(module));
 
-        Properties properties = new Properties(System.getProperties());
+        final Properties properties = new Properties(System.getProperties());
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         ctx = new InitialContext(properties);
     }
@@ -95,14 +95,14 @@ public class CdiDecoratorTest extends TestCase {
     public void testSimple() {
         try {
 
-            Color color = (Color) ctx.lookup("HelloOneLocal");
+            final Color color = (Color) ctx.lookup("HelloOneLocal");
             color.hello();
 
-            for (String call : callback) {
+            for (final String call : callback) {
                 System.out.println("callback = " + call);
             }
-            
-            for (String call : businessMethod) {
+
+            for (final String call : businessMethod) {
                 System.out.println("call = " + call);
             }
 
@@ -113,7 +113,7 @@ public class CdiDecoratorTest extends TestCase {
             assertTrue(OrangeCdiInterceptor.RUN);
             assertTrue(OrangeOneDecorator.RUN);
 
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             e.printStackTrace();
         }
     }
@@ -146,7 +146,7 @@ public class CdiDecoratorTest extends TestCase {
 
         @Inject
         private YellowBean cdiBean;
-        
+
         public static boolean RUN = false;
 
         @PostConstruct
@@ -165,13 +165,13 @@ public class CdiDecoratorTest extends TestCase {
 
     public static class RedInterceptor {
         @PostConstruct
-        public void postConstruct(InvocationContext ctx) throws Exception {
+        public void postConstruct(final InvocationContext ctx) throws Exception {
             callback.add(this.getClass().getSimpleName());
             ctx.proceed();
         }
 
         @AroundInvoke
-        public Object aroundInvoke(InvocationContext ctx) throws Exception {
+        public Object aroundInvoke(final InvocationContext ctx) throws Exception {
             businessMethod.add(this.getClass().getSimpleName());
             return ctx.proceed();
         }
@@ -183,7 +183,7 @@ public class CdiDecoratorTest extends TestCase {
         @Inject
         @OrangeQualifier
         private Color colorEjb;
-        
+
         public static boolean RUN = false;
 
         @PostConstruct
@@ -244,14 +244,14 @@ public class CdiDecoratorTest extends TestCase {
         public static boolean RUN = false;
 
         @PostConstruct
-        public void postConstruct(InvocationContext ctx) throws Exception {
+        public void postConstruct(final InvocationContext ctx) throws Exception {
             callback.add(this.getClass().getSimpleName());
             ctx.proceed();
 
         }
 
         @AroundInvoke
-        public Object aroundInvoke(InvocationContext ctx) throws Exception {
+        public Object aroundInvoke(final InvocationContext ctx) throws Exception {
             businessMethod.add(this.getClass().getSimpleName());
             System.out.println("In CDI Style Interceptor  : " + OrangeCdiInterceptor.class.getName());
             RUN = true;
@@ -283,13 +283,13 @@ public class CdiDecoratorTest extends TestCase {
     public static class OrangeEjbInterceptor {
 
         @PostConstruct
-        public void postConstruct(InvocationContext ctx) throws Exception {
+        public void postConstruct(final InvocationContext ctx) throws Exception {
             callback.add(this.getClass().getSimpleName());
             ctx.proceed();
         }
 
         @AroundInvoke
-        public Object aroundInvoke(InvocationContext ctx) throws Exception {
+        public Object aroundInvoke(final InvocationContext ctx) throws Exception {
             businessMethod.add(this.getClass().getSimpleName());
             return ctx.proceed();
         }

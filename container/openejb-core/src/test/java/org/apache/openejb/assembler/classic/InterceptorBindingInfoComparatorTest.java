@@ -30,7 +30,7 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
 
     public void testHighLevelOrdering() throws Exception {
 
-        ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
+        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
 
         InterceptorBindingInfo info = null;
 
@@ -60,21 +60,21 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
         info.method.methodParams = new ArrayList<String>();
         info.method.methodParams.add("java.lang.String");
 
-        ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(expected);
+        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(expected);
         Collections.shuffle(actual);
         Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
-            InterceptorBindingInfo a = actual.get(i);
-            InterceptorBindingInfo e = expected.get(i);
+            final InterceptorBindingInfo a = actual.get(i);
+            final InterceptorBindingInfo e = expected.get(i);
             assertSame(e, a);
         }
     }
 
     public void testInnerLevelOrdering() {
 
-        ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
-        ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(7);
+        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
+        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(7);
         for (int i = 0; i < 7; i++) actual.add(null);
 
         InterceptorBindingInfo info = null;
@@ -130,13 +130,13 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
         Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
-            InterceptorBindingInfo a = actual.get(i);
-            InterceptorBindingInfo e = expected.get(i);
+            final InterceptorBindingInfo a = actual.get(i);
+            final InterceptorBindingInfo e = expected.get(i);
             assertSame(e, a);
         }
     }
 
-    private InterceptorBindingInfo add(List list, InterceptorBindingInfo bindingInfo) {
+    private InterceptorBindingInfo add(final List list, final InterceptorBindingInfo bindingInfo) {
         list.add(bindingInfo);
         return bindingInfo;
     }

@@ -43,7 +43,8 @@ public class AfterCompletionMetaTest {
 
             @TransactionFinished
             @AfterCompletion
-            public void method(){}
+            public void method() {
+            }
         }
     }
 
@@ -53,7 +54,7 @@ public class AfterCompletionMetaTest {
     public static class ExpectedBean implements Bean {
 
         @AfterCompletion
-        public void method(boolean b) {
+        public void method(final boolean b) {
         }
     }
 
@@ -63,7 +64,7 @@ public class AfterCompletionMetaTest {
     public static class ActualBean implements Bean {
 
         @TransactionFinished
-        public void method(boolean b) {
+        public void method(final boolean b) {
         }
     }
 

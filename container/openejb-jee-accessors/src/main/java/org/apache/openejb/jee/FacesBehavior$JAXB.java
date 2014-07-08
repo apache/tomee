@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesBehavior$JAXB
-        extends JAXBObject<FacesBehavior> {
+    extends JAXBObject<FacesBehavior> {
 
 
     public FacesBehavior$JAXB() {
         super(FacesBehavior.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-behaviorType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesBehaviorExtension$JAXB.class);
     }
 
-    public static FacesBehavior readFacesBehavior(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesBehavior readFacesBehavior(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesBehavior(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesBehavior(final XoXMLStreamWriter writer, final FacesBehavior facesBehavior, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehavior, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesBehavior facesBehavior, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesBehavior, context);
     }
 
-    public final static FacesBehavior _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesBehavior _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesBehavior$JAXB
             context = new RuntimeContext();
         }
 
-        FacesBehavior facesBehavior = new FacesBehavior();
+        final FacesBehavior facesBehavior = new FacesBehavior();
         context.beforeUnmarshal(facesBehavior, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,7 +89,7 @@ public class FacesBehavior$JAXB
         List<FacesBehaviorExtension> behaviorExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-behaviorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesBehavior.class);
@@ -97,31 +97,31 @@ public class FacesBehavior$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesBehavior.icon;
                     if (icon != null) {
@@ -133,12 +133,12 @@ public class FacesBehavior$JAXB
                 icon.add(iconItem);
             } else if (("behavior-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: behaviorId
-                String behaviorIdRaw = elementReader.getElementAsString();
+                final String behaviorIdRaw = elementReader.getElementAsString();
 
-                String behaviorId;
+                final String behaviorId;
                 try {
                     behaviorId = Adapters.collapsedStringAdapterAdapter.unmarshal(behaviorIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -146,12 +146,12 @@ public class FacesBehavior$JAXB
                 facesBehavior.behaviorId = behaviorId;
             } else if (("behavior-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: behaviorClass
-                String behaviorClassRaw = elementReader.getElementAsString();
+                final String behaviorClassRaw = elementReader.getElementAsString();
 
-                String behaviorClass;
+                final String behaviorClass;
                 try {
                     behaviorClass = Adapters.collapsedStringAdapterAdapter.unmarshal(behaviorClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -159,7 +159,7 @@ public class FacesBehavior$JAXB
                 facesBehavior.behaviorClass = behaviorClass;
             } else if (("attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attribute
-                FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
+                final FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
                 if (attribute1 == null) {
                     attribute1 = facesBehavior.attribute;
                     if (attribute1 != null) {
@@ -171,7 +171,7 @@ public class FacesBehavior$JAXB
                 attribute1.add(attributeItem);
             } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                FacesProperty propertyItem = readFacesProperty(elementReader, context);
+                final FacesProperty propertyItem = readFacesProperty(elementReader, context);
                 if (property == null) {
                     property = facesBehavior.property;
                     if (property != null) {
@@ -183,7 +183,7 @@ public class FacesBehavior$JAXB
                 property.add(propertyItem);
             } else if (("behavior-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: behaviorExtension
-                FacesBehaviorExtension behaviorExtensionItem = readFacesBehaviorExtension(elementReader, context);
+                final FacesBehaviorExtension behaviorExtensionItem = readFacesBehaviorExtension(elementReader, context);
                 if (behaviorExtension == null) {
                     behaviorExtension = facesBehavior.behaviorExtension;
                     if (behaviorExtension != null) {
@@ -202,14 +202,14 @@ public class FacesBehavior$JAXB
         if (descriptions != null) {
             try {
                 facesBehavior.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesBehavior.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesBehavior.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesBehavior.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -231,13 +231,13 @@ public class FacesBehavior$JAXB
         return facesBehavior;
     }
 
-    public final FacesBehavior read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesBehavior read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesBehavior facesBehavior, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesBehavior facesBehavior, RuntimeContext context)
+        throws Exception {
         if (facesBehavior == null) {
             writer.writeXsiNil();
             return;
@@ -247,7 +247,7 @@ public class FacesBehavior$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesBehavior.class != facesBehavior.getClass()) {
             context.unexpectedSubclass(writer, facesBehavior, FacesBehavior.class);
             return;
@@ -260,11 +260,11 @@ public class FacesBehavior$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesBehavior.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesBehavior, "descriptions", FacesBehavior.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -279,11 +279,11 @@ public class FacesBehavior$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesBehavior.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesBehavior, "displayNames", FacesBehavior.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -295,9 +295,9 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesBehavior.icon;
+        final LocalCollection<Icon> icon = facesBehavior.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -309,11 +309,11 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: behaviorId
-        String behaviorIdRaw = facesBehavior.behaviorId;
+        final String behaviorIdRaw = facesBehavior.behaviorId;
         String behaviorId = null;
         try {
             behaviorId = Adapters.collapsedStringAdapterAdapter.marshal(behaviorIdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesBehavior, "behaviorId", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (behaviorId != null) {
@@ -325,11 +325,11 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: behaviorClass
-        String behaviorClassRaw = facesBehavior.behaviorClass;
+        final String behaviorClassRaw = facesBehavior.behaviorClass;
         String behaviorClass = null;
         try {
             behaviorClass = Adapters.collapsedStringAdapterAdapter.marshal(behaviorClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesBehavior, "behaviorClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (behaviorClass != null) {
@@ -341,9 +341,9 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: attribute
-        List<FacesAttribute> attribute = facesBehavior.attribute;
+        final List<FacesAttribute> attribute = facesBehavior.attribute;
         if (attribute != null) {
-            for (FacesAttribute attributeItem : attribute) {
+            for (final FacesAttribute attributeItem : attribute) {
                 writer.writeStartElement(prefix, "attribute", "http://java.sun.com/xml/ns/javaee");
                 if (attributeItem != null) {
                     writeFacesAttribute(writer, attributeItem, context);
@@ -355,9 +355,9 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: property
-        List<FacesProperty> property = facesBehavior.property;
+        final List<FacesProperty> property = facesBehavior.property;
         if (property != null) {
-            for (FacesProperty propertyItem : property) {
+            for (final FacesProperty propertyItem : property) {
                 writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
                 if (propertyItem != null) {
                     writeFacesProperty(writer, propertyItem, context);
@@ -369,9 +369,9 @@ public class FacesBehavior$JAXB
         }
 
         // ELEMENT: behaviorExtension
-        List<FacesBehaviorExtension> behaviorExtension = facesBehavior.behaviorExtension;
+        final List<FacesBehaviorExtension> behaviorExtension = facesBehavior.behaviorExtension;
         if (behaviorExtension != null) {
-            for (FacesBehaviorExtension behaviorExtensionItem : behaviorExtension) {
+            for (final FacesBehaviorExtension behaviorExtensionItem : behaviorExtension) {
                 if (behaviorExtensionItem != null) {
                     writer.writeStartElement(prefix, "behavior-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesBehaviorExtension(writer, behaviorExtensionItem, context);

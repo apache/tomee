@@ -42,7 +42,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
         try {
             final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
@@ -56,11 +56,11 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
 //                    "***************************************\n\n");
             try {
                 message.acknowledge();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
                 e.printStackTrace();
             }
             mdbInvoker.onMessage(message);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }
@@ -169,28 +169,28 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
         try {
             mdbContext.getEJBHome();
             policy.allow(OperationsPolicy.Context_getEJBHome);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
         }
 
         /*[1] Test getCallerPrincipal /////////*/
         try {
             mdbContext.getCallerPrincipal();
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
         }
 
         /*[2] Test isCallerInRole /////////////*/
         try {
             mdbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
         }
 
         /*[3] Test getRollbackOnly ////////////*/
         try {
             mdbContext.getRollbackOnly();
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
         }
 
         /*[4] Test setRollbackOnly ////////////*/
@@ -200,7 +200,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
         try {
             mdbContext.getUserTransaction();
             policy.allow(OperationsPolicy.Context_getUserTransaction);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
         }
 
         /*[6] Test getEJBObject ///////////////
@@ -220,15 +220,15 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
             final String actual = (String) jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-        } catch (IllegalStateException ignored) {
-        } catch (javax.naming.NamingException ignored) {
+        } catch (final IllegalStateException ignored) {
+        } catch (final javax.naming.NamingException ignored) {
         }
 
         /*[11] Test lookup /////////*/
         try {
             mdbContext.lookup("stateless/references/JNDI_access_to_java_comp_env");
             policy.allow(OperationsPolicy.Context_lookup);
-        } catch (IllegalArgumentException ignored) {
+        } catch (final IllegalArgumentException ignored) {
         }
 
         allowedOperationsTable.put(methodName, policy);

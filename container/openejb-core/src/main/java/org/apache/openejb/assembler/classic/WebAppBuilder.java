@@ -22,6 +22,8 @@ import java.util.Set;
 
 public interface WebAppBuilder {
     void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception;
+
     void undeployWebApps(AppInfo appInfo) throws Exception;
+
     Map<ClassLoader, Map<String, Set<String>>> getJsfClasses();
 }

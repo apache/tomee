@@ -25,14 +25,18 @@ import java.util.Arrays;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
+ *
  * @version $Revision: 927249 $ $Date: 2010-03-24 18:06:51 -0700 (Wed, 24 Mar 2010) $
  */
 public final class MathUtils {
 
-    /** Smallest positive number such that 1 - EPSILON is not numerically equal to 1. */
+    /**
+     * Smallest positive number such that 1 - EPSILON is not numerically equal to 1.
+     */
     public static final double EPSILON = 0x1.0p-53;
 
-    /** Safe minimum, such that 1 / SAFE_MIN does not overflow.
+    /**
+     * Safe minimum, such that 1 / SAFE_MIN does not overflow.
      * <p>In IEEE 754 arithmetic, this is also the smallest normalized
      * number 2<sup>-1022</sup>.</p>
      */
@@ -40,43 +44,62 @@ public final class MathUtils {
 
     /**
      * 2 &pi;.
+     *
      * @since 2.1
      */
     public static final double TWO_PI = 2 * Math.PI;
 
-    /** -1.0 cast as a byte. */
-    private static final byte  NB = (byte)-1;
+    /**
+     * -1.0 cast as a byte.
+     */
+    private static final byte NB = (byte) -1;
 
-    /** -1.0 cast as a short. */
-    private static final short NS = (short)-1;
+    /**
+     * -1.0 cast as a short.
+     */
+    private static final short NS = (short) -1;
 
-    /** 1.0 cast as a byte. */
-    private static final byte  PB = (byte)1;
+    /**
+     * 1.0 cast as a byte.
+     */
+    private static final byte PB = (byte) 1;
 
-    /** 1.0 cast as a short. */
-    private static final short PS = (short)1;
+    /**
+     * 1.0 cast as a short.
+     */
+    private static final short PS = (short) 1;
 
-    /** 0.0 cast as a byte. */
-    private static final byte  ZB = (byte)0;
+    /**
+     * 0.0 cast as a byte.
+     */
+    private static final byte ZB = (byte) 0;
 
-    /** 0.0 cast as a short. */
-    private static final short ZS = (short)0;
+    /**
+     * 0.0 cast as a short.
+     */
+    private static final short ZS = (short) 0;
 
-    /** Gap between NaN and regular numbers. */
+    /**
+     * Gap between NaN and regular numbers.
+     */
     private static final int NAN_GAP = 4 * 1024 * 1024;
 
-    /** Offset to order signed double numbers lexicographically. */
+    /**
+     * Offset to order signed double numbers lexicographically.
+     */
     private static final long SGN_MASK = 0x8000000000000000L;
 
-    /** All long-representable factorials */
-    private static final long[] FACTORIALS = new long[] {
-                       1l,                  1l,                   2l,
-                       6l,                 24l,                 120l,
-                     720l,               5040l,               40320l,
-                  362880l,            3628800l,            39916800l,
-               479001600l,         6227020800l,         87178291200l,
-           1307674368000l,     20922789888000l,     355687428096000l,
-        6402373705728000l, 121645100408832000l, 2432902008176640000l };
+    /**
+     * All long-representable factorials
+     */
+    private static final long[] FACTORIALS = new long[]{
+        1l, 1l, 2l,
+        6l, 24l, 120l,
+        720l, 5040l, 40320l,
+        362880l, 3628800l, 39916800l,
+        479001600l, 6227020800l, 87178291200l,
+        1307674368000l, 20922789888000l, 355687428096000l,
+        6402373705728000l, 121645100408832000l, 2432902008176640000l};
 
     /**
      * Private Constructor
@@ -92,15 +115,15 @@ public final class MathUtils {
      * @param y an addend
      * @return the sum <code>x+y</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         int
+     *                             int
      * @since 1.1
      */
     public static int addAndCheck(final int x, final int y) {
-        final long s = (long)x + (long)y;
+        final long s = (long) x + (long) y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: add");
         }
-        return (int)s;
+        return (int) s;
     }
 
     /**
@@ -110,7 +133,7 @@ public final class MathUtils {
      * @param b an addend
      * @return the sum <code>a+b</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         long
+     *                             long
      * @since 1.2
      */
     public static long addAndCheck(final long a, final long b) {
@@ -120,12 +143,12 @@ public final class MathUtils {
     /**
      * Add two long integers, checking for overflow.
      *
-     * @param a an addend
-     * @param b an addend
+     * @param a   an addend
+     * @param b   an addend
      * @param msg the message to use for any thrown exception.
      * @return the sum <code>a+b</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         long
+     *                             long
      * @since 1.2
      */
     private static long addAndCheck(final long a, final long b, final String msg) {
@@ -185,8 +208,8 @@ public final class MathUtils {
      * @param k the size of the subsets to be counted
      * @return <code>n choose k</code>
      * @throws IllegalArgumentException if preconditions are not met.
-     * @throws ArithmeticException if the result is too large to be represented
-     *         by a long integer.
+     * @throws ArithmeticException      if the result is too large to be represented
+     *                                  by a long integer.
      */
     public static long binomialCoefficient(final int n, final int k) {
         checkBinomial(n, k);
@@ -273,16 +296,16 @@ public final class MathUtils {
         if (k == 1 || k == n - 1) {
             return n;
         }
-        if (k > n/2) {
+        if (k > n / 2) {
             return binomialCoefficientDouble(n, n - k);
         }
         if (n < 67) {
-            return binomialCoefficient(n,k);
+            return binomialCoefficient(n, k);
         }
 
         double result = 1d;
         for (int i = 1; i <= k; i++) {
-             result *= (double)(n - k + i) / (double)i;
+            result *= (double) (n - k + i) / (double) i;
         }
 
         return Math.floor(result + 0.5);
@@ -320,7 +343,7 @@ public final class MathUtils {
          * return the log of the exact value
          */
         if (n < 67) {
-            return Math.log(binomialCoefficient(n,k));
+            return Math.log(binomialCoefficient(n, k));
         }
 
         /*
@@ -355,9 +378,10 @@ public final class MathUtils {
 
     /**
      * Check binomial preconditions.
+     *
      * @param n the size of the set
      * @param k the size of the subsets to be counted
-     * @exception IllegalArgumentException if preconditions are not met.
+     * @throws IllegalArgumentException if preconditions are not met.
      */
     private static void checkBinomial(final int n, final int k)
         throws IllegalArgumentException {
@@ -368,26 +392,26 @@ public final class MathUtils {
         }
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for binomial coefficient (n,k), got n = {0}",
-                  n);
+                "must have n >= 0 for binomial coefficient (n,k), got n = {0}",
+                n);
         }
     }
 
     /**
      * Compares two numbers given some amount of allowed error.
      *
-     * @param x the first number
-     * @param y the second number
+     * @param x   the first number
+     * @param y   the second number
      * @param eps the amount of error to allow when checking for equality
      * @return <ul><li>0 if  {@link #equals(double, double, double) equals(x, y, eps)}</li>
-     *       <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
-     *       <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
+     * <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
+     * <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
      */
     public static int compareTo(final double x, final double y, final double eps) {
         if (equals(x, y, eps)) {
             return 0;
         } else if (x < y) {
-          return -1;
+            return -1;
         }
         return 1;
     }
@@ -422,13 +446,13 @@ public final class MathUtils {
      * Two NaNs are considered equals, as are two infinities with same sign.
      * </p>
      *
-     * @param x first value
-     * @param y second value
+     * @param x   first value
+     * @param y   second value
      * @param eps the amount of absolute error to allow
      * @return true if the values are equal or within range of each other
      */
     public static boolean equals(final double x, final double y, final double eps) {
-      return equals(x, y) || Math.abs(y - x) <= eps;
+        return equals(x, y) || Math.abs(y - x) <= eps;
     }
 
     /**
@@ -438,10 +462,10 @@ public final class MathUtils {
      * href="http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm">
      * Bruce Dawson</a>
      *
-     * @param x first value
-     * @param y second value
+     * @param x       first value
+     * @param y       second value
      * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
-     * values between {@code x} and {@code y}.
+     *                values between {@code x} and {@code y}.
      * @return {@code true} if there are less than {@code maxUlps} floating
      * point values between {@code x} and {@code y}
      */
@@ -466,7 +490,7 @@ public final class MathUtils {
 
     /**
      * Returns true iff both arguments are null or have same dimensions
-     * and all their elements are {@link #equals(double,double) equals}
+     * and all their elements are {@link #equals(double, double) equals}
      *
      * @param x first array
      * @param y second array
@@ -507,19 +531,19 @@ public final class MathUtils {
      *
      * @param n argument
      * @return <code>n!</code>
-     * @throws ArithmeticException if the result is too large to be represented
-     *         by a long integer.
+     * @throws ArithmeticException      if the result is too large to be represented
+     *                                  by a long integer.
      * @throws IllegalArgumentException if n < 0
      */
     public static long factorial(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
-                  n);
+                "must have n >= 0 for n!, got n = {0}",
+                n);
         }
         if (n > 20) {
             throw new ArithmeticException(
-                    "factorial value is too large to fit in a long");
+                "factorial value is too large to fit in a long");
         }
         return FACTORIALS[n];
     }
@@ -547,8 +571,8 @@ public final class MathUtils {
     public static double factorialDouble(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
-                  n);
+                "must have n >= 0 for n!, got n = {0}",
+                n);
         }
         if (n < 21) {
             return factorial(n);
@@ -572,8 +596,8 @@ public final class MathUtils {
     public static double factorialLog(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
-                  n);
+                "must have n >= 0 for n!, got n = {0}",
+                n);
         }
         if (n < 21) {
             return Math.log(factorial(n));
@@ -611,7 +635,7 @@ public final class MathUtils {
      * @param q any number
      * @return the greatest common divisor, never negative
      * @throws ArithmeticException if the result cannot be represented as a
-     * nonnegative int value
+     *                             nonnegative int value
      * @since 1.1
      */
     public static int gcd(final int p, final int q) {
@@ -620,8 +644,8 @@ public final class MathUtils {
         if (u == 0 || v == 0) {
             if (u == Integer.MIN_VALUE || v == Integer.MIN_VALUE) {
                 throw MathRuntimeException.createArithmeticException(
-                        "overflow: gcd({0}, {1}) is 2^31",
-                        p, q);
+                    "overflow: gcd({0}, {1}) is 2^31",
+                    p, q);
             }
             return Math.abs(u) + Math.abs(v);
         }
@@ -639,15 +663,15 @@ public final class MathUtils {
         // B1. [Find power of 2]
         int k = 0;
         while ((u & 1) == 0 && (v & 1) == 0 && k < 31) { // while u and v are
-                                                            // both even...
+            // both even...
             u /= 2;
             v /= 2;
             k++; // cast out twos.
         }
         if (k == 31) {
             throw MathRuntimeException.createArithmeticException(
-                    "overflow: gcd({0}, {1}) is 2^31",
-                    p, q);
+                "overflow: gcd({0}, {1}) is 2^31",
+                p, q);
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
         // one is odd.
@@ -700,17 +724,17 @@ public final class MathUtils {
      * @param q any number
      * @return the greatest common divisor, never negative
      * @throws ArithmeticException if the result cannot be represented as a nonnegative long
-     * value
+     *                             value
      * @since 2.1
      */
     public static long gcd(final long p, final long q) {
         long u = p;
         long v = q;
         if (u == 0 || v == 0) {
-            if (u == Long.MIN_VALUE || v == Long.MIN_VALUE){
+            if (u == Long.MIN_VALUE || v == Long.MIN_VALUE) {
                 throw MathRuntimeException.createArithmeticException(
-                        "overflow: gcd({0}, {1}) is 2^63",
-                        p, q);
+                    "overflow: gcd({0}, {1}) is 2^63",
+                    p, q);
             }
             return Math.abs(u) + Math.abs(v);
         }
@@ -728,15 +752,15 @@ public final class MathUtils {
         // B1. [Find power of 2]
         int k = 0;
         while ((u & 1) == 0 && (v & 1) == 0 && k < 63) { // while u and v are
-                                                            // both even...
+            // both even...
             u /= 2;
             v /= 2;
             k++; // cast out twos.
         }
         if (k == 63) {
             throw MathRuntimeException.createArithmeticException(
-                    "overflow: gcd({0}, {1}) is 2^63",
-                    p, q);
+                "overflow: gcd({0}, {1}) is 2^63",
+                p, q);
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
         // one is odd.
@@ -873,13 +897,12 @@ public final class MathUtils {
      * @param a any number
      * @param b any number
      * @return the least common multiple, never negative
-     * @throws ArithmeticException
-     *             if the result cannot be represented as a nonnegative int
-     *             value
+     * @throws ArithmeticException if the result cannot be represented as a nonnegative int
+     *                             value
      * @since 1.1
      */
     public static int lcm(final int a, final int b) {
-        if (a==0 || b==0){
+        if (a == 0 || b == 0) {
             return 0;
         }
         final int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
@@ -910,15 +933,15 @@ public final class MathUtils {
      * @param b any number
      * @return the least common multiple, never negative
      * @throws ArithmeticException if the result cannot be represented as a nonnegative long
-     * value
+     *                             value
      * @since 2.1
      */
     public static long lcm(final long a, final long b) {
-        if (a==0 || b==0){
+        if (a == 0 || b == 0) {
             return 0;
         }
         final long lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
-        if (lcm == Long.MIN_VALUE){
+        if (lcm == Long.MIN_VALUE) {
             throw MathRuntimeException.createArithmeticException(
                 "overflow: lcm({0}, {1}) is 2^63",
                 a, b);
@@ -938,12 +961,12 @@ public final class MathUtils {
      * are 0, the result is <code>NaN</code>.</p>
      *
      * @param base the base of the logarithm, must be greater than 0
-     * @param x argument, must be greater than 0
+     * @param x    argument, must be greater than 0
      * @return the value of the logarithm - the number y such that base^y = x.
      * @since 1.2
      */
     public static double log(final double base, final double x) {
-        return Math.log(x)/Math.log(base);
+        return Math.log(x) / Math.log(base);
     }
 
     /**
@@ -953,15 +976,15 @@ public final class MathUtils {
      * @param y a factor
      * @return the product <code>x*y</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         int
+     *                             int
      * @since 1.1
      */
     public static int mulAndCheck(final int x, final int y) {
-        final long m = (long)x * (long)y;
+        final long m = (long) x * (long) y;
         if (m < Integer.MIN_VALUE || m > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: mul");
         }
-        return (int)m;
+        return (int) m;
     }
 
     /**
@@ -971,7 +994,7 @@ public final class MathUtils {
      * @param b second value
      * @return the product <code>a * b</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         long
+     *                             long
      * @since 1.2
      */
     public static long mulAndCheck(final long a, final long b) {
@@ -1030,9 +1053,9 @@ public final class MathUtils {
      * <p>
      * If <code>d</code> is NaN or Infinite, it is returned unchanged.</p>
      *
-     * @param d base number
+     * @param d         base number
      * @param direction (the only important thing is whether
-     * direction is greater or smaller than d)
+     *                  direction is greater or smaller than d)
      * @return the next machine representable number in the specified direction
      * @since 1.2
      */
@@ -1040,38 +1063,38 @@ public final class MathUtils {
 
         // handling of some important special cases
         if (Double.isNaN(d) || Double.isInfinite(d)) {
-                return d;
+            return d;
         } else if (d == 0) {
-                return direction < 0 ? -Double.MIN_VALUE : Double.MIN_VALUE;
+            return direction < 0 ? -Double.MIN_VALUE : Double.MIN_VALUE;
         }
         // special cases MAX_VALUE to infinity and  MIN_VALUE to 0
         // are handled just as normal numbers
 
         // split the double in raw components
-        final long bits     = Double.doubleToLongBits(d);
-        final long sign     = bits & 0x8000000000000000L;
+        final long bits = Double.doubleToLongBits(d);
+        final long sign = bits & 0x8000000000000000L;
         final long exponent = bits & 0x7ff0000000000000L;
         final long mantissa = bits & 0x000fffffffffffffL;
 
         if (d * (direction - d) >= 0) {
-                // we should increase the mantissa
-                if (mantissa == 0x000fffffffffffffL) {
-                        return Double.longBitsToDouble(sign |
-                                exponent + 0x0010000000000000L);
-                } else {
-                        return Double.longBitsToDouble(sign |
-                                        exponent | mantissa + 1);
-                }
+            // we should increase the mantissa
+            if (mantissa == 0x000fffffffffffffL) {
+                return Double.longBitsToDouble(sign |
+                    exponent + 0x0010000000000000L);
+            } else {
+                return Double.longBitsToDouble(sign |
+                    exponent | mantissa + 1);
+            }
         } else {
-                // we should decrease the mantissa
-                if (mantissa == 0L) {
-                        return Double.longBitsToDouble(sign |
-                                exponent - 0x0010000000000000L |
-                                        0x000fffffffffffffL);
-                } else {
-                        return Double.longBitsToDouble(sign |
-                                        exponent | mantissa - 1);
-                }
+            // we should decrease the mantissa
+            if (mantissa == 0L) {
+                return Double.longBitsToDouble(sign |
+                    exponent - 0x0010000000000000L |
+                    0x000fffffffffffffL);
+            } else {
+                return Double.longBitsToDouble(sign |
+                    exponent | mantissa - 1);
+            }
         }
 
     }
@@ -1080,7 +1103,7 @@ public final class MathUtils {
      * Scale a number by 2<sup>scaleFactor</sup>.
      * <p>If <code>d</code> is 0 or NaN or Infinite, it is returned unchanged.</p>
      *
-     * @param d base number
+     * @param d           base number
      * @param scaleFactor power of two by which d sould be multiplied
      * @return d &times; 2<sup>scaleFactor</sup>
      * @since 2.0
@@ -1093,9 +1116,9 @@ public final class MathUtils {
         }
 
         // split the double in raw components
-        final long bits     = Double.doubleToLongBits(d);
+        final long bits = Double.doubleToLongBits(d);
         final long exponent = bits & 0x7ff0000000000000L;
-        final long rest     = bits & 0x800fffffffffffffL;
+        final long rest = bits & 0x800fffffffffffffL;
 
         // shift the exponent
         final long newBits = rest | exponent + ((long) scaleFactor << 52);
@@ -1107,87 +1130,88 @@ public final class MathUtils {
      * Normalize an angle in a 2&pi wide interval around a center value.
      * <p>This method has three main uses:</p>
      * <ul>
-     *   <li>normalize an angle between 0 and 2&pi;:<br/>
-     *       <code>a = MathUtils.normalizeAngle(a, Math.PI);</code></li>
-     *   <li>normalize an angle between -&pi; and +&pi;<br/>
-     *       <code>a = MathUtils.normalizeAngle(a, 0.0);</code></li>
-     *   <li>compute the angle between two defining angular positions:<br>
-     *       <code>angle = MathUtils.normalizeAngle(end, start) - start;</code></li>
+     * <li>normalize an angle between 0 and 2&pi;:<br/>
+     * <code>a = MathUtils.normalizeAngle(a, Math.PI);</code></li>
+     * <li>normalize an angle between -&pi; and +&pi;<br/>
+     * <code>a = MathUtils.normalizeAngle(a, 0.0);</code></li>
+     * <li>compute the angle between two defining angular positions:<br>
+     * <code>angle = MathUtils.normalizeAngle(end, start) - start;</code></li>
      * </ul>
      * <p>Note that due to numerical accuracy and since &pi; cannot be represented
      * exactly, the result interval is <em>closed</em>, it cannot be half-closed
      * as would be more satisfactory in a purely mathematical view.</p>
-     * @param a angle to normalize
+     *
+     * @param a      angle to normalize
      * @param center center of the desired 2&pi; interval for the result
      * @return a-2k&pi; with integer k and center-&pi; &lt;= a-2k&pi; &lt;= center+&pi;
      * @since 1.2
      */
-     public static double normalizeAngle(final double a, final double center) {
-         return a - TWO_PI * Math.floor((a + Math.PI - center) / TWO_PI);
-     }
+    public static double normalizeAngle(final double a, final double center) {
+        return a - TWO_PI * Math.floor((a + Math.PI - center) / TWO_PI);
+    }
 
-     /**
-      * <p>Normalizes an array to make it sum to a specified value.
-      * Returns the result of the transformation <pre>
-      *    x |-> x * normalizedSum / sum
-      * </pre>
-      * applied to each non-NaN element x of the input array, where sum is the
-      * sum of the non-NaN entries in the input array.</p>
-      *
-      * <p>Throws IllegalArgumentException if <code>normalizedSum</code> is infinite
-      * or NaN and ArithmeticException if the input array contains any infinite elements
-      * or sums to 0</p>
-      *
-      * <p>Ignores (i.e., copies unchanged to the output array) NaNs in the input array.</p>
-      *
-      * @param values input array to be normalized
-      * @param normalizedSum target sum for the normalized array
-      * @return normalized array
-      * @throws ArithmeticException if the input array contains infinite elements or sums to zero
-      * @throws IllegalArgumentException if the target sum is infinite or NaN
-      * @since 2.1
-      */
-     public static double[] normalizeArray(final double[] values, final double normalizedSum)
-       throws ArithmeticException, IllegalArgumentException {
-         if (Double.isInfinite(normalizedSum)) {
-             throw MathRuntimeException.createIllegalArgumentException(
-                     "Cannot normalize to an infinite value");
-         }
-         if (Double.isNaN(normalizedSum)) {
-             throw MathRuntimeException.createIllegalArgumentException(
-                     "Cannot normalize to NaN");
-         }
-         double sum = 0d;
-         final int len = values.length;
-         final double[] out = new double[len];
-         for (int i = 0; i < len; i++) {
-             if (Double.isInfinite(values[i])) {
-                 throw MathRuntimeException.createArithmeticException(
-                         "Array contains an infinite element, {0} at index {1}", values[i], i);
-             }
-             if (!Double.isNaN(values[i])) {
-                 sum += values[i];
-             }
-         }
-         if (sum == 0) {
-             throw MathRuntimeException.createArithmeticException(
-                     "Array sums to zero");
-         }
-         for (int i = 0; i < len; i++) {
-             if (Double.isNaN(values[i])) {
-                 out[i] = Double.NaN;
-             } else {
-                 out[i] = values[i] * normalizedSum / sum;
-             }
-         }
-         return out;
-     }
+    /**
+     * <p>Normalizes an array to make it sum to a specified value.
+     * Returns the result of the transformation <pre>
+     *    x |-> x * normalizedSum / sum
+     * </pre>
+     * applied to each non-NaN element x of the input array, where sum is the
+     * sum of the non-NaN entries in the input array.</p>
+     * <p/>
+     * <p>Throws IllegalArgumentException if <code>normalizedSum</code> is infinite
+     * or NaN and ArithmeticException if the input array contains any infinite elements
+     * or sums to 0</p>
+     * <p/>
+     * <p>Ignores (i.e., copies unchanged to the output array) NaNs in the input array.</p>
+     *
+     * @param values        input array to be normalized
+     * @param normalizedSum target sum for the normalized array
+     * @return normalized array
+     * @throws ArithmeticException      if the input array contains infinite elements or sums to zero
+     * @throws IllegalArgumentException if the target sum is infinite or NaN
+     * @since 2.1
+     */
+    public static double[] normalizeArray(final double[] values, final double normalizedSum)
+        throws ArithmeticException, IllegalArgumentException {
+        if (Double.isInfinite(normalizedSum)) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "Cannot normalize to an infinite value");
+        }
+        if (Double.isNaN(normalizedSum)) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "Cannot normalize to NaN");
+        }
+        double sum = 0d;
+        final int len = values.length;
+        final double[] out = new double[len];
+        for (int i = 0; i < len; i++) {
+            if (Double.isInfinite(values[i])) {
+                throw MathRuntimeException.createArithmeticException(
+                    "Array contains an infinite element, {0} at index {1}", values[i], i);
+            }
+            if (!Double.isNaN(values[i])) {
+                sum += values[i];
+            }
+        }
+        if (sum == 0) {
+            throw MathRuntimeException.createArithmeticException(
+                "Array sums to zero");
+        }
+        for (int i = 0; i < len; i++) {
+            if (Double.isNaN(values[i])) {
+                out[i] = Double.NaN;
+            } else {
+                out[i] = values[i] * normalizedSum / sum;
+            }
+        }
+        return out;
+    }
 
     /**
      * Round the given value to the specified number of decimal places. The
      * value is rounded using the {@link BigDecimal#ROUND_HALF_UP} method.
      *
-     * @param x the value to round.
+     * @param x     the value to round.
      * @param scale the number of digits to the right of the decimal point.
      * @return the rounded value.
      * @since 1.1
@@ -1201,19 +1225,19 @@ public final class MathUtils {
      * value is rounded using the given method which is any method defined in
      * {@link BigDecimal}.
      *
-     * @param x the value to round.
-     * @param scale the number of digits to the right of the decimal point.
+     * @param x              the value to round.
+     * @param scale          the number of digits to the right of the decimal point.
      * @param roundingMethod the rounding method as defined in
-     *        {@link BigDecimal}.
+     *                       {@link BigDecimal}.
      * @return the rounded value.
      * @since 1.1
      */
     public static double round(final double x, final int scale, final int roundingMethod) {
         try {
             return new BigDecimal
-                   (Double.toString(x))
-                   .setScale(scale, roundingMethod)
-                   .doubleValue();
+                (Double.toString(x))
+                .setScale(scale, roundingMethod)
+                .doubleValue();
         } catch (final NumberFormatException ex) {
             if (Double.isInfinite(x)) {
                 return x;
@@ -1227,7 +1251,7 @@ public final class MathUtils {
      * Round the given value to the specified number of decimal places. The
      * value is rounding using the {@link BigDecimal#ROUND_HALF_UP} method.
      *
-     * @param x the value to round.
+     * @param x     the value to round.
      * @param scale the number of digits to the right of the decimal point.
      * @return the rounded value.
      * @since 1.1
@@ -1241,17 +1265,17 @@ public final class MathUtils {
      * value is rounded using the given method which is any method defined in
      * {@link BigDecimal}.
      *
-     * @param x the value to round.
-     * @param scale the number of digits to the right of the decimal point.
+     * @param x              the value to round.
+     * @param scale          the number of digits to the right of the decimal point.
      * @param roundingMethod the rounding method as defined in
-     *        {@link BigDecimal}.
+     *                       {@link BigDecimal}.
      * @return the rounded value.
      * @since 1.1
      */
     public static float round(final float x, final int scale, final int roundingMethod) {
         final float sign = indicator(x);
-        final float factor = (float)Math.pow(10.0f, scale) * sign;
-        return (float)roundUnscaled(x * factor, sign, roundingMethod) / factor;
+        final float factor = (float) Math.pow(10.0f, scale) * sign;
+        return (float) roundUnscaled(x * factor, sign, roundingMethod) / factor;
     }
 
     /**
@@ -1259,91 +1283,91 @@ public final class MathUtils {
      * determined by the rounding method specified. Rounding methods are defined
      * in {@link BigDecimal}.
      *
-     * @param unscaled the value to round.
-     * @param sign the sign of the original, scaled value.
+     * @param unscaled       the value to round.
+     * @param sign           the sign of the original, scaled value.
      * @param roundingMethod the rounding method as defined in
-     *        {@link BigDecimal}.
+     *                       {@link BigDecimal}.
      * @return the rounded value.
      * @since 1.1
      */
     private static double roundUnscaled(double unscaled, final double sign,
-        final int roundingMethod) {
+                                        final int roundingMethod) {
         switch (roundingMethod) {
-        case BigDecimal.ROUND_CEILING :
-            if (sign == -1) {
-                unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
-            } else {
-                unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
-            }
-            break;
-        case BigDecimal.ROUND_DOWN :
-            unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
-            break;
-        case BigDecimal.ROUND_FLOOR :
-            if (sign == -1) {
-                unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
-            } else {
-                unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
-            }
-            break;
-        case BigDecimal.ROUND_HALF_DOWN : {
-            unscaled = nextAfter(unscaled, Double.NEGATIVE_INFINITY);
-            final double fraction = unscaled - Math.floor(unscaled);
-            if (fraction > 0.5) {
-                unscaled = Math.ceil(unscaled);
-            } else {
-                unscaled = Math.floor(unscaled);
-            }
-            break;
-        }
-        case BigDecimal.ROUND_HALF_EVEN : {
-            final double fraction = unscaled - Math.floor(unscaled);
-            if (fraction > 0.5) {
-                unscaled = Math.ceil(unscaled);
-            } else if (fraction < 0.5) {
-                unscaled = Math.floor(unscaled);
-            } else {
-                // The following equality test is intentional and needed for rounding purposes
-                if (Math.floor(unscaled) / 2.0 == Math.floor(Math
-                    .floor(unscaled) / 2.0)) { // even
-                    unscaled = Math.floor(unscaled);
-                } else { // odd
-                    unscaled = Math.ceil(unscaled);
+            case BigDecimal.ROUND_CEILING:
+                if (sign == -1) {
+                    unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+                } else {
+                    unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
                 }
+                break;
+            case BigDecimal.ROUND_DOWN:
+                unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+                break;
+            case BigDecimal.ROUND_FLOOR:
+                if (sign == -1) {
+                    unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
+                } else {
+                    unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+                }
+                break;
+            case BigDecimal.ROUND_HALF_DOWN: {
+                unscaled = nextAfter(unscaled, Double.NEGATIVE_INFINITY);
+                final double fraction = unscaled - Math.floor(unscaled);
+                if (fraction > 0.5) {
+                    unscaled = Math.ceil(unscaled);
+                } else {
+                    unscaled = Math.floor(unscaled);
+                }
+                break;
             }
-            break;
-        }
-        case BigDecimal.ROUND_HALF_UP : {
-            unscaled = nextAfter(unscaled, Double.POSITIVE_INFINITY);
-            final double fraction = unscaled - Math.floor(unscaled);
-            if (fraction >= 0.5) {
-                unscaled = Math.ceil(unscaled);
-            } else {
-                unscaled = Math.floor(unscaled);
+            case BigDecimal.ROUND_HALF_EVEN: {
+                final double fraction = unscaled - Math.floor(unscaled);
+                if (fraction > 0.5) {
+                    unscaled = Math.ceil(unscaled);
+                } else if (fraction < 0.5) {
+                    unscaled = Math.floor(unscaled);
+                } else {
+                    // The following equality test is intentional and needed for rounding purposes
+                    if (Math.floor(unscaled) / 2.0 == Math.floor(Math
+                        .floor(unscaled) / 2.0)) { // even
+                        unscaled = Math.floor(unscaled);
+                    } else { // odd
+                        unscaled = Math.ceil(unscaled);
+                    }
+                }
+                break;
             }
-            break;
-        }
-        case BigDecimal.ROUND_UNNECESSARY :
-            if (unscaled != Math.floor(unscaled)) {
-                throw new ArithmeticException("Inexact result from rounding");
+            case BigDecimal.ROUND_HALF_UP: {
+                unscaled = nextAfter(unscaled, Double.POSITIVE_INFINITY);
+                final double fraction = unscaled - Math.floor(unscaled);
+                if (fraction >= 0.5) {
+                    unscaled = Math.ceil(unscaled);
+                } else {
+                    unscaled = Math.floor(unscaled);
+                }
+                break;
             }
-            break;
-        case BigDecimal.ROUND_UP :
-            unscaled = Math.ceil(nextAfter(unscaled,  Double.POSITIVE_INFINITY));
-            break;
-        default :
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4})," +
-                  " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
-                  roundingMethod,
-                  "ROUND_CEILING",     BigDecimal.ROUND_CEILING,
-                  "ROUND_DOWN",        BigDecimal.ROUND_DOWN,
-                  "ROUND_FLOOR",       BigDecimal.ROUND_FLOOR,
-                  "ROUND_HALF_DOWN",   BigDecimal.ROUND_HALF_DOWN,
-                  "ROUND_HALF_EVEN",   BigDecimal.ROUND_HALF_EVEN,
-                  "ROUND_HALF_UP",     BigDecimal.ROUND_HALF_UP,
-                  "ROUND_UNNECESSARY", BigDecimal.ROUND_UNNECESSARY,
-                  "ROUND_UP",          BigDecimal.ROUND_UP);
+            case BigDecimal.ROUND_UNNECESSARY:
+                if (unscaled != Math.floor(unscaled)) {
+                    throw new ArithmeticException("Inexact result from rounding");
+                }
+                break;
+            case BigDecimal.ROUND_UP:
+                unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
+                break;
+            default:
+                throw MathRuntimeException.createIllegalArgumentException(
+                    "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4})," +
+                        " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
+                    roundingMethod,
+                    "ROUND_CEILING", BigDecimal.ROUND_CEILING,
+                    "ROUND_DOWN", BigDecimal.ROUND_DOWN,
+                    "ROUND_FLOOR", BigDecimal.ROUND_FLOOR,
+                    "ROUND_HALF_DOWN", BigDecimal.ROUND_HALF_DOWN,
+                    "ROUND_HALF_EVEN", BigDecimal.ROUND_HALF_EVEN,
+                    "ROUND_HALF_UP", BigDecimal.ROUND_HALF_UP,
+                    "ROUND_UNNECESSARY", BigDecimal.ROUND_UNNECESSARY,
+                    "ROUND_UP", BigDecimal.ROUND_UP);
         }
         return unscaled;
     }
@@ -1436,7 +1460,7 @@ public final class MathUtils {
      *
      * @param x the value, a short
      * @return (short)(+1), (short)(0), or (short)(-1), depending on the sign of
-     *         x
+     * x
      */
     public static short sign(final short x) {
         return x == ZS ? ZS : x > ZS ? PS : NS;
@@ -1460,15 +1484,15 @@ public final class MathUtils {
      * @param y the subtrahend
      * @return the difference <code>x-y</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         int
+     *                             int
      * @since 1.1
      */
     public static int subAndCheck(final int x, final int y) {
-        final long s = (long)x - (long)y;
+        final long s = (long) x - (long) y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: subtract");
         }
-        return (int)s;
+        return (int) s;
     }
 
     /**
@@ -1478,7 +1502,7 @@ public final class MathUtils {
      * @param b second value
      * @return the difference <code>a-b</code>
      * @throws ArithmeticException if the result can not be represented as an
-     *         long
+     *                             long
      * @since 1.2
      */
     public static long subAndCheck(final long a, final long b) {
@@ -1499,10 +1523,11 @@ public final class MathUtils {
 
     /**
      * Raise an int to an int power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static int pow(final int k, int e)
         throws IllegalArgumentException {
@@ -1514,7 +1539,7 @@ public final class MathUtils {
         }
 
         int result = 1;
-        int k2p    = k;
+        int k2p = k;
         while (e != 0) {
             if ((e & 0x1) != 0) {
                 result *= k2p;
@@ -1529,10 +1554,11 @@ public final class MathUtils {
 
     /**
      * Raise an int to a long power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static int pow(final int k, long e)
         throws IllegalArgumentException {
@@ -1544,7 +1570,7 @@ public final class MathUtils {
         }
 
         int result = 1;
-        int k2p    = k;
+        int k2p = k;
         while (e != 0) {
             if ((e & 0x1) != 0) {
                 result *= k2p;
@@ -1559,10 +1585,11 @@ public final class MathUtils {
 
     /**
      * Raise a long to an int power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static long pow(final long k, int e)
         throws IllegalArgumentException {
@@ -1574,7 +1601,7 @@ public final class MathUtils {
         }
 
         long result = 1l;
-        long k2p    = k;
+        long k2p = k;
         while (e != 0) {
             if ((e & 0x1) != 0) {
                 result *= k2p;
@@ -1589,10 +1616,11 @@ public final class MathUtils {
 
     /**
      * Raise a long to a long power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static long pow(final long k, long e)
         throws IllegalArgumentException {
@@ -1604,7 +1632,7 @@ public final class MathUtils {
         }
 
         long result = 1l;
-        long k2p    = k;
+        long k2p = k;
         while (e != 0) {
             if ((e & 0x1) != 0) {
                 result *= k2p;
@@ -1619,10 +1647,11 @@ public final class MathUtils {
 
     /**
      * Raise a BigInteger to an int power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static BigInteger pow(final BigInteger k, final int e)
         throws IllegalArgumentException {
@@ -1639,10 +1668,11 @@ public final class MathUtils {
 
     /**
      * Raise a BigInteger to a long power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static BigInteger pow(final BigInteger k, long e)
         throws IllegalArgumentException {
@@ -1654,7 +1684,7 @@ public final class MathUtils {
         }
 
         BigInteger result = BigInteger.ONE;
-        BigInteger k2p    = k;
+        BigInteger k2p = k;
         while (e != 0) {
             if ((e & 0x1) != 0) {
                 result = result.multiply(k2p);
@@ -1669,10 +1699,11 @@ public final class MathUtils {
 
     /**
      * Raise a BigInteger to a BigInteger power.
+     *
      * @param k number to raise
      * @param e exponent (must be positive or null)
      * @return k<sup>e</sup>
-     * @exception IllegalArgumentException if e is negative
+     * @throws IllegalArgumentException if e is negative
      */
     public static BigInteger pow(final BigInteger k, BigInteger e)
         throws IllegalArgumentException {
@@ -1684,7 +1715,7 @@ public final class MathUtils {
         }
 
         BigInteger result = BigInteger.ONE;
-        BigInteger k2p    = k;
+        BigInteger k2p = k;
         while (!BigInteger.ZERO.equals(e)) {
             if (e.testBit(0)) {
                 result = result.multiply(k2p);
@@ -1720,11 +1751,11 @@ public final class MathUtils {
      * @return the L<sub>1</sub> distance between the two points
      */
     public static int distance1(final int[] p1, final int[] p2) {
-      int sum = 0;
-      for (int i = 0; i < p1.length; i++) {
-          sum += Math.abs(p1[i] - p2[i]);
-      }
-      return sum;
+        int sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            sum += Math.abs(p1[i] - p2[i]);
+        }
+        return sum;
     }
 
     /**
@@ -1751,12 +1782,12 @@ public final class MathUtils {
      * @return the L<sub>2</sub> distance between the two points
      */
     public static double distance(final int[] p1, final int[] p2) {
-      double sum = 0;
-      for (int i = 0; i < p1.length; i++) {
-          final double dp = p1[i] - p2[i];
-          sum += dp * dp;
-      }
-      return Math.sqrt(sum);
+        double sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            final double dp = p1[i] - p2[i];
+            sum += dp * dp;
+        }
+        return Math.sqrt(sum);
     }
 
     /**
@@ -1792,8 +1823,8 @@ public final class MathUtils {
     /**
      * Checks that the given array is sorted.
      *
-     * @param val Values
-     * @param dir Order direction (-1 for decreasing, 1 for increasing)
+     * @param val    Values
+     * @param dir    Order direction (-1 for decreasing, 1 for increasing)
      * @param strict Whether the order should be strict
      * @throws IllegalArgumentException if the array is not sorted.
      */
@@ -1806,24 +1837,24 @@ public final class MathUtils {
                 if (strict) {
                     if (val[i] <= previous) {
                         throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly increasing ({2} >= {3})",
-                                                                                  i - 1, i, previous, val[i]);
+                            i - 1, i, previous, val[i]);
                     }
                 } else {
                     if (val[i] < previous) {
                         throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not increasing ({2} > {3})",
-                                                                                  i - 1, i, previous, val[i]);
+                            i - 1, i, previous, val[i]);
                     }
                 }
             } else {
                 if (strict) {
                     if (val[i] >= previous) {
                         throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly decreasing ({2} <= {3})",
-                                                                                  i - 1, i, previous, val[i]);
+                            i - 1, i, previous, val[i]);
                     }
                 } else {
                     if (val[i] > previous) {
                         throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not decreasing ({2} < {3})",
-                                                                                  i - 1, i, previous, val[i]);
+                            i - 1, i, previous, val[i]);
                     }
                 }
             }

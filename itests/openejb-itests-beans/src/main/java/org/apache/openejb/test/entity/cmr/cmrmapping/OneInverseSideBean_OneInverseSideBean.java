@@ -28,7 +28,7 @@ public class OneInverseSideBean_OneInverseSideBean extends OneInverseSideBean {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
 
@@ -36,7 +36,7 @@ public class OneInverseSideBean_OneInverseSideBean extends OneInverseSideBean {
         return oneOwningSide;
     }
 
-    public void setOneOwningSide(OneOwningSideLocal oneOwningSide) {
+    public void setOneOwningSide(final OneOwningSideLocal oneOwningSide) {
         this.oneOwningSide = oneOwningSide;
     }
 
@@ -44,7 +44,7 @@ public class OneInverseSideBean_OneInverseSideBean extends OneInverseSideBean {
         return manyOwningSide;
     }
 
-    public void setManyOwningSide(Set manyOwningSide) {
+    public void setManyOwningSide(final Set manyOwningSide) {
         this.manyOwningSide = manyOwningSide;
     }
 }

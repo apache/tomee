@@ -17,8 +17,6 @@
 
 package org.apache.openejb.jee.jba;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,11 +100,9 @@ public class ContainerConfiguration {
 
     /**
      * Gets the value of the extends property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExtends() {
         return _extends;
@@ -112,23 +110,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the extends property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setExtends(String value) {
+    public void setExtends(final String value) {
         this._extends = value;
     }
 
     /**
      * Gets the value of the containerName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getContainerName() {
         return containerName;
@@ -136,23 +130,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the containerName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setContainerName(String value) {
+    public void setContainerName(final String value) {
         this.containerName = value;
     }
 
     /**
      * Gets the value of the callLogging property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCallLogging() {
         return callLogging;
@@ -160,23 +150,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the callLogging property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCallLogging(String value) {
+    public void setCallLogging(final String value) {
         this.callLogging = value;
     }
 
     /**
      * Gets the value of the invokerProxyBindingName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInvokerProxyBindingName() {
         return invokerProxyBindingName;
@@ -184,23 +170,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the invokerProxyBindingName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInvokerProxyBindingName(String value) {
+    public void setInvokerProxyBindingName(final String value) {
         this.invokerProxyBindingName = value;
     }
 
     /**
      * Gets the value of the syncOnCommitOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSyncOnCommitOnly() {
         return syncOnCommitOnly;
@@ -208,23 +190,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the syncOnCommitOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSyncOnCommitOnly(String value) {
+    public void setSyncOnCommitOnly(final String value) {
         this.syncOnCommitOnly = value;
     }
 
     /**
      * Gets the value of the insertAfterEjbPostCreate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInsertAfterEjbPostCreate() {
         return insertAfterEjbPostCreate;
@@ -232,23 +210,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the insertAfterEjbPostCreate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInsertAfterEjbPostCreate(String value) {
+    public void setInsertAfterEjbPostCreate(final String value) {
         this.insertAfterEjbPostCreate = value;
     }
 
     /**
      * Gets the value of the callEjbStoreOnClean property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCallEjbStoreOnClean() {
         return callEjbStoreOnClean;
@@ -256,23 +230,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the callEjbStoreOnClean property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCallEjbStoreOnClean(String value) {
+    public void setCallEjbStoreOnClean(final String value) {
         this.callEjbStoreOnClean = value;
     }
 
     /**
      * Gets the value of the storeNotFlushed property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStoreNotFlushed() {
         return storeNotFlushed;
@@ -280,23 +250,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the storeNotFlushed property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setStoreNotFlushed(String value) {
+    public void setStoreNotFlushed(final String value) {
         this.storeNotFlushed = value;
     }
 
     /**
      * Gets the value of the containerInterceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ContainerInterceptors }
-     *     
+     *
+     * @return possible object is
+     * {@link ContainerInterceptors }
      */
     public ContainerInterceptors getContainerInterceptors() {
         return containerInterceptors;
@@ -304,23 +270,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the containerInterceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ContainerInterceptors }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ContainerInterceptors }
      */
-    public void setContainerInterceptors(ContainerInterceptors value) {
+    public void setContainerInterceptors(final ContainerInterceptors value) {
         this.containerInterceptors = value;
     }
 
     /**
      * Gets the value of the instancePool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInstancePool() {
         return instancePool;
@@ -328,23 +290,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the instancePool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInstancePool(String value) {
+    public void setInstancePool(final String value) {
         this.instancePool = value;
     }
 
     /**
      * Gets the value of the instanceCache property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInstanceCache() {
         return instanceCache;
@@ -352,23 +310,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the instanceCache property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInstanceCache(String value) {
+    public void setInstanceCache(final String value) {
         this.instanceCache = value;
     }
 
     /**
      * Gets the value of the persistenceManager property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistenceManager() {
         return persistenceManager;
@@ -376,23 +330,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the persistenceManager property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistenceManager(String value) {
+    public void setPersistenceManager(final String value) {
         this.persistenceManager = value;
     }
 
     /**
      * Gets the value of the webClassLoader property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWebClassLoader() {
         return webClassLoader;
@@ -400,23 +350,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the webClassLoader property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWebClassLoader(String value) {
+    public void setWebClassLoader(final String value) {
         this.webClassLoader = value;
     }
 
     /**
      * Gets the value of the lockingPolicy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLockingPolicy() {
         return lockingPolicy;
@@ -424,23 +370,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the lockingPolicy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLockingPolicy(String value) {
+    public void setLockingPolicy(final String value) {
         this.lockingPolicy = value;
     }
 
     /**
      * Gets the value of the containerCacheConf property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ContainerCacheConf }
-     *     
+     *
+     * @return possible object is
+     * {@link ContainerCacheConf }
      */
     public ContainerCacheConf getContainerCacheConf() {
         return containerCacheConf;
@@ -448,23 +390,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the containerCacheConf property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ContainerCacheConf }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ContainerCacheConf }
      */
-    public void setContainerCacheConf(ContainerCacheConf value) {
+    public void setContainerCacheConf(final ContainerCacheConf value) {
         this.containerCacheConf = value;
     }
 
     /**
      * Gets the value of the containerPoolConf property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ContainerPoolConf }
-     *     
+     *
+     * @return possible object is
+     * {@link ContainerPoolConf }
      */
     public ContainerPoolConf getContainerPoolConf() {
         return containerPoolConf;
@@ -472,23 +410,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the containerPoolConf property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ContainerPoolConf }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ContainerPoolConf }
      */
-    public void setContainerPoolConf(ContainerPoolConf value) {
+    public void setContainerPoolConf(final ContainerPoolConf value) {
         this.containerPoolConf = value;
     }
 
     /**
      * Gets the value of the commitOption property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCommitOption() {
         return commitOption;
@@ -496,23 +430,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the commitOption property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCommitOption(String value) {
+    public void setCommitOption(final String value) {
         this.commitOption = value;
     }
 
     /**
      * Gets the value of the optiondRefreshRate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getOptiondRefreshRate() {
         return optiondRefreshRate;
@@ -520,23 +450,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the optiondRefreshRate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setOptiondRefreshRate(String value) {
+    public void setOptiondRefreshRate(final String value) {
         this.optiondRefreshRate = value;
     }
 
     /**
      * Gets the value of the securityDomain property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSecurityDomain() {
         return securityDomain;
@@ -544,23 +470,19 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the securityDomain property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSecurityDomain(String value) {
+    public void setSecurityDomain(final String value) {
         this.securityDomain = value;
     }
 
     /**
      * Gets the value of the clusterConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ClusterConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link ClusterConfig }
      */
     public ClusterConfig getClusterConfig() {
         return clusterConfig;
@@ -568,37 +490,33 @@ public class ContainerConfiguration {
 
     /**
      * Sets the value of the clusterConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ClusterConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ClusterConfig }
      */
-    public void setClusterConfig(ClusterConfig value) {
+    public void setClusterConfig(final ClusterConfig value) {
         this.clusterConfig = value;
     }
 
     /**
      * Gets the value of the depends property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the depends property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDepends().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Depends }
-     * 
-     * 
      */
     public List<Depends> getDepends() {
         if (depends == null) {

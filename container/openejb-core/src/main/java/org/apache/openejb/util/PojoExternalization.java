@@ -28,7 +28,9 @@ import java.io.ObjectStreamException;
  */
 public class PojoExternalization extends PojoSerialization implements Externalizable {
 
-    /** Constructor for externalization */
+    /**
+     * Constructor for externalization
+     */
     public PojoExternalization() {
         super();
     }

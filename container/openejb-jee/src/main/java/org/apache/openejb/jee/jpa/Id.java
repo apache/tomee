@@ -25,17 +25,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Id {}
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface Id {}
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for id complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="id">
  *   &lt;complexContent>
@@ -53,8 +51,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "id", propOrder = {
@@ -82,22 +78,20 @@ public class Id implements Field {
     public Id() {
     }
 
-    public Id(String name) {
+    public Id(final String name) {
         this.name = name;
     }
 
-    public Id(String name, String columnName) {
+    public Id(final String name, final String columnName) {
         this.name = name;
         this.column = new Column(columnName);
     }
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Column }
-     *     
+     *
+     * @return possible object is
+     * {@link Column }
      */
     public Column getColumn() {
         return column;
@@ -105,23 +99,19 @@ public class Id implements Field {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Column }
      */
-    public void setColumn(Column value) {
+    public void setColumn(final Column value) {
         this.column = value;
     }
 
     /**
      * Gets the value of the generatedValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GeneratedValue }
-     *     
+     *
+     * @return possible object is
+     * {@link GeneratedValue }
      */
     public GeneratedValue getGeneratedValue() {
         return generatedValue;
@@ -129,23 +119,19 @@ public class Id implements Field {
 
     /**
      * Sets the value of the generatedValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GeneratedValue }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link GeneratedValue }
      */
-    public void setGeneratedValue(GeneratedValue value) {
+    public void setGeneratedValue(final GeneratedValue value) {
         this.generatedValue = value;
     }
 
     /**
      * Gets the value of the temporal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @return possible object is
+     * {@link TemporalType }
      */
     public TemporalType getTemporal() {
         return temporal;
@@ -153,23 +139,19 @@ public class Id implements Field {
 
     /**
      * Sets the value of the temporal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TemporalType }
      */
-    public void setTemporal(TemporalType value) {
+    public void setTemporal(final TemporalType value) {
         this.temporal = value;
     }
 
     /**
      * Gets the value of the tableGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TableGenerator }
-     *     
+     *
+     * @return possible object is
+     * {@link TableGenerator }
      */
     public TableGenerator getTableGenerator() {
         return tableGenerator;
@@ -177,23 +159,19 @@ public class Id implements Field {
 
     /**
      * Sets the value of the tableGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TableGenerator }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TableGenerator }
      */
-    public void setTableGenerator(TableGenerator value) {
+    public void setTableGenerator(final TableGenerator value) {
         this.tableGenerator = value;
     }
 
     /**
      * Gets the value of the sequenceGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SequenceGenerator }
-     *     
+     *
+     * @return possible object is
+     * {@link SequenceGenerator }
      */
     public SequenceGenerator getSequenceGenerator() {
         return sequenceGenerator;
@@ -201,23 +179,19 @@ public class Id implements Field {
 
     /**
      * Sets the value of the sequenceGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SequenceGenerator }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SequenceGenerator }
      */
-    public void setSequenceGenerator(SequenceGenerator value) {
+    public void setSequenceGenerator(final SequenceGenerator value) {
         this.sequenceGenerator = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -225,13 +199,11 @@ public class Id implements Field {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -242,10 +214,8 @@ public class Id implements Field {
     /**
      * Gets the value of the access property.
      *
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -254,12 +224,10 @@ public class Id implements Field {
     /**
      * Sets the value of the access property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 }

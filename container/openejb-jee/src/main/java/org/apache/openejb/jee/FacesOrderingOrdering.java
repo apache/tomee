@@ -16,20 +16,20 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-ordering-orderingType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-ordering-orderingType">
  *   &lt;complexContent>
@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-ordering-orderingType", propOrder = {
@@ -57,25 +55,23 @@ public class FacesOrderingOrdering {
 
     /**
      * Gets the value of the name property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the name property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getName() {
         if (name == null) {
@@ -86,11 +82,9 @@ public class FacesOrderingOrdering {
 
     /**
      * Gets the value of the others property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesOrderingOthers }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesOrderingOthers }
      */
     public FacesOrderingOthers getOthers() {
         return others;
@@ -98,13 +92,11 @@ public class FacesOrderingOrdering {
 
     /**
      * Sets the value of the others property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesOrderingOthers }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesOrderingOthers }
      */
-    public void setOthers(FacesOrderingOthers value) {
+    public void setOthers(final FacesOrderingOthers value) {
         this.others = value;
     }
 

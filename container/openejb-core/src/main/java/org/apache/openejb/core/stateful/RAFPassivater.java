@@ -51,7 +51,7 @@ public class RAFPassivater implements PassivationStrategy {
 
     @Override
     public synchronized void passivate(final Map stateTable)
-            throws SystemException {
+        throws SystemException {
         try {
             fileID++;
 
@@ -81,7 +81,7 @@ public class RAFPassivater implements PassivationStrategy {
 
     @Override
     public synchronized Object activate(final Object primaryKey)
-            throws SystemException {
+        throws SystemException {
 
         final Pointer pointer = (Pointer) masterTable.get(primaryKey);
         if (pointer == null) {

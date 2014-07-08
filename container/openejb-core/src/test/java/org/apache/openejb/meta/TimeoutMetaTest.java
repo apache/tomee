@@ -43,7 +43,8 @@ public class TimeoutMetaTest {
         public static class $ {
 
             @Timeout
-            public void method(){}
+            public void method() {
+            }
         }
     }
 
@@ -53,7 +54,7 @@ public class TimeoutMetaTest {
     public static class ExpectedBean implements Bean {
 
         @Timeout
-        public void method(Timer timer) {
+        public void method(final Timer timer) {
         }
     }
 
@@ -63,7 +64,7 @@ public class TimeoutMetaTest {
     public static class ActualBean implements Bean {
 
         @ExecuteTimer
-        public void method(Timer timer) {
+        public void method(final Timer timer) {
         }
     }
 

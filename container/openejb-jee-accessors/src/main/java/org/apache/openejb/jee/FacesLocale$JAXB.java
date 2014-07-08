@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesLocale$JAXB
-        extends JAXBObject<FacesLocale> {
+    extends JAXBObject<FacesLocale> {
 
 
     public FacesLocale$JAXB() {
         super(FacesLocale.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-localeType".intern()));
     }
 
-    public static FacesLocale readFacesLocale(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesLocale readFacesLocale(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesLocale(XoXMLStreamWriter writer, FacesLocale facesLocale, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesLocale(final XoXMLStreamWriter writer, final FacesLocale facesLocale, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLocale, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesLocale facesLocale, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesLocale facesLocale, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLocale, context);
     }
 
-    public final static FacesLocale _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesLocale _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class FacesLocale$JAXB
             context = new RuntimeContext();
         }
 
-        FacesLocale facesLocale = new FacesLocale();
+        final FacesLocale facesLocale = new FacesLocale();
         context.beforeUnmarshal(facesLocale, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-localeType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesLocale.class);
@@ -78,21 +78,21 @@ public class FacesLocale$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // VALUE: value
-        String valueRaw = reader.getElementText();
+        final String valueRaw = reader.getElementText();
 
         String value = null;
         boolean valueConverted;
         try {
             value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
             valueConverted = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(reader, CollapsedStringAdapter.class, String.class, String.class, e);
             valueConverted = false;
         }
@@ -106,13 +106,13 @@ public class FacesLocale$JAXB
         return facesLocale;
     }
 
-    public final FacesLocale read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesLocale read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesLocale facesLocale, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesLocale facesLocale, RuntimeContext context)
+        throws Exception {
         if (facesLocale == null) {
             writer.writeXsiNil();
             return;
@@ -131,11 +131,11 @@ public class FacesLocale$JAXB
 
 
         // VALUE: value
-        String valueRaw = facesLocale.value;
+        final String valueRaw = facesLocale.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesLocale, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         writer.writeCharacters(value);

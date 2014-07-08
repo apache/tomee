@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
  * jsp_2_2.xsd
- *
+ * <p/>
  * <p>Java class for jsp-property-groupType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="jsp-property-groupType">
  *   &lt;complexContent>
@@ -62,23 +62,21 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jsp-property-groupType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "urlPattern",
-        "elIgnored",
-        "pageEncoding",
-        "scriptingInvalid",
-        "isXml",
-        "includePrelude",
-        "includeCoda", 
-        "deferredSyntaxAllowedAsLiteral",
-        "trimDirectiveWhitespaces",
+    "descriptions",
+    "displayNames",
+    "icon",
+    "urlPattern",
+    "elIgnored",
+    "pageEncoding",
+    "scriptingInvalid",
+    "isXml",
+    "includePrelude",
+    "includeCoda",
+    "deferredSyntaxAllowedAsLiteral",
+    "trimDirectiveWhitespaces",
     "defaultContentType",
     "buffer",
     "errorOnUndeclaredNamespace"
@@ -127,7 +125,7 @@ public class JspPropertyGroup {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -140,7 +138,7 @@ public class JspPropertyGroup {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -155,7 +153,7 @@ public class JspPropertyGroup {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -177,7 +175,7 @@ public class JspPropertyGroup {
         return elIgnored;
     }
 
-    public void setElIgnored(Boolean value) {
+    public void setElIgnored(final Boolean value) {
         this.elIgnored = value;
     }
 
@@ -185,7 +183,7 @@ public class JspPropertyGroup {
         return pageEncoding;
     }
 
-    public void setPageEncoding(String value) {
+    public void setPageEncoding(final String value) {
         this.pageEncoding = value;
     }
 
@@ -193,7 +191,7 @@ public class JspPropertyGroup {
         return scriptingInvalid;
     }
 
-    public void setScriptingInvalid(Boolean value) {
+    public void setScriptingInvalid(final Boolean value) {
         this.scriptingInvalid = value;
     }
 
@@ -201,7 +199,7 @@ public class JspPropertyGroup {
         return isXml;
     }
 
-    public void setIsXml(Boolean value) {
+    public void setIsXml(final Boolean value) {
         this.isXml = value;
     }
 
@@ -223,7 +221,7 @@ public class JspPropertyGroup {
         return deferredSyntaxAllowedAsLiteral;
     }
 
-    public void setDeferredSyntaxAllowedAsLiteral(Boolean value) {
+    public void setDeferredSyntaxAllowedAsLiteral(final Boolean value) {
         this.deferredSyntaxAllowedAsLiteral = value;
     }
 
@@ -231,7 +229,7 @@ public class JspPropertyGroup {
         return trimDirectiveWhitespaces;
     }
 
-    public void setTrimDirectiveWhitespaces(Boolean value) {
+    public void setTrimDirectiveWhitespaces(final Boolean value) {
         this.trimDirectiveWhitespaces = value;
     }
 
@@ -239,7 +237,7 @@ public class JspPropertyGroup {
         return defaultContentType;
     }
 
-    public void setDefaultContentType(String value) {
+    public void setDefaultContentType(final String value) {
         this.defaultContentType = value;
     }
 
@@ -247,7 +245,7 @@ public class JspPropertyGroup {
         return buffer;
     }
 
-    public void setBuffer(String value) {
+    public void setBuffer(final String value) {
         this.buffer = value;
     }
 
@@ -255,7 +253,7 @@ public class JspPropertyGroup {
         return errorOnUndeclaredNamespace;
     }
 
-    public void setErrorOnUndeclaredNamespace(Boolean value) {
+    public void setErrorOnUndeclaredNamespace(final Boolean value) {
         this.errorOnUndeclaredNamespace = value;
     }
 
@@ -263,7 +261,7 @@ public class JspPropertyGroup {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

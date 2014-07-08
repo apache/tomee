@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * application_6.xsd
- *
+ * <p/>
  * <p>Java class for webType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="webType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webType", propOrder = {
@@ -71,17 +69,15 @@ public class Web {
         return webUri;
     }
 
-    public void setWebUri(String value) {
+    public void setWebUri(final String value) {
         this.webUri = value;
     }
 
     /**
      * Gets the value of the contextRoot property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getContextRoot() {
         return contextRoot;
@@ -89,23 +85,19 @@ public class Web {
 
     /**
      * Sets the value of the contextRoot property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setContextRoot(String value) {
+    public void setContextRoot(final String value) {
         this.contextRoot = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -113,13 +105,11 @@ public class Web {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

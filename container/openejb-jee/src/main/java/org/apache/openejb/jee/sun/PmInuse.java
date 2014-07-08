@@ -33,7 +33,7 @@ public class PmInuse {
         return pmIdentifier;
     }
 
-    public void setPmIdentifier(String value) {
+    public void setPmIdentifier(final String value) {
         this.pmIdentifier = value;
     }
 
@@ -41,7 +41,7 @@ public class PmInuse {
         return pmVersion;
     }
 
-    public void setPmVersion(String value) {
+    public void setPmVersion(final String value) {
         this.pmVersion = value;
     }
 }

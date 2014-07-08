@@ -48,11 +48,9 @@ public class ClientInterceptors {
 
     /**
      * Gets the value of the exposeContainer property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExposeContainer() {
         if (exposeContainer == null) {
@@ -64,23 +62,19 @@ public class ClientInterceptors {
 
     /**
      * Sets the value of the exposeContainer property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setExposeContainer(String value) {
+    public void setExposeContainer(final String value) {
         this.exposeContainer = value;
     }
 
     /**
      * Gets the value of the home property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Home }
-     *     
+     *
+     * @return possible object is
+     * {@link Home }
      */
     public Home getHome() {
         return home;
@@ -88,23 +82,19 @@ public class ClientInterceptors {
 
     /**
      * Sets the value of the home property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Home }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Home }
      */
-    public void setHome(Home value) {
+    public void setHome(final Home value) {
         this.home = value;
     }
 
     /**
      * Gets the value of the bean property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Bean }
-     *     
+     *
+     * @return possible object is
+     * {@link Bean }
      */
     public Bean getBean() {
         return bean;
@@ -112,23 +102,19 @@ public class ClientInterceptors {
 
     /**
      * Sets the value of the bean property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Bean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Bean }
      */
-    public void setBean(Bean value) {
+    public void setBean(final Bean value) {
         this.bean = value;
     }
 
     /**
      * Gets the value of the listEntity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ListEntity }
-     *     
+     *
+     * @return possible object is
+     * {@link ListEntity }
      */
     public ListEntity getListEntity() {
         return listEntity;
@@ -136,13 +122,11 @@ public class ClientInterceptors {
 
     /**
      * Sets the value of the listEntity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ListEntity }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ListEntity }
      */
-    public void setListEntity(ListEntity value) {
+    public void setListEntity(final ListEntity value) {
         this.listEntity = value;
     }
 

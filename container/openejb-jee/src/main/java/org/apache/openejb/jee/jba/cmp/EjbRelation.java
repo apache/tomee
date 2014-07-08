@@ -17,21 +17,21 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -74,32 +72,32 @@ public class EjbRelation {
     protected List<Object> content;
 
     /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "EjbRelationshipRole" is used by two different parts of a schema. See: 
+     * Gets the rest of the content model.
+     * <p/>
+     * <p/>
+     * You are getting this "catch-all" property because of the following reason:
+     * The field name "EjbRelationshipRole" is used by two different parts of a schema. See:
      * line 476 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
      * line 475 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names: 
+     * <p/>
+     * To get rid of this property, apply a property customization to one
+     * of both of the following declarations to change their names:
      * Gets the value of the content property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRelationshipRole }
      * {@link EjbRelationName }
@@ -107,8 +105,6 @@ public class EjbRelation {
      * {@link ForeignKeyMapping }
      * {@link ReadOnly }
      * {@link ReadTimeOut }
-     * 
-     * 
      */
     public List<Object> getContent() {
         if (content == null) {

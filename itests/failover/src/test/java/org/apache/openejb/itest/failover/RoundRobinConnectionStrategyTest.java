@@ -59,7 +59,7 @@ public class RoundRobinConnectionStrategyTest {
 //        set(Logger.getLogger("OpenEJB.client"), Level.FINEST);
     }
 
-    private static void set(Logger logger, Level level) {
+    private static void set(final Logger logger, final Level level) {
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(level);
         logger.addHandler(consoleHandler);
@@ -109,7 +109,7 @@ public class RoundRobinConnectionStrategyTest {
         Client.addEventObserver(services);
 
         final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
-        for (String name : new String[]{"red", "green", "blue"}) {
+        for (final String name : new String[]{"red", "green", "blue"}) {
 
             final File home = new File(dir, name);
             Files.mkdir(home);
@@ -162,7 +162,7 @@ public class RoundRobinConnectionStrategyTest {
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
 
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
             final StandaloneServer server = entry.getValue();
             final URI serverURI = server.getContext().get(URI.class);
@@ -185,13 +185,13 @@ public class RoundRobinConnectionStrategyTest {
 
             final String name = bean.name();
             Assert.fail("Server should be destroyed: " + name);
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
         }
 
 
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
             final StandaloneServer server = entry.getValue();
             final URI serverURI = server.getContext().get(URI.class);
@@ -209,14 +209,14 @@ public class RoundRobinConnectionStrategyTest {
         }
     }
 
-    private void assertBalance(Calculator bean, int size) {
+    private void assertBalance(final Calculator bean, final int size) {
         final int expectedInvocations = 100;
         final int tolerance = 2;
         final int totalInvocations = size * expectedInvocations + (size * tolerance);
 
 
         // Verify the work was split up more or less evenly (within a tolerance of 2)
-        for (Map.Entry<String, AtomicInteger> entry : invoke(bean, totalInvocations).entrySet()) {
+        for (final Map.Entry<String, AtomicInteger> entry : invoke(bean, totalInvocations).entrySet()) {
 
             final int actualInvocations = entry.getValue().get();
 
@@ -225,7 +225,7 @@ public class RoundRobinConnectionStrategyTest {
     }
 
 
-    private Map<String, AtomicInteger> invoke(Calculator bean, int max) {
+    private Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
         final Map<String, AtomicInteger> invocations = new HashMap<String, AtomicInteger>();
         for (int i = 0; i < max; i++) {
             final String name = bean.name();
@@ -237,7 +237,7 @@ public class RoundRobinConnectionStrategyTest {
             invocations.get(name).incrementAndGet();
         }
 
-        for (Map.Entry<String, AtomicInteger> entry : invocations.entrySet()) {
+        for (final Map.Entry<String, AtomicInteger> entry : invocations.entrySet()) {
             logger.info(String.format("Server %s invoked %s times", entry.getKey(), entry.getValue()));
         }
 
@@ -260,15 +260,15 @@ public class RoundRobinConnectionStrategyTest {
             return expected;
         }
 
-        public boolean add(URI uri) {
+        public boolean add(final URI uri) {
             return expected.add(uri);
         }
 
-        public boolean remove(URI o) {
+        public boolean remove(final URI o) {
             return expected.remove(o);
         }
 
-        public void observe(@Observes ClusterMetaDataUpdated updated) {
+        public void observe(@Observes final ClusterMetaDataUpdated updated) {
             found.clear();
             Collections.addAll(found, updated.getClusterMetaData().getLocations());
 
@@ -282,26 +282,26 @@ public class RoundRobinConnectionStrategyTest {
             }
         }
 
-        public Set<URI> diff(Set<URI> a, Set<URI> b) {
+        public Set<URI> diff(final Set<URI> a, final Set<URI> b) {
             final Set<URI> diffs = new HashSet<URI>();
-            for (URI uri : b) {
+            for (final URI uri : b) {
                 if (!a.contains(uri)) diffs.add(uri);
             }
 
             return diffs;
         }
 
-        public void assertServices(long timeout, TimeUnit unit, Callable callable) {
+        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable) {
             assertServices(timeout, unit, callable, 10);
         }
 
-        public void assertServices(long timeout, TimeUnit unit, Callable callable, int delay) {
+        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
             final ClientThread client = new ClientThread(callable);
             client.delay(delay);
             client.start();
             try {
                 Assert.assertTrue(String.format("services failed to come online: waited %s %s", timeout, unit), await(timeout, unit));
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 Assert.fail("Interrupted");
             } finally {
@@ -310,7 +310,7 @@ public class RoundRobinConnectionStrategyTest {
         }
 
 
-        public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
             if (expected.equals(found)) return true;
 
             lock.lock();
@@ -325,7 +325,7 @@ public class RoundRobinConnectionStrategyTest {
     private static class CalculatorCallable implements Callable {
         private final Calculator bean;
 
-        public CalculatorCallable(Calculator bean) {
+        public CalculatorCallable(final Calculator bean) {
             this.bean = bean;
         }
 
@@ -334,7 +334,7 @@ public class RoundRobinConnectionStrategyTest {
             try {
                 logger.info("Invoke");
                 return bean.name();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.log(Level.SEVERE, "bean invocation failed", e);
                 throw e;
             }

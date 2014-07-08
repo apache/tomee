@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -65,11 +63,9 @@ public class DeclaredSql {
 
     /**
      * Gets the value of the select property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Select }
-     *     
+     *
+     * @return possible object is
+     * {@link Select }
      */
     public Select getSelect() {
         return select;
@@ -77,23 +73,19 @@ public class DeclaredSql {
 
     /**
      * Sets the value of the select property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Select }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Select }
      */
-    public void setSelect(Select value) {
+    public void setSelect(final Select value) {
         this.select = value;
     }
 
     /**
      * Gets the value of the from property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link From }
-     *     
+     *
+     * @return possible object is
+     * {@link From }
      */
     public From getFrom() {
         return from;
@@ -101,23 +93,19 @@ public class DeclaredSql {
 
     /**
      * Sets the value of the from property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link From }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link From }
      */
-    public void setFrom(From value) {
+    public void setFrom(final From value) {
         this.from = value;
     }
 
     /**
      * Gets the value of the where property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Where }
-     *     
+     *
+     * @return possible object is
+     * {@link Where }
      */
     public Where getWhere() {
         return where;
@@ -125,23 +113,19 @@ public class DeclaredSql {
 
     /**
      * Sets the value of the where property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Where }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Where }
      */
-    public void setWhere(Where value) {
+    public void setWhere(final Where value) {
         this.where = value;
     }
 
     /**
      * Gets the value of the order property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Order }
-     *     
+     *
+     * @return possible object is
+     * {@link Order }
      */
     public Order getOrder() {
         return order;
@@ -149,23 +133,19 @@ public class DeclaredSql {
 
     /**
      * Sets the value of the order property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Order }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Order }
      */
-    public void setOrder(Order value) {
+    public void setOrder(final Order value) {
         this.order = value;
     }
 
     /**
      * Gets the value of the other property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Other }
-     *     
+     *
+     * @return possible object is
+     * {@link Other }
      */
     public Other getOther() {
         return other;
@@ -173,13 +153,11 @@ public class DeclaredSql {
 
     /**
      * Sets the value of the other property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Other }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Other }
      */
-    public void setOther(Other value) {
+    public void setOther(final Other value) {
         this.other = value;
     }
 

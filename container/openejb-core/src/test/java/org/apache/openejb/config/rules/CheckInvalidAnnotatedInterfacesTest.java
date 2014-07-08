@@ -33,18 +33,18 @@ public class CheckInvalidAnnotatedInterfacesTest {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
     }
 
-    @Keys( { @Key("ann.local.noAttributes"), @Key("ann.remote.noAttributes") })
+    @Keys({@Key("ann.local.noAttributes"), @Key("ann.remote.noAttributes")})
     public EjbJar noAttributes() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBeanLocal.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBeanRemote.class));
         return ejbJar;
     }
 
-    @Keys( { @Key("ann.localRemote.ambiguous"), @Key("ann.localRemote.conflict") })
+    @Keys({@Key("ann.localRemote.ambiguous"), @Key("ann.localRemote.conflict")})
     public EjbJar ambiguous() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBeanLocalRemote.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBeanLocalOne.class));
         return ejbJar;
@@ -56,28 +56,36 @@ public class CheckInvalidAnnotatedInterfacesTest {
     }
 
     @Local
-    public static class FooBeanLocal implements FooLocalOne, FooLocalTwo {}
+    public static class FooBeanLocal implements FooLocalOne, FooLocalTwo {
+    }
 
     @Remote
-    public static class FooBeanRemote implements FooRemoteOne, FooRemoteTwo {}
+    public static class FooBeanRemote implements FooRemoteOne, FooRemoteTwo {
+    }
 
     @Local
     @Remote
-    public static class FooBeanLocalRemote implements FooLocalOne {}
+    public static class FooBeanLocalRemote implements FooLocalOne {
+    }
 
     @Local(FooRemoteOne.class)
     @Remote(FooRemoteOne.class)
-    public static class FooBeanLocalOne {}
+    public static class FooBeanLocalOne {
+    }
 
     @Remote
-    public static interface FooRemoteOne {}
+    public static interface FooRemoteOne {
+    }
 
     @Remote
-    public static interface FooRemoteTwo {}
+    public static interface FooRemoteTwo {
+    }
 
     @Local
-    public static interface FooLocalOne {}
+    public static interface FooLocalOne {
+    }
 
     @Local
-    public static interface FooLocalTwo {}
+    public static interface FooLocalTwo {
+    }
 }

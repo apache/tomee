@@ -17,7 +17,13 @@
 
 package org.apache.openejb.javaagent;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -94,7 +100,7 @@ public class Agent {
             try {
                 checkSystemClassPath();
                 dynamicLoadAgent();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 new IllegalStateException("Unable to initialize agent", e).printStackTrace();
             } finally {
                 initialized = true;
@@ -111,7 +117,7 @@ public class Agent {
         try {
             final ClassLoader systemCl = ClassLoader.getSystemClassLoader();
             systemAgentClass = systemCl.loadClass(Agent.class.getName());
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // java-agent jar was not on the system class path
             return;
         }
@@ -150,9 +156,9 @@ public class Agent {
             // The AgentJar is loaded into the system classpath, and this class could
             // be in a child classloader, so we need to double check the system classpath
             checkSystemClassPath();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // not a Sun VM
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // not a Sun VM
         }
     }
@@ -193,7 +199,7 @@ public class Agent {
         try {
             try {
                 file = File.createTempFile(Agent.class.getName(), ".jar");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -230,7 +236,7 @@ public class Agent {
             }
 
             return file.getAbsolutePath();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (file != null) {
                 if (!file.delete()) {
                     file.deleteOnExit();
@@ -247,7 +253,7 @@ public class Agent {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             }
         }
@@ -262,7 +268,7 @@ public class Agent {
 
             try {
                 bootstrap(loader);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 done = true;
             }
 
@@ -290,7 +296,7 @@ public class Agent {
                 final Class<?> bootstrapClass = loader.loadClass(bootstrapClassName);
                 final Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 Logger.getLogger(Agent.class.getName()).log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage());
             }
         }

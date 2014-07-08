@@ -40,7 +40,7 @@ public class ClientThread implements Runnable {
 
             try {
                 callable.call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -59,7 +59,7 @@ public class ClientThread implements Runnable {
         final long l = delay.get();
         try {
             if (l > 0) Thread.sleep(l);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
     }

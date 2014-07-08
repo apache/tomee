@@ -45,32 +45,32 @@ public abstract class StorageBean implements EntityBean {
 
     public abstract void setChar(char value);
 
-    public void setBytes(byte[] bytes) {
+    public void setBytes(final byte[] bytes) {
         try {
-            DataSource ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/DefaultDatabase");
-            Connection c = ds.getConnection();
-            PreparedStatement ps = c.prepareStatement("UPDATE storage SET blob_column = ? WHERE id = ?");
+            final DataSource ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/DefaultDatabase");
+            final Connection c = ds.getConnection();
+            final PreparedStatement ps = c.prepareStatement("UPDATE storage SET blob_column = ? WHERE id = ?");
             ps.setBinaryStream(1, new ByteArrayInputStream(bytes), bytes.length);
             ps.setInt(2, ((Integer) ctx.getPrimaryKey()).intValue());
             ps.executeUpdate();
             ps.close();
             c.close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
 
     public byte[] getBytes() {
         try {
-            DataSource ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/DefaultDatabase");
-            Connection c = ds.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT blob_column FROM storage WHERE id = ?");
+            final DataSource ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/DefaultDatabase");
+            final Connection c = ds.getConnection();
+            final PreparedStatement ps = c.prepareStatement("SELECT blob_column FROM storage WHERE id = ?");
             ps.setInt(1, ((Integer) ctx.getPrimaryKey()).intValue());
-            ResultSet rs = ps.executeQuery();
+            final ResultSet rs = ps.executeQuery();
             rs.next();
-            InputStream is = rs.getBinaryStream(1);
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
+            final InputStream is = rs.getBinaryStream(1);
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            final byte[] buffer = new byte[1024];
             int count;
             while ((count = is.read(buffer)) > 0) {
                 os.write(buffer, 0, count);
@@ -81,23 +81,23 @@ public abstract class StorageBean implements EntityBean {
             ps.close();
             c.close();
             return os.toByteArray();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
 
-    public Integer ejbCreate(Integer id) throws CreateException {
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
     public void ejbLoad() {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         this.ctx = ctx;
     }
 

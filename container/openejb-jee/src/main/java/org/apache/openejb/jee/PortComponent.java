@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * javaee_web_services_1_3.xsd
- *
+ * <p/>
  * <p>Java class for port-componentType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="port-componentType">
  *   &lt;complexContent>
@@ -63,8 +63,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "port-componentType", propOrder = {
@@ -75,9 +73,9 @@ import java.util.List;
     "wsdlService",
     "wsdlPort",
     "enableMtom",
-        "mtomThreshold",
-        "addressing",
-        "respectBinding",
+    "mtomThreshold",
+    "addressing",
+    "respectBinding",
     "protocolBinding",
     "serviceEndpointInterface",
     "serviceImplBean",
@@ -127,7 +125,7 @@ public class PortComponent implements Keyable<String> {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -135,7 +133,7 @@ public class PortComponent implements Keyable<String> {
         return displayName;
     }
 
-    public void setDisplayName(String value) {
+    public void setDisplayName(final String value) {
         this.displayName = value;
     }
 
@@ -143,7 +141,7 @@ public class PortComponent implements Keyable<String> {
         return icon;
     }
 
-    public void setIcon(Icon value) {
+    public void setIcon(final Icon value) {
         this.icon = value;
     }
 
@@ -151,7 +149,7 @@ public class PortComponent implements Keyable<String> {
         return portComponentName;
     }
 
-    public void setPortComponentName(String value) {
+    public void setPortComponentName(final String value) {
         this.portComponentName = value;
     }
 
@@ -159,7 +157,7 @@ public class PortComponent implements Keyable<String> {
         return wsdlService;
     }
 
-    public void setWsdlService(QName value) {
+    public void setWsdlService(final QName value) {
         this.wsdlService = value;
     }
 
@@ -167,7 +165,7 @@ public class PortComponent implements Keyable<String> {
         return wsdlPort;
     }
 
-    public void setWsdlPort(QName value) {
+    public void setWsdlPort(final QName value) {
         this.wsdlPort = value;
     }
 
@@ -179,7 +177,7 @@ public class PortComponent implements Keyable<String> {
         return enableMtom;
     }
 
-    public void setEnableMtom(Boolean value) {
+    public void setEnableMtom(final Boolean value) {
         this.enableMtom = value;
     }
 
@@ -187,7 +185,7 @@ public class PortComponent implements Keyable<String> {
         return mtomThreshold;
     }
 
-    public void setMtomThreshold(Integer value) {
+    public void setMtomThreshold(final Integer value) {
         this.mtomThreshold = value;
     }
 
@@ -195,7 +193,7 @@ public class PortComponent implements Keyable<String> {
         return addressing;
     }
 
-    public void setAddressing(Addressing value) {
+    public void setAddressing(final Addressing value) {
         this.addressing = value;
     }
 
@@ -203,7 +201,7 @@ public class PortComponent implements Keyable<String> {
         return respectBinding;
     }
 
-    public void setRespectBinding(RespectBinding value) {
+    public void setRespectBinding(final RespectBinding value) {
         this.respectBinding = value;
     }
 
@@ -211,7 +209,7 @@ public class PortComponent implements Keyable<String> {
         return protocolBinding;
     }
 
-    public void setProtocolBinding(String value) {
+    public void setProtocolBinding(final String value) {
         this.protocolBinding = value;
     }
 
@@ -219,7 +217,7 @@ public class PortComponent implements Keyable<String> {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String value) {
+    public void setServiceEndpointInterface(final String value) {
         this.serviceEndpointInterface = value;
     }
 
@@ -227,7 +225,7 @@ public class PortComponent implements Keyable<String> {
         return serviceImplBean;
     }
 
-    public void setServiceImplBean(ServiceImplBean value) {
+    public void setServiceImplBean(final ServiceImplBean value) {
         this.serviceImplBean = value;
     }
 
@@ -235,7 +233,7 @@ public class PortComponent implements Keyable<String> {
         // convert the handlers to handler chain
         if (handlerChains == null && handler != null) {
             handlerChains = new HandlerChains();
-            HandlerChain handlerChain = new HandlerChain();
+            final HandlerChain handlerChain = new HandlerChain();
             handlerChain.getHandler().addAll(handler);
             handler = null;
             handlerChains.getHandlerChain().add(handlerChain);
@@ -243,7 +241,7 @@ public class PortComponent implements Keyable<String> {
         return handlerChains;
     }
 
-    public void setHandlerChains(HandlerChains value) {
+    public void setHandlerChains(final HandlerChains value) {
         this.handlerChains = value;
     }
 
@@ -251,7 +249,7 @@ public class PortComponent implements Keyable<String> {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(final String location) {
         this.location = location;
     }
 
@@ -259,7 +257,7 @@ public class PortComponent implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

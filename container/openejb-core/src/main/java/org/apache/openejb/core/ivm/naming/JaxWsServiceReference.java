@@ -88,7 +88,7 @@ public class JaxWsServiceReference extends Reference {
         }
 
         // add the port addresses to the portRefData
-        final Map<QName,PortRefData> portsByQName = new HashMap<QName,PortRefData>();
+        final Map<QName, PortRefData> portsByQName = new HashMap<QName, PortRefData>();
         final List<PortRefData> ports = new ArrayList<PortRefData>(portRefs.size() + portAddresses.size());
         for (final PortRefData portRef : portRefs) {
             final PortRefData port = new PortRefData(portRef);
@@ -148,12 +148,12 @@ public class JaxWsServiceReference extends Reference {
 
         // register the service data so it can be fetched when the service is passed over the EJBd protocol
         final ServiceRefData serviceRefData = new ServiceRefData(id,
-                serviceQName,
-                serviceClass, portQName,
-                referenceClass,
-                wsdlUrl,
-                handlerChains,
-                portRefs);
+            serviceQName,
+            serviceClass, portQName,
+            referenceClass,
+            wsdlUrl,
+            handlerChains,
+            portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
 
         return port;

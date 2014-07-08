@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class ResultTypeMapping$JAXB
-        extends JAXBEnum<ResultTypeMapping> {
+    extends JAXBEnum<ResultTypeMapping> {
 
 
     public ResultTypeMapping$JAXB() {
         super(ResultTypeMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "resultTypeMapping".intern()));
     }
 
-    public ResultTypeMapping parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public ResultTypeMapping parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseResultTypeMapping(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, ResultTypeMapping resultTypeMapping)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ResultTypeMapping resultTypeMapping)
+        throws Exception {
         return toStringResultTypeMapping(bean, parameterName, context, resultTypeMapping);
     }
 
-    public static ResultTypeMapping parseResultTypeMapping(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static ResultTypeMapping parseResultTypeMapping(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Local".equals(value)) {
             return ResultTypeMapping.LOCAL;
         } else if ("Remote".equals(value)) {
@@ -52,8 +52,8 @@ public class ResultTypeMapping$JAXB
         }
     }
 
-    public static String toStringResultTypeMapping(Object bean, String parameterName, RuntimeContext context, ResultTypeMapping resultTypeMapping)
-            throws Exception {
+    public static String toStringResultTypeMapping(final Object bean, final String parameterName, final RuntimeContext context, final ResultTypeMapping resultTypeMapping)
+        throws Exception {
         if (ResultTypeMapping.LOCAL == resultTypeMapping) {
             return "Local";
         } else if (ResultTypeMapping.REMOTE == resultTypeMapping) {

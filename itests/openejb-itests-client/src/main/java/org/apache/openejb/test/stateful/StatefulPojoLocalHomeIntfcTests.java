@@ -39,7 +39,7 @@ public class StatefulPojoLocalHomeIntfcTests extends BasicStatefulLocalTestClien
         try{
             ejbLocalObject = ejbLocalHome.create("First Bean");
             assertNotNull("The EJBLocalObject is null", ejbLocalObject);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

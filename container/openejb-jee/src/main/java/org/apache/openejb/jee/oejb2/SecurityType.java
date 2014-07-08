@@ -30,12 +30,12 @@ import java.util.List;
     "description", "credentialStoreRef", "defaultSubject", "roleMappings"
 })
 public class SecurityType extends AbstractSecurityType {
-    @XmlElement(name="description", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    @XmlElement(name = "description", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected List<Object> description;
-    @XmlElement(name="credential-store-ref", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    @XmlElement(name = "credential-store-ref", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected Object credentialStoreRef;
-    @XmlElement(name="default-subject", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    @XmlElement(name = "default-subject", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected Object defaultSubject;
-    @XmlElement(name="role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
+    @XmlElement(name = "role-mappings", namespace = "http://geronimo.apache.org/xml/ns/security-2.0")
     protected Object roleMappings;
 }

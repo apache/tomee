@@ -35,7 +35,7 @@ public class ContextWrapperStatementTest {
     private static class FakeStatement extends Statement {
         private boolean fail;
 
-        public FakeStatement(boolean fail) {
+        public FakeStatement(final boolean fail) {
             this.fail = fail;
         }
 
@@ -51,11 +51,11 @@ public class ContextWrapperStatementTest {
     private static class FakeTestContext implements TestContext {
         private boolean fail;
 
-        public FakeTestContext(boolean fail) {
+        public FakeTestContext(final boolean fail) {
             this.fail = fail;
         }
 
-        public void configureTest(Object testObj) {
+        public void configureTest(final Object testObj) {
             if (fail) {
                 throw new OpenEJBRuntimeException("Fail");
             }
@@ -79,7 +79,7 @@ public class ContextWrapperStatementTest {
         configuredInvoked = false;
         statementInvoked = false;
 
-        ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(false), new FakeStatement(false), fakeTestObject);
+        final ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(false), new FakeStatement(false), fakeTestObject);
         wrapper.evaluate();
 
         assertTrue(configuredInvoked);
@@ -97,12 +97,11 @@ public class ContextWrapperStatementTest {
         configuredInvoked = false;
         statementInvoked = false;
 
-        ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(false), new FakeStatement(true), fakeTestObject);
+        final ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(false), new FakeStatement(true), fakeTestObject);
         try {
             wrapper.evaluate();
             fail("Wrapper call succeeded.");
-        }
-        catch (Throwable e) {
+        } catch (final Throwable e) {
         }
 
         assertTrue(configuredInvoked);
@@ -120,12 +119,11 @@ public class ContextWrapperStatementTest {
         configuredInvoked = false;
         statementInvoked = false;
 
-        ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(true), new FakeStatement(false), fakeTestObject);
+        final ContextWrapperStatement wrapper = new ContextWrapperStatement(new FakeTestContext(true), new FakeStatement(false), fakeTestObject);
         try {
             wrapper.evaluate();
             fail("Wrapper call succeeded.");
-        }
-        catch (Throwable e) {
+        } catch (final Throwable e) {
         }
 
         assertFalse(configuredInvoked);

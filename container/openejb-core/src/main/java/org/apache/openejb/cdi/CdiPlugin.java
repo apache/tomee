@@ -232,17 +232,12 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                     }
 
                     try {
-                        instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), new InvocationHandler()
-                        {
+                        instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), new InvocationHandler() {
                             @Override
-                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable
-                            {
-                                try
-                                {
+                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                                try {
                                     return method.invoke(provider.get(), args);
-                                }
-                                catch (final InvocationTargetException ite)
-                                {
+                                } catch (final InvocationTargetException ite) {
                                     throw ite.getCause();
                                 }
                             }
@@ -341,7 +336,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         validateScope(bean);
 
         final Set<ObserverMethod<?>> observerMethods;
-        if(bean.isEnabled()) {
+        if (bean.isEnabled()) {
             observerMethods = new ObserverMethodsBuilder<T, InjectionTargetBean<T>>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
         } else {
             observerMethods = new HashSet<ObserverMethod<?>>();
@@ -352,29 +347,29 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final Set<ProducerMethodBean<?>> producerMethods = new ProducerMethodBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerMethods(bean);
         final Set<ProducerFieldBean<?>> producerFields = new ProducerFieldBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerFields(bean);
 
-        final Map<ProducerMethodBean<?>,AnnotatedMethod<?>> annotatedMethods = new HashMap<ProducerMethodBean<?>, AnnotatedMethod<?>>();
-        for(final ProducerMethodBean<?> producerMethod : producerMethods) {
+        final Map<ProducerMethodBean<?>, AnnotatedMethod<?>> annotatedMethods = new HashMap<ProducerMethodBean<?>, AnnotatedMethod<?>>();
+        for (final ProducerMethodBean<?> producerMethod : producerMethods) {
             final AnnotatedMethod<?> method = webBeansContext.getAnnotatedElementFactory().newAnnotatedMethod(producerMethod.getCreatorMethod(), annotatedType);
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for "
-                    + "ProducerMethods. Look at logs for further details");
+                + "ProducerMethods. Look at logs for further details");
 
             annotatedMethods.put(producerMethod, method);
         }
 
-        final Map<ProducerFieldBean<?>,AnnotatedField<?>> annotatedFields = new HashMap<ProducerFieldBean<?>, AnnotatedField<?>>();
-        for(final ProducerFieldBean<?> producerField : producerFields) {
+        final Map<ProducerFieldBean<?>, AnnotatedField<?>> annotatedFields = new HashMap<ProducerFieldBean<?>, AnnotatedField<?>>();
+        for (final ProducerFieldBean<?> producerField : producerFields) {
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for"
-                    + " ProducerFields. Look at logs for further details");
+                + " ProducerFields. Look at logs for further details");
 
             annotatedFields.put(producerField,
-                    webBeansContext.getAnnotatedElementFactory().newAnnotatedField(
-                            producerField.getCreatorField(),
-                            webBeansContext.getAnnotatedElementFactory().newAnnotatedType(producerField.getBeanClass())));
+                webBeansContext.getAnnotatedElementFactory().newAnnotatedField(
+                    producerField.getCreatorField(),
+                    webBeansContext.getAnnotatedElementFactory().newAnnotatedType(producerField.getBeanClass())));
         }
 
-        final Map<ObserverMethod<?>,AnnotatedMethod<?>> observerMethodsMap = new HashMap<ObserverMethod<?>, AnnotatedMethod<?>>();
-        for(final ObserverMethod<?> observerMethod : observerMethods) {
-            final ObserverMethodImpl<?> impl = (ObserverMethodImpl<?>)observerMethod;
+        final Map<ObserverMethod<?>, AnnotatedMethod<?>> observerMethodsMap = new HashMap<ObserverMethod<?>, AnnotatedMethod<?>>();
+        for (final ObserverMethod<?> observerMethod : observerMethods) {
+            final ObserverMethodImpl<?> impl = (ObserverMethodImpl<?>) observerMethod;
             final AnnotatedMethod<?> method = impl.getObserverMethod();
 
             observerMethodsMap.put(observerMethod, method);
@@ -401,7 +396,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         webBeansUtil.fireProcessObservableMethodBeanEvent(observerMethodsMap);
         webBeansUtil.inspectErrorStack("There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
 
-        if(!webBeansUtil.isAnnotatedTypeDecoratorOrInterceptor(annotatedType)) {
+        if (!webBeansUtil.isAnnotatedTypeDecoratorOrInterceptor(annotatedType)) {
             for (final ProducerMethodBean<?> producerMethod : producerMethods) {
                 beanManager.addBean(producerMethod);
             }

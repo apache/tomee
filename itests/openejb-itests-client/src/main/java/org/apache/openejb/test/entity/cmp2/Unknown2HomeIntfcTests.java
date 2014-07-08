@@ -36,7 +36,7 @@ public class Unknown2HomeIntfcTests extends UnknownCmp2TestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
         ejbHome = (UnknownCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
     }
 
@@ -56,7 +56,7 @@ public class Unknown2HomeIntfcTests extends UnknownCmp2TestClient {
     }
 
     public void test03_findByLastName() throws Exception {
-        Set<Object> keys = new HashSet<Object>();
+        final Set<Object> keys = new HashSet<Object>();
         try {
             ejbObject = ejbHome.createObject("David Blevins");
             ejbPrimaryKey = ejbObject.getPrimaryKey();
@@ -72,27 +72,27 @@ public class Unknown2HomeIntfcTests extends UnknownCmp2TestClient {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
             assertNotNull("ejbPrimaryKey is null", ejbPrimaryKey);
             keys.add(ejbObject.getPrimaryKey());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received exception while preparing the test: " + e.getClass() + " : " + e.getMessage());
         }
 
         try {
-            Collection objects = ejbHome.findByLastName("Blevins");
-            Set<Object> foundKeys = new HashSet<Object>();
+            final Collection objects = ejbHome.findByLastName("Blevins");
+            final Set<Object> foundKeys = new HashSet<Object>();
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
-            for (Object object : objects) {
+            for (final Object object : objects) {
                 ejbObject = (UnknownCmpObject) PortableRemoteObject.narrow(object, UnknownCmpObject.class);
 
                 // This could be problematic, it assumes the order of the collection.
-                Object foundKey = ejbObject.getPrimaryKey();
+                final Object foundKey = ejbObject.getPrimaryKey();
                 assertTrue("Extra ejb found " + ejbObject.getPrimaryKey(), keys.contains(foundKey));
                 foundKeys.add(foundKey);
             }
 
             keys.removeAll(foundKeys);
             assertEquals("Some keys were not found", Collections.EMPTY_SET, keys);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
@@ -100,10 +100,10 @@ public class Unknown2HomeIntfcTests extends UnknownCmp2TestClient {
 
     public void test04_homeMethod() {
         try {
-            int expected = 8;
-            int actual = ejbHome.sum(5, 3);
+            final int expected = 8;
+            final int actual = ejbHome.sum(5, 3);
             assertEquals("home method returned wrong result", expected, actual);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

@@ -24,15 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Indicates that a separate table holds a list of table name/ID
- *                 pairs and the server should fetch the next ID from that table.
- *             
- * 
+ * Indicates that a separate table holds a list of table name/ID
+ * pairs and the server should fetch the next ID from that table.
+ * <p/>
+ * <p/>
  * <p>Java class for sequence-tableType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="sequence-tableType">
  *   &lt;complexContent>
@@ -46,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sequence-tableType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -66,11 +63,9 @@ public class SequenceTableType {
 
     /**
      * Gets the value of the tableName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTableName() {
         return tableName;
@@ -78,23 +73,19 @@ public class SequenceTableType {
 
     /**
      * Sets the value of the tableName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTableName(String value) {
+    public void setTableName(final String value) {
         this.tableName = value;
     }
 
     /**
      * Gets the value of the sequenceName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSequenceName() {
         return sequenceName;
@@ -102,19 +93,16 @@ public class SequenceTableType {
 
     /**
      * Sets the value of the sequenceName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSequenceName(String value) {
+    public void setSequenceName(final String value) {
         this.sequenceName = value;
     }
 
     /**
      * Gets the value of the batchSize property.
-     * 
      */
     public int getBatchSize() {
         return batchSize;
@@ -122,9 +110,8 @@ public class SequenceTableType {
 
     /**
      * Sets the value of the batchSize property.
-     * 
      */
-    public void setBatchSize(int value) {
+    public void setBatchSize(final int value) {
         this.batchSize = value;
     }
 

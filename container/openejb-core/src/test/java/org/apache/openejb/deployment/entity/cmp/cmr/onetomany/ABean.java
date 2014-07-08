@@ -26,42 +26,44 @@ import javax.ejb.RemoveException;
 import java.util.Set;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public abstract class ABean implements EntityBean {
 
     private EntityContext context;
-    
+
     // CMP
     public abstract Integer getField1();
+
     public abstract void setField1(Integer field1);
 
     public abstract String getField2();
+
     public abstract void setField2(String field2);
-    
+
     // CMR
     public abstract Set getB();
+
     public abstract void setB(Set bSet);
 
-    public Integer ejbCreate(Integer field1)  throws CreateException {
+    public Integer ejbCreate(final Integer field1) throws CreateException {
         setField1(field1);
         return null;
     }
 
-    public void ejbPostCreate(Integer field1) {
+    public void ejbPostCreate(final Integer field1) {
     }
 
-    public CompoundPK ejbCreate(CompoundPK primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final CompoundPK primaryKey) throws CreateException {
         setField1(primaryKey.field1);
         setField2(primaryKey.field2);
         return null;
     }
 
-    public void ejbPostCreate(CompoundPK primaryKey) {
+    public void ejbPostCreate(final CompoundPK primaryKey) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         context = ctx;
     }
 

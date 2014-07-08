@@ -50,19 +50,19 @@ public class CustomInjectionTest {
     public Properties configuration() {
         return new PropertiesBuilder()
 
-                .property("concurrent/es", "new://Resource?type=ManagedExecutorService")
-                .property("concurrent/es.core", "2")
-                .property("concurrent/es.max", "10")
-                .property("concurrent/es.keepAlive", "4 minutes")
-                .property("concurrent/es.queue", "3")
+            .property("concurrent/es", "new://Resource?type=ManagedExecutorService")
+            .property("concurrent/es.core", "2")
+            .property("concurrent/es.max", "10")
+            .property("concurrent/es.keepAlive", "4 minutes")
+            .property("concurrent/es.queue", "3")
 
-                .property("concurrent/ses", "new://Resource?type=ManagedScheduledExecutorService")
-                .property("concurrent/ses.core", "12")
+            .property("concurrent/ses", "new://Resource?type=ManagedScheduledExecutorService")
+            .property("concurrent/ses.core", "12")
 
-                .property("concurrent/tf", "new://Resource?type=ManagedThreadFactory")
-                .property("concurrent/tf.prefix", "custom-")
+            .property("concurrent/tf", "new://Resource?type=ManagedThreadFactory")
+            .property("concurrent/tf.prefix", "custom-")
 
-                .build();
+            .build();
     }
 
     @Module
@@ -106,7 +106,7 @@ public class CustomInjectionTest {
         assertEquals("custom-", Reflections.get(tf, "prefix"));
     }
 
-    private static ThreadPoolExecutor pool(ManagedExecutorService es) {
+    private static ThreadPoolExecutor pool(final ManagedExecutorService es) {
         return ThreadPoolExecutor.class.cast(ManagedExecutorServiceImpl.class.cast(es).getDelegate());
     }
 

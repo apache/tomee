@@ -35,7 +35,7 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * cause filled in.
      *
      * @param detailMessage String The detail message for the exception.
-     * @param throwable The cause of this Throwable
+     * @param throwable     The cause of this Throwable
      */
     public NoSuchObjectException(final String detailMessage, final Throwable throwable) {
         super(detailMessage);
@@ -72,14 +72,14 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * the end of the stack.
      *
      * @param currentStack a stack to compare
-     * @param parentStack a stack to compare
+     * @param parentStack  a stack to compare
      * @return the number of duplicate stack frames.
      */
     private static int countDuplicates(final StackTraceElement[] currentStack,
-            final StackTraceElement[] parentStack) {
+                                       final StackTraceElement[] parentStack) {
         int duplicates = 0;
         int parentIndex = parentStack.length;
-        for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0;) {
+        for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0; ) {
             final StackTraceElement parentFrame = parentStack[parentIndex];
             if (parentFrame.equals(currentStack[i])) {
                 duplicates++;
@@ -177,7 +177,7 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * @param throwable The cause of this Throwable
      * @return the receiver.
      * @throws IllegalArgumentException when the cause is the receiver
-     * @throws IllegalStateException when the cause has already been initialized
+     * @throws IllegalStateException    when the cause has already been initialized
      */
     public synchronized NoSuchObjectException initCause(final Throwable throwable) {
         cause = throwable;

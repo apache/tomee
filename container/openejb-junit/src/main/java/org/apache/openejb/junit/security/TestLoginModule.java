@@ -37,7 +37,6 @@ import java.util.Set;
  * This is used to "emulate" a login for the "securityRole" option in the JUnit runner.
  * The TestContext should set the {@link Context#SECURITY_PRINCIPAL } {@link InitialContext} property
  * to the rolename it wants to "RunAs", and this login module will do the result.
- *
  */
 public class TestLoginModule implements LoginModule {
     private Subject subject;
@@ -60,8 +59,7 @@ public class TestLoginModule implements LoginModule {
         callbacks[1] = new PasswordCallback("Password:", false);
         try {
             callbackHandler.handle(callbacks);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new LoginException("Failed to perform emulated login: " + e.getMessage());
         }
 

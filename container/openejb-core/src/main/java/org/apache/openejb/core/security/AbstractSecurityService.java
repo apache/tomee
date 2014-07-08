@@ -285,8 +285,8 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             }
             final Identity currentIdentity = clientIdentity.get();
             final SecurityContext securityContext;
-            if(currentIdentity == null) {
-                securityContext= threadContext.get(SecurityContext.class);
+            if (currentIdentity == null) {
+                securityContext = threadContext.get(SecurityContext.class);
             } else {
                 securityContext = new SecurityContext(currentIdentity.getSubject());
             }

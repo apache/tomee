@@ -17,19 +17,19 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for persistence-context-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-context-refType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -59,8 +57,7 @@ import javax.xml.bind.annotation.XmlType;
     "property"
 })
 public class PersistenceContextRefType
-    extends AbstractNamingEntryType
-{
+    extends AbstractNamingEntryType {
 
     @XmlElement(name = "persistence-context-ref-name", required = true)
     protected String persistenceContextRefName;
@@ -73,11 +70,9 @@ public class PersistenceContextRefType
 
     /**
      * Gets the value of the persistenceContextRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistenceContextRefName() {
         return persistenceContextRefName;
@@ -85,23 +80,19 @@ public class PersistenceContextRefType
 
     /**
      * Sets the value of the persistenceContextRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistenceContextRefName(String value) {
+    public void setPersistenceContextRefName(final String value) {
         this.persistenceContextRefName = value;
     }
 
     /**
      * Gets the value of the persistenceUnitName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistenceUnitName() {
         return persistenceUnitName;
@@ -109,23 +100,19 @@ public class PersistenceContextRefType
 
     /**
      * Sets the value of the persistenceUnitName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistenceUnitName(String value) {
+    public void setPersistenceUnitName(final String value) {
         this.persistenceUnitName = value;
     }
 
     /**
      * Gets the value of the pattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getPattern() {
         return pattern;
@@ -133,23 +120,19 @@ public class PersistenceContextRefType
 
     /**
      * Sets the value of the pattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setPattern(PatternType value) {
+    public void setPattern(final PatternType value) {
         this.pattern = value;
     }
 
     /**
      * Gets the value of the persistenceContextType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PersistenceContextTypeType }
-     *     
+     *
+     * @return possible object is
+     * {@link PersistenceContextTypeType }
      */
     public PersistenceContextTypeType getPersistenceContextType() {
         return persistenceContextType;
@@ -157,37 +140,33 @@ public class PersistenceContextRefType
 
     /**
      * Sets the value of the persistenceContextType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceContextTypeType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PersistenceContextTypeType }
      */
-    public void setPersistenceContextType(PersistenceContextTypeType value) {
+    public void setPersistenceContextType(final PersistenceContextTypeType value) {
         this.persistenceContextType = value;
     }
 
     /**
      * Gets the value of the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link PropertyType }
-     * 
-     * 
      */
     public List<PropertyType> getProperty() {
         if (property == null) {

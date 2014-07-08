@@ -143,7 +143,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
+        final Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
         ejbHome = (BasicBmpHome) PortableRemoteObject.narrow( obj, BasicBmpHome.class);
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
@@ -205,17 +205,17 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test01_setEntityContext(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -234,17 +234,17 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         try{
 
         /* TO DO:  This test needs unique functionality to work */
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -268,7 +268,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test03_ejbCreate(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -276,13 +276,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -308,7 +308,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test04_ejbPostCreate(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -318,13 +318,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -350,7 +350,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test05_ejbRemove(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -360,13 +360,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -390,7 +390,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test06_ejbFind(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -398,13 +398,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbFind");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbFind");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -429,7 +429,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test08_ejbHome(){   
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -437,13 +437,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -463,19 +463,19 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test10_ejbActivate(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getEJBObject );
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -495,19 +495,19 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test11_ejbPassivate(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getEJBObject );
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -533,7 +533,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test12_ejbLoad(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -543,13 +543,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -575,7 +575,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test13_ejbStore(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -585,13 +585,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
 
         assertNotNull( "The OperationsPolicy returned is null", actual);
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -617,7 +617,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     public void test14_businessMethod(){
         try{
 
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( OperationsPolicy.Context_getEJBHome );
         policy.allow( OperationsPolicy.Context_getCallerPrincipal );
         //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
@@ -627,13 +627,13 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
         policy.allow( OperationsPolicy.Context_getPrimaryKey );
         policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
 
         assertNotNull("The OpperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

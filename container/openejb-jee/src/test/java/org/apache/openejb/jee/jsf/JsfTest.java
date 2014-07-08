@@ -25,7 +25,6 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.JaxbJavaee;
 
-import javax.xml.bind.JAXBElement;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ import static org.apache.openejb.jee.JeeTest.marshalAndUnmarshal;
 /**
  * @version $Rev$ $Date$
  */
-public class JsfTest  extends TestCase {
+public class JsfTest extends TestCase {
 
     /**
      * This test requires that there are three managed beans in faces-config.xml. It will ask JaxbJavaee to load faces-config.xml
@@ -44,15 +43,15 @@ public class JsfTest  extends TestCase {
      * @throws Exception
      */
     public void testFacesConfig() throws Exception {
-        List<String> managedBeanClasses = new ArrayList<String>();
+        final List<String> managedBeanClasses = new ArrayList<String>();
         managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
         managedBeanClasses.add("org.apache.openejb.faces.OneBean");
         managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
-        FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
-        List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
+        final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
+        final FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
+        final List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
 
-        for (FacesManagedBean bean : managedBean) {
+        for (final FacesManagedBean bean : managedBean) {
             assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
         }
         assertEquals(3, managedBean.size());
@@ -72,7 +71,7 @@ public class JsfTest  extends TestCase {
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-moderate-src.xml", "jsf/1_0_dtd/faces-config-moderate-expected.xml");
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-complex-src.xml", "jsf/1_0_dtd/faces-config-complex-expected.xml");
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-empty-src.xml", "jsf/1_0_dtd/faces-config-empty-expected.xml");
-        FacesConfig f = marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config.xml", null);
+        final FacesConfig f = marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config.xml", null);
     }
 
     public void test12() throws Exception {

@@ -34,21 +34,21 @@ import javax.ejb.Remote;
  */
 @RunWith(ValidationRunner.class)
 public class InvalidEjbRefTest extends TestCase {
-//    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
-    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject")})
+    //    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
+    @Keys({@Key("ann.ejb.ejbObject"), @Key("ann.ejb.ejbLocalObject")})
     public EjbJar test() throws Exception {
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new StatelessBean(EjbRefBean.class));
 
-        StatelessBean fooBean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        final StatelessBean fooBean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         fooBean.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
         fooBean.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         fooBean.addBusinessLocal(FooLocal.class.getName());
         fooBean.addBusinessRemote(FooRemote.class.getName());
 
-        StatelessBean fooImpl = ejbJar.addEnterpriseBean(new StatelessBean(FooImpl.class));
+        final StatelessBean fooImpl = ejbJar.addEnterpriseBean(new StatelessBean(FooImpl.class));
         fooImpl.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
         fooImpl.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         fooImpl.addBusinessLocal(FooLocal.class.getName());
@@ -57,9 +57,9 @@ public class InvalidEjbRefTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys( { @Key("ejbAnnotation.onClassWithNoBeanInterface"), @Key("ejbAnnotation.onClassWithNoName") })
+    @Keys({@Key("ejbAnnotation.onClassWithNoBeanInterface"), @Key("ejbAnnotation.onClassWithNoName")})
     public EjbJar test1() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(MyBean.class));
         return ejbJar;
     }
@@ -143,9 +143,11 @@ public class InvalidEjbRefTest extends TestCase {
     public static class FooClass {
 
     }
-    
+
     public static class FooImpl implements FooLocal {
     }
+
     @EJB
-    public static class MyBean{}
+    public static class MyBean {
+    }
 }

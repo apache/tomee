@@ -32,7 +32,7 @@ import java.util.Properties;
 @RunWith(MetaRunner.class)
 public class ResourceMetaTest {
     static {
-        Properties properties = System.getProperties();
+        final Properties properties = System.getProperties();
         properties.put("orange", "new://Resource?type=DataSource");
         properties.put("yellow", "new://Resource?type=DataSource");
         properties.put("red", "new://Resource?type=DataSource");
@@ -85,7 +85,7 @@ public class ResourceMetaTest {
         private DataSource red;
 
         @Resource(name = "yellow")
-        public void setYellow(DataSource yellow) {
+        public void setYellow(final DataSource yellow) {
 
         }
     }
@@ -100,7 +100,7 @@ public class ResourceMetaTest {
         private DataSource red;
 
         @Resource(name = "yellow")
-        public void setYellow(DataSource yellow) {
+        public void setYellow(final DataSource yellow) {
         }
     }
 

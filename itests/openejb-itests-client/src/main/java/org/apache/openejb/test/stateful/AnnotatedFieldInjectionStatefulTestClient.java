@@ -24,7 +24,7 @@ package org.apache.openejb.test.stateful;
  */
 public abstract class AnnotatedFieldInjectionStatefulTestClient extends BasicStatefulTestClient {
 
-    public AnnotatedFieldInjectionStatefulTestClient(String name) {
+    public AnnotatedFieldInjectionStatefulTestClient(final String name) {
         super("AnnotatedFieldInjectionStatefulTestClient." + name);
     }
     

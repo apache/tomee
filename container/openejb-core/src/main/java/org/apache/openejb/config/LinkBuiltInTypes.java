@@ -118,10 +118,10 @@ public class LinkBuiltInTypes implements DynamicDeployer {
     }
 
     private void add(final Map<String, String> links, final Class<?> type, final Class... aliases) {
-        links.put(type.getName(), "java:comp/"+type.getSimpleName());
+        links.put(type.getName(), "java:comp/" + type.getSimpleName());
 
         for (final Class clazz : aliases) {
-            links.put(clazz.getName(), "java:comp/"+type.getSimpleName());
+            links.put(clazz.getName(), "java:comp/" + type.getSimpleName());
         }
     }
 }

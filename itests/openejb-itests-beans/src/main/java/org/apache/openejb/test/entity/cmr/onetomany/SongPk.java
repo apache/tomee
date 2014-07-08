@@ -25,16 +25,16 @@ public class SongPk {
     }
 
 
-    public SongPk(Integer id, String name) {
+    public SongPk(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SongPk menuPk = (SongPk) o;
+        final SongPk menuPk = (SongPk) o;
 
         return id.equals(menuPk.id) && name.equals(menuPk.name);
     }

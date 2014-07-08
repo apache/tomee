@@ -18,15 +18,6 @@
 
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,15 +28,23 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for session-beanType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="session-beanType">
  *   &lt;complexContent>
@@ -91,58 +90,56 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "session-beanType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "ejbName",
-        "mappedName",
-        "home",
-        "remote",
-        "localHome",
-        "local",
-        "businessLocal",
-        "businessRemote",
-        "localBean",
-        "serviceEndpoint",
-        "ejbClass",
-        "sessionType",
-        "statefulTimeout",
-        "timeoutMethod",
-        "timer",
-        "initOnStartup",
-        "concurrencyManagementType",
-        "concurrentMethod",
-        "dependsOn",
-        "initMethod",
-        "removeMethod",
-        "asyncMethod",
-        "transactionType",
-        "afterBeginMethod",
-        "beforeCompletionMethod",
-        "afterCompletionMethod",
-        "aroundInvoke",
-        "aroundTimeout",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "dataSource",
-        "postActivate",
-        "prePassivate",
-        "securityRoleRef",
-        "securityIdentity"
+    "descriptions",
+    "displayNames",
+    "icon",
+    "ejbName",
+    "mappedName",
+    "home",
+    "remote",
+    "localHome",
+    "local",
+    "businessLocal",
+    "businessRemote",
+    "localBean",
+    "serviceEndpoint",
+    "ejbClass",
+    "sessionType",
+    "statefulTimeout",
+    "timeoutMethod",
+    "timer",
+    "initOnStartup",
+    "concurrencyManagementType",
+    "concurrentMethod",
+    "dependsOn",
+    "initMethod",
+    "removeMethod",
+    "asyncMethod",
+    "transactionType",
+    "afterBeginMethod",
+    "beforeCompletionMethod",
+    "afterCompletionMethod",
+    "aroundInvoke",
+    "aroundTimeout",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "dataSource",
+    "postActivate",
+    "prePassivate",
+    "securityRoleRef",
+    "securityIdentity"
 })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
@@ -265,7 +262,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     public SessionBean() {
     }
 
-    public SessionBean(String ejbName, String ejbClass, SessionType sessionType) {
+    public SessionBean(final String ejbName, final String ejbClass, final SessionType sessionType) {
         this.ejbName = ejbName;
         this.ejbClass = ejbClass;
         this.sessionType = sessionType;
@@ -280,7 +277,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -293,7 +290,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -342,7 +339,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
      * <p/>
      * <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -350,7 +347,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -358,7 +355,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return home;
     }
 
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
 
@@ -366,26 +363,26 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return remote;
     }
 
-    public void setRemote(String value) {
+    public void setRemote(final String value) {
         this.remote = value;
     }
 
-    public void setHomeAndRemote(String home, String remote) {
+    public void setHomeAndRemote(final String home, final String remote) {
         this.remote = remote;
         this.home = home;
     }
 
-    public void setHomeAndRemote(Class<?> home, Class<?> remote) {
+    public void setHomeAndRemote(final Class<?> home, final Class<?> remote) {
         this.remote = remote.getName();
         this.home = home.getName();
     }
 
-    public void setHomeAndLocal(String localHome, String local) {
+    public void setHomeAndLocal(final String localHome, final String local) {
         this.local = local;
         this.localHome = localHome;
     }
 
-    public void setHomeAndLocal(Class<?> localHome, Class<?> local) {
+    public void setHomeAndLocal(final Class<?> localHome, final Class<?> local) {
         this.local = local.getName();
         this.localHome = localHome.getName();
     }
@@ -394,7 +391,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return localHome;
     }
 
-    public void setLocalHome(String value) {
+    public void setLocalHome(final String value) {
         this.localHome = value;
     }
 
@@ -402,7 +399,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return local;
     }
 
-    public void setLocal(String value) {
+    public void setLocal(final String value) {
         this.local = value;
     }
 
@@ -413,12 +410,12 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return businessLocal;
     }
 
-    public void addBusinessLocal(String businessLocal) {
+    public void addBusinessLocal(final String businessLocal) {
         if (businessLocal == null) return;
         getBusinessLocal().add(businessLocal);
     }
 
-    public void addBusinessLocal(Class businessLocal) {
+    public void addBusinessLocal(final Class businessLocal) {
         addBusinessLocal(businessLocal.getName());
     }
 
@@ -429,12 +426,12 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return businessRemote;
     }
 
-    public void addBusinessRemote(String businessRemote) {
+    public void addBusinessRemote(final String businessRemote) {
         if (businessRemote == null) return;
         getBusinessRemote().add(businessRemote);
     }
 
-    public void addBusinessRemote(Class businessRemote) {
+    public void addBusinessRemote(final Class businessRemote) {
         addBusinessRemote(businessRemote.getName());
     }
 
@@ -442,7 +439,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return localBean;
     }
 
-    public void setLocalBean(Empty localBean) {
+    public void setLocalBean(final Empty localBean) {
         this.localBean = localBean;
     }
 
@@ -450,7 +447,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return serviceEndpoint;
     }
 
-    public void setServiceEndpoint(String value) {
+    public void setServiceEndpoint(final String value) {
         this.serviceEndpoint = value;
     }
 
@@ -458,11 +455,11 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return ejbClass;
     }
 
-    public void setEjbClass(String value) {
+    public void setEjbClass(final String value) {
         this.ejbClass = value;
     }
 
-    public void setEjbClass(Class value) {
+    public void setEjbClass(final Class value) {
         this.ejbClass = value.getName();
     }
 
@@ -470,7 +467,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return sessionType;
     }
 
-    public void setSessionType(SessionType value) {
+    public void setSessionType(final SessionType value) {
         this.sessionType = value;
     }
 
@@ -478,7 +475,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return timeoutMethod;
     }
 
-    public void setTimeoutMethod(NamedMethod value) {
+    public void setTimeoutMethod(final NamedMethod value) {
         this.timeoutMethod = value;
     }
 
@@ -504,7 +501,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 //        return concurrencyType;
 //    }
 
-    public void setTransactionType(TransactionType value) {
+    public void setTransactionType(final TransactionType value) {
         this.transactionType = value;
     }
 
@@ -517,7 +514,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     @XmlElement(name = "after-begin-method")
-    public void setAfterBeginMethod(NamedMethod afterBeginMethod) {
+    public void setAfterBeginMethod(final NamedMethod afterBeginMethod) {
         this.afterBeginMethod = afterBeginMethod;
         getAfterBegin().clear();
         getAfterBegin().add(new LifecycleCallback(afterBeginMethod));
@@ -528,7 +525,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     @XmlElement(name = "before-completion-method")
-    public void setBeforeCompletionMethod(NamedMethod beforeCompletionMethod) {
+    public void setBeforeCompletionMethod(final NamedMethod beforeCompletionMethod) {
         this.beforeCompletionMethod = beforeCompletionMethod;
         getBeforeCompletion().clear();
         getBeforeCompletion().add(new LifecycleCallback(beforeCompletionMethod));
@@ -539,7 +536,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     @XmlElement(name = "after-completion-method")
-    public void setAfterCompletionMethod(NamedMethod afterCompletionMethod) {
+    public void setAfterCompletionMethod(final NamedMethod afterCompletionMethod) {
         this.afterCompletionMethod = afterCompletionMethod;
         getAfterCompletion().clear();
         getAfterCompletion().add(new LifecycleCallback(afterCompletionMethod));
@@ -552,7 +549,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.aroundInvoke;
     }
 
-    public void addAroundInvoke(String method) {
+    public void addAroundInvoke(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundInvoke().add(new AroundInvoke(ejbClass, method));
     }
@@ -690,7 +687,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.postConstruct;
     }
 
-    public void addPostConstruct(String method) {
+    public void addPostConstruct(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getPostConstruct().add(new LifecycleCallback(ejbClass, method));
     }
@@ -702,7 +699,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.preDestroy;
     }
 
-    public void addPreDestroy(String method) {
+    public void addPreDestroy(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getPreDestroy().add(new LifecycleCallback(ejbClass, method));
     }
@@ -714,7 +711,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.postActivate;
     }
 
-    public void addPostActivate(String method) {
+    public void addPostActivate(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getPostActivate().add(new LifecycleCallback(ejbClass, method));
     }
@@ -726,7 +723,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.prePassivate;
     }
 
-    public void addPrePassivate(String method) {
+    public void addPrePassivate(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getPrePassivate().add(new LifecycleCallback(ejbClass, method));
     }
@@ -743,7 +740,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return securityIdentity;
     }
 
-    public void setSecurityIdentity(SecurityIdentity value) {
+    public void setSecurityIdentity(final SecurityIdentity value) {
         this.securityIdentity = value;
     }
 
@@ -751,11 +748,11 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return dependsOn;
     }
 
-    public void setDependsOn(String... ejbNames) {
+    public void setDependsOn(final String... ejbNames) {
         setDependsOn(Arrays.asList(ejbNames));
     }
 
-    public void setDependsOn(List<String> ejbNames) {
+    public void setDependsOn(final List<String> ejbNames) {
         this.dependsOn = new ArrayList(ejbNames);
     }
 
@@ -767,7 +764,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return initOnStartup != null && initOnStartup;
     }
 
-    public void setInitOnStartup(boolean initOnStartup) {
+    public void setInitOnStartup(final boolean initOnStartup) {
         this.initOnStartup = initOnStartup;
     }
 
@@ -775,7 +772,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -783,7 +780,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return statefulTimeout;
     }
 
-    public void setStatefulTimeout(Timeout statefulTimeout) {
+    public void setStatefulTimeout(final Timeout statefulTimeout) {
         this.statefulTimeout = statefulTimeout;
     }
 
@@ -805,7 +802,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return concurrencyManagementType;
     }
 
-    public void setConcurrencyManagementType(ConcurrencyManagementType concurrencyManagementType) {
+    public void setConcurrencyManagementType(final ConcurrencyManagementType concurrencyManagementType) {
         this.concurrencyManagementType = concurrencyManagementType;
     }
 
@@ -816,17 +813,17 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.concurrentMethod;
     }
 
-    public void addAfterBegin(String method) {
+    public void addAfterBegin(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAfterBegin().add(new LifecycleCallback(ejbClass, method));
     }
 
-    public void addAfterCompletion(String method) {
+    public void addAfterCompletion(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAfterCompletion().add(new LifecycleCallback(ejbClass, method));
     }
 
-    public void addBeforeCompletion(String method) {
+    public void addBeforeCompletion(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getBeforeCompletion().add(new LifecycleCallback(ejbClass, method));
     }
@@ -874,19 +871,19 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return this.timer;
     }
 
-    public void addAroundTimeout(String method) {
+    public void addAroundTimeout(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }
 
-    public Set<String> getAsynchronousClasses(){
-        if(asynchronousClasses == null) {
+    public Set<String> getAsynchronousClasses() {
+        if (asynchronousClasses == null) {
             asynchronousClasses = new HashSet<String>();
         }
         return asynchronousClasses;
     }
 
-    public void addAsynchronousClass(String cls) {
+    public void addAsynchronousClass(final String cls) {
         getAsynchronousClasses().add(cls);
     }
 
@@ -898,11 +895,11 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return restService;
     }
 
-    public void setRestService(boolean restService) {
+    public void setRestService(final boolean restService) {
         this.restService = restService;
     }
 
-    public void setProxy(String name) {
+    public void setProxy(final String name) {
         proxy = name;
     }
 

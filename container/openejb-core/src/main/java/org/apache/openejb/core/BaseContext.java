@@ -116,11 +116,11 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     protected boolean isCallerInRole(final SecurityService securityService, final String roleName) {
         check(Call.isCallerInRole);
-        
+
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
         final String roleLink = di.getSecurityRoleReference(roleName);
-        
+
         return securityService.isCallerInRole(roleLink);
     }
 
@@ -156,8 +156,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
         if (txPolicy.getTransactionType() == TransactionType.Never
-                || txPolicy.getTransactionType() == TransactionType.NotSupported
-                || txPolicy.getTransactionType() == TransactionType.Supports) {
+            || txPolicy.getTransactionType() == TransactionType.NotSupported
+            || txPolicy.getTransactionType() == TransactionType.Supports) {
             throw new IllegalStateException("setRollbackOnly accessible only from MANDATORY, REQUIRED, or REQUIRES_NEW");
         }
         txPolicy.setRollbackOnly();
@@ -177,8 +177,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
         if (txPolicy.getTransactionType() == TransactionType.Never
-                || txPolicy.getTransactionType() == TransactionType.NotSupported
-                || txPolicy.getTransactionType() == TransactionType.Supports) {
+            || txPolicy.getTransactionType() == TransactionType.NotSupported
+            || txPolicy.getTransactionType() == TransactionType.Supports) {
             throw new IllegalStateException("getRollbackOnly accessible only from MANDATORY, REQUIRED, or REQUIRES_NEW");
         }
         return txPolicy.isRollbackOnly();

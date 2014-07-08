@@ -69,18 +69,18 @@ public class DynamicDataSourceTest {
     public void route() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // resources
         for (int i = 1; i <= 3; i++) {
-            String dbName = "database" + i;
-            Resource resourceDs = new Resource(dbName, "DataSource");
-            Properties p = resourceDs.getProperties();
+            final String dbName = "database" + i;
+            final Resource resourceDs = new Resource(dbName, "DataSource");
+            final Properties p = resourceDs.getProperties();
             p.put("JdbcDriver", "org.hsqldb.jdbcDriver");
             p.put("JdbcUrl", "jdbc:hsqldb:mem:db" + i);
             p.put("UserName", "sa");
@@ -88,38 +88,38 @@ public class DynamicDataSourceTest {
             p.put("JtaManaged", "true");
             assembler.createResource(config.configureService(resourceDs, ResourceInfo.class));
         }
-        Resource resourceRouter = new Resource("My Router", "org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter", "org.router:DeterminedRouter");
+        final Resource resourceRouter = new Resource("My Router", "org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter", "org.router:DeterminedRouter");
         resourceRouter.getProperties().setProperty("DatasourceNames", "database1 database2 database3");
         resourceRouter.getProperties().setProperty("DefaultDataSourceName", "database1");
         assembler.createResource(config.configureService(resourceRouter, ResourceInfo.class));
 
-        Resource resourceRoutedDs = new Resource("Routed Datasource", "org.apache.openejb.resource.jdbc.Router", "RoutedDataSource");
+        final Resource resourceRoutedDs = new Resource("Routed Datasource", "org.apache.openejb.resource.jdbc.Router", "RoutedDataSource");
         resourceRoutedDs.getProperties().setProperty("Router", "My Router");
         assembler.createResource(config.configureService(resourceRoutedDs, ResourceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         assembler.createContainer(statelessContainerInfo);
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(RoutedEJBBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(UtilityBean.class));
 
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
 
         // Create an "ear"
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), "test-dynamic-data-source");
+        final AppModule appModule = new AppModule(ejbModule.getClassLoader(), "test-dynamic-data-source");
         appModule.getEjbModules().add(ejbModule);
 
         // Create a persistence-units
-        PersistenceUnit unit = new PersistenceUnit("router");
+        final PersistenceUnit unit = new PersistenceUnit("router");
         unit.addClass(Person.class);
         unit.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
         unit.setTransactionType(TransactionType.JTA);
         unit.setJtaDataSource("Routed Datasource");
         appModule.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
         for (int i = 1; i <= 3; i++) {
-            PersistenceUnit u = new PersistenceUnit("db" + i);
+            final PersistenceUnit u = new PersistenceUnit("db" + i);
             u.addClass(Person.class);
             u.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
             u.setTransactionType(TransactionType.JTA);
@@ -130,7 +130,7 @@ public class DynamicDataSourceTest {
         assembler.createApplication(config.configureApplication(appModule));
 
         // context
-        Context ctx = new InitialContext();
+        final Context ctx = new InitialContext();
 
         // running persist on all "routed" databases
         final List<String> databases = new ArrayList<String>();
@@ -139,21 +139,21 @@ public class DynamicDataSourceTest {
         databases.add("database3");
 
         // convinient bean to create tables for each persistence unit
-        Utility utility = (Utility) ctx.lookup("UtilityBeanLocal");
+        final Utility utility = (Utility) ctx.lookup("UtilityBeanLocal");
         utility.initDatabase();
 
-        RoutedEJB ejb = (RoutedEJB) ctx.lookup("RoutedEJBBeanLocal");
+        final RoutedEJB ejb = (RoutedEJB) ctx.lookup("RoutedEJBBeanLocal");
         for (int i = 0; i < 18; i++) {
-            String name = "record " + i;
-            String db = databases.get(i % 3);
+            final String name = "record " + i;
+            final String db = databases.get(i % 3);
             ejb.persist(i, name, db);
         }
 
         // assert database records number using jdbc
         for (int i = 1; i <= 3; i++) {
-            Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:db" + i, "sa", "");
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("select count(*) from \"DynamicDataSourceTest$Person\"");
+            final Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:db" + i, "sa", "");
+            final Statement st = connection.createStatement();
+            final ResultSet rs = st.executeQuery("select count(*) from \"DynamicDataSourceTest$Person\"");
             rs.next();
             assertEquals(6, rs.getInt(1));
             st.close();
@@ -170,7 +170,7 @@ public class DynamicDataSourceTest {
         @javax.annotation.Resource(name = "My Router", type = DeterminedRouter.class)
         private DeterminedRouter router;
 
-        public void persist(int id, String name, String ds) {
+        public void persist(final int id, final String name, final String ds) {
             router.setDataSource(ds);
             em.persist(new Person(id, name));
         }
@@ -214,7 +214,7 @@ public class DynamicDataSourceTest {
             // no-op
         }
 
-        public Person(int i, String n) {
+        public Person(final int i, final String n) {
             id = i;
             name = n;
         }
@@ -223,7 +223,7 @@ public class DynamicDataSourceTest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
 
@@ -231,7 +231,7 @@ public class DynamicDataSourceTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
     }
@@ -245,7 +245,7 @@ public class DynamicDataSourceTest {
         /**
          * @param datasourceList datasource resource name, separator is a space
          */
-        public void setDataSourceNames(String datasourceList) {
+        public void setDataSourceNames(final String datasourceList) {
             dataSourceNames = datasourceList;
         }
 
@@ -254,25 +254,25 @@ public class DynamicDataSourceTest {
          */
         private void init() {
             dataSources = new ConcurrentHashMap<String, DataSource>();
-            for (String ds : dataSourceNames.split(" ")) {
-                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            for (final String ds : dataSourceNames.split(" ")) {
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
                 Object o = null;
-                Context ctx = containerSystem.getJNDIContext();
+                final Context ctx = containerSystem.getJNDIContext();
                 try {
                     o = ctx.lookup("openejb:Resource/" + ds);
                     if (o instanceof DataSource) {
                         dataSources.put(ds, (DataSource) o);
                     }
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                 }
             }
         }
 
         /**
          * @return the user selected data source if it is set
-         *         or the default one
-         *  @throws IllegalArgumentException if the data source is not found
+         * or the default one
+         * @throws IllegalArgumentException if the data source is not found
          */
         public DataSource getDataSource() {
             // lazy init of routed datasources
@@ -295,17 +295,16 @@ public class DynamicDataSourceTest {
         }
 
         /**
-         *
          * @param datasourceName data source name
          */
-        public void setDataSource(String datasourceName) {
+        public void setDataSource(final String datasourceName) {
             if (dataSources == null) {
                 init();
             }
             if (!dataSources.containsKey(datasourceName)) {
                 throw new IllegalArgumentException("data source called " + datasourceName + " can't be found.");
             }
-            DataSource ds = dataSources.get(datasourceName);
+            final DataSource ds = dataSources.get(datasourceName);
             currentDataSource.set(ds);
         }
 
@@ -316,7 +315,7 @@ public class DynamicDataSourceTest {
             currentDataSource.remove();
         }
 
-        public void setDefaultDataSourceName(String name) {
+        public void setDefaultDataSourceName(final String name) {
             this.defaultDataSourceName = name;
         }
     }

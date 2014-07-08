@@ -22,7 +22,7 @@ import java.net.URI;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class ModuleContext extends DeploymentContext {
     private final AppContext appContext;
     private final Context moduleJndiContext;
@@ -58,8 +58,8 @@ public class ModuleContext extends DeploymentContext {
     public String getUniqueId() {
         return uniqueId;
     }
-    
+
     public URI getModuleURI() {
         return moduleURI;
-    }    
+    }
 }

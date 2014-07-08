@@ -17,10 +17,11 @@
 
 package org.apache.openejb.cdi;
 
-import java.util.Map;
-import java.util.Properties;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+
+import java.util.Map;
+import java.util.Properties;
 
 public class WebappWebBeansContext extends WebBeansContext {
     private WebBeansContext parent;

@@ -31,7 +31,7 @@ public class SingletonEjbHomeTests extends BasicSingletonTestClient {
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
         ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
     }
 
@@ -40,9 +40,9 @@ public class SingletonEjbHomeTests extends BasicSingletonTestClient {
     //
     public void test01_getEJBMetaData(){
         try{
-            EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
+            final EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
             assertNotNull("EJBMetaData is null", ejbMetaData);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -51,7 +51,7 @@ public class SingletonEjbHomeTests extends BasicSingletonTestClient {
         try{
             ejbHomeHandle = ejbHome.getHomeHandle();
             assertNotNull("The HomeHandle is null", ejbHomeHandle );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -88,9 +88,9 @@ public class SingletonEjbHomeTests extends BasicSingletonTestClient {
     public void test03_removeByPrimaryKey(){
         try{
             ejbHome.remove("primaryKey");
-        } catch (RemoveException e){
+        } catch (final RemoveException e){
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
         }
         assertTrue("javax.ejb.RemoveException should have been thrown", false );

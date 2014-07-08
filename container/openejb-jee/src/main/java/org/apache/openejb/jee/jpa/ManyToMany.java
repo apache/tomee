@@ -17,33 +17,31 @@
 
 package org.apache.openejb.jee.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- *
- *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface ManyToMany {
- *           Class targetEntity() default void.class;
- *           CascadeType[] cascade() default {};
- *           FetchType fetch() default LAZY;
- *           String mappedBy() default "";
- *         }
- *
- *
- *
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface ManyToMany {
+ * Class targetEntity() default void.class;
+ * CascadeType[] cascade() default {};
+ * FetchType fetch() default LAZY;
+ * String mappedBy() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for many-to-many complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="many-to-many">
  *   &lt;complexContent>
@@ -80,8 +78,6 @@ import javax.xml.bind.annotation.XmlTransient;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "many-to-many", propOrder = {
@@ -138,10 +134,8 @@ public class ManyToMany implements RelationField {
     /**
      * Gets the value of the orderBy property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getOrderBy() {
         return orderBy;
@@ -150,22 +144,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the orderBy property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setOrderBy(String value) {
+    public void setOrderBy(final String value) {
         this.orderBy = value;
     }
 
     /**
      * Gets the value of the orderColumn property.
      *
-     * @return
-     *     possible object is
-     *     {@link OrderColumn }
-     *
+     * @return possible object is
+     * {@link OrderColumn }
      */
     public OrderColumn getOrderColumn() {
         return orderColumn;
@@ -174,22 +164,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the orderColumn property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link OrderColumn }
-     *
+     * @param value allowed object is
+     *              {@link OrderColumn }
      */
-    public void setOrderColumn(OrderColumn value) {
+    public void setOrderColumn(final OrderColumn value) {
         this.orderColumn = value;
     }
 
     /**
      * Gets the value of the mapKey property.
      *
-     * @return
-     *     possible object is
-     *     {@link MapKey }
-     *
+     * @return possible object is
+     * {@link MapKey }
      */
     public MapKey getMapKey() {
         return mapKey;
@@ -198,22 +184,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mapKey property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link MapKey }
-     *
+     * @param value allowed object is
+     *              {@link MapKey }
      */
-    public void setMapKey(MapKey value) {
+    public void setMapKey(final MapKey value) {
         this.mapKey = value;
     }
 
     /**
      * Gets the value of the mapKeyClass property.
      *
-     * @return
-     *     possible object is
-     *     {@link MapKeyClass }
-     *
+     * @return possible object is
+     * {@link MapKeyClass }
      */
     public MapKeyClass getMapKeyClass() {
         return mapKeyClass;
@@ -222,22 +204,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mapKeyClass property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link MapKeyClass }
-     *
+     * @param value allowed object is
+     *              {@link MapKeyClass }
      */
-    public void setMapKeyClass(MapKeyClass value) {
+    public void setMapKeyClass(final MapKeyClass value) {
         this.mapKeyClass = value;
     }
 
     /**
      * Gets the value of the mapKeyTemporal property.
      *
-     * @return
-     *     possible object is
-     *     {@link TemporalType }
-     *
+     * @return possible object is
+     * {@link TemporalType }
      */
     public TemporalType getMapKeyTemporal() {
         return mapKeyTemporal;
@@ -246,22 +224,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mapKeyTemporal property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link TemporalType }
-     *
+     * @param value allowed object is
+     *              {@link TemporalType }
      */
-    public void setMapKeyTemporal(TemporalType value) {
+    public void setMapKeyTemporal(final TemporalType value) {
         this.mapKeyTemporal = value;
     }
 
     /**
      * Gets the value of the mapKeyEnumerated property.
      *
-     * @return
-     *     possible object is
-     *     {@link EnumType }
-     *
+     * @return possible object is
+     * {@link EnumType }
      */
     public EnumType getMapKeyEnumerated() {
         return mapKeyEnumerated;
@@ -270,36 +244,32 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mapKeyEnumerated property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link EnumType }
-     *
+     * @param value allowed object is
+     *              {@link EnumType }
      */
-    public void setMapKeyEnumerated(EnumType value) {
+    public void setMapKeyEnumerated(final EnumType value) {
         this.mapKeyEnumerated = value;
     }
 
     /**
      * Gets the value of the mapKeyAttributeOverride property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapKeyAttributeOverride property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapKeyAttributeOverride().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link AttributeOverride }
-     *
-     *
      */
     public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
@@ -311,10 +281,8 @@ public class ManyToMany implements RelationField {
     /**
      * Gets the value of the mapKeyColumn property.
      *
-     * @return
-     *     possible object is
-     *     {@link MapKeyColumn }
-     *
+     * @return possible object is
+     * {@link MapKeyColumn }
      */
     public MapKeyColumn getMapKeyColumn() {
         return mapKeyColumn;
@@ -323,36 +291,32 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mapKeyColumn property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link MapKeyColumn }
-     *
+     * @param value allowed object is
+     *              {@link MapKeyColumn }
      */
-    public void setMapKeyColumn(MapKeyColumn value) {
+    public void setMapKeyColumn(final MapKeyColumn value) {
         this.mapKeyColumn = value;
     }
 
     /**
      * Gets the value of the mapKeyJoinColumn property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapKeyJoinColumn property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapKeyJoinColumn().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link MapKeyJoinColumn }
-     *
-     *
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
@@ -364,10 +328,8 @@ public class ManyToMany implements RelationField {
     /**
      * Gets the value of the joinTable property.
      *
-     * @return
-     *     possible object is
-     *     {@link JoinTable }
-     *
+     * @return possible object is
+     * {@link JoinTable }
      */
     public JoinTable getJoinTable() {
         return joinTable;
@@ -376,22 +338,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the joinTable property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link JoinTable }
-     *
+     * @param value allowed object is
+     *              {@link JoinTable }
      */
-    public void setJoinTable(JoinTable value) {
+    public void setJoinTable(final JoinTable value) {
         this.joinTable = value;
     }
 
     /**
      * Gets the value of the cascade property.
      *
-     * @return
-     *     possible object is
-     *     {@link CascadeType }
-     *
+     * @return possible object is
+     * {@link CascadeType }
      */
     public CascadeType getCascade() {
         return cascade;
@@ -400,22 +358,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the cascade property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link CascadeType }
-     *
+     * @param value allowed object is
+     *              {@link CascadeType }
      */
-    public void setCascade(CascadeType value) {
+    public void setCascade(final CascadeType value) {
         this.cascade = value;
     }
 
     /**
      * Gets the value of the fetch property.
      *
-     * @return
-     *     possible object is
-     *     {@link FetchType }
-     *
+     * @return possible object is
+     * {@link FetchType }
      */
     public FetchType getFetch() {
         return fetch;
@@ -424,22 +378,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the fetch property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link FetchType }
-     *
+     * @param value allowed object is
+     *              {@link FetchType }
      */
-    public void setFetch(FetchType value) {
+    public void setFetch(final FetchType value) {
         this.fetch = value;
     }
 
     /**
      * Gets the value of the mappedBy property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMappedBy() {
         return mappedBy;
@@ -448,22 +398,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the mappedBy property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMappedBy(String value) {
+    public void setMappedBy(final String value) {
         this.mappedBy = value;
     }
 
     /**
      * Gets the value of the name property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -472,22 +418,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the name property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the access property.
      *
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -496,22 +438,18 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the access property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 
     /**
      * Gets the value of the targetEntity property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTargetEntity() {
         return targetEntity;
@@ -520,22 +458,21 @@ public class ManyToMany implements RelationField {
     /**
      * Sets the value of the targetEntity property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTargetEntity(String value) {
+    public void setTargetEntity(final String value) {
         this.targetEntity = value;
     }
 
     public List<JoinColumn> getJoinColumn() {
         throw new UnsupportedOperationException("Many to many element can not have join columns");
     }
-    
+
     /**
      * This is only used for xml converters and will normally return null.
      * Gets the field on the target entity for this relationship.
+     *
      * @return the field on the target entity for this relationship.
      */
     public RelationField getRelatedField() {
@@ -544,15 +481,17 @@ public class ManyToMany implements RelationField {
 
     /**
      * Gets the field on the target entity for this relationship.
+     *
      * @param value field on the target entity for this relationship.
      */
-    public void setRelatedField(RelationField value) {
+    public void setRelatedField(final RelationField value) {
         this.relatedField = value;
     }
 
     /**
      * This is only used for xml converters and will normally return false.
      * A true value indicates that this field was generated for CMR back references.
+     *
      * @return true if this field was generated for CMR back references.
      */
     public boolean isSyntheticField() {
@@ -562,9 +501,10 @@ public class ManyToMany implements RelationField {
     /**
      * This is only used for xml converters and will normally return false.
      * A true value indicates that this field was generated for CMR back references.
+     *
      * @return true if this field was generated for CMR back references.
      */
-    public void setSyntheticField(boolean syntheticField) {
+    public void setSyntheticField(final boolean syntheticField) {
         this.syntheticField = syntheticField;
     }
 

@@ -128,7 +128,7 @@ public abstract class AbstractService implements Service {
      * Gets the value of the id property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -148,7 +148,7 @@ public abstract class AbstractService implements Service {
      * Gets the value of the jar property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getJar() {
         return jar;
@@ -168,7 +168,7 @@ public abstract class AbstractService implements Service {
      * Gets the value of the provider property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getProvider() {
         return provider;

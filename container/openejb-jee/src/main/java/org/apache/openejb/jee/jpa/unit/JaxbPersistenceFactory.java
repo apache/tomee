@@ -17,11 +17,11 @@
  */
 package org.apache.openejb.jee.jpa.unit;
 
+import org.apache.openejb.jee.JAXBContextFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
-import org.apache.openejb.jee.JAXBContextFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -29,9 +29,9 @@ import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -40,31 +40,31 @@ import java.net.URL;
 public class JaxbPersistenceFactory {
     public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
 
-    public static <T> T getPersistence(Class<T> clazz, InputStream persistenceDescriptor) throws Exception {
-        JAXBContext jc = JAXBContextFactory.newInstance(clazz);
-        Unmarshaller u = jc.createUnmarshaller();
-        UnmarshallerHandler uh = u.getUnmarshallerHandler();
+    public static <T> T getPersistence(final Class<T> clazz, final InputStream persistenceDescriptor) throws Exception {
+        final JAXBContext jc = JAXBContextFactory.newInstance(clazz);
+        final Unmarshaller u = jc.createUnmarshaller();
+        final UnmarshallerHandler uh = u.getUnmarshallerHandler();
 
         // create a new XML parser
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(true);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
-        XMLReader xmlReader = parser.getXMLReader();
+        final XMLReader xmlReader = parser.getXMLReader();
 
         // Create a filter to intercept events
-        PersistenceFilter xmlFilter = new PersistenceFilter(xmlReader);
+        final PersistenceFilter xmlFilter = new PersistenceFilter(xmlReader);
 
         // Be sure the filter has the JAXB content handler set (or it wont
         // work)
         xmlFilter.setContentHandler(uh);
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
+        final SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
 
         return (T) u.unmarshal(source);
     }
 
-    public static <T> T getPersistence(Class<T> clazz, URL url) throws Exception {
+    public static <T> T getPersistence(final Class<T> clazz, final URL url) throws Exception {
         InputStream persistenceDescriptor = null;
 
         try {
@@ -81,11 +81,11 @@ public class JaxbPersistenceFactory {
     public static class PersistenceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public PersistenceFilter(XMLReader xmlReader) {
+        public PersistenceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             return EMPTY_INPUT_SOURCE;
         }
     }

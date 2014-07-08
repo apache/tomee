@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 @Managed(append = true)
 public class Event {
     private final AtomicLong count = new AtomicLong();
@@ -50,7 +50,7 @@ public class Event {
         if (last <= 0) {
             return "-";
         }
-        
+
         final DateFormat format = SimpleDateFormat.getDateTimeInstance();
         return format.format(new Date(last));
     }

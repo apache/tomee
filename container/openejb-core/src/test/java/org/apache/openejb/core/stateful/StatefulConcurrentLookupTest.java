@@ -143,7 +143,7 @@ public class StatefulConcurrentLookupTest {
 
                 bean.set(name, throwException);
                 success = name.equals(bean.get());
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 success = false;
             } finally {
                 finishingLine.countDown();

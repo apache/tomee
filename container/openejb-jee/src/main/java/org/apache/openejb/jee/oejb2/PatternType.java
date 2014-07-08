@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for patternType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="patternType">
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "patternType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -65,11 +63,9 @@ public class PatternType {
 
     /**
      * Gets the value of the groupId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupId() {
         return groupId;
@@ -77,23 +73,19 @@ public class PatternType {
 
     /**
      * Sets the value of the groupId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupId(String value) {
+    public void setGroupId(final String value) {
         this.groupId = value;
     }
 
     /**
      * Gets the value of the artifactId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getArtifactId() {
         return artifactId;
@@ -101,23 +93,19 @@ public class PatternType {
 
     /**
      * Sets the value of the artifactId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setArtifactId(String value) {
+    public void setArtifactId(final String value) {
         this.artifactId = value;
     }
 
     /**
      * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVersion() {
         return version;
@@ -125,23 +113,19 @@ public class PatternType {
 
     /**
      * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
     /**
      * Gets the value of the module property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getModule() {
         return module;
@@ -149,23 +133,19 @@ public class PatternType {
 
     /**
      * Sets the value of the module property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setModule(String value) {
+    public void setModule(final String value) {
         this.module = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -173,13 +153,11 @@ public class PatternType {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

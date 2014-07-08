@@ -21,33 +21,43 @@ import javax.ejb.EJBLocalObject;
 
 public interface QueryDataLocal extends EJBLocalObject {
     public Integer getId();
+
     public void setId(Integer id);
 
     public boolean getBooleanField();
+
     public void setBooleanField(boolean value);
 
     public char getCharField();
+
     public void setCharField(char value);
 
     public byte getByteField();
+
     public void setByteField(byte value);
 
     public short getShortField();
+
     public void setShortField(short value);
 
     public int getIntField();
+
     public void setIntField(int value);
 
     public long getLongField();
+
     public void setLongField(long value);
 
     public float getFloatField();
+
     public void setFloatField(float value);
 
     public double getDoubleField();
+
     public void setDoubleField(double value);
 
     public String getStringField();
+
     public void setStringField(String value);
 
 }

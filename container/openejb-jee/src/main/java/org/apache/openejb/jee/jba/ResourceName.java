@@ -36,11 +36,9 @@ public class ResourceName {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getvalue() {
         return value;
@@ -48,13 +46,11 @@ public class ResourceName {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 

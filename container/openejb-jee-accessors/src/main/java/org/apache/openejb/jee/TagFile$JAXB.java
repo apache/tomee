@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.TldExtension$JAXB.readTldExtension;
 import static org.apache.openejb.jee.TldExtension$JAXB.writeTldExtension;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class TagFile$JAXB
-        extends JAXBObject<TagFile> {
+    extends JAXBObject<TagFile> {
 
 
     public TagFile$JAXB() {
         super(TagFile.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "tagFileType".intern()), Text$JAXB.class, Icon$JAXB.class, TldExtension$JAXB.class);
     }
 
-    public static TagFile readTagFile(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static TagFile readTagFile(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTagFile(XoXMLStreamWriter writer, TagFile tagFile, RuntimeContext context)
-            throws Exception {
+    public static void writeTagFile(final XoXMLStreamWriter writer, final TagFile tagFile, final RuntimeContext context)
+        throws Exception {
         _write(writer, tagFile, context);
     }
 
-    public void write(XoXMLStreamWriter writer, TagFile tagFile, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final TagFile tagFile, final RuntimeContext context)
+        throws Exception {
         _write(writer, tagFile, context);
     }
 
-    public final static TagFile _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static TagFile _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class TagFile$JAXB
             context = new RuntimeContext();
         }
 
-        TagFile tagFile = new TagFile();
+        final TagFile tagFile = new TagFile();
         context.beforeUnmarshal(tagFile, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -83,7 +83,7 @@ public class TagFile$JAXB
         List<TldExtension> tagExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("tagFileType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, TagFile.class);
@@ -91,10 +91,10 @@ public class TagFile$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, tagFile);
                 tagFile.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -103,24 +103,24 @@ public class TagFile$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = tagFile.icon;
                     if (icon != null) {
@@ -132,12 +132,12 @@ public class TagFile$JAXB
                 icon.add(iconItem);
             } else if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                String nameRaw = elementReader.getElementAsString();
+                final String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -145,12 +145,12 @@ public class TagFile$JAXB
                 tagFile.name = name;
             } else if (("path" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: path
-                String pathRaw = elementReader.getElementAsString();
+                final String pathRaw = elementReader.getElementAsString();
 
-                String path;
+                final String path;
                 try {
                     path = Adapters.collapsedStringAdapterAdapter.unmarshal(pathRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -158,12 +158,12 @@ public class TagFile$JAXB
                 tagFile.path = path;
             } else if (("example" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: example
-                String exampleRaw = elementReader.getElementAsString();
+                final String exampleRaw = elementReader.getElementAsString();
 
-                String example;
+                final String example;
                 try {
                     example = Adapters.collapsedStringAdapterAdapter.unmarshal(exampleRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -171,7 +171,7 @@ public class TagFile$JAXB
                 tagFile.example = example;
             } else if (("tag-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tagExtension
-                TldExtension tagExtensionItem = readTldExtension(elementReader, context);
+                final TldExtension tagExtensionItem = readTldExtension(elementReader, context);
                 if (tagExtension == null) {
                     tagExtension = tagFile.tagExtension;
                     if (tagExtension != null) {
@@ -188,14 +188,14 @@ public class TagFile$JAXB
         if (descriptions != null) {
             try {
                 tagFile.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, TagFile.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 tagFile.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, TagFile.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -211,13 +211,13 @@ public class TagFile$JAXB
         return tagFile;
     }
 
-    public final TagFile read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final TagFile read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, TagFile tagFile, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final TagFile tagFile, RuntimeContext context)
+        throws Exception {
         if (tagFile == null) {
             writer.writeXsiNil();
             return;
@@ -227,7 +227,7 @@ public class TagFile$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (TagFile.class != tagFile.getClass()) {
             context.unexpectedSubclass(writer, tagFile, TagFile.class);
             return;
@@ -237,12 +237,12 @@ public class TagFile$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = tagFile.id;
+        final String idRaw = tagFile.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tagFile, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -252,11 +252,11 @@ public class TagFile$JAXB
         Text[] descriptions = null;
         try {
             descriptions = tagFile.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tagFile, "descriptions", TagFile.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -271,11 +271,11 @@ public class TagFile$JAXB
         Text[] displayNames = null;
         try {
             displayNames = tagFile.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tagFile, "displayNames", TagFile.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -287,9 +287,9 @@ public class TagFile$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = tagFile.icon;
+        final LocalCollection<Icon> icon = tagFile.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -301,11 +301,11 @@ public class TagFile$JAXB
         }
 
         // ELEMENT: name
-        String nameRaw = tagFile.name;
+        final String nameRaw = tagFile.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tagFile, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (name != null) {
@@ -317,11 +317,11 @@ public class TagFile$JAXB
         }
 
         // ELEMENT: path
-        String pathRaw = tagFile.path;
+        final String pathRaw = tagFile.path;
         String path = null;
         try {
             path = Adapters.collapsedStringAdapterAdapter.marshal(pathRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tagFile, "path", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (path != null) {
@@ -333,11 +333,11 @@ public class TagFile$JAXB
         }
 
         // ELEMENT: example
-        String exampleRaw = tagFile.example;
+        final String exampleRaw = tagFile.example;
         String example = null;
         try {
             example = Adapters.collapsedStringAdapterAdapter.marshal(exampleRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tagFile, "example", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (example != null) {
@@ -347,9 +347,9 @@ public class TagFile$JAXB
         }
 
         // ELEMENT: tagExtension
-        List<TldExtension> tagExtension = tagFile.tagExtension;
+        final List<TldExtension> tagExtension = tagFile.tagExtension;
         if (tagExtension != null) {
-            for (TldExtension tagExtensionItem : tagExtension) {
+            for (final TldExtension tagExtensionItem : tagExtension) {
                 if (tagExtensionItem != null) {
                     writer.writeStartElement(prefix, "tag-extension", "http://java.sun.com/xml/ns/javaee");
                     writeTldExtension(writer, tagExtensionItem, context);

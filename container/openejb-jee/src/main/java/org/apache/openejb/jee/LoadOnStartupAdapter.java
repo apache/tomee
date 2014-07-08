@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class LoadOnStartupAdapter extends XmlAdapter<String, Integer> {
     @Override
-    public Integer unmarshal(String value) throws Exception {
+    public Integer unmarshal(final String value) throws Exception {
         if (value.equalsIgnoreCase("true")) {
             return 1;
         }
@@ -38,7 +38,7 @@ public class LoadOnStartupAdapter extends XmlAdapter<String, Integer> {
     }
 
     @Override
-    public String marshal(Integer v) throws Exception {
+    public String marshal(final Integer v) throws Exception {
         return v.toString();
     }
 }

@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,13 +24,16 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for weblogic-rdbms-bean complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-rdbms-bean">
  *   &lt;complexContent>
@@ -60,8 +60,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-rdbms-bean", propOrder = {
@@ -123,11 +121,9 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbName() {
         return ejbName;
@@ -135,23 +131,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the dataSourceJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDataSourceJndiName() {
         return dataSourceJndiName;
@@ -159,23 +151,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the dataSourceJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDataSourceJndiName(String value) {
+    public void setDataSourceJndiName(final String value) {
         this.dataSourceJndiName = value;
     }
 
     /**
      * Gets the value of the unknownPrimaryKeyField property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UnknownPrimaryKeyField }
-     *     
+     *
+     * @return possible object is
+     * {@link UnknownPrimaryKeyField }
      */
     public UnknownPrimaryKeyField getUnknownPrimaryKeyField() {
         return unknownPrimaryKeyField;
@@ -183,37 +171,33 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the unknownPrimaryKeyField property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UnknownPrimaryKeyField }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UnknownPrimaryKeyField }
      */
-    public void setUnknownPrimaryKeyField(UnknownPrimaryKeyField value) {
+    public void setUnknownPrimaryKeyField(final UnknownPrimaryKeyField value) {
         this.unknownPrimaryKeyField = value;
     }
 
     /**
      * Gets the value of the tableMap property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the tableMap property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTableMap().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link TableMap }
-     * 
-     * 
      */
     public List<TableMap> getTableMap() {
         if (tableMap == null) {
@@ -224,25 +208,23 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the fieldGroup property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the fieldGroup property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFieldGroup().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldGroup }
-     * 
-     * 
      */
     public List<FieldGroup> getFieldGroup() {
         if (fieldGroup == null) {
@@ -253,25 +235,23 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the relationshipCaching property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the relationshipCaching property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRelationshipCaching().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link RelationshipCaching }
-     * 
-     * 
      */
     public List<RelationshipCaching> getRelationshipCaching() {
         if (relationshipCaching == null) {
@@ -282,25 +262,23 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the sqlShape property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sqlShape property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSqlShape().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SqlShape }
-     * 
-     * 
      */
     public List<SqlShape> getSqlShape() {
         if (sqlShape == null) {
@@ -311,25 +289,23 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the weblogicQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the weblogicQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWeblogicQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link WeblogicQuery }
-     * 
-     * 
      */
     public List<WeblogicQuery> getWeblogicQuery() {
         if (weblogicQuery == null) {
@@ -340,11 +316,9 @@ public class WeblogicRdbmsBean {
 
     /**
      * Gets the value of the delayDatabaseInsertUntil property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDelayDatabaseInsertUntil() {
         return delayDatabaseInsertUntil;
@@ -352,23 +326,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the delayDatabaseInsertUntil property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDelayDatabaseInsertUntil(String value) {
+    public void setDelayDatabaseInsertUntil(final String value) {
         this.delayDatabaseInsertUntil = value;
     }
 
     /**
      * Gets the value of the useSelectForUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getUseSelectForUpdate() {
         return useSelectForUpdate;
@@ -376,23 +346,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the useSelectForUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setUseSelectForUpdate(Boolean value) {
+    public void setUseSelectForUpdate(final Boolean value) {
         this.useSelectForUpdate = value;
     }
 
     /**
      * Gets the value of the lockOrder property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getLockOrder() {
         return lockOrder;
@@ -400,23 +366,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the lockOrder property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setLockOrder(BigInteger value) {
+    public void setLockOrder(final BigInteger value) {
         this.lockOrder = value;
     }
 
     /**
      * Gets the value of the instanceLockOrder property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInstanceLockOrder() {
         return instanceLockOrder;
@@ -424,23 +386,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the instanceLockOrder property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInstanceLockOrder(String value) {
+    public void setInstanceLockOrder(final String value) {
         this.instanceLockOrder = value;
     }
 
     /**
      * Gets the value of the automaticKeyGeneration property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AutomaticKeyGeneration }
-     *     
+     *
+     * @return possible object is
+     * {@link AutomaticKeyGeneration }
      */
     public AutomaticKeyGeneration getAutomaticKeyGeneration() {
         return automaticKeyGeneration;
@@ -448,23 +406,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the automaticKeyGeneration property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AutomaticKeyGeneration }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AutomaticKeyGeneration }
      */
-    public void setAutomaticKeyGeneration(AutomaticKeyGeneration value) {
+    public void setAutomaticKeyGeneration(final AutomaticKeyGeneration value) {
         this.automaticKeyGeneration = value;
     }
 
     /**
      * Gets the value of the checkExistsOnMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getCheckExistsOnMethod() {
         return checkExistsOnMethod;
@@ -472,23 +426,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the checkExistsOnMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setCheckExistsOnMethod(Boolean value) {
+    public void setCheckExistsOnMethod(final Boolean value) {
         this.checkExistsOnMethod = value;
     }
 
     /**
      * Gets the value of the clusterInvalidationDisabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getClusterInvalidationDisabled() {
         return clusterInvalidationDisabled;
@@ -496,23 +446,19 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the clusterInvalidationDisabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setClusterInvalidationDisabled(Boolean value) {
+    public void setClusterInvalidationDisabled(final Boolean value) {
         this.clusterInvalidationDisabled = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -520,13 +466,11 @@ public class WeblogicRdbmsBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

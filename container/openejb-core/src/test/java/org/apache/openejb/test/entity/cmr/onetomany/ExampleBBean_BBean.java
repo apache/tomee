@@ -37,7 +37,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return field1;
     }
 
-    public void setId(Integer field1) {
+    public void setId(final Integer field1) {
         this.field1 = field1;
     }
 
@@ -45,7 +45,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return field2;
     }
 
-    public void setName(String field2) {
+    public void setName(final String field2) {
         this.field2 = field2;
     }
 
@@ -53,7 +53,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return field3;
     }
 
-    public void setBpm(Integer field3) {
+    public void setBpm(final Integer field3) {
         this.field3 = field3;
     }
 
@@ -61,7 +61,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return field4;
     }
 
-    public void setDescription(String field4) {
+    public void setDescription(final String field4) {
         this.field4 = field4;
     }
 
@@ -69,7 +69,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return (ArtistLocal) aCmr.get(a);
     }
 
-    public void setPerformer(ArtistLocal artist) {
+    public void setPerformer(final ArtistLocal artist) {
         this.a = (ExampleABean_ABean) aCmr.set(this.a, artist);
     }
 
@@ -77,7 +77,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         return (ArtistLocal) aNonCascadeCmr.get(aNonCascade);
     }
 
-    public void setComposer(ArtistLocal artistNonCascade) {
+    public void setComposer(final ArtistLocal artistNonCascade) {
         this.aNonCascade = (ExampleABean_ABean) aNonCascadeCmr.set(this.aNonCascade, artistNonCascade);
     }
 
@@ -93,17 +93,17 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         aNonCascadeCmr.deleted(aNonCascade);
     }
 
-    public Object OpenEJB_addCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) return null;
 
         if ("a".equals(name)) {
-            Object oldValue = a;
+            final Object oldValue = a;
             a = (ExampleABean_ABean) bean;
             return oldValue;
         }
 
         if ("aNonCascade".equals(name)) {
-            Object oldValue = aNonCascade;
+            final Object oldValue = aNonCascade;
             aNonCascade = (ExampleABean_ABean) bean;
             return oldValue;
         }
@@ -111,7 +111,7 @@ public class ExampleBBean_BBean extends SongBean implements Cmp2Entity {
         throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 
-    public void OpenEJB_removeCmr(String name, Object bean) {
+    public void OpenEJB_removeCmr(final String name, final Object bean) {
         if (deleted) return;
 
         if ("a".equals(name)) {

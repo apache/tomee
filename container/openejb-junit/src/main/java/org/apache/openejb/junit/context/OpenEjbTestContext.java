@@ -42,7 +42,6 @@ import java.util.Properties;
  * To implement your own context, you need to create an implementation of TestContext
  * which would configure the test when instructed. You can then use whatever method
  * of configuration you choose.
- *
  */
 public class OpenEjbTestContext implements TestContext {
     protected static final String REALM_PROPERTY_KEY = "openejb.authentication.realmName";
@@ -125,14 +124,11 @@ public class OpenEjbTestContext implements TestContext {
 
             // perform custom injections
             performInjections(testObj);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBRuntimeException("Failed to load configuration.", e);
-        }
-        catch (final NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Failed to configure object.", e);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException("Unknown error trying to configure object.", e);
         }
     }
@@ -163,8 +159,7 @@ public class OpenEjbTestContext implements TestContext {
             try {
                 final Properties config = getContextConfig();
                 initialContext = new InitialContext(config);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new NamingException("Failed to load initial context configuration: " + e.getMessage());
             }
         }
@@ -199,14 +194,14 @@ public class OpenEjbTestContext implements TestContext {
             final InputStream in = OpenEjbTestContext.class.getResourceAsStream(DEFAULT_CONFIG_FILE_RESOURCE);
             if (in == null) {
                 throw new FileNotFoundException("Default configuration file not found. Specify configuration " +
-                        "properties to initialize OpenEJB using @ContextConfig.");
+                    "properties to initialize OpenEJB using @ContextConfig.");
             }
             env.load(in);
 
             // if it's still empty, something bad has happened, and OpenEJB won't initialize. Complain.
             if (env.size() == 0) {
                 throw new IOException("Context configuration failed to load, so OpenEJB won't load either. Specify configuration " +
-                        "properties for initializing OpenEJB using @ContextConfig.");
+                    "properties for initializing OpenEJB using @ContextConfig.");
             }
         }
 
@@ -263,7 +258,7 @@ public class OpenEjbTestContext implements TestContext {
      * @return true if any properties were loaded
      */
     protected boolean loadConfigFile(final Properties env, final ContextConfig contextConfig)
-            throws IOException {
+        throws IOException {
         // properties file
         if (contextConfig.configFile().length() > 0) {
             final InputStream in = clazz.getResourceAsStream(contextConfig.configFile());
@@ -325,8 +320,7 @@ public class OpenEjbTestContext implements TestContext {
                     setterMethod.invoke(testObj, injectValue);
                     continue;
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 System.err.println("Failed to perform setter injection on: " + clazz.getCanonicalName() + "." + field.getName());
                 e.printStackTrace();
             }
@@ -338,8 +332,7 @@ public class OpenEjbTestContext implements TestContext {
                 }
 
                 field.set(testObj, injectValue);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBRuntimeException("Failed to inject on: " + clazz.getCanonicalName() + "." + field.getName(), e);
             }
         }
@@ -359,7 +352,7 @@ public class OpenEjbTestContext implements TestContext {
 
             if (resourceType == null) {
                 throw new IllegalArgumentException("Null TestResource type '" + resourceType +
-                        "' on field: " + clazz.getCanonicalName() + "." + field.getName());
+                    "' on field: " + clazz.getCanonicalName() + "." + field.getName());
             } else {
                 if (TestResourceTypes.CONTEXT_CONFIG.equals(resourceType)) {
                     return getContextConfig();

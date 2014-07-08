@@ -33,17 +33,17 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
     Context envContext;
     Boolean useJdbc = Boolean.FALSE;
 
-    public void ejbCreate(String name) throws javax.ejb.CreateException {
+    public void ejbCreate(final String name) throws javax.ejb.CreateException {
         //testAllowedOperations("ejbCreate");
         try {
 
             jndiContext = new InitialContext();
 
-            String author = (String) jndiContext.lookup("java:comp/env/author");
+            final String author = (String) jndiContext.lookup("java:comp/env/author");
 
-            Double price = (Double) jndiContext.lookup("java:comp/env/price");
+            final Double price = (Double) jndiContext.lookup("java:comp/env/price");
 
-        } catch (javax.naming.NamingException re) {
+        } catch (final javax.naming.NamingException re) {
             throw new RuntimeException("Using JNDI failed");
         }
 
@@ -53,17 +53,17 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
 
         try {
 
-            boolean test = context.isCallerInRole("TheMan");
+            final boolean test = context.isCallerInRole("TheMan");
 
             jndiContext = new InitialContext();
 
-            CalculatorHome home = (CalculatorHome) jndiContext.lookup("java:comp/env/ejb/calculator");
-            Calculator calc = home.create();
+            final CalculatorHome home = (CalculatorHome) jndiContext.lookup("java:comp/env/ejb/calculator");
+            final Calculator calc = home.create();
             return calc;
 
-        } catch (java.rmi.RemoteException re) {
+        } catch (final java.rmi.RemoteException re) {
             throw new RuntimeException("Getting calulator bean failed");
-        } catch (javax.naming.NamingException re) {
+        } catch (final javax.naming.NamingException re) {
             throw new RuntimeException("Using JNDI failed");
         }
 
@@ -75,36 +75,36 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
         Connection con = null;
         try {
 
-            javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
             con = ds.getConnection();
 
-            Statement stmt = con.createStatement();
+            final Statement stmt = con.createStatement();
             try {
-                ResultSet rs = stmt.executeQuery("select * from Employees");
+                final ResultSet rs = stmt.executeQuery("select * from Employees");
                 while (rs.next())
                     System.out.println(rs.getString(2));
 
-                Calculator calc = getCalculator();
+                final Calculator calc = getCalculator();
                 calc.add(1, 1);
                 calc.sub(1, 2);
 
-                int i = 1;
+                final int i = 1;
             } finally {
                 stmt.close();
             }
 
-        } catch (java.rmi.RemoteException re) {
+        } catch (final java.rmi.RemoteException re) {
             throw new RuntimeException("Accessing Calculator bean failed");
-        } catch (javax.naming.NamingException ne) {
+        } catch (final javax.naming.NamingException ne) {
             throw new RuntimeException("Using JNDI failed");
-        } catch (java.sql.SQLException se) {
+        } catch (final java.sql.SQLException se) {
             throw new RuntimeException("Getting JDBC data source failed");
         } finally {
             if (con != null) {
                 try {
                     con.close();
-                } catch (SQLException se) {
+                } catch (final SQLException se) {
                     se.printStackTrace();
                 }
             }
@@ -117,12 +117,12 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         //testAllowedOperations("setName");
         this.name = name;
     }
 
-    public void setSessionContext(SessionContext cntx) {
+    public void setSessionContext(final SessionContext cntx) {
         context = cntx;
         //testAllowedOperations("setSessionContext");
     }
@@ -147,53 +147,53 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
         // do nothing
     }
 
-    public void afterCompletion(boolean commit) {
+    public void afterCompletion(final boolean commit) {
         // do nothing
     }
 
-    private void testAllowedOperations(String methodName) {
+    private void testAllowedOperations(final String methodName) {
         System.out.println("******************************************************");
         System.out.println("\nTesting Allowed Operations for " + methodName + "() method\n");
         try {
             context.getEJBObject();
             System.out.println("SessionContext.getEJBObject() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getEJBObject() ... Failed");
         }
         try {
             context.getEJBHome();
             System.out.println("SessionContext.getEJBHome() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getEJBHome() ... Failed");
         }
         try {
             context.getCallerPrincipal();
             System.out.println("SessionContext.getCallerPrincipal() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getCallerPrincipal() ... Failed");
         }
         try {
             context.isCallerInRole("ROLE");
             System.out.println("SessionContext.isCallerInRole() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.isCallerInRole() ... Failed");
         }
         try {
             context.getRollbackOnly();
             System.out.println("SessionContext.getRollbackOnly() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getRollbackOnly() ... Failed");
         }
         try {
             context.setRollbackOnly();
             System.out.println("SessionContext.setRollbackOnly() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.setRollbackOnly() ... Failed");
         }
         try {
             context.getUserTransaction();
             System.out.println("SessionContext.getUserTransaction() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getUserTransaction() ... Failed");
         }
     }

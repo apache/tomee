@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 
 public final class ProvisioningUtil {
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
+
     static {
         FACTORY.setNamespaceAware(false);
         FACTORY.setValidating(false);

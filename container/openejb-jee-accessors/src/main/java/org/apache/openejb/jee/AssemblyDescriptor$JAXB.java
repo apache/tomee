@@ -47,33 +47,33 @@ import static org.apache.openejb.jee.SecurityRole$JAXB.readSecurityRole;
 import static org.apache.openejb.jee.SecurityRole$JAXB.writeSecurityRole;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AssemblyDescriptor$JAXB
-        extends JAXBObject<AssemblyDescriptor> {
+    extends JAXBObject<AssemblyDescriptor> {
 
 
     public AssemblyDescriptor$JAXB() {
         super(AssemblyDescriptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "assembly-descriptorType".intern()), SecurityRole$JAXB.class, MethodPermission$JAXB.class, ContainerTransaction$JAXB.class, ContainerConcurrency$JAXB.class, InterceptorBinding$JAXB.class, MessageDestination$JAXB.class, ExcludeList$JAXB.class, ApplicationException$JAXB.class);
     }
 
-    public static AssemblyDescriptor readAssemblyDescriptor(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AssemblyDescriptor readAssemblyDescriptor(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAssemblyDescriptor(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public static void writeAssemblyDescriptor(final XoXMLStreamWriter writer, final AssemblyDescriptor assemblyDescriptor, final RuntimeContext context)
+        throws Exception {
         _write(writer, assemblyDescriptor, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final AssemblyDescriptor assemblyDescriptor, final RuntimeContext context)
+        throws Exception {
         _write(writer, assemblyDescriptor, context);
     }
 
-    public final static AssemblyDescriptor _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AssemblyDescriptor _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -84,7 +84,7 @@ public class AssemblyDescriptor$JAXB
             context = new RuntimeContext();
         }
 
-        AssemblyDescriptor assemblyDescriptor = new AssemblyDescriptor();
+        final AssemblyDescriptor assemblyDescriptor = new AssemblyDescriptor();
         context.beforeUnmarshal(assemblyDescriptor, LifecycleCallback.NONE);
 
         List<SecurityRole> securityRole = null;
@@ -96,7 +96,7 @@ public class AssemblyDescriptor$JAXB
         KeyedCollection<String, ApplicationException> applicationException = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("assembly-descriptorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AssemblyDescriptor.class);
@@ -104,10 +104,10 @@ public class AssemblyDescriptor$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, assemblyDescriptor);
                 assemblyDescriptor.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -116,10 +116,10 @@ public class AssemblyDescriptor$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("security-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityRole
-                SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
+                final SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
                 if (securityRole == null) {
                     securityRole = assemblyDescriptor.securityRole;
                     if (securityRole != null) {
@@ -131,7 +131,7 @@ public class AssemblyDescriptor$JAXB
                 securityRole.add(securityRoleItem);
             } else if (("method-permission" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodPermission
-                MethodPermission methodPermissionItem = readMethodPermission(elementReader, context);
+                final MethodPermission methodPermissionItem = readMethodPermission(elementReader, context);
                 if (methodPermission == null) {
                     methodPermission = assemblyDescriptor.methodPermission;
                     if (methodPermission != null) {
@@ -143,7 +143,7 @@ public class AssemblyDescriptor$JAXB
                 methodPermission.add(methodPermissionItem);
             } else if (("container-transaction" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: containerTransaction
-                ContainerTransaction containerTransactionItem = readContainerTransaction(elementReader, context);
+                final ContainerTransaction containerTransactionItem = readContainerTransaction(elementReader, context);
                 if (containerTransaction == null) {
                     containerTransaction = assemblyDescriptor.containerTransaction;
                     if (containerTransaction != null) {
@@ -155,7 +155,7 @@ public class AssemblyDescriptor$JAXB
                 containerTransaction.add(containerTransactionItem);
             } else if (("container-concurrency" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: containerConcurrency
-                ContainerConcurrency containerConcurrencyItem = readContainerConcurrency(elementReader, context);
+                final ContainerConcurrency containerConcurrencyItem = readContainerConcurrency(elementReader, context);
                 if (containerConcurrency == null) {
                     containerConcurrency = assemblyDescriptor.containerConcurrency;
                     if (containerConcurrency != null) {
@@ -167,7 +167,7 @@ public class AssemblyDescriptor$JAXB
                 containerConcurrency.add(containerConcurrencyItem);
             } else if (("interceptor-binding" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptorBinding
-                InterceptorBinding interceptorBindingItem = readInterceptorBinding(elementReader, context);
+                final InterceptorBinding interceptorBindingItem = readInterceptorBinding(elementReader, context);
                 if (interceptorBinding == null) {
                     interceptorBinding = assemblyDescriptor.interceptorBinding;
                     if (interceptorBinding != null) {
@@ -179,7 +179,7 @@ public class AssemblyDescriptor$JAXB
                 interceptorBinding.add(interceptorBindingItem);
             } else if (("message-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestination
-                MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
+                final MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
                 if (messageDestination == null) {
                     messageDestination = assemblyDescriptor.messageDestination;
                     if (messageDestination != null) {
@@ -191,11 +191,11 @@ public class AssemblyDescriptor$JAXB
                 messageDestination.add(messageDestinationItem);
             } else if (("exclude-list" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeList
-                ExcludeList excludeList = readExcludeList(elementReader, context);
+                final ExcludeList excludeList = readExcludeList(elementReader, context);
                 assemblyDescriptor.excludeList = excludeList;
             } else if (("application-exception" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: applicationException
-                ApplicationException applicationExceptionItem = readApplicationException(elementReader, context);
+                final ApplicationException applicationExceptionItem = readApplicationException(elementReader, context);
                 if (applicationException == null) {
                     applicationException = assemblyDescriptor.applicationException;
                     if (applicationException != null) {
@@ -236,13 +236,13 @@ public class AssemblyDescriptor$JAXB
         return assemblyDescriptor;
     }
 
-    public final AssemblyDescriptor read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AssemblyDescriptor read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final AssemblyDescriptor assemblyDescriptor, RuntimeContext context)
+        throws Exception {
         if (assemblyDescriptor == null) {
             writer.writeXsiNil();
             return;
@@ -252,7 +252,7 @@ public class AssemblyDescriptor$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (AssemblyDescriptor.class != assemblyDescriptor.getClass()) {
             context.unexpectedSubclass(writer, assemblyDescriptor, AssemblyDescriptor.class);
             return;
@@ -262,21 +262,21 @@ public class AssemblyDescriptor$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = assemblyDescriptor.id;
+        final String idRaw = assemblyDescriptor.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(assemblyDescriptor, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: securityRole
-        List<SecurityRole> securityRole = assemblyDescriptor.securityRole;
+        final List<SecurityRole> securityRole = assemblyDescriptor.securityRole;
         if (securityRole != null) {
-            for (SecurityRole securityRoleItem : securityRole) {
+            for (final SecurityRole securityRoleItem : securityRole) {
                 if (securityRoleItem != null) {
                     writer.writeStartElement(prefix, "security-role", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityRole(writer, securityRoleItem, context);
@@ -288,9 +288,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: methodPermission
-        List<MethodPermission> methodPermission = assemblyDescriptor.methodPermission;
+        final List<MethodPermission> methodPermission = assemblyDescriptor.methodPermission;
         if (methodPermission != null) {
-            for (MethodPermission methodPermissionItem : methodPermission) {
+            for (final MethodPermission methodPermissionItem : methodPermission) {
                 if (methodPermissionItem != null) {
                     writer.writeStartElement(prefix, "method-permission", "http://java.sun.com/xml/ns/javaee");
                     writeMethodPermission(writer, methodPermissionItem, context);
@@ -302,9 +302,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: containerTransaction
-        List<ContainerTransaction> containerTransaction = assemblyDescriptor.containerTransaction;
+        final List<ContainerTransaction> containerTransaction = assemblyDescriptor.containerTransaction;
         if (containerTransaction != null) {
-            for (ContainerTransaction containerTransactionItem : containerTransaction) {
+            for (final ContainerTransaction containerTransactionItem : containerTransaction) {
                 if (containerTransactionItem != null) {
                     writer.writeStartElement(prefix, "container-transaction", "http://java.sun.com/xml/ns/javaee");
                     writeContainerTransaction(writer, containerTransactionItem, context);
@@ -316,9 +316,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: containerConcurrency
-        List<ContainerConcurrency> containerConcurrency = assemblyDescriptor.containerConcurrency;
+        final List<ContainerConcurrency> containerConcurrency = assemblyDescriptor.containerConcurrency;
         if (containerConcurrency != null) {
-            for (ContainerConcurrency containerConcurrencyItem : containerConcurrency) {
+            for (final ContainerConcurrency containerConcurrencyItem : containerConcurrency) {
                 if (containerConcurrencyItem != null) {
                     writer.writeStartElement(prefix, "container-concurrency", "http://java.sun.com/xml/ns/javaee");
                     writeContainerConcurrency(writer, containerConcurrencyItem, context);
@@ -330,9 +330,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: interceptorBinding
-        List<InterceptorBinding> interceptorBinding = assemblyDescriptor.interceptorBinding;
+        final List<InterceptorBinding> interceptorBinding = assemblyDescriptor.interceptorBinding;
         if (interceptorBinding != null) {
-            for (InterceptorBinding interceptorBindingItem : interceptorBinding) {
+            for (final InterceptorBinding interceptorBindingItem : interceptorBinding) {
                 if (interceptorBindingItem != null) {
                     writer.writeStartElement(prefix, "interceptor-binding", "http://java.sun.com/xml/ns/javaee");
                     writeInterceptorBinding(writer, interceptorBindingItem, context);
@@ -344,9 +344,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: messageDestination
-        List<MessageDestination> messageDestination = assemblyDescriptor.messageDestination;
+        final List<MessageDestination> messageDestination = assemblyDescriptor.messageDestination;
         if (messageDestination != null) {
-            for (MessageDestination messageDestinationItem : messageDestination) {
+            for (final MessageDestination messageDestinationItem : messageDestination) {
                 if (messageDestinationItem != null) {
                     writer.writeStartElement(prefix, "message-destination", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDestination(writer, messageDestinationItem, context);
@@ -358,7 +358,7 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: excludeList
-        ExcludeList excludeList = assemblyDescriptor.excludeList;
+        final ExcludeList excludeList = assemblyDescriptor.excludeList;
         if (excludeList != null) {
             writer.writeStartElement(prefix, "exclude-list", "http://java.sun.com/xml/ns/javaee");
             writeExcludeList(writer, excludeList, context);
@@ -366,9 +366,9 @@ public class AssemblyDescriptor$JAXB
         }
 
         // ELEMENT: applicationException
-        KeyedCollection<String, ApplicationException> applicationException = assemblyDescriptor.applicationException;
+        final KeyedCollection<String, ApplicationException> applicationException = assemblyDescriptor.applicationException;
         if (applicationException != null) {
-            for (ApplicationException applicationExceptionItem : applicationException) {
+            for (final ApplicationException applicationExceptionItem : applicationException) {
                 if (applicationExceptionItem != null) {
                     writer.writeStartElement(prefix, "application-exception", "http://java.sun.com/xml/ns/javaee");
                     writeApplicationException(writer, applicationExceptionItem, context);

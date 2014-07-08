@@ -115,8 +115,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 cons.setAccessible(acc);
             }
             value.addLogger(rootLogger);
-            Reflections.invokeByReflection(Reflections.get(value, "systemContext"), "addLocalLogger", new Class<?>[] { Logger.class }, new Object[] { rootLogger });
-            Reflections.invokeByReflection(Logger.global, "setLogManager", new Class<?>[] { LogManager.class }, new Object[] { value });
+            Reflections.invokeByReflection(Reflections.get(value, "systemContext"), "addLocalLogger", new Class<?>[]{Logger.class}, new Object[]{rootLogger});
+            Reflections.invokeByReflection(Logger.global, "setLogManager", new Class<?>[]{LogManager.class}, new Object[]{value});
             value.addLogger(Logger.global);
         } catch (final Throwable e) {
             // no-op
@@ -165,8 +165,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
             // if it is one of ours loggers and no value is defined let set our nice logging style
             if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom logging
-                    && isOverridableLogger(name) // managed loggers
-                    && parentValue == null) { // not already defined
+                && isOverridableLogger(name) // managed loggers
+                && parentValue == null) { // not already defined
                 if (name.endsWith(".handlers")) {
                     return consoleHandlerClazz;
                 } else if (name.endsWith(".useParentHandlers")) {
@@ -186,15 +186,15 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
         private static boolean isOverridableLogger(final String name) {
             return useOpenEJBHandler
-                    || name.toLowerCase().contains("openejb")
-                    || name.toLowerCase().contains("transaction")
-                    || name.toLowerCase().contains("cxf")
-                    || name.toLowerCase().contains("timer")
-                    || (name.startsWith("org.apache.") && !name.startsWith("org.apache.geronimo.connector.work.WorkerContext."))
-                    || name.startsWith("openjpa.")
-                    || name.startsWith("net.sf.ehcache.")
-                    || name.startsWith("org.quartz.")
-                    || name.startsWith("org.hibernate.");
+                || name.toLowerCase().contains("openejb")
+                || name.toLowerCase().contains("transaction")
+                || name.toLowerCase().contains("cxf")
+                || name.toLowerCase().contains("timer")
+                || (name.startsWith("org.apache.") && !name.startsWith("org.apache.geronimo.connector.work.WorkerContext."))
+                || name.startsWith("openjpa.")
+                || name.startsWith("net.sf.ehcache.")
+                || name.startsWith("org.quartz.")
+                || name.startsWith("org.hibernate.");
         }
     }
 

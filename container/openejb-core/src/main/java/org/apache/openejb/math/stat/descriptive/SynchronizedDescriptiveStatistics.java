@@ -27,12 +27,14 @@ package org.apache.openejb.math.stat.descriptive;
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  *
- * @since 1.2
  * @version $Revision: 811685 $ $Date: 2009-09-05 10:36:48 -0700 (Sat, 05 Sep 2009) $
+ * @since 1.2
  */
 public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
-    /** Serialization UID */
+    /**
+     * Serialization UID
+     */
     private static final long serialVersionUID = 2L;
 
     /**
@@ -44,6 +46,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
     /**
      * Construct an instance with finite window
+     *
      * @param window the finite window size.
      */
     public SynchronizedDescriptiveStatistics(final int window) {
@@ -159,11 +162,11 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * <p>Acquires synchronization lock on source, then dest before copying.</p>
      *
      * @param source SynchronizedDescriptiveStatistics to copy
-     * @param dest SynchronizedDescriptiveStatistics to copy to
+     * @param dest   SynchronizedDescriptiveStatistics to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final SynchronizedDescriptiveStatistics source,
-            final SynchronizedDescriptiveStatistics dest) {
+                            final SynchronizedDescriptiveStatistics dest) {
         synchronized (source) {
             synchronized (dest) {
                 DescriptiveStatistics.copy(source, dest);

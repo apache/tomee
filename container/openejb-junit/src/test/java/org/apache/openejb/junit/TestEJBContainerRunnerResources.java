@@ -16,14 +16,15 @@
  */
 package org.apache.openejb.junit;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.junit.jee.EJBContainerRunner;
 import org.apache.openejb.junit.jee.config.Properties;
 import org.apache.openejb.junit.jee.config.Property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
 
 import static org.junit.Assert.assertNotNull;
 

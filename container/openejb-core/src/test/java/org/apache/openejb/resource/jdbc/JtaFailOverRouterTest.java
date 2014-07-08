@@ -54,19 +54,19 @@ public class JtaFailOverRouterTest {
     @Configuration
     public Properties configuration() {
         return datasource(datasource(new PropertiesBuilder(), "fo1"), "fo2")
-                .property("fo1.JtaManaged", "true")
-                .property("fo2.JtaManaged", "true")
-                .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
-                .property("router.datasourceNames", "fo1,fo2")
-                .property("router.strategy", "reverse")
-                .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
-                .property("routedDs.router", "router")
-                .build();
+            .property("fo1.JtaManaged", "true")
+            .property("fo2.JtaManaged", "true")
+            .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
+            .property("router.datasourceNames", "fo1,fo2")
+            .property("router.strategy", "reverse")
+            .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
+            .property("routedDs.router", "router")
+            .build();
     }
 
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { JtaWrapper.class };
+        return new Class<?>[]{JtaWrapper.class};
     }
 
     @Singleton
@@ -77,7 +77,7 @@ public class JtaFailOverRouterTest {
         public void inTx(final String url) {
             Connection firstConnection = null;
             try {
-                firstConnection  = ds.getConnection();
+                firstConnection = ds.getConnection();
                 assertEquals(url, url(firstConnection));
                 for (int i = 0; i < 1; i++) { // 4 is kind of random, > 2 is enough
                     final Connection anotherConnection = ds.getConnection();

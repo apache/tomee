@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class PersistenceType$JAXB
-        extends JAXBEnum<PersistenceType> {
+    extends JAXBEnum<PersistenceType> {
 
 
     public PersistenceType$JAXB() {
         super(PersistenceType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "persistenceType".intern()));
     }
 
-    public PersistenceType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public PersistenceType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parsePersistenceType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, PersistenceType persistenceType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final PersistenceType persistenceType)
+        throws Exception {
         return toStringPersistenceType(bean, parameterName, context, persistenceType);
     }
 
-    public static PersistenceType parsePersistenceType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static PersistenceType parsePersistenceType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Bean".equals(value)) {
             return PersistenceType.BEAN;
         } else if ("Container".equals(value)) {
@@ -52,8 +52,8 @@ public class PersistenceType$JAXB
         }
     }
 
-    public static String toStringPersistenceType(Object bean, String parameterName, RuntimeContext context, PersistenceType persistenceType)
-            throws Exception {
+    public static String toStringPersistenceType(final Object bean, final String parameterName, final RuntimeContext context, final PersistenceType persistenceType)
+        throws Exception {
         if (PersistenceType.BEAN == persistenceType) {
             return "Bean";
         } else if (PersistenceType.CONTAINER == persistenceType) {

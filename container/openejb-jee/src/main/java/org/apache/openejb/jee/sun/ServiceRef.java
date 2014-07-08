@@ -50,7 +50,7 @@ public class ServiceRef {
         return serviceRefName;
     }
 
-    public void setServiceRefName(String value) {
+    public void setServiceRefName(final String value) {
         this.serviceRefName = value;
     }
 
@@ -72,7 +72,7 @@ public class ServiceRef {
         return wsdlOverride;
     }
 
-    public void setWsdlOverride(String value) {
+    public void setWsdlOverride(final String value) {
         this.wsdlOverride = value;
     }
 
@@ -80,7 +80,7 @@ public class ServiceRef {
         return serviceImplClass;
     }
 
-    public void setServiceImplClass(String value) {
+    public void setServiceImplClass(final String value) {
         this.serviceImplClass = value;
     }
 
@@ -88,7 +88,7 @@ public class ServiceRef {
         return serviceQname;
     }
 
-    public void setServiceQname(ServiceQname value) {
+    public void setServiceQname(final ServiceQname value) {
         this.serviceQname = value;
     }
 }

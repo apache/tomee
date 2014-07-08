@@ -144,13 +144,13 @@ public class EjbModule extends Module implements WsModule {
     public File getFile() {
         return id.getLocation();
     }
-    
+
     public void setModuleId(final String moduleId) {
         if (openejbJar == null) {
             openejbJar = new OpenejbJar();
         }
         openejbJar.setModuleName(moduleId);
-        
+
         this.id = new ID(openejbJar, ejbJar, moduleId, id.getLocation(), id.getUri(), this);
     }
 
@@ -201,8 +201,8 @@ public class EjbModule extends Module implements WsModule {
     @Override
     public String toString() {
         return "EjbModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                '}';
+            "moduleId='" + id.getName() + '\'' +
+            '}';
     }
 
     @Override

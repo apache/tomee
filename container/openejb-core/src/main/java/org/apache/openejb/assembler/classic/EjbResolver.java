@@ -156,21 +156,21 @@ public class EjbResolver {
         }
 
         final List<Interfaces> matches = this.interfaces.get(new Interfaces(ref.getHome(), ref.getInterface()));
-        if (matches != null && matches.size() > 0){
+        if (matches != null && matches.size() > 0) {
 
             final List<Interfaces> nameMatches = filter(matches, ref.getName());
             // Imply by name and type (local/remote)
             id = first(filter(nameMatches, ref.getRefType()));
-            if (id == null){
+            if (id == null) {
                 // Match by name
                 id = first(nameMatches);
             }
             // Imply by type (local/remote)
-            if (id == null){
+            if (id == null) {
                 id = first(filter(matches, ref.getRefType()));
             }
             // Just grab the first
-            if (id == null){
+            if (id == null) {
                 id = first(matches);
             }
         }
@@ -193,9 +193,9 @@ public class EjbResolver {
         final String shortName = name.replaceAll(".*/", "");
         final List<Interfaces> matches = new ArrayList();
         for (final Interfaces entry : list) {
-            if (name.equalsIgnoreCase(entry.getId())){
+            if (name.equalsIgnoreCase(entry.getId())) {
                 matches.add(entry);
-            } else if (shortName.equalsIgnoreCase(entry.getId())){
+            } else if (shortName.equalsIgnoreCase(entry.getId())) {
                 matches.add(entry);
             }
         }
@@ -205,7 +205,7 @@ public class EjbResolver {
     private List<Interfaces> filter(final List<Interfaces> list, final Type type) {
         final List<Interfaces> matches = new ArrayList();
         for (final Interfaces entry : list) {
-            if (type == Type.UNKNOWN || type == entry.type){
+            if (type == Type.UNKNOWN || type == entry.type) {
                 matches.add(entry);
             }
         }

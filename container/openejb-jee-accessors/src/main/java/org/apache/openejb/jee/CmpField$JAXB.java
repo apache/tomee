@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class CmpField$JAXB
-        extends JAXBObject<CmpField> {
+    extends JAXBObject<CmpField> {
 
 
     public CmpField$JAXB() {
         super(CmpField.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmp-fieldType".intern()), Text$JAXB.class);
     }
 
-    public static CmpField readCmpField(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static CmpField readCmpField(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeCmpField(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public static void writeCmpField(final XoXMLStreamWriter writer, final CmpField cmpField, final RuntimeContext context)
+        throws Exception {
         _write(writer, cmpField, context);
     }
 
-    public void write(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final CmpField cmpField, final RuntimeContext context)
+        throws Exception {
         _write(writer, cmpField, context);
     }
 
-    public final static CmpField _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static CmpField _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class CmpField$JAXB
             context = new RuntimeContext();
         }
 
-        CmpField cmpField = new CmpField();
+        final CmpField cmpField = new CmpField();
         context.beforeUnmarshal(cmpField, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("cmp-fieldType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, CmpField.class);
@@ -83,10 +83,10 @@ public class CmpField$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, cmpField);
                 cmpField.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class CmpField$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("field-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fieldName
-                String fieldNameRaw = elementReader.getElementAsString();
+                final String fieldNameRaw = elementReader.getElementAsString();
 
-                String fieldName;
+                final String fieldName;
                 try {
                     fieldName = Adapters.collapsedStringAdapterAdapter.unmarshal(fieldNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -123,7 +123,7 @@ public class CmpField$JAXB
         if (descriptions != null) {
             try {
                 cmpField.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, CmpField.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -133,13 +133,13 @@ public class CmpField$JAXB
         return cmpField;
     }
 
-    public final CmpField read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final CmpField read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, CmpField cmpField, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final CmpField cmpField, RuntimeContext context)
+        throws Exception {
         if (cmpField == null) {
             writer.writeXsiNil();
             return;
@@ -149,7 +149,7 @@ public class CmpField$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (CmpField.class != cmpField.getClass()) {
             context.unexpectedSubclass(writer, cmpField, CmpField.class);
             return;
@@ -159,12 +159,12 @@ public class CmpField$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = cmpField.id;
+        final String idRaw = cmpField.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(cmpField, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -174,11 +174,11 @@ public class CmpField$JAXB
         Text[] descriptions = null;
         try {
             descriptions = cmpField.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(cmpField, "descriptions", CmpField.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -190,11 +190,11 @@ public class CmpField$JAXB
         }
 
         // ELEMENT: fieldName
-        String fieldNameRaw = cmpField.fieldName;
+        final String fieldNameRaw = cmpField.fieldName;
         String fieldName = null;
         try {
             fieldName = Adapters.collapsedStringAdapterAdapter.marshal(fieldNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(cmpField, "fieldName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (fieldName != null) {

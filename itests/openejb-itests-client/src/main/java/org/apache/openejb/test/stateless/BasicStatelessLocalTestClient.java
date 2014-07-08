@@ -29,11 +29,11 @@ public abstract class BasicStatelessLocalTestClient extends StatelessTestClient 
 	protected BasicStatelessLocalHome ejbLocalHome = null;
     protected BasicStatelessLocalObject ejbLocalObject = null;
 
-    public BasicStatelessLocalTestClient(String name){
+    public BasicStatelessLocalTestClient(final String name){
         super(name);
     }
     
-    protected Object cast(Object object, Class type) {
+    protected Object cast(final Object object, final Class type) {
     	return type.cast(object);
     }
     

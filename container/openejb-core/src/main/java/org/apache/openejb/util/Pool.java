@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
@@ -55,6 +56,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  *
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("StatementWithEmptyBody")
 public class Pool<T> {
 
     private final LinkedList<Entry> pool = new LinkedList<Entry>();
@@ -97,6 +99,7 @@ public class Pool<T> {
         this(max, min, strict, 0, 0, 0, null, null, false, -1, false, false);
     }
 
+    @SuppressWarnings("unchecked")
     public Pool(final int max, final int min, final boolean strict, final long maxAge, final long idleTimeout, long sweepInterval, final Executor executor, final Supplier<T> supplier, final boolean replaceAged, final double maxAgeOffset, final boolean garbageCollection, final boolean replaceFlushed) {
         if (min > max) {
             greater("max", max, "min", min);
@@ -123,7 +126,9 @@ public class Pool<T> {
     }
 
     public Pool start() {
-        if (this.scheduler.compareAndSet(null, Executors.newScheduledThreadPool(1, new SchedulerThreadFactory()))) {
+        final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new SchedulerThreadFactory());
+
+        if (this.scheduler.compareAndSet(null, scheduledExecutorService)) {
             this.scheduler.get().scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
         }
         return this;
@@ -149,8 +154,8 @@ public class Pool<T> {
 
     private Executor createExecutor() {
         return new ThreadPoolExecutor(3, 10,
-                60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
     }
 
     private void greater(final String maxName, final long max, final String minName, final long min) {
@@ -172,8 +177,7 @@ public class Pool<T> {
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
-     * @throws TimeoutException
-     *                               if no instance could be obtained within the timeout
+     * @throws TimeoutException      if no instance could be obtained within the timeout
      */
     public Entry pop(final long timeout, final TimeUnit unit) throws InterruptedException, TimeoutException {
         return pop(timeout, unit, true);
@@ -288,7 +292,7 @@ public class Pool<T> {
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj    object to push onto the pool
-     * @param offset
+     * @param offset long
      * @return false if the pool max size was exceeded
      */
     private boolean push(final T obj, final long offset) {
@@ -320,7 +324,7 @@ public class Pool<T> {
 
         try {
             if (entry == null) {
-                return added;
+                return false;
             }
 
             if (!sweeper) {
@@ -418,25 +422,35 @@ public class Pool<T> {
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
-            ; //NOPMD
+            Thread.yield();
         }
+
         while (minimum.tryAcquire()) {
-            ; //NOPMD
+            Thread.yield();
+        }
+
+        // flush and sweep
+        flush();
+        try {
+            sweeper.run();
+        } catch (final RejectedExecutionException e) {
+            //Ignore
         }
 
         // Stop the sweeper thread
         stop();
 
-        // flush and sweep
-        flush();
-        sweeper.run();
-
         // Drain all leases
         if (!(available instanceof Overdraft)) {
             while (available.tryAcquire()) {
-                ; //NOPMD
+                Thread.yield();
             }
+
+            available.drainPermits();
         }
+
+        instances.drainPermits();
+        minimum.drainPermits();
 
         // Wait for any pending discards
         return out.await(timeout, unit);
@@ -498,8 +512,8 @@ public class Pool<T> {
             }
             final Instance instance = new Instance(obj);
             this.soft = garbageCollection ?
-                    new SoftReference<Instance>(instance) :
-                    new HardReference<Instance>(instance);
+                new SoftReference<Instance>(instance) :
+                new HardReference<Instance>(instance);
             this.version = poolVersion.get();
             this.active.set(instance);
             this.created = now() + offset;
@@ -539,11 +553,11 @@ public class Pool<T> {
         public String toString() {
             final long now = now();
             return "Entry{" +
-                    "min=" + (hard.get() != null) +
-                    ", age=" + (now - created) +
-                    ", idle=" + (now - used) +
-                    ", bean=" + soft.get() +
-                    '}';
+                "min=" + (hard.get() != null) +
+                ", age=" + (now - created) +
+                ", idle=" + (now - used) +
+                ", bean=" + soft.get() +
+                '}';
         }
 
         private class Discarded implements Runnable {
@@ -965,7 +979,7 @@ public class Pool<T> {
         }
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateField")
+    @SuppressWarnings({"PMD.UnusedPrivateField", "UnusedDeclaration"})
     @Managed
     private final class Stats {
 
@@ -1003,7 +1017,7 @@ public class Pool<T> {
         private final int maxSize;
 
         @Managed
-        private long idleTimeout;
+        private final long idleTimeout;
 
         private Stats(final int minSize, final int maxSize, final long idleTimeout) {
             this.minSize = minSize;
@@ -1047,6 +1061,7 @@ public class Pool<T> {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static class Builder<T> {
 
         private int max = 10;
@@ -1107,8 +1122,7 @@ public class Pool<T> {
         /**
          * Alias for pool size
          *
-         * @param max
-         * @return
+         * @param max int
          */
         public void setPoolSize(final int max) {
             setMaxSize(max);
@@ -1185,6 +1199,11 @@ public class Pool<T> {
         public HardReference(final T referent) {
             super(referent);
             this.hard = referent;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public T getHard() {
+            return hard;
         }
     }
 

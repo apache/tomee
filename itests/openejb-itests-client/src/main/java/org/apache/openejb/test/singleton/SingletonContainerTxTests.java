@@ -54,14 +54,14 @@ public class SingletonContainerTxTests extends org.apache.openejb.test.NamedTest
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "SINGLETON_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "SINGLETON_test00_CLIENT");
 
         initialContext = new InitialContext(properties);
 
         /*[1] Get bean */
-        Object obj = initialContext.lookup(jndiEJBHomeEntry);
+        final Object obj = initialContext.lookup(jndiEJBHomeEntry);
         ejbHome = (ContainerTxSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, ContainerTxSingletonHome.class);
         ejbObject = ejbHome.create();
 
@@ -80,360 +80,360 @@ public class SingletonContainerTxTests extends org.apache.openejb.test.NamedTest
 
     public void test01_txMandatory_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_txNever_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test03_txNotSupported_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test04_txRequired_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test05_txRequiresNew_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test06_txSupports_withoutTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test07_txMandatory_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test08_txNever_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test09_txNotSupported_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test10_txRequired_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test11_txRequiresNew_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test12_txSupports_withTx(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test01_txMandatory_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_txNever_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test03_txNotSupported_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test04_txRequired_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test05_txRequiresNew_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test06_txSupports_withoutTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test07_txMandatory_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test08_txNever_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test09_txNotSupported_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test10_txRequired_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test11_txRequiresNew_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test12_txSupports_withTx_appException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test01_txMandatory_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_txNever_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test03_txNotSupported_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test04_txRequired_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test05_txRequiresNew_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test06_txSupports_withoutTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test07_txMandatory_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txMandatoryMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txMandatoryMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test08_txNever_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNeverMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNeverMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test09_txNotSupported_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txNotSupportedMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txNotSupportedMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test10_txRequired_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiredMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiredMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test11_txRequiresNew_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txRequiresNewMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txRequiresNewMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test12_txSupports_withTx_sysException(){
         try{
-            String expected = "ping";
-            String actual   = ejbObject.txSupportsMethod( expected );
+            final String expected = "ping";
+            final String actual   = ejbObject.txSupportsMethod( expected );
             assertEquals("The method invocation was invalid.", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

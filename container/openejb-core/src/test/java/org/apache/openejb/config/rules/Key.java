@@ -27,5 +27,6 @@ public @interface Key {
     String value();
 
     int count() default 1;
+
     int type() default KeyType.FAILURE;
 }

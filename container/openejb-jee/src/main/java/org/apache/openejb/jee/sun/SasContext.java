@@ -31,7 +31,7 @@ public class SasContext {
         return callerPropagation;
     }
 
-    public void setCallerPropagation(String value) {
+    public void setCallerPropagation(final String value) {
         this.callerPropagation = value;
     }
 }

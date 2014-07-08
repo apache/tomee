@@ -62,7 +62,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
-public class GeronimoConnectionManagerFactory   {
+public class GeronimoConnectionManagerFactory {
     private String name;
     private ClassLoader classLoader;
 
@@ -239,13 +239,13 @@ public class GeronimoConnectionManagerFactory   {
 
         if (validationInterval >= 0 && mcf instanceof ValidatingManagedConnectionFactory) {
             return new ValidatingGenericConnectionManager(txSupport, poolingSupport,
-                    null, new AutoConnectionTracker(), tm,
-                    mcf, name, classLoader, validationInterval);
+                null, new AutoConnectionTracker(), tm,
+                mcf, name, classLoader, validationInterval);
         }
 
         return new GenericConnectionManager(txSupport, poolingSupport,
-                        null, new AutoConnectionTracker(), tm,
-                        mcf, name, classLoader);
+            null, new AutoConnectionTracker(), tm,
+            mcf, name, classLoader);
     }
 
     private TransactionSupport createTransactionSupport() {
@@ -271,37 +271,37 @@ public class GeronimoConnectionManagerFactory   {
 
             // unpartitioned pool
             return new SinglePool(poolMaxSize,
-                    poolMinSize,
-                    connectionMaxWaitMilliseconds,
-                    connectionMaxIdleMinutes,
-                    allConnectionsEqual,
-                    !allConnectionsEqual,
-                    false);
+                poolMinSize,
+                connectionMaxWaitMilliseconds,
+                connectionMaxIdleMinutes,
+                allConnectionsEqual,
+                !allConnectionsEqual,
+                false);
 
         } else if ("by-connector-properties".equalsIgnoreCase(partitionStrategy)) {
 
             // partition by contector properties such as username and password on a jdbc connection
             return new PartitionedPool(poolMaxSize,
-                    poolMinSize,
-                    connectionMaxWaitMilliseconds,
-                    connectionMaxIdleMinutes,
-                    allConnectionsEqual,
-                    !allConnectionsEqual,
-                    false,
-                    true,
-                    false);
+                poolMinSize,
+                connectionMaxWaitMilliseconds,
+                connectionMaxIdleMinutes,
+                allConnectionsEqual,
+                !allConnectionsEqual,
+                false,
+                true,
+                false);
         } else if ("by-subject".equalsIgnoreCase(partitionStrategy)) {
 
             // partition by caller subject
             return new PartitionedPool(poolMaxSize,
-                    poolMinSize,
-                    connectionMaxWaitMilliseconds,
-                    connectionMaxIdleMinutes,
-                    allConnectionsEqual,
-                    !allConnectionsEqual,
-                    false,
-                    false,
-                    true);
+                poolMinSize,
+                connectionMaxWaitMilliseconds,
+                connectionMaxIdleMinutes,
+                allConnectionsEqual,
+                !allConnectionsEqual,
+                false,
+                false,
+                true);
         } else {
             throw new IllegalArgumentException("Unknown partition strategy " + partitionStrategy);
         }
@@ -477,7 +477,7 @@ public class GeronimoConnectionManagerFactory   {
                     // destroy invalid connections
                     try {
                         final Set<ManagedConnection> invalids = ValidatingManagedConnectionFactory.class.cast(getManagedConnectionFactory())
-                                .getInvalidConnections(connections.keySet());
+                            .getInvalidConnections(connections.keySet());
                         if (invalids != null) {
                             for (final ManagedConnection invalid : invalids) {
                                 stack.returnConnection(new ConnectionInfo(connections.get(invalid)), ConnectionReturnAction.DESTROY);

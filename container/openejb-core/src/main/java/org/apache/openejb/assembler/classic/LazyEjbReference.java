@@ -51,7 +51,7 @@ public class LazyEjbReference extends Reference {
     }
 
     public Object getObject() throws NamingException {
-        if (reference != null){
+        if (reference != null) {
             return reference.getObject();
         }
 
@@ -64,7 +64,7 @@ public class LazyEjbReference extends Reference {
 
         if (deploymentId == null) {
             String key = "lazyEjbRefNotResolved";
-            if (info.getHome() != null){
+            if (info.getHome() != null) {
                 key += ".home";
             }
             final String message = messages.format(key, info.getName(), info.getEjbLink(), info.getHome(), info.getInterface());
@@ -81,9 +81,13 @@ public class LazyEjbReference extends Reference {
         }
 
         InterfaceType type = null;
-        switch (info.getRefType()){
-            case LOCAL: type = InterfaceType.BUSINESS_LOCAL; break;
-            case REMOTE: type = InterfaceType.BUSINESS_REMOTE; break;
+        switch (info.getRefType()) {
+            case LOCAL:
+                type = InterfaceType.BUSINESS_LOCAL;
+                break;
+            case REMOTE:
+                type = InterfaceType.BUSINESS_REMOTE;
+                break;
         }
 
         final String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
@@ -98,17 +102,20 @@ public class LazyEjbReference extends Reference {
     }
 
     private boolean isRemote(final BeanContext beanContext) {
-        switch(info.getRefType()){
-            case REMOTE: return true;
-            case LOCAL: return false;
-            case UNKNOWN:{
+        switch (info.getRefType()) {
+            case REMOTE:
+                return true;
+            case LOCAL:
+                return false;
+            case UNKNOWN: {
                 for (final Class clazz : beanContext.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
                     if (clazz.getName().equals(info.getInterface())) {
                         return true;
                     }
                 }
             }
-            default: return false;
+            default:
+                return false;
         }
     }
 }

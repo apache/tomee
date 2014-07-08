@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -79,28 +78,28 @@ public class Beans {
         return managedClasses;
     }
 
-    public void addManagedClass(String className) {
+    public void addManagedClass(final String className) {
         managedClasses.add(className);
     }
 
-    public void addManagedClass(Class clazz) {
+    public void addManagedClass(final Class clazz) {
         addManagedClass(clazz.getName());
     }
-    
+
     public List<String> getInterceptors() {
         if (interceptors == null) {
             interceptors = new ArrayList<String>();
         }
         return interceptors;
     }
-    
-    public void addInterceptor(String className) {
-        getInterceptors().add(className);
-    } 
 
-    public void addInterceptor(Class clazz) {
+    public void addInterceptor(final String className) {
+        getInterceptors().add(className);
+    }
+
+    public void addInterceptor(final Class clazz) {
         addInterceptor(clazz.getName());
-    } 
+    }
 
     public List<String> getDecorators() {
         if (decorators == null) {
@@ -109,43 +108,43 @@ public class Beans {
         return decorators;
     }
 
-    public void addDecorator(String className) {
+    public void addDecorator(final String className) {
         getDecorators().add(className);
-    } 
+    }
 
-    public void addDecorator(Class clazz) {
+    public void addDecorator(final Class clazz) {
         addDecorator(clazz.getName());
-    } 
+    }
 
     public List<String> getAlternativeClasses() {
         return getAlternatives().getClasses();
     }
 
-    public void addAlternativeClass(String className) {
+    public void addAlternativeClass(final String className) {
         getAlternativeClasses().add(className);
-    } 
+    }
 
-    public void addAlternativeClass(Class clazz) {
+    public void addAlternativeClass(final Class clazz) {
         addAlternativeClass(clazz.getName());
-    } 
+    }
 
     public List<String> getAlternativeStereotypes() {
         return getAlternatives().getStereotypes();
     }
 
-    public void addAlternativeStereotype(String className) {
+    public void addAlternativeStereotype(final String className) {
         getAlternativeStereotypes().add(className);
-    } 
+    }
 
-    public void addAlternativeStereotype(Class clazz) {
+    public void addAlternativeStereotype(final Class clazz) {
         addAlternativeStereotype(clazz.getName());
-    } 
-    
+    }
+
     /**
      * Gets the value of the alternatives property.
      *
      * @return possible object is
-     *         {@link Alternatives }
+     * {@link Alternatives }
      */
     private Alternatives getAlternatives() {
         if (alternatives == null) {
@@ -175,8 +174,8 @@ public class Beans {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-            "classes",
-            "stereotypes"
+        "classes",
+        "stereotypes"
     })
     @XmlRootElement(name = "alternatives")
     public static class Alternatives {
@@ -233,7 +232,7 @@ public class Beans {
     private <T> void removeDuplicates(final List<T> list) {
         // don't use a set to keep order
         final List<T> classes = new ArrayList<T>();
-        for (T t : list) {
+        for (final T t : list) {
             if (!classes.contains(t)) {
                 classes.add(t);
             }

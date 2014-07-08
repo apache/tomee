@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,35 +16,36 @@
  */
 package org.apache.openejb.jee.was.v6.java;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.openejb.jee.was.v6.ecore.EClassifier;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.openejb.jee.was.v6.ecore.EClassifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Describes a Java Array type For multi-dimensional arrays, it is unlikely that
  * the component type will be specified directly. This would require
  * instantiating a chain of component types such as
  * String[][][][]->String[][][]->String[][]->String[]->String.
- * 
+ * <p/>
  * The component type relationship will be computed if the finalComponentType
  * and array dimensions is specified.
- * 
+ * <p/>
  * For this reason, the preferred way to create is through the JavaRefFactory
  * factory method: createArrayType(JavaClass finalComponentType, int dimensions)
- * 
- * 
- * <p>
+ * <p/>
+ * <p/>
+ * <p/>
  * Java class for ArrayType complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ArrayType">
  *   &lt;complexContent>
@@ -58,90 +59,80 @@ import org.apache.openejb.jee.was.v6.ecore.EClassifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayType", propOrder = { "componentTypes" })
+@XmlType(name = "ArrayType", propOrder = {"componentTypes"})
 public class ArrayType extends JavaClass {
 
-	@XmlElement(name = "componentType")
-	protected List<EClassifier> componentTypes;
-	@XmlAttribute
-	protected Integer arrayDimensions;
-	@XmlAttribute
-	protected String componentType;
+    @XmlElement(name = "componentType")
+    protected List<EClassifier> componentTypes;
+    @XmlAttribute
+    protected Integer arrayDimensions;
+    @XmlAttribute
+    protected String componentType;
 
-	/**
-	 * Gets the value of the componentTypes property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the componentTypes property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getComponentTypes().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link EClassifier }
-	 * 
-	 * 
-	 */
-	public List<EClassifier> getComponentTypes() {
-		if (componentTypes == null) {
-			componentTypes = new ArrayList<EClassifier>();
-		}
-		return this.componentTypes;
-	}
+    /**
+     * Gets the value of the componentTypes property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the componentTypes property.
+     * <p/>
+     * <p/>
+     * For example, to add a new item, do as follows:
+     * <p/>
+     * <pre>
+     * getComponentTypes().add(newItem);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list
+     * {@link EClassifier }
+     */
+    public List<EClassifier> getComponentTypes() {
+        if (componentTypes == null) {
+            componentTypes = new ArrayList<EClassifier>();
+        }
+        return this.componentTypes;
+    }
 
-	/**
-	 * Gets the value of the arrayDimensions property.
-	 * 
-	 * @return possible object is {@link Integer }
-	 * 
-	 */
-	public Integer getArrayDimensions() {
-		return arrayDimensions;
-	}
+    /**
+     * Gets the value of the arrayDimensions property.
+     *
+     * @return possible object is {@link Integer }
+     */
+    public Integer getArrayDimensions() {
+        return arrayDimensions;
+    }
 
-	/**
-	 * Sets the value of the arrayDimensions property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Integer }
-	 * 
-	 */
-	public void setArrayDimensions(Integer value) {
-		this.arrayDimensions = value;
-	}
+    /**
+     * Sets the value of the arrayDimensions property.
+     *
+     * @param value allowed object is {@link Integer }
+     */
+    public void setArrayDimensions(final Integer value) {
+        this.arrayDimensions = value;
+    }
 
-	/**
-	 * Gets the value of the componentType property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getComponentType() {
-		return componentType;
-	}
+    /**
+     * Gets the value of the componentType property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getComponentType() {
+        return componentType;
+    }
 
-	/**
-	 * Sets the value of the componentType property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setComponentType(String value) {
-		this.componentType = value;
-	}
+    /**
+     * Sets the value of the componentType property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setComponentType(final String value) {
+        this.componentType = value;
+    }
 
 }

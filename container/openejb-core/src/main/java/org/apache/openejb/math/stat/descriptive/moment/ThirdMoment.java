@@ -47,13 +47,17 @@ import java.io.Serializable;
  */
 public class ThirdMoment extends SecondMoment implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = -1238711964045118679L;
 
-    /** third moment of values that have been added */
+    /**
+     * third moment of values that have been added
+     */
     protected double m3;
 
-     /**
+    /**
      * Square of deviation of most recently added value from previous first
      * moment, normalized by previous sample size.  Retained to prevent
      * repeated computation in higher order moments.  nDevSq = nDev * nDev.
@@ -128,7 +132,7 @@ public class ThirdMoment extends SecondMoment implements Serializable {
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source ThirdMoment to copy
-     * @param dest ThirdMoment to copy to
+     * @param dest   ThirdMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final ThirdMoment source, final ThirdMoment dest) {

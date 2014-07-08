@@ -148,7 +148,7 @@ public class TomcatRemoteTestServer implements TestServer {
         try {
             final URL url = new URL(serverUri);
             is = url.openStream();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             tries--;
             //System.out.println(e.getMessage());
             if (tries < 1) {
@@ -156,7 +156,7 @@ public class TomcatRemoteTestServer implements TestServer {
             } else {
                 try {
                     Thread.sleep(2000);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     e.printStackTrace();
                 }
                 return connect(tries);
@@ -165,7 +165,7 @@ public class TomcatRemoteTestServer implements TestServer {
             if (null != is) {
                 try {
                     is.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }

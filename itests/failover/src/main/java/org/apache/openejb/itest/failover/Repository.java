@@ -34,7 +34,7 @@ public final class Repository {
         final String path;
         try {
             path = RESOLVER.resolve("mvn:" + groupId + ":" + artifactId + ":" + guessVersion(groupId, artifactId) + ":" + type);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (oldCache == null) {

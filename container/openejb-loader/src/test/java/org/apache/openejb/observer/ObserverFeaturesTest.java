@@ -79,7 +79,7 @@ public class ObserverFeaturesTest {
     }
 
     @Test
-    @Assert({ "before", "observe" })
+    @Assert({"before", "observe"})
     public void beforeEvent() {
         a(new Object() {
             public void before(final @Observes BeforeEvent<Integer> event) {
@@ -93,7 +93,7 @@ public class ObserverFeaturesTest {
     }
 
     @Test
-    @Assert({ "observe", "after" })
+    @Assert({"observe", "after"})
     public void afterEvent() {
         a(new Object() {
             public void after(final @Observes AfterEvent<Integer> event) {
@@ -108,7 +108,7 @@ public class ObserverFeaturesTest {
 
 
     @Test
-    @Assert({ "before", "after" })
+    @Assert({"before", "after"})
     public void beforeInvokeAfter() {
         a(new Object() {
             public void after(final @Observes AfterEvent<Integer> event) {
@@ -212,7 +212,7 @@ public class ObserverFeaturesTest {
 
 
     @Test
-    @Assert({ "number", "afterInteger", "beforeDate", "object", "afterObject", "object", "afterObject" })
+    @Assert({"number", "afterInteger", "beforeDate", "object", "afterObject", "object", "afterObject"})
     public void sequence() {
         a(new Object() {
             public void object(final @Observes Object event) {
@@ -238,7 +238,7 @@ public class ObserverFeaturesTest {
     }
 
     @Test
-    @Assert({ "number", "failed" })
+    @Assert({"number", "failed"})
     public void failure() {
         a(new Object() {
             public void number(final @Observes Integer event) {
@@ -253,7 +253,7 @@ public class ObserverFeaturesTest {
     }
 
     @Test
-    @Assert({ "number", "failed" })
+    @Assert({"number", "failed"})
     public void circularFailureDirect() {
         a(new Object() {
             public void number(final @Observes Integer event) {
@@ -270,10 +270,10 @@ public class ObserverFeaturesTest {
 
     @Test
     @Assert({
-            "number.Integer",
-            "afterObject.AfterEvent<ObserverFailed{number}>",
-            "afterObject.AfterEvent<ObserverFailed{afterObject}>",
-            "afterObject.AfterEvent<Integer>",
+        "number.Integer",
+        "afterObject.AfterEvent<ObserverFailed{number}>",
+        "afterObject.AfterEvent<ObserverFailed{afterObject}>",
+        "afterObject.AfterEvent<Integer>",
     })
     public void circularFailureAfterObject() {
         a(new Object() {
@@ -291,10 +291,10 @@ public class ObserverFeaturesTest {
 
     @Test
     @Assert({
-            "number.Integer",
-            "afterObject.AfterEvent<Integer>",
-            "failed.ObserverFailed{afterObject}",
-            "afterObject.AfterEvent<ObserverFailed{afterObject}>",
+        "number.Integer",
+        "afterObject.AfterEvent<Integer>",
+        "failed.ObserverFailed{afterObject}",
+        "afterObject.AfterEvent<ObserverFailed{afterObject}>",
     })
     public void circluarFailureProtection() {
         a(new Object() {
@@ -335,19 +335,19 @@ public class ObserverFeaturesTest {
         invocations.add(method.getName());
     }
 
-    public void invoked(String suffix) {
+    public void invoked(final String suffix) {
         final Method method = caller(2);
         invocations.add(method.getName() + "." + suffix);
     }
 
-    private void a(final Object observer, Object... events) {
+    private void a(final Object observer, final Object... events) {
         final ObserverManager observers = new ObserverManager();
         observers.addObserver(observer);
 
         conditions.clear();
         invocations.clear();
 
-        for (Object event : events) {
+        for (final Object event : events) {
             observers.fireEvent(event);
         }
 
@@ -360,7 +360,7 @@ public class ObserverFeaturesTest {
         } else {
 
             org.junit.Assert.assertNotEquals(0, conditions.size());
-            for (Boolean condition : conditions) {
+            for (final Boolean condition : conditions) {
                 org.junit.Assert.assertTrue(condition);
             }
         }

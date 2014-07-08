@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -84,11 +82,9 @@ public class Query {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
+     *
+     * @return possible object is
+     * {@link Description }
      */
     public Description getDescription() {
         return description;
@@ -96,23 +92,19 @@ public class Query {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Description }
      */
-    public void setDescription(Description value) {
+    public void setDescription(final Description value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the queryMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QueryMethod }
-     *     
+     *
+     * @return possible object is
+     * {@link QueryMethod }
      */
     public QueryMethod getQueryMethod() {
         return queryMethod;
@@ -120,23 +112,19 @@ public class Query {
 
     /**
      * Sets the value of the queryMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QueryMethod }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link QueryMethod }
      */
-    public void setQueryMethod(QueryMethod value) {
+    public void setQueryMethod(final QueryMethod value) {
         this.queryMethod = value;
     }
 
     /**
      * Gets the value of the jbossQl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JbossQl }
-     *     
+     *
+     * @return possible object is
+     * {@link JbossQl }
      */
     public JbossQl getJbossQl() {
         return jbossQl;
@@ -144,23 +132,19 @@ public class Query {
 
     /**
      * Sets the value of the jbossQl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JbossQl }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JbossQl }
      */
-    public void setJbossQl(JbossQl value) {
+    public void setJbossQl(final JbossQl value) {
         this.jbossQl = value;
     }
 
     /**
      * Gets the value of the dynamicQl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DynamicQl }
-     *     
+     *
+     * @return possible object is
+     * {@link DynamicQl }
      */
     public DynamicQl getDynamicQl() {
         return dynamicQl;
@@ -168,23 +152,19 @@ public class Query {
 
     /**
      * Sets the value of the dynamicQl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DynamicQl }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DynamicQl }
      */
-    public void setDynamicQl(DynamicQl value) {
+    public void setDynamicQl(final DynamicQl value) {
         this.dynamicQl = value;
     }
 
     /**
      * Gets the value of the declaredSql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DeclaredSql }
-     *     
+     *
+     * @return possible object is
+     * {@link DeclaredSql }
      */
     public DeclaredSql getDeclaredSql() {
         return declaredSql;
@@ -192,23 +172,19 @@ public class Query {
 
     /**
      * Sets the value of the declaredSql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DeclaredSql }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DeclaredSql }
      */
-    public void setDeclaredSql(DeclaredSql value) {
+    public void setDeclaredSql(final DeclaredSql value) {
         this.declaredSql = value;
     }
 
     /**
      * Gets the value of the readAhead property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadAhead }
      */
     public ReadAhead getReadAhead() {
         return readAhead;
@@ -216,23 +192,19 @@ public class Query {
 
     /**
      * Sets the value of the readAhead property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadAhead }
      */
-    public void setReadAhead(ReadAhead value) {
+    public void setReadAhead(final ReadAhead value) {
         this.readAhead = value;
     }
 
     /**
      * Gets the value of the qlCompiler property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QlCompiler }
-     *     
+     *
+     * @return possible object is
+     * {@link QlCompiler }
      */
     public QlCompiler getQlCompiler() {
         return qlCompiler;
@@ -240,23 +212,19 @@ public class Query {
 
     /**
      * Sets the value of the qlCompiler property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QlCompiler }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link QlCompiler }
      */
-    public void setQlCompiler(QlCompiler value) {
+    public void setQlCompiler(final QlCompiler value) {
         this.qlCompiler = value;
     }
 
     /**
      * Gets the value of the lazyResultsetLoading property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LazyResultsetLoading }
-     *     
+     *
+     * @return possible object is
+     * {@link LazyResultsetLoading }
      */
     public LazyResultsetLoading getLazyResultsetLoading() {
         return lazyResultsetLoading;
@@ -264,13 +232,11 @@ public class Query {
 
     /**
      * Sets the value of the lazyResultsetLoading property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LazyResultsetLoading }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LazyResultsetLoading }
      */
-    public void setLazyResultsetLoading(LazyResultsetLoading value) {
+    public void setLazyResultsetLoading(final LazyResultsetLoading value) {
         this.lazyResultsetLoading = value;
     }
 

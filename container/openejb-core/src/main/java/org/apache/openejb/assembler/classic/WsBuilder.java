@@ -68,14 +68,14 @@ public class WsBuilder {
                     handlerData.getSoapRoles().addAll(handler.soapRoles);
                     handlers.add(handlerData);
                 } catch (final ClassNotFoundException e) {
-                    throw new OpenEJBException("Could not load handler class "+ handler.handlerClass);
+                    throw new OpenEJBException("Could not load handler class " + handler.handlerClass);
                 }
             }
 
             final HandlerChainData handlerChainData = new HandlerChainData(handlerChain.serviceNamePattern,
-                    handlerChain.portNamePattern,
-                    handlerChain.protocolBindings,
-                    handlers);
+                handlerChain.portNamePattern,
+                handlerChain.protocolBindings,
+                handlers);
             handlerChains.add(handlerChainData);
 
         }

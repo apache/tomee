@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class EjbRefType$JAXB
-        extends JAXBEnum<EjbRefType> {
+    extends JAXBEnum<EjbRefType> {
 
 
     public EjbRefType$JAXB() {
         super(EjbRefType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejbRefType".intern()));
     }
 
-    public EjbRefType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public EjbRefType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseEjbRefType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, EjbRefType ejbRefType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final EjbRefType ejbRefType)
+        throws Exception {
         return toStringEjbRefType(bean, parameterName, context, ejbRefType);
     }
 
-    public static EjbRefType parseEjbRefType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static EjbRefType parseEjbRefType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Entity".equals(value)) {
             return EjbRefType.ENTITY;
         } else if ("Session".equals(value)) {
@@ -52,8 +52,8 @@ public class EjbRefType$JAXB
         }
     }
 
-    public static String toStringEjbRefType(Object bean, String parameterName, RuntimeContext context, EjbRefType ejbRefType)
-            throws Exception {
+    public static String toStringEjbRefType(final Object bean, final String parameterName, final RuntimeContext context, final EjbRefType ejbRefType)
+        throws Exception {
         if (EjbRefType.ENTITY == ejbRefType) {
             return "Entity";
         } else if (EjbRefType.SESSION == ejbRefType) {

@@ -27,13 +27,13 @@ public class ServiceUtilsTest extends TestCase {
 
     public void testImplies() throws Exception {
 
-        Properties properties = new Properties();
-        properties.put("color","blue");
-        properties.put("size","10");
-        properties.put("weight","100");
-        properties.put("shape","round");
+        final Properties properties = new Properties();
+        properties.put("color", "blue");
+        properties.put("size", "10");
+        properties.put("weight", "100");
+        properties.put("shape", "round");
 
-        Properties required = new Properties();
+        final Properties required = new Properties();
         required.put("color", "BLUE");
 
         assertTrue(ServiceUtils.implies(required, properties));

@@ -26,9 +26,9 @@ import javax.xml.ws.EndpointReference;
  * {@link UnsupportedOperationException} for all its methods.
  */
 public class NoAddressingSupport implements AddressingSupport {
-    
+
     public static final NoAddressingSupport INSTANCE = new NoAddressingSupport();
-    
+
     public EndpointReference getEndpointReference(final Element... referenceParameters) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported.");
     }
@@ -36,5 +36,5 @@ public class NoAddressingSupport implements AddressingSupport {
     public <T extends EndpointReference> T getEndpointReference(final Class<T> clazz, final Element... referenceParameters) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported.");
     }
-    
+
 }

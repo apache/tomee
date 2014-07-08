@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesValidator$JAXB
-        extends JAXBObject<FacesValidator> {
+    extends JAXBObject<FacesValidator> {
 
 
     public FacesValidator$JAXB() {
         super(FacesValidator.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-validatorType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesValidatorExtension$JAXB.class);
     }
 
-    public static FacesValidator readFacesValidator(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesValidator readFacesValidator(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesValidator(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesValidator(final XoXMLStreamWriter writer, final FacesValidator facesValidator, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidator, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesValidator facesValidator, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesValidator, context);
     }
 
-    public final static FacesValidator _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesValidator _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class FacesValidator$JAXB
             context = new RuntimeContext();
         }
 
-        FacesValidator facesValidator = new FacesValidator();
+        final FacesValidator facesValidator = new FacesValidator();
         context.beforeUnmarshal(facesValidator, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -89,7 +89,7 @@ public class FacesValidator$JAXB
         List<FacesValidatorExtension> validatorExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-validatorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesValidator.class);
@@ -97,10 +97,10 @@ public class FacesValidator$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesValidator);
                 facesValidator.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -109,24 +109,24 @@ public class FacesValidator$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesValidator.icon;
                     if (icon != null) {
@@ -138,12 +138,12 @@ public class FacesValidator$JAXB
                 icon.add(iconItem);
             } else if (("validator-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: validatorId
-                String validatorIdRaw = elementReader.getElementAsString();
+                final String validatorIdRaw = elementReader.getElementAsString();
 
-                String validatorId;
+                final String validatorId;
                 try {
                     validatorId = Adapters.collapsedStringAdapterAdapter.unmarshal(validatorIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -151,12 +151,12 @@ public class FacesValidator$JAXB
                 facesValidator.validatorId = validatorId;
             } else if (("validator-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: validatorClass
-                String validatorClassRaw = elementReader.getElementAsString();
+                final String validatorClassRaw = elementReader.getElementAsString();
 
-                String validatorClass;
+                final String validatorClass;
                 try {
                     validatorClass = Adapters.collapsedStringAdapterAdapter.unmarshal(validatorClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -164,7 +164,7 @@ public class FacesValidator$JAXB
                 facesValidator.validatorClass = validatorClass;
             } else if (("attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attribute
-                FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
+                final FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
                 if (attribute1 == null) {
                     attribute1 = facesValidator.attribute;
                     if (attribute1 != null) {
@@ -176,7 +176,7 @@ public class FacesValidator$JAXB
                 attribute1.add(attributeItem);
             } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                FacesProperty propertyItem = readFacesProperty(elementReader, context);
+                final FacesProperty propertyItem = readFacesProperty(elementReader, context);
                 if (property == null) {
                     property = facesValidator.property;
                     if (property != null) {
@@ -188,7 +188,7 @@ public class FacesValidator$JAXB
                 property.add(propertyItem);
             } else if (("validator-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: validatorExtension
-                FacesValidatorExtension validatorExtensionItem = readFacesValidatorExtension(elementReader, context);
+                final FacesValidatorExtension validatorExtensionItem = readFacesValidatorExtension(elementReader, context);
                 if (validatorExtension == null) {
                     validatorExtension = facesValidator.validatorExtension;
                     if (validatorExtension != null) {
@@ -207,14 +207,14 @@ public class FacesValidator$JAXB
         if (descriptions != null) {
             try {
                 facesValidator.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesValidator.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesValidator.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesValidator.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -236,13 +236,13 @@ public class FacesValidator$JAXB
         return facesValidator;
     }
 
-    public final FacesValidator read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesValidator read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesValidator facesValidator, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesValidator facesValidator, RuntimeContext context)
+        throws Exception {
         if (facesValidator == null) {
             writer.writeXsiNil();
             return;
@@ -252,7 +252,7 @@ public class FacesValidator$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesValidator.class != facesValidator.getClass()) {
             context.unexpectedSubclass(writer, facesValidator, FacesValidator.class);
             return;
@@ -262,12 +262,12 @@ public class FacesValidator$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesValidator.id;
+        final String idRaw = facesValidator.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesValidator, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -277,11 +277,11 @@ public class FacesValidator$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesValidator.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesValidator, "descriptions", FacesValidator.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -296,11 +296,11 @@ public class FacesValidator$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesValidator.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesValidator, "displayNames", FacesValidator.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -312,9 +312,9 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesValidator.icon;
+        final LocalCollection<Icon> icon = facesValidator.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -326,11 +326,11 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: validatorId
-        String validatorIdRaw = facesValidator.validatorId;
+        final String validatorIdRaw = facesValidator.validatorId;
         String validatorId = null;
         try {
             validatorId = Adapters.collapsedStringAdapterAdapter.marshal(validatorIdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesValidator, "validatorId", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (validatorId != null) {
@@ -342,11 +342,11 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: validatorClass
-        String validatorClassRaw = facesValidator.validatorClass;
+        final String validatorClassRaw = facesValidator.validatorClass;
         String validatorClass = null;
         try {
             validatorClass = Adapters.collapsedStringAdapterAdapter.marshal(validatorClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesValidator, "validatorClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (validatorClass != null) {
@@ -358,9 +358,9 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: attribute
-        List<FacesAttribute> attribute = facesValidator.attribute;
+        final List<FacesAttribute> attribute = facesValidator.attribute;
         if (attribute != null) {
-            for (FacesAttribute attributeItem : attribute) {
+            for (final FacesAttribute attributeItem : attribute) {
                 writer.writeStartElement(prefix, "attribute", "http://java.sun.com/xml/ns/javaee");
                 if (attributeItem != null) {
                     writeFacesAttribute(writer, attributeItem, context);
@@ -372,9 +372,9 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: property
-        List<FacesProperty> property = facesValidator.property;
+        final List<FacesProperty> property = facesValidator.property;
         if (property != null) {
-            for (FacesProperty propertyItem : property) {
+            for (final FacesProperty propertyItem : property) {
                 writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
                 if (propertyItem != null) {
                     writeFacesProperty(writer, propertyItem, context);
@@ -386,9 +386,9 @@ public class FacesValidator$JAXB
         }
 
         // ELEMENT: validatorExtension
-        List<FacesValidatorExtension> validatorExtension = facesValidator.validatorExtension;
+        final List<FacesValidatorExtension> validatorExtension = facesValidator.validatorExtension;
         if (validatorExtension != null) {
-            for (FacesValidatorExtension validatorExtensionItem : validatorExtension) {
+            for (final FacesValidatorExtension validatorExtensionItem : validatorExtension) {
                 if (validatorExtensionItem != null) {
                     writer.writeStartElement(prefix, "validator-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesValidatorExtension(writer, validatorExtensionItem, context);

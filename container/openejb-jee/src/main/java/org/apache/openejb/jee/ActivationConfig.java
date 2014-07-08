@@ -32,11 +32,11 @@ import java.util.Properties;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for activation-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="activation-configType">
  *   &lt;complexContent>
@@ -50,15 +50,13 @@ import java.util.Properties;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-configType", propOrder = {
-        "descriptions",
-        "activationConfigProperty"
-        })
+    "descriptions",
+    "activationConfigProperty"
+})
 public class ActivationConfig {
 
     @XmlTransient
@@ -76,7 +74,7 @@ public class ActivationConfig {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -84,10 +82,10 @@ public class ActivationConfig {
         return description.get();
     }
 
-    public void addProperty(String name, String value) {
+    public void addProperty(final String name, final String value) {
         getActivationConfigProperty().add(new ActivationConfigProperty(name, value));
     }
-    
+
     public List<ActivationConfigProperty> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
             activationConfigProperty = new ArrayList<ActivationConfigProperty>();
@@ -99,15 +97,15 @@ public class ActivationConfig {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     public Properties toProperties() {
-        Properties properties = new Properties();
-        for (ActivationConfigProperty property : getActivationConfigProperty()) {
-            String name = property.getActivationConfigPropertyName();
-            String value = property.getActivationConfigPropertyValue();
+        final Properties properties = new Properties();
+        for (final ActivationConfigProperty property : getActivationConfigProperty()) {
+            final String name = property.getActivationConfigPropertyName();
+            final String value = property.getActivationConfigPropertyValue();
             properties.put(name, value);
         }
         return properties;

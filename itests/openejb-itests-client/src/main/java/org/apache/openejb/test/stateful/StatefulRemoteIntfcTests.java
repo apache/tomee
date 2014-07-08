@@ -31,7 +31,7 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
         ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
         ejbObject = ejbHome.createObject("Third Bean");
     }
@@ -41,10 +41,10 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
     //
     public void test01_businessMethod(){
         try{
-        String expected = "Success";
-        String actual = ejbObject.businessMethod("sseccuS");
+        final String expected = "Success";
+        final String actual = ejbObject.businessMethod("sseccuS");
         assertEquals(expected, actual);
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -57,10 +57,10 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
     public void test02_throwApplicationException(){
         try{
             ejbObject.throwApplicationException();
-        } catch (ApplicationException e){
+        } catch (final ApplicationException e){
             //Good.  This is the correct behaviour
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
@@ -72,10 +72,10 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
      */
     public void test03_invokeAfterApplicationException(){
         try{
-        String expected = "Success";
-        String actual   = ejbObject.businessMethod("sseccuS");
+        final String expected = "Success";
+        final String actual   = ejbObject.businessMethod("sseccuS");
         assertEquals(expected, actual);
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -83,13 +83,13 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
     public void test04_throwSystemException(){
         try{
             ejbObject.throwSystemException_NullPointer();
-        } catch (java.rmi.RemoteException e){
+        } catch (final java.rmi.RemoteException e){
             //Good, so far.
-            Throwable n = e.detail;
+            final Throwable n = e.detail;
             assertNotNull("Nested exception should not be is null", n );
             assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
@@ -103,9 +103,9 @@ public class StatefulRemoteIntfcTests extends BasicStatefulTestClient{
         try{
         ejbObject.businessMethod("This refernce is invalid");
         fail("A java.rmi.NoSuchObjectException should have been thrown.");
-        } catch (java.rmi.NoSuchObjectException e){
+        } catch (final java.rmi.NoSuchObjectException e){
             // Good.
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

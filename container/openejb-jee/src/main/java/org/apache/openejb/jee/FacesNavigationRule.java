@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,15 +26,19 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-navigation-ruleType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-navigation-ruleType">
  *   &lt;complexContent>
@@ -54,8 +54,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-navigation-ruleType", propOrder = {
@@ -91,7 +89,7 @@ public class FacesNavigationRule {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -104,7 +102,7 @@ public class FacesNavigationRule {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -119,7 +117,7 @@ public class FacesNavigationRule {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -132,11 +130,9 @@ public class FacesNavigationRule {
 
     /**
      * Gets the value of the fromViewId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getFromViewId() {
         return fromViewId;
@@ -144,37 +140,33 @@ public class FacesNavigationRule {
 
     /**
      * Sets the value of the fromViewId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setFromViewId(java.lang.String value) {
+    public void setFromViewId(final java.lang.String value) {
         this.fromViewId = value;
     }
 
     /**
      * Gets the value of the navigationCase property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the navigationCase property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNavigationCase().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesNavigationCase }
-     * 
-     * 
      */
     public List<FacesNavigationCase> getNavigationCase() {
         if (navigationCase == null) {
@@ -185,25 +177,23 @@ public class FacesNavigationRule {
 
     /**
      * Gets the value of the navigationRuleExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the navigationRuleExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNavigationRuleExtension().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesNavigationRuleExtension }
-     * 
-     * 
      */
     public List<FacesNavigationRuleExtension> getNavigationRuleExtension() {
         if (navigationRuleExtension == null) {
@@ -214,11 +204,9 @@ public class FacesNavigationRule {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -226,13 +214,11 @@ public class FacesNavigationRule {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

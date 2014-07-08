@@ -21,12 +21,12 @@ public abstract class NamedTestCase extends NumberedTestCase{
         
     protected String testName;
 
-    public NamedTestCase(String testName){
+    public NamedTestCase(final String testName){
         super();
         this.testName = testName;
     }
     
-    public NamedTestCase(String category, String testName){
+    public NamedTestCase(final String category, final String testName){
         super();
         this.testName = testName;
     }

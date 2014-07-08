@@ -56,17 +56,17 @@ public class CleanEnvEntriesTest extends TestCase {
 
         // fill in type
         singletonBean.getEnvEntry().add(new EnvEntry().name("value-but-no-type1").value("10")
-                .injectionTarget(Blue.class, "number")
-                .injectionTarget(Orange.class, "number") // attempt to confuse the type
+            .injectionTarget(Blue.class, "number")
+            .injectionTarget(Orange.class, "number") // attempt to confuse the type
         );
 
         singletonBean.getEnvEntry().add(new EnvEntry().name("value-but-no-type2").value("D")
-                .injectionTarget(Blue.class, "letter"))
+            .injectionTarget(Blue.class, "letter"))
         ;
 
         singletonBean.getEnvEntry().add(new EnvEntry().name("value-but-no-type3").value("2")
-                .injectionTarget(Blue.class, "vague")    // short
-                .injectionTarget(Orange.class, "vague")  // character
+            .injectionTarget(Blue.class, "vague")    // short
+            .injectionTarget(Orange.class, "vague")  // character
         );
 
         final EjbJar ejbJar = new EjbJar();
@@ -87,9 +87,9 @@ public class CleanEnvEntriesTest extends TestCase {
         assertEquals(String.class.getName(), entries.get("comp/env/value-but-no-type3").type);
     }
 
-    private Map<String, EnvEntryInfo> map(List<EnvEntryInfo> envEntries) {
-        Map<String, EnvEntryInfo> map = new HashMap<String, EnvEntryInfo>();
-        for (EnvEntryInfo entry : envEntries) {
+    private Map<String, EnvEntryInfo> map(final List<EnvEntryInfo> envEntries) {
+        final Map<String, EnvEntryInfo> map = new HashMap<String, EnvEntryInfo>();
+        for (final EnvEntryInfo entry : envEntries) {
             map.put(entry.referenceName, entry);
         }
         return map;
@@ -100,11 +100,11 @@ public class CleanEnvEntriesTest extends TestCase {
         private Character letter;
         private Short vague;
 
-        public void setNumber(int number) {
+        public void setNumber(final int number) {
         }
 
         // False positive if case is not considered
-        public void setNumBer(long number) {
+        public void setNumBer(final long number) {
         }
     }
 

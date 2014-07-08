@@ -27,7 +27,7 @@ import javax.interceptor.InvocationContext;
 public class InternalSecurityInterceptor {
     public static final String OPENEJB_INTERNAL_BEANS_SECURITY_ENABLED = "openejb.internal.beans.security.enabled";
 
-    private static String[] ROLES = new String[] { "openejb-admin", "tomee-admin" };
+    private static String[] ROLES = new String[]{"openejb-admin", "tomee-admin"};
 
     @AroundInvoke
     public Object invoke(final InvocationContext ic) throws Exception {

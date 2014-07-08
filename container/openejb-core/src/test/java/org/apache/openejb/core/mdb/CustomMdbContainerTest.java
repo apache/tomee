@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.junit.Assert;
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -35,6 +34,7 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.util.Join;
+import org.junit.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -67,8 +67,8 @@ public class CustomMdbContainerTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -78,38 +78,38 @@ public class CustomMdbContainerTest extends TestCase {
         EmailBean.lifecycle.clear();
 
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
 
-        Connector connector = new Connector("email-ra");
-        ResourceAdapter adapter = new ResourceAdapter(EmailResourceAdapter.class);
+        final Connector connector = new Connector("email-ra");
+        final ResourceAdapter adapter = new ResourceAdapter(EmailResourceAdapter.class);
         connector.setResourceAdapter(adapter);
-        InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
-        MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
-        MessageListener listener = messageAdapter.addMessageListener(new MessageListener(EmailConsumer.class, EmailAccountInfo.class));
+        final InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
+        final MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
+        final MessageListener listener = messageAdapter.addMessageListener(new MessageListener(EmailConsumer.class, EmailAccountInfo.class));
         listener.getActivationSpec().addRequiredConfigProperty("address");
         app.getConnectorModules().add(new ConnectorModule(connector));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(EmailBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
-        InitialContext initialContext = new InitialContext();
+        final InitialContext initialContext = new InitialContext();
 
-        EmailResourceAdapter ra = (EmailResourceAdapter) initialContext.lookup("java:openejb/Resource/email-raRA");
+        final EmailResourceAdapter ra = (EmailResourceAdapter) initialContext.lookup("java:openejb/Resource/email-raRA");
 
-        Properties headers = new Properties();
+        final Properties headers = new Properties();
         headers.put("To", "dblevins@apache.org");
         headers.put("From", "dblevins@visi.com");
         headers.put("Subject", "Hello");
 
         ra.deliverEmail(headers, "How's it going?");
 
-        Stack<Lifecycle> lifecycle = EmailBean.lifecycle;
+        final Stack<Lifecycle> lifecycle = EmailBean.lifecycle;
 
-        List expected = Arrays.asList(Lifecycle.values());
+        final List expected = Arrays.asList(Lifecycle.values());
 
         Assert.assertEquals(Join.join("\n", expected), Join.join("\n", lifecycle));
 
@@ -132,7 +132,7 @@ public class CustomMdbContainerTest extends TestCase {
         }
 
         @Resource
-        public void setMessageDrivenContext(MessageDrivenContext messageDrivenContext) {
+        public void setMessageDrivenContext(final MessageDrivenContext messageDrivenContext) {
             lifecycle.push(Lifecycle.INJECTION);
         }
 
@@ -141,7 +141,7 @@ public class CustomMdbContainerTest extends TestCase {
             lifecycle.push(Lifecycle.POST_CONSTRUCT);
         }
 
-        public void receiveEmail(Properties headers, String body) {
+        public void receiveEmail(final Properties headers, final String body) {
             lifecycle.push(Lifecycle.ON_MESSAGE);
         }
     }
@@ -155,39 +155,39 @@ public class CustomMdbContainerTest extends TestCase {
 
         private final Map<String, EmailConsumer> consumers = new HashMap<String, EmailConsumer>();
 
-        public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+        public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         }
 
         public void stop() {
         }
 
-        public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
-            EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
+        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) throws ResourceException {
+            final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
-            EmailConsumer emailConsumer = (EmailConsumer) messageEndpointFactory.createEndpoint(null);
+            final EmailConsumer emailConsumer = (EmailConsumer) messageEndpointFactory.createEndpoint(null);
             consumers.put(accountInfo.getAddress(), emailConsumer);
         }
 
-        public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
-            EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
+        public void endpointDeactivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) {
+            final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
-            EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
             endpoint.release();
         }
 
-        public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
+        public XAResource[] getXAResources(final ActivationSpec[] activationSpecs) throws ResourceException {
             return new XAResource[0];
         }
 
-        public void deliverEmail(Properties headers, String body) throws Exception {
-            String to = headers.getProperty("To");
+        public void deliverEmail(final Properties headers, final String body) throws Exception {
+            final String to = headers.getProperty("To");
 
-            EmailConsumer emailConsumer = consumers.get(to);
+            final EmailConsumer emailConsumer = consumers.get(to);
 
             if (emailConsumer == null) throw new Exception("No such account");
 
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
 
             endpoint.beforeDelivery(EmailConsumer.class.getMethod("receiveEmail", Properties.class, String.class));
             emailConsumer.receiveEmail(headers, body);
@@ -207,7 +207,7 @@ public class CustomMdbContainerTest extends TestCase {
             return address;
         }
 
-        public void setAddress(String address) {
+        public void setAddress(final String address) {
             this.address = address;
         }
 
@@ -215,7 +215,7 @@ public class CustomMdbContainerTest extends TestCase {
             return emailResourceAdapter;
         }
 
-        public void setResourceAdapter(javax.resource.spi.ResourceAdapter resourceAdapter) {
+        public void setResourceAdapter(final javax.resource.spi.ResourceAdapter resourceAdapter) {
             this.emailResourceAdapter = (EmailResourceAdapter) resourceAdapter;
         }
     }

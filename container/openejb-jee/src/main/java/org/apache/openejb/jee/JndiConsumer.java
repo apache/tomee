@@ -32,32 +32,42 @@ public interface JndiConsumer {
     String getJndiConsumerName();
 
     Collection<EnvEntry> getEnvEntry();
-    Map<String,EnvEntry> getEnvEntryMap();
+
+    Map<String, EnvEntry> getEnvEntryMap();
 
     Collection<EjbRef> getEjbRef();
-    Map<String,EjbRef> getEjbRefMap();
+
+    Map<String, EjbRef> getEjbRefMap();
 
     Collection<EjbLocalRef> getEjbLocalRef();
-    Map<String,EjbLocalRef> getEjbLocalRefMap();
+
+    Map<String, EjbLocalRef> getEjbLocalRefMap();
 
     Collection<ServiceRef> getServiceRef();
-    Map<String,ServiceRef> getServiceRefMap();
+
+    Map<String, ServiceRef> getServiceRefMap();
 
     Collection<ResourceRef> getResourceRef();
-    Map<String,ResourceRef> getResourceRefMap();
+
+    Map<String, ResourceRef> getResourceRefMap();
 
     Collection<ResourceEnvRef> getResourceEnvRef();
-    Map<String,ResourceEnvRef> getResourceEnvRefMap();
+
+    Map<String, ResourceEnvRef> getResourceEnvRefMap();
 
     Collection<MessageDestinationRef> getMessageDestinationRef();
-    Map<String,MessageDestinationRef> getMessageDestinationRefMap();
+
+    Map<String, MessageDestinationRef> getMessageDestinationRefMap();
 
     Collection<PersistenceContextRef> getPersistenceContextRef();
-    Map<String,PersistenceContextRef> getPersistenceContextRefMap();
+
+    Map<String, PersistenceContextRef> getPersistenceContextRefMap();
 
     Collection<PersistenceUnitRef> getPersistenceUnitRef();
-    Map<String,PersistenceUnitRef> getPersistenceUnitRefMap();
+
+    Map<String, PersistenceUnitRef> getPersistenceUnitRefMap();
 
     Collection<DataSource> getDataSource();
-    Map<String,DataSource> getDataSourceMap();
+
+    Map<String, DataSource> getDataSourceMap();
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for entity-cache complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-cache">
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-cache", propOrder = {
@@ -83,11 +81,9 @@ public class EntityCache {
 
     /**
      * Gets the value of the maxBeansInCache property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxBeansInCache() {
         return maxBeansInCache;
@@ -95,23 +91,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the maxBeansInCache property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxBeansInCache(BigInteger value) {
+    public void setMaxBeansInCache(final BigInteger value) {
         this.maxBeansInCache = value;
     }
 
     /**
      * Gets the value of the maxQueriesInCache property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxQueriesInCache() {
         return maxQueriesInCache;
@@ -119,23 +111,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the maxQueriesInCache property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxQueriesInCache(BigInteger value) {
+    public void setMaxQueriesInCache(final BigInteger value) {
         this.maxQueriesInCache = value;
     }
 
     /**
      * Gets the value of the idleTimeoutSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getIdleTimeoutSeconds() {
         return idleTimeoutSeconds;
@@ -143,23 +131,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the idleTimeoutSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setIdleTimeoutSeconds(BigInteger value) {
+    public void setIdleTimeoutSeconds(final BigInteger value) {
         this.idleTimeoutSeconds = value;
     }
 
     /**
      * Gets the value of the readTimeoutSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getReadTimeoutSeconds() {
         return readTimeoutSeconds;
@@ -167,23 +151,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the readTimeoutSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setReadTimeoutSeconds(BigInteger value) {
+    public void setReadTimeoutSeconds(final BigInteger value) {
         this.readTimeoutSeconds = value;
     }
 
     /**
      * Gets the value of the concurrencyStrategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConcurrencyStrategy() {
         return concurrencyStrategy;
@@ -191,23 +171,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the concurrencyStrategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConcurrencyStrategy(String value) {
+    public void setConcurrencyStrategy(final String value) {
         this.concurrencyStrategy = value;
     }
 
     /**
      * Gets the value of the cacheBetweenTransactions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getCacheBetweenTransactions() {
         return cacheBetweenTransactions;
@@ -215,23 +191,19 @@ public class EntityCache {
 
     /**
      * Sets the value of the cacheBetweenTransactions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setCacheBetweenTransactions(Boolean value) {
+    public void setCacheBetweenTransactions(final Boolean value) {
         this.cacheBetweenTransactions = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -239,13 +211,11 @@ public class EntityCache {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tld-deferred-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tld-deferred-methodType">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-deferred-methodType", propOrder = {"methodSignature"})
@@ -61,7 +59,7 @@ public class TldDeferredMethod {
         return methodSignature;
     }
 
-    public void setMethodSignature(String value) {
+    public void setMethodSignature(final String value) {
         this.methodSignature = value;
     }
 
@@ -69,7 +67,7 @@ public class TldDeferredMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

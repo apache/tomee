@@ -43,7 +43,8 @@ public class PrePassivateMetaTest {
 
             @Serializing
             @PrePassivate
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

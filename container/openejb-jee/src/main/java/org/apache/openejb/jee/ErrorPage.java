@@ -29,11 +29,11 @@ import java.math.BigInteger;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for error-pageType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="error-pageType">
  *   &lt;complexContent>
@@ -50,14 +50,12 @@ import java.math.BigInteger;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "error-pageType", propOrder = {
-        "errorCode",
-        "exceptionType",
-        "location"
+    "errorCode",
+    "exceptionType",
+    "location"
 })
 public class ErrorPage {
 
@@ -76,7 +74,7 @@ public class ErrorPage {
         return errorCode;
     }
 
-    public void setErrorCode(BigInteger value) {
+    public void setErrorCode(final BigInteger value) {
         this.errorCode = value;
     }
 
@@ -84,7 +82,7 @@ public class ErrorPage {
         return exceptionType;
     }
 
-    public void setExceptionType(String value) {
+    public void setExceptionType(final String value) {
         this.exceptionType = value;
     }
 
@@ -92,7 +90,7 @@ public class ErrorPage {
         return location;
     }
 
-    public void setLocation(String value) {
+    public void setLocation(final String value) {
         this.location = value;
     }
 
@@ -100,7 +98,7 @@ public class ErrorPage {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

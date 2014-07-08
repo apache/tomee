@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  */
 public class Instance {
     public final Object bean;
-    public final Map<String,Object> interceptors;
+    public final Map<String, Object> interceptors;
     public final ReadWriteLock lock;
     public final CreationalContext creationalContext;
 

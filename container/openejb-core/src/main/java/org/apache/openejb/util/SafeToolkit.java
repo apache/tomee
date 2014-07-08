@@ -59,14 +59,12 @@ public final class SafeToolkit {
             OpenEJBErrorHandler.classNotIntantiateable(systemLocation, clazz.getName());
         } catch (final IllegalAccessException iae) {
             OpenEJBErrorHandler.classNotAccessible(systemLocation, clazz.getName());
-        }
-
-        catch (final Throwable exception) {
+        } catch (final Throwable exception) {
             exception.printStackTrace();
             final ClassLoader classLoader = clazz.getClassLoader();
             if (classLoader instanceof URLClassLoader) {
                 OpenEJBErrorHandler.classNotIntantiateableFromCodebaseForUnknownReason(systemLocation, clazz.getName(), getCodebase((URLClassLoader) classLoader),
-                        exception.getClass().getName(), exception.getMessage());
+                    exception.getClass().getName(), exception.getMessage());
             } else {
                 OpenEJBErrorHandler.classNotIntantiateableForUnknownReason(systemLocation, clazz.getName(), exception.getClass().getName(), exception.getMessage());
             }

@@ -48,11 +48,9 @@ public class DLQConfig {
 
     /**
      * Gets the value of the destinationQueue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationQueue() {
         return destinationQueue;
@@ -60,23 +58,19 @@ public class DLQConfig {
 
     /**
      * Sets the value of the destinationQueue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationQueue(String value) {
+    public void setDestinationQueue(final String value) {
         this.destinationQueue = value;
     }
 
     /**
      * Gets the value of the maxTimesRedelivered property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxTimesRedelivered() {
         return maxTimesRedelivered;
@@ -84,23 +78,19 @@ public class DLQConfig {
 
     /**
      * Sets the value of the maxTimesRedelivered property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxTimesRedelivered(String value) {
+    public void setMaxTimesRedelivered(final String value) {
         this.maxTimesRedelivered = value;
     }
 
     /**
      * Gets the value of the timeToLive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTimeToLive() {
         return timeToLive;
@@ -108,23 +98,19 @@ public class DLQConfig {
 
     /**
      * Sets the value of the timeToLive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTimeToLive(String value) {
+    public void setTimeToLive(final String value) {
         this.timeToLive = value;
     }
 
     /**
      * Gets the value of the dlqUser property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDLQUser() {
         return dlqUser;
@@ -132,23 +118,19 @@ public class DLQConfig {
 
     /**
      * Sets the value of the dlqUser property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDLQUser(String value) {
+    public void setDLQUser(final String value) {
         this.dlqUser = value;
     }
 
     /**
      * Gets the value of the dlqPassword property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDLQPassword() {
         return dlqPassword;
@@ -156,13 +138,11 @@ public class DLQConfig {
 
     /**
      * Sets the value of the dlqPassword property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDLQPassword(String value) {
+    public void setDLQPassword(final String value) {
         this.dlqPassword = value;
     }
 

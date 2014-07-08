@@ -83,7 +83,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         try {
             final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
@@ -97,11 +97,11 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 //                    "***************************************\n\n");
             try {
                 message.acknowledge();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
                 e.printStackTrace();
             }
             mdbInvoker.onMessage(message);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }
@@ -113,7 +113,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -122,7 +122,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatefulBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statefulHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -131,7 +131,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatelessBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statelessHome);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -140,7 +140,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatelessBusinessLocal() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -149,7 +149,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatelessBusinessRemote() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -158,7 +158,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatefulBusinessLocal() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -167,7 +167,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupStatefulBusinessRemote() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -178,7 +178,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
             final String expected = "1";
             Assert.assertNotNull("The String looked up is null", striing);
             Assert.assertEquals(expected, striing);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -191,7 +191,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
             Assert.assertNotNull("The Double looked up is null", doouble);
             Assert.assertEquals(expected, doouble);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -203,7 +203,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Long looked up is null", loong);
             Assert.assertEquals(expected, loong);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -215,7 +215,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Float looked up is null", flooat);
             Assert.assertEquals(expected, flooat);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -228,7 +228,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
             Assert.assertNotNull("The Integer looked up is null", inteeger);
             Assert.assertEquals(expected, inteeger);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -240,7 +240,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Short looked up is null", shoort);
             Assert.assertEquals(expected, shoort);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -252,7 +252,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Boolean looked up is null", booolean);
             Assert.assertEquals(expected, booolean);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -264,7 +264,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Byte looked up is null", byyte);
             Assert.assertEquals(expected, byyte);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -276,7 +276,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
             Assert.assertNotNull("The Character looked up is null", chaaracter);
             Assert.assertEquals(expected, chaaracter);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -285,7 +285,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupResource() throws TestFailureException {
         try {
             Assert.assertNotNull("The DataSource is null", daataSource);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -297,11 +297,11 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -320,7 +320,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManagerFactory is null", emf);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -333,10 +333,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
             try {
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -345,7 +345,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void lookupMessageDrivenContext() throws TestFailureException {
         try {
             Assert.assertNotNull("The MessageDrivenContext is null", ejbContext);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
 

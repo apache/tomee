@@ -32,7 +32,7 @@ public class BasicMdbTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
+        final Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
         basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
     }
 
@@ -47,10 +47,10 @@ public class BasicMdbTests extends MdbTestClient {
     //
     public void test01_businessMethod(){
         try{
-            String expected = "Success";
-            String actual = basicMdbObject.businessMethod("sseccuS");
+            final String expected = "Success";
+            final String actual = basicMdbObject.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
@@ -63,10 +63,10 @@ public class BasicMdbTests extends MdbTestClient {
     public void Xtest02_throwApplicationException(){
         try{
             basicMdbObject.throwApplicationException();
-        } catch (org.apache.openejb.test.ApplicationException e){
+        } catch (final org.apache.openejb.test.ApplicationException e){
             //Good.  This is the correct behaviour
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
@@ -78,10 +78,10 @@ public class BasicMdbTests extends MdbTestClient {
      */
     public void test03_invokeAfterApplicationException(){
         try{
-        String expected = "Success";
-        String actual   = basicMdbObject.businessMethod("sseccuS");
+        final String expected = "Success";
+        final String actual   = basicMdbObject.businessMethod("sseccuS");
         assertEquals(expected, actual);
-        } catch (Throwable e){
+        } catch (final Throwable e){
             e.printStackTrace();
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
@@ -90,13 +90,13 @@ public class BasicMdbTests extends MdbTestClient {
     public void Xtest04_throwSystemException(){
         try{
             basicMdbObject.throwSystemException_NullPointer();
-        } catch (Exception e){
+        } catch (final Exception e){
             //Good, so far.
-            Throwable n = e.getCause();
+            final Throwable n = e.getCause();
             assertNotNull("Nested exception should not be is null", n );
             assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
@@ -112,9 +112,9 @@ public class BasicMdbTests extends MdbTestClient {
         try{
         basicMdbObject.businessMethod("This refernce is invalid");
         fail("A java.rmi.NoSuchObjectException should have been thrown.");
-        } catch (Exception e){
+        } catch (final Exception e){
             // Good.
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

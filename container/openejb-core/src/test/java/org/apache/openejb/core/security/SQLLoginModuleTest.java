@@ -39,25 +39,25 @@ import static org.junit.Assert.assertEquals;
 
 public class SQLLoginModuleTest {
 
-	private static Connection conn;
+    private static Connection conn;
 
-	@BeforeClass
+    @BeforeClass
     public static void setUp() throws Exception {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = SQLLoginModuleTest.class.getClassLoader()
-					.getResource("login.config");
+            final URL resource = SQLLoginModuleTest.class.getClassLoader()
+                .getResource("login.config");
             if (resource != null) {
                 path = URLs.toFilePath(resource);
                 System.setProperty("java.security.auth.login.config", path);
             }
         }
-        
+
         // Create the data source and initialize the database tables
-        Driver hsqlDriver = (Driver) Class.forName("org.hsqldb.jdbcDriver").newInstance();
-        Properties info = new Properties();
+        final Driver hsqlDriver = (Driver) Class.forName("org.hsqldb.jdbcDriver").newInstance();
+        final Properties info = new Properties();
         info.setProperty("shutdown", "false");
-        Connection conn = hsqlDriver.connect("jdbc:hsqldb:mem:sqltest", info);
+        final Connection conn = hsqlDriver.connect("jdbc:hsqldb:mem:sqltest", info);
 //        Connection conn = DriverManager.getConnection("jdbc:hsqldb:mem:sqltest");
         conn.createStatement().execute("CREATE TABLE users (username VARCHAR(255), password VARCHAR(255))");
         conn.createStatement().execute("CREATE TABLE groups (grp VARCHAR(255), username VARCHAR(255))");
@@ -91,50 +91,50 @@ public class SQLLoginModuleTest {
         conn.close();
     }
 
-	@AfterClass
-	public static void tearDown() {
-		if (conn != null) {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// Can't do anything about it -- ignore
-			}
-			conn = null;
-		}
-	}
+    @AfterClass
+    public static void tearDown() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (final SQLException e) {
+                // Can't do anything about it -- ignore
+            }
+            conn = null;
+        }
+    }
 
     @Test
     public void testLogin() throws LoginException {
-        LoginContext context = new LoginContext("SQLLogin",
-				new UsernamePasswordCallbackHandler("jonathan", "secret"));
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("jonathan", "secret"));
         context.login();
 
-        Subject subject = context.getSubject();
+        final Subject subject = context.getSubject();
 
         assertEquals("Should have three principals", 3,
-        		subject.getPrincipals().size());
+            subject.getPrincipals().size());
         assertEquals("Should have one user principal", 1,
-        		subject.getPrincipals(UserPrincipal.class).size());
+            subject.getPrincipals(UserPrincipal.class).size());
         assertEquals("Should have two group principals", 2,
-        		subject.getPrincipals(GroupPrincipal.class).size());
+            subject.getPrincipals(GroupPrincipal.class).size());
 
         context.logout();
 
         assertEquals("Should have zero principals", 0,
-        		subject.getPrincipals().size());
+            subject.getPrincipals().size());
     }
 
     @Test(expected = FailedLoginException.class)
     public void testBadUseridLogin() throws LoginException {
-        LoginContext context = new LoginContext("SQLLogin",
-				new UsernamePasswordCallbackHandler("nobody", "secret"));
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("nobody", "secret"));
         context.login();
     }
 
     @Test(expected = FailedLoginException.class)
     public void testBadPWLogin() throws LoginException {
-        LoginContext context = new LoginContext("SQLLogin",
-				new UsernamePasswordCallbackHandler("jonathan", "badpass"));
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("jonathan", "badpass"));
         context.login();
     }
 

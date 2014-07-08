@@ -57,9 +57,9 @@ public class StatefulContainerTest extends TestCase {
     public void testBusinessLocalInterface() throws Exception {
         testBusinessLocalInterface(expectedLifecycle);
     }
-    
+
     public void testBusinessLocalBeanInterface() throws Exception {
-        List localbeanExpectedLifecycle = new ArrayList();
+        final List localbeanExpectedLifecycle = new ArrayList();
         localbeanExpectedLifecycle.addAll(expectedLifecycle);
 
         // WAS can't avoid the extra constructor call
@@ -70,7 +70,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessRemoteInterfaceInTx() throws Exception {
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         transactionManager.begin();
         try {
             testBusinessRemoteInterface(inTxExpectedLifecycle);
@@ -79,26 +79,26 @@ public class StatefulContainerTest extends TestCase {
         }
     }
 
-    protected void testBusinessLocalInterface(List expectedLifecycle) throws Exception {
+    protected void testBusinessLocalInterface(final List expectedLifecycle) throws Exception {
 
         // Do a create...
 
-        InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("WidgetBeanLocal");
+        final InitialContext ctx = new InitialContext();
+        final Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
-        Widget widget = (Widget) object;
+        final Widget widget = (Widget) object;
 
         // Do a business method...
-        Stack<Object> actual = widget.getLifecycle();
+        final Stack<Object> actual = widget.getLifecycle();
         assertNotNull("lifecycle", actual);
 
         // test app exception
         try {
             widget.throwAppException();
             fail("Expected application exception");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             assertEquals("test", e.getMessage());
         }
 
@@ -109,29 +109,29 @@ public class StatefulContainerTest extends TestCase {
         widget.destroy();
 
         // Check the lifecycle of the bean
-        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle) , join("\n", WidgetBean.lifecycle));
+        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle), join("\n", WidgetBean.lifecycle));
     }
 
-    protected void testBusinessLocalBeanInterface(List expectedLifecycle) throws Exception {
+    protected void testBusinessLocalBeanInterface(final List expectedLifecycle) throws Exception {
 
         // Do a create...
 
-        InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("WidgetBeanLocalBean");
+        final InitialContext ctx = new InitialContext();
+        final Object object = ctx.lookup("WidgetBeanLocalBean");
 
         assertTrue("instanceof widget", object instanceof WidgetBean);
 
-        WidgetBean widget = (WidgetBean) object;
+        final WidgetBean widget = (WidgetBean) object;
 
         // Do a business method...
-        Stack<Object> actual = widget.getLifecycle();
+        final Stack<Object> actual = widget.getLifecycle();
         assertNotNull("lifecycle", actual);
 
         // test app exception
         try {
             widget.throwAppException();
             fail("Expected application exception");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             assertEquals("test", e.getMessage());
         }
 
@@ -143,7 +143,7 @@ public class StatefulContainerTest extends TestCase {
 
         // Check the lifecycle of the bean
 
-        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle) , join("\n", WidgetBean.lifecycle));
+        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle), join("\n", WidgetBean.lifecycle));
     }
 
     public void testBusinessRemoteInterface() throws Exception {
@@ -151,7 +151,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessLocalInterfaceInTx() throws Exception {
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         transactionManager.begin();
         try {
             testBusinessLocalInterface(inTxExpectedLifecycle);
@@ -161,14 +161,14 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessLocalBeanInterfaceInTx() throws Exception {
-         List localbeanExpectedLifecycle = new ArrayList();
+        final List localbeanExpectedLifecycle = new ArrayList();
         localbeanExpectedLifecycle.addAll(inTxExpectedLifecycle);
 
         // WAS can't avoid the extra constructor call
         // NOW it was rewritten to avoid it
         // localbeanExpectedLifecycle.add(3, Lifecycle.CONSTRUCTOR);
 
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         transactionManager.begin();
         try {
             testBusinessLocalBeanInterface(localbeanExpectedLifecycle);
@@ -177,28 +177,28 @@ public class StatefulContainerTest extends TestCase {
         }
     }
 
-    protected void testBusinessRemoteInterface(List expectedLifecycle) throws Exception {
+    protected void testBusinessRemoteInterface(final List expectedLifecycle) throws Exception {
         WidgetBean.lifecycle.clear();
 
         // Do a create...
 
-        InitialContext ctx = new InitialContext();
-        Object object = ctx.lookup("WidgetBeanRemote");
+        final InitialContext ctx = new InitialContext();
+        final Object object = ctx.lookup("WidgetBeanRemote");
 
         assertTrue("instanceof widget", object instanceof RemoteWidget);
 
-        RemoteWidget widget = (RemoteWidget) object;
+        final RemoteWidget widget = (RemoteWidget) object;
 
         // Do a business method...
-        Stack<Object> lifecycle = widget.getLifecycle();
-        assertNotNull("lifecycle",lifecycle);
+        final Stack<Object> lifecycle = widget.getLifecycle();
+        assertNotNull("lifecycle", lifecycle);
         assertNotSame("is copy", lifecycle, WidgetBean.lifecycle);
 
         // test app exception
         try {
             widget.throwAppException();
             fail("Expected application exception");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             assertEquals("test", e.getMessage());
         }
 
@@ -211,11 +211,11 @@ public class StatefulContainerTest extends TestCase {
         try {
             widget.destroy();
             fail("Calling a removed bean should not be possible");
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
 
         // Check the lifecycle of the bean
-        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle) , join("\n", WidgetBean.lifecycle));
+        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle), join("\n", WidgetBean.lifecycle));
     }
 
     protected void setUp() throws Exception {
@@ -223,15 +223,15 @@ public class StatefulContainerTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+        final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("PoolSize", "0");
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         statefulContainerInfo.properties.setProperty("Frequency", "0");
@@ -239,7 +239,7 @@ public class StatefulContainerTest extends TestCase {
 
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(WidgetBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
@@ -248,17 +248,17 @@ public class StatefulContainerTest extends TestCase {
 
         expectedLifecycle = Arrays.asList(Lifecycle.values());
         inTxExpectedLifecycle = new ArrayList<Lifecycle>();
-        for (Lifecycle lifecycle : Lifecycle.values()) {
+        for (final Lifecycle lifecycle : Lifecycle.values()) {
             if (!lifecycle.name().startsWith("PRE_PASSIVATE") &&
-                    !lifecycle.name().startsWith("POST_ACTIVATE")) {
+                !lifecycle.name().startsWith("POST_ACTIVATE")) {
                 inTxExpectedLifecycle.add(lifecycle);
             }
         }
     }
 
-    private static String join(String delimeter, List items){
-        StringBuilder sb = new StringBuilder();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();
@@ -267,8 +267,11 @@ public class StatefulContainerTest extends TestCase {
     @Local
     public static interface Widget {
         Stack<Object> getLifecycle();
+
         void throwAppException() throws SQLException;
+
         void afterAppException();
+
         void destroy();
     }
 
@@ -309,7 +312,7 @@ public class StatefulContainerTest extends TestCase {
         }
 
         @Resource
-        public void setContext(SessionContext context){
+        public void setContext(final SessionContext context) {
             lifecycle.push(Lifecycle.INJECTION);
         }
 
@@ -319,21 +322,21 @@ public class StatefulContainerTest extends TestCase {
         }
 
         @PostActivate
-        public void activate(){
-            String name = "POST_ACTIVATE" + (++activates);
+        public void activate() {
+            final String name = "POST_ACTIVATE" + (++activates);
             try {
                 lifecycle.push(Enum.valueOf(Lifecycle.class, name));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 lifecycle.push(name);
             }
         }
 
         @PrePassivate
-        public void passivate(){
-            String name = "PRE_PASSIVATE" + (++passivates);
+        public void passivate() {
+            final String name = "PRE_PASSIVATE" + (++passivates);
             try {
                 lifecycle.push(Enum.valueOf(Lifecycle.class, name));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 lifecycle.push(name);
             }
         }

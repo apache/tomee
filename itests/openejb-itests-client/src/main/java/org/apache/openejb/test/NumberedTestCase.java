@@ -31,12 +31,12 @@ public class NumberedTestCase extends Assert implements Test{
     
     class MethodComparator implements java.util.Comparator {
         
-        public int compare(Object o1, Object o2){
-                Method m1 = (Method)o1;
-                Method m2 = (Method)o2;
+        public int compare(final Object o1, final Object o2){
+                final Method m1 = (Method)o1;
+                final Method m2 = (Method)o2;
                 return m1.getName().compareTo(m2.getName());
         }
-        public boolean equals(Object other){
+        public boolean equals(final Object other){
             if(other instanceof MethodComparator)
                 return true;
             else
@@ -48,8 +48,8 @@ public class NumberedTestCase extends Assert implements Test{
     public NumberedTestCase(){
         try{
             // Get all methods of the subclass
-            Method[] methods = getClass().getMethods();
-            java.util.TreeSet tm = new java.util.TreeSet(new MethodComparator());
+            final Method[] methods = getClass().getMethods();
+            final java.util.TreeSet tm = new java.util.TreeSet(new MethodComparator());
 
             // Add the ones that start with "test"
             for (int i=0; i < methods.length; i++){
@@ -58,11 +58,11 @@ public class NumberedTestCase extends Assert implements Test{
                 }
             }
             testMethods = new Method[tm.size()];
-            Iterator orderedMethods = tm.iterator();
+            final Iterator orderedMethods = tm.iterator();
             for(int i=0;orderedMethods.hasNext();i++){
                 testMethods[i]=(Method)orderedMethods.next();
             }
-        } catch (Exception e){
+        } catch (final Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -83,12 +83,12 @@ public class NumberedTestCase extends Assert implements Test{
     /**
      * Runs a test and collects its result in a TestResult instance.
      */
-    public void run(TestResult result) {
+    public void run(final TestResult result) {
         try{
             setUp();
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
-            Test test = new TestSetup();
+            final Test test = new TestSetup();
         
             result.addError(test, e);
             return;
@@ -98,9 +98,9 @@ public class NumberedTestCase extends Assert implements Test{
         }
         try{
             tearDown();
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
-            Test test = new TestTearDown();
+            final Test test = new TestTearDown();
         
             result.addError(test, e);
             return;
@@ -108,9 +108,9 @@ public class NumberedTestCase extends Assert implements Test{
     }
 
     protected void run(final TestResult result, final Method testMethod) {
-        Test test = createTest(testMethod);
+        final Test test = createTest(testMethod);
         result.startTest(test);
-        Protectable p= new Protectable() {
+        final Protectable p= new Protectable() {
             public void protect() throws Throwable {
                 runTestMethod(testMethod);
             }
@@ -121,17 +121,17 @@ public class NumberedTestCase extends Assert implements Test{
     
 
     protected Test createTest(final Method testMethod){
-        Test test = new NamedTest(testMethod);
+        final Test test = new NamedTest(testMethod);
         return test;
     }
 
-    protected void runTestMethod(Method testMethod) throws Throwable {
+    protected void runTestMethod(final Method testMethod) throws Throwable {
         try {
             testMethod.invoke(this, new Class[0]);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             e.fillInStackTrace();
             throw e.getTargetException();
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             e.fillInStackTrace();
             throw e;
         }
@@ -146,22 +146,22 @@ public class NumberedTestCase extends Assert implements Test{
         return "";
     }
     
-    protected String createTestName(Method testMethod){
+    protected String createTestName(final Method testMethod){
         return name() + removePrefix(testMethod.getName());
     }
 
-    protected static String removePrefix(String name){
+    protected static String removePrefix(final String name){
         return removePrefix(standardPrefix, name);
     }
     
-    protected static String removePrefix(String prefix, String name){
+    protected static String removePrefix(final String prefix, final String name){
         return name.substring(prefix.length());
     }
 
     public class NamedTest implements Test {
         private final Method testMethod;
 
-        public NamedTest(Method testMethod) {
+        public NamedTest(final Method testMethod) {
             this.testMethod = testMethod;
         }
 
@@ -173,7 +173,7 @@ public class NumberedTestCase extends Assert implements Test{
             return 1;
         }
 
-        public void run(TestResult result) {
+        public void run(final TestResult result) {
         }
 
         public String toString() {
@@ -186,7 +186,7 @@ public class NumberedTestCase extends Assert implements Test{
             return 0;
         }
 
-        public void run(TestResult result) {
+        public void run(final TestResult result) {
         }
 
         public String getName(){
@@ -203,7 +203,7 @@ public class NumberedTestCase extends Assert implements Test{
             return 0;
         }
 
-        public void run(TestResult result) {
+        public void run(final TestResult result) {
         }
 
         public String getName(){

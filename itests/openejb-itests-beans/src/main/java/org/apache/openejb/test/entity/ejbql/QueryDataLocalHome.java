@@ -22,5 +22,6 @@ import javax.ejb.FinderException;
 
 public interface QueryDataLocalHome extends EJBLocalHome {
     public QueryDataLocal create(int value) throws FinderException;
+
     public QueryDataLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
 }

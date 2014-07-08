@@ -24,12 +24,12 @@ import org.apache.openejb.test.FilteredTestSuite;
  */
 public class SingletonLocalTestSuite extends junit.framework.TestCase {
 
-    public SingletonLocalTestSuite(String name) {
+    public SingletonLocalTestSuite(final String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
+        final TestSuite suite = new FilteredTestSuite();
         suite.addTest(new SingletonJndiTests());
         suite.addTest(new SingletonPojoLocalJndiTests());
 

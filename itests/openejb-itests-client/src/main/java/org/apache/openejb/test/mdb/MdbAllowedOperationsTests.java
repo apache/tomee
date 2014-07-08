@@ -71,7 +71,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
+        final Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
         basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
         basicMdbObject.businessMethod("foo");
     }
@@ -97,16 +97,16 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      */
     public void test01_setSessionContext(){
         try {
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_lookup);
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-            Object expected = policy;
-            Object actual = basicMdbObject.getAllowedOperationsReport("setMessageDrivenContext");
+            final Object expected = policy;
+            final Object actual = basicMdbObject.getAllowedOperationsReport("setMessageDrivenContext");
 
             assertNotNull("The OperationsPolicy is null", actual );
             assertEquals( expected, actual );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -124,16 +124,16 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      */
     public void test02_ejbCreate() {
         try {
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_lookup);
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-            Object expected = policy;
-            Object actual = basicMdbObject.getAllowedOperationsReport("ejbCreate");
+            final Object expected = policy;
+            final Object actual = basicMdbObject.getAllowedOperationsReport("ejbCreate");
 
             assertNotNull("The OperationsPolicy is null", actual );
             assertEquals( expected, actual );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -152,17 +152,17 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
     public void TODO_test03_ejbRemove(){
         try {
             /* TO DO:  This test needs unique functionality to work */
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getEJBHome );
             policy.allow( OperationsPolicy.Context_getEJBObject );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-            Object expected = policy;
-            Object actual = basicMdbObject.getAllowedOperationsReport("ejbRemove");
+            final Object expected = policy;
+            final Object actual = basicMdbObject.getAllowedOperationsReport("ejbRemove");
 
             assertNotNull("The OperationsPolicy is null", actual );
             assertEquals( expected, actual );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -187,7 +187,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
      */
     public void TODO_test04_businessMethod(){
         try {
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getRollbackOnly );
             // policy.allow( OperationsPolicy.Context_setRollbackOnly );
             policy.allow( OperationsPolicy.Context_getCallerPrincipal );
@@ -195,12 +195,12 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
             policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
-            Object expected = policy;
-            Object actual = basicMdbObject.getAllowedOperationsReport("businessMethod");
+            final Object expected = policy;
+            final Object actual = basicMdbObject.getAllowedOperationsReport("businessMethod");
 
             assertNotNull("The OperationsPolicy is null", actual );
             assertEquals( expected, actual );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

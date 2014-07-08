@@ -62,7 +62,7 @@ public final class Tee implements Runnable {
         try {
             int i = -1;
 
-            final byte[] buf = new byte[32*32*32];
+            final byte[] buf = new byte[32 * 32 * 32];
 
             while ((i = in.read(buf)) != -1) {
                 System.out.print("#");

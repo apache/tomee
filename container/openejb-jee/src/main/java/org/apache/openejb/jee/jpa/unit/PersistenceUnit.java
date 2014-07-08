@@ -19,25 +19,25 @@ package org.apache.openejb.jee.jpa.unit;
 
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
- *
- *                 Configuration of a persistence unit.
- *
- *
+ * Configuration of a persistence unit.
+ * <p/>
+ * <p/>
  * <p>Java class for anonymous complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -78,8 +78,6 @@ import java.util.Properties;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -132,12 +130,12 @@ public class PersistenceUnit {
         return scanned;
     }
 
-    public void setScanned(boolean scanned) {
+    public void setScanned(final boolean scanned) {
         this.scanned = scanned;
     }
 
 
-    public PersistenceUnit(String name, String provider) {
+    public PersistenceUnit(final String name, final String provider) {
         this.name = name;
         this.provider = provider;
     }
@@ -145,7 +143,7 @@ public class PersistenceUnit {
     public PersistenceUnit() {
     }
 
-    public PersistenceUnit(String unitName) {
+    public PersistenceUnit(final String unitName) {
         this.name = unitName;
     }
 
@@ -153,7 +151,7 @@ public class PersistenceUnit {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -161,7 +159,7 @@ public class PersistenceUnit {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -169,11 +167,11 @@ public class PersistenceUnit {
         return provider;
     }
 
-    public void setProvider(String value) {
+    public void setProvider(final String value) {
         this.provider = value;
     }
 
-    public void setProvider(Class value) {
+    public void setProvider(final Class value) {
         setProvider(value == null ? null : value.getName());
     }
 
@@ -181,7 +179,7 @@ public class PersistenceUnit {
         return jtaDataSource;
     }
 
-    public void setJtaDataSource(String value) {
+    public void setJtaDataSource(final String value) {
         this.jtaDataSource = value;
     }
 
@@ -189,7 +187,7 @@ public class PersistenceUnit {
         return nonJtaDataSource;
     }
 
-    public void setNonJtaDataSource(String value) {
+    public void setNonJtaDataSource(final String value) {
         this.nonJtaDataSource = value;
     }
 
@@ -214,11 +212,11 @@ public class PersistenceUnit {
         return this.clazz;
     }
 
-    public boolean addClass(String s) {
+    public boolean addClass(final String s) {
         return getClazz().add(s);
     }
 
-    public boolean addClass(Class clazz) {
+    public boolean addClass(final Class clazz) {
         return addClass(clazz.getName());
     }
 
@@ -226,11 +224,11 @@ public class PersistenceUnit {
         return excludeUnlistedClasses;
     }
 
-    public void setExcludeUnlistedClasses(Boolean value) {
+    public void setExcludeUnlistedClasses(final Boolean value) {
         this.excludeUnlistedClasses = value;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
 
@@ -241,15 +239,15 @@ public class PersistenceUnit {
         return properties;
     }
 
-    public String getProperty(String key) {
+    public String getProperty(final String key) {
         return getProperties().getProperty(key);
     }
 
-    public String getProperty(String key, String defaultValue) {
+    public String getProperty(final String key, final String defaultValue) {
         return getProperties().getProperty(key, defaultValue);
     }
 
-    public Object setProperty(String key, String value) {
+    public Object setProperty(final String key, final String value) {
         return getProperties().setProperty(key, value);
     }
 
@@ -257,16 +255,16 @@ public class PersistenceUnit {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     public TransactionType getTransactionType() {
         // TODO: Is this the correct default?
-        return (transactionType == null)? TransactionType.JTA: transactionType;
+        return (transactionType == null) ? TransactionType.JTA : transactionType;
     }
 
-    public void setTransactionType(TransactionType value) {
+    public void setTransactionType(final TransactionType value) {
         this.transactionType = value;
     }
 
@@ -280,7 +278,7 @@ public class PersistenceUnit {
             if (propConfig != null) {
                 try {
                     validationMode = ValidationMode.valueOf(propConfig.toUpperCase());
-                } catch (IllegalArgumentException iae) { // can happen since some provider allow more than the enum
+                } catch (final IllegalArgumentException iae) { // can happen since some provider allow more than the enum
                     // no-op
                 }
             }

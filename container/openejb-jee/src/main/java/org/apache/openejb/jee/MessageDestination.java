@@ -27,19 +27,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>Java class for message-destinationType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destinationType">
  *   &lt;complexContent>
@@ -55,18 +53,16 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destinationType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "messageDestinationName",
-        "mappedName",
-        "lookupName"
-        })
+    "descriptions",
+    "displayNames",
+    "icon",
+    "messageDestinationName",
+    "mappedName",
+    "lookupName"
+})
 public class MessageDestination implements Keyable<String> {
 
     @XmlTransient
@@ -91,7 +87,7 @@ public class MessageDestination implements Keyable<String> {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -104,7 +100,7 @@ public class MessageDestination implements Keyable<String> {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -119,7 +115,7 @@ public class MessageDestination implements Keyable<String> {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -134,7 +130,7 @@ public class MessageDestination implements Keyable<String> {
         return messageDestinationName;
     }
 
-    public void setMessageDestinationName(String value) {
+    public void setMessageDestinationName(final String value) {
         this.messageDestinationName = value;
     }
 
@@ -146,7 +142,7 @@ public class MessageDestination implements Keyable<String> {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -154,7 +150,7 @@ public class MessageDestination implements Keyable<String> {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -162,7 +158,7 @@ public class MessageDestination implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

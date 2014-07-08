@@ -90,7 +90,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     public boolean addAll(final Collection c) {
         final Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
-        for (final Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext();) {
+        for (final Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext(); ) {
             final Bean bean = iterator.next();
             changed = add(bean) || changed;
         }
@@ -100,9 +100,9 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     public boolean add(final Object proxy) {
         if (!relatedLocal.isInstance(proxy)) {
             throw new IllegalArgumentException("Object is not an instance of " + relatedLocal.getName() +
-                                ": " + (proxy == null ? "null" : proxy.getClass().getName()));
+                ": " + (proxy == null ? "null" : proxy.getClass().getName()));
         }
-        
+
         final Bean newEntity = getEntityBean((EJBLocalObject) proxy);
         if (newEntity == null) {
             throw new IllegalArgumentException("Ejb has been deleted");
@@ -146,7 +146,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         final Set entityBeans = getEntityBeans(c, null);
 
         boolean changed = false;
-        for (final Iterator<Bean> iterator = getRelatedBeans(false, true).iterator(); iterator.hasNext();) {
+        for (final Iterator<Bean> iterator = getRelatedBeans(false, true).iterator(); iterator.hasNext(); ) {
             final Bean entity = iterator.next();
             if (!entityBeans.contains(entity)) {
                 iterator.remove();
@@ -218,7 +218,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         for (final Object value : proxies) {
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalArgumentException("Object is not an instance of " + type.getName() +
-                                    ": " + (value == null ? "null" : value.getClass().getName()));
+                    ": " + (value == null ? "null" : value.getClass().getName()));
             }
             final Bean entity = Cmp2Util.<Bean>getEntityBean((EJBLocalObject) value);
             if (entity == null) {

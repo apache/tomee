@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for referenceType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="referenceType">
  *   &lt;complexContent>
@@ -37,25 +37,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "referenceType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
 public class ReferenceType
-    extends DepPatternType
-{
+    extends DepPatternType {
 
     @XmlAttribute(name = "name")
     protected String nameAttribute;
 
     /**
      * Gets the value of the nameAttribute property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getNameAttribute() {
         return nameAttribute;
@@ -63,13 +58,11 @@ public class ReferenceType
 
     /**
      * Sets the value of the nameAttribute property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setNameAttribute(String value) {
+    public void setNameAttribute(final String value) {
         this.nameAttribute = value;
     }
 

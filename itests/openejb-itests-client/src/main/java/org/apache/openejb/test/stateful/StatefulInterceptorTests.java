@@ -35,7 +35,7 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("BasicStatefulInterceptedBusinessRemote");
+        final Object obj = initialContext.lookup("BasicStatefulInterceptedBusinessRemote");
         assertNotNull("The object is null", obj);
         remoteInterceptor = (BasicStatefulInterceptedRemote) javax.rmi.PortableRemoteObject.narrow(obj,
                 BasicStatefulInterceptedRemote.class);
@@ -54,17 +54,17 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
      * Invokes a business method which is to be intercepted by class, in-bean and at method level.
      */
     public void test01_interceptorChaining() {
-        String reverseMe = "Intercept";
-        String reversedString = remoteInterceptor.reverse(reverseMe);
+        final String reverseMe = "Intercept";
+        final String reversedString = remoteInterceptor.reverse(reverseMe);
         // verifying InvocationContext.procced()
         assertEquals("tpecretnI", reversedString);
         
-        Map contextData = remoteInterceptor.getContextData();
+        final Map contextData = remoteInterceptor.getContextData();
         // verifying that inBeanInterceptor indeed intercepted this method. This cannot be excluded at all.
         assertNotNull(contextData.containsKey("reverse"));
         
-        Map innerMap = (Map) contextData.get("reverse");
-        ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
+        final Map innerMap = (Map) contextData.get("reverse");
+        final ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
         // verifying interceptor chaining order
         assertEquals("superClassInterceptor", interceptorsList.get(0)); //derived from class extension
         assertEquals("classInterceptor", interceptorsList.get(1)); //specified by @
@@ -80,17 +80,17 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
      * params in a map that is returned by the <code>getContextData</code>
      */
     public void test02_methodProfile() {
-        String reverseMe = "Intercept";
-        String reversedString = remoteInterceptor.reverse(reverseMe);
+        final String reverseMe = "Intercept";
+        final String reversedString = remoteInterceptor.reverse(reverseMe);
         // verifying InvocationContext.procced()
         assertEquals("tpecretnI", reversedString);
 
-        Map contextData = remoteInterceptor.getContextData();
+        final Map contextData = remoteInterceptor.getContextData();
         // verifying InvocationContext.getMethod().getName()
         assertTrue(contextData.containsKey("reverse"));
 
-        Map innerMap = (Map) contextData.get("reverse");
-        Object[] params = (Object[]) innerMap.get("PARAMETERS");
+        final Map innerMap = (Map) contextData.get("reverse");
+        final Object[] params = (Object[]) innerMap.get("PARAMETERS");
         // verifying that the parameters array was received from contextData and stored.
         assertNotNull("value of PARAMETERS key is null", params);
         // verifying InvocationContext.getParameters()
@@ -104,12 +104,12 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
      * <code>getContextData()</code> has been annotated with <code>@ExcludesClassInterceptors</code>
      */
     public void test03_excludeClassInterceptors() {
-        Map contextData = remoteInterceptor.getContextData();
+        final Map contextData = remoteInterceptor.getContextData();
         // verifying that inBeanInterceptor indeed intercepted this method. This cannot be excluded at all.
         assertNotNull(contextData.containsKey("getContextData"));
         
-        Map innerMap = (Map) contextData.get("getContextData");
-        ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
+        final Map innerMap = (Map) contextData.get("getContextData");
+        final ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
         // verifying @ExcludeClassInterceptors annotated method was not intercepted by class interceptors
         assertFalse("getContextData() should not have been intercepted by superClassInterceptor()", interceptorsList.contains("superClassInterceptor"));
         assertFalse("getContextData() should not have been intercepted by classInterceptor()", interceptorsList.contains("classInterceptor"));
@@ -122,16 +122,16 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
      * <code>getContextData()</code> has been annotated with <code>@ExcludesClassInterceptors</code>
      */
     public void test04_excludeClassInterceptors_02() {
-        String catString = remoteInterceptor.concat("Inter", "cept");
+        final String catString = remoteInterceptor.concat("Inter", "cept");
         // verifying InvocationContext.procced()
         assertEquals("Intercept", catString);
         
-        Map contextData = remoteInterceptor.getContextData();
+        final Map contextData = remoteInterceptor.getContextData();
         // verifying that inBeanInterceptor indeed intercepted this method. This cannot be excluded at all.
         assertNotNull(contextData.containsKey("concat"));
         
-        Map innerMap = (Map) contextData.get("concat");
-        ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
+        final Map innerMap = (Map) contextData.get("concat");
+        final ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
         // verifying @ExcludeClassInterceptors annotated method was not intercepted
         assertFalse("concat() should not have been intercepted by superClassInterceptor()", interceptorsList.contains("superClassInterceptor"));
         assertFalse("concat() should not have been intercepted by classInterceptor()", interceptorsList.contains("classInterceptor"));
@@ -146,13 +146,13 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
     public void test05_PreDestroy() {
         try {
             tearDown();
-            Map contextData = remoteInterceptor.getContextData();
-            Map innerMap = (Map) contextData.get("BasicStatefulInterceptedBean");
+            final Map contextData = remoteInterceptor.getContextData();
+            final Map innerMap = (Map) contextData.get("BasicStatefulInterceptedBean");
             assertNotNull("InnerMap is null", innerMap);
-            ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
+            final ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
             // verifying interceptor chaining order
             assertEquals("superClassInterceptorPreDestroy", interceptorsList.get(0));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

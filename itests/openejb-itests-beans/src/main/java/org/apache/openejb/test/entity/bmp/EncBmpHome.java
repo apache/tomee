@@ -21,12 +21,12 @@ public interface EncBmpHome extends javax.ejb.EJBHome {
 
 
     public EncBmpObject create(String name)
-    throws javax.ejb.CreateException, java.rmi.RemoteException;
-    
+        throws javax.ejb.CreateException, java.rmi.RemoteException;
+
     public EncBmpObject findByPrimaryKey(Integer primarykey)
-    throws javax.ejb.FinderException, java.rmi.RemoteException;
-    
+        throws javax.ejb.FinderException, java.rmi.RemoteException;
+
     public java.util.Collection findEmptyCollection()
-    throws javax.ejb.FinderException, java.rmi.RemoteException;
-    
+        throws javax.ejb.FinderException, java.rmi.RemoteException;
+
 }

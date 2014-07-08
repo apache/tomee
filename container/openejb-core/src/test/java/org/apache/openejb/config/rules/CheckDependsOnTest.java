@@ -26,15 +26,15 @@ import javax.ejb.Singleton;
 
 @RunWith(ValidationRunner.class)
 public class CheckDependsOnTest {
-    @Keys( { @Key(value = "dependsOn.circuit", count = 2), @Key(value = "dependsOn.noSuchEjb", count = 2) })
+    @Keys({@Key(value = "dependsOn.circuit", count = 2), @Key(value = "dependsOn.noSuchEjb", count = 2)})
     public EjbJar dependsOn() throws OpenEJBException {
-        EjbJar ejbJar = new EjbJar();
-        SingletonBean one = new SingletonBean(One.class);
-        SingletonBean two = new SingletonBean(Two.class);
-        SingletonBean three = new SingletonBean(Three.class);
-        SingletonBean four = new SingletonBean(Four.class);
-        SingletonBean five = new SingletonBean(Five.class);
-        SingletonBean six = new SingletonBean(Six.class);
+        final EjbJar ejbJar = new EjbJar();
+        final SingletonBean one = new SingletonBean(One.class);
+        final SingletonBean two = new SingletonBean(Two.class);
+        final SingletonBean three = new SingletonBean(Three.class);
+        final SingletonBean four = new SingletonBean(Four.class);
+        final SingletonBean five = new SingletonBean(Five.class);
+        final SingletonBean six = new SingletonBean(Six.class);
         ejbJar.addEnterpriseBean(one);
         ejbJar.addEnterpriseBean(two);
         ejbJar.addEnterpriseBean(three);
@@ -46,25 +46,31 @@ public class CheckDependsOnTest {
 
     @Singleton
     @DependsOn("Two")
-    private static class One {}
+    private static class One {
+    }
 
     @Singleton
     @DependsOn("One")
-    private static class Two {}
+    private static class Two {
+    }
 
     @Singleton
     @DependsOn("Four")
-    private static class Three {}
+    private static class Three {
+    }
 
     @Singleton
     @DependsOn("Three")
-    private static class Four {}
+    private static class Four {
+    }
 
     @Singleton
     @DependsOn("WrongOne")
-    private static class Five {}
+    private static class Five {
+    }
 
     @Singleton
     @DependsOn("WrongOne")
-    private static class Six {}
+    private static class Six {
+    }
 }

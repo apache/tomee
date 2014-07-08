@@ -57,19 +57,18 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default BMP Container"
-          service="Container"
-          types="BMP_ENTITY"
-          constructor="id, securityService, PoolSize"
-          class-name="org.apache.openejb.core.entity.EntityContainer">
+      id="Default BMP Container"
+      service="Container"
+      types="BMP_ENTITY"
+      constructor="id, securityService, PoolSize"
+      class-name="org.apache.openejb.core.entity.EntityContainer">
 
     # Specifies the size of the bean pools for this
     # bmp entity container.
 
     PoolSize 10
 
-</ServiceProvider>
-
+  </ServiceProvider>
 
 
   <!--
@@ -78,11 +77,11 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default Stateless Container"
-          service="Container"
-          types="STATELESS"
-          factory-name="create"
-          class-name="org.apache.openejb.core.stateless.StatelessContainerFactory">
+      id="Default Stateless Container"
+      service="Container"
+      types="STATELESS"
+      factory-name="create"
+      class-name="org.apache.openejb.core.stateless.StatelessContainerFactory">
 
     # Specifies the time an invokation should wait for an instance
     # of the pool to become available.
@@ -91,7 +90,7 @@
     # be obtained, the method invocation will fail.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
     #
     # Any usage of the `javax.ejb.AccessTimeout` annotation will
@@ -101,7 +100,7 @@
     AccessTimeout = 30 seconds
 
     # Specifies the size of the bean pools for this stateless
-    # SessionBean container.  If StrictPooling is not used, instances
+    # SessionBean container. If StrictPooling is not used, instances
     # will still be created beyond this number if there is demand, but
     # they will not be returned to the pool and instead will be
     # immediately destroyed.
@@ -109,23 +108,23 @@
     MaxSize = 10
 
     # Specifies the minimum number of bean instances that should be in
-    # the pool for each bean.  Pools are prefilled to the minimum on
-    # startup.  Note this will create start order dependencies between
+    # the pool for each bean. Pools are prefilled to the minimum on
+    # startup. Note this will create start order dependencies between
     # other beans that also eagerly start, such as other `@Stateless`
-    # beans with a minimum or `@Singleton` beans using `@Startup`.  The
+    # beans with a minimum or `@Singleton` beans using `@Startup`. The
     # @DependsOn annotation can be used to appropriately influence
     # start order.
     #
-    # The minimum pool size is rigidly maintained.  Instances in the
+    # The minimum pool size is rigidly maintained. Instances in the
     # minimum side of the pool are not eligible for `IdleTimeout` or
     # `GarbageCollection`, but are subject to `MaxAge` and flushing.
     #
     # If the pool is flushed it is immediately refilled to the minimum
-    # size with `MaxAgeOffset` applied.  If an instance from the minimum
+    # size with `MaxAgeOffset` applied. If an instance from the minimum
     # side of the pool reaches its `MaxAge`, it is also immediately
-    # replaced.  Replacement is done in a background queue using the
+    # replaced. Replacement is done in a background queue using the
     # number of threads specified by `CallbackThreads`.
-    
+
     MinSize = 0
 
     # StrictPooling tells the container what to do when the pool
@@ -134,7 +133,7 @@
     #
     # With strict pooling, requests will have to wait for instances to
     # become available. The pool size will never grow beyond the the
-    # set `MaxSize` value.  The maximum amount of time a request should
+    # set `MaxSize` value. The maximum amount of time a request should
     # wait is specified via the `AccessTimeout` setting.
     #
     # Without strict pooling, the container will create temporary
@@ -148,20 +147,20 @@
     StrictPooling = true
 
     # Specifies the maximum time that an instance should live before
-    # it should be retired and removed from use.  This will happen
-    # gracefully.  Useful for situations where bean instances are
+    # it should be retired and removed from use. This will happen
+    # gracefully. Useful for situations where bean instances are
     # designed to hold potentially expensive resources such as memory
     # or file handles and need to be periodically cleared out.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # `1 hour and 27 minutes and 10 seconds`
 
     MaxAge = 0 hours
 
     # When `ReplaceAged` is enabled, any instances in the pool that
     # expire due to reaching their `MaxAge` will be replaced immediately
-    # so that the pool will remain at its current size.  Replacement
+    # so that the pool will remain at its current size. Replacement
     # is done in a background queue so that incoming threads will not
     # have to wait for instance creation.
     #
@@ -177,7 +176,7 @@
 
     # When `ReplaceFlushed` is enabled, any instances in the pool that
     # are flushed will be replaced immediately so that the pool will
-    # remain at its current size.  Replacement is done in a background
+    # remain at its current size. Replacement is done in a background
     # queue so that incoming threads will not have to wait for
     # instance creation.
     #
@@ -190,26 +189,26 @@
     # non-minimum instances.
     #
     # A bean may flush its pool by casting the `SessionContext` to
-    # `Flushable` and calling `flush()`.  See `SweepInterval` for details on
+    # `Flushable` and calling `flush()`. See `SweepInterval` for details on
     # how flush is performed.
     #
-    #     import javax.annotation.Resource;
-    #     import javax.ejb.SessionContext;
-    #     import javax.ejb.Stateless;
-    #     import java.io.Flushable;
-    #     import java.io.IOException;
+    # import javax.annotation.Resource;
+    # import javax.ejb.SessionContext;
+    # import javax.ejb.Stateless;
+    # import java.io.Flushable;
+    # import java.io.IOException;
     #
-    #     @Stateless
-    #     public class MyBean {
+    # @Stateless
+    # public class MyBean {
     #
-    #         @Resource
-    #         private SessionContext sessionContext;
+    # @Resource
+    # private SessionContext sessionContext;
     #
-    #         public void flush() throws IOException {
+    # public void flush() throws IOException {
     #
-    #             ((Flushable) sessionContext).flush();
-    #         }
-    #     }
+    # ((Flushable) sessionContext).flush();
+    # }
+    # }
 
     ReplaceFlushed = false
 
@@ -219,7 +218,7 @@
     # When the container first starts and the pool is filled to the
     # minimum size, all those "minimum" instances will have the same
     # creation time and therefore all expire at the same time dictated
-    # by the `MaxAge` setting.  To protect against this sudden drop
+    # by the `MaxAge` setting. To protect against this sudden drop
     # scenario and provide a more gradual expiration from the start
     # the container will spread out the age of the instances that fill
     # the pool to the minimum using an offset.
@@ -227,25 +226,25 @@
     # The `MaxAgeOffset` is not the final value of the offset, but
     # rather it is used in creating the offset and allows the
     # spreading to push the initial ages into the future or into the
-    # past.  The pool is filled at startup as follows:
+    # past. The pool is filled at startup as follows:
     #
-    #     for (int i = 0; i &lt; poolMin; i++) {
-    #         long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
-    #         pool.add(new Bean(), ageOffset));
-    #     }
+    # for (int i = 0; i &lt; poolMin; i++) {
+    # long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
+    # pool.add(new Bean(), ageOffset));
+    # }
     #
     # The default `MaxAgeOffset` is -1 which causes the initial
-    # instances in the pool to live a bit longer before expiring.  As
+    # instances in the pool to live a bit longer before expiring. As
     # a concrete example, let's say the MinSize is 4 and the MaxAge is
-    # 100 years.  The generated offsets for the four instances created
-    # at startup would be 0, -25, -50, -75.  So the first instance
-    # would be "born" at age 0, die at 100, living 100 years.  The
+    # 100 years. The generated offsets for the four instances created
+    # at startup would be 0, -25, -50, -75. So the first instance
+    # would be "born" at age 0, die at 100, living 100 years. The
     # second instance would be born at -25, die at 100, living a total
-    # of 125 years.  The third would live 150 years.  The fourth 175
+    # of 125 years. The third would live 150 years. The fourth 175
     # years.
     #
     # A `MaxAgeOffset` of 1 would cause instances to be "born" older
-    # and therefore die sooner.  Using the same example `MinSize` of 4
+    # and therefore die sooner. Using the same example `MinSize` of 4
     # and `MaxAge` of `100 years`, the life spans of these initial four
     # instances would be 100, 75, 50, and 25 years respectively.
     #
@@ -262,25 +261,25 @@
     # removed.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
     IdleTimeout = 0 minutes
 
     # Allows Garbage Collection to be used as a mechanism for shrinking
-    # the pool.  When set to true all instances in the pool, excluding
+    # the pool. When set to true all instances in the pool, excluding
     # the minimum, are eligible for garbage collection by the virtual
     # machine as per the rules of `java.lang.ref.SoftReference` and can be
-    # claimed by the JVM to free memory.  Instances garbage collected
+    # claimed by the JVM to free memory. Instances garbage collected
     # will have their `@PreDestroy` methods called during finalization.
     #
     # In the OpenJDK VM the `-XX:SoftRefLRUPolicyMSPerMB` flag can adjust
-    # how aggressively SoftReferences are collected.  The default
+    # how aggressively SoftReferences are collected. The default
     # OpenJDK setting is 1000, resulting in inactive pooled instances
     # living one second of lifetime per free megabyte in the heap, which
-    # is very aggressive.  The setting should be increased to get the
-    # most out of the `GarbageCollection` feature of the pool.  Much
-    # higher settings are safe.  Even a setting as high as 3600000 (1
+    # is very aggressive. The setting should be increased to get the
+    # most out of the `GarbageCollection` feature of the pool. Much
+    # higher settings are safe. Even a setting as high as 3600000 (1
     # hour per free MB in the heap) does not affect the ability for the
     # VM to garbage collect SoftReferences in the event that memory is
     # needed to avoid an `OutOfMemoryException`.
@@ -288,19 +287,19 @@
     GarbageCollection = false
 
     # The frequency in which the container will sweep the pool and
-    # evict expired instances.  Eviction is how the `IdleTimeout`,
-    # `MaxAge`, and pool "flush" functionality is enforced.  Higher
+    # evict expired instances. Eviction is how the `IdleTimeout`,
+    # `MaxAge`, and pool "flush" functionality is enforced. Higher
     # intervals are better.
     #
-    # Instances in use are excluded from sweeping.  Should an instance
+    # Instances in use are excluded from sweeping. Should an instance
     # expire while in use it will be evicted immediately upon return
-    # to the pool.  Effectively `MaxAge` and flushes will be enforced as
+    # to the pool. Effectively `MaxAge` and flushes will be enforced as
     # a part of normal activity or sweeping, while IdleTimeout is only
-    # enforcable via sweeping.  This makes aggressive sweeping less
+    # enforcable via sweeping. This makes aggressive sweeping less
     # important for a pool under moderate load.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # `1 hour and 27 minutes and 10 seconds`
 
     SweepInterval = 5 minutes
@@ -308,19 +307,19 @@
     # When sweeping the pool for expired instances a thread pool is
     # used to process calling `@PreDestroy` on expired instances as well
     # as creating new instances as might be required to fill the pool
-    # to the minimum after a Flush or `MaxAge` expiration.  The
+    # to the minimum after a Flush or `MaxAge` expiration. The
     # `CallbackThreads` setting dictates the size of the thread pool and
     # is shared by all beans deployed in the container.
 
     CallbackThreads = 5
 
     # PostConstruct methods are invoked on all instances in the pool
-    # when the bean is undeployed and its pool is closed.  The
+    # when the bean is undeployed and its pool is closed. The
     # `CloseTimeout` specifies the maximum time to wait for the pool to
     # close and `PostConstruct` methods to be invoked.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # `1 hour and 27 minutes and 10 seconds`
 
     CloseTimeout = 5 minutes
@@ -334,11 +333,11 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default Singleton Container"
-          service="Container"
-          types="SINGLETON"
-          constructor="id, securityService"
-          class-name="org.apache.openejb.core.singleton.SingletonContainer">
+      id="Default Singleton Container"
+      service="Container"
+      types="SINGLETON"
+      constructor="id, securityService"
+      class-name="org.apache.openejb.core.singleton.SingletonContainer">
 
     # Specifies the maximum time an invocation could wait for the
     # `@Singleton` bean instance to become available before giving up.
@@ -347,7 +346,7 @@
     # will be thrown.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # `1 hour and 27 minutes and 10 seconds`
     #
     # Any usage of the `javax.ejb.AccessTimeout` annotation will
@@ -355,7 +354,7 @@
     # annotation is used.
 
     AccessTimeout = 30 seconds
-    
+
   </ServiceProvider>
 
 
@@ -365,11 +364,11 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default Stateful Container"
-          service="Container"
-          types="STATEFUL"
-          factory-name="create"
-          class-name="org.apache.openejb.core.stateful.StatefulContainerFactory">
+      id="Default Stateful Container"
+      service="Container"
+      types="STATEFUL"
+      factory-name="create"
+      class-name="org.apache.openejb.core.stateful.StatefulContainerFactory">
 
     # Specifies the maximum time an invocation could wait for the
     # `@Stateful` bean instance to become available before giving up.
@@ -378,7 +377,7 @@
     # will be thrown.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
-    # seconds, minutes, hours, days.  Or any combination such as
+    # seconds, minutes, hours, days. Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
     #
     # Any usage of the `javax.ejb.AccessTimeout` annotation will
@@ -388,8 +387,8 @@
     AccessTimeout = 30 seconds
 
     # The cache is responsible for managing stateful bean
-    # instances.  The cache can page instances to disk as memory
-    # is filled and can destroy abandoned instances.  A different
+    # instances. The cache can page instances to disk as memory
+    # is filled and can destroy abandoned instances. A different
     # cache implementation can be used by setting this property
     # to the fully qualified class name of the Cache implementation.
 
@@ -421,10 +420,10 @@
     # override this setting for the bean where the annotation is used.
 
     TimeOut 20
-    
-    # Specifies the frequency (in seconds) at which the bean cache is checked for 
+
+    # Specifies the frequency (in seconds) at which the bean cache is checked for
     # idle beans.
-    
+
     Frequency 60
 
     # Specifies the size of the bean pools for this
@@ -445,11 +444,11 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default Managed Container"
-          service="Container"
-          types="MANAGED"
-          constructor="id, securityService"
-          class-name="org.apache.openejb.core.managed.ManagedContainer">
+      id="Default Managed Container"
+      service="Container"
+      types="MANAGED"
+      constructor="id, securityService"
+      class-name="org.apache.openejb.core.managed.ManagedContainer">
 
   </ServiceProvider>
 
@@ -459,11 +458,11 @@
   # ==========================================================
   -->
   <ServiceProvider
-          id="Default MDB Container"
-          service="Container"
-          types="MESSAGE"
-          constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
-          class-name="org.apache.openejb.core.mdb.MdbContainer">
+      id="Default MDB Container"
+      service="Container"
+      types="MESSAGE"
+      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
+      class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
 
@@ -490,10 +489,10 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default JDK 1.3 ProxyFactory"
-          service="ProxyFactory"
-          types="ProxyFactory"
-          class-name="org.apache.openejb.util.proxy.Jdk13ProxyFactory"/>
+      id="Default JDK 1.3 ProxyFactory"
+      service="ProxyFactory"
+      types="ProxyFactory"
+      class-name="org.apache.openejb.util.proxy.Jdk13ProxyFactory"/>
 
   <!--
   # ================================================
@@ -501,73 +500,73 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default Security Service"
-          service="SecurityService"
-          types="SecurityService"
-          class-name="org.apache.openejb.core.security.SecurityServiceImpl">
-  
-    DefaultUser guest         
+      id="Default Security Service"
+      service="SecurityService"
+      types="SecurityService"
+      class-name="org.apache.openejb.core.security.SecurityServiceImpl">
+
+    DefaultUser guest
   </ServiceProvider>
 
   <ServiceProvider
-          id="PseudoSecurityService"
-          service="SecurityService"
-          types="SecurityService"
-          class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
+      id="PseudoSecurityService"
+      service="SecurityService"
+      types="SecurityService"
+      class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
 
   <!--
   # ================================================
   # Default Transaction Manager implementation
   # ================================================
   -->
-    <ServiceProvider
-            id="Default Transaction Manager"
-            service="TransactionManager"
-            types="TransactionManager"
-            factory-name="create"
-            constructor="defaultTransactionTimeoutSeconds, defaultTransactionTimeout, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
-            class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
-      defaultTransactionTimeout 10 minutes
+  <ServiceProvider
+      id="Default Transaction Manager"
+      service="TransactionManager"
+      types="TransactionManager"
+      factory-name="create"
+      constructor="defaultTransactionTimeoutSeconds, defaultTransactionTimeout, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
+      class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
+    defaultTransactionTimeout 10 minutes
 
-      # When set to true, Howl logging is enabled
-      TxRecovery false
+    # When set to true, Howl logging is enabled
+    TxRecovery false
 
-      # Requires TxRecovery
-      bufferSizeKb 32
+    # Requires TxRecovery
+    bufferSizeKb 32
 
-      # Requires TxRecovery
-      checksumEnabled true
+    # Requires TxRecovery
+    checksumEnabled true
 
-      # Requires TxRecovery
-      adler32Checksum true
+    # Requires TxRecovery
+    adler32Checksum true
 
-      # Requires TxRecovery
-      flushSleepTime 50 Milliseconds
+    # Requires TxRecovery
+    flushSleepTime 50 Milliseconds
 
-      # Requires TxRecovery
-      logFileDir txlog
+    # Requires TxRecovery
+    logFileDir txlog
 
-      # Requires TxRecovery
-      logFileExt log
+    # Requires TxRecovery
+    logFileExt log
 
-      # Requires TxRecovery
-      logFileName howl
+    # Requires TxRecovery
+    logFileName howl
 
-      # Requires TxRecovery
-      maxBlocksPerFile -1
+    # Requires TxRecovery
+    maxBlocksPerFile -1
 
-      # Requires TxRecovery
-      maxBuffers 0
+    # Requires TxRecovery
+    maxBuffers 0
 
-      # Requires TxRecovery
-      maxLogFiles 2
+    # Requires TxRecovery
+    maxLogFiles 2
 
-      # Requires TxRecovery
-      minBuffers 4
+    # Requires TxRecovery
+    minBuffers 4
 
-      # Requires TxRecovery
-      threadsWaitingForceThreshold -1
-    </ServiceProvider>
+    # Requires TxRecovery
+    threadsWaitingForceThreshold -1
+  </ServiceProvider>
 
   <!--
   # ================================================
@@ -575,20 +574,20 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default JDBC Database"
-          service="Resource"
-          types="javax.sql.DataSource, DataSource"
-          factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
-          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+      id="Default JDBC Database"
+      service="Resource"
+      types="javax.sql.DataSource, DataSource"
+      factory-name="create"
+      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+      class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
     Definition
 
     # Determines wether or not this data source should be JTA managed
-    # or user managed.  If set to 'true' it will automatically be enrolled
-    # in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
-    # on the datasource or connection will not be allowed.  If you need to perform
+    # or user managed. If set to 'true' it will automatically be enrolled
+    # in any ongoing transactions. Calling begin/commit/rollback or setAutoCommit
+    # on the datasource or connection will not be allowed. If you need to perform
     # these functions yourself, set `JtaManaged` to `false`
     #
     # In terms of JPA persistence.xml:
@@ -614,7 +613,7 @@
 
     Password
 
-    PasswordCipher  PlainText
+    PasswordCipher PlainText
 
 
     # The connection properties that will be sent to the JDBC
@@ -656,32 +655,32 @@
     # The initial number of connections that are created when the
     # pool is started
 
-    InitialSize	0
+    InitialSize 0
 
     # The maximum number of active connections that can be
     # allocated from this pool at the same time, or a negative
     # number for no limit.
 
-    MaxActive	20
+    MaxActive 20
 
     # The maximum number of connections that can remain idle in
     # the pool, without extra ones being released, or a negative
     # number for no limit.
 
-    MaxIdle	20
+    MaxIdle 20
 
     # The minimum number of connections that can remain idle in
     # the pool, without extra ones being created, or zero to
     # create none.
 
-    MinIdle	0
+    MinIdle 0
 
     # The maximum number of milliseconds that the pool will wait
     # (when there are no available connections) for a connection
     # to be returned before throwing an exception, or -1 to wait
     # indefinitely.
 
-    MaxWaitTime	-1 millisecond
+    MaxWaitTime -1 millisecond
 
     # The SQL query that will be used to validate connections from
     # this pool before returning them to the caller. If specified,
@@ -698,16 +697,16 @@
     # NOTE - for a true value to have any effect, the
     # ValidationQuery parameter must be set.
 
-    TestOnBorrow	true
+    TestOnBorrow true
 
     # If true connections will be validated before being returned
-    # to the pool.  If the validation fails, the connection is
+    # to the pool. If the validation fails, the connection is
     # destroyed instead of being returned to the pool.
     #
     # NOTE - for a true value to have any effect, the
     # ValidationQuery parameter must be set.
 
-    TestOnReturn	false
+    TestOnReturn false
 
     # If true connections will be validated by the idle connection
     # evictor (if any). If the validation fails, the connection is
@@ -717,31 +716,31 @@
     # timeBetweenEvictionRunsMillis property must be a positive
     # number and the ValidationQuery parameter must be set.
 
-    TestWhileIdle	false
+    TestWhileIdle false
 
     # The number of milliseconds to sleep between runs of the idle
     # connection evictor thread. When set to a negative number, no
     # idle connection evictor thread will be run.
 
-    TimeBetweenEvictionRuns	-1 millisecond
+    TimeBetweenEvictionRuns -1 millisecond
 
     # The number of connectionss to examine during each run of the
     # idle connection evictor thread (if any).
 
-    NumTestsPerEvictionRun	3
+    NumTestsPerEvictionRun 3
 
     # The minimum amount of time a connection may sit idle in the
     # pool before it is eligable for eviction by the idle
     # connection evictor (if any).
 
-    MinEvictableIdleTime	30 minutes
+    MinEvictableIdleTime 30 minutes
 
     # If true, a statement pool is created for each Connection and
     # PreparedStatements created by one of the following methods are
     # pooled:
     #
-    #     public PreparedStatement prepareStatement(String sql);
-    #     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+    # public PreparedStatement prepareStatement(String sql);
+    # public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
 
     PoolPreparedStatements false
 
@@ -758,22 +757,22 @@
     # If true the raw physical connection to the database can be
     # accessed using the following construct:
     #
-    #     Connection conn = ds.getConnection();
-    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
-    #     ...
-    #     conn.close()
+    # Connection conn = ds.getConnection();
+    # Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    # ...
+    # conn.close()
     #
     # Default is false, because misbehaving programs can do harmfull
     # things to the raw connection shuch as closing the raw
     # connection or continuing to use the raw connection after it
-    # has been assigned to another logical connection.  Be careful
+    # has been assigned to another logical connection. Be careful
     # and only use when you need direct access to driver specific
     # extensions.
     #
     # NOTE: Do NOT close the underlying connection, only the
     # original logical connection wrapper.
 
-    AccessToUnderlyingConnectionAllowed	false
+    AccessToUnderlyingConnectionAllowed false
 
     # use only all set values in this config
     # will need a lot of properties but allow to not set some values
@@ -781,12 +780,12 @@
   </ServiceProvider>
 
   <ServiceProvider
-          id="Default Unmanaged JDBC Database"
-          service="Resource"
-          types="javax.sql.DataSource, DataSource"
-          factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
-          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+      id="Default Unmanaged JDBC Database"
+      service="Resource"
+      types="javax.sql.DataSource, DataSource"
+      factory-name="create"
+      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+      class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
     Definition
@@ -809,7 +808,7 @@
 
     Password
 
-    PasswordCipher  PlainText
+    PasswordCipher PlainText
 
     # The connection properties that will be sent to the JDBC
     # driver when establishing new connections
@@ -835,11 +834,11 @@
     # The default TransactionIsolation state of new connections
     # If not set then the setTransactionIsolation method will not
     # be called. The allowed values for this property are:
-    #     NONE
-    #     READ_COMMITTED
-    #     READ_UNCOMMITTED
-    #     REPEATABLE_READ
-    #     SERIALIZABLE
+    # NONE
+    # READ_COMMITTED
+    # READ_UNCOMMITTED
+    # REPEATABLE_READ
+    # SERIALIZABLE
     #
     # Note: Most JDBC drivers do not support all isolation levels
 
@@ -849,32 +848,32 @@
     # The initial number of connections that are created when the
     # pool is started
 
-    InitialSize	0
+    InitialSize 0
 
     # The maximum number of active connections that can be
     # allocated from this pool at the same time, or a negative
     # number for no limit.
 
-    MaxActive	10
+    MaxActive 10
 
     # The maximum number of connections that can remain idle in
     # the pool, without extra ones being released, or a negative
     # number for no limit.
 
-    MaxIdle	10
+    MaxIdle 10
 
     # The minimum number of connections that can remain idle in
     # the pool, without extra ones being created, or zero to
     # create none.
 
-    MinIdle	0
+    MinIdle 0
 
     # The maximum number of milliseconds that the pool will wait
     # (when there are no available connections) for a connection
     # to be returned before throwing an exception, or -1 to wait
     # indefinitely.
 
-    MaxWaitTime	-1 millisecond
+    MaxWaitTime -1 millisecond
 
     # The SQL query that will be used to validate connections from
     # this pool before returning them to the caller. If specified,
@@ -891,16 +890,16 @@
     # NOTE - for a true value to have any effect, the
     # ValidationQuery parameter must be set.
 
-    TestOnBorrow	true
+    TestOnBorrow true
 
     # If true connections will be validated before being returned
-    # to the pool.  If the validation fails, the connection is
+    # to the pool. If the validation fails, the connection is
     # destroyed instead of being returned to the pool.
     #
     # NOTE - for a true value to have any effect, the
     # ValidationQuery parameter must be set.
 
-    TestOnReturn	false
+    TestOnReturn false
 
     # If true connections will be validated by the idle connection
     # evictor (if any). If the validation fails, the connection is
@@ -910,32 +909,32 @@
     # timeBetweenEvictionRunsMillis property must be a positive
     # number and the ValidationQuery parameter must be set.
 
-    TestWhileIdle	false
+    TestWhileIdle false
 
     # The number of milliseconds to sleep between runs of the idle
     # connection evictor thread. When set to a negative number, no
     # idle connection evictor thread will be run.
 
-    TimeBetweenEvictionRuns	-1 millisecond
+    TimeBetweenEvictionRuns -1 millisecond
 
     # The number of connectionss to examine during each run of the
     # idle connection evictor thread (if any).
 
-    NumTestsPerEvictionRun	3
+    NumTestsPerEvictionRun 3
 
     # The minimum amount of time a connection may sit idle in the
     # pool before it is eligable for eviction by the idle
     # connection evictor (if any).
 
-    MinEvictableIdleTime	30 minutes
+    MinEvictableIdleTime 30 minutes
 
     # If true, a statement pool is created for each Connection and
     # PreparedStatements created by one of the following methods are
     # pooled:
-    #    public PreparedStatement prepareStatement(String sql);
-    #    public PreparedStatement prepareStatement(String sql,
-    #            int resultSetType,
-    #            int resultSetConcurrency)
+    # public PreparedStatement prepareStatement(String sql);
+    # public PreparedStatement prepareStatement(String sql,
+    # int resultSetType,
+    # int resultSetConcurrency)
 
     PoolPreparedStatements false
 
@@ -951,22 +950,22 @@
 
     # If true the raw physical connection to the database can be
     # accessed using the following construct:
-    #     Connection conn = ds.getConnection();
-    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
-    #     ...
-    #     conn.close()
+    # Connection conn = ds.getConnection();
+    # Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    # ...
+    # conn.close()
     #
     # Default is false, because misbehaving programs can do harmfull
     # things to the raw connection shuch as closing the raw
     # connection or continuing to use the raw connection after it
-    # has been assigned to another logical connection.  Be carefull
+    # has been assigned to another logical connection. Be carefull
     # and only use when you need direct access to driver specific
     # extentions.
     #
     # NOTE: Do NOT close the underlying connection, only the
     # original logical connection wrapper.
 
-    AccessToUnderlyingConnectionAllowed	false
+    AccessToUnderlyingConnectionAllowed false
   </ServiceProvider>
 
   <!--
@@ -975,10 +974,10 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default JMS Resource Adapter"
-          service="Resource"
-          types="ActiveMQResourceAdapter"
-          class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
+      id="Default JMS Resource Adapter"
+      service="Resource"
+      types="ActiveMQResourceAdapter"
+      class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
 
     # Broker configuration URI as defined by ActiveMQ
     # see http://activemq.apache.org/broker-configuration-uri.html
@@ -997,10 +996,10 @@
   </ServiceProvider>
 
   <ServiceProvider
-          id="Default JMS Connection Factory"
-          service="Resource"
-          types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
-          class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
+      id="Default JMS Connection Factory"
+      service="Resource"
+      types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+      class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
 
     ResourceAdapter Default JMS Resource Adapter
 
@@ -1022,11 +1021,11 @@
   </ServiceProvider>
 
   <ServiceProvider
-          id="Default Queue"
-          service="Resource"
-          types="javax.jms.Queue, Queue, javax.jms.Destination"
-          constructor="destination"
-          class-name="org.apache.activemq.command.ActiveMQQueue">
+      id="Default Queue"
+      service="Resource"
+      types="javax.jms.Queue, Queue, javax.jms.Destination"
+      constructor="destination"
+      class-name="org.apache.activemq.command.ActiveMQQueue">
 
     # Specifies the name of the queue
 
@@ -1034,11 +1033,11 @@
   </ServiceProvider>
 
   <ServiceProvider
-          id="Default Topic"
-          service="Resource"
-          types="javax.jms.Topic, Topic, javax.jms.Destination"
-          constructor="destination"
-          class-name="org.apache.activemq.command.ActiveMQTopic">
+      id="Default Topic"
+      service="Resource"
+      types="javax.jms.Topic, Topic, javax.jms.Destination"
+      constructor="destination"
+      class-name="org.apache.activemq.command.ActiveMQTopic">
 
     # Specifies the name of the topic
 
@@ -1051,11 +1050,11 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default ORB"
-          service="Resource"
-          types="org.omg.CORBA.ORB, ORB"
-          factory-name="create"
-          class-name="org.apache.openejb.core.OrbFactory">
+      id="Default ORB"
+      service="Resource"
+      types="org.omg.CORBA.ORB, ORB"
+      factory-name="create"
+      class-name="org.apache.openejb.core.OrbFactory">
 
   </ServiceProvider>
 
@@ -1065,11 +1064,11 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default Mail Session"
-          service="Resource"
-          types="javax.mail.Session"
-          factory-name="create"
-          class-name="org.apache.openejb.core.MailSessionFactory">
+      id="Default Mail Session"
+      service="Resource"
+      types="javax.mail.Session"
+      factory-name="create"
+      class-name="org.apache.openejb.core.MailSessionFactory">
 
   </ServiceProvider>
 
@@ -1079,10 +1078,10 @@
   # ================================================
   -->
   <ServiceProvider
-          id="Default Remote Jndi Provider"
-          service="JndiProvider"
-          types="javax.naming.InitialContext"
-          class-name="org.apache.openejb.core.NoProvider">
+      id="Default Remote Jndi Provider"
+      service="JndiProvider"
+      types="javax.naming.InitialContext"
+      class-name="org.apache.openejb.core.NoProvider">
     # This provider allows the configuration of InitialContext
     # objects for the lookup of resources outside this server
     #
@@ -1091,8 +1090,8 @@
     #
     # Example properties might look like the following:
     #
-    #     java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
-    #     java.naming.provider.url = ejbd://localhost:4201
+    # java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
+    # java.naming.provider.url = ejbd://localhost:4201
     #
   </ServiceProvider>
 
@@ -1100,9 +1099,9 @@
   # dynamic routing datasource
   -->
   <ServiceProvider
-          id="RoutedDataSource"
-          service="Resource" types="DataSource"
-          class-name="org.apache.openejb.resource.jdbc.RoutedDataSource">
+      id="RoutedDataSource"
+      service="Resource" types="DataSource"
+      class-name="org.apache.openejb.resource.jdbc.RoutedDataSource">
     Router
   </ServiceProvider>
 
@@ -1142,6 +1141,6 @@
   <ServiceProvider id="Default Context Service"
                    service="Resource"
                    types="ContextService, javax.enterprise.concurrent.ContextService"
-                   class-name="org.apache.openejb.concurrencyutilities.ee.impl.ContextServiceImpl" />
+                   class-name="org.apache.openejb.concurrencyutilities.ee.impl.ContextServiceImpl"/>
 
 </ServiceJar>

@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for res-authType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="res-authType">
  *   &lt;simpleContent>
@@ -36,10 +36,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum ResAuth {
-    @XmlEnumValue("Application") APPLICATION,
-    @XmlEnumValue("Container") CONTAINER;
+    @XmlEnumValue("Application")APPLICATION,
+    @XmlEnumValue("Container")CONTAINER;
 }

@@ -73,12 +73,12 @@ public class ProxyInterfaceResolverTest extends TestCase {
         assertTrue(ingredients.contains(Honey.class));
     }
 
-    public List<Class> resolve(Class impl, Class mainInterface, Class... interfaces) {
+    public List<Class> resolve(final Class impl, final Class mainInterface, final Class... interfaces) {
         return ProxyInterfaceResolver.getInterfaces(impl, mainInterface, Arrays.asList(interfaces));
     }
 
 
-    public Class implement(Class<?>... interfaces) {
+    public Class implement(final Class<?>... interfaces) {
         return java.lang.reflect.Proxy.getProxyClass(this.getClass().getClassLoader(), interfaces);
     }
 

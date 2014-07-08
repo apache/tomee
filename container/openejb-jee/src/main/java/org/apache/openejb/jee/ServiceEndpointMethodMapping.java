@@ -70,7 +70,7 @@ public class ServiceEndpointMethodMapping {
         return javaMethodName;
     }
 
-    public void setJavaMethodName(String value) {
+    public void setJavaMethodName(final String value) {
         this.javaMethodName = value;
     }
 
@@ -78,7 +78,7 @@ public class ServiceEndpointMethodMapping {
         return wsdlOperation;
     }
 
-    public void setWsdlOperation(String value) {
+    public void setWsdlOperation(final String value) {
         this.wsdlOperation = value;
     }
 
@@ -86,7 +86,7 @@ public class ServiceEndpointMethodMapping {
         return wrappedElement;
     }
 
-    public void setWrappedElement(Object value) {
+    public void setWrappedElement(final Object value) {
         this.wrappedElement = value;
     }
 
@@ -101,7 +101,7 @@ public class ServiceEndpointMethodMapping {
         return wsdlReturnValueMapping;
     }
 
-    public void setWsdlReturnValueMapping(WsdlReturnValueMapping value) {
+    public void setWsdlReturnValueMapping(final WsdlReturnValueMapping value) {
         this.wsdlReturnValueMapping = value;
     }
 
@@ -109,7 +109,7 @@ public class ServiceEndpointMethodMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

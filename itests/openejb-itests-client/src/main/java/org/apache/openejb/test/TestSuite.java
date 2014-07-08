@@ -34,15 +34,15 @@ public class TestSuite extends junit.framework.TestSuite {
     /**
      * Runs the tests and collects their result in a TestResult.
      */
-    public void run(TestResult result) {
+    public void run(final TestResult result) {
         try {
-            List<Test> tests = getTests();
+            final List<Test> tests = getTests();
             if (tests.size() == 0) return;
 
             setUp();
 
             try {
-                for (Test test : tests) {
+                for (final Test test : tests) {
                     if (result.shouldStop()) break;
                     test.run(result);
                 }
@@ -50,7 +50,7 @@ public class TestSuite extends junit.framework.TestSuite {
                 tearDown();
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result.addError(this, e);
         }
     }

@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.List;
 
 public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
-                                    implements UriInfo {
+    implements UriInfo {
 
     protected ThreadLocalUriInfo() {
         super(UriInfo.class);
@@ -39,7 +39,7 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         return get().getAbsolutePathBuilder();
     }
 
-    
+
     public URI getBaseUri() {
         return get().getBaseUri();
     }

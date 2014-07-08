@@ -24,7 +24,7 @@
 	             <handler-class>org.helloworld.Handler1</handler-class>
               </handler>
            </handler-chain>
-          
+
            <handler-chain>
               <service-name-pattern xmlns:ns1="http://www.helloworld.org">bar:HelloService</service-name-pattern>
               <handler>

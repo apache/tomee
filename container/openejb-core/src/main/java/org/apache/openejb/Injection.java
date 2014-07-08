@@ -63,10 +63,10 @@ public class Injection {
     @Override
     public String toString() {
         return "Injection{" +
-                "target=" + classname +
-                ", name='" + name + '\'' +
-                ", jndiName='" + jndiName + '\'' +
-                '}';
+            "target=" + classname +
+            ", name='" + name + '\'' +
+            ", jndiName='" + jndiName + '\'' +
+            '}';
     }
 
     @Override

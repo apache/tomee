@@ -27,7 +27,7 @@ public class TrueFalseAdapter extends XmlAdapter<String, Boolean> {
         return s.matches("(true|True|TRUE|yes|Yes|YES|Y|1)");
     }
 
-    public String marshal(Boolean b) throws Exception {
-        return (b == null)? "false" : b.toString();
+    public String marshal(final Boolean b) throws Exception {
+        return (b == null) ? "false" : b.toString();
     }
 }

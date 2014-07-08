@@ -25,11 +25,11 @@ import javax.jms.Session;
 import java.lang.reflect.Method;
 
 public class MdbUtil {
-    public static String getSignature(Method method){
-        StringBuilder builder = new StringBuilder();
+    public static String getSignature(final Method method) {
+        final StringBuilder builder = new StringBuilder();
         builder.append(method.getName()).append("(");
         boolean first = true;
-        for (Class<?> type : method.getParameterTypes()) {
+        for (final Class<?> type : method.getParameterTypes()) {
             if (!first) {
                 builder.append(",");
             }
@@ -40,38 +40,38 @@ public class MdbUtil {
         return builder.toString();
     }
 
-    public static void close(MessageProducer closeable) {
+    public static void close(final MessageProducer closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
             }
         }
     }
 
-    public static void close(MessageConsumer closeable) {
+    public static void close(final MessageConsumer closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
             }
         }
     }
 
-    public static void close(Session closeable) {
+    public static void close(final Session closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
             }
         }
     }
 
-    public static void close(Connection closeable) {
+    public static void close(final Connection closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
             }
         }
     }

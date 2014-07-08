@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.MessageAdapter$JAXB.readMessageAdapter;
 import static org.apache.openejb.jee.MessageAdapter$JAXB.writeMessageAdapter;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InboundResourceadapter$JAXB
-        extends JAXBObject<InboundResourceadapter> {
+    extends JAXBObject<InboundResourceadapter> {
 
 
     public InboundResourceadapter$JAXB() {
         super(InboundResourceadapter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "inbound-resourceadapterType".intern()), MessageAdapter$JAXB.class);
     }
 
-    public static InboundResourceadapter readInboundResourceadapter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InboundResourceadapter readInboundResourceadapter(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInboundResourceadapter(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public static void writeInboundResourceadapter(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, inboundResourceadapter, context);
     }
 
-    public final static InboundResourceadapter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InboundResourceadapter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,12 +68,12 @@ public class InboundResourceadapter$JAXB
             context = new RuntimeContext();
         }
 
-        InboundResourceadapter inboundResourceadapter = new InboundResourceadapter();
+        final InboundResourceadapter inboundResourceadapter = new InboundResourceadapter();
         context.beforeUnmarshal(inboundResourceadapter, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("inbound-resourceadapterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InboundResourceadapter.class);
@@ -81,10 +81,10 @@ public class InboundResourceadapter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, inboundResourceadapter);
                 inboundResourceadapter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,10 +93,10 @@ public class InboundResourceadapter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("messageadapter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageAdapter
-                MessageAdapter messageAdapter = readMessageAdapter(elementReader, context);
+                final MessageAdapter messageAdapter = readMessageAdapter(elementReader, context);
                 inboundResourceadapter.messageAdapter = messageAdapter;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "messageadapter"));
@@ -108,13 +108,13 @@ public class InboundResourceadapter$JAXB
         return inboundResourceadapter;
     }
 
-    public final InboundResourceadapter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InboundResourceadapter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InboundResourceadapter inboundResourceadapter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final InboundResourceadapter inboundResourceadapter, RuntimeContext context)
+        throws Exception {
         if (inboundResourceadapter == null) {
             writer.writeXsiNil();
             return;
@@ -133,19 +133,19 @@ public class InboundResourceadapter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = inboundResourceadapter.id;
+        final String idRaw = inboundResourceadapter.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(inboundResourceadapter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: messageAdapter
-        MessageAdapter messageAdapter = inboundResourceadapter.messageAdapter;
+        final MessageAdapter messageAdapter = inboundResourceadapter.messageAdapter;
         if (messageAdapter != null) {
             writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "messageadapter");
             writeMessageAdapter(writer, messageAdapter, context);

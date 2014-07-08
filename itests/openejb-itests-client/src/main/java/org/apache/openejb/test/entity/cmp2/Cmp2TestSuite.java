@@ -67,7 +67,7 @@ public class Cmp2TestSuite extends org.apache.openejb.test.FilteredTestSuite {
      * This method is called before a test is executed.
      */
     protected void setUp() throws Exception {
-        Properties props = TestManager.getServer().getContextEnvironment();
+        final Properties props = TestManager.getServer().getContextEnvironment();
         //props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
         //props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
         new InitialContext(props);

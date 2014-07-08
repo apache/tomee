@@ -50,9 +50,9 @@ public class IvmJndiFactory implements JndiFactory {
         try {
             context.bind("java:comp/env/dummy", "dummy");
         } catch (final NamingException e) {
-            throw new SystemException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
+            throw new SystemException("Unable to create subcontext 'java:comp/env'.  Exception:" + e.getMessage(), e);
         }
-        for (final Map.Entry<String, Object> entry:  bindings.entrySet()) {
+        for (final Map.Entry<String, Object> entry : bindings.entrySet()) {
             final String name = entry.getKey();
             final Object value = entry.getValue();
             if (value == null) {

@@ -47,7 +47,7 @@ public class GeronimoMappedName implements DynamicDeployer {
     }
 
     private void mapReferences(final EjbJar ejbJar) {
-        if (ejbJar == null){
+        if (ejbJar == null) {
             return;
         }
 
@@ -56,7 +56,7 @@ public class GeronimoMappedName implements DynamicDeployer {
                 // remap only corba references
                 final String mappedName = ref.getMappedName();
                 if (mappedName != null &&
-                        (mappedName.startsWith("jndi:corbaloc") || mappedName.startsWith("jndi:corbaname"))) {
+                    (mappedName.startsWith("jndi:corbaloc") || mappedName.startsWith("jndi:corbaname"))) {
                     final String refName = ref.getEjbRefName();
                     ref.setMappedName(MAPPED_NAME_PREFIX + refName);
                 }

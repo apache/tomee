@@ -16,7 +16,14 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Collection;
@@ -28,15 +35,15 @@ import java.util.Map;
 @XmlRootElement(name = "connector")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connectorType", propOrder = {
-        "displayNames",
-        "descriptions",
-        "icon",
-        "vendorName",
-        "specVersion",
-        "eisType",
-        "version",
-        "license",
-        "resourceAdapter"
+    "displayNames",
+    "descriptions",
+    "icon",
+    "vendorName",
+    "specVersion",
+    "eisType",
+    "version",
+    "license",
+    "resourceAdapter"
 })
 public class Connector10 {
     @XmlTransient
@@ -59,7 +66,7 @@ public class Connector10 {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-    @XmlElement(name="spec-version")
+    @XmlElement(name = "spec-version")
     protected String specVersion;
 
     public Connector10() {
@@ -70,7 +77,7 @@ public class Connector10 {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -83,7 +90,7 @@ public class Connector10 {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -98,7 +105,7 @@ public class Connector10 {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -113,7 +120,7 @@ public class Connector10 {
         return vendorName;
     }
 
-    public void setVendorName(String value) {
+    public void setVendorName(final String value) {
         this.vendorName = value;
     }
 
@@ -121,7 +128,7 @@ public class Connector10 {
         return eisType;
     }
 
-    public void setEisType(String value) {
+    public void setEisType(final String value) {
         this.eisType = value;
     }
 
@@ -129,7 +136,7 @@ public class Connector10 {
         return version;
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -137,7 +144,7 @@ public class Connector10 {
         return license;
     }
 
-    public void setLicense(License value) {
+    public void setLicense(final License value) {
         this.license = value;
     }
 
@@ -145,7 +152,7 @@ public class Connector10 {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapter10 value) {
+    public void setResourceAdapter(final ResourceAdapter10 value) {
         this.resourceAdapter = value;
     }
 
@@ -157,7 +164,7 @@ public class Connector10 {
         }
     }
 
-    public void setSpecVersion(String value) {
+    public void setSpecVersion(final String value) {
         this.specVersion = value;
     }
 
@@ -165,7 +172,7 @@ public class Connector10 {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

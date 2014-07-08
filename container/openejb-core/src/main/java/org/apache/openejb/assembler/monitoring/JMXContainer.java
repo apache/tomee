@@ -57,9 +57,9 @@ public class JMXContainer {
         int i = 0;
         for (final BeanContext bc : beans) {
             beanNames[i++] = new StringBuilder("bean-class: ").append(bc.getBeanClass().getName()).append(", ")
-                    .append("ejb-name: ").append(bc.getEjbName()).append(", ")
-                    .append("deployment-id: ").append(bc.getDeploymentID()).append(", ")
-                    .toString();
+                .append("ejb-name: ").append(bc.getEjbName()).append(", ")
+                .append("deployment-id: ").append(bc.getDeploymentID()).append(", ")
+                .toString();
         }
         return beanNames;
     }
@@ -89,8 +89,8 @@ public class JMXContainer {
         int i = 0;
         for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) {
             properties[i++] = new StringBuilder(entry.getKey().toString())
-                    .append(" = ").append(entry.getValue().toString())
-                    .toString();
+                .append(" = ").append(entry.getValue().toString())
+                .toString();
         }
         return properties;
     }

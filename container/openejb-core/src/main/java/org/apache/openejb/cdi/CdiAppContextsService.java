@@ -172,8 +172,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
-                            + scopeType.getSimpleName()
-                            + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
+                        + scopeType.getSimpleName()
+                        + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
                 }
             }
         }
@@ -217,8 +217,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
-                            + scopeType.getSimpleName()
-                            + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
+                        + scopeType.getSimpleName()
+                        + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
                 }
             }
         }
@@ -235,11 +235,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     @Override
     public boolean supportsContext(final Class<? extends Annotation> scopeType) {
         return scopeType.equals(RequestScoped.class)
-                || scopeType.equals(SessionScoped.class)
-                || scopeType.equals(ApplicationScoped.class)
-                || scopeType.equals(Dependent.class)
-                || scopeType.equals(Singleton.class)
-                || scopeType.equals(ConversationScoped.class) && supportsConversation();
+            || scopeType.equals(SessionScoped.class)
+            || scopeType.equals(ApplicationScoped.class)
+            || scopeType.equals(Dependent.class)
+            || scopeType.equals(Singleton.class)
+            || scopeType.equals(ConversationScoped.class) && supportsConversation();
 
     }
 
@@ -350,7 +350,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
                 try {
                     final Constructor<?> constr = clazz.getConstructor(HttpSession.class);
-                    return (SessionContext)constr.newInstance(session);
+                    return (SessionContext) constr.newInstance(session);
                 } catch (final Exception e) {
                     return (SessionContext) clazz.newInstance();
                 }

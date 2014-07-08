@@ -33,7 +33,7 @@ public class Web {
         return webUri;
     }
 
-    public void setWebUri(String value) {
+    public void setWebUri(final String value) {
         this.webUri = value;
     }
 
@@ -41,7 +41,7 @@ public class Web {
         return contextRoot;
     }
 
-    public void setContextRoot(String value) {
+    public void setContextRoot(final String value) {
         this.contextRoot = value;
     }
 }

@@ -54,11 +54,11 @@ import java.util.Set;
 /**
  * The point of this test case is to verify that OpenEJB is accurately performing
  * it's part of a WebServiceProvider to OpenEJB invocation as it relates to JAX-RPC.
- *
+ * <p/>
  * In the agreement between OpenEJB and the Web Service Provider, the Web Service Provider
  * must supply the MessageContext and an Interceptor as the arguments of the standard
  * container.invoke method call.
- *
+ * <p/>
  * OpenEJB must ensure the MessageContext is exposed via the SessionContext.getMessageContext
  * and ensure that the interceptor is added to the chain just after the other interceptors and
  * before the bean method itself is invoked.
@@ -70,23 +70,23 @@ public class JaxWsInvocationTest extends TestCase {
     public void testWsInvocations() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class,"PseudoSecurityService",null,"PseudoSecurityService",null));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class, "PseudoSecurityService", null, "PseudoSecurityService", null));
 
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
 
 
-        EjbJarInfo ejbJar = config.configureApplication(buildTestApp());
+        final EjbJarInfo ejbJar = config.configureApplication(buildTestApp());
 
         assembler.createApplication(ejbJar);
 
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        BeanContext beanContext = containerSystem.getBeanContext("EchoBean");
+        final BeanContext beanContext = containerSystem.getBeanContext("EchoBean");
 
         assertNotNull(beanContext);
 
@@ -99,36 +99,36 @@ public class JaxWsInvocationTest extends TestCase {
         // the arguments of the standard container.invoke signature.
 
         // So let's create a fake message context.
-        MessageContext messageContext = new FakeMessageContext();
+        final MessageContext messageContext = new FakeMessageContext();
 
         // Now let's create a fake interceptor as would be supplied by the
         // web service provider.  Instead of writing "fake" marshalling
         // code that would pull the arguments from the soap message, we'll
         // just give it the argument values directly.
-        Object wsProviderInterceptor = new FakeWsProviderInterceptor("Hello world");
+        final Object wsProviderInterceptor = new FakeWsProviderInterceptor("Hello world");
 
         // Ok, now we have the two arguments expected on a JAX-RPC Web Service
         // invocation as per the OpenEJB-specific agreement between OpenEJB
         // and the Web Service Provider
-        Object[] args = new Object[]{messageContext, wsProviderInterceptor};
+        final Object[] args = new Object[]{messageContext, wsProviderInterceptor};
 
         // Let's grab the container as the Web Service Provider would do and
         // perform an invocation
-        RpcContainer container = (RpcContainer) beanContext.getContainer();
+        final RpcContainer container = (RpcContainer) beanContext.getContainer();
 
-        Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
+        final Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        String value = (String) container.invoke("EchoBean", InterfaceType.SERVICE_ENDPOINT, echoMethod.getDeclaringClass(), echoMethod, args, null);
+        final String value = (String) container.invoke("EchoBean", InterfaceType.SERVICE_ENDPOINT, echoMethod.getDeclaringClass(), echoMethod, args, null);
 
         assertCalls(Call.values());
         calls.clear();
-        assertEquals("Hello world" , value);
-        
+        assertEquals("Hello world", value);
+
     }
 
-    private void assertCalls(Call... expectedCalls) {
-        List expected = Arrays.asList(expectedCalls);
-        assertEquals(join("\n", expected) , join("\n", calls));
+    private void assertCalls(final Call... expectedCalls) {
+        final List expected = Arrays.asList(expectedCalls);
+        assertEquals(join("\n", expected), join("\n", calls));
     }
 
     public static enum Call {
@@ -144,9 +144,9 @@ public class JaxWsInvocationTest extends TestCase {
     public static List<Call> calls = new ArrayList<Call>();
 
     public EjbModule buildTestApp() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(EchoBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(EchoBean.class));
         bean.setServiceEndpoint(EchoServiceEndpoint.class.getName());
 
         return new EjbModule(this.getClass().getClassLoader(), this.getClass().getSimpleName(), "test", ejbJar, null);
@@ -163,7 +163,7 @@ public class JaxWsInvocationTest extends TestCase {
         private WebServiceContext wsContext;
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
 
             /**
              * For JAX-WS invocations context.getContextData() must return the 
@@ -172,8 +172,8 @@ public class JaxWsInvocationTest extends TestCase {
              * and the container should then ensure it's available via getContextData()
              * for the duration of this call.
              */
-            MessageContext messageContext = (MessageContext)context.getContextData();
-            
+            final MessageContext messageContext = (MessageContext) context.getContextData();
+
             org.junit.Assert.assertNotNull("message context should not be null", messageContext);
             org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
 
@@ -181,10 +181,10 @@ public class JaxWsInvocationTest extends TestCase {
             try {
                 ctx.getMessageContext();
                 org.junit.Assert.fail("Did not throw exception");
-            } catch (IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 // that's expected since it's JAX-WS
             }
-            
+
             // test @Resource WebServiceContext injection
             org.junit.Assert.assertNotNull("web service context should not be null", wsContext);
             org.junit.Assert.assertEquals("msg context should be the smae", messageContext, wsContext.getMessageContext());
@@ -193,19 +193,19 @@ public class JaxWsInvocationTest extends TestCase {
             org.junit.Assert.assertNotNull("user principal", wsContext.getUserPrincipal());
 
             calls.add(Call.Bean_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);
             return o;
         }
-        
-        public String echo(String data){
+
+        public String echo(final String data) {
             calls.add(Call.Bean_Invoke);
             return data;
         }
     }
 
     @WebService
-    public static interface EchoServiceEndpoint { 
+    public static interface EchoServiceEndpoint {
         String echo(String data);
     }
 
@@ -219,19 +219,19 @@ public class JaxWsInvocationTest extends TestCase {
     public static class PlainEjbInterceptor {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             // Track this call so we can assert proper interceptor order
             calls.add(Call.EjbInterceptor_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.EjbInterceptor_Invoke_AFTER);
             return o;
         }
     }
 
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();
@@ -248,14 +248,14 @@ public class JaxWsInvocationTest extends TestCase {
         private Map map = new HashMap();
 
         public void clear() {
-            map.clear();      
+            map.clear();
         }
 
-        public boolean containsKey(Object key) {
+        public boolean containsKey(final Object key) {
             return map.containsKey(key);
         }
 
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             return map.containsValue(value);
         }
 
@@ -263,7 +263,7 @@ public class JaxWsInvocationTest extends TestCase {
             return map.entrySet();
         }
 
-        public Object get(Object key) {
+        public Object get(final Object key) {
             return map.get(key);
         }
 
@@ -275,15 +275,15 @@ public class JaxWsInvocationTest extends TestCase {
             return map.keySet();
         }
 
-        public Object put(String key, Object value) {
+        public Object put(final String key, final Object value) {
             return map.put(key, value);
         }
 
-        public void putAll(Map<? extends String, ? extends Object> t) {
+        public void putAll(final Map<? extends String, ? extends Object> t) {
             map.putAll(t);
         }
 
-        public Object remove(Object key) {
+        public Object remove(final Object key) {
             return map.remove(key);
         }
 
@@ -295,11 +295,11 @@ public class JaxWsInvocationTest extends TestCase {
             return map.values();
         }
 
-        public Scope getScope(String arg0) {
+        public Scope getScope(final String arg0) {
             return null;
         }
 
-        public void setScope(String arg0, Scope arg1) {
+        public void setScope(final String arg0, final Scope arg1) {
         }
 
     }
@@ -308,30 +308,30 @@ public class JaxWsInvocationTest extends TestCase {
      * This object would be supplied by the Web Service Provider
      * as per the OpenEJB-WebServiceProvider agreement and serves
      * two purposes:
-     *
+     * <p/>
      * 1. Executing the Handler Chain (as required by
      * the JAX-RPC specification) in the context of the EJB Container
      * (as required by the EJB and J2EE WebServices specifications)
-     *
+     * <p/>
      * 2. Unmarshalling the method arguments from the SOAP message
      * after the handlers in the Handler Chain have had a chance
      * to modify the argument values via the SAAJ tree.
-     *
+     * <p/>
      * The Interceptor instance given to OpenEJB is constructed
      * and created by the Web Service Provider and should contain
      * all the data it requires to complete it's part of the agreement.
-     *
+     * <p/>
      * OpenEJB will not perform any injection on this object and
      * the interceptor will be discarded so that the Web Service
      * Provider may pass in a new Interceptor instance on every
      * web service invocation.
-     *
+     * <p/>
      * The Web Service Provider may pass in any object to serve
      * the roll of the Interceptor as long as it has an @AroundInvoke
      * method using the method signature:
-     *
+     * <p/>
      * public Object <METHOD-NAME> (InvocationContext ctx) throws Exception
-     *
+     * <p/>
      * Unlike typical EJB Interceptor around invoke methods, the @AroundInvoke
      * annotation must be used and is not optional, and the method must be public.
      */
@@ -342,18 +342,18 @@ public class JaxWsInvocationTest extends TestCase {
          */
         private final Object[] args;
 
-        public FakeWsProviderInterceptor(Object... args) {
+        public FakeWsProviderInterceptor(final Object... args) {
             this.args = args;
         }
 
         @AroundInvoke
-        public Object invoke(InvocationContext invocationContext) throws Exception {
+        public Object invoke(final InvocationContext invocationContext) throws Exception {
             // The interceptor of the web serivce must set the
             // arguments it marshalls from the soap message into
             // the InvocationContext so we can invoke the bean.
             invocationContext.setParameters(args);
 
-            Object returnValue;
+            final Object returnValue;
             try {
 
                 // Track this call so we can assert proper interceptor order
@@ -366,7 +366,7 @@ public class JaxWsInvocationTest extends TestCase {
                 // Track this call so we can assert proper interceptor order
                 calls.add(Call.WebServiceProvider_Invoke_AFTER);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // handler chain fault processing would happen here
                 throw e;
             }

@@ -43,7 +43,7 @@ public class SessionManager {
         }
     }
 
-    public void setPersistenceType(String value) {
+    public void setPersistenceType(final String value) {
         this.persistenceType = value;
     }
 
@@ -51,7 +51,7 @@ public class SessionManager {
         return managerProperties;
     }
 
-    public void setManagerProperties(ManagerProperties value) {
+    public void setManagerProperties(final ManagerProperties value) {
         this.managerProperties = value;
     }
 
@@ -59,7 +59,7 @@ public class SessionManager {
         return storeProperties;
     }
 
-    public void setStoreProperties(StoreProperties value) {
+    public void setStoreProperties(final StoreProperties value) {
         this.storeProperties = value;
     }
 }

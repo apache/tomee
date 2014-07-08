@@ -27,21 +27,21 @@ import java.util.concurrent.TimeUnit;
 public class TimerSyncBean implements TimerSync {
     private static Map<String, CountDownLatch> latches = new TreeMap<String, CountDownLatch>();
 
-    public boolean waitFor(String name) {
-        CountDownLatch latch = getLatch(name);
+    public boolean waitFor(final String name) {
+        final CountDownLatch latch = getLatch(name);
         try {
             return latch.await(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             return false;
         }
     }
 
-    public void countDown(String name) {
-        CountDownLatch latch = getLatch(name);
+    public void countDown(final String name) {
+        final CountDownLatch latch = getLatch(name);
         latch.countDown();
     }
 
-    private synchronized CountDownLatch getLatch(String name) {
+    private synchronized CountDownLatch getLatch(final String name) {
         CountDownLatch latch = latches.get(name);
         if (latch == null) {
             latch = new CountDownLatch(1);

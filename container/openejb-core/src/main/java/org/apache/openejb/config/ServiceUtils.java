@@ -44,11 +44,12 @@ public class ServiceUtils {
      * 3. Embedded mode "org.apache.openejb.embedded" </br>
      */
     public static final String DEFAULT_PROVIDER_URL;
+
     static {
         String defaultValue = "org.apache.openejb";
         try {
             final SystemInstance system = SystemInstance.get();
-            if (system.getProperty("openejb.embedded") != null){
+            if (system.getProperty("openejb.embedded") != null) {
                 defaultValue = "org.apache.openejb.embedded";
             }
         } catch (final Exception ignored) {
@@ -66,7 +67,7 @@ public class ServiceUtils {
 
     public static ProviderManager getManager() {
         final ProviderManager manager = SystemInstance.get().getComponent(ProviderManager.class);
-        if (manager!= null) {
+        if (manager != null) {
             return manager;
         }
 
@@ -131,7 +132,7 @@ public class ServiceUtils {
     public static String getServiceProviderId(final String type, final Properties required) throws OpenEJBException {
         final ServiceProvider provider = getServiceProviderByType(type, required);
 
-        return provider != null? provider.getId(): null;
+        return provider != null ? provider.getId() : null;
     }
 
 
@@ -181,11 +182,11 @@ public class ServiceUtils {
 
             Object expected = entry.getValue();
 
-            if (expected.equals(NONE)){
+            if (expected.equals(NONE)) {
                 if (value != null) {
                     return false;
                 }
-            } else if (expected.equals(ANY)){
+            } else if (expected.equals(ANY)) {
                 if (value == null) {
                     return false;
                 }
@@ -197,7 +198,7 @@ public class ServiceUtils {
                 if (expected instanceof String) {
                     expected = ((String) expected).toLowerCase();
                 }
-                
+
                 if (!expected.equals(value)) {
                     return false;
                 }

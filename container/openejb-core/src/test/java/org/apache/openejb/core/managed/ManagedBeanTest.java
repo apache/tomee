@@ -49,13 +49,13 @@ public class ManagedBeanTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new ManagedBean(MyBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
@@ -63,9 +63,9 @@ public class ManagedBeanTest extends TestCase {
 
     public void test() throws Exception {
         MyBean.instances.set(0);
-        
-        InitialContext context = new InitialContext();
-        MyBean myBean = (MyBean) context.lookup("MyBeanLocalBean");
+
+        final InitialContext context = new InitialContext();
+        final MyBean myBean = (MyBean) context.lookup("MyBeanLocalBean");
 
         assertEquals("pan", myBean.echo("nap"));
         assertEquals(1, MyBean.instances.get());
@@ -90,7 +90,7 @@ public class ManagedBeanTest extends TestCase {
     }
 
     public static class MyRuntimeException extends RuntimeException {
-        public MyRuntimeException(String message) {
+        public MyRuntimeException(final String message) {
             super(message);
         }
     }
@@ -120,8 +120,8 @@ public class ManagedBeanTest extends TestCase {
          * @param string a string to reverse
          * @return the reversed string
          */
-        public String echo(String string) {
-            StringBuilder sb = new StringBuilder(string);
+        public String echo(final String string) {
+            final StringBuilder sb = new StringBuilder(string);
             return sb.reverse().toString();
         }
 
@@ -136,10 +136,10 @@ public class ManagedBeanTest extends TestCase {
 
         private boolean inTransaction() {
             try {
-                TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-                int status = transactionManager.getStatus();
+                final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+                final int status = transactionManager.getStatus();
                 return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 throw new RuntimeException(e);
             }
         }

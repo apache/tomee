@@ -44,10 +44,14 @@ import java.io.Serializable;
  */
 public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = -123076995648386763L;
 
-    /**Number of values that have been added */
+    /**
+     * Number of values that have been added
+     */
     private int n;
 
     /**
@@ -59,8 +63,8 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * Create a SumOfLogs instance
      */
     public SumOfLogs() {
-       value = 0d;
-       n = 0;
+        value = 0d;
+        n = 0;
     }
 
     /**
@@ -120,12 +124,12 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * See {@link SumOfLogs}.</p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the sum of the natural logs of the values or Double.NaN if
      * length = 0
      * @throws IllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                  parameters are not valid
      */
     @Override
     public double evaluate(final double[] values, final int begin, final int length) {
@@ -154,7 +158,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source SumOfLogs to copy
-     * @param dest SumOfLogs to copy to
+     * @param dest   SumOfLogs to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final SumOfLogs source, final SumOfLogs dest) {

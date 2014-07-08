@@ -40,7 +40,7 @@ public final class ClientInjections {
         final Context clients;
         try {
             clients = (Context) SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
-                                              .lookup("openejb/client/");
+                .lookup("openejb/client/");
         } catch (final NamingException e) {
             throw new OpenEJBException(object.getClass().getName(), e);
         }
@@ -62,10 +62,10 @@ public final class ClientInjections {
 
         if (injections == null) {
             throw new OpenEJBException("Unable to find injection meta-data for "
-                                       + object.getClass().getName()
-                                       + ".  Ensure that class was annotated with @"
-                                       + LocalClient.class.getName() + " and was successfully discovered and deployed. "
-                                       + " See http://openejb.apache.org/3.0/local-client-injection.html");
+                + object.getClass().getName()
+                + ".  Ensure that class was annotated with @"
+                + LocalClient.class.getName() + " and was successfully discovered and deployed. "
+                + " See http://openejb.apache.org/3.0/local-client-injection.html");
         }
 
         return new InjectionProcessor(object, injections, ctx);

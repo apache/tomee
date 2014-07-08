@@ -17,20 +17,20 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -57,8 +57,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -117,11 +115,9 @@ public class TypeMapping {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Name }
-     *     
+     *
+     * @return possible object is
+     * {@link Name }
      */
     public Name getName() {
         return name;
@@ -129,23 +125,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Name }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Name }
      */
-    public void setName(Name value) {
+    public void setName(final Name value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the rowLockingTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RowLockingTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link RowLockingTemplate }
      */
     public RowLockingTemplate getRowLockingTemplate() {
         return rowLockingTemplate;
@@ -153,23 +145,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the rowLockingTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RowLockingTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RowLockingTemplate }
      */
-    public void setRowLockingTemplate(RowLockingTemplate value) {
+    public void setRowLockingTemplate(final RowLockingTemplate value) {
         this.rowLockingTemplate = value;
     }
 
     /**
      * Gets the value of the pkConstraintTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PkConstraintTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link PkConstraintTemplate }
      */
     public PkConstraintTemplate getPkConstraintTemplate() {
         return pkConstraintTemplate;
@@ -177,23 +165,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the pkConstraintTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PkConstraintTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PkConstraintTemplate }
      */
-    public void setPkConstraintTemplate(PkConstraintTemplate value) {
+    public void setPkConstraintTemplate(final PkConstraintTemplate value) {
         this.pkConstraintTemplate = value;
     }
 
     /**
      * Gets the value of the fkConstraintTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FkConstraintTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link FkConstraintTemplate }
      */
     public FkConstraintTemplate getFkConstraintTemplate() {
         return fkConstraintTemplate;
@@ -201,23 +185,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the fkConstraintTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FkConstraintTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FkConstraintTemplate }
      */
-    public void setFkConstraintTemplate(FkConstraintTemplate value) {
+    public void setFkConstraintTemplate(final FkConstraintTemplate value) {
         this.fkConstraintTemplate = value;
     }
 
     /**
      * Gets the value of the autoIncrementTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AutoIncrementTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link AutoIncrementTemplate }
      */
     public AutoIncrementTemplate getAutoIncrementTemplate() {
         return autoIncrementTemplate;
@@ -225,23 +205,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the autoIncrementTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AutoIncrementTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AutoIncrementTemplate }
      */
-    public void setAutoIncrementTemplate(AutoIncrementTemplate value) {
+    public void setAutoIncrementTemplate(final AutoIncrementTemplate value) {
         this.autoIncrementTemplate = value;
     }
 
     /**
      * Gets the value of the addColumnTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AddColumnTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link AddColumnTemplate }
      */
     public AddColumnTemplate getAddColumnTemplate() {
         return addColumnTemplate;
@@ -249,23 +225,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the addColumnTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AddColumnTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AddColumnTemplate }
      */
-    public void setAddColumnTemplate(AddColumnTemplate value) {
+    public void setAddColumnTemplate(final AddColumnTemplate value) {
         this.addColumnTemplate = value;
     }
 
     /**
      * Gets the value of the alterColumnTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AlterColumnTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link AlterColumnTemplate }
      */
     public AlterColumnTemplate getAlterColumnTemplate() {
         return alterColumnTemplate;
@@ -273,23 +245,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the alterColumnTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AlterColumnTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AlterColumnTemplate }
      */
-    public void setAlterColumnTemplate(AlterColumnTemplate value) {
+    public void setAlterColumnTemplate(final AlterColumnTemplate value) {
         this.alterColumnTemplate = value;
     }
 
     /**
      * Gets the value of the dropColumnTemplate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DropColumnTemplate }
-     *     
+     *
+     * @return possible object is
+     * {@link DropColumnTemplate }
      */
     public DropColumnTemplate getDropColumnTemplate() {
         return dropColumnTemplate;
@@ -297,23 +265,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the dropColumnTemplate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DropColumnTemplate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DropColumnTemplate }
      */
-    public void setDropColumnTemplate(DropColumnTemplate value) {
+    public void setDropColumnTemplate(final DropColumnTemplate value) {
         this.dropColumnTemplate = value;
     }
 
     /**
      * Gets the value of the aliasHeaderPrefix property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AliasHeaderPrefix }
-     *     
+     *
+     * @return possible object is
+     * {@link AliasHeaderPrefix }
      */
     public AliasHeaderPrefix getAliasHeaderPrefix() {
         return aliasHeaderPrefix;
@@ -321,23 +285,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the aliasHeaderPrefix property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AliasHeaderPrefix }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AliasHeaderPrefix }
      */
-    public void setAliasHeaderPrefix(AliasHeaderPrefix value) {
+    public void setAliasHeaderPrefix(final AliasHeaderPrefix value) {
         this.aliasHeaderPrefix = value;
     }
 
     /**
      * Gets the value of the aliasHeaderSuffix property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AliasHeaderSuffix }
-     *     
+     *
+     * @return possible object is
+     * {@link AliasHeaderSuffix }
      */
     public AliasHeaderSuffix getAliasHeaderSuffix() {
         return aliasHeaderSuffix;
@@ -345,23 +305,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the aliasHeaderSuffix property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AliasHeaderSuffix }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AliasHeaderSuffix }
      */
-    public void setAliasHeaderSuffix(AliasHeaderSuffix value) {
+    public void setAliasHeaderSuffix(final AliasHeaderSuffix value) {
         this.aliasHeaderSuffix = value;
     }
 
     /**
      * Gets the value of the aliasMaxLength property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AliasMaxLength }
-     *     
+     *
+     * @return possible object is
+     * {@link AliasMaxLength }
      */
     public AliasMaxLength getAliasMaxLength() {
         return aliasMaxLength;
@@ -369,23 +325,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the aliasMaxLength property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AliasMaxLength }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AliasMaxLength }
      */
-    public void setAliasMaxLength(AliasMaxLength value) {
+    public void setAliasMaxLength(final AliasMaxLength value) {
         this.aliasMaxLength = value;
     }
 
     /**
      * Gets the value of the subquerySupported property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SubquerySupported }
-     *     
+     *
+     * @return possible object is
+     * {@link SubquerySupported }
      */
     public SubquerySupported getSubquerySupported() {
         return subquerySupported;
@@ -393,23 +345,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the subquerySupported property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SubquerySupported }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SubquerySupported }
      */
-    public void setSubquerySupported(SubquerySupported value) {
+    public void setSubquerySupported(final SubquerySupported value) {
         this.subquerySupported = value;
     }
 
     /**
      * Gets the value of the trueMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TrueMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link TrueMapping }
      */
     public TrueMapping getTrueMapping() {
         return trueMapping;
@@ -417,23 +365,19 @@ public class TypeMapping {
 
     /**
      * Sets the value of the trueMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TrueMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TrueMapping }
      */
-    public void setTrueMapping(TrueMapping value) {
+    public void setTrueMapping(final TrueMapping value) {
         this.trueMapping = value;
     }
 
     /**
      * Gets the value of the falseMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FalseMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link FalseMapping }
      */
     public FalseMapping getFalseMapping() {
         return falseMapping;
@@ -441,37 +385,33 @@ public class TypeMapping {
 
     /**
      * Sets the value of the falseMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FalseMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FalseMapping }
      */
-    public void setFalseMapping(FalseMapping value) {
+    public void setFalseMapping(final FalseMapping value) {
         this.falseMapping = value;
     }
 
     /**
      * Gets the value of the functionMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the functionMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFunctionMapping().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FunctionMapping }
-     * 
-     * 
      */
     public List<FunctionMapping> getFunctionMapping() {
         if (functionMapping == null) {
@@ -482,25 +422,23 @@ public class TypeMapping {
 
     /**
      * Gets the value of the mapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapping().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Mapping }
-     * 
-     * 
      */
     public List<Mapping> getMapping() {
         if (mapping == null) {

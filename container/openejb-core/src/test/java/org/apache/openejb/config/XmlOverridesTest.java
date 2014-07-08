@@ -63,14 +63,14 @@ import java.util.Map;
 public class XmlOverridesTest extends TestCase {
 
     public void test() throws Exception {
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(AnnotatedBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(AnnotatedBean.class));
 
         bean.getEjbLocalRef().add(new EjbLocalRef(name("annotatedLocal"), "BarBean"));
 
@@ -83,8 +83,8 @@ public class XmlOverridesTest extends TestCase {
         bean.getEnvEntry().add(new EnvEntry(name("booolean"), "java.lang.String", "seven"));
         bean.getEnvEntry().add(new EnvEntry(name("byyte"), "java.lang.String", "eight"));
         bean.getEnvEntry().add(new EnvEntry(name("chaaracter"), "java.lang.String", "nine"));
-        
-        EnvEntry lookupEntry = new EnvEntry(name("lookup"), "java.lang.String", null);
+
+        final EnvEntry lookupEntry = new EnvEntry(name("lookup"), "java.lang.String", null);
         lookupEntry.setLookupName("java:app/AppName");
         bean.getEnvEntry().add(lookupEntry);
 
@@ -94,24 +94,24 @@ public class XmlOverridesTest extends TestCase {
 
         bean.getPersistenceContextRef().add(new PersistenceContextRef(name("em"), "yellow", PersistenceContextType.TRANSACTION, new ArrayList(Arrays.asList(new Property("zzzz", "AAAA")))));
 
-        org.apache.openejb.jee.jpa.unit.PersistenceUnit persistenceUnit = new org.apache.openejb.jee.jpa.unit.PersistenceUnit("yellow");
+        final org.apache.openejb.jee.jpa.unit.PersistenceUnit persistenceUnit = new org.apache.openejb.jee.jpa.unit.PersistenceUnit("yellow");
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "app");
         app.getEjbModules().add(new EjbModule(ejbJar));
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
 
-        EjbJarInfo ejbJarInfo = appInfo.ejbJars.get(0);
-        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
-        JndiEncInfo enc = beanInfo.jndiEnc;
+        final EjbJarInfo ejbJarInfo = appInfo.ejbJars.get(0);
+        final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+        final JndiEncInfo enc = beanInfo.jndiEnc;
 
         assertEquals("Enc.ejbLocalReferences.size()", 1, enc.ejbLocalReferences.size());
         assertEquals("Enc.ejbLocalReferences.get(0).link", "BarBean", enc.ejbLocalReferences.get(0).link);
         assertEquals("Enc.ejbReferences.size()", 0, enc.ejbReferences.size());
 
         assertEquals("Enc.envEntries.size()", 11, enc.envEntries.size()); // 10 + ComponentName
-        Map<String, EnvEntryInfo> entries = map(enc.envEntries);
+        final Map<String, EnvEntryInfo> entries = map(enc.envEntries);
 
         assertEnvEntry(entries, name("striing"), "java.lang.Integer", "2");
         assertEnvEntry(entries, name("doouble"), "java.lang.String", "two");
@@ -125,51 +125,51 @@ public class XmlOverridesTest extends TestCase {
         assertEnvEntryLookup(entries, name("lookup"), "java.lang.String", "java:app/AppName");
 
         assertEquals("Enc.persistenceContextRefs.size()", 1, enc.persistenceContextRefs.size());
-        PersistenceContextReferenceInfo context = enc.persistenceContextRefs.get(0);
+        final PersistenceContextReferenceInfo context = enc.persistenceContextRefs.get(0);
         assertEquals("Context.extended", false, context.extended);
         assertEquals("Context.persistenceUnitName", "yellow", context.persistenceUnitName);
         assertEquals("Context.properties.size()", 1, context.properties.size());
         assertEquals("Context.properties.getProperty(\"zzzz\")", "AAAA", context.properties.getProperty("zzzz"));
 
         assertEquals("Enc.persistenceUnitRefs.size()", 1, enc.persistenceUnitRefs.size());
-        PersistenceUnitReferenceInfo unit = enc.persistenceUnitRefs.get(0);
+        final PersistenceUnitReferenceInfo unit = enc.persistenceUnitRefs.get(0);
         assertEquals("Unit.persistenceUnitName", "yellow", unit.persistenceUnitName);
 
         assertEquals("Enc.resourceRefs.size()", 1, enc.resourceRefs.size());
-        ResourceReferenceInfo resource = enc.resourceRefs.get(0);
+        final ResourceReferenceInfo resource = enc.resourceRefs.get(0);
         assertEquals("Resource.referenceAuth", "CONTAINER", resource.referenceAuth);
 
     }
 
-    private void assertEnvEntry(Map<String, EnvEntryInfo> entries, String name, String type, String value) {
-        EnvEntryInfo entryInfo = entries.get(name);
+    private void assertEnvEntry(final Map<String, EnvEntryInfo> entries, final String name, final String type, final String value) {
+        final EnvEntryInfo entryInfo = entries.get(name);
         assertNotNull(name, entryInfo);
         assertEquals(name + ".type", type, entryInfo.type);
         assertEquals(name + ".value", value, entryInfo.value);
     }
-    
-    private void assertEnvEntryLookup(Map<String, EnvEntryInfo> entries, String name, String type, String lookup) {
-        EnvEntryInfo entryInfo = entries.get(name);
+
+    private void assertEnvEntryLookup(final Map<String, EnvEntryInfo> entries, final String name, final String type, final String lookup) {
+        final EnvEntryInfo entryInfo = entries.get(name);
         assertNotNull(name, entryInfo);
         assertEquals(name + ".type", type, entryInfo.type);
         assertNull(name + ".value", entryInfo.value);
         assertNotNull(name + ".location", entryInfo.location);
-        assertEquals(name + ".location.jndiName", lookup, entryInfo.location.jndiName);        
+        assertEquals(name + ".location.jndiName", lookup, entryInfo.location.jndiName);
     }
 
-    private <T extends InjectableInfo> Map<String, T> map(List<T> list) {
+    private <T extends InjectableInfo> Map<String, T> map(final List<T> list) {
         try {
-            Map<String, T> entries = new HashMap<String, T>();
-            for (T envEntry : list) {
+            final Map<String, T> entries = new HashMap<String, T>();
+            for (final T envEntry : list) {
                 entries.put("java:" + envEntry.referenceName, envEntry);
             }
             return entries;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private String name(String name) {
+    private String name(final String name) {
 //        return AnnotatedBean.class.getName() + "/" + name;
         return "java:comp/env/" + AnnotatedBean.class.getName() + "/" + name;
     }
@@ -211,7 +211,7 @@ public class XmlOverridesTest extends TestCase {
 
         @Resource
         private Character chaaracter = 'D';
-        
+
         @Resource
         private String lookup;
 

@@ -59,7 +59,7 @@ public class WsdlReturnValueMapping {
         return methodReturnValue;
     }
 
-    public void setMethodReturnValue(String value) {
+    public void setMethodReturnValue(final String value) {
         this.methodReturnValue = value;
     }
 
@@ -67,7 +67,7 @@ public class WsdlReturnValueMapping {
         return wsdlMessage;
     }
 
-    public void setWsdlMessage(QName value) {
+    public void setWsdlMessage(final QName value) {
         this.wsdlMessage = value;
     }
 
@@ -75,7 +75,7 @@ public class WsdlReturnValueMapping {
         return wsdlMessagePartName;
     }
 
-    public void setWsdlMessagePartName(String value) {
+    public void setWsdlMessagePartName(final String value) {
         this.wsdlMessagePartName = value;
     }
 
@@ -83,7 +83,7 @@ public class WsdlReturnValueMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

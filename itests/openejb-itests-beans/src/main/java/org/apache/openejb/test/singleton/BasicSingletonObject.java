@@ -22,52 +22,51 @@ import java.util.Properties;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicSingletonObject extends javax.ejb.EJBObject{
-    
+public interface BasicSingletonObject extends javax.ejb.EJBObject {
+
     /**
      * Reverses the string passed in then returns it
-     * 
+     *
      * @return string
      */
     public String businessMethod(String text) throws RemoteException;
-    
+
     /**
      * Throws an ApplicationException when invoked
-     * 
      */
     public void throwApplicationException() throws RemoteException, ApplicationException;
-    
+
     /**
      * Throws a java.lang.NullPointerException when invoked
-     * This is a system exception and should result in the 
+     * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     * 
      */
     public void throwSystemException_NullPointer() throws RemoteException;
-    
+
     /**
-     * Returns a report of the bean's 
+     * Returns a report of the bean's
      * runtime permissions
-     * 
+     *
      * @return properties
      */
     public Properties getPermissionsReport() throws RemoteException;
-    
+
     /**
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
-     * 
+     *
      * @param methodName The method for which to get the allowed opperations report
-     * @return operations policy 
+     * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;
 
     /**
      * Schedules a timer with the specified name.  This name is used to notify via the TimerSyncBean.
+     *
      * @param name the name used to notify via the TimerSyncBean
      */
     public void scheduleTimer(String name) throws RemoteException;
-    
+
     public String remove(String obj) throws RemoteException;
 }

@@ -35,19 +35,19 @@ public class SecureServlet extends HttpServlet {
     @EJB
     private SecureEJBLocal secureEJBLocal;
 
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        ServletOutputStream out = response.getOutputStream();
-        PrintStream printStream = new PrintStream(out);
+        final ServletOutputStream out = response.getOutputStream();
+        final PrintStream printStream = new PrintStream(out);
 
-        String methodName = request.getParameter("method");
+        final String methodName = request.getParameter("method");
         if (methodName == null) {
             testAll(request, printStream);
         } else {
             try {
-                Method method = getClass().getMethod(methodName, HttpServletRequest.class);
+                final Method method = getClass().getMethod(methodName, HttpServletRequest.class);
                 method.invoke(this, request);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 // response.setStatus(580);
                 printStream.println("FAILED");
                 e.printStackTrace(printStream);
@@ -56,14 +56,14 @@ public class SecureServlet extends HttpServlet {
         printStream.flush();
     }
 
-    public void testAll(HttpServletRequest request, PrintStream printStream) {
-        for (Method method : EjbServlet.class.getMethods()) {
+    public void testAll(final HttpServletRequest request, final PrintStream printStream) {
+        for (final Method method : EjbServlet.class.getMethods()) {
             if (!method.getName().startsWith("invoke")) continue;
 
             try {
                 method.invoke(this);
                 printStream.println(method.getName() + " PASSED");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 printStream.println(method.getName() + " FAILED");
                 e.printStackTrace(printStream);
                 printStream.flush();
@@ -72,7 +72,7 @@ public class SecureServlet extends HttpServlet {
         }
     }
 
-    public void invokeGetCallerPrincipal(HttpServletRequest request) {
+    public void invokeGetCallerPrincipal(final HttpServletRequest request) {
         // Servlet environment
         Principal principal = request.getUserPrincipal();
         Assert.assertNotNull(principal);
@@ -84,7 +84,7 @@ public class SecureServlet extends HttpServlet {
         Assert.assertEquals("user", principal.getName());
     }
 
-    public void invokeIsCallerInRole(HttpServletRequest request) {
+    public void invokeIsCallerInRole(final HttpServletRequest request) {
         // Servlet environment
         Assert.assertTrue(request.isUserInRole("user"));
         Assert.assertFalse(request.isUserInRole("manager"));
@@ -98,35 +98,35 @@ public class SecureServlet extends HttpServlet {
         Assert.assertFalse(secureEJBLocal.isCallerInRole("runas"));
     }
 
-    public void invokeIsAllowed(HttpServletRequest request) {
+    public void invokeIsAllowed(final HttpServletRequest request) {
         try {
             secureEJBLocal.allowUserMethod();
-        } catch(EJBAccessException e) {
+        } catch(final EJBAccessException e) {
             Assert.fail("Method allowUserMethod() NOT ALLOWED");
         }
 
         try {
             secureEJBLocal.allowManagerMethod();
             Assert.fail("Method allowManagerMethod() ALLOWED");
-        } catch(EJBAccessException expected) {
+        } catch(final EJBAccessException expected) {
         }
 
         try {
             secureEJBLocal.allowUnknownMethod();
             Assert.fail("Method allowUnknownMethod() ALLOWED");
-        } catch(EJBAccessException expected) {
+        } catch(final EJBAccessException expected) {
         }
 
         try {
             secureEJBLocal.allowRunasMethod();
             Assert.fail("Method allowRunasMethod() ALLOWED");
-        } catch(EJBAccessException expected) {
+        } catch(final EJBAccessException expected) {
         }
 
         try {
             secureEJBLocal.denyAllMethod();
             Assert.fail("Method denyAllMethod() ALLOWED");
-        } catch(EJBAccessException expected) {
+        } catch(final EJBAccessException expected) {
         }
     }
 }

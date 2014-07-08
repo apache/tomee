@@ -39,33 +39,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesNavigationRule$JAXB
-        extends JAXBObject<FacesNavigationRule> {
+    extends JAXBObject<FacesNavigationRule> {
 
 
     public FacesNavigationRule$JAXB() {
         super(FacesNavigationRule.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-navigation-ruleType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesNavigationCase$JAXB.class, FacesNavigationRuleExtension$JAXB.class);
     }
 
-    public static FacesNavigationRule readFacesNavigationRule(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesNavigationRule readFacesNavigationRule(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNavigationRule(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesNavigationRule(final XoXMLStreamWriter writer, final FacesNavigationRule facesNavigationRule, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRule, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesNavigationRule facesNavigationRule, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesNavigationRule, context);
     }
 
-    public final static FacesNavigationRule _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesNavigationRule _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -76,7 +76,7 @@ public class FacesNavigationRule$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNavigationRule facesNavigationRule = new FacesNavigationRule();
+        final FacesNavigationRule facesNavigationRule = new FacesNavigationRule();
         context.beforeUnmarshal(facesNavigationRule, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -86,7 +86,7 @@ public class FacesNavigationRule$JAXB
         List<FacesNavigationRuleExtension> navigationRuleExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-navigation-ruleType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesNavigationRule.class);
@@ -94,10 +94,10 @@ public class FacesNavigationRule$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNavigationRule);
                 facesNavigationRule.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,24 +106,24 @@ public class FacesNavigationRule$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesNavigationRule.icon;
                     if (icon != null) {
@@ -135,12 +135,12 @@ public class FacesNavigationRule$JAXB
                 icon.add(iconItem);
             } else if (("from-view-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fromViewId
-                String fromViewIdRaw = elementReader.getElementAsString();
+                final String fromViewIdRaw = elementReader.getElementAsString();
 
-                String fromViewId;
+                final String fromViewId;
                 try {
                     fromViewId = Adapters.collapsedStringAdapterAdapter.unmarshal(fromViewIdRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -148,7 +148,7 @@ public class FacesNavigationRule$JAXB
                 facesNavigationRule.fromViewId = fromViewId;
             } else if (("navigation-case" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: navigationCase
-                FacesNavigationCase navigationCaseItem = readFacesNavigationCase(elementReader, context);
+                final FacesNavigationCase navigationCaseItem = readFacesNavigationCase(elementReader, context);
                 if (navigationCase == null) {
                     navigationCase = facesNavigationRule.navigationCase;
                     if (navigationCase != null) {
@@ -160,7 +160,7 @@ public class FacesNavigationRule$JAXB
                 navigationCase.add(navigationCaseItem);
             } else if (("navigation-rule-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: navigationRuleExtension
-                FacesNavigationRuleExtension navigationRuleExtensionItem = readFacesNavigationRuleExtension(elementReader, context);
+                final FacesNavigationRuleExtension navigationRuleExtensionItem = readFacesNavigationRuleExtension(elementReader, context);
                 if (navigationRuleExtension == null) {
                     navigationRuleExtension = facesNavigationRule.navigationRuleExtension;
                     if (navigationRuleExtension != null) {
@@ -179,14 +179,14 @@ public class FacesNavigationRule$JAXB
         if (descriptions != null) {
             try {
                 facesNavigationRule.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesNavigationRule.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesNavigationRule.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesNavigationRule.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -205,13 +205,13 @@ public class FacesNavigationRule$JAXB
         return facesNavigationRule;
     }
 
-    public final FacesNavigationRule read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesNavigationRule read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesNavigationRule facesNavigationRule, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesNavigationRule facesNavigationRule, RuntimeContext context)
+        throws Exception {
         if (facesNavigationRule == null) {
             writer.writeXsiNil();
             return;
@@ -221,7 +221,7 @@ public class FacesNavigationRule$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesNavigationRule.class != facesNavigationRule.getClass()) {
             context.unexpectedSubclass(writer, facesNavigationRule, FacesNavigationRule.class);
             return;
@@ -231,12 +231,12 @@ public class FacesNavigationRule$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesNavigationRule.id;
+        final String idRaw = facesNavigationRule.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesNavigationRule, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -246,11 +246,11 @@ public class FacesNavigationRule$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesNavigationRule.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesNavigationRule, "descriptions", FacesNavigationRule.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -265,11 +265,11 @@ public class FacesNavigationRule$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesNavigationRule.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesNavigationRule, "displayNames", FacesNavigationRule.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -281,9 +281,9 @@ public class FacesNavigationRule$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesNavigationRule.icon;
+        final LocalCollection<Icon> icon = facesNavigationRule.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -295,11 +295,11 @@ public class FacesNavigationRule$JAXB
         }
 
         // ELEMENT: fromViewId
-        String fromViewIdRaw = facesNavigationRule.fromViewId;
+        final String fromViewIdRaw = facesNavigationRule.fromViewId;
         String fromViewId = null;
         try {
             fromViewId = Adapters.collapsedStringAdapterAdapter.marshal(fromViewIdRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesNavigationRule, "fromViewId", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (fromViewId != null) {
@@ -309,9 +309,9 @@ public class FacesNavigationRule$JAXB
         }
 
         // ELEMENT: navigationCase
-        List<FacesNavigationCase> navigationCase = facesNavigationRule.navigationCase;
+        final List<FacesNavigationCase> navigationCase = facesNavigationRule.navigationCase;
         if (navigationCase != null) {
-            for (FacesNavigationCase navigationCaseItem : navigationCase) {
+            for (final FacesNavigationCase navigationCaseItem : navigationCase) {
                 if (navigationCaseItem != null) {
                     writer.writeStartElement(prefix, "navigation-case", "http://java.sun.com/xml/ns/javaee");
                     writeFacesNavigationCase(writer, navigationCaseItem, context);
@@ -321,9 +321,9 @@ public class FacesNavigationRule$JAXB
         }
 
         // ELEMENT: navigationRuleExtension
-        List<FacesNavigationRuleExtension> navigationRuleExtension = facesNavigationRule.navigationRuleExtension;
+        final List<FacesNavigationRuleExtension> navigationRuleExtension = facesNavigationRule.navigationRuleExtension;
         if (navigationRuleExtension != null) {
-            for (FacesNavigationRuleExtension navigationRuleExtensionItem : navigationRuleExtension) {
+            for (final FacesNavigationRuleExtension navigationRuleExtensionItem : navigationRuleExtension) {
                 if (navigationRuleExtensionItem != null) {
                     writer.writeStartElement(prefix, "navigation-rule-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesNavigationRuleExtension(writer, navigationRuleExtensionItem, context);

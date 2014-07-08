@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for column-map complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="column-map">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column-map", propOrder = {
@@ -65,11 +63,9 @@ public class ColumnMap {
 
     /**
      * Gets the value of the foreignKeyColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getForeignKeyColumn() {
         return foreignKeyColumn;
@@ -77,23 +73,19 @@ public class ColumnMap {
 
     /**
      * Sets the value of the foreignKeyColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setForeignKeyColumn(String value) {
+    public void setForeignKeyColumn(final String value) {
         this.foreignKeyColumn = value;
     }
 
     /**
      * Gets the value of the keyColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getKeyColumn() {
         return keyColumn;
@@ -101,23 +93,19 @@ public class ColumnMap {
 
     /**
      * Sets the value of the keyColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setKeyColumn(String value) {
+    public void setKeyColumn(final String value) {
         this.keyColumn = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -125,13 +113,11 @@ public class ColumnMap {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

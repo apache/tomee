@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for mime-mappingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="mime-mappingType">
  *   &lt;complexContent>
@@ -46,13 +46,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "mime-mappingType", propOrder = {
-        "extension",
-        "mimeType"
+    "extension",
+    "mimeType"
 })
 public class MimeMapping {
 
@@ -69,7 +67,7 @@ public class MimeMapping {
         return extension;
     }
 
-    public void setExtension(String value) {
+    public void setExtension(final String value) {
         this.extension = value;
     }
 
@@ -77,7 +75,7 @@ public class MimeMapping {
         return mimeType;
     }
 
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -85,7 +83,7 @@ public class MimeMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

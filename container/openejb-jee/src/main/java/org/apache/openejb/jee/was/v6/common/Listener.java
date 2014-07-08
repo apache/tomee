@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,31 +16,31 @@
  */
 package org.apache.openejb.jee.was.v6.common;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.openejb.jee.was.v6.java.JavaClass;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.openejb.jee.was.v6.java.JavaClass;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 
  * @since J2EE1.4 moved from webapp
- * 
- *        Declares a class in the application must be registered as a web
- *        application listener bean.
- * 
- * 
- *        <p>
- *        Java class for Listener complex type.
- * 
- *        <p>
- *        The following schema fragment specifies the expected content contained
- *        within this class.
- * 
- *        <pre>
+ * <p/>
+ * Declares a class in the application must be registered as a web
+ * application listener bean.
+ * <p/>
+ * <p/>
+ * <p/>
+ * Java class for Listener complex type.
+ * <p/>
+ * <p/>
+ * The following schema fragment specifies the expected content contained
+ * within this class.
+ * <p/>
+ * <pre>
  * &lt;complexType name="Listener">
  *   &lt;complexContent>
  *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
@@ -52,67 +52,60 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Listener", propOrder = { "listenerClasses" })
+@XmlType(name = "Listener", propOrder = {"listenerClasses"})
 public class Listener extends CompatibilityDescriptionGroup {
 
-	@XmlElement(name = "listenerClass")
-	protected List<JavaClass> listenerClasses;
-	@XmlAttribute(name = "listenerClass")
-	protected String listenerClassString;
+    @XmlElement(name = "listenerClass")
+    protected List<JavaClass> listenerClasses;
+    @XmlAttribute(name = "listenerClass")
+    protected String listenerClassString;
 
-	/**
-	 * Gets the value of the listenerClasses property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a
-	 * snapshot. Therefore any modification you make to the returned list will
-	 * be present inside the JAXB object. This is why there is not a
-	 * <CODE>set</CODE> method for the listenerClasses property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-	 * getListenerClasses().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link JavaClass }
-	 * 
-	 * 
-	 */
-	public List<JavaClass> getListenerClasses() {
-		if (listenerClasses == null) {
-			listenerClasses = new ArrayList<JavaClass>();
-		}
-		return this.listenerClasses;
-	}
+    /**
+     * Gets the value of the listenerClasses property.
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the listenerClasses property.
+     * <p/>
+     * <p/>
+     * For example, to add a new item, do as follows:
+     * <p/>
+     * <pre>
+     * getListenerClasses().add(newItem);
+     * </pre>
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list
+     * {@link JavaClass }
+     */
+    public List<JavaClass> getListenerClasses() {
+        if (listenerClasses == null) {
+            listenerClasses = new ArrayList<JavaClass>();
+        }
+        return this.listenerClasses;
+    }
 
-	/**
-	 * Gets the value of the listenerClassString property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getListenerClassString() {
-		return listenerClassString;
-	}
+    /**
+     * Gets the value of the listenerClassString property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getListenerClassString() {
+        return listenerClassString;
+    }
 
-	/**
-	 * Sets the value of the listenerClassString property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setListenerClassString(String value) {
-		this.listenerClassString = value;
-	}
+    /**
+     * Sets the value of the listenerClassString property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setListenerClassString(final String value) {
+        this.listenerClassString = value;
+    }
 
 }

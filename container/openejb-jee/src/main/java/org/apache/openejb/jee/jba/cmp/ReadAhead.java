@@ -17,20 +17,20 @@
 
 package org.apache.openejb.jee.jba.cmp;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -69,11 +67,9 @@ public class ReadAhead {
 
     /**
      * Gets the value of the strategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Strategy }
-     *     
+     *
+     * @return possible object is
+     * {@link Strategy }
      */
     public Strategy getStrategy() {
         return strategy;
@@ -81,23 +77,19 @@ public class ReadAhead {
 
     /**
      * Sets the value of the strategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Strategy }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Strategy }
      */
-    public void setStrategy(Strategy value) {
+    public void setStrategy(final Strategy value) {
         this.strategy = value;
     }
 
     /**
      * Gets the value of the pageSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PageSize }
-     *     
+     *
+     * @return possible object is
+     * {@link PageSize }
      */
     public PageSize getPageSize() {
         return pageSize;
@@ -105,23 +97,19 @@ public class ReadAhead {
 
     /**
      * Sets the value of the pageSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PageSize }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PageSize }
      */
-    public void setPageSize(PageSize value) {
+    public void setPageSize(final PageSize value) {
         this.pageSize = value;
     }
 
     /**
      * Gets the value of the eagerLoadGroup property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EagerLoadGroup }
-     *     
+     *
+     * @return possible object is
+     * {@link EagerLoadGroup }
      */
     public EagerLoadGroup getEagerLoadGroup() {
         return eagerLoadGroup;
@@ -129,37 +117,33 @@ public class ReadAhead {
 
     /**
      * Sets the value of the eagerLoadGroup property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EagerLoadGroup }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EagerLoadGroup }
      */
-    public void setEagerLoadGroup(EagerLoadGroup value) {
+    public void setEagerLoadGroup(final EagerLoadGroup value) {
         this.eagerLoadGroup = value;
     }
 
     /**
      * Gets the value of the leftJoin property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the leftJoin property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLeftJoin().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link LeftJoin }
-     * 
-     * 
      */
     public List<LeftJoin> getLeftJoin() {
         if (leftJoin == null) {

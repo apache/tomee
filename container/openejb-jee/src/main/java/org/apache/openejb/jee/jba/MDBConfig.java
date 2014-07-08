@@ -42,11 +42,9 @@ public class MDBConfig {
 
     /**
      * Gets the value of the reconnectIntervalSec property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getReconnectIntervalSec() {
         return reconnectIntervalSec;
@@ -54,23 +52,19 @@ public class MDBConfig {
 
     /**
      * Sets the value of the reconnectIntervalSec property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setReconnectIntervalSec(String value) {
+    public void setReconnectIntervalSec(final String value) {
         this.reconnectIntervalSec = value;
     }
 
     /**
      * Gets the value of the deliveryActive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDeliveryActive() {
         return deliveryActive;
@@ -78,23 +72,19 @@ public class MDBConfig {
 
     /**
      * Sets the value of the deliveryActive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDeliveryActive(String value) {
+    public void setDeliveryActive(final String value) {
         this.deliveryActive = value;
     }
 
     /**
      * Gets the value of the dlqConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DLQConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link DLQConfig }
      */
     public DLQConfig getDLQConfig() {
         return dlqConfig;
@@ -102,13 +92,11 @@ public class MDBConfig {
 
     /**
      * Sets the value of the dlqConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DLQConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DLQConfig }
      */
-    public void setDLQConfig(DLQConfig value) {
+    public void setDLQConfig(final DLQConfig value) {
         this.dlqConfig = value;
     }
 

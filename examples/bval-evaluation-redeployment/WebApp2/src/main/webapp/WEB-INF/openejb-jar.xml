@@ -20,7 +20,8 @@
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
   <pojo-deployment class-name="jaxrs-application">
     <properties>
-      cxf.jaxrs.providers = com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider,org.superbiz.webapp2.provider.ConstraintViolationExceptionMapper
+      cxf.jaxrs.providers =
+      com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider,org.superbiz.webapp2.provider.ConstraintViolationExceptionMapper
     </properties>
   </pojo-deployment>
 </openejb-jar>

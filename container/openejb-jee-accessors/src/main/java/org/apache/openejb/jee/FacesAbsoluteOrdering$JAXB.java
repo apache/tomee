@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.readFacesOrderingO
 import static org.apache.openejb.jee.FacesOrderingOthers$JAXB.writeFacesOrderingOthers;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesAbsoluteOrdering$JAXB
-        extends JAXBObject<FacesAbsoluteOrdering> {
+    extends JAXBObject<FacesAbsoluteOrdering> {
 
 
     public FacesAbsoluteOrdering$JAXB() {
         super(FacesAbsoluteOrdering.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-absoluteOrderingType".intern()), FacesOrderingOthers$JAXB.class);
     }
 
-    public static FacesAbsoluteOrdering readFacesAbsoluteOrdering(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesAbsoluteOrdering readFacesAbsoluteOrdering(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesAbsoluteOrdering(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesAbsoluteOrdering(final XoXMLStreamWriter writer, final FacesAbsoluteOrdering facesAbsoluteOrdering, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAbsoluteOrdering, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesAbsoluteOrdering facesAbsoluteOrdering, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesAbsoluteOrdering, context);
     }
 
-    public final static FacesAbsoluteOrdering _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesAbsoluteOrdering _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class FacesAbsoluteOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        FacesAbsoluteOrdering facesAbsoluteOrdering = new FacesAbsoluteOrdering();
+        final FacesAbsoluteOrdering facesAbsoluteOrdering = new FacesAbsoluteOrdering();
         context.beforeUnmarshal(facesAbsoluteOrdering, LifecycleCallback.NONE);
 
         List<Object> nameOrOthers = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-absoluteOrderingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesAbsoluteOrdering.class);
@@ -83,17 +83,17 @@ public class FacesAbsoluteOrdering$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("others" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameOrOthers
-                org.apache.openejb.jee.FacesOrderingOthers nameOrOthersItem = readFacesOrderingOthers(elementReader, context);
+                final org.apache.openejb.jee.FacesOrderingOthers nameOrOthersItem = readFacesOrderingOthers(elementReader, context);
                 if (nameOrOthers == null) {
                     nameOrOthers = facesAbsoluteOrdering.nameOrOthers;
                     if (nameOrOthers != null) {
@@ -105,7 +105,7 @@ public class FacesAbsoluteOrdering$JAXB
                 nameOrOthers.add(nameOrOthersItem);
             } else if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameOrOthers
-                java.lang.String nameOrOthersItem1 = elementReader.getElementAsString();
+                final java.lang.String nameOrOthersItem1 = elementReader.getElementAsString();
                 if (nameOrOthers == null) {
                     nameOrOthers = facesAbsoluteOrdering.nameOrOthers;
                     if (nameOrOthers != null) {
@@ -130,13 +130,13 @@ public class FacesAbsoluteOrdering$JAXB
         return facesAbsoluteOrdering;
     }
 
-    public final FacesAbsoluteOrdering read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesAbsoluteOrdering read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesAbsoluteOrdering facesAbsoluteOrdering, RuntimeContext context)
+        throws Exception {
         if (facesAbsoluteOrdering == null) {
             writer.writeXsiNil();
             return;
@@ -146,7 +146,7 @@ public class FacesAbsoluteOrdering$JAXB
             context = new RuntimeContext();
         }
 
-        java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesAbsoluteOrdering.class != facesAbsoluteOrdering.getClass()) {
             context.unexpectedSubclass(writer, facesAbsoluteOrdering, FacesAbsoluteOrdering.class);
             return;
@@ -156,16 +156,16 @@ public class FacesAbsoluteOrdering$JAXB
 
 
         // ELEMENT: nameOrOthers
-        List<Object> nameOrOthers = facesAbsoluteOrdering.nameOrOthers;
+        final List<Object> nameOrOthers = facesAbsoluteOrdering.nameOrOthers;
         if (nameOrOthers != null) {
-            for (Object nameOrOthersItem : nameOrOthers) {
+            for (final Object nameOrOthersItem : nameOrOthers) {
                 if (nameOrOthersItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nameOrOthersItem);
+                    final java.lang.String String = ((java.lang.String) nameOrOthersItem);
                     writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(String);
                     writer.writeEndElement();
                 } else if (nameOrOthersItem instanceof org.apache.openejb.jee.FacesOrderingOthers) {
-                    org.apache.openejb.jee.FacesOrderingOthers FacesOrderingOthers = ((org.apache.openejb.jee.FacesOrderingOthers) nameOrOthersItem);
+                    final org.apache.openejb.jee.FacesOrderingOthers FacesOrderingOthers = ((org.apache.openejb.jee.FacesOrderingOthers) nameOrOthersItem);
                     writer.writeStartElement(prefix, "others", "http://java.sun.com/xml/ns/javaee");
                     writeFacesOrderingOthers(writer, FacesOrderingOthers, context);
                     writer.writeEndElement();

@@ -180,7 +180,7 @@ public class ModulePropertiesTest extends TestCase {
         assertContexts(containerSystem);
     }
 
-    private void assertContexts(ContainerSystem containerSystem) {
+    private void assertContexts(final ContainerSystem containerSystem) {
         final BeanContext beanContext = containerSystem.getBeanContext("WidgetBean");
         final ModuleContext moduleContext = beanContext.getModuleContext();
         final AppContext appContext = moduleContext.getAppContext();
@@ -218,21 +218,21 @@ public class ModulePropertiesTest extends TestCase {
         }
     }
 
-    private void assertOption(Options options, final String key, final String value) {
+    private void assertOption(final Options options, final String key, final String value) {
         assertEquals(value, options.get(key, key + " (not set)"));
     }
 
-    private void assertNoOption(Options options, final String key) {
+    private void assertNoOption(final Options options, final String key) {
         final String defaultValue = key + " (not set)";
         assertEquals(defaultValue, options.get(key, defaultValue));
     }
 
-    private void assertProperty(Properties properties, final String key, final String value) {
+    private void assertProperty(final Properties properties, final String key, final String value) {
         assertTrue(properties.containsKey(key));
         assertEquals(value, properties.getProperty(key));
     }
 
-    private void assertNoProperty(Properties properties, final String key) {
+    private void assertNoProperty(final Properties properties, final String key) {
         assertFalse(properties.containsKey(key));
     }
 

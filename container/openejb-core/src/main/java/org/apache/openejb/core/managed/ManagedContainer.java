@@ -858,8 +858,8 @@ public class ManagedContainer implements RpcContainer {
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
         final boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
-                                    callContext.getBeanContext().isSessionSynchronized() &&
-                                    txPolicy.isTransactionActive();
+            callContext.getBeanContext().isSessionSynchronized() &&
+            txPolicy.isTransactionActive();
 
         coordinator.registerSessionSynchronization(instance, callContext.getBeanContext(), callContext.getPrimaryKey(), synchronize);
     }
@@ -1100,9 +1100,9 @@ public class ManagedContainer implements RpcContainer {
 
                 interceptorStack.invoke();
             } catch (final Throwable e) {
-                logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out Stateful SessionBean instance", e);
+                logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out managed bean instance", e);
             } finally {
-                logger.info("Removing the timed-out stateful session bean instance " + instance.primaryKey);
+                logger.info(("Removing the timed-out managed bean instance " + instance.primaryKey) + " : " + (null != instance.bean ? instance.bean.getClass().getName() : "unknown"));
                 ThreadContext.exit(oldContext);
             }
         }

@@ -63,7 +63,7 @@ public class CdiDecoratorMultipleDelegateCallsTest {
     }
 
     @Module
-    @Classes({ ServiceImpl.class })
+    @Classes({ServiceImpl.class})
     public EjbModule classes() {
         final Beans beans = new Beans();
         beans.addDecorator(ServiceDecorator.class);

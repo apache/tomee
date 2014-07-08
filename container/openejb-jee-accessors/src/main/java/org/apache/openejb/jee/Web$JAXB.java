@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Web$JAXB
-        extends JAXBObject<Web> {
+    extends JAXBObject<Web> {
 
 
     public Web$JAXB() {
         super(Web.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "webType".intern()));
     }
 
-    public static Web readWeb(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Web readWeb(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeWeb(XoXMLStreamWriter writer, Web web, RuntimeContext context)
-            throws Exception {
+    public static void writeWeb(final XoXMLStreamWriter writer, final Web web, final RuntimeContext context)
+        throws Exception {
         _write(writer, web, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Web web, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Web web, final RuntimeContext context)
+        throws Exception {
         _write(writer, web, context);
     }
 
-    public final static Web _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Web _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class Web$JAXB
             context = new RuntimeContext();
         }
 
-        Web web = new Web();
+        final Web web = new Web();
         context.beforeUnmarshal(web, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("webType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Web.class);
@@ -78,10 +78,10 @@ public class Web$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, web);
                 web.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class Web$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("web-uri" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: webUri
-                String webUriRaw = elementReader.getElementAsString();
+                final String webUriRaw = elementReader.getElementAsString();
 
-                String webUri;
+                final String webUri;
                 try {
                     webUri = Adapters.collapsedStringAdapterAdapter.unmarshal(webUriRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class Web$JAXB
                 web.webUri = webUri;
             } else if (("context-root" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: contextRoot
-                String contextRootRaw = elementReader.getElementAsString();
+                final String contextRootRaw = elementReader.getElementAsString();
 
-                String contextRoot;
+                final String contextRoot;
                 try {
                     contextRoot = Adapters.collapsedStringAdapterAdapter.unmarshal(contextRootRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class Web$JAXB
         return web;
     }
 
-    public final Web read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Web read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Web web, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Web web, RuntimeContext context)
+        throws Exception {
         if (web == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class Web$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Web.class != web.getClass()) {
             context.unexpectedSubclass(writer, web, Web.class);
             return;
@@ -153,23 +153,23 @@ public class Web$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = web.id;
+        final String idRaw = web.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(web, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: webUri
-        String webUriRaw = web.webUri;
+        final String webUriRaw = web.webUri;
         String webUri = null;
         try {
             webUri = Adapters.collapsedStringAdapterAdapter.marshal(webUriRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(web, "webUri", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (webUri != null) {
@@ -181,11 +181,11 @@ public class Web$JAXB
         }
 
         // ELEMENT: contextRoot
-        String contextRootRaw = web.contextRoot;
+        final String contextRootRaw = web.contextRoot;
         String contextRoot = null;
         try {
             contextRoot = Adapters.collapsedStringAdapterAdapter.marshal(contextRootRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(web, "contextRoot", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (contextRoot != null) {

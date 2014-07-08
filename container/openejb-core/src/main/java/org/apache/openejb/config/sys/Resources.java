@@ -46,7 +46,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "container", "resource", "service", "connector", "jndiProvider" })
+@XmlType(name = "", propOrder = {"container", "resource", "service", "connector", "jndiProvider"})
 @XmlRootElement(name = "resources")
 public class Resources {
 

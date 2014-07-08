@@ -45,11 +45,9 @@ public class ServiceRef {
 
     /**
      * Gets the value of the serviceRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getServiceRefName() {
         return serviceRefName;
@@ -57,23 +55,19 @@ public class ServiceRef {
 
     /**
      * Sets the value of the serviceRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setServiceRefName(String value) {
+    public void setServiceRefName(final String value) {
         this.serviceRefName = value;
     }
 
     /**
      * Gets the value of the configName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConfigName() {
         return configName;
@@ -81,23 +75,19 @@ public class ServiceRef {
 
     /**
      * Sets the value of the configName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConfigName(String value) {
+    public void setConfigName(final String value) {
         this.configName = value;
     }
 
     /**
      * Gets the value of the configFile property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConfigFile() {
         return configFile;
@@ -105,23 +95,19 @@ public class ServiceRef {
 
     /**
      * Sets the value of the configFile property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConfigFile(String value) {
+    public void setConfigFile(final String value) {
         this.configFile = value;
     }
 
     /**
      * Gets the value of the wsdlOverride property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWsdlOverride() {
         return wsdlOverride;
@@ -129,13 +115,11 @@ public class ServiceRef {
 
     /**
      * Sets the value of the wsdlOverride property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWsdlOverride(String value) {
+    public void setWsdlOverride(final String value) {
         this.wsdlOverride = value;
     }
 

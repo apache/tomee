@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE,
-        ElementType.LOCAL_VARIABLE, ElementType.PACKAGE, ElementType.PARAMETER})
+    ElementType.LOCAL_VARIABLE, ElementType.PACKAGE, ElementType.PARAMETER})
 public @interface Revisit {
     String value();
 }

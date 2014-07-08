@@ -31,7 +31,7 @@ public class SingletonPojoHomeIntfcTests extends BasicSingletonTestClient {
     
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
         ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
     }
     
@@ -42,7 +42,7 @@ public class SingletonPojoHomeIntfcTests extends BasicSingletonTestClient {
         try{
             ejbObject = ejbHome.createObject();
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

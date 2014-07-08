@@ -56,7 +56,7 @@ public class JavaXmlTypeMapping {
         return javaType;
     }
 
-    public void setJavaType(String value) {
+    public void setJavaType(final String value) {
         this.javaType = value;
     }
 
@@ -64,7 +64,7 @@ public class JavaXmlTypeMapping {
         return rootTypeQname;
     }
 
-    public void setRootTypeQname(QName value) {
+    public void setRootTypeQname(final QName value) {
         this.rootTypeQname = value;
     }
 
@@ -72,7 +72,7 @@ public class JavaXmlTypeMapping {
         return anonymousTypeQname;
     }
 
-    public void setAnonymousTypeQname(String value) {
+    public void setAnonymousTypeQname(final String value) {
         this.anonymousTypeQname = value;
     }
 
@@ -80,7 +80,7 @@ public class JavaXmlTypeMapping {
         return qnameScope;
     }
 
-    public void setQNameScope(String value) {
+    public void setQNameScope(final String value) {
         this.qnameScope = value;
     }
 
@@ -103,7 +103,7 @@ public class JavaXmlTypeMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

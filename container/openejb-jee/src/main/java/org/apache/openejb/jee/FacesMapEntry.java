@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-map-entryType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-map-entryType">
  *   &lt;complexContent>
@@ -50,8 +50,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-map-entryType", propOrder = {
@@ -74,11 +72,9 @@ public class FacesMapEntry {
 
     /**
      * Gets the value of the key property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getKey() {
         return key;
@@ -86,23 +82,19 @@ public class FacesMapEntry {
 
     /**
      * Sets the value of the key property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setKey(java.lang.String value) {
+    public void setKey(final java.lang.String value) {
         this.key = value;
     }
 
     /**
      * Gets the value of the nullValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesNullValue }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesNullValue }
      */
     public FacesNullValue getNullValue() {
         return nullValue;
@@ -110,23 +102,19 @@ public class FacesMapEntry {
 
     /**
      * Sets the value of the nullValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesNullValue }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesNullValue }
      */
-    public void setNullValue(FacesNullValue value) {
+    public void setNullValue(final FacesNullValue value) {
         this.nullValue = value;
     }
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -134,23 +122,19 @@ public class FacesMapEntry {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -158,13 +142,11 @@ public class FacesMapEntry {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

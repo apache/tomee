@@ -43,7 +43,8 @@ public class RemoveMetaTest {
 
             @Delete
             @Remove
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

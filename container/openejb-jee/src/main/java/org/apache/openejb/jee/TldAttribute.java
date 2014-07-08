@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tld-attributeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tld-attributeType">
  *   &lt;complexContent>
@@ -60,8 +60,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-attributeType", propOrder = {
@@ -97,7 +95,7 @@ public class TldAttribute {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -109,7 +107,7 @@ public class TldAttribute {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -117,7 +115,7 @@ public class TldAttribute {
         return required;
     }
 
-    public void setRequired(String value) {
+    public void setRequired(final String value) {
         this.required = value;
     }
 
@@ -125,7 +123,7 @@ public class TldAttribute {
         return rtexprvalue;
     }
 
-    public void setRtexprvalue(String value) {
+    public void setRtexprvalue(final String value) {
         this.rtexprvalue = value;
     }
 
@@ -133,7 +131,7 @@ public class TldAttribute {
         return type;
     }
 
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -141,7 +139,7 @@ public class TldAttribute {
         return deferredValue;
     }
 
-    public void setDeferredValue(TldDeferredValue value) {
+    public void setDeferredValue(final TldDeferredValue value) {
         this.deferredValue = value;
     }
 
@@ -149,7 +147,7 @@ public class TldAttribute {
         return deferredMethod;
     }
 
-    public void setDeferredMethod(TldDeferredMethod value) {
+    public void setDeferredMethod(final TldDeferredMethod value) {
         this.deferredMethod = value;
     }
 
@@ -157,7 +155,7 @@ public class TldAttribute {
         return fragment;
     }
 
-    public void setFragment(String value) {
+    public void setFragment(final String value) {
         this.fragment = value;
     }
 
@@ -165,7 +163,7 @@ public class TldAttribute {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

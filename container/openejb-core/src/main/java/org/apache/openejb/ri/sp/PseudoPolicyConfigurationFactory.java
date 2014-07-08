@@ -29,11 +29,11 @@ import java.security.PermissionCollection;
 public class PseudoPolicyConfigurationFactory extends PolicyConfigurationFactory {
 
     public static void install() {
-        System.setProperty("javax.security.jacc.PolicyConfigurationFactory.provider", PseudoPolicyConfigurationFactory.class.getName()) ;
+        System.setProperty("javax.security.jacc.PolicyConfigurationFactory.provider", PseudoPolicyConfigurationFactory.class.getName());
     }
 
     public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
-        return new PolicyConfiguration(){
+        return new PolicyConfiguration() {
             public String getContextID() throws PolicyContextException {
                 return contextID;
             }

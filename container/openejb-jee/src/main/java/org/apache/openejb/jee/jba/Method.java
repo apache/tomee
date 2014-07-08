@@ -44,11 +44,9 @@ public class Method {
 
     /**
      * Gets the value of the methodName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMethodName() {
         return methodName;
@@ -56,23 +54,19 @@ public class Method {
 
     /**
      * Sets the value of the methodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
     /**
      * Gets the value of the readOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getReadOnly() {
         return readOnly;
@@ -80,23 +74,19 @@ public class Method {
 
     /**
      * Sets the value of the readOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setReadOnly(String value) {
+    public void setReadOnly(final String value) {
         this.readOnly = value;
     }
 
     /**
      * Gets the value of the idempotent property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIdempotent() {
         return idempotent;
@@ -104,23 +94,19 @@ public class Method {
 
     /**
      * Sets the value of the idempotent property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIdempotent(String value) {
+    public void setIdempotent(final String value) {
         this.idempotent = value;
     }
 
     /**
      * Gets the value of the transactionTimeout property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTransactionTimeout() {
         return transactionTimeout;
@@ -128,13 +114,11 @@ public class Method {
 
     /**
      * Sets the value of the transactionTimeout property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTransactionTimeout(String value) {
+    public void setTransactionTimeout(final String value) {
         this.transactionTimeout = value;
     }
 

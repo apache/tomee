@@ -125,7 +125,7 @@ public class VmDeploymentManager implements DeploymentManager {
 
     private boolean isDeployerLocal() {
         if (deployer == null) {
-            deployerLocal = new File(getDeployer().getUniqueFile()).exists();            
+            deployerLocal = new File(getDeployer().getUniqueFile()).exists();
         }
         return deployerLocal;
     }
@@ -200,31 +200,31 @@ public class VmDeploymentManager implements DeploymentManager {
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
                         return null;
                     }
-                    if (null != ejbJarInfo.moduleName&&ejbJarInfo.moduleName.equals(appInfo.appId)) {
+                    if (null != ejbJarInfo.moduleName && ejbJarInfo.moduleName.equals(appInfo.appId)) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleName);
                     }
                 }
             }
             if (infoObject instanceof ConnectorInfo) {
                 final ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
-                if (null != appInfo.path&&appInfo.path.equals(connectorInfo.path)) {
+                if (null != appInfo.path && appInfo.path.equals(connectorInfo.path)) {
                     // are connector modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
                         return null;
                     }
-                    if (null !=connectorInfo.moduleId&& connectorInfo.moduleId.equals(appInfo.path)) {
+                    if (null != connectorInfo.moduleId && connectorInfo.moduleId.equals(appInfo.path)) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
                     }
                 }
             }
             if (infoObject instanceof WebAppInfo) {
                 final WebAppInfo webAppInfo = (WebAppInfo) infoObject;
-                if (null !=appInfo.path&&appInfo.path.equals(webAppInfo.path)) {
+                if (null != appInfo.path && appInfo.path.equals(webAppInfo.path)) {
                     // are web app modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
                         return null;
                     }
-                    if (null !=webAppInfo.moduleId&&webAppInfo.moduleId.equals(appInfo.path)) {
+                    if (null != webAppInfo.moduleId && webAppInfo.moduleId.equals(appInfo.path)) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId); //todo web module
                     }
                 }
@@ -644,7 +644,7 @@ public class VmDeploymentManager implements DeploymentManager {
 
             final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
-                    moduleId.equals(targetModuleID.moduleId);
+                moduleId.equals(targetModuleID.moduleId);
         }
 
         public int hashCode() {

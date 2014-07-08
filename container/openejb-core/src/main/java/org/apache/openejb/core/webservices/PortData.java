@@ -137,6 +137,6 @@ public class PortData implements PortInfo {
     public void setProperties(final Properties properties) {
         this.properties = properties;
     }
-    
-    
+
+
 }

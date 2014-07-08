@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.TransactionSupportType$JAXB.parseTransactio
 import static org.apache.openejb.jee.TransactionSupportType$JAXB.toStringTransactionSupportType;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class OutboundResourceAdapter$JAXB
-        extends JAXBObject<OutboundResourceAdapter> {
+    extends JAXBObject<OutboundResourceAdapter> {
 
 
     public OutboundResourceAdapter$JAXB() {
         super(OutboundResourceAdapter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "outbound-resourceadapterType".intern()), ConnectionDefinition$JAXB.class, TransactionSupportType$JAXB.class, AuthenticationMechanism$JAXB.class);
     }
 
-    public static OutboundResourceAdapter readOutboundResourceAdapter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static OutboundResourceAdapter readOutboundResourceAdapter(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeOutboundResourceAdapter(XoXMLStreamWriter writer, OutboundResourceAdapter outboundResourceAdapter, RuntimeContext context)
-            throws Exception {
+    public static void writeOutboundResourceAdapter(final XoXMLStreamWriter writer, final OutboundResourceAdapter outboundResourceAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, outboundResourceAdapter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, OutboundResourceAdapter outboundResourceAdapter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final OutboundResourceAdapter outboundResourceAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, outboundResourceAdapter, context);
     }
 
-    public final static OutboundResourceAdapter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static OutboundResourceAdapter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,14 +74,14 @@ public class OutboundResourceAdapter$JAXB
             context = new RuntimeContext();
         }
 
-        OutboundResourceAdapter outboundResourceAdapter = new OutboundResourceAdapter();
+        final OutboundResourceAdapter outboundResourceAdapter = new OutboundResourceAdapter();
         context.beforeUnmarshal(outboundResourceAdapter, LifecycleCallback.NONE);
 
         List<ConnectionDefinition> connectionDefinition = null;
         List<AuthenticationMechanism> authenticationMechanism = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("outbound-resourceadapterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, OutboundResourceAdapter.class);
@@ -89,10 +89,10 @@ public class OutboundResourceAdapter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, outboundResourceAdapter);
                 outboundResourceAdapter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -101,10 +101,10 @@ public class OutboundResourceAdapter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("connection-definition" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: connectionDefinition
-                ConnectionDefinition connectionDefinitionItem = readConnectionDefinition(elementReader, context);
+                final ConnectionDefinition connectionDefinitionItem = readConnectionDefinition(elementReader, context);
                 if (connectionDefinition == null) {
                     connectionDefinition = outboundResourceAdapter.connectionDefinition;
                     if (connectionDefinition != null) {
@@ -116,13 +116,13 @@ public class OutboundResourceAdapter$JAXB
                 connectionDefinition.add(connectionDefinitionItem);
             } else if (("transaction-support" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionSupport
-                TransactionSupportType transactionSupport = parseTransactionSupportType(elementReader, context, elementReader.getElementAsString());
+                final TransactionSupportType transactionSupport = parseTransactionSupportType(elementReader, context, elementReader.getElementAsString());
                 if (transactionSupport != null) {
                     outboundResourceAdapter.transactionSupport = transactionSupport;
                 }
             } else if (("authentication-mechanism" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: authenticationMechanism
-                AuthenticationMechanism authenticationMechanismItem = readAuthenticationMechanism(elementReader, context);
+                final AuthenticationMechanism authenticationMechanismItem = readAuthenticationMechanism(elementReader, context);
                 if (authenticationMechanism == null) {
                     authenticationMechanism = outboundResourceAdapter.authenticationMechanism;
                     if (authenticationMechanism != null) {
@@ -134,7 +134,7 @@ public class OutboundResourceAdapter$JAXB
                 authenticationMechanism.add(authenticationMechanismItem);
             } else if (("reauthentication-support" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: reauthenticationSupport
-                Boolean reauthenticationSupport = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean reauthenticationSupport = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 outboundResourceAdapter.reauthenticationSupport = reauthenticationSupport;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "connection-definition"), new QName("http://java.sun.com/xml/ns/javaee", "transaction-support"), new QName("http://java.sun.com/xml/ns/javaee", "authentication-mechanism"), new QName("http://java.sun.com/xml/ns/javaee", "reauthentication-support"));
@@ -152,13 +152,13 @@ public class OutboundResourceAdapter$JAXB
         return outboundResourceAdapter;
     }
 
-    public final OutboundResourceAdapter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final OutboundResourceAdapter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, OutboundResourceAdapter outboundResourceAdapter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final OutboundResourceAdapter outboundResourceAdapter, RuntimeContext context)
+        throws Exception {
         if (outboundResourceAdapter == null) {
             writer.writeXsiNil();
             return;
@@ -168,7 +168,7 @@ public class OutboundResourceAdapter$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (OutboundResourceAdapter.class != outboundResourceAdapter.getClass()) {
             context.unexpectedSubclass(writer, outboundResourceAdapter, OutboundResourceAdapter.class);
             return;
@@ -178,21 +178,21 @@ public class OutboundResourceAdapter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = outboundResourceAdapter.id;
+        final String idRaw = outboundResourceAdapter.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(outboundResourceAdapter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: connectionDefinition
-        List<ConnectionDefinition> connectionDefinition = outboundResourceAdapter.connectionDefinition;
+        final List<ConnectionDefinition> connectionDefinition = outboundResourceAdapter.connectionDefinition;
         if (connectionDefinition != null) {
-            for (ConnectionDefinition connectionDefinitionItem : connectionDefinition) {
+            for (final ConnectionDefinition connectionDefinitionItem : connectionDefinition) {
                 if (connectionDefinitionItem != null) {
                     writer.writeStartElement(prefix, "connection-definition", "http://java.sun.com/xml/ns/javaee");
                     writeConnectionDefinition(writer, connectionDefinitionItem, context);
@@ -202,7 +202,7 @@ public class OutboundResourceAdapter$JAXB
         }
 
         // ELEMENT: transactionSupport
-        TransactionSupportType transactionSupport = outboundResourceAdapter.transactionSupport;
+        final TransactionSupportType transactionSupport = outboundResourceAdapter.transactionSupport;
         if (transactionSupport != null) {
             writer.writeStartElement(prefix, "transaction-support", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringTransactionSupportType(outboundResourceAdapter, null, context, transactionSupport));
@@ -210,9 +210,9 @@ public class OutboundResourceAdapter$JAXB
         }
 
         // ELEMENT: authenticationMechanism
-        List<AuthenticationMechanism> authenticationMechanism = outboundResourceAdapter.authenticationMechanism;
+        final List<AuthenticationMechanism> authenticationMechanism = outboundResourceAdapter.authenticationMechanism;
         if (authenticationMechanism != null) {
-            for (AuthenticationMechanism authenticationMechanismItem : authenticationMechanism) {
+            for (final AuthenticationMechanism authenticationMechanismItem : authenticationMechanism) {
                 if (authenticationMechanismItem != null) {
                     writer.writeStartElement(prefix, "authentication-mechanism", "http://java.sun.com/xml/ns/javaee");
                     writeAuthenticationMechanism(writer, authenticationMechanismItem, context);
@@ -222,7 +222,7 @@ public class OutboundResourceAdapter$JAXB
         }
 
         // ELEMENT: reauthenticationSupport
-        Boolean reauthenticationSupport = outboundResourceAdapter.reauthenticationSupport;
+        final Boolean reauthenticationSupport = outboundResourceAdapter.reauthenticationSupport;
         if (reauthenticationSupport != null) {
             writer.writeStartElement(prefix, "reauthentication-support", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(reauthenticationSupport));

@@ -73,11 +73,11 @@ public class RedeploymentTest {
         Assert.assertEquals(406, result);
         deployer.undeploy("webapp2");
         result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
+            .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
         System.out.println(result);
         Assert.assertEquals(406, result);
         result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+            .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
         System.out.println(result);
         Assert.assertEquals(200, result);
         System.out.println("===========================================");

@@ -27,9 +27,11 @@ public interface LicenseLocalHome extends EJBLocalHome {
 
     // Create
     public LicenseLocal create(Integer field1) throws CreateException;
+
     public LicenseLocal create(LicensePk primaryKey) throws CreateException;
 
     // Finder
     public LicenseLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+
     public LicenseLocal findByPrimaryKey(LicensePk primaryKey) throws FinderException;
 }

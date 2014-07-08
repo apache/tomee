@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesLifecycleExtension$JAXB.readFacesLifec
 import static org.apache.openejb.jee.FacesLifecycleExtension$JAXB.writeFacesLifecycleExtension;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesLifecycle$JAXB
-        extends JAXBObject<FacesLifecycle> {
+    extends JAXBObject<FacesLifecycle> {
 
 
     public FacesLifecycle$JAXB() {
         super(FacesLifecycle.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-lifecycleType".intern()), FacesLifecycleExtension$JAXB.class);
     }
 
-    public static FacesLifecycle readFacesLifecycle(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesLifecycle readFacesLifecycle(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesLifecycle(XoXMLStreamWriter writer, FacesLifecycle facesLifecycle, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesLifecycle(final XoXMLStreamWriter writer, final FacesLifecycle facesLifecycle, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLifecycle, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesLifecycle facesLifecycle, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesLifecycle facesLifecycle, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLifecycle, context);
     }
 
-    public final static FacesLifecycle _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesLifecycle _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,14 +70,14 @@ public class FacesLifecycle$JAXB
             context = new RuntimeContext();
         }
 
-        FacesLifecycle facesLifecycle = new FacesLifecycle();
+        final FacesLifecycle facesLifecycle = new FacesLifecycle();
         context.beforeUnmarshal(facesLifecycle, LifecycleCallback.NONE);
 
         List<String> phaseListener = null;
         List<FacesLifecycleExtension> lifecycleExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-lifecycleType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesLifecycle.class);
@@ -85,10 +85,10 @@ public class FacesLifecycle$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesLifecycle);
                 facesLifecycle.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -97,15 +97,15 @@ public class FacesLifecycle$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("phase-listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: phaseListener
-                String phaseListenerItemRaw = elementReader.getElementAsString();
+                final String phaseListenerItemRaw = elementReader.getElementAsString();
 
-                String phaseListenerItem;
+                final String phaseListenerItem;
                 try {
                     phaseListenerItem = Adapters.collapsedStringAdapterAdapter.unmarshal(phaseListenerItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -121,7 +121,7 @@ public class FacesLifecycle$JAXB
                 phaseListener.add(phaseListenerItem);
             } else if (("lifecycle-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lifecycleExtension
-                FacesLifecycleExtension lifecycleExtensionItem = readFacesLifecycleExtension(elementReader, context);
+                final FacesLifecycleExtension lifecycleExtensionItem = readFacesLifecycleExtension(elementReader, context);
                 if (lifecycleExtension == null) {
                     lifecycleExtension = facesLifecycle.lifecycleExtension;
                     if (lifecycleExtension != null) {
@@ -149,13 +149,13 @@ public class FacesLifecycle$JAXB
         return facesLifecycle;
     }
 
-    public final FacesLifecycle read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesLifecycle read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesLifecycle facesLifecycle, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesLifecycle facesLifecycle, RuntimeContext context)
+        throws Exception {
         if (facesLifecycle == null) {
             writer.writeXsiNil();
             return;
@@ -165,7 +165,7 @@ public class FacesLifecycle$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesLifecycle.class != facesLifecycle.getClass()) {
             context.unexpectedSubclass(writer, facesLifecycle, FacesLifecycle.class);
             return;
@@ -175,25 +175,25 @@ public class FacesLifecycle$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesLifecycle.id;
+        final String idRaw = facesLifecycle.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesLifecycle, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: phaseListener
-        List<String> phaseListenerRaw = facesLifecycle.phaseListener;
+        final List<String> phaseListenerRaw = facesLifecycle.phaseListener;
         if (phaseListenerRaw != null) {
-            for (String phaseListenerItem : phaseListenerRaw) {
+            for (final String phaseListenerItem : phaseListenerRaw) {
                 String phaseListener = null;
                 try {
                     phaseListener = Adapters.collapsedStringAdapterAdapter.marshal(phaseListenerItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(facesLifecycle, "phaseListener", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (phaseListener != null) {
@@ -205,9 +205,9 @@ public class FacesLifecycle$JAXB
         }
 
         // ELEMENT: lifecycleExtension
-        List<FacesLifecycleExtension> lifecycleExtension = facesLifecycle.lifecycleExtension;
+        final List<FacesLifecycleExtension> lifecycleExtension = facesLifecycle.lifecycleExtension;
         if (lifecycleExtension != null) {
-            for (FacesLifecycleExtension lifecycleExtensionItem : lifecycleExtension) {
+            for (final FacesLifecycleExtension lifecycleExtensionItem : lifecycleExtension) {
                 if (lifecycleExtensionItem != null) {
                     writer.writeStartElement(prefix, "lifecycle-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesLifecycleExtension(writer, lifecycleExtensionItem, context);

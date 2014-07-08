@@ -26,7 +26,6 @@ import java.util.Map;
  * Tomcat swallows some exception when trying to deploy a war.
  * To be able to get it back (from our Deployers for instance)
  * we need a way to store it.
- *
  */
 public class DeploymentExceptionManager {
     private static final int MAX_SIZE = SystemInstance.get().getOptions().get("tomee.deployement-exception-max-size", 10);

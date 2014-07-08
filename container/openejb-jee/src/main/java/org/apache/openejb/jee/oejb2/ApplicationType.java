@@ -17,8 +17,6 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,13 +24,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for applicationType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="applicationType">
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "applicationType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", propOrder = {
@@ -62,13 +60,13 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ApplicationType {
 
-    @XmlElement(name="environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected EnvironmentType environment;
-    @XmlElement(name="module", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "module", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected List<ModuleType> module;
     @XmlElement(name = "ext-module", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected List<ExtModuleType> extModule;
-    @XmlElement(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
+    @XmlElement(name = "security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
     protected AbstractSecurityType security;
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
@@ -77,11 +75,9 @@ public class ApplicationType {
 
     /**
      * Gets the value of the environment property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnvironmentType }
-     *     
+     *
+     * @return possible object is
+     * {@link EnvironmentType }
      */
     public EnvironmentType getEnvironment() {
         return environment;
@@ -89,37 +85,33 @@ public class ApplicationType {
 
     /**
      * Sets the value of the environment property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnvironmentType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EnvironmentType }
      */
-    public void setEnvironment(EnvironmentType value) {
+    public void setEnvironment(final EnvironmentType value) {
         this.environment = value;
     }
 
     /**
      * Gets the value of the module property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the module property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getModule().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ModuleType }
-     * 
-     * 
      */
     public List<ModuleType> getModule() {
         if (module == null) {
@@ -130,25 +122,23 @@ public class ApplicationType {
 
     /**
      * Gets the value of the extModule property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the extModule property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExtModule().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ExtModuleType }
-     * 
-     * 
      */
     public List<ExtModuleType> getExtModule() {
         if (extModule == null) {
@@ -159,11 +149,9 @@ public class ApplicationType {
 
     /**
      * Gets the value of the security property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AbstractSecurityType }
-     *     
+     *
+     * @return possible object is
+     * {@link AbstractSecurityType }
      */
     public AbstractSecurityType getSecurity() {
         return security;
@@ -171,38 +159,34 @@ public class ApplicationType {
 
     /**
      * Sets the value of the security property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AbstractSecurityType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AbstractSecurityType }
      */
-    public void setSecurity(AbstractSecurityType value) {
+    public void setSecurity(final AbstractSecurityType value) {
         this.security = value;
     }
 
     /**
      * Gets the value of the service property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the service property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getService().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link GbeanType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}
-     * 
-     * 
      */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
@@ -213,11 +197,9 @@ public class ApplicationType {
 
     /**
      * Gets the value of the applicationName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getApplicationName() {
         return applicationName;
@@ -225,13 +207,11 @@ public class ApplicationType {
 
     /**
      * Sets the value of the applicationName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setApplicationName(String value) {
+    public void setApplicationName(final String value) {
         this.applicationName = value;
     }
 

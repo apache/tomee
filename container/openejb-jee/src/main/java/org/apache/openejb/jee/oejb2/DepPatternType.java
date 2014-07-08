@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for patternType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="patternType">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "patternType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -65,7 +63,7 @@ public class DepPatternType {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(final String groupId) {
         this.groupId = groupId;
     }
 
@@ -73,7 +71,7 @@ public class DepPatternType {
         return artifactId;
     }
 
-    public void setArtifactId(String artifactId) {
+    public void setArtifactId(final String artifactId) {
         this.artifactId = artifactId;
     }
 
@@ -81,7 +79,7 @@ public class DepPatternType {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -89,7 +87,7 @@ public class DepPatternType {
         return module;
     }
 
-    public void setModule(String module) {
+    public void setModule(final String module) {
         this.module = module;
     }
 
@@ -97,7 +95,7 @@ public class DepPatternType {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -105,7 +103,7 @@ public class DepPatternType {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

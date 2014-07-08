@@ -19,19 +19,21 @@ package org.apache.openejb.deployment.entity.cmp.cmr.onetoone;
 import javax.ejb.EJBLocalObject;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface ALocal extends EJBLocalObject {
 
     // CMP
     public Integer getField1();
+
     public void setField1(Integer field1);
 
     public String getField2();
+
     public void setField2(String field2);
-    
+
     // CMR
     public BLocal getB();
+
     public void setB(BLocal b);
 }

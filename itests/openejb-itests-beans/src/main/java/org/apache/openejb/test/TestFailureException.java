@@ -18,21 +18,21 @@ package org.apache.openejb.test;
 
 import junit.framework.AssertionFailedError;
 
-public class TestFailureException extends Exception{
+public class TestFailureException extends Exception {
 
     public AssertionFailedError error;
 
-    public TestFailureException(AssertionFailedError afe){
+    public TestFailureException(final AssertionFailedError afe) {
         error = afe;
     }
-    
+
     public String getMessage() {
-	if (error == null) {
-	    return super.getMessage();
-	} else {
-	    return super.getMessage() + "; nested exception is: \n\t" +
-		error.toString();
-	}
+        if (error == null) {
+            return super.getMessage();
+        } else {
+            return super.getMessage() + "; nested exception is: \n\t" +
+                error.toString();
+        }
     }
 
 }

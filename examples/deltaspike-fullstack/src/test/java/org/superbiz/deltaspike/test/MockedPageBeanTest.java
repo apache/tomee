@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.apache.deltaspike.core.spi.scope.window.WindowContext;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.apache.deltaspike.testcontrol.api.mock.DynamicMockManager;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.deltaspike.WebappMessageBundle;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 
 import static org.mockito.Mockito.*;
 
+@Ignore
 @RunWith(CdiTestRunner.class)
 public class MockedPageBeanTest
 {

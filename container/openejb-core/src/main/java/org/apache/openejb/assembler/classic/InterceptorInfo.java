@@ -20,7 +20,7 @@ package org.apache.openejb.assembler.classic;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InterceptorInfo extends InfoObject{
+public class InterceptorInfo extends InfoObject {
     public String clazz;
 
     public final List<CallbackInfo> aroundInvoke = new ArrayList<CallbackInfo>();
@@ -35,5 +35,5 @@ public class InterceptorInfo extends InfoObject{
     public final List<CallbackInfo> beforeCompletion = new ArrayList<CallbackInfo>();
     public final List<CallbackInfo> afterCompletion = new ArrayList<CallbackInfo>();
 
-    public final List<CallbackInfo> aroundTimeout= new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> aroundTimeout = new ArrayList<CallbackInfo>();
 }

@@ -50,10 +50,10 @@ public class SaxAppCtxConfig {
 
     public static void parse(final AppModule appModule, final InputSource source,
                              final EnvEntriesPropertiesDeployer envEntriesDeployer, final BeanProperties beanProperties)
-            throws SAXException, ParserConfigurationException, IOException {
+        throws SAXException, ParserConfigurationException, IOException {
         Saxs.factory()
             .newSAXParser()
-                .parse(source, new SaxAppContextConfig(appModule, envEntriesDeployer, beanProperties));
+            .parse(source, new SaxAppContextConfig(appModule, envEntriesDeployer, beanProperties));
     }
 
     private static class SaxAppContextConfig extends StackHandler {
@@ -92,7 +92,7 @@ public class SaxAppCtxConfig {
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 // by default don't care about root tag
                 if (!APPLICATION_ALIASES.contains(localName.toLowerCase())
-                        && SystemInstance.get().getOptions().get("openejb.configuration.strict-tags", false)) {
+                    && SystemInstance.get().getOptions().get("openejb.configuration.strict-tags", false)) {
                     throw new IllegalStateException("Unsupported Element: " + localName);
 
                 }
@@ -165,7 +165,7 @@ public class SaxAppCtxConfig {
 
             private Configuration(final String prefix, final Properties properties) {
                 this.properties = properties;
-                this.prefix =  prefix;
+                this.prefix = prefix;
             }
 
             @Override
@@ -196,7 +196,7 @@ public class SaxAppCtxConfig {
 
             private MultipleConfiguration(final String prefix, final Collection<Properties> properties) {
                 this.properties = properties;
-                this.prefix =  prefix;
+                this.prefix = prefix;
             }
 
             @Override

@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for persistence-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-typeType">
  *   &lt;simpleContent>
@@ -36,10 +36,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum PersistenceType {
-    @XmlEnumValue("Bean") BEAN,
-    @XmlEnumValue("Container") CONTAINER;
+    @XmlEnumValue("Bean")BEAN,
+    @XmlEnumValue("Container")CONTAINER;
 }

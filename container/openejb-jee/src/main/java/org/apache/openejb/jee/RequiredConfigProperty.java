@@ -25,16 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for required-config-propertyType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="required-config-propertyType">
  *   &lt;complexContent>
@@ -48,13 +46,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "required-config-propertyType", propOrder = {
-        "descriptions",
-        "configPropertyName"
+    "descriptions",
+    "configPropertyName"
 })
 public class RequiredConfigProperty {
 
@@ -70,7 +66,7 @@ public class RequiredConfigProperty {
     public RequiredConfigProperty() {
     }
 
-    public RequiredConfigProperty(String configPropertyName) {
+    public RequiredConfigProperty(final String configPropertyName) {
         this.configPropertyName = configPropertyName;
     }
 
@@ -79,7 +75,7 @@ public class RequiredConfigProperty {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -91,7 +87,7 @@ public class RequiredConfigProperty {
         return configPropertyName;
     }
 
-    public void setConfigPropertyName(String value) {
+    public void setConfigPropertyName(final String value) {
         this.configPropertyName = value;
     }
 
@@ -99,7 +95,7 @@ public class RequiredConfigProperty {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

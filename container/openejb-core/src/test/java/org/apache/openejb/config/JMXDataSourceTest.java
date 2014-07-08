@@ -46,7 +46,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class JMXDataSourceTest {
@@ -62,10 +65,10 @@ public class JMXDataSourceTest {
 
     @Test
     public void checkNumActiveAndNumIdle() throws MalformedObjectNameException, IntrospectionException,
-                                                  InstanceNotFoundException, ReflectionException,
-                                                  AttributeNotFoundException, MBeanException {
+        InstanceNotFoundException, ReflectionException,
+        AttributeNotFoundException, MBeanException {
 
-        Map<String, Object> map = getDatasourceJmxMap();
+        final Map<String, Object> map = getDatasourceJmxMap();
         assertNotNull(map.get("numActive"));
         assertNotNull(map.get("numIdle"));
 
@@ -79,12 +82,12 @@ public class JMXDataSourceTest {
             connection = dataSource.getConnection();
             assertAttributeValue("numActive", ((Integer) 1));
 
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             fail();
         } finally {
             if (connection != null) try {
                 connection.close();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 fail();
             }
         }
@@ -92,22 +95,22 @@ public class JMXDataSourceTest {
     }
 
     private <T> void assertAttributeValue(final String name, final T value) throws MalformedObjectNameException,
-                                                                                   IntrospectionException,
-                                                                                   InstanceNotFoundException,
-                                                                                   AttributeNotFoundException,
-                                                                                   MBeanException, ReflectionException {
+        IntrospectionException,
+        InstanceNotFoundException,
+        AttributeNotFoundException,
+        MBeanException, ReflectionException {
         final Map<String, Object> map = getDatasourceJmxMap();
         assertEquals((T) value, (T) map.get(name));
     }
 
     private Map<String, Object> getDatasourceJmxMap() throws MalformedObjectNameException, InstanceNotFoundException,
-                                                             IntrospectionException, ReflectionException,
-                                                             MBeanException, AttributeNotFoundException {
+        IntrospectionException, ReflectionException,
+        MBeanException, AttributeNotFoundException {
         final ObjectName on = new ObjectName("openejb.management:ObjectType=datasources,DataSource=JMXDataSourceTest");
         final MBeanInfo mBeanInfo = ManagementFactory.getPlatformMBeanServer().getMBeanInfo(on);
         assertNotNull(mBeanInfo);
         final Map<String, Object> map = new HashMap<String, Object>();
-        int found = 0;
+        final int found = 0;
         for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanInfo.getAttributes()) {
             final String name = mBeanAttributeInfo.getName();
             final Object value = ManagementFactory.getPlatformMBeanServer().getAttribute(on, name);
@@ -150,7 +153,7 @@ public class JMXDataSourceTest {
             return id;
         }
 
-        public void setId(long i) {
+        public void setId(final long i) {
             id = i;
         }
     }

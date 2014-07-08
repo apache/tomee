@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,21 @@
  */
 package org.superbiz
 
-import javax.ejb.{Singleton, LocalBean, Lock, LockType}
+import javax.ejb.{LocalBean, Lock, LockType, Singleton}
 
 object GreetingService {
-    val DefaultName = "Scala"
+  val DefaultName = "Scala"
 }
 
 @LocalBean
 @Singleton
 @Lock(LockType.READ)
 class GreetingService {
-    def hi(name: String = GreetingService.DefaultName) = {
-        if (name != null) {
-            "hi " + name
-        } else {
-            "hi " + GreetingService.DefaultName
-        }
+  def hi(name: String = GreetingService.DefaultName) = {
+    if (name != null) {
+      "hi " + name
+    } else {
+      "hi " + GreetingService.DefaultName
     }
+  }
 }

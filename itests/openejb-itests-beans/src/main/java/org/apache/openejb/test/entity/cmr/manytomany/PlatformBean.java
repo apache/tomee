@@ -30,33 +30,36 @@ import org.apache.openejb.test.entity.cmr.CompoundPK;
 public abstract class PlatformBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getName();
+
     public abstract void setName(String name);
-    
+
     // CMR
     public abstract Set<GameLocal> getGames();
+
     public abstract void setGames(Set<GameLocal> gameSets);
-    
-    public Integer ejbCreate(Integer id)  throws CreateException {
+
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public CompoundPK ejbCreate(PlatformPk primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final PlatformPk primaryKey) throws CreateException {
         setId(primaryKey.id);
         setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(PlatformPk primaryKey) {
+    public void ejbPostCreate(final PlatformPk primaryKey) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

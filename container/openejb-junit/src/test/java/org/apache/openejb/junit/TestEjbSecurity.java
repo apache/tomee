@@ -18,24 +18,24 @@
 package org.apache.openejb.junit;
 
 import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.ejbs.SecuredEjbLocal;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 @ContextConfig(properties = {
-        @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
-        @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
+    @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
+    @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
 })
 @RunWith(OpenEjbRunner.class)
 @TestSecurity(
-        authorized = {"RoleA"}
+    authorized = {"RoleA"}
 )
 @LocalClient
 public class TestEjbSecurity {
@@ -72,7 +72,7 @@ public class TestEjbSecurity {
 
     @Test
     @TestSecurity(
-            authorized = {"RoleB"}
+        authorized = {"RoleB"}
     )
     public void testMethodLevelSecurity() {
         assertNotNull(securedEjb);
@@ -84,7 +84,7 @@ public class TestEjbSecurity {
 
     @Test(expected = EJBAccessException.class)
     @TestSecurity(
-            authorized = {"RoleB"}
+        authorized = {"RoleB"}
     )
     public void testMethodLevelSecurityUnauthorized() {
         assertNotNull(securedEjb);
@@ -94,8 +94,8 @@ public class TestEjbSecurity {
 
     @Test
     @TestSecurity(
-            authorized = {"RoleA"},
-            unauthorized = {"RoleB"}
+        authorized = {"RoleA"},
+        unauthorized = {"RoleB"}
     )
     public void testMultipleSecurityRoles_RoleA() {
         assertNotNull(securedEjb);
@@ -105,8 +105,8 @@ public class TestEjbSecurity {
 
     @Test
     @TestSecurity(
-            authorized = {"RoleB"},
-            unauthorized = {"RoleA"}
+        authorized = {"RoleB"},
+        unauthorized = {"RoleA"}
     )
     public void testMultipleSecurityRoles_RoleB() {
         assertNotNull(securedEjb);
@@ -121,7 +121,7 @@ public class TestEjbSecurity {
      */
     @Test(expected = EJBAccessException.class)
     @TestSecurity(
-            authorized = {"RoleB"}
+        authorized = {"RoleB"}
     )
     public void testRoleAFailAuthorized() {
         assertNotNull(securedEjb);
@@ -136,7 +136,7 @@ public class TestEjbSecurity {
      */
     @Test(expected = EJBAccessException.class)
     @TestSecurity(
-            authorized = {"RoleA"}
+        authorized = {"RoleA"}
     )
     public void testRoleBFailAuthorized() {
         assertNotNull(securedEjb);
@@ -151,7 +151,7 @@ public class TestEjbSecurity {
      */
     @Test(expected = AssertionError.class)
     @TestSecurity(
-            unauthorized = {"RoleA"}
+        unauthorized = {"RoleA"}
     )
     public void testRoleAFailUnauthorized() {
         securedEjb.roleA();
@@ -164,7 +164,7 @@ public class TestEjbSecurity {
      */
     @Test(expected = AssertionError.class)
     @TestSecurity(
-            unauthorized = {"RoleB"}
+        unauthorized = {"RoleB"}
     )
     public void testRoleBFailUnauthorized() {
         securedEjb.roleB();
@@ -177,7 +177,7 @@ public class TestEjbSecurity {
      */
     @Test
     @TestSecurity(
-            unauthorized = {TestSecurity.UNAUTHENTICATED}
+        unauthorized = {TestSecurity.UNAUTHENTICATED}
     )
     public void testUnauthenticated() {
         securedEjb.roleA();

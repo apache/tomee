@@ -30,7 +30,7 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
         ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
         ejbMetaData = ejbHome.getEJBMetaData();
     }
@@ -41,19 +41,19 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
     public void test01_getEJBHome(){
         try{
 
-        EJBHome home = ejbMetaData.getEJBHome();
+        final EJBHome home = ejbMetaData.getEJBHome();
         assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_getHomeInterfaceClass(){
         try{
-        Class clazz = ejbMetaData.getHomeInterfaceClass();
+        final Class clazz = ejbMetaData.getHomeInterfaceClass();
         assertNotNull( "The Home Interface class is null", clazz );
         assertEquals(clazz , BasicSingletonHome.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -72,12 +72,12 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
      */
     public void test03_getPrimaryKeyClass(){
         try{
-            Class clazz = ejbMetaData.getPrimaryKeyClass();
+            final Class clazz = ejbMetaData.getPrimaryKeyClass();
             assertNull("Should not return a primary key.  Method should throw an java.lang.RuntimeException", clazz );
-        } catch (UnsupportedOperationException e){
+        } catch (final UnsupportedOperationException e){
             assertTrue( true );
             return;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         assertTrue( "Method should throw an java.lang.RuntimeException", false );
@@ -85,10 +85,10 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
 
     public void test04_getRemoteInterfaceClass(){
         try{
-        Class clazz = ejbMetaData.getRemoteInterfaceClass();
+        final Class clazz = ejbMetaData.getRemoteInterfaceClass();
         assertNotNull( "The Remote Interface class is null", clazz );
         assertEquals(clazz , BasicSingletonObject.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -96,7 +96,7 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
     public void test05_isSession(){
         try{
         assertTrue( "EJBMetaData says this is not a session bean", ejbMetaData.isSession() );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -105,7 +105,7 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient{
         try{
             // TODO: hopefully an isSingletonSession() method will get added to the EJB 3.1 API
         assertTrue( "EJBMetaData says this is not a singleton session bean", !ejbMetaData.isStatelessSession() );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

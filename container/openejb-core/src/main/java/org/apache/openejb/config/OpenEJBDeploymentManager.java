@@ -95,7 +95,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         // target.* - known targets available on the server
         // target.*.description - known targets available on the server
         final SortedMap<String, Target> targets = new TreeMap<String, Target>();
-        for (final Iterator<Map.Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+        for (final Iterator<Map.Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext(); ) {
             final Map.Entry entry = iterator.next();
             final String key = (String) entry.getKey();
             final String targetName = (String) entry.getValue();
@@ -515,7 +515,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
 
             final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
-                    moduleId.equals(targetModuleID.moduleId);
+                moduleId.equals(targetModuleID.moduleId);
         }
 
         public int hashCode() {

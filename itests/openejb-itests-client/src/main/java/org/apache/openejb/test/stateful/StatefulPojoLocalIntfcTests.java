@@ -35,9 +35,9 @@ public class StatefulPojoLocalIntfcTests extends BasicStatefulLocalTestClient {
     //===============================
     public void test01_isIdentical(){
         try{            
-            String str = ejbLocalObject.businessMethod("Hello");
+            final String str = ejbLocalObject.businessMethod("Hello");
             assertTrue( "The Strings are not equal", str.equals("olleH") );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

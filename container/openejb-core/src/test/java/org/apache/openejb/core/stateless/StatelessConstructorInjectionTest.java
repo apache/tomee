@@ -39,11 +39,11 @@ import javax.naming.InitialContext;
 public class StatelessConstructorInjectionTest extends TestCase {
 
     public void test() throws Exception {
-        InitialContext ctx = new InitialContext();
+        final InitialContext ctx = new InitialContext();
 
-        Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
+        final Widget widget = (Widget) ctx.lookup("WidgetBeanLocal");
 
-        Foo foo = (Foo) ctx.lookup("FooBeanLocal");
+        final Foo foo = (Foo) ctx.lookup("FooBeanLocal");
 
 //        assertEquals("Widget.getCount()", 10, widget.getCount());
         assertEquals("Widget.getFoo()", foo, widget.getFoo());
@@ -54,33 +54,35 @@ public class StatelessConstructorInjectionTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         assembler.createContainer(statelessContainerInfo);
 
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
         bean.getEnvEntry().add(new EnvEntry("count", Integer.class.getName(), "10"));
 
         assembler.createApplication(config.configureApplication(new EjbModule(ejbJar).withCdi()));
 
     }
 
-    public static interface Foo {}
+    public static interface Foo {
+    }
 
-    public static class FooBean implements Foo {}
+    public static class FooBean implements Foo {
+    }
 
     public static interface Widget {
         public int getCount();
@@ -101,7 +103,7 @@ public class StatelessConstructorInjectionTest extends TestCase {
 
         //TODO OPENEJB-1578 use producer fields or methods to inject count and datasource
         @Inject
-        public WidgetBean(/*Integer count,*/ Foo foo/*, DataSource ds*/) {
+        public WidgetBean(/*Integer count,*/ final Foo foo/*, DataSource ds*/) {
 //            this.count = count;
             this.foo = foo;
 //            this.ds = ds;

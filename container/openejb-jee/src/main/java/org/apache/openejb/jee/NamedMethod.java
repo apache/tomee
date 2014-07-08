@@ -23,17 +23,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="named-methodType">
  *   &lt;complexContent>
@@ -47,14 +47,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-methodType", propOrder = {
-        "methodName",
-        "methodParams"
-        })
+    "methodName",
+    "methodParams"
+})
 public class NamedMethod {
 
     @XmlElement(name = "method-name", required = true)
@@ -74,22 +72,22 @@ public class NamedMethod {
     public NamedMethod() {
     }
 
-    public NamedMethod(java.lang.reflect.Method method) {
+    public NamedMethod(final java.lang.reflect.Method method) {
         this.className = method.getDeclaringClass().getName();
         this.methodName = method.getName();
-        MethodParams methodParams = new MethodParams();
-        for (Class<?> type : method.getParameterTypes()) {
+        final MethodParams methodParams = new MethodParams();
+        for (final Class<?> type : method.getParameterTypes()) {
             methodParams.getMethodParam().add(type.getCanonicalName());
         }
         this.methodParams = methodParams;
     }
 
-    public NamedMethod(String methodName, String... parameters) {
+    public NamedMethod(final String methodName, final String... parameters) {
         this.methodName = methodName;
 
-        if (parameters.length > 0){
-            MethodParams params = new MethodParams();
-            for (String paramName : parameters) {
+        if (parameters.length > 0) {
+            final MethodParams params = new MethodParams();
+            for (final String paramName : parameters) {
                 params.getMethodParam().add(paramName);
             }
             this.methodParams = params;
@@ -100,7 +98,7 @@ public class NamedMethod {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -108,7 +106,7 @@ public class NamedMethod {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 
@@ -116,7 +114,7 @@ public class NamedMethod {
         return className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         this.className = className;
     }
 
@@ -124,11 +122,11 @@ public class NamedMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -143,7 +141,7 @@ public class NamedMethod {
         return true;
     }
 
-    private boolean nullOrEmpty(MethodParams methodParams) {
+    private boolean nullOrEmpty(final MethodParams methodParams) {
         return methodParams == null || methodParams.getMethodParam().size() == 0;
     }
 

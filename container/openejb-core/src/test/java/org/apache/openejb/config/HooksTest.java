@@ -69,11 +69,11 @@ public class HooksTest {
         private static boolean start = false;
         private static boolean stop = false;
 
-        public void start(@Observes AssemblerCreated notUsed) {
+        public void start(@Observes final AssemblerCreated notUsed) {
             start = true;
         }
 
-        public void stop(@Observes AssemblerDestroyed notUsed) {
+        public void stop(@Observes final AssemblerDestroyed notUsed) {
             stop = true;
         }
     }

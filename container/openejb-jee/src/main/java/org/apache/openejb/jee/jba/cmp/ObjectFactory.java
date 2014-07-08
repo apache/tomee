@@ -21,18 +21,17 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.apache.openejb.jee.jba.cmp package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.apache.openejb.jee.jba.cmp package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -40,14 +39,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.jba.cmp
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link DropColumnTemplate }
-     * 
      */
     public DropColumnTemplate createDropColumnTemplate() {
         return new DropColumnTemplate();
@@ -55,7 +52,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mapper }
-     * 
      */
     public Mapper createMapper() {
         return new Mapper();
@@ -63,7 +59,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TrueMapping }
-     * 
      */
     public TrueMapping createTrueMapping() {
         return new TrueMapping();
@@ -71,7 +66,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReservedWords }
-     * 
      */
     public ReservedWords createReservedWords() {
         return new ReservedWords();
@@ -79,7 +73,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Relationships }
-     * 
      */
     public Relationships createRelationships() {
         return new Relationships();
@@ -87,7 +80,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimestampColumn }
-     * 
      */
     public TimestampColumn createTimestampColumn() {
         return new TimestampColumn();
@@ -95,7 +87,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FunctionName }
-     * 
      */
     public FunctionName createFunctionName() {
         return new FunctionName();
@@ -103,7 +94,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Strategy }
-     * 
      */
     public Strategy createStrategy() {
         return new Strategy();
@@ -111,7 +101,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Description }
-     * 
      */
     public Description createDescription() {
         return new Description();
@@ -119,7 +108,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AliasMaxLength }
-     * 
      */
     public AliasMaxLength createAliasMaxLength() {
         return new AliasMaxLength();
@@ -127,7 +115,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JavaType }
-     * 
      */
     public JavaType createJavaType() {
         return new JavaType();
@@ -135,7 +122,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DatasourceMapping }
-     * 
      */
     public DatasourceMapping createDatasourceMapping() {
         return new DatasourceMapping();
@@ -143,7 +129,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FetchSize }
-     * 
      */
     public FetchSize createFetchSize() {
         return new FetchSize();
@@ -151,7 +136,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityCommands }
-     * 
      */
     public EntityCommands createEntityCommands() {
         return new EntityCommands();
@@ -159,7 +143,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DynamicQl }
-     * 
      */
     public DynamicQl createDynamicQl() {
         return new DynamicQl();
@@ -167,7 +150,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FieldType }
-     * 
      */
     public FieldType createFieldType() {
         return new FieldType();
@@ -175,7 +157,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FkConstraintTemplate }
-     * 
      */
     public FkConstraintTemplate createFkConstraintTemplate() {
         return new FkConstraintTemplate();
@@ -183,7 +164,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Select }
-     * 
      */
     public Select createSelect() {
         return new Select();
@@ -191,7 +171,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Entity }
-     * 
      */
     public Entity createEntity() {
         return new Entity();
@@ -199,7 +178,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LazyLoadGroups }
-     * 
      */
     public LazyLoadGroups createLazyLoadGroups() {
         return new LazyLoadGroups();
@@ -207,7 +185,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnterpriseBeans }
-     * 
      */
     public EnterpriseBeans createEnterpriseBeans() {
         return new EnterpriseBeans();
@@ -215,7 +192,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReadTimeOut }
-     * 
      */
     public ReadTimeOut createReadTimeOut() {
         return new ReadTimeOut();
@@ -223,7 +199,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JdbcType }
-     * 
      */
     public JdbcType createJdbcType() {
         return new JdbcType();
@@ -231,7 +206,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DependentValueClasses }
-     * 
      */
     public DependentValueClasses createDependentValueClasses() {
         return new DependentValueClasses();
@@ -239,7 +213,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RelationTableMapping }
-     * 
      */
     public RelationTableMapping createRelationTableMapping() {
         return new RelationTableMapping();
@@ -247,7 +220,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PageSize }
-     * 
      */
     public PageSize createPageSize() {
         return new PageSize();
@@ -255,7 +227,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Audit }
-     * 
      */
     public Audit createAudit() {
         return new Audit();
@@ -263,7 +234,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Distinct }
-     * 
      */
     public Distinct createDistinct() {
         return new Distinct();
@@ -271,7 +241,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreateTable }
-     * 
      */
     public CreateTable createCreateTable() {
         return new CreateTable();
@@ -279,7 +248,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AlterColumnTemplate }
-     * 
      */
     public AlterColumnTemplate createAlterColumnTemplate() {
         return new AlterColumnTemplate();
@@ -287,7 +255,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoadGroupName }
-     * 
      */
     public LoadGroupName createLoadGroupName() {
         return new LoadGroupName();
@@ -295,7 +262,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Defaults }
-     * 
      */
     public Defaults createDefaults() {
         return new Defaults();
@@ -303,7 +269,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mapping }
-     * 
      */
     public Mapping createMapping() {
         return new Mapping();
@@ -311,7 +276,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoadGroups }
-     * 
      */
     public LoadGroups createLoadGroups() {
         return new LoadGroups();
@@ -319,7 +283,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotNull }
-     * 
      */
     public NotNull createNotNull() {
         return new NotNull();
@@ -327,7 +290,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationName }
-     * 
      */
     public EjbRelationName createEjbRelationName() {
         return new EjbRelationName();
@@ -335,7 +297,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Property }
-     * 
      */
     public Property createProperty() {
         return new Property();
@@ -343,7 +304,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnknownPkClass }
-     * 
      */
     public UnknownPkClass createUnknownPkClass() {
         return new UnknownPkClass();
@@ -351,7 +311,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TypeMapping }
-     * 
      */
     public TypeMapping createTypeMapping() {
         return new TypeMapping();
@@ -359,7 +318,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FalseMapping }
-     * 
      */
     public FalseMapping createFalseMapping() {
         return new FalseMapping();
@@ -367,7 +325,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AdditionalColumns }
-     * 
      */
     public AdditionalColumns createAdditionalColumns() {
         return new AdditionalColumns();
@@ -375,7 +332,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SqlType }
-     * 
      */
     public SqlType createSqlType() {
         return new SqlType();
@@ -383,7 +339,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SubquerySupported }
-     * 
      */
     public SubquerySupported createSubquerySupported() {
         return new SubquerySupported();
@@ -391,7 +346,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StateFactory }
-     * 
      */
     public StateFactory createStateFactory() {
         return new StateFactory();
@@ -399,7 +353,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreatedTime }
-     * 
      */
     public CreatedTime createCreatedTime() {
         return new CreatedTime();
@@ -407,7 +360,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AliasHeaderSuffix }
-     * 
      */
     public AliasHeaderSuffix createAliasHeaderSuffix() {
         return new AliasHeaderSuffix();
@@ -415,7 +367,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdatedBy }
-     * 
      */
     public UpdatedBy createUpdatedBy() {
         return new UpdatedBy();
@@ -423,7 +374,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CleanReadAheadOnLoad }
-     * 
      */
     public CleanReadAheadOnLoad createCleanReadAheadOnLoad() {
         return new CleanReadAheadOnLoad();
@@ -431,7 +381,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FunctionSql }
-     * 
      */
     public FunctionSql createFunctionSql() {
         return new FunctionSql();
@@ -439,7 +388,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyName }
-     * 
      */
     public PropertyName createPropertyName() {
         return new PropertyName();
@@ -447,7 +395,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SqlStatement }
-     * 
      */
     public SqlStatement createSqlStatement() {
         return new SqlStatement();
@@ -455,7 +402,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JbossQl }
-     * 
      */
     public JbossQl createJbossQl() {
         return new JbossQl();
@@ -463,7 +409,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EagerLoadGroup }
-     * 
      */
     public EagerLoadGroup createEagerLoadGroup() {
         return new EagerLoadGroup();
@@ -471,7 +416,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Datasource }
-     * 
      */
     public Datasource createDatasource() {
         return new Datasource();
@@ -479,7 +423,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AutoIncrementTemplate }
-     * 
      */
     public AutoIncrementTemplate createAutoIncrementTemplate() {
         return new AutoIncrementTemplate();
@@ -487,7 +430,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LazyResultsetLoading }
-     * 
      */
     public LazyResultsetLoading createLazyResultsetLoading() {
         return new LazyResultsetLoading();
@@ -495,7 +437,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QlCompiler }
-     * 
      */
     public QlCompiler createQlCompiler() {
         return new QlCompiler();
@@ -503,7 +444,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AliasHeaderPrefix }
-     * 
      */
     public AliasHeaderPrefix createAliasHeaderPrefix() {
         return new AliasHeaderPrefix();
@@ -511,7 +451,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LeftJoin }
-     * 
      */
     public LeftJoin createLeftJoin() {
         return new LeftJoin();
@@ -519,7 +458,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoadGroup }
-     * 
      */
     public LoadGroup createLoadGroup() {
         return new LoadGroup();
@@ -527,7 +465,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultReader }
-     * 
      */
     public ResultReader createResultReader() {
         return new ResultReader();
@@ -535,7 +472,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeyFields }
-     * 
      */
     public KeyFields createKeyFields() {
         return new KeyFields();
@@ -543,7 +479,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserTypeMapping }
-     * 
      */
     public UserTypeMapping createUserTypeMapping() {
         return new UserTypeMapping();
@@ -551,7 +486,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TypeMappings }
-     * 
      */
     public TypeMappings createTypeMappings() {
         return new TypeMappings();
@@ -559,7 +493,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReadAhead }
-     * 
      */
     public ReadAhead createReadAhead() {
         return new ReadAhead();
@@ -567,7 +500,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EntityCommand }
-     * 
      */
     public EntityCommand createEntityCommand() {
         return new EntityCommand();
@@ -575,7 +507,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VersionColumn }
-     * 
      */
     public VersionColumn createVersionColumn() {
         return new VersionColumn();
@@ -583,7 +514,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AutoIncrement }
-     * 
      */
     public AutoIncrement createAutoIncrement() {
         return new AutoIncrement();
@@ -591,7 +521,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PkConstraint }
-     * 
      */
     public PkConstraint createPkConstraint() {
         return new PkConstraint();
@@ -599,7 +528,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelation }
-     * 
      */
     public EjbRelation createEjbRelation() {
         return new EjbRelation();
@@ -607,7 +535,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReadStrategy }
-     * 
      */
     public ReadStrategy createReadStrategy() {
         return new ReadStrategy();
@@ -615,7 +542,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Attribute }
-     * 
      */
     public Attribute createAttribute() {
         return new Attribute();
@@ -623,7 +549,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRoleName }
-     * 
      */
     public EjbRelationshipRoleName createEjbRelationshipRoleName() {
         return new EjbRelationshipRoleName();
@@ -631,7 +556,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnknownPk }
-     * 
      */
     public UnknownPk createUnknownPk() {
         return new UnknownPk();
@@ -639,7 +563,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Other }
-     * 
      */
     public Other createOther() {
         return new Other();
@@ -647,7 +570,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListCacheMax }
-     * 
      */
     public ListCacheMax createListCacheMax() {
         return new ListCacheMax();
@@ -655,7 +577,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReadOnly }
-     * 
      */
     public ReadOnly createReadOnly() {
         return new ReadOnly();
@@ -663,7 +584,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JbosscmpJdbc }
-     * 
      */
     public JbosscmpJdbc createJbosscmpJdbc() {
         return new JbosscmpJdbc();
@@ -671,7 +591,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryMethod }
-     * 
      */
     public QueryMethod createQueryMethod() {
         return new QueryMethod();
@@ -679,7 +598,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddColumnTemplate }
-     * 
      */
     public AddColumnTemplate createAddColumnTemplate() {
         return new AddColumnTemplate();
@@ -687,7 +605,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Dbindex }
-     * 
      */
     public Dbindex createDbindex() {
         return new Dbindex();
@@ -695,7 +612,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GroupName }
-     * 
      */
     public GroupName createGroupName() {
         return new GroupName();
@@ -703,7 +619,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodName }
-     * 
      */
     public MethodName createMethodName() {
         return new MethodName();
@@ -711,7 +626,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link From }
-     * 
      */
     public From createFrom() {
         return new From();
@@ -719,7 +633,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RowLocking }
-     * 
      */
     public RowLocking createRowLocking() {
         return new RowLocking();
@@ -727,7 +640,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PkConstraintTemplate }
-     * 
      */
     public PkConstraintTemplate createPkConstraintTemplate() {
         return new PkConstraintTemplate();
@@ -735,7 +647,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdatedTime }
-     * 
      */
     public UpdatedTime createUpdatedTime() {
         return new UpdatedTime();
@@ -743,7 +654,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FunctionMapping }
-     * 
      */
     public FunctionMapping createFunctionMapping() {
         return new FunctionMapping();
@@ -751,7 +661,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreatedBy }
-     * 
      */
     public CreatedBy createCreatedBy() {
         return new CreatedBy();
@@ -759,7 +668,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MappedType }
-     * 
      */
     public MappedType createMappedType() {
         return new MappedType();
@@ -767,7 +675,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodParams }
-     * 
      */
     public MethodParams createMethodParams() {
         return new MethodParams();
@@ -775,7 +682,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRelationshipRole }
-     * 
      */
     public EjbRelationshipRole createEjbRelationshipRole() {
         return new EjbRelationshipRole();
@@ -783,7 +689,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PreferredRelationMapping }
-     * 
      */
     public PreferredRelationMapping createPreferredRelationMapping() {
         return new PreferredRelationMapping();
@@ -791,7 +696,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ForeignKeyMapping }
-     * 
      */
     public ForeignKeyMapping createForeignKeyMapping() {
         return new ForeignKeyMapping();
@@ -799,7 +703,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FkConstraint }
-     * 
      */
     public FkConstraint createFkConstraint() {
         return new FkConstraint();
@@ -807,7 +710,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PostTableCreate }
-     * 
      */
     public PostTableCreate createPostTableCreate() {
         return new PostTableCreate();
@@ -815,7 +717,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbName }
-     * 
      */
     public EjbName createEjbName() {
         return new EjbName();
@@ -823,7 +724,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AlterTable }
-     * 
      */
     public AlterTable createAlterTable() {
         return new AlterTable();
@@ -831,7 +731,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OptimisticLocking }
-     * 
      */
     public OptimisticLocking createOptimisticLocking() {
         return new OptimisticLocking();
@@ -839,7 +738,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CmpField }
-     * 
      */
     public CmpField createCmpField() {
         return new CmpField();
@@ -847,7 +745,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModifiedStrategy }
-     * 
      */
     public ModifiedStrategy createModifiedStrategy() {
         return new ModifiedStrategy();
@@ -855,7 +752,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Alias }
-     * 
      */
     public Alias createAlias() {
         return new Alias();
@@ -863,7 +759,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeyField }
-     * 
      */
     public KeyField createKeyField() {
         return new KeyField();
@@ -871,7 +766,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ColumnName }
-     * 
      */
     public ColumnName createColumnName() {
         return new ColumnName();
@@ -879,7 +773,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Where }
-     * 
      */
     public Where createWhere() {
         return new Where();
@@ -887,7 +780,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Name }
-     * 
      */
     public Name createName() {
         return new Name();
@@ -895,7 +787,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeyGeneratorFactory }
-     * 
      */
     public KeyGeneratorFactory createKeyGeneratorFactory() {
         return new KeyGeneratorFactory();
@@ -903,7 +794,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodParam }
-     * 
      */
     public MethodParam createMethodParam() {
         return new MethodParam();
@@ -911,7 +801,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CheckDirtyAfterGet }
-     * 
      */
     public CheckDirtyAfterGet createCheckDirtyAfterGet() {
         return new CheckDirtyAfterGet();
@@ -919,7 +808,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TableName }
-     * 
      */
     public TableName createTableName() {
         return new TableName();
@@ -927,7 +815,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FieldName }
-     * 
      */
     public FieldName createFieldName() {
         return new FieldName();
@@ -935,7 +822,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RowLockingTemplate }
-     * 
      */
     public RowLockingTemplate createRowLockingTemplate() {
         return new RowLockingTemplate();
@@ -943,7 +829,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Order }
-     * 
      */
     public Order createOrder() {
         return new Order();
@@ -951,7 +836,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DependentValueClass }
-     * 
      */
     public DependentValueClass createDependentValueClass() {
         return new DependentValueClass();
@@ -959,7 +843,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoveTable }
-     * 
      */
     public RemoveTable createRemoveTable() {
         return new RemoveTable();
@@ -967,7 +850,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserTypeMappings }
-     * 
      */
     public UserTypeMappings createUserTypeMappings() {
         return new UserTypeMappings();
@@ -975,7 +857,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BatchCascadeDelete }
-     * 
      */
     public BatchCascadeDelete createBatchCascadeDelete() {
         return new BatchCascadeDelete();
@@ -983,7 +864,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ThrowRuntimeExceptions }
-     * 
      */
     public ThrowRuntimeExceptions createThrowRuntimeExceptions() {
         return new ThrowRuntimeExceptions();
@@ -991,7 +871,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Query }
-     * 
      */
     public Query createQuery() {
         return new Query();
@@ -999,7 +878,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeclaredSql }
-     * 
      */
     public DeclaredSql createDeclaredSql() {
         return new DeclaredSql();
@@ -1007,7 +885,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Word }
-     * 
      */
     public Word createWord() {
         return new Word();
@@ -1015,7 +892,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParamSetter }
-     * 
      */
     public ParamSetter createParamSetter() {
         return new ParamSetter();
@@ -1023,7 +899,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Class }
-     * 
      */
     public Class createClass() {
         return new Class();

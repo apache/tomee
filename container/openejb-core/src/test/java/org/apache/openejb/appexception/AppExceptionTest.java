@@ -32,14 +32,20 @@ public class AppExceptionTest {
     @ApplicationException
     public static class RuntimeAppEx extends RuntimeException {
     }
+
     @ApplicationException
     public static class EjbJarRuntimeAppEx extends RuntimeException {
     }
 
     @Singleton
     public static class Ejb {
-        public void runtime() { throw new RuntimeAppEx(); }
-        public void ejbjar() { throw new EjbJarRuntimeAppEx(); }
+        public void runtime() {
+            throw new RuntimeAppEx();
+        }
+
+        public void ejbjar() {
+            throw new EjbJarRuntimeAppEx();
+        }
     }
 
     @Module

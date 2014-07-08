@@ -27,17 +27,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for relationship-role-sourceType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="relationship-role-sourceType">
  *   &lt;complexContent>
@@ -51,14 +49,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "relationship-role-sourceType", propOrder = {
-        "descriptions",
-        "ejbName"
-        })
+    "descriptions",
+    "ejbName"
+})
 public class RelationshipRoleSource {
 
     @XmlTransient
@@ -75,7 +71,7 @@ public class RelationshipRoleSource {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -106,7 +102,7 @@ public class RelationshipRoleSource {
      * <p/>
      * <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -114,7 +110,7 @@ public class RelationshipRoleSource {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

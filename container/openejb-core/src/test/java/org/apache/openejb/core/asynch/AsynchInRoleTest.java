@@ -336,7 +336,7 @@ public class AsynchInRoleTest {
             Exception expectedException = null;
             try {
                 sessionContext.wasCancelCalled();
-            } catch (IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 expectedException = e;
             }
             lastInvokeMethod = "testA";
@@ -350,7 +350,7 @@ public class AsynchInRoleTest {
             Assert.assertFalse(sessionContext.wasCancelCalled());
             try {
                 Thread.sleep(3000L);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //Ignore
             }
             Assert.assertTrue(sessionContext.wasCancelCalled());
@@ -364,7 +364,7 @@ public class AsynchInRoleTest {
             Exception expectedException = null;
             try {
                 sessionContext.wasCancelCalled();
-            } catch (IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 expectedException = e;
             }
             Assert.assertNotNull("IllegalStateException should be thrown", expectedException);
@@ -379,7 +379,7 @@ public class AsynchInRoleTest {
             Exception expectedException = null;
             try {
                 sessionContext.wasCancelCalled();
-            } catch (IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 expectedException = e;
             }
             Assert.assertNotNull("IllegalStateException should be thrown", expectedException);

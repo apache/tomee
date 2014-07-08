@@ -39,7 +39,7 @@ public abstract class TestClient extends NamedTestCase {
     protected Handle            ejbHandle;
     protected Integer           ejbPrimaryKey;
 
-    public TestClient(String name){
+    public TestClient(final String name){
         super(name);
     }
     
@@ -49,7 +49,7 @@ public abstract class TestClient extends NamedTestCase {
      */
     protected abstract void setUp() throws Exception;
     
-    protected Object cast(Object object, Class type) {
+    protected Object cast(final Object object, final Class type) {
     	return PortableRemoteObject.narrow(object, type);
     }
     
@@ -60,9 +60,9 @@ public abstract class TestClient extends NamedTestCase {
     	
     	finder = new ClassFinder(getClassPath());
     	fieldList = finder.findAnnotatedFields(EJB.class);
-    	for(Iterator fields = fieldList.iterator(); fields.hasNext();) {
-    		Field field = (Field) fields.next();
-    		EJB ejbAnnotation = field.getAnnotation(EJB.class);
+    	for(final Iterator fields = fieldList.iterator(); fields.hasNext();) {
+    		final Field field = (Field) fields.next();
+    		final EJB ejbAnnotation = field.getAnnotation(EJB.class);
     		if( (ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
     			try {
     				home = initialContext.lookup(ejbAnnotation.name());
@@ -70,7 +70,7 @@ public abstract class TestClient extends NamedTestCase {
     				home = cast(home, ejbAnnotation.beanInterface());
     				field.setAccessible(true);
     				field.set(this, home);
-    			} catch(Exception ex) {
+    			} catch(final Exception ex) {
     				// TODO - MNour : Needs better exception handling
     				ex.printStackTrace();
     			}
@@ -85,9 +85,9 @@ public abstract class TestClient extends NamedTestCase {
     	
     	finder = new ClassFinder(getClassPath());
     	methodList = finder.findAnnotatedMethods(EJB.class);
-    	for(Iterator methods = methodList.iterator(); methods.hasNext();) {
-    		Method method = (Method) methods.next();
-    		EJB ejbAnnotation = method.getAnnotation(EJB.class);
+    	for(final Iterator methods = methodList.iterator(); methods.hasNext();) {
+    		final Method method = (Method) methods.next();
+    		final EJB ejbAnnotation = method.getAnnotation(EJB.class);
     		if( (ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
     			try {
     				home = initialContext.lookup(ejbAnnotation.name());
@@ -95,7 +95,7 @@ public abstract class TestClient extends NamedTestCase {
     				home = cast(home, ejbAnnotation.beanInterface());
     				method.setAccessible(true);
     				method.invoke(this, new Object[] {home});
-    			} catch(Exception ex) {
+    			} catch(final Exception ex) {
     				// TODO - MNour : Needs better exception handling
     				ex.printStackTrace();
     			}
@@ -105,7 +105,7 @@ public abstract class TestClient extends NamedTestCase {
     
     private List<Class<?>> getClassPath() {
     	Class<?> superClass = null;
-    	List<Class<?>> classPath = new ArrayList<Class<?>>();
+    	final List<Class<?>> classPath = new ArrayList<Class<?>>();
     	
     	classPath.add(getClass());
     	superClass = getClass().getSuperclass();

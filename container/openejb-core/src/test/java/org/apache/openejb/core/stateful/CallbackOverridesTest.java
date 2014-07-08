@@ -48,24 +48,24 @@ public class CallbackOverridesTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(ChildBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
     public void test() throws Exception {
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
         callbacks.clear();
 
-        ChildBean childBean = (ChildBean) context.lookup("ChildBeanLocalBean");
+        final ChildBean childBean = (ChildBean) context.lookup("ChildBeanLocalBean");
 
 
         assertEquals(asList(ParentInterceptor.class, ChildInterceptor.class, ParentBean.class, ChildBean.class), callbacks);
@@ -89,13 +89,13 @@ public class CallbackOverridesTest extends TestCase {
     public static class ParentInterceptor {
 
         @PostConstruct
-        private void construct(InvocationContext context) throws Exception {
+        private void construct(final InvocationContext context) throws Exception {
             callbacks.add(ParentInterceptor.class);
             context.proceed();
         }
 
         @PreDestroy
-        protected void destroy(InvocationContext context) throws Exception {
+        protected void destroy(final InvocationContext context) throws Exception {
             callbacks.add(ParentInterceptor.class);
             context.proceed();
         }
@@ -105,13 +105,13 @@ public class CallbackOverridesTest extends TestCase {
     public static class ChildInterceptor extends ParentInterceptor {
 
         @PostConstruct
-        private void construct(InvocationContext context) throws Exception {
+        private void construct(final InvocationContext context) throws Exception {
             callbacks.add(ChildInterceptor.class);
             context.proceed();
         }
 
         // callback is disabled
-        protected void destroy(InvocationContext context) throws Exception {
+        protected void destroy(final InvocationContext context) throws Exception {
             callbacks.add(ParentInterceptor.class);
             context.proceed();
         }
@@ -120,7 +120,7 @@ public class CallbackOverridesTest extends TestCase {
     public static class ParentBean {
 
         @PostConstruct
-        private void construct()  {
+        private void construct() {
             callbacks.add(ParentBean.class);
         }
 
@@ -137,7 +137,7 @@ public class CallbackOverridesTest extends TestCase {
 
 
         @PostConstruct
-        private void construct()  {
+        private void construct() {
             callbacks.add(ChildBean.class);
         }
 
@@ -146,7 +146,8 @@ public class CallbackOverridesTest extends TestCase {
         }
 
         @Remove
-        public void remove() {}
+        public void remove() {
+        }
     }
 
 }

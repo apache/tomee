@@ -24,7 +24,7 @@ public abstract class ComplexCmp2TestClient extends Cmp2TestClient {
     protected ComplexCmpHome ejbHome;
     protected ComplexCmpObject ejbObject;
 
-    public ComplexCmp2TestClient(String name) {
+    public ComplexCmp2TestClient(final String name) {
         super(name);
     }
 }

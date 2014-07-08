@@ -30,26 +30,22 @@ import java.util.List;
 
 
 /**
- * 
- * 
- *         
- * 
  * <p class="changed_added_2_2">Define a call node in a flow graph.</p>
- * 
+ * <p/>
  * <div class="changed_added_2_2">
- * 
- * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code> element, 
+ * <p/>
+ * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code> element,
  * which must contain exactly one <code>&lt;flow-id&gt;</code> element.</p>
  * </div>
- * 
- * 
- * 
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-flow-callType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-callType">
  *   &lt;complexContent>
@@ -63,8 +59,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-flow-callType", propOrder = {
@@ -85,11 +79,9 @@ public class FacesConfigFlowDefinitionFlowCall {
 
     /**
      * Gets the value of the flowReference property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesConfigFlowDefinitionFlowCallFlowReference }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesConfigFlowDefinitionFlowCallFlowReference }
      */
     public FacesConfigFlowDefinitionFlowCallFlowReference getFlowReference() {
         return flowReference;
@@ -97,37 +89,33 @@ public class FacesConfigFlowDefinitionFlowCall {
 
     /**
      * Sets the value of the flowReference property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesConfigFlowDefinitionFlowCallFlowReference }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesConfigFlowDefinitionFlowCallFlowReference }
      */
-    public void setFlowReference(FacesConfigFlowDefinitionFlowCallFlowReference value) {
+    public void setFlowReference(final FacesConfigFlowDefinitionFlowCallFlowReference value) {
         this.flowReference = value;
     }
 
     /**
      * Gets the value of the outboundParameter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the outboundParameter property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOutboundParameter().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFlowCallOutboundParameter }
-     * 
-     * 
      */
     public List<FacesConfigFlowDefinitionFlowCallOutboundParameter> getOutboundParameter() {
         if (outboundParameter == null) {
@@ -138,11 +126,9 @@ public class FacesConfigFlowDefinitionFlowCall {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -150,13 +136,11 @@ public class FacesConfigFlowDefinitionFlowCall {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

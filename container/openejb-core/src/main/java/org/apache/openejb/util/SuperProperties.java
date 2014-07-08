@@ -62,28 +62,27 @@ public class SuperProperties extends Properties {
     private static final String PROP_DTD_NAME = "http://java.sun.com/dtd/properties.dtd";
 
     private static final String PROP_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "    <!ELEMENT properties (comment?, entry*) >"
-            + "    <!ATTLIST properties version CDATA #FIXED \"1.0\" >"
-            + "    <!ELEMENT comment (#PCDATA) >"
-            + "    <!ELEMENT entry (#PCDATA) >"
-            + "    <!ATTLIST entry key CDATA #REQUIRED >";
-
+        + "    <!ELEMENT properties (comment?, entry*) >"
+        + "    <!ATTLIST properties version CDATA #FIXED \"1.0\" >"
+        + "    <!ELEMENT comment (#PCDATA) >"
+        + "    <!ELEMENT entry (#PCDATA) >"
+        + "    <!ATTLIST entry key CDATA #REQUIRED >";
 
 
     /**
      * Actual property values.
      */
-    protected LinkedHashMap<Object,Object> properties = new LinkedHashMap<Object,Object>();
+    protected LinkedHashMap<Object, Object> properties = new LinkedHashMap<Object, Object>();
 
     /**
      * Comments for individual the properties.
      */
-    protected LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
+    protected LinkedHashMap<String, String> comments = new LinkedHashMap<String, String>();
 
     /**
      * Attributes for the properties.
      */
-    protected LinkedHashMap<String,LinkedHashMap<String,String>> attributes = new LinkedHashMap<String,LinkedHashMap<String,String>>();
+    protected LinkedHashMap<String, LinkedHashMap<String, String>> attributes = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
     /**
      * The default property values.
@@ -149,6 +148,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Are lookups case insensitive?
+     *
      * @return true if lookups are insensitive
      */
     public boolean isCaseInsensitive() {
@@ -157,6 +157,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the sensitive of lookups.
+     *
      * @param caseInsensitive if looks are insensitive
      */
     public void setCaseInsensitive(final boolean caseInsensitive) {
@@ -171,6 +172,7 @@ public class SuperProperties extends Properties {
     /**
      * Gets the text that separates keys and values.
      * The default is "=".
+     *
      * @return the text that separates keys and values
      */
     public String getKeyValueSeparator() {
@@ -179,6 +181,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the text that separates keys and values.
+     *
      * @param keyValueSeparator the text that separates keys and values
      */
     public void setKeyValueSeparator(final String keyValueSeparator) {
@@ -194,6 +197,7 @@ public class SuperProperties extends Properties {
     /**
      * Gets the text that separates lines while storing.
      * The default is the system line.separator.
+     *
      * @return the text that separates keys and values
      */
     public String getLineSeparator() {
@@ -202,6 +206,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the text that separates lines while storing
+     *
      * @param lineSeparator the text that separates lines
      */
     public void setLineSeparator(final String lineSeparator) {
@@ -216,6 +221,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Gets the number of spaces to indent each line of the properties file.
+     *
      * @return the number of spaces to indent each line of the properties file
      */
     public int getIndent() {
@@ -224,7 +230,8 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the number of spaces to indent each line of the properties file.
-     * @param  indent the number of spaces to indent each line of the properties file
+     *
+     * @param indent the number of spaces to indent each line of the properties file
      */
     public void setIndent(final int indent) {
         final char[] chars = new char[indent];
@@ -234,6 +241,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Gets the number of spaces to indent comment after '#' character.
+     *
      * @return the number of spaces to indent comment after '#' character
      */
     public int getCommentIndent() {
@@ -242,6 +250,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the number of spaces to indent comment after '#' character.
+     *
      * @param commentIndent the number of spaces to indent comment after '#' character
      */
     public void setCommentIndent(final int commentIndent) {
@@ -252,6 +261,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Should a blank line be added between properties?
+     *
      * @return true if a blank line should be added between properties; false otherwise
      */
     public boolean isSpaceBetweenProperties() {
@@ -260,6 +270,7 @@ public class SuperProperties extends Properties {
 
     /**
      * If true a blank line will be added between properties.
+     *
      * @param spaceBetweenProperties if true a blank line will be added between properties
      */
     public void setSpaceBetweenProperties(final boolean spaceBetweenProperties) {
@@ -268,6 +279,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Should there be a blank line between a comment and the property?
+     *
      * @return true if a blank line should be added between a comment and the property
      */
     public boolean isSpaceAfterComment() {
@@ -276,6 +288,7 @@ public class SuperProperties extends Properties {
 
     /**
      * If true a blank line will be added between a comment and the property.
+     *
      * @param spaceAfterComment if true a blank line will be added between a comment and the property
      */
     public void setSpaceAfterComment(final boolean spaceAfterComment) {
@@ -325,7 +338,8 @@ public class SuperProperties extends Properties {
 
     /**
      * Sets the comment associated with a property.
-     * @param name the property name; not null
+     *
+     * @param name    the property name; not null
      * @param comment the comment; not null
      */
     public void setComment(String name, final String comment) {
@@ -347,7 +361,7 @@ public class SuperProperties extends Properties {
      * @param name the name of the property to find
      * @return the attributes for an existing property (not null); null for non-existant properties
      */
-    public Map<String,String> getAttributes(String name) {
+    public Map<String, String> getAttributes(String name) {
         if (name == null) {
             throw new NullPointerException("name is null");
         }
@@ -418,7 +432,7 @@ public class SuperProperties extends Properties {
         // never null, contains the comment for the property or nothing if no comment
         StringBuilder comment = new StringBuilder();
         // never null, contains attributes for a property
-        LinkedHashMap<String,String> attributes = new LinkedHashMap<String,String>();
+        LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
 
         int indent = 0;
         boolean globalIndentSet = false;
@@ -477,7 +491,7 @@ public class SuperProperties extends Properties {
                         }
                         // add attributes
                         this.attributes.put(normalize(key.toString()), attributes);
-                        attributes = new LinkedHashMap<String,String>();
+                        attributes = new LinkedHashMap<String, String>();
                         // set line indent
                         if (!globalIndentSet) {
                             setIndent(indent);
@@ -594,7 +608,7 @@ public class SuperProperties extends Properties {
                     nextChar = '\r';
                     break;
             }
-            
+
             inSeparator = false;
             if (value == null) {
                 key.append(nextChar);
@@ -631,8 +645,8 @@ public class SuperProperties extends Properties {
 
     private int decodeNextCharacter(final InputStream in) throws IOException {
         boolean lineContinuation = false;
-        boolean carriageReturnLineContinuation  = false;
-        boolean encoded  = false;
+        boolean carriageReturnLineContinuation = false;
+        boolean encoded = false;
         while (true) {
             // read character
             int nextByte = in.read();
@@ -857,8 +871,7 @@ public class SuperProperties extends Properties {
                     buffer.append("\\r");
                     break;
                 default:
-                    if ("\\".indexOf(ch) >= 0 || key && "#!=: ".indexOf(ch) >= 0)
-                    {
+                    if ("\\".indexOf(ch) >= 0 || key && "#!=: ".indexOf(ch) >= 0) {
                         buffer.append('\\');
                     }
                     if (ch >= ' ' && ch <= '~') {
@@ -893,7 +906,7 @@ public class SuperProperties extends Properties {
                 switch (ch) {
                     case '\r':
                         // if next character is not \n, this is the line break
-                        if (i+1 < comment.length() && comment.charAt(i+1) != '\n') {
+                        if (i + 1 < comment.length() && comment.charAt(i + 1) != '\n') {
                             buffer.append(lineSeparator);
                             startOfLine = true;
                         }
@@ -908,7 +921,7 @@ public class SuperProperties extends Properties {
             }
 
             // if the last character written was not a line break, write one now
-            if (ch != '\r' && ch != '\n'){
+            if (ch != '\r' && ch != '\n') {
                 buffer.append(lineSeparator);
             }
         }
@@ -956,7 +969,7 @@ public class SuperProperties extends Properties {
 
                         // read comment line by line
                         final StringBuilder comment = new StringBuilder();
-                        final LinkedHashMap<String,String> attributes = new LinkedHashMap<String,String>();
+                        final LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
 
                         int nextByte;
                         char nextChar;
@@ -1013,7 +1026,7 @@ public class SuperProperties extends Properties {
 
                             firstLine = false;
                         } while (nextByte > 0);
-                        
+
                         if (comment.length() > 0) {
                             setComment(key, comment.toString());
                         }
@@ -1056,7 +1069,7 @@ public class SuperProperties extends Properties {
 
             builder.setEntityResolver(new EntityResolver() {
                 public InputSource resolveEntity(final String publicId,
-                        final String systemId) throws SAXException, IOException {
+                                                 final String systemId) throws SAXException, IOException {
                     if (systemId.equals(PROP_DTD_NAME)) {
                         final InputSource result = new InputSource(new StringReader(PROP_DTD));
                         result.setSystemId(PROP_DTD_NAME);
@@ -1186,7 +1199,7 @@ public class SuperProperties extends Properties {
         if (key instanceof String) {
             final String name = (String) key;
             if (!attributes.containsKey(name)) {
-                attributes.put(name, new LinkedHashMap<String,String>());
+                attributes.put(name, new LinkedHashMap<String, String>());
             }
         }
         return properties.put(key, value);
@@ -1216,6 +1229,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Returns an unmodifiable view of the keys.
+     *
      * @return an unmodifiable view of the keys
      */
     public Set<Object> keySet() {
@@ -1228,6 +1242,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Returns an unmodifiable view of the values.
+     *
      * @return an unmodifiable view of the values
      */
     public Collection<Object> values() {
@@ -1236,6 +1251,7 @@ public class SuperProperties extends Properties {
 
     /**
      * Returns an unmodifiable view of the entries.
+     *
      * @return an unmodifiable view of the entries
      */
     public Set<Map.Entry<Object, Object>> entrySet() {
@@ -1268,9 +1284,9 @@ public class SuperProperties extends Properties {
     @SuppressWarnings({"unchecked"})
     public Object clone() {
         final SuperProperties clone = (SuperProperties) super.clone();
-        clone.properties = (LinkedHashMap<Object,Object>) properties.clone();
-        clone.comments = (LinkedHashMap<String,String>) comments.clone();
-        clone.attributes = (LinkedHashMap<String,LinkedHashMap<String,String>>) attributes.clone();
+        clone.properties = (LinkedHashMap<Object, Object>) properties.clone();
+        clone.comments = (LinkedHashMap<String, String>) comments.clone();
+        clone.attributes = (LinkedHashMap<String, LinkedHashMap<String, String>>) attributes.clone();
         for (final Map.Entry<String, LinkedHashMap<String, String>> entry : clone.attributes.entrySet()) {
             entry.setValue((LinkedHashMap<String, String>) entry.getValue().clone());
         }
@@ -1293,19 +1309,19 @@ public class SuperProperties extends Properties {
     protected void rehash() {
     }
 
-    private Object normalize(final Object key){
+    private Object normalize(final Object key) {
         if (key instanceof String) {
-            return normalize((String)key);
+            return normalize((String) key);
         }
         return key;
     }
 
-    private String normalize(final String property){
+    private String normalize(final String property) {
         if (!caseInsensitive) {
             return property;
         }
 
-        if (super.containsKey(property)){
+        if (super.containsKey(property)) {
             return property;
         }
 

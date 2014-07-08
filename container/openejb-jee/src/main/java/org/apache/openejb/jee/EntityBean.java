@@ -23,24 +23,24 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
-import java.util.Set;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for entity-beanType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-beanType">
  *   &lt;complexContent>
@@ -71,45 +71,43 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-beanType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "ejbName",
-        "mappedName",
-        "home",
-        "remote",
-        "localHome",
-        "local",
-        "ejbClass",
-        "persistenceType",
-        "primKeyClass",
-        "reentrant",
-        "cmpVersion",
-        "abstractSchemaName",
-        "cmpField",
-        "primkeyField",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "dataSource",
-        "securityRoleRef",
-        "securityIdentity",
-        "query"
-        })
+    "descriptions",
+    "displayNames",
+    "icon",
+    "ejbName",
+    "mappedName",
+    "home",
+    "remote",
+    "localHome",
+    "local",
+    "ejbClass",
+    "persistenceType",
+    "primKeyClass",
+    "reentrant",
+    "cmpVersion",
+    "abstractSchemaName",
+    "cmpField",
+    "primkeyField",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "dataSource",
+    "securityRoleRef",
+    "securityIdentity",
+    "query"
+})
 public class EntityBean implements RemoteBean {
 
     @XmlTransient
@@ -146,29 +144,29 @@ public class EntityBean implements RemoteBean {
     @XmlElement(name = "primkey-field")
     protected String primkeyField;
     @XmlElement(name = "env-entry", required = true)
-    protected KeyedCollection<String,EnvEntry> envEntry;
+    protected KeyedCollection<String, EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected KeyedCollection<String,EjbRef> ejbRef;
+    protected KeyedCollection<String, EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String, EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected KeyedCollection<String,ServiceRef> serviceRef;
+    protected KeyedCollection<String, ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected KeyedCollection<String,ResourceRef> resourceRef;
+    protected KeyedCollection<String, ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String, ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
     protected List<LifecycleCallback> preDestroy;
     @XmlElement(name = "data-source")
-    protected KeyedCollection<String,DataSource> dataSource;
+    protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "security-role-ref", required = true)
     protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
@@ -181,7 +179,7 @@ public class EntityBean implements RemoteBean {
     protected String id;
 
     public EntityBean() {
-        Set<String> publicIds = JaxbJavaee.currentPublicId.get();
+        final Set<String> publicIds = JaxbJavaee.currentPublicId.get();
         if (publicIds != null && publicIds.contains("-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN")) {
             cmpVersion = CmpVersion.CMP1;
         } else {
@@ -190,14 +188,14 @@ public class EntityBean implements RemoteBean {
     }
 
 
-    public EntityBean(String ejbName, String ejbClass, PersistenceType persistenceType) {
+    public EntityBean(final String ejbName, final String ejbClass, final PersistenceType persistenceType) {
         this();
         this.ejbName = ejbName;
         this.ejbClass = ejbClass;
         this.persistenceType = persistenceType;
     }
 
-    public EntityBean(Class<?> ejbClass, PersistenceType persistenceType) {
+    public EntityBean(final Class<?> ejbClass, final PersistenceType persistenceType) {
         this(ejbClass.getSimpleName(), ejbClass.getName(), persistenceType);
     }
 
@@ -211,7 +209,7 @@ public class EntityBean implements RemoteBean {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -224,7 +222,7 @@ public class EntityBean implements RemoteBean {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -239,7 +237,7 @@ public class EntityBean implements RemoteBean {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -273,7 +271,7 @@ public class EntityBean implements RemoteBean {
      * <p/>
      * <ejb-name>EmployeeService</ejb-name>
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -281,7 +279,7 @@ public class EntityBean implements RemoteBean {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -289,7 +287,7 @@ public class EntityBean implements RemoteBean {
         return home;
     }
 
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
 
@@ -297,7 +295,7 @@ public class EntityBean implements RemoteBean {
         return remote;
     }
 
-    public void setRemote(String value) {
+    public void setRemote(final String value) {
         this.remote = value;
     }
 
@@ -305,7 +303,7 @@ public class EntityBean implements RemoteBean {
         return localHome;
     }
 
-    public void setLocalHome(String value) {
+    public void setLocalHome(final String value) {
         this.localHome = value;
     }
 
@@ -313,7 +311,7 @@ public class EntityBean implements RemoteBean {
         return local;
     }
 
-    public void setLocal(String value) {
+    public void setLocal(final String value) {
         this.local = value;
     }
 
@@ -321,11 +319,11 @@ public class EntityBean implements RemoteBean {
         return ejbClass;
     }
 
-    public void setEjbClass(String value) {
+    public void setEjbClass(final String value) {
         this.ejbClass = value;
     }
 
-    public void setEjbClass(Class value) {
+    public void setEjbClass(final Class value) {
         this.ejbClass = value.getName();
     }
 
@@ -333,7 +331,7 @@ public class EntityBean implements RemoteBean {
         return persistenceType;
     }
 
-    public void setPersistenceType(PersistenceType value) {
+    public void setPersistenceType(final PersistenceType value) {
         this.persistenceType = value;
     }
 
@@ -341,7 +339,7 @@ public class EntityBean implements RemoteBean {
         return primKeyClass;
     }
 
-    public void setPrimKeyClass(String value) {
+    public void setPrimKeyClass(final String value) {
         this.primKeyClass = value;
     }
 
@@ -349,7 +347,7 @@ public class EntityBean implements RemoteBean {
         return reentrant;
     }
 
-    public void setReentrant(boolean value) {
+    public void setReentrant(final boolean value) {
         this.reentrant = value;
     }
 
@@ -357,7 +355,7 @@ public class EntityBean implements RemoteBean {
         return cmpVersion;
     }
 
-    public void setCmpVersion(CmpVersion value) {
+    public void setCmpVersion(final CmpVersion value) {
         this.cmpVersion = value;
     }
 
@@ -365,7 +363,7 @@ public class EntityBean implements RemoteBean {
         return abstractSchemaName;
     }
 
-    public void setAbstractSchemaName(String value) {
+    public void setAbstractSchemaName(final String value) {
         this.abstractSchemaName = value;
     }
 
@@ -376,10 +374,10 @@ public class EntityBean implements RemoteBean {
         return this.cmpField;
     }
 
-    public void addCmpField(String fieldName) {
+    public void addCmpField(final String fieldName) {
         if (fieldName == null) return;
 
-        for (CmpField field : cmpField) {
+        for (final CmpField field : cmpField) {
             if (fieldName.equals(field.getFieldName())) return;
         }
 
@@ -390,132 +388,132 @@ public class EntityBean implements RemoteBean {
         return primkeyField;
     }
 
-    public void setPrimkeyField(String value) {
+    public void setPrimkeyField(final String value) {
         this.primkeyField = value;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry;
     }
 
-    public Map<String,EnvEntry> getEnvEntryMap() {
+    public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef;
     }
 
-    public Map<String,EjbRef> getEjbRefMap() {
+    public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
-    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+    public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef;
     }
 
-    public Map<String,ServiceRef> getServiceRefMap() {
+    public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef;
     }
 
-    public Map<String,ResourceRef> getResourceRefMap() {
+    public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
-    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+    public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
-    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+    public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
-    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+    public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
     }
 
-    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+    public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -527,8 +525,8 @@ public class EntityBean implements RemoteBean {
         return this.postConstruct;
     }
 
-    public void addPostConstruct(String method){
-        assert ejbClass != null: "Set the ejbClass before calling this method";
+    public void addPostConstruct(final String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getPostConstruct().add(new LifecycleCallback(ejbClass, method));
     }
 
@@ -539,21 +537,21 @@ public class EntityBean implements RemoteBean {
         return this.preDestroy;
     }
 
-    public void addPreDestroy(String method){
-        assert ejbClass != null: "Set the ejbClass before calling this method";
+    public void addPreDestroy(final String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getPreDestroy().add(new LifecycleCallback(ejbClass, method));
     }
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource;
     }
 
-    public Map<String,DataSource> getDataSourceMap() {
+    public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
     }
@@ -577,7 +575,7 @@ public class EntityBean implements RemoteBean {
         return securityIdentity;
     }
 
-    public void setSecurityIdentity(SecurityIdentity value) {
+    public void setSecurityIdentity(final SecurityIdentity value) {
         this.securityIdentity = value;
     }
 
@@ -592,7 +590,7 @@ public class EntityBean implements RemoteBean {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -600,6 +598,6 @@ public class EntityBean implements RemoteBean {
         return TransactionType.CONTAINER;
     }
 
-    public void setTransactionType(TransactionType type){
+    public void setTransactionType(final TransactionType type) {
     }
 }

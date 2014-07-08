@@ -54,7 +54,7 @@ public class JTADataSourceWrapperFactory {
     private DataSource findDelegate() {
         try {
             return DataSource.class.cast(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
-                    .lookup(Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + delegate));
+                .lookup(Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + delegate));
         } catch (final NamingException e) {
             throw new IllegalArgumentException("'" + delegate + "' not found", e);
         }

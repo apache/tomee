@@ -34,7 +34,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         initialContext = new Context(SECURITY_SERVICE.currentState(), ThreadContext.getThreadContext(), Thread.currentThread().getContextClassLoader());
     }
 
-    protected T invoke(final Callable<T> call) throws Exception{
+    protected T invoke(final Callable<T> call) throws Exception {
         initialContext.enter();
 
         Throwable throwable = null;

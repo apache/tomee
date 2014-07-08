@@ -109,10 +109,10 @@ public class StatefulContainerFactory {
         }
         cache.init();
         return new StatefulContainer(
-                id, securityService,
-                cache, accessTimeout,
-                "true".equalsIgnoreCase(properties.getProperty("PreventExtendedEntityManagerSerialization", "false").trim()),
-                createLockFactory());
+            id, securityService,
+            cache, accessTimeout,
+            "true".equalsIgnoreCase(properties.getProperty("PreventExtendedEntityManagerSerialization", "false").trim()),
+            createLockFactory());
     }
 
     private LockFactory createLockFactory() {

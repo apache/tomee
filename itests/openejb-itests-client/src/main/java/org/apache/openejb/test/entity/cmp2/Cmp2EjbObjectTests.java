@@ -32,7 +32,7 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
         ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
         ejbObject = ejbHome.createObject("Third Bean");
     }
@@ -41,7 +41,7 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
         if (ejbObject != null) {// set to null by test05_remove() method
             try {
                 ejbObject.remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw e;
             }
         }
@@ -55,7 +55,7 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
         try {
             ejbHandle = ejbObject.getHandle();
             assertNotNull("The Handle is null", ejbHandle);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -64,7 +64,7 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
         try {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
             assertNotNull("The primary key is null", ejbPrimaryKey);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
@@ -73,16 +73,16 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
     public void test03_isIdentical() {
         try {
             assertTrue("The EJBObjects are not equal", ejbObject.isIdentical(ejbObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_getEjbHome() {
         try {
-            EJBHome home = ejbObject.getEJBHome();
+            final EJBHome home = ejbObject.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -96,16 +96,16 @@ public class Cmp2EjbObjectTests extends BasicCmp2TestClient {
             try {
                 ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
                 fail("Entity was not actually removed");
-            } catch (ObjectNotFoundException e) {
+            } catch (final ObjectNotFoundException e) {
             }
 
             // verify the proxy is dead
             try{
                 ejbObject.businessMethod("Should throw an exception");
                 assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
+            } catch (final Exception e){
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         } finally {
             ejbObject = null;

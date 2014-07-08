@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.loader;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Properties;
 
 public class OpenEJBInstance {
     private final Method init;

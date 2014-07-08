@@ -79,7 +79,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statefulBusinessLocalField;
     }
 
-    public void setStatefulBusinessLocal(BasicStatefulBusinessLocal statefulBusinessLocal) {
+    public void setStatefulBusinessLocal(final BasicStatefulBusinessLocal statefulBusinessLocal) {
         this.statefulBusinessLocalField = statefulBusinessLocal;
     }
 
@@ -87,7 +87,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statefulBusinessLocalBeanField;
     }
 
-    public void setStatefulBusinessLocalBean(BasicStatefulPojoBean statefulBusinessLocalBean) {
+    public void setStatefulBusinessLocalBean(final BasicStatefulPojoBean statefulBusinessLocalBean) {
         this.statefulBusinessLocalBeanField = statefulBusinessLocalBean;
     }
 
@@ -95,7 +95,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statefulBusinessRemoteField;
     }
 
-    public void setStatefulBusinessRemote(BasicStatefulBusinessRemote statefulBusinessRemote) {
+    public void setStatefulBusinessRemote(final BasicStatefulBusinessRemote statefulBusinessRemote) {
         this.statefulBusinessRemoteField = statefulBusinessRemote;
     }
 
@@ -103,7 +103,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statelessBusinessLocalField;
     }
 
-    public void setStatelessBusinessLocal(BasicStatelessBusinessLocal statelessBusinessLocal) {
+    public void setStatelessBusinessLocal(final BasicStatelessBusinessLocal statelessBusinessLocal) {
         this.statelessBusinessLocalField = statelessBusinessLocal;
     }
 
@@ -111,7 +111,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statelessBusinessLocalBeanField;
     }
 
-    public void setStatelessBusinessLocalBean(BasicStatelessPojoBean statelessBusinessLocalBean) {
+    public void setStatelessBusinessLocalBean(final BasicStatelessPojoBean statelessBusinessLocalBean) {
         this.statelessBusinessLocalBeanField = statelessBusinessLocalBean;
     }
 
@@ -119,17 +119,16 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statelessBusinessRemoteField;
     }
 
-    public void setStatelessBusinessRemote(BasicStatelessBusinessRemote statelessBusinessRemote) {
+    public void setStatelessBusinessRemote(final BasicStatelessBusinessRemote statelessBusinessRemote) {
         this.statelessBusinessRemoteField = statelessBusinessRemote;
     }
-
 
 
     public BasicBmpHome getBmpHome() {
         return bmpHomeField;
     }
 
-    public void setBmpHome(BasicBmpHome bmpHome) {
+    public void setBmpHome(final BasicBmpHome bmpHome) {
         this.bmpHomeField = bmpHome;
     }
 
@@ -137,7 +136,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return boooleanField;
     }
 
-    public void setBooolean(Boolean booolean) {
+    public void setBooolean(final Boolean booolean) {
         this.boooleanField = booolean;
     }
 
@@ -145,7 +144,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return byyteField;
     }
 
-    public void setByyte(Byte byyte) {
+    public void setByyte(final Byte byyte) {
         this.byyteField = byyte;
     }
 
@@ -153,7 +152,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return chaaracterField;
     }
 
-    public void setChaaracter(Character chaaracter) {
+    public void setChaaracter(final Character chaaracter) {
         this.chaaracterField = chaaracter;
     }
 
@@ -161,7 +160,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return daataSourceField;
     }
 
-    public void setDaataSource(DataSource daataSource) {
+    public void setDaataSource(final DataSource daataSource) {
         this.daataSourceField = daataSource;
     }
 
@@ -169,7 +168,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return coonnectionFactory;
     }
 
-    public void setCoonnectionFactory(ConnectionFactory coonnectionFactory) {
+    public void setCoonnectionFactory(final ConnectionFactory coonnectionFactory) {
         this.coonnectionFactory = coonnectionFactory;
     }
 
@@ -177,7 +176,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return queueCoonnectionFactory;
     }
 
-    public void setQueueCoonnectionFactory(QueueConnectionFactory queueCoonnectionFactory) {
+    public void setQueueCoonnectionFactory(final QueueConnectionFactory queueCoonnectionFactory) {
         this.queueCoonnectionFactory = queueCoonnectionFactory;
     }
 
@@ -185,7 +184,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return topicCoonnectionFactory;
     }
 
-    public void setTopicCoonnectionFactory(TopicConnectionFactory topicCoonnectionFactory) {
+    public void setTopicCoonnectionFactory(final TopicConnectionFactory topicCoonnectionFactory) {
         this.topicCoonnectionFactory = topicCoonnectionFactory;
     }
 
@@ -193,7 +192,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return dooubleField;
     }
 
-    public void setDoouble(Double doouble) {
+    public void setDoouble(final Double doouble) {
         this.dooubleField = doouble;
     }
 
@@ -201,7 +200,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return eemField;
     }
 
-    public void setEem(EntityManager eem) {
+    public void setEem(final EntityManager eem) {
         this.eemField = eem;
     }
 
@@ -209,7 +208,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return ejbContextField;
     }
 
-    public void setEjbContext(SessionContext ejbContext) {
+    public void setEjbContext(final SessionContext ejbContext) {
         this.ejbContextField = ejbContext;
     }
 
@@ -217,7 +216,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return emField;
     }
 
-    public void setEm(EntityManager em) {
+    public void setEm(final EntityManager em) {
         this.emField = em;
     }
 
@@ -225,7 +224,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return emfField;
     }
 
-    public void setEmf(EntityManagerFactory emf) {
+    public void setEmf(final EntityManagerFactory emf) {
         this.emfField = emf;
     }
 
@@ -233,7 +232,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return flooatField;
     }
 
-    public void setFlooat(Float flooat) {
+    public void setFlooat(final Float flooat) {
         this.flooatField = flooat;
     }
 
@@ -241,7 +240,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return inteegerField;
     }
 
-    public void setInteeger(Integer inteeger) {
+    public void setInteeger(final Integer inteeger) {
         this.inteegerField = inteeger;
     }
 
@@ -249,7 +248,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return loongField;
     }
 
-    public void setLoong(Long loong) {
+    public void setLoong(final Long loong) {
         this.loongField = loong;
     }
 
@@ -257,7 +256,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -265,7 +264,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return pemField;
     }
 
-    public void setPem(EntityManager pem) {
+    public void setPem(final EntityManager pem) {
         this.pemField = pem;
     }
 
@@ -273,7 +272,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return shoortField;
     }
 
-    public void setShoort(Short shoort) {
+    public void setShoort(final Short shoort) {
         this.shoortField = shoort;
     }
 
@@ -281,7 +280,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statefulHomeField;
     }
 
-    public void setStatefulHome(BasicStatefulHome statefulHome) {
+    public void setStatefulHome(final BasicStatefulHome statefulHome) {
         this.statefulHomeField = statefulHome;
     }
 
@@ -289,7 +288,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return statelessHomeField;
     }
 
-    public void setStatelessHome(BasicStatelessHome statelessHome) {
+    public void setStatelessHome(final BasicStatelessHome statelessHome) {
         this.statelessHomeField = statelessHome;
     }
 
@@ -297,7 +296,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         return striingField;
     }
 
-    public void setStriing(String striing) {
+    public void setStriing(final String striing) {
         this.striingField = striing;
     }
     //=============================
@@ -311,7 +310,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
      * @throws javax.ejb.CreateException
      * @see EncStatefulHome#create
      */
-    public void ejbCreate(String name) throws CreateException {
+    public void ejbCreate(final String name) throws CreateException {
         this.name = name;
     }
     //
@@ -325,7 +324,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHomeField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -333,7 +332,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statefulHomeField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -341,155 +340,155 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void lookupStatelessBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statelessHomeField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocalField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocalField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", statelessBusinessLocalBeanField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statelessBusinessLocalBeanField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemoteField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemoteField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBeanField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBeanField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemoteField );
-        } catch (AssertionFailedError afe){
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemoteField);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupStringEntry() throws TestFailureException {
         try {
-            String expected = new String("1");
+            final String expected = new String("1");
             Assert.assertNotNull("The String looked up is null", striingField);
             Assert.assertEquals(expected, striingField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            Double expected = new Double(1.0D);
+            final Double expected = new Double(1.0D);
 
             Assert.assertNotNull("The Double looked up is null", dooubleField);
             Assert.assertEquals(expected, dooubleField);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupLongEntry() throws TestFailureException {
         try {
-            Long expected = new Long(1L);
+            final Long expected = new Long(1L);
 
             Assert.assertNotNull("The Long looked up is null", loongField);
             Assert.assertEquals(expected, loongField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            Float expected = new Float(1.0F);
+            final Float expected = new Float(1.0F);
 
             Assert.assertNotNull("The Float looked up is null", flooatField);
             Assert.assertEquals(expected, flooatField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            Integer expected = new Integer(1);
+            final Integer expected = new Integer(1);
 
             Assert.assertNotNull("The Integer looked up is null", inteegerField);
             Assert.assertEquals(expected, inteegerField);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupShortEntry() throws TestFailureException {
         try {
-            Short expected = new Short((short) 1);
+            final Short expected = new Short((short) 1);
 
             Assert.assertNotNull("The Short looked up is null", shoortField);
             Assert.assertEquals(expected, shoortField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            Boolean expected = new Boolean(true);
+            final Boolean expected = new Boolean(true);
 
             Assert.assertNotNull("The Boolean looked up is null", boooleanField);
             Assert.assertEquals(expected, boooleanField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupByteEntry() throws TestFailureException {
         try {
-            Byte expected = new Byte((byte) 1);
+            final Byte expected = new Byte((byte) 1);
 
             Assert.assertNotNull("The Byte looked up is null", byyteField);
             Assert.assertEquals(expected, byyteField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            Character expected = new Character('D');
+            final Character expected = new Character('D');
 
             Assert.assertNotNull("The Character looked up is null", chaaracterField);
             Assert.assertEquals(expected, chaaracterField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -497,30 +496,30 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void lookupResource() throws TestFailureException {
         try {
             Assert.assertNotNull("The DataSource is null", daataSourceField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
@@ -530,7 +529,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManagerFactory is null", emfField);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -542,10 +541,10 @@ public class SetterInjectionStatefulBean implements SessionBean {
             try {
                 // call a do nothing method to assure entity manager actually exists
                 emField.getFlushMode();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -554,7 +553,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
         try {
 // TODO: DMB: Can't seem to find where to make this work
 //            Assert.assertNotNull("The SessionContext is null", ejbContext);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
 
@@ -569,10 +568,10 @@ public class SetterInjectionStatefulBean implements SessionBean {
     public void ejbRemove() throws EJBException, RemoteException {
     }
 
-    public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
+    public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
-    }    
+    }
 }

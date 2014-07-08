@@ -30,11 +30,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class StaticDESPasswordCipher implements PasswordCipher {
 
     private static final byte[] _3desData = {
-            (byte) 0x76, (byte) 0x6F, (byte) 0xBA, (byte) 0x39, (byte) 0x31,
-            (byte) 0x2F, (byte) 0x0D, (byte) 0x4A, (byte) 0xA3, (byte) 0x90,
-            (byte) 0x55, (byte) 0xFE, (byte) 0x55, (byte) 0x65, (byte) 0x61,
-            (byte) 0x13, (byte) 0x34, (byte) 0x82, (byte) 0x12, (byte) 0x17,
-            (byte) 0xAC, (byte) 0x77, (byte) 0x39, (byte) 0x19 };
+        (byte) 0x76, (byte) 0x6F, (byte) 0xBA, (byte) 0x39, (byte) 0x31,
+        (byte) 0x2F, (byte) 0x0D, (byte) 0x4A, (byte) 0xA3, (byte) 0x90,
+        (byte) 0x55, (byte) 0xFE, (byte) 0x55, (byte) 0x65, (byte) 0x61,
+        (byte) 0x13, (byte) 0x34, (byte) 0x82, (byte) 0x12, (byte) 0x17,
+        (byte) 0xAC, (byte) 0x77, (byte) 0x39, (byte) 0x19};
 
     private static final SecretKeySpec KEY = new SecretKeySpec(_3desData, "DESede");
 
@@ -44,9 +44,8 @@ public class StaticDESPasswordCipher implements PasswordCipher {
     private static final String TRANSFORMATION = "DESede";
 
     /**
+     * @throws RuntimeException in any case of error.
      * @see org.apache.openejb.cipher.PasswordCipher#encrypt(String)
-     * @throws RuntimeException
-     *             in any case of error.
      */
     public char[] encrypt(final String plainPassword) {
         if (null == plainPassword || plainPassword.length() == 0) {
@@ -70,9 +69,8 @@ public class StaticDESPasswordCipher implements PasswordCipher {
     }
 
     /**
+     * @throws RuntimeException in any case of error.
      * @see org.apache.openejb.cipher.PasswordCipher#decrypt(char[])
-     * @throws RuntimeException
-     *             in any case of error.
      */
     public String decrypt(final char[] encodedPassword) {
         if (null == encodedPassword || encodedPassword.length == 0) {
@@ -81,7 +79,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
 
         try {
             final byte[] cipherText = Base64.decodeBase64(
-                    String.valueOf(encodedPassword).getBytes());
+                String.valueOf(encodedPassword).getBytes());
 
             // Get a 3DES Cipher object
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);

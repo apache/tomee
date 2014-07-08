@@ -53,8 +53,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version $Rev$ $Date$
@@ -76,13 +76,13 @@ public @interface MetaTest {
         // The test method
         private final FrameworkMethod testMethod;
 
-        public $(FrameworkMethod testMethod, Object target) {
+        public $(final FrameworkMethod testMethod, final Object target) {
             this.testMethod = testMethod;
         }
 
         @Override
         public void evaluate() throws Throwable {
-            MetaTest annotation = testMethod.getAnnotation(MetaTest.class);
+            final MetaTest annotation = testMethod.getAnnotation(MetaTest.class);
 
             if (isSpecificBeanType(annotation)) {
 
@@ -94,53 +94,54 @@ public @interface MetaTest {
             }
         }
 
-        private void testAsAllBeanTypes(MetaTest annotation) throws Throwable {
+        private void testAsAllBeanTypes(final MetaTest annotation) throws Throwable {
             Class<? extends EnterpriseBean>[] classes = annotation.types();
 
             // for some reason these defaults do not work in the annotation
-            if (classes.length == 0) classes = new Class[]{SingletonBean.class, StatelessBean.class, StatefulBean.class, ManagedBean.class, MessageDrivenBean.class};
+            if (classes.length == 0)
+                classes = new Class[]{SingletonBean.class, StatelessBean.class, StatefulBean.class, ManagedBean.class, MessageDrivenBean.class};
 
-            for (Class<? extends EnterpriseBean> beanType : classes) {
+            for (final Class<? extends EnterpriseBean> beanType : classes) {
 
 
                 try {
-                    ConfigurationFactory factory = factory();
+                    final ConfigurationFactory factory = factory();
 
-                    EjbJar expected = new EjbJar("expected");
-                    EnterpriseBean bean = expected.addEnterpriseBean(newBean(beanType, annotation.expected()));
+                    final EjbJar expected = new EjbJar("expected");
+                    final EnterpriseBean bean = expected.addEnterpriseBean(newBean(beanType, annotation.expected()));
 
-                    EjbJar actual = new EjbJar("actual");
+                    final EjbJar actual = new EjbJar("actual");
                     actual.addEnterpriseBean(newBean(beanType, annotation.actual()));
 
 
-                    AppModule app = new AppModule(this.getClass().getClassLoader(), "test");
+                    final AppModule app = new AppModule(this.getClass().getClassLoader(), "test");
                     app.getEjbModules().add(module(expected));
                     app.getEjbModules().add(module(actual));
 
-                    AppInfo appInfo = factory.configureApplication(app);
+                    final AppInfo appInfo = factory.configureApplication(app);
 
-                    List<ContainerTransaction> expectedList = expected.getAssemblyDescriptor().getContainerTransaction();
-                    List<ContainerTransaction> actualList = actual.getAssemblyDescriptor().getContainerTransaction();
+                    final List<ContainerTransaction> expectedList = expected.getAssemblyDescriptor().getContainerTransaction();
+                    final List<ContainerTransaction> actualList = actual.getAssemblyDescriptor().getContainerTransaction();
 
                     assertEquals(expectedList.size(), actualList.size());
-                    String expectedXml = toString(expected);
-                    String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
+                    final String expectedXml = toString(expected);
+                    final String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
                     assertEquals(expectedXml, actualXml);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new AssertionError(beanType.getSimpleName()).initCause(e);
                 }
             }
         }
 
-        private void testOnce(MetaTest annotation) throws Throwable {
+        private void testOnce(final MetaTest annotation) throws Throwable {
 
             try {
 
                 SystemInstance.reset();
                 SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
-                Assembler assembler = new Assembler();
-                ConfigurationFactory factory = new ConfigurationFactory();
+                final Assembler assembler = new Assembler();
+                final ConfigurationFactory factory = new ConfigurationFactory();
                 assembler.createTransactionManager(factory.configureService(TransactionServiceInfo.class));
                 assembler.createSecurityService(factory.configureService(SecurityServiceInfo.class));
 
@@ -163,21 +164,21 @@ public @interface MetaTest {
                     ejbModule.getProperties().setProperty(FinderFactory.FORCE_LINK, Boolean.TRUE.toString());
                 }
 
-                OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
+                final OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
 
                 factory.configureApplication(app);
 
-                EjbJar expected = getDescriptor(app, "expected");
-                EjbJar actual = getDescriptor(app, "actual");
+                final EjbJar expected = getDescriptor(app, "expected");
+                final EjbJar actual = getDescriptor(app, "actual");
                 final String expectedXml = toString(expected);
                 final String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
                 assertEquals(expectedXml, actualXml);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new AssertionError().initCause(e);
             }
         }
 
-        private Class[] getClasses(MetaTest annotation) {
+        private Class[] getClasses(final MetaTest annotation) {
             final Class clazz = annotation.actual();
 
             final List<Class> classes = new ArrayList<Class>();
@@ -187,12 +188,12 @@ public @interface MetaTest {
             return classes.toArray(new Class[]{});
         }
 
-        private void getClasses(Class clazz, List<Class> classes) {
+        private void getClasses(final Class clazz, final List<Class> classes) {
             if (classes.contains(clazz)) return;
             classes.add(clazz);
 
             final Annotation[] annotations = clazz.getAnnotations();
-            for (Annotation ann : annotations) {
+            for (final Annotation ann : annotations) {
                 final Class<? extends Annotation> type = ann.annotationType();
                 final String name = type.getName();
                 if (name.startsWith("javax.")) continue;
@@ -202,8 +203,8 @@ public @interface MetaTest {
             }
         }
 
-        private EjbJar getDescriptor(AppModule app, String name) {
-            for (EjbModule ejbModule : app.getEjbModules()) {
+        private EjbJar getDescriptor(final AppModule app, final String name) {
+            for (final EjbModule ejbModule : app.getEjbModules()) {
                 if (name.equals(ejbModule.getModuleId())) {
                     return ejbModule.getEjbJar();
                 }
@@ -211,9 +212,9 @@ public @interface MetaTest {
             throw new RuntimeException("Test setup failed, no such module: " + name);
         }
 
-        private boolean isSpecificBeanType(MetaTest annotation) {
-            Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
-            for (Class<? extends Annotation> compDef : annotations) {
+        private boolean isSpecificBeanType(final MetaTest annotation) {
+            final Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
+            for (final Class<? extends Annotation> compDef : annotations) {
                 if (annotation.expected().isAnnotationPresent(compDef)) {
                     return true;
                 }
@@ -227,25 +228,25 @@ public @interface MetaTest {
                 SystemInstance.reset();
                 SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
-                Assembler assembler = new Assembler();
-                ConfigurationFactory factory = new ConfigurationFactory();
+                final Assembler assembler = new Assembler();
+                final ConfigurationFactory factory = new ConfigurationFactory();
 
                 // Configure the system but don't actually build it
-                OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
-                ContainerInfo container = new ContainerInfo();
+                final OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
+                final ContainerInfo container = new ContainerInfo();
                 container.id = "foo";
                 conf.containerSystem.containers.add(container);
 
                 SystemInstance.get().setComponent(OpenEjbConfiguration.class, conf);
 
                 return factory;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        private EjbModule module(EjbJar ejbJar) {
-            OpenejbJar openejbJar = new OpenejbJar();
+        private EjbModule module(final EjbJar ejbJar) {
+            final OpenejbJar openejbJar = new OpenejbJar();
             openejbJar.addEjbDeployment(ejbJar.getEnterpriseBeans()[0]).setContainerId("foo");
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
@@ -253,16 +254,16 @@ public @interface MetaTest {
             return ejbModule;
         }
 
-        private <T> T newBean(Class<T> beanType, Class ejbClass) {
+        private <T> T newBean(final Class<T> beanType, final Class ejbClass) {
             try {
-                Constructor<T> constructor = beanType.getConstructor(Class.class);
+                final Constructor<T> constructor = beanType.getConstructor(Class.class);
                 return constructor.newInstance(ejbClass);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        private static String toString(EjbJar ejbjar) throws JAXBException {
+        private static String toString(final EjbJar ejbjar) throws JAXBException {
             return JaxbJavaee.marshal(EjbJar.class, ejbjar);
         }
 

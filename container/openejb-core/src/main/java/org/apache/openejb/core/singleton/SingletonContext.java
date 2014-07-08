@@ -51,13 +51,13 @@ public class SingletonContext extends BaseSessionContext {
             case getCallerPrincipal:
             case isCallerInRole:
                 switch (operation) {
-                case INJECTION:
-                case CREATE:
-                case POST_CONSTRUCT:
-                case PRE_DESTROY:
-                    throw illegal(call, operation);
-                default:
-                    return;
+                    case INJECTION:
+                    case CREATE:
+                    case POST_CONSTRUCT:
+                    case PRE_DESTROY:
+                        throw illegal(call, operation);
+                    default:
+                        return;
                 }
             case timerMethod:
             case setRollbackOnly:

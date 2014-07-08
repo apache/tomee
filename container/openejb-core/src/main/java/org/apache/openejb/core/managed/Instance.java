@@ -99,7 +99,7 @@ public class Instance implements Serializable {
     }
 
     public synchronized Transaction getTransaction() {
-        return transaction.size() > 0 ? transaction.peek(): null;
+        return transaction.size() > 0 ? transaction.peek() : null;
     }
 
     public Lock getLock() {
@@ -113,7 +113,7 @@ public class Instance implements Serializable {
         } else if (this.transaction.size() != 0 && transaction == null) {
             this.transaction.pop();
             lock.unlock();
-        } else if (transaction != null){
+        } else if (transaction != null) {
             this.transaction.push(transaction);
         }
     }

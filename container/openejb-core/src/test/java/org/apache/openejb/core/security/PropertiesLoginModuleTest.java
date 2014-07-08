@@ -41,7 +41,7 @@ public class PropertiesLoginModuleTest extends TestCase {
     private static void loadJassLoginConfig() {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = PropertiesLoginModuleTest.class.getClassLoader().getResource("login.config");
+            final URL resource = PropertiesLoginModuleTest.class.getClassLoader().getResource("login.config");
             if (resource != null) {
                 path = toFilePath(resource);
                 System.setProperty("java.security.auth.login.config", path);
@@ -51,10 +51,10 @@ public class PropertiesLoginModuleTest extends TestCase {
     }
 
     public void testLogin() throws LoginException {
-        LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("jonathan", "secret"));
+        final LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("jonathan", "secret"));
         context.login();
 
-        Subject subject = context.getSubject();
+        final Subject subject = context.getSubject();
 
         assertEquals("Should have three principals", 3, subject.getPrincipals().size());
         assertEquals("Should have one user principal", 1, subject.getPrincipals(UserPrincipal.class).size());
@@ -66,21 +66,21 @@ public class PropertiesLoginModuleTest extends TestCase {
     }
 
     public void testBadUseridLogin() throws Exception {
-        LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
+        final LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
 
     }
 
     public void testBadPWLogin() throws Exception {
-        LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("jonathan", "badpass"));
+        final LoginContext context = new LoginContext("PropertiesLogin", new UsernamePasswordCallbackHandler("jonathan", "badpass"));
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
 
     }

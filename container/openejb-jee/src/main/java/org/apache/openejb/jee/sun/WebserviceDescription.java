@@ -42,7 +42,7 @@ public class WebserviceDescription implements Keyable<String> {
         return webserviceDescriptionName;
     }
 
-    public void setWebserviceDescriptionName(String value) {
+    public void setWebserviceDescriptionName(final String value) {
         this.webserviceDescriptionName = value;
     }
 
@@ -50,7 +50,7 @@ public class WebserviceDescription implements Keyable<String> {
         return wsdlPublishLocation;
     }
 
-    public void setWsdlPublishLocation(String value) {
+    public void setWsdlPublishLocation(final String value) {
         this.wsdlPublishLocation = value;
     }
 }

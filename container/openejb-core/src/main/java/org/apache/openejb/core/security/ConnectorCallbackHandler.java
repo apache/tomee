@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * Spec 16.4.1: must support CallerPrincipalCallback, GroupPrincipalCallback, PasswordValidationCallback. Recommended to support CertStoreCallback, PrivateKeyCallback, SecretKeyCallback, and TrustStoreCallback.
- * 
+ *
  * @version $Rev: 925911 $ $Date: 2010-03-21 22:03:35 +0000 (Sun, 21 Mar 2010) $
  */
 public class ConnectorCallbackHandler implements CallbackHandler {

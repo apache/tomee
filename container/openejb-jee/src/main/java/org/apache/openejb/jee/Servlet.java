@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for servletType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="servletType">
  *   &lt;complexContent>
@@ -62,25 +62,23 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "servletType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "servletName",
-        "servletClass",
-        "jspFile",
-        "initParam",
-        "loadOnStartup",
-        "enabled",
-        "asyncSupported",
-        "runAs",
-        "securityRoleRef",
-        "multipartConfig"
+    "descriptions",
+    "displayNames",
+    "icon",
+    "servletName",
+    "servletClass",
+    "jspFile",
+    "initParam",
+    "loadOnStartup",
+    "enabled",
+    "asyncSupported",
+    "runAs",
+    "securityRoleRef",
+    "multipartConfig"
 })
 public class Servlet {
 
@@ -121,7 +119,7 @@ public class Servlet {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -129,7 +127,7 @@ public class Servlet {
         return description.get();
     }
 
-    public void addDescription(Text text) {
+    public void addDescription(final Text text) {
         description.add(text);
     }
 
@@ -138,7 +136,7 @@ public class Servlet {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -146,7 +144,7 @@ public class Servlet {
         return displayName.get();
     }
 
-    public void addDisplayName(Text text) {
+    public void addDisplayName(final Text text) {
         displayName.add(text);
     }
 
@@ -157,7 +155,7 @@ public class Servlet {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -172,7 +170,7 @@ public class Servlet {
         return servletName;
     }
 
-    public void setServletName(String value) {
+    public void setServletName(final String value) {
         this.servletName = value;
     }
 
@@ -180,7 +178,7 @@ public class Servlet {
         return servletClass;
     }
 
-    public void setServletClass(String value) {
+    public void setServletClass(final String value) {
         this.servletClass = value;
     }
 
@@ -188,7 +186,7 @@ public class Servlet {
         return jspFile;
     }
 
-    public void setJspFile(String value) {
+    public void setJspFile(final String value) {
         this.jspFile = value;
     }
 
@@ -203,7 +201,7 @@ public class Servlet {
         return loadOnStartup;
     }
 
-    public void setLoadOnStartup(Integer value) {
+    public void setLoadOnStartup(final Integer value) {
         this.loadOnStartup = value;
     }
 
@@ -211,7 +209,7 @@ public class Servlet {
         return asyncSupported;
     }
 
-    public void setAsyncSupported(Boolean asyncSupported) {
+    public void setAsyncSupported(final Boolean asyncSupported) {
         this.asyncSupported = asyncSupported;
     }
 
@@ -219,7 +217,7 @@ public class Servlet {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -227,7 +225,7 @@ public class Servlet {
         return runAs;
     }
 
-    public void setRunAs(RunAs value) {
+    public void setRunAs(final RunAs value) {
         this.runAs = value;
     }
 
@@ -242,7 +240,7 @@ public class Servlet {
         return multipartConfig;
     }
 
-    public void setMultipartConfig(MultipartConfig multipartConfig) {
+    public void setMultipartConfig(final MultipartConfig multipartConfig) {
         this.multipartConfig = multipartConfig;
     }
 
@@ -250,7 +248,7 @@ public class Servlet {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -76,7 +76,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public JtaEntityManager(final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final String unitName) {
         this(unitName, registry, entityManagerFactory, properties, false);
     }
-    
+
     public JtaEntityManager(final String unitName, final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended) {
         if (registry == null) {
             throw new NullPointerException("registry is null");
@@ -103,6 +103,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /**
      * This method assures that a non-extended entity managers has an acive transaction.  This is
      * required for some operations on the entity manager.
+     *
      * @throws TransactionRequiredException if non-extended and a transaction is not active
      */
     private void assertTransactionActive() throws TransactionRequiredException {
@@ -115,6 +116,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
      * Closes a non-extended entity manager if no transaction is active.  For methods on an
      * entity manager that do not require an active transaction, a temp entity manager is created
      * for the operation and then closed.
+     *
      * @param entityManager the entity manager to close if non-extended and a transaction is not active
      */
     void closeIfNoTx(final EntityManager entityManager) {
@@ -145,7 +147,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T merge(final T entity) {
+    public <T> T merge(final T entity) {
         assertTransactionActive();
         final Timer timer = Op.merge.start(this);
         try {
@@ -165,7 +167,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T find(final Class<T> entityClass, final Object primaryKey) {
+    public <T> T find(final Class<T> entityClass, final Object primaryKey) {
         final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.find.start(this);
@@ -179,7 +181,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T getReference(final Class<T> entityClass, final Object primaryKey) {
+    public <T> T getReference(final Class<T> entityClass, final Object primaryKey) {
         final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getReference.start(this);
@@ -323,7 +325,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
         return createQuery(Query.class, getEntityManager(), method, args);
     }
-    
+
     private <T> TypedQuery<T> typedProxyIfNoTx(final Method method, final Object... args) {
         if (!extended && !isTransactionActive()) {
             return new JtaTypedQuery<T>(getEntityManager(), this, method, args);
@@ -381,6 +383,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#createQuery(javax.persistence.criteria.CriteriaQuery)
      */
@@ -392,6 +395,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#createQuery(java.lang.String, java.lang.Class)
      */
@@ -403,6 +407,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#detach(java.lang.Object)
      */
@@ -416,6 +421,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, java.util.Map)
      */
@@ -432,6 +438,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType)
      */
@@ -448,6 +455,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
@@ -464,12 +472,14 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getEntityManagerFactory()
      */
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getLockMode(java.lang.Object)
      */
@@ -480,8 +490,9 @@ public class JtaEntityManager implements EntityManager, Serializable {
             return getEntityManager().getLockMode(entity);
         } finally {
             timer.stop();
-        }        
+        }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getMetamodel()
      */
@@ -498,6 +509,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getProperties()
      */
@@ -514,6 +526,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getCriteriaBuilder()
      */
@@ -530,6 +543,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#lock(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
@@ -540,8 +554,9 @@ public class JtaEntityManager implements EntityManager, Serializable {
             getEntityManager().lock(entity, lockMode, properties);
         } finally {
             timer.stop();
-        }        
+        }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
      */
@@ -554,6 +569,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType)
      */
@@ -566,6 +582,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
@@ -578,6 +595,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             timer.stop();
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#setProperty(java.lang.String, java.lang.Object)
      */
@@ -594,6 +612,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
             closeIfNoTx(entityManager);
         }
     }
+
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#unwrap(java.lang.Class)
      */

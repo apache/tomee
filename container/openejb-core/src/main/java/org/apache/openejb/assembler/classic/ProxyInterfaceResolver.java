@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ProxyInterfaceResolver {
 
-    public static List<Class> getInterfaces(final Class implementation, final Class mainInterface, final List<Class> interfaces){
+    public static List<Class> getInterfaces(final Class implementation, final Class mainInterface, final List<Class> interfaces) {
         final List<Class> valid = new ArrayList<Class>();
         // The intended interface is safe to add
         if (mainInterface != null) {
@@ -36,7 +36,7 @@ public class ProxyInterfaceResolver {
 
         // Any interface the bean implements is safe (potentially)
         for (final Class interfce : interfaces) {
-            if (interfce.isAssignableFrom(implementation)){
+            if (interfce.isAssignableFrom(implementation)) {
                 valid.add(interfce);
             }
         }
@@ -73,7 +73,7 @@ public class ProxyInterfaceResolver {
         final List<Class> remotes = new ArrayList<Class>();
         final List<Class> nonremotes = new ArrayList<Class>();
         for (final Class interfce : valid) {
-            if (Remote.class.isAssignableFrom(interfce)){
+            if (Remote.class.isAssignableFrom(interfce)) {
                 remotes.add(interfce);
             } else {
                 nonremotes.add(interfce);
@@ -104,7 +104,7 @@ public class ProxyInterfaceResolver {
 
         // Show affinity for the remote interfaces if the main
         // interface is a java.rmi.Remote
-        if (Remote.class.isAssignableFrom(mainInterface)){
+        if (Remote.class.isAssignableFrom(mainInterface)) {
             for (final Class interfce : remotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
@@ -141,8 +141,8 @@ public class ProxyInterfaceResolver {
             // Contains will return true if the
             // method signature exits *and* has
             // a different throws clause
-            if (proxySignatures.contains(sig)){
-                 return;  // conflicts and cannot be added
+            if (proxySignatures.contains(sig)) {
+                return;  // conflicts and cannot be added
             }
         }
 

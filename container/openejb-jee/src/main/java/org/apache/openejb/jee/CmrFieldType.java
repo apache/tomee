@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for cmr-field-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="cmr-field-typeType">
  *   &lt;simpleContent>
@@ -36,19 +36,17 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 public enum CmrFieldType {
-    @XmlEnumValue("java.util.Collection") COLLECTION("java.util.Collection"),
-    @XmlEnumValue("java.util.Set") SET("java.util.Set");
+    @XmlEnumValue("java.util.Collection")COLLECTION("java.util.Collection"),
+    @XmlEnumValue("java.util.Set")SET("java.util.Set");
 
     private final String value;
 
-    CmrFieldType(String value) {
-       this.value = value;
-   }
+    CmrFieldType(final String value) {
+        this.value = value;
+    }
 
     public String toString() {
         return value;

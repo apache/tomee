@@ -32,18 +32,18 @@ public class SingletonJndiTests extends BasicSingletonTestClient{
     public void test01_initialContext(){
         try{
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
     
     public void test02_Jndi_lookupHome(){
         try{
-            Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+            final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
             assertNotNull("The EJBHome looked up from JNDI is null", obj);
             ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
             assertNotNull("The EJBHome is null after PortableRemoteObject.narrow", ejbHome);
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }

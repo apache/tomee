@@ -31,30 +31,30 @@ import javax.sql.DataSource;
 public class DatabaseBean implements javax.ejb.SessionBean {
 
     private static final long serialVersionUID = 1L;
-    
+
     public SessionContext context;
     public InitialContext jndiContext;
 
     public DatabaseBean() {
-        this.getClass();        
+        this.getClass();
     }
 
     public void ejbCreate() throws javax.ejb.CreateException {
         try {
             jndiContext = new InitialContext();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public void executeQuery(String statement) throws java.sql.SQLException {
+    public void executeQuery(final String statement) throws java.sql.SQLException {
         try {
 
-            DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
-            Connection con = ds.getConnection();
+            final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
+            final Connection con = ds.getConnection();
 
             try {
-                PreparedStatement stmt = con.prepareStatement(statement);
+                final PreparedStatement stmt = con.prepareStatement(statement);
                 try {
                     stmt.executeQuery();
                 } finally {
@@ -63,27 +63,27 @@ public class DatabaseBean implements javax.ejb.SessionBean {
             } finally {
                 con.close();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Cannot execute the statement: " + statement + e.getMessage());
         }
     }
 
-    public boolean execute(String statement) throws java.sql.SQLException {
+    public boolean execute(final String statement) throws java.sql.SQLException {
         boolean retval;
         Connection con = null;
         try {
 
-            DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
+            final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
             con = ds.getConnection();
 
-            Statement stmt = con.createStatement();
+            final Statement stmt = con.createStatement();
             try {
                 retval = stmt.execute(statement);
             } finally {
                 stmt.close();
             }
 
-        } catch (javax.naming.NamingException e) {
+        } catch (final javax.naming.NamingException e) {
 //        } catch (Exception e){
 //            e.printStackTrace();
             //throw new RemoteException("Cannot execute the statement: "+statement, e);
@@ -107,7 +107,7 @@ public class DatabaseBean implements javax.ejb.SessionBean {
     public void ejbRemove() {
     }
 
-    public void setSessionContext(javax.ejb.SessionContext cntx) {
+    public void setSessionContext(final javax.ejb.SessionContext cntx) {
         context = cntx;
     }
 } 

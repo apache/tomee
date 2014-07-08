@@ -34,7 +34,7 @@ public class Yellow implements MessageListener {
     }
 
     @Override
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

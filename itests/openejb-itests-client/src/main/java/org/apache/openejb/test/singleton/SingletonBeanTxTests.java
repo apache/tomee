@@ -57,14 +57,14 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "SINGLETON_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "SINGLETON_test00_CLIENT");
 
         initialContext = new InitialContext(properties);
 
         /*[1] Get bean */
-        Object obj = initialContext.lookup(jndiEJBHomeEntry);
+        final Object obj = initialContext.lookup(jndiEJBHomeEntry);
         ejbHome = (BeanTxSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BeanTxSingletonHome.class);
         ejbObject = ejbHome.create();
 
@@ -101,9 +101,9 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      */
     public void test01_EJBContext_getUserTransaction(){
         try{
-           Transaction t = ejbObject.getUserTransaction();
+           final Transaction t = ejbObject.getUserTransaction();
            assertNotNull("UserTransaction is null.", t);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -128,9 +128,9 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      */
     public void test02_java_comp_UserTransaction(){
         try{
-            Transaction t = ejbObject.jndiUserTransaction();
+            final Transaction t = ejbObject.jndiUserTransaction();
             assertNotNull("UserTransaction is null. Could not retreive a UserTransaction from the bean's JNDI namespace.", t);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Could not retreive a UserTransaction from the bean's JNDI namespace. Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -150,7 +150,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test03_EJBContext_setRollbackOnly(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -170,7 +170,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test04_EJBContext_getRollbackOnly(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -180,7 +180,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      */
     public void test05_singleTransactionCommit(){
         try{
-            Account expected = new Account("123-45-6789","Joe","Cool",40000);
+            final Account expected = new Account("123-45-6789","Joe","Cool",40000);
             Account actual = new Account();
 
             ejbObject.openAccount(expected, new Boolean(false));
@@ -188,9 +188,9 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
 
             assertNotNull( "The transaction was not commited.  The record is null", actual );
             assertEquals( "The transaction was not commited cleanly.", expected, actual );
-        } catch (RollbackException re){
+        } catch (final RollbackException re){
             fail("Transaction was rolledback.  Received Exception "+re.getClass()+ " : "+re.getMessage());
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -201,17 +201,17 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * sent to the client, the server blocks.
      */
     public void BUG_test06_singleTransactionRollback(){
-        Account expected = new Account("234-56-7890","Charlie","Brown", 20000);
-        Account actual   = new Account();
+        final Account expected = new Account("234-56-7890","Charlie","Brown", 20000);
+        final Account actual   = new Account();
 
         // Try and add the account in a transaction.  This should fail and 
         // throw a RollbackException
         try{
             ejbObject.openAccount(expected, new Boolean(true));
             fail( "A javax.transaction.RollbackException should have been thrown." );
-        } catch (RollbackException re){
+        } catch (final RollbackException re){
             // Good.
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         
@@ -235,7 +235,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test07_serialTransactions(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -253,7 +253,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test08_nestedTransactions(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -278,7 +278,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test09_beginWithNoCommit(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -327,7 +327,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test10_scenario1_NoneNone(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -376,7 +376,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase{
     public void TODO_test11_scenario2_T1None(){
         try{
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

@@ -24,15 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Indicates that an arbitrary SQL statement should be used to
- *                 generate the next ID.
- *             
- * 
+ * Indicates that an arbitrary SQL statement should be used to
+ * generate the next ID.
+ * <p/>
+ * <p/>
  * <p>Java class for sql-generatorType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="sql-generatorType">
  *   &lt;complexContent>
@@ -45,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sql-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -55,18 +52,16 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class SqlGeneratorType {
 
-    @XmlElement(name="sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String sql;
     @XmlElement(name = "return-type", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String returnType;
 
     /**
      * Gets the value of the sql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSql() {
         return sql;
@@ -74,23 +69,19 @@ public class SqlGeneratorType {
 
     /**
      * Sets the value of the sql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSql(String value) {
+    public void setSql(final String value) {
         this.sql = value;
     }
 
     /**
      * Gets the value of the returnType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getReturnType() {
         return returnType;
@@ -98,13 +89,11 @@ public class SqlGeneratorType {
 
     /**
      * Sets the value of the returnType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setReturnType(String value) {
+    public void setReturnType(final String value) {
         this.returnType = value;
     }
 

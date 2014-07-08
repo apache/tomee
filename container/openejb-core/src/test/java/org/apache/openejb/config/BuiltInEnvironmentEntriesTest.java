@@ -102,7 +102,7 @@ public class BuiltInEnvironmentEntriesTest {
 
             final Field[] fields = this.getClass().getDeclaredFields();
 
-            for (Field field : fields) {
+            for (final Field field : fields) {
                 SetAccessible.on(field);
                 Assert.assertNotNull(field.getName(), field.get(this));
             }
@@ -143,7 +143,7 @@ public class BuiltInEnvironmentEntriesTest {
 
             final Field[] fields = this.getClass().getDeclaredFields();
 
-            for (Field field : fields) {
+            for (final Field field : fields) {
                 SetAccessible.on(field);
                 Assert.assertNotNull(field.getName(), field.get(this));
             }

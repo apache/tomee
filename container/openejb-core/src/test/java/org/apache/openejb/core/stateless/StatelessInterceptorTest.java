@@ -66,8 +66,8 @@ public class StatelessInterceptorTest extends TestCase {
         }
         init = true;
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -75,18 +75,18 @@ public class StatelessInterceptorTest extends TestCase {
 
         assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
 
-        EjbJarInfo ejbJar = config.configureApplication(buildTestApp());
+        final EjbJarInfo ejbJar = config.configureApplication(buildTestApp());
         assertNotNull(ejbJar);
 
         assembler.createApplication(ejbJar);
 
-        Properties properties = new Properties(System.getProperties());
+        final Properties properties = new Properties(System.getProperties());
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         ctx = new InitialContext(properties);
     }
 
     public void test() throws Exception {
-        Target target = (Target) ctx.lookup("TargetBeanLocal");
+        final Target target = (Target) ctx.lookup("TargetBeanLocal");
         target.echo(new ArrayList());
 
         assertCalls(Call.values());
@@ -97,43 +97,43 @@ public class StatelessInterceptorTest extends TestCase {
         assertEquals(123, i);
 
         assertCalls(
-                Call.Default_Invoke_BEFORE,
-                Call.Method_ann_Invoke_BEFORE,
-                Call.Method_dd_Invoke_BEFORE,
-                Call.Bean_Invoke_BEFORE,
-                Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER,
-                Call.Method_dd_Invoke_AFTER,
-                Call.Method_ann_Invoke_AFTER,
-                Call.Default_Invoke_AFTER);
+            Call.Default_Invoke_BEFORE,
+            Call.Method_ann_Invoke_BEFORE,
+            Call.Method_dd_Invoke_BEFORE,
+            Call.Bean_Invoke_BEFORE,
+            Call.Bean_Invoke,
+            Call.Bean_Invoke_AFTER,
+            Call.Method_dd_Invoke_AFTER,
+            Call.Method_ann_Invoke_AFTER,
+            Call.Default_Invoke_AFTER);
         calls.clear();
 
         boolean b = target.echo(true);
         assertTrue(b);
 
         assertCalls(
-                Call.Method_ann_Invoke_BEFORE,
-                Call.Method_dd_Invoke_BEFORE,
-                Call.Bean_Invoke_BEFORE,
-                Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER,
-                Call.Method_dd_Invoke_AFTER,
-                Call.Method_ann_Invoke_AFTER);
+            Call.Method_ann_Invoke_BEFORE,
+            Call.Method_dd_Invoke_BEFORE,
+            Call.Bean_Invoke_BEFORE,
+            Call.Bean_Invoke,
+            Call.Bean_Invoke_AFTER,
+            Call.Method_dd_Invoke_AFTER,
+            Call.Method_ann_Invoke_AFTER);
         calls.clear();
 
         try {
             target.throwAppException();
             fail("Should have thrown app exception");
-        } catch (AppException e) {
+        } catch (final AppException e) {
             // pass
         }
 
         try {
             target.throwSysException();
             fail("Should have thrown a sys exception");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // so far so good
-            Throwable cause = e.getCause();
+            final Throwable cause = e.getCause();
             if (!(cause instanceof SysException)) {
                 fail("Inner Exception should be a SysException");
             }
@@ -141,7 +141,7 @@ public class StatelessInterceptorTest extends TestCase {
 
         calls.clear();
 
-        Target target2 = (Target) ctx.lookup("Target2BeanLocal");
+        final Target target2 = (Target) ctx.lookup("Target2BeanLocal");
 
         i = target2.echo(123);
         assertEquals(123, i);
@@ -152,22 +152,22 @@ public class StatelessInterceptorTest extends TestCase {
         assertEquals(123, i);
 
         assertCalls(
-                Call.Method_ann_Invoke_BEFORE,
-                Call.Bean_Invoke_BEFORE,
-                Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER,
-                Call.Method_ann_Invoke_AFTER);
+            Call.Method_ann_Invoke_BEFORE,
+            Call.Bean_Invoke_BEFORE,
+            Call.Bean_Invoke,
+            Call.Bean_Invoke_AFTER,
+            Call.Method_ann_Invoke_AFTER);
         calls.clear();
 
         b = target2.echo(true);
         assertTrue(b);
 
         assertCalls(
-                Call.Method_ann_Invoke_BEFORE,
-                Call.Bean_Invoke_BEFORE,
-                Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER,
-                Call.Method_ann_Invoke_AFTER);
+            Call.Method_ann_Invoke_BEFORE,
+            Call.Bean_Invoke_BEFORE,
+            Call.Bean_Invoke,
+            Call.Bean_Invoke_AFTER,
+            Call.Method_ann_Invoke_AFTER);
         calls.clear();
     }
 
@@ -175,27 +175,27 @@ public class StatelessInterceptorTest extends TestCase {
     public void testExcludeClassAndDefaultInterceptors() throws Exception {
 
         // 1. Look up the bean it's to be tested against
-        Target target3 = (Target) ctx.lookup("Target3BeanLocal");
+        final Target target3 = (Target) ctx.lookup("Target3BeanLocal");
 
         // 2. Execute intercepted method
         target3.echo(Collections.EMPTY_LIST);
 
         // 3. Assert that appropriate interceptors were executed
         assertCalls(
-                Call.Bean_PostConstruct,
-                Call.Method_ann_Invoke_BEFORE,
-                Call.Bean_Invoke_BEFORE,
-                Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER,
-                Call.Method_ann_Invoke_AFTER);
+            Call.Bean_PostConstruct,
+            Call.Method_ann_Invoke_BEFORE,
+            Call.Bean_Invoke_BEFORE,
+            Call.Bean_Invoke,
+            Call.Bean_Invoke_AFTER,
+            Call.Method_ann_Invoke_AFTER);
 
         // 4. Clean up after yourself
         calls.clear();
     }
 
-    private void assertCalls(Call... expectedCalls) {
-        List expected = Arrays.asList(expectedCalls);
-        assertEquals(join("\n", expected) , join("\n", calls));
+    private void assertCalls(final Call... expectedCalls) {
+        final List expected = Arrays.asList(expectedCalls);
+        assertEquals(join("\n", expected), join("\n", calls));
     }
 
     public static enum Call {
@@ -224,14 +224,14 @@ public class StatelessInterceptorTest extends TestCase {
     }
 
     public static EjbModule buildTestApp() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.setId(StatelessInterceptorTest.class.getName());
-        
-        AssemblyDescriptor ad = ejbJar.getAssemblyDescriptor();
+
+        final AssemblyDescriptor ad = ejbJar.getAssemblyDescriptor();
 
         ejbJar.addEnterpriseBean(new StatelessBean(Target2Bean.class));
 
-        EnterpriseBean bean = ejbJar.addEnterpriseBean(new StatelessBean(TargetBean.class));
+        final EnterpriseBean bean = ejbJar.addEnterpriseBean(new StatelessBean(TargetBean.class));
 
         Interceptor interceptor;
 
@@ -240,24 +240,24 @@ public class StatelessInterceptorTest extends TestCase {
 
         {
             interceptor = ejbJar.addInterceptor(new Interceptor(EchoMethodInterceptorViaDD.class));
-            InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
+            final InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
             binding.setMethod(new NamedMethod(TargetBean.class.getMethod("echo", List.class)));
         }
 
         {
             interceptor = ejbJar.addInterceptor(new Interceptor(EchoMethodInterceptorViaDD.class));
-            InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
+            final InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
             binding.setMethod(new NamedMethod(TargetBean.class.getMethod("echo", int.class)));
         }
 
         {
             interceptor = ejbJar.addInterceptor(new Interceptor(EchoMethodInterceptorViaDD.class));
-            InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
+            final InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean, interceptor));
             binding.setMethod(new NamedMethod(TargetBean.class.getMethod("echo", boolean.class)));
         }
 
-        EnterpriseBean bean3 = ejbJar.addEnterpriseBean(new StatelessBean(Target3Bean.class));
-        InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean3));
+        final EnterpriseBean bean3 = ejbJar.addEnterpriseBean(new StatelessBean(Target3Bean.class));
+        final InterceptorBinding binding = ad.addInterceptorBinding(new InterceptorBinding(bean3));
         binding.setExcludeDefaultInterceptors(true);
         binding.setExcludeClassInterceptors(true);
 
@@ -275,15 +275,15 @@ public class StatelessInterceptorTest extends TestCase {
         }
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Bean_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);
             return o;
         }
 
         @Interceptors({EchoMethodInterceptorViaAnn.class})
-        public List echo(List data){
+        public List echo(final List data) {
             calls.add(Call.Bean_Invoke);
             return data;
         }
@@ -298,7 +298,7 @@ public class StatelessInterceptorTest extends TestCase {
 
         @Interceptors({EchoMethodInterceptorViaAnn.class})
         @ExcludeClassInterceptors
-        public int echo(int i) {
+        public int echo(final int i) {
             calls.add(Call.Bean_Invoke);
             return i;
         }
@@ -306,7 +306,7 @@ public class StatelessInterceptorTest extends TestCase {
         @Interceptors({EchoMethodInterceptorViaAnn.class})
         @ExcludeClassInterceptors
         @ExcludeDefaultInterceptors
-        public boolean echo(boolean i) {
+        public boolean echo(final boolean i) {
             calls.add(Call.Bean_Invoke);
             return i;
         }
@@ -317,15 +317,15 @@ public class StatelessInterceptorTest extends TestCase {
     public static class Target2Bean implements Target {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Bean_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Bean_Invoke_AFTER);
             return o;
         }
 
         @Interceptors({EchoMethodInterceptorViaAnn.class})
-        public List echo(List data){
+        public List echo(final List data) {
             calls.add(Call.Bean_Invoke);
             return data;
         }
@@ -340,7 +340,7 @@ public class StatelessInterceptorTest extends TestCase {
 
         @Interceptors({EchoMethodInterceptorViaAnn.class})
         @ExcludeClassInterceptors
-        public int echo(int i) {
+        public int echo(final int i) {
             calls.add(Call.Bean_Invoke);
             return i;
         }
@@ -348,7 +348,7 @@ public class StatelessInterceptorTest extends TestCase {
         @Interceptors({EchoMethodInterceptorViaAnn.class})
         @ExcludeClassInterceptors
         @ExcludeDefaultInterceptors
-        public boolean echo(boolean i) {
+        public boolean echo(final boolean i) {
             calls.add(Call.Bean_Invoke);
             return i;
         }
@@ -360,9 +360,13 @@ public class StatelessInterceptorTest extends TestCase {
 
     public static interface Target {
         List echo(List data);
+
         void throwAppException() throws AppException;
+
         void throwSysException();
+
         int echo(int i);
+
         boolean echo(boolean b);
     }
 
@@ -379,9 +383,9 @@ public class StatelessInterceptorTest extends TestCase {
     public static class EchoMethodInterceptorViaAnn {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Method_ann_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Method_ann_Invoke_AFTER);
             return o;
         }
@@ -390,9 +394,9 @@ public class StatelessInterceptorTest extends TestCase {
     public static class EchoMethodInterceptorViaDD {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Method_dd_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Method_dd_Invoke_AFTER);
             return o;
         }
@@ -401,16 +405,16 @@ public class StatelessInterceptorTest extends TestCase {
     public static class ClassInterceptor extends SuperClassInterceptor {
 
         @PostConstruct
-        public void construct(InvocationContext context) throws Exception {
+        public void construct(final InvocationContext context) throws Exception {
             calls.add(Call.Class_PostConstruct_BEFORE);
             context.proceed();
             calls.add(Call.Class_PostConstruct_AFTER);
         }
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Class_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Class_Invoke_AFTER);
             return o;
         }
@@ -419,16 +423,16 @@ public class StatelessInterceptorTest extends TestCase {
     public static class SuperClassInterceptor {
 
         @PostConstruct
-        public void superConstruct(InvocationContext context) throws Exception {
+        public void superConstruct(final InvocationContext context) throws Exception {
             calls.add(Call.SuperClass_PostConstruct_BEFORE);
             context.proceed();
             calls.add(Call.SuperClass_PostConstruct_AFTER);
         }
 
         @AroundInvoke
-        public Object superInvoke(InvocationContext context) throws Exception {
+        public Object superInvoke(final InvocationContext context) throws Exception {
             calls.add(Call.SuperClass_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.SuperClass_Invoke_AFTER);
             return o;
         }
@@ -437,25 +441,25 @@ public class StatelessInterceptorTest extends TestCase {
     public static class DefaultInterceptor {
 
         @PostConstruct
-        public void construct(InvocationContext context) throws Exception {
+        public void construct(final InvocationContext context) throws Exception {
             calls.add(Call.Default_PostConstruct_BEFORE);
             context.proceed();
             calls.add(Call.Default_PostConstruct_AFTER);
         }
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Default_Invoke_BEFORE);
-            Object o = context.proceed();
+            final Object o = context.proceed();
             calls.add(Call.Default_Invoke_AFTER);
             return o;
         }
     }
 
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

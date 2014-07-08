@@ -32,15 +32,15 @@ public class ValidationException extends Exception {
 
     public void setDetails(Object... details) {
         this.details = details;
-        if (details == null){
+        if (details == null) {
             details = new Object[]{};
         }
     }
 
-    public String getMessageKey(){
+    public String getMessageKey() {
         return message;
     }
-    
+
     public Object[] getDetails() {
         return details;
     }

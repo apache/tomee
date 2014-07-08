@@ -87,9 +87,9 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public List<String> jndiNames = new ArrayList<String>();
     public boolean loadOnStartup;
-    public final List<String> dependsOn = new ArrayList<String>() ;
+    public final List<String> dependsOn = new ArrayList<String>();
 
-    public TimeoutInfo statefulTimeout;    
+    public TimeoutInfo statefulTimeout;
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
 
     public boolean restService;

@@ -20,18 +20,18 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Map;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class PropertiesAdapter extends XmlAdapter<org.apache.openejb.jee.jpa.unit.Properties, java.util.Properties> {
 
     @Override
-    public org.apache.openejb.jee.jpa.unit.Properties marshal(java.util.Properties v) throws Exception {
+    public org.apache.openejb.jee.jpa.unit.Properties marshal(final java.util.Properties v) throws Exception {
 
         if (v == null) return null;
 
-        org.apache.openejb.jee.jpa.unit.Properties p = new org.apache.openejb.jee.jpa.unit.Properties();
+        final org.apache.openejb.jee.jpa.unit.Properties p = new org.apache.openejb.jee.jpa.unit.Properties();
 
-        for (Map.Entry<Object, Object> entry : v.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : v.entrySet()) {
 
             p.setProperty(entry.getKey().toString(), entry.getValue().toString());
 
@@ -41,13 +41,13 @@ public class PropertiesAdapter extends XmlAdapter<org.apache.openejb.jee.jpa.uni
     }
 
     @Override
-    public java.util.Properties unmarshal(org.apache.openejb.jee.jpa.unit.Properties v) throws Exception {
+    public java.util.Properties unmarshal(final org.apache.openejb.jee.jpa.unit.Properties v) throws Exception {
 
         if (v == null) return null;
 
-        java.util.Properties properties = new java.util.Properties();
+        final java.util.Properties properties = new java.util.Properties();
 
-        for (Property property : v.getProperty()) {
+        for (final Property property : v.getProperty()) {
             properties.setProperty(property.getName(), property.getValue());
         }
 

@@ -32,11 +32,11 @@ import java.util.Map;
 
 /**
  * web-facelettaglibary_2_0.xsd
- *
+ * <p/>
  * <p>Java class for functionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="functionType">
  *   &lt;complexContent>
@@ -54,8 +54,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -96,7 +94,7 @@ public class Function {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -109,7 +107,7 @@ public class Function {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -139,7 +137,7 @@ public class Function {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -147,7 +145,7 @@ public class Function {
         return functionClass;
     }
 
-    public void setFunctionClass(String value) {
+    public void setFunctionClass(final String value) {
         this.functionClass = value;
     }
 
@@ -155,7 +153,7 @@ public class Function {
         return functionSignature;
     }
 
-    public void setFunctionSignature(String value) {
+    public void setFunctionSignature(final String value) {
         this.functionSignature = value;
     }
 
@@ -163,7 +161,7 @@ public class Function {
         return example;
     }
 
-    public void setExample(String value) {
+    public void setExample(final String value) {
         this.example = value;
     }
 
@@ -178,7 +176,7 @@ public class Function {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

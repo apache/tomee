@@ -50,7 +50,7 @@ public class WebContext {
     private final Collection<Injection> injections = new ArrayList<Injection>();
     private Context jndiEnc;
     private final AppContext appContext;
-    private Map<String,Object> bindings;
+    private Map<String, Object> bindings;
     private Map<Object, CreationalContext<?>> creatonalContexts = new ConcurrentHashMap<Object, CreationalContext<?>>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
@@ -179,13 +179,13 @@ public class WebContext {
 
     private static boolean isWeb(final Class<?> beanClass) {
         return Servlet.class.isAssignableFrom(beanClass)
-                || Filter.class.isAssignableFrom(beanClass)
-                || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
-                || ServletContextListener.class.isAssignableFrom(beanClass)
-                || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
-                || ServletRequestListener.class.isAssignableFrom(beanClass)
-                || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
-                || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
+            || Filter.class.isAssignableFrom(beanClass)
+            || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
+            || ServletContextListener.class.isAssignableFrom(beanClass)
+            || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
+            || ServletRequestListener.class.isAssignableFrom(beanClass)
+            || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
+            || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
     }
 
     public WebBeansContext getWebBeansContext() {

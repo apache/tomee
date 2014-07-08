@@ -102,8 +102,8 @@ public class StatelessInstanceManager {
         final int qsize = callbackThreads > 1 ? callbackThreads - 1 : 1;
         final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
         this.executor = new ThreadPoolExecutor(
-                callbackThreads, callbackThreads * 2,
-                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
+            callbackThreads, callbackThreads * 2,
+            1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
 
         this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -208,11 +208,11 @@ public class StatelessInstanceManager {
                 try {
                     callContext.setCurrentOperation(Operation.CREATE);
                     final InterceptorStack ejbCreate = new InterceptorStack(
-                            context.getBean(),
-                            beanContext.getCreateMethod(),
-                            Operation.CREATE,
-                            new ArrayList<InterceptorData>(),
-                            new HashMap<String, Object>()
+                        context.getBean(),
+                        beanContext.getCreateMethod(),
+                        Operation.CREATE,
+                        new ArrayList<InterceptorData>(),
+                        new HashMap<String, Object>()
                     );
                     ejbCreate.invoke();
                 } finally {
@@ -315,10 +315,10 @@ public class StatelessInstanceManager {
         final Options options = new Options(beanContext.getProperties());
 
         final Duration accessTimeout = getDuration(
-                options,
-                "AccessTimeout",
-                getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS), // default timeout
-                TimeUnit.MILLISECONDS
+            options,
+            "AccessTimeout",
+            getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS), // default timeout
+            TimeUnit.MILLISECONDS
         );
         final Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
 

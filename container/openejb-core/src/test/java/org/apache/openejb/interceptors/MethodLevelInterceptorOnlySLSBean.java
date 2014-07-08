@@ -27,8 +27,8 @@ import java.util.List;
 public class MethodLevelInterceptorOnlySLSBean implements MethodLevelInterceptorOnlyParent {
 
     @Interceptors(MethodLevelInterceptorOne.class)
-    public List<String> makePersistent(String entity) {
-        List<String> list = new ArrayList<String>();
+    public List<String> makePersistent(final String entity) {
+        final List<String> list = new ArrayList<String>();
         list.add("makePersistent");
         return list;
     }

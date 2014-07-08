@@ -17,8 +17,6 @@
 
 package org.apache.openejb.jee.jba;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -114,11 +114,9 @@ public class MessageDriven {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -126,23 +124,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     /**
      * Gets the value of the ejbName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbName() {
         return ejbName;
@@ -150,23 +144,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the ejbName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
     /**
      * Gets the value of the activationConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ActivationConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link ActivationConfig }
      */
     public ActivationConfig getActivationConfig() {
         return activationConfig;
@@ -174,23 +164,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the activationConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ActivationConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ActivationConfig }
      */
-    public void setActivationConfig(ActivationConfig value) {
+    public void setActivationConfig(final ActivationConfig value) {
         this.activationConfig = value;
     }
 
     /**
      * Gets the value of the destinationJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationJndiName() {
         return destinationJndiName;
@@ -198,23 +184,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the destinationJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationJndiName(String value) {
+    public void setDestinationJndiName(final String value) {
         this.destinationJndiName = value;
     }
 
     /**
      * Gets the value of the localJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLocalJndiName() {
         return localJndiName;
@@ -222,23 +204,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the localJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLocalJndiName(String value) {
+    public void setLocalJndiName(final String value) {
         this.localJndiName = value;
     }
 
     /**
      * Gets the value of the mdbUser property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMdbUser() {
         return mdbUser;
@@ -246,23 +224,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the mdbUser property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMdbUser(String value) {
+    public void setMdbUser(final String value) {
         this.mdbUser = value;
     }
 
     /**
      * Gets the value of the mdbPasswd property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMdbPasswd() {
         return mdbPasswd;
@@ -270,23 +244,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the mdbPasswd property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMdbPasswd(String value) {
+    public void setMdbPasswd(final String value) {
         this.mdbPasswd = value;
     }
 
     /**
      * Gets the value of the mdbClientId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMdbClientId() {
         return mdbClientId;
@@ -294,23 +264,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the mdbClientId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMdbClientId(String value) {
+    public void setMdbClientId(final String value) {
         this.mdbClientId = value;
     }
 
     /**
      * Gets the value of the mdbSubscriptionId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMdbSubscriptionId() {
         return mdbSubscriptionId;
@@ -318,23 +284,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the mdbSubscriptionId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMdbSubscriptionId(String value) {
+    public void setMdbSubscriptionId(final String value) {
         this.mdbSubscriptionId = value;
     }
 
     /**
      * Gets the value of the resourceAdapterName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResourceAdapterName() {
         return resourceAdapterName;
@@ -342,23 +304,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the resourceAdapterName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResourceAdapterName(String value) {
+    public void setResourceAdapterName(final String value) {
         this.resourceAdapterName = value;
     }
 
     /**
      * Gets the value of the exceptionOnRollback property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExceptionOnRollback() {
         return exceptionOnRollback;
@@ -366,23 +324,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the exceptionOnRollback property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setExceptionOnRollback(String value) {
+    public void setExceptionOnRollback(final String value) {
         this.exceptionOnRollback = value;
     }
 
     /**
      * Gets the value of the timerPersistence property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTimerPersistence() {
         return timerPersistence;
@@ -390,23 +344,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the timerPersistence property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTimerPersistence(String value) {
+    public void setTimerPersistence(final String value) {
         this.timerPersistence = value;
     }
 
     /**
      * Gets the value of the configurationName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConfigurationName() {
         return configurationName;
@@ -414,23 +364,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the configurationName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConfigurationName(String value) {
+    public void setConfigurationName(final String value) {
         this.configurationName = value;
     }
 
     /**
      * Gets the value of the invokerBindings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InvokerBindings }
-     *     
+     *
+     * @return possible object is
+     * {@link InvokerBindings }
      */
     public InvokerBindings getInvokerBindings() {
         return invokerBindings;
@@ -438,23 +384,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the invokerBindings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InvokerBindings }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link InvokerBindings }
      */
-    public void setInvokerBindings(InvokerBindings value) {
+    public void setInvokerBindings(final InvokerBindings value) {
         this.invokerBindings = value;
     }
 
     /**
      * Gets the value of the securityProxy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSecurityProxy() {
         return securityProxy;
@@ -462,37 +404,33 @@ public class MessageDriven {
 
     /**
      * Sets the value of the securityProxy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSecurityProxy(String value) {
+    public void setSecurityProxy(final String value) {
         this.securityProxy = value;
     }
 
     /**
      * Gets the value of the ejbRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRef }
-     * 
-     * 
      */
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
@@ -503,25 +441,23 @@ public class MessageDriven {
 
     /**
      * Gets the value of the ejbLocalRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbLocalRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbLocalRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link EjbLocalRef }
-     * 
-     * 
      */
     public List<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
@@ -532,25 +468,23 @@ public class MessageDriven {
 
     /**
      * Gets the value of the serviceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServiceRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceRef }
-     * 
-     * 
      */
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
@@ -561,11 +495,9 @@ public class MessageDriven {
 
     /**
      * Gets the value of the securityIdentity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityIdentity }
-     *     
+     *
+     * @return possible object is
+     * {@link SecurityIdentity }
      */
     public SecurityIdentity getSecurityIdentity() {
         return securityIdentity;
@@ -573,37 +505,33 @@ public class MessageDriven {
 
     /**
      * Sets the value of the securityIdentity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityIdentity }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SecurityIdentity }
      */
-    public void setSecurityIdentity(SecurityIdentity value) {
+    public void setSecurityIdentity(final SecurityIdentity value) {
         this.securityIdentity = value;
     }
 
     /**
      * Gets the value of the resourceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceRef }
-     * 
-     * 
      */
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
@@ -614,25 +542,23 @@ public class MessageDriven {
 
     /**
      * Gets the value of the resourceEnvRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceEnvRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvRef }
-     * 
-     * 
      */
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
@@ -643,25 +569,23 @@ public class MessageDriven {
 
     /**
      * Gets the value of the messageDestinationRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the messageDestinationRef property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMessageDestinationRef().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDestinationRef }
-     * 
-     * 
      */
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
@@ -672,25 +596,23 @@ public class MessageDriven {
 
     /**
      * Gets the value of the depends property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the depends property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDepends().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Depends }
-     * 
-     * 
      */
     public List<Depends> getDepends() {
         if (depends == null) {
@@ -701,11 +623,9 @@ public class MessageDriven {
 
     /**
      * Gets the value of the iorSecurityConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IorSecurityConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link IorSecurityConfig }
      */
     public IorSecurityConfig getIorSecurityConfig() {
         return iorSecurityConfig;
@@ -713,23 +633,19 @@ public class MessageDriven {
 
     /**
      * Sets the value of the iorSecurityConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IorSecurityConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IorSecurityConfig }
      */
-    public void setIorSecurityConfig(IorSecurityConfig value) {
+    public void setIorSecurityConfig(final IorSecurityConfig value) {
         this.iorSecurityConfig = value;
     }
 
     /**
      * Gets the value of the ejbTimeoutIdentity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbTimeoutIdentity }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbTimeoutIdentity }
      */
     public EjbTimeoutIdentity getEjbTimeoutIdentity() {
         return ejbTimeoutIdentity;
@@ -737,13 +653,11 @@ public class MessageDriven {
 
     /**
      * Sets the value of the ejbTimeoutIdentity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbTimeoutIdentity }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbTimeoutIdentity }
      */
-    public void setEjbTimeoutIdentity(EjbTimeoutIdentity value) {
+    public void setEjbTimeoutIdentity(final EjbTimeoutIdentity value) {
         this.ejbTimeoutIdentity = value;
     }
 

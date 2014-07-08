@@ -107,20 +107,20 @@ public class CheckMethods extends ValidationBase {
                 final List<Method> differentCase = new ArrayList<Method>();
 
                 for (final Method method : beanClass.getMethods()) {
-                    if (method.getName().equals(name)){
+                    if (method.getName().equals(name)) {
                         differentArgs.add(method);
-                    } else if (method.getName().equalsIgnoreCase(name)){
+                    } else if (method.getName().equalsIgnoreCase(name)) {
                         differentCase.add(method);
                     }
                 }
 
                 if (differentArgs.size() > 0) {
                     fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentArgs.size());
-                } 
-                if (differentCase.size() > 0){
+                }
+                if (differentCase.size() > 0) {
                     fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentCase.size());
-                } 
-                if(differentArgs.size() == 0 && differentCase.size() == 0){
+                }
+                if (differentArgs.size() == 0 && differentCase.size() == 0) {
                     fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
                 }
             }
@@ -158,20 +158,20 @@ public class CheckMethods extends ValidationBase {
                 final List<Method> differentCase = new ArrayList<Method>();
 
                 for (final Method method : beanClass.getMethods()) {
-                    if (method.getName().equals(name)){
+                    if (method.getName().equals(name)) {
                         differentArgs.add(method);
-                    } else if (method.getName().equalsIgnoreCase(name)){
+                    } else if (method.getName().equalsIgnoreCase(name)) {
                         differentCase.add(method);
                     }
                 }
 
                 if (differentArgs.size() > 0) {
                     fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentArgs.size());
-                } 
-                if (differentCase.size() > 0){
+                }
+                if (differentCase.size() > 0) {
                     fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentCase.size());
                 }
-                if (differentArgs.size() == 0 && differentCase.size() == 0){
+                if (differentArgs.size() == 0 && differentCase.size() == 0) {
                     fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
                 }
             }
@@ -351,10 +351,10 @@ public class CheckMethods extends ValidationBase {
                 // no-op
             }
 
-            if (!inLocalHome && !inHome){
+            if (!inLocalHome && !inHome) {
                 final String paramString = getParameters(ejbCreate);
 
-                warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(),  paramString, create.toString());
+                warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(), paramString, create.toString());
             }
         }
     }

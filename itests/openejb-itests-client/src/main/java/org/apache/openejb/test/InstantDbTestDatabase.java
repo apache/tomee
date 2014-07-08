@@ -85,15 +85,15 @@ public class InstantDbTestDatabase implements TestDatabase{
         dropTable(_dropAccount);
     }
 
-    private void createTable(String create, String drop) throws java.sql.SQLException {
+    private void createTable(final String create, final String drop) throws java.sql.SQLException {
         try{
             try{
                 database.execute(drop);
-            } catch (Exception e){
+            } catch (final Exception e){
                 // not concerned
             }
             database.execute(create);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -102,10 +102,10 @@ public class InstantDbTestDatabase implements TestDatabase{
         }
     }
 
-    private void dropTable(String drop) throws java.sql.SQLException {
+    private void dropTable(final String drop) throws java.sql.SQLException {
         try {
             database.execute(drop);
-        } catch (RemoteException re){
+        } catch (final RemoteException re){
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException)re.detail;
             } else {
@@ -117,9 +117,9 @@ public class InstantDbTestDatabase implements TestDatabase{
 
     public void start() throws IllegalStateException {
         try {
-            Properties properties = TestManager.getServer().getContextEnvironment();
+            final Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
-        } catch (Exception e){
+        } catch (final Exception e){
             throw (IllegalStateException) new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage()).initCause(e);
         }
 
@@ -129,12 +129,12 @@ public class InstantDbTestDatabase implements TestDatabase{
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
             databaseHome = (DatabaseHome)javax.rmi.PortableRemoteObject.narrow( obj, DatabaseHome.class);
-        } catch (Exception e){
+        } catch (final Exception e){
             throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': "+e.getClass().getName()+" "+e.getMessage());
         }
         try {
             database = databaseHome.create();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw new IllegalStateException("Cannot start database: "+e.getClass().getName()+" "+e.getMessage());
         }
     }
@@ -143,7 +143,7 @@ public class InstantDbTestDatabase implements TestDatabase{
     public void stop() throws IllegalStateException {
     }
     
-    public void init(Properties props) throws IllegalStateException {
+    public void init(final Properties props) throws IllegalStateException {
     }
 }
 

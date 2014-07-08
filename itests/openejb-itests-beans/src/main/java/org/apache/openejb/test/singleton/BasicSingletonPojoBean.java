@@ -33,22 +33,21 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
      * @return
      * @see org.apache.openejb.test.singleton.BasicSingletonObject#businessMethod
      */
-    public String businessMethod(String text){
-        StringBuffer b = new StringBuffer(text);
+    public String businessMethod(final String text) {
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
-    public void scheduleTimer(String name) {
+    public void scheduleTimer(final String name) {
         // ejbContext.getTimerService().createTimer(1, name);
     }
 
-    public Object echo(Object object) {
+    public Object echo(final Object object) {
         return object;
     }
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     public void throwApplicationException() throws ApplicationException {
         throw new ApplicationException("Testing ability to throw Application Exceptions");
@@ -59,7 +58,6 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     public void throwSystemException_NullPointer() {
         throw new NullPointerException("Testing ability to throw System Exceptions");
@@ -67,21 +65,21 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
 
     /**
      * Maps to BasicSingletonObject.getPermissionsReport
-     *
+     * <p/>
      * Returns a report of the bean's
      * runtime permissions
      *
      * @return
      * @see org.apache.openejb.test.singleton.BasicSingletonObject#getPermissionsReport
      */
-    public Properties getPermissionsReport(){
+    public Properties getPermissionsReport() {
         /* TO DO: */
         return null;
     }
 
     /**
      * Maps to BasicSingletonObject.getAllowedOperationsReport
-     *
+     * <p/>
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *
@@ -89,19 +87,19 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
      * @return
      * @see org.apache.openejb.test.singleton.BasicSingletonObject#getAllowedOperationsReport
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName){
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return null;
     }
 
     @Resource
-    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+    public void setSessionContext(final SessionContext ctx) throws EJBException, RemoteException {
     }
 
     public Object remove() {
         return "Executed remove() Method";
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
     }
 }

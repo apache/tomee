@@ -122,14 +122,14 @@ public class NewLoaderLogic {
         // We don't want any of the classes after that
         {
             final Filter end = Filters.packages(
-                                                   "junit.",
-                                                   "org.junit.",
-                                                   "org.testng.",
-                                                   "org.apache.maven.",
-                                                   "org.eclipse.",
-                                                   "com.intellij.",
-                                                   "org.scalatest."
-                                               );
+                "junit.",
+                "org.junit.",
+                "org.testng.",
+                "org.apache.maven.",
+                "org.eclipse.",
+                "com.intellij.",
+                "org.scalatest."
+            );
 
             // Everything between here and the end is part
             // of the call chain in which we are interested
@@ -148,10 +148,10 @@ public class NewLoaderLogic {
         // Finally filter out everything that we definitely don't want
         {
             final Filter unwanted = Filters.packages(
-                                                        "java.",
-                                                        "javax.",
-                                                        "sun.reflect."
-                                                    );
+                "java.",
+                "javax.",
+                "sun.reflect."
+            );
 
             final Iterator<String> classes = callers.iterator();
             while (classes.hasNext()) {
@@ -448,9 +448,9 @@ public class NewLoaderLogic {
             // If the user filtered out too much, that's a problem
             if (urlSet.size() == 0) {
                 final String message = String.format("Classpath Include/Exclude resulted in zero URLs.  There were %s possible URLs before filtering and 0 after: include=\"%s\", exclude=\"%s\"",
-                                                     beforeFiltering.size(),
-                                                     include,
-                                                     exclude);
+                    beforeFiltering.size(),
+                    include,
+                    exclude);
                 logger.error(message);
                 logger.info("Eligible Classpath before filtering:");
 
@@ -513,25 +513,25 @@ public class NewLoaderLogic {
             } else if (time < 10000) {
                 logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
-                               DeploymentFilterable.CLASSPATH_EXCLUDE +
-                               " and " +
-                               DeploymentFilterable.CLASSPATH_INCLUDE +
-                               " settings.  Current settings: exclude='" +
-                               exclude +
-                               "', include='" +
-                               include +
-                               "'");
+                    DeploymentFilterable.CLASSPATH_EXCLUDE +
+                    " and " +
+                    DeploymentFilterable.CLASSPATH_INCLUDE +
+                    " settings.  Current settings: exclude='" +
+                    exclude +
+                    "', include='" +
+                    include +
+                    "'");
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
-                             DeploymentFilterable.CLASSPATH_EXCLUDE +
-                             "='" +
-                             exclude +
-                             "', " +
-                             DeploymentFilterable.CLASSPATH_INCLUDE +
-                             "='" +
-                             include +
-                             "'");
+                    DeploymentFilterable.CLASSPATH_EXCLUDE +
+                    "='" +
+                    exclude +
+                    "', " +
+                    DeploymentFilterable.CLASSPATH_INCLUDE +
+                    "='" +
+                    include +
+                    "'");
                 final List<String> list = new ArrayList<String>();
                 for (final URL url : urls) {
                     list.add(url.toExternalForm());
@@ -564,7 +564,7 @@ public class NewLoaderLogic {
         @Override
         public boolean accept(final String name) {
             return super.accept(name)
-                   || name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix);
+                || name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix);
         }
     }
 }

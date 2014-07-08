@@ -33,7 +33,7 @@ public class MessageDestination {
         return messageDestinationName;
     }
 
-    public void setMessageDestinationName(String value) {
+    public void setMessageDestinationName(final String value) {
         this.messageDestinationName = value;
     }
 
@@ -41,7 +41,7 @@ public class MessageDestination {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 }

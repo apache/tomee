@@ -16,5 +16,3 @@
  */
 package org.apache.openejb.jee.bval;
 
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;

@@ -37,7 +37,7 @@ public class ParameterEncoding {
         return formHintField;
     }
 
-    public void setFormHintField(String value) {
+    public void setFormHintField(final String value) {
         this.formHintField = value;
     }
 
@@ -45,7 +45,7 @@ public class ParameterEncoding {
         return defaultCharset;
     }
 
-    public void setDefaultCharset(String value) {
+    public void setDefaultCharset(final String value) {
         this.defaultCharset = value;
     }
 }

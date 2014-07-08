@@ -34,7 +34,7 @@ import java.util.Date;
  * There's nothing in the spec which says a timeout-less bean cannot call getTimerService. So, we now have NullEjbTimerServiceImpl, which does not do very much...
  */
 public class NullEjbTimerServiceImpl implements EjbTimerService {
-    
+
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, NullEjbTimerServiceImpl.class);
 
     public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final ScheduleExpression schedule, final TimerConfig timerConfig) {
@@ -44,32 +44,32 @@ public class NullEjbTimerServiceImpl implements EjbTimerService {
 
     public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;   
+        return null;
     }
 
     public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;    
+        return null;
     }
 
     public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long initialDuration, final long intervalDuration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;    
+        return null;
     }
 
     public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long duration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;    
+        return null;
     }
 
     public Timer getTimer(final long id) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;   
+        return null;
     }
 
     public Collection<Timer> getTimers(final Object primaryKey) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
-        return null;    
+        return null;
     }
 
     public void start() throws OpenEJBException {

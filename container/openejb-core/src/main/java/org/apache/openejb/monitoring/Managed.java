@@ -26,5 +26,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
 public @interface Managed {
     String description() default "";
+
     boolean append() default false;
 }

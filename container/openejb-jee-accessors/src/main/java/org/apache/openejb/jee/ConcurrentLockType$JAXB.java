@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class ConcurrentLockType$JAXB
-        extends JAXBEnum<ConcurrentLockType> {
+    extends JAXBEnum<ConcurrentLockType> {
 
 
     public ConcurrentLockType$JAXB() {
         super(ConcurrentLockType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "concurrent-lock-typeType".intern()));
     }
 
-    public ConcurrentLockType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public ConcurrentLockType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseConcurrentLockType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, ConcurrentLockType concurrentLockType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrentLockType concurrentLockType)
+        throws Exception {
         return toStringConcurrentLockType(bean, parameterName, context, concurrentLockType);
     }
 
-    public static ConcurrentLockType parseConcurrentLockType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static ConcurrentLockType parseConcurrentLockType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Read".equals(value)) {
             return ConcurrentLockType.READ;
         } else if ("Write".equals(value)) {
@@ -52,8 +52,8 @@ public class ConcurrentLockType$JAXB
         }
     }
 
-    public static String toStringConcurrentLockType(Object bean, String parameterName, RuntimeContext context, ConcurrentLockType concurrentLockType)
-            throws Exception {
+    public static String toStringConcurrentLockType(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrentLockType concurrentLockType)
+        throws Exception {
         if (ConcurrentLockType.READ == concurrentLockType) {
             return "Read";
         } else if (ConcurrentLockType.WRITE == concurrentLockType) {

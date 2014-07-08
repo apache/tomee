@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class ResSharingScope$JAXB
-        extends JAXBEnum<ResSharingScope> {
+    extends JAXBEnum<ResSharingScope> {
 
 
     public ResSharingScope$JAXB() {
         super(ResSharingScope.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "resSharingScope".intern()));
     }
 
-    public ResSharingScope parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public ResSharingScope parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseResSharingScope(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, ResSharingScope resSharingScope)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ResSharingScope resSharingScope)
+        throws Exception {
         return toStringResSharingScope(bean, parameterName, context, resSharingScope);
     }
 
-    public static ResSharingScope parseResSharingScope(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static ResSharingScope parseResSharingScope(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Shareable".equals(value)) {
             return ResSharingScope.SHAREABLE;
         } else if ("Unshareable".equals(value)) {
@@ -52,8 +52,8 @@ public class ResSharingScope$JAXB
         }
     }
 
-    public static String toStringResSharingScope(Object bean, String parameterName, RuntimeContext context, ResSharingScope resSharingScope)
-            throws Exception {
+    public static String toStringResSharingScope(final Object bean, final String parameterName, final RuntimeContext context, final ResSharingScope resSharingScope)
+        throws Exception {
         if (ResSharingScope.SHAREABLE == resSharingScope) {
             return "Shareable";
         } else if (ResSharingScope.UNSHAREABLE == resSharingScope) {

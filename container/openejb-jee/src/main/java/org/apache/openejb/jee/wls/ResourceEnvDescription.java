@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for resource-env-description complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="resource-env-description">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-env-description", propOrder = {
@@ -68,11 +66,9 @@ public class ResourceEnvDescription {
 
     /**
      * Gets the value of the resourceEnvRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResourceEnvRefName() {
         return resourceEnvRefName;
@@ -80,23 +76,19 @@ public class ResourceEnvDescription {
 
     /**
      * Sets the value of the resourceEnvRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResourceEnvRefName(String value) {
+    public void setResourceEnvRefName(final String value) {
         this.resourceEnvRefName = value;
     }
 
     /**
      * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJndiName() {
         return jndiName;
@@ -104,23 +96,19 @@ public class ResourceEnvDescription {
 
     /**
      * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
     /**
      * Gets the value of the resourceLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResourceLink() {
         return resourceLink;
@@ -128,23 +116,19 @@ public class ResourceEnvDescription {
 
     /**
      * Sets the value of the resourceLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResourceLink(String value) {
+    public void setResourceLink(final String value) {
         this.resourceLink = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -152,13 +136,11 @@ public class ResourceEnvDescription {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

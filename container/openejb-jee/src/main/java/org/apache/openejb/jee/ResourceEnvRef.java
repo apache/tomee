@@ -23,23 +23,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for resource-env-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="resource-env-refType">
  *   &lt;complexContent>
@@ -55,18 +53,16 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-env-refType", propOrder = {
-        "descriptions",
-        "resourceEnvRefName",
-        "resourceEnvRefType",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "resourceEnvRefName",
+    "resourceEnvRefType",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class ResourceEnvRef implements JndiReference {
 
     @XmlTransient
@@ -89,40 +85,40 @@ public class ResourceEnvRef implements JndiReference {
     public ResourceEnvRef() {
     }
 
-    public ResourceEnvRef(String resourceEnvRefName, String resourceEnvRefType) {
+    public ResourceEnvRef(final String resourceEnvRefName, final String resourceEnvRefType) {
         this.resourceEnvRefName = resourceEnvRefName;
         this.resourceEnvRefType = resourceEnvRefType;
     }
 
-    public ResourceEnvRef(String resourceEnvRefName, Class resourceEnvRefType) {
+    public ResourceEnvRef(final String resourceEnvRefName, final Class resourceEnvRefType) {
         this(resourceEnvRefName, resourceEnvRefType.getName());
     }
 
-    public ResourceEnvRef name(String resourceEnvRefName) {
+    public ResourceEnvRef name(final String resourceEnvRefName) {
         this.resourceEnvRefName = resourceEnvRefName;
         return this;
     }
 
-    public ResourceEnvRef type(String resourceEnvRefType) {
+    public ResourceEnvRef type(final String resourceEnvRefType) {
         this.resourceEnvRefType = resourceEnvRefType;
         return this;
     }
 
-    public ResourceEnvRef type(Class<?> resourceEnvRefType) {
+    public ResourceEnvRef type(final Class<?> resourceEnvRefType) {
         return type(resourceEnvRefType.getName());
     }
 
-    public ResourceEnvRef mappedName(String mappedName) {
+    public ResourceEnvRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public ResourceEnvRef lookup(String lookupName) {
+    public ResourceEnvRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(String className, String property) {
+    public ResourceEnvRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.resourceEnvRefName == null) {
@@ -132,7 +128,7 @@ public class ResourceEnvRef implements JndiReference {
         return this;
     }
 
-    public ResourceEnvRef injectionTarget(Class<?> clazz, String property) {
+    public ResourceEnvRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -142,7 +138,7 @@ public class ResourceEnvRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -152,11 +148,11 @@ public class ResourceEnvRef implements JndiReference {
         return getResourceEnvRefType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setResourceEnvRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setResourceEnvRefType(type);
     }
 
@@ -165,7 +161,7 @@ public class ResourceEnvRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -177,7 +173,7 @@ public class ResourceEnvRef implements JndiReference {
         return resourceEnvRefName;
     }
 
-    public void setResourceEnvRefName(String value) {
+    public void setResourceEnvRefName(final String value) {
         this.resourceEnvRefName = value;
     }
 
@@ -185,7 +181,7 @@ public class ResourceEnvRef implements JndiReference {
         return resourceEnvRefType;
     }
 
-    public void setResourceEnvRefType(String value) {
+    public void setResourceEnvRefType(final String value) {
         this.resourceEnvRefType = value;
     }
 
@@ -193,7 +189,7 @@ public class ResourceEnvRef implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -201,7 +197,7 @@ public class ResourceEnvRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -216,17 +212,17 @@ public class ResourceEnvRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "ResourceEnvRef{" +
-                "name='" + resourceEnvRefName + '\'' +
-                ", type='" + resourceEnvRefType + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + resourceEnvRefName + '\'' +
+            ", type='" + resourceEnvRefType + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

@@ -62,7 +62,7 @@ public class ResourceLocalCdiEmTest {
 
     @Module
     public Class<?>[] app() throws Exception {
-        return new Class<?>[] { EMFProducer.class, PersistManager.class };
+        return new Class<?>[]{EMFProducer.class, PersistManager.class};
     }
 
     @Module

@@ -39,7 +39,7 @@ public class IorSecurityConfig {
         return transportConfig;
     }
 
-    public void setTransportConfig(TransportConfig value) {
+    public void setTransportConfig(final TransportConfig value) {
         this.transportConfig = value;
     }
 
@@ -47,7 +47,7 @@ public class IorSecurityConfig {
         return asContext;
     }
 
-    public void setAsContext(AsContext value) {
+    public void setAsContext(final AsContext value) {
         this.asContext = value;
     }
 
@@ -55,7 +55,7 @@ public class IorSecurityConfig {
         return sasContext;
     }
 
-    public void setSasContext(SasContext value) {
+    public void setSasContext(final SasContext value) {
         this.sasContext = value;
     }
 }

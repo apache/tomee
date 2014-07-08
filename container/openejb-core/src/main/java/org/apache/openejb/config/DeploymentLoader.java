@@ -151,7 +151,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                final URL[] urls = new URL[]{ baseUrl };
+                final URL[] urls = new URL[]{baseUrl};
 
                 SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
@@ -196,7 +196,6 @@ public class DeploymentLoader implements DeploymentFilterable {
                         connectorModules.add(aliasModule);
                     }
                 }
-
 
 
                 // Wrap the resource module with an Application Module
@@ -246,7 +245,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (PersistenceModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{ baseUrl }, getOpenEJBClassLoader());
+                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader());
 
                 // wrap the EJB Module with an Application Module
                 final AppModule appModule = new AppModule(classLoader, jarLocation);
@@ -423,8 +422,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 for (final URL url : configurer.additionalURLs()) {
                     try {
                         detectAndAddModuleToApplication(appId, tmpClassLoader,
-                                ejbModules, clientModules, resouceModules, webModules,
-                                new ImmutablePair<String, URL>(URLs.toFile(url).getAbsolutePath(), url));
+                            ejbModules, clientModules, resouceModules, webModules,
+                            new ImmutablePair<String, URL>(URLs.toFile(url).getAbsolutePath(), url));
                     } catch (final Exception e) {
                         jarsXmlLib.add(url);
                     }
@@ -1182,8 +1181,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // create the class loader
         final Map<String, URL[]> urls = new HashMap<String, URL[]>();
-        urls.put(URLS_KEY,  webClassPath.toArray(new URL[webClassPath.size()]));
-        urls.put(RAR_URLS_KEY,  webRars.toArray(new URL[webRars.size()]));
+        urls.put(URLS_KEY, webClassPath.toArray(new URL[webClassPath.size()]));
+        urls.put(RAR_URLS_KEY, webRars.toArray(new URL[webRars.size()]));
         return urls;
     }
 
@@ -1578,7 +1577,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static Map<String, URL> mapDescriptors(final ResourceFinder finder)
-            throws IOException {
+        throws IOException {
         final Map<String, URL> map = finder.getResourcesMap(ddDir);
 
         if (map.size() == 0) {
@@ -1660,7 +1659,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
                     if (!entry.isDirectory() && entryName.startsWith("WEB-INF/")
-                            && (KNOWN_DESCRIPTORS.contains(entryName.substring("WEB-INF/".length())) || entryName.endsWith(".xml"))) { // + web.xml, web-fragment.xml...
+                        && (KNOWN_DESCRIPTORS.contains(entryName.substring("WEB-INF/".length())) || entryName.endsWith(".xml"))) { // + web.xml, web-fragment.xml...
                         descriptors.put(entryName, new URL(jarURL, entry.getName()));
                     }
                 }
@@ -1821,7 +1820,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (baseUrl != null) {
             final Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
             if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey(WEB_FRAGMENT_XML) // descriptor
-                    || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
+                || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
                 return WebModule.class;
             }
         }
@@ -1915,7 +1914,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
 
     private Map<String, URL> getDescriptors(final ClassLoader classLoader, final URL pathToScanDescriptors)
-            throws IOException {
+        throws IOException {
         final ResourceFinder finder = new ResourceFinder("", classLoader, pathToScanDescriptors);
 
         return altDDSources(mapDescriptors(finder), false);

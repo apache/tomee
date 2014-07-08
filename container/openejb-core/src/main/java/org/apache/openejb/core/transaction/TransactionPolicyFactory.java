@@ -26,13 +26,13 @@ import org.apache.openejb.SystemException;
 public interface TransactionPolicyFactory {
     /**
      * Creates and begins a TransactionPolicy for the specified TransactionType.
-     *  If this method returns successfully, the specfied transaction type is
+     * If this method returns successfully, the specfied transaction type is
      * active and must be committed.
      *
      * @param type the desired type of transaction
      * @return the active TransactionPolicy
      * @throws ApplicationException if recoverable exception is encountered
-     * @throws SystemException if an unrecoverable exception is encountered
+     * @throws SystemException      if an unrecoverable exception is encountered
      */
     TransactionPolicy createTransactionPolicy(TransactionType type) throws SystemException, ApplicationException;
 }

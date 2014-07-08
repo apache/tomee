@@ -34,7 +34,7 @@ public class MdbConnectionFactoryTests extends MdbTestClient {
     }
 
     public void test01_createConnection() throws Exception {
-        Connection connection = createConnection();
+        final Connection connection = createConnection();
         try {
             assertNotNull("Jms connection is null.", connection);
         } finally {
@@ -43,24 +43,24 @@ public class MdbConnectionFactoryTests extends MdbTestClient {
     }
 
     public void test02_directRpc() throws Exception {
-        Connection connection = createConnection();
+        final Connection connection = createConnection();
         Session session = null;
         MessageProducer producer = null;
         MessageConsumer consumer = null;
         try {
 
             // create request
-            Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<String, Object>();
             request.put("method", "businessMethod(java.lang.String)");
             request.put("args", new Object[]{"cheese"});
 
             // initialize session
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination requestQueue = session.createQueue("BasicMdb");
-            Destination responseQueue = session.createTemporaryQueue();
+            final Destination requestQueue = session.createQueue("BasicMdb");
+            final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a request messages
-            ObjectMessage requestMessage = session.createObjectMessage();
+            final ObjectMessage requestMessage = session.createObjectMessage();
             requestMessage.setJMSReplyTo(responseQueue);
             requestMessage.setObject((Serializable) request);
 
@@ -81,22 +81,22 @@ public class MdbConnectionFactoryTests extends MdbTestClient {
 //                    "***************************************\n\n");
 
             // wait for response mesage
-            Message message = consumer.receive(1000);
+            final Message message = consumer.receive(1000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
             assertTrue("Response message is not an ObjectMessage", message instanceof ObjectMessage);
-            ObjectMessage responseMessage = (ObjectMessage) message;
-            Serializable object = responseMessage.getObject();
+            final ObjectMessage responseMessage = (ObjectMessage) message;
+            final Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
-            Map response = (Map) object;
+            final Map response = (Map) object;
 
             // process results
             if (response.containsKey("exception")) {
                 throw (Exception) response.get("return");
             }
-            String returnValue = (String) response.get("return");
+            final String returnValue = (String) response.get("return");
             assertEquals("eseehc", returnValue);
         } finally {
             MdbUtil.close(producer);
@@ -106,9 +106,9 @@ public class MdbConnectionFactoryTests extends MdbTestClient {
     }
 
     public void test03_proxy() throws Exception {
-        BasicMdbObject basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
+        final BasicMdbObject basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, "BasicMdb");
         try {
-            String returnValue = basicMdbObject.businessMethod("blah");
+            final String returnValue = basicMdbObject.businessMethod("blah");
             assertEquals("halb", returnValue);
         } finally {
             MdbProxy.destroyProxy(basicMdbObject);

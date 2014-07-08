@@ -44,7 +44,7 @@ public class CmpFieldMapping {
         return fieldName;
     }
 
-    public void setFieldName(String value) {
+    public void setFieldName(final String value) {
         this.fieldName = value;
     }
 
@@ -59,7 +59,7 @@ public class CmpFieldMapping {
         return readOnly;
     }
 
-    public void setReadOnly(ReadOnly value) {
+    public void setReadOnly(final ReadOnly value) {
         this.readOnly = value;
     }
 
@@ -67,7 +67,7 @@ public class CmpFieldMapping {
         return fetchedWith;
     }
 
-    public void setFetchedWith(FetchedWith value) {
+    public void setFetchedWith(final FetchedWith value) {
         this.fetchedWith = value;
     }
 }

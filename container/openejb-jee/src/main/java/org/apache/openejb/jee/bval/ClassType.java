@@ -16,20 +16,20 @@
  */
 package org.apache.openejb.jee.bval;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for classType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="classType">
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "classType", propOrder = {
@@ -62,10 +60,8 @@ public class ClassType {
     /**
      * Gets the value of the groupSequence property.
      *
-     * @return
-     *     possible object is
-     *     {@link GroupSequenceType }
-     *
+     * @return possible object is
+     * {@link GroupSequenceType }
      */
     public GroupSequenceType getGroupSequence() {
         return groupSequence;
@@ -74,36 +70,32 @@ public class ClassType {
     /**
      * Sets the value of the groupSequence property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link GroupSequenceType }
-     *
+     * @param value allowed object is
+     *              {@link GroupSequenceType }
      */
-    public void setGroupSequence(GroupSequenceType value) {
+    public void setGroupSequence(final GroupSequenceType value) {
         this.groupSequence = value;
     }
 
     /**
      * Gets the value of the constraint property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the constraint property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConstraint().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ConstraintType }
-     *
-     *
      */
     public List<ConstraintType> getConstraint() {
         if (constraint == null) {
@@ -115,10 +107,8 @@ public class ClassType {
     /**
      * Gets the value of the ignoreAnnotations property.
      *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isIgnoreAnnotations() {
         return ignoreAnnotations;
@@ -127,12 +117,10 @@ public class ClassType {
     /**
      * Sets the value of the ignoreAnnotations property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setIgnoreAnnotations(Boolean value) {
+    public void setIgnoreAnnotations(final Boolean value) {
         this.ignoreAnnotations = value;
     }
 

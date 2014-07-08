@@ -32,13 +32,13 @@ import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
  * @version $Rev$ $Date$
  */
 public class FailoverTest {
-    private long invoke(Calculator bean, int max, String expectedName) {
+    private long invoke(final Calculator bean, final int max, final String expectedName) {
 
         long total = 0;
 
         for (int i = 0; i < max; i++) {
             final long start = System.nanoTime();
-            String name = bean.name();
+            final String name = bean.name();
             System.out.println(name);
             Assert.assertEquals(expectedName, name);
             total += System.nanoTime() - start;
@@ -47,7 +47,7 @@ public class FailoverTest {
         return TimeUnit.NANOSECONDS.toMicros(total / max);
     }
 
-    protected long invoke(Calculator bean, int max) {
+    protected long invoke(final Calculator bean, final int max) {
 
         long total = 0;
 
@@ -60,13 +60,13 @@ public class FailoverTest {
         return TimeUnit.NANOSECONDS.toMicros(total / max);
     }
 
-    public StandaloneServer createMultipointServer(File zip, File dir, String name) throws IOException {
+    public StandaloneServer createMultipointServer(final File zip, final File dir, final String name) throws IOException {
         final File home = new File(dir, name);
 
         Files.mkdir(home);
         Zips.unzip(zip, home, true);
 
-        StandaloneServer server = new StandaloneServer(home, home);
+        final StandaloneServer server = new StandaloneServer(home, home);
         server.killOnExit();
         server.ignoreOut();
         server.setProperty("name", name);

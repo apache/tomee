@@ -33,7 +33,7 @@ public class HeapDump {
         dumpHeap(fileName);
         return fileName;
     }
-    
+
     /**
      * Dumps the java heap to the specified file in hprof format.
      * This method will not overwrite the dump file, so make sure it doesn't already exist.
@@ -46,7 +46,7 @@ public class HeapDump {
             clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
         } catch (final ClassNotFoundException e) {
             System.out.println("ERROR: dumpHeap only works on a Sun Java 1.6+ VM containing " +
-                    "the class com.sun.management.HotSpotDiagnosticMXBean");
+                "the class com.sun.management.HotSpotDiagnosticMXBean");
             return;
         }
 
@@ -55,8 +55,8 @@ public class HeapDump {
         try {
             final MBeanServer server = LocalMBeanServer.get();
             hotspotMBean = ManagementFactory.newPlatformMXBeanProxy(server,
-                    "com.sun.management:type=HotSpotDiagnostic",
-                    clazz);
+                "com.sun.management:type=HotSpotDiagnostic",
+                clazz);
         } catch (final Throwable e) {
             System.out.print("ERROR: dumpHeap was unable to obtain the HotSpotDiagnosticMXBean: ");
             e.printStackTrace();
@@ -73,6 +73,6 @@ public class HeapDump {
         } catch (final Throwable e) {
             System.out.print("ERROR: dumpHeap threw an exception: ");
             e.printStackTrace();
+        }
     }
-}
 }

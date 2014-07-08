@@ -25,17 +25,17 @@ public class StatelessPojoRemoteJndiTests extends BasicStatelessTestClient {
     public void test01_initialContext(){
         try{
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
     public void test02_Jndi_lookupHome(){
         try{
-            Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
+            final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
             ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

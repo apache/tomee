@@ -64,11 +64,11 @@ public class CheckCallbacks extends ValidationBase {
 
             if (bean instanceof Invokable) {
                 final Invokable invokable = (Invokable) bean;
-                
+
                 for (final AroundInvoke aroundInvoke : invokable.getAroundInvoke()) {
                     checkAroundInvoke(ejbClass, aroundInvoke, bean.getEjbName());
                 }
-                
+
                 for (final AroundTimeout aroundTimeout : invokable.getAroundTimeout()) {
                     checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
                 }
@@ -84,10 +84,10 @@ public class CheckCallbacks extends ValidationBase {
 
             final ClassFinder finder = new ClassFinder(ejbClass);
 
-            if (bean instanceof Session ) {
+            if (bean instanceof Session) {
                 final SessionBean session = (SessionBean) bean;
 
-                if (session.getSessionType() == SessionType.STATEFUL ) {
+                if (session.getSessionType() == SessionType.STATEFUL) {
 
                     for (final LifecycleCallback callback : session.getPrePassivate()) {
                         checkCallback(ejbClass, "PrePassivate", callback, bean);
@@ -348,7 +348,7 @@ public class CheckCallbacks extends ValidationBase {
                 final Class<?>[] parameters = possibleMethods.get(0).getParameterTypes();
                 if (parameters.length == 1 && parameters[0].equals(InvocationContext.class)) {
                     fail(bean.getEjbName(), "callback.invocationcontext.notallowed", type,
-                            callback.getMethodName());
+                        callback.getMethodName());
                 } else {
                     fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), callback.getClassName(), getParameters(parameterTypes));
                 }
@@ -361,7 +361,7 @@ public class CheckCallbacks extends ValidationBase {
     private boolean implementsSessionBean(final Class<?> ejbClass) {
         final Class<?>[] interfaces = ejbClass.getInterfaces();
         for (final Class<?> interfce : interfaces) {
-            if(interfce.equals(javax.ejb.SessionBean.class)) {
+            if (interfce.equals(javax.ejb.SessionBean.class)) {
                 return true;
             }
         }
@@ -409,7 +409,7 @@ public class CheckCallbacks extends ValidationBase {
             } else {
                 final ClassFinder classFinder = new ClassFinder(ejbClass);
                 if (classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0 || classFinder.findAnnotatedMethods(BeforeCompletion.class).size() > 0
-                        || classFinder.findAnnotatedMethods(AfterCompletion.class).size() > 0) {
+                    || classFinder.findAnnotatedMethods(AfterCompletion.class).size() > 0) {
                     fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
                 }
             }
@@ -418,7 +418,7 @@ public class CheckCallbacks extends ValidationBase {
 
     private Method getMethod(Class clazz, final String methodName, final Class... parameterTypes) throws NoSuchMethodException {
         NoSuchMethodException original = null;
-        while (clazz != null){
+        while (clazz != null) {
             try {
                 return clazz.getDeclaredMethod(methodName, parameterTypes);
             } catch (final NoSuchMethodException e) {
@@ -433,9 +433,9 @@ public class CheckCallbacks extends ValidationBase {
 
     private List<Method> getMethods(Class clazz, final String methodName) {
         final List<Method> methods = new ArrayList<Method>();
-        while (clazz != null){
+        while (clazz != null) {
             for (final Method method : clazz.getDeclaredMethods()) {
-                if (method.getName().equals(methodName)){
+                if (method.getName().equals(methodName)) {
                     methods.add(method);
                 }
             }

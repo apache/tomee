@@ -23,7 +23,7 @@ package org.apache.openejb.util;
 public class Strings {
 
 
-    public static String lc(final String string){
+    public static String lc(final String string) {
         return lowercase(string);
     }
 
@@ -34,12 +34,12 @@ public class Strings {
 
         final StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < sb.length(); i++) {
-              sb.setCharAt(i, Character.toLowerCase(sb.charAt(i)));
+            sb.setCharAt(i, Character.toLowerCase(sb.charAt(i)));
         }
         return sb.toString();
     }
 
-    public static String uc(final String string){
+    public static String uc(final String string) {
         return uppercase(string);
     }
 
@@ -50,30 +50,30 @@ public class Strings {
 
         final StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < sb.length(); i++) {
-              sb.setCharAt(i, Character.toUpperCase(sb.charAt(i)));
+            sb.setCharAt(i, Character.toUpperCase(sb.charAt(i)));
         }
         return sb.toString();
     }
 
-    public static String ucfirst(final String string){
+    public static String ucfirst(final String string) {
         if (string == null) {
             return null;
         }
 
         final StringBuilder sb = new StringBuilder(string);
-        if (sb.length() > 0){
+        if (sb.length() > 0) {
             sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
         }
         return sb.toString();
     }
 
-    public static String lcfirst(final String string){
+    public static String lcfirst(final String string) {
         if (string == null) {
             return null;
         }
 
         final StringBuilder sb = new StringBuilder(string);
-        if (sb.length() > 0){
+        if (sb.length() > 0) {
             sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
         }
         return sb.toString();
@@ -83,7 +83,7 @@ public class Strings {
         return camelCase(string, "-");
     }
 
-    public static String camelCase(final String string, final String delimiter){
+    public static String camelCase(final String string, final String delimiter) {
         final StringBuilder sb = new StringBuilder();
         final String[] strings = string.split(delimiter);
 

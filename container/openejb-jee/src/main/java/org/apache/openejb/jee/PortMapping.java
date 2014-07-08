@@ -48,7 +48,7 @@ public class PortMapping {
         return portName;
     }
 
-    public void setPortName(String value) {
+    public void setPortName(final String value) {
         this.portName = value;
     }
 
@@ -56,7 +56,7 @@ public class PortMapping {
         return javaPortName;
     }
 
-    public void setJavaPortName(String value) {
+    public void setJavaPortName(final String value) {
         this.javaPortName = value;
     }
 
@@ -64,7 +64,7 @@ public class PortMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

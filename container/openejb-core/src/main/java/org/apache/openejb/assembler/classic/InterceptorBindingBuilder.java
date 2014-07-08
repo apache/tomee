@@ -53,7 +53,7 @@ public class InterceptorBindingBuilder {
     }
 
     private final ArrayList<InterceptorBindingInfo> bindings;
-    private final Map<String, InterceptorData> interceptors =  new HashMap<String, InterceptorData>();
+    private final Map<String, InterceptorData> interceptors = new HashMap<String, InterceptorData>();
 
     public InterceptorBindingBuilder(final ClassLoader cl, final EjbJarInfo ejbJarInfo) throws OpenEJBException {
         bindings = new ArrayList<InterceptorBindingInfo>(ejbJarInfo.interceptorBindings);
@@ -63,7 +63,7 @@ public class InterceptorBindingBuilder {
         packageAndClassBindings = new ArrayList<InterceptorBindingInfo>();
         for (final InterceptorBindingInfo binding : bindings) {
             final Level level = level(binding);
-            if (level == Level.PACKAGE || level == Level.CLASS || level == Level.ANNOTATION_CLASS){
+            if (level == Level.PACKAGE || level == Level.CLASS || level == Level.ANNOTATION_CLASS) {
                 packageAndClassBindings.add(binding);
             }
         }
@@ -73,7 +73,7 @@ public class InterceptorBindingBuilder {
             try {
                 clazz = Class.forName(info.clazz, true, cl);
             } catch (final ClassNotFoundException e) {
-                throw new OpenEJBException("Interceptor class cannot be loaded: "+info.clazz);
+                throw new OpenEJBException("Interceptor class cannot be loaded: " + info.clazz);
             }
             final InterceptorData interceptor = new InterceptorData(clazz);
 
@@ -94,8 +94,7 @@ public class InterceptorBindingBuilder {
         Class<?> clazz = beanContext.getBeanClass();
 
         final InterceptorData beanAsInterceptor = new InterceptorData(clazz);
-        
-        
+
 
         if (beanInfo instanceof StatelessBeanInfo || beanInfo instanceof MessageDrivenBeanInfo) {
             /*
@@ -109,7 +108,7 @@ public class InterceptorBindingBuilder {
             info.className = clazz.getName();
             info.methodName = "ejbCreate";
             info.methodParams = new ArrayList<String>();
-            
+
             try {
                 final Method ejbcreate = MethodInfoUtil.toMethod(clazz, info);
                 if (ejbcreate != null) {
@@ -140,7 +139,7 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, beanInfo.aroundTimeout, beanAsInterceptor.getAroundTimeout());
         }
 
-       
+
         while (clazz != null && clazz != Object.class) {
             for (final Method method : clazz.getDeclaredMethods()) {
                 final List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
@@ -150,7 +149,7 @@ public class InterceptorBindingBuilder {
             }
             clazz = clazz.getSuperclass();
         }
-        
+
 
         final List<InterceptorData> callbackInterceptorDatas = createInterceptorDatas(null, beanInfo.ejbName, this.packageAndClassBindings);
 
@@ -169,7 +168,7 @@ public class InterceptorBindingBuilder {
             final List<String> classes = info.interceptorOrder.size() > 0 ? info.interceptorOrder : info.interceptors;
             for (final String interceptorClassName : classes) {
                 final InterceptorData interceptorData = interceptors.get(interceptorClassName);
-                if (interceptorData == null){
+                if (interceptorData == null) {
                     logger.warning("InterceptorBinding references non-existent (undeclared) interceptor: " + interceptorClassName);
                     continue;
                 }
@@ -180,7 +179,7 @@ public class InterceptorBindingBuilder {
     }
 
 
-    private List<InterceptorBindingInfo> processBindings(final Method method, final String ejbName, final List<InterceptorBindingInfo> bindings){
+    private List<InterceptorBindingInfo> processBindings(final Method method, final String ejbName, final List<InterceptorBindingInfo> bindings) {
         final List<InterceptorBindingInfo> methodBindings = new ArrayList<InterceptorBindingInfo>();
 
         // The only critical thing to understand in this loop is that
@@ -216,7 +215,7 @@ public class InterceptorBindingBuilder {
 
             final Type type = type(level, info);
 
-            if (type == Type.EXPLICIT_ORDERING && !excludes.contains(level)){
+            if (type == Type.EXPLICIT_ORDERING && !excludes.contains(level)) {
 
                 methodBindings.add(info);
                 // An explicit ordering trumps all other bindings of the same level or below
@@ -227,14 +226,14 @@ public class InterceptorBindingBuilder {
                 return methodBindings;
             }
 
-            if (type == Type.SAME_AND_LOWER_EXCLUSION){
+            if (type == Type.SAME_AND_LOWER_EXCLUSION) {
                 // We're done as the only things that will come after this will be
                 // at the same or lower level and we've just been told to exclude them.
                 // Nothing more to do for this method.
                 return methodBindings;
             }
 
-            if (type == Type.SAME_LEVEL_EXCLUSION){
+            if (type == Type.SAME_LEVEL_EXCLUSION) {
                 excludes.add(level);
             }
 
@@ -271,17 +270,17 @@ public class InterceptorBindingBuilder {
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     *
-     *  - @PostConstruct <any-scope> void <method-name>(InvocationContext)
-     *  - @PreDestroy <any-scope> void <method-name>(InvocationContext)
-     *  - @PrePassivate <any-scope> void <method-name>(InvocationContext)
-     *  - @PostActivate <any-scope> void <method-name>(InvocationContext)
-     *  - @AroundInvoke <any-scope> Object <method-name>(InvocationContext) throws Exception
-     *  - @AroundTimeout <any-scope> Object <method-name>(InvocationContext) throws Exception
+     * <p/>
+     * - @PostConstruct <any-scope> void <method-name>(InvocationContext)
+     * - @PreDestroy <any-scope> void <method-name>(InvocationContext)
+     * - @PrePassivate <any-scope> void <method-name>(InvocationContext)
+     * - @PostActivate <any-scope> void <method-name>(InvocationContext)
+     * - @AroundInvoke <any-scope> Object <method-name>(InvocationContext) throws Exception
+     * - @AroundTimeout <any-scope> Object <method-name>(InvocationContext) throws Exception
      *
      * @param clazz
      * @param callbackInfos the raw CallbackInfo objects
-     * @param callbacks the collection where the created methods will be placed
+     * @param callbacks     the collection where the created methods will be placed
      */
     private void toMethods(final Class<?> clazz, final List<CallbackInfo> callbackInfos, final Set<Method> callbacks) {
         final List<Method> methods = new ArrayList<Method>();
@@ -289,12 +288,12 @@ public class InterceptorBindingBuilder {
         for (final CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
-                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz) && !methods.contains(method)){
+                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz) && !methods.contains(method)) {
                     methods.add(method);
                 }
-                if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)){
+                if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)) {
                     methods.add(method);
-                }  else {
+                } else {
                     // check for a private method on the declared class
 
                     // find declared class
@@ -328,15 +327,15 @@ public class InterceptorBindingBuilder {
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     *
-     *  - @PostConstruct <any-scope> void <method-name>()
-     *  - @PreDestroy <any-scope> void <method-name>()
-     *  - @PrePassivate <any-scope> void <method-name>()
-     *  - @PostActivate <any-scope> void <method-name>()
-     *  - @AfterBegin <any-scope> void <method-name>()
-     *  - @BeforeCompletion <any-scope> void <method-name>()
-     *  - @AfterCompletion <any-scope> void <method-name>(boolean)
-     *
+     * <p/>
+     * - @PostConstruct <any-scope> void <method-name>()
+     * - @PreDestroy <any-scope> void <method-name>()
+     * - @PrePassivate <any-scope> void <method-name>()
+     * - @PostActivate <any-scope> void <method-name>()
+     * - @AfterBegin <any-scope> void <method-name>()
+     * - @BeforeCompletion <any-scope> void <method-name>()
+     * - @AfterCompletion <any-scope> void <method-name>(boolean)
+     * <p/>
      * These apply to the bean class only, interceptor methods use InvocationContext as
      * a parameter.  The toMethods method is used for those.
      *
@@ -359,9 +358,9 @@ public class InterceptorBindingBuilder {
 
             try {
                 Method method = getMethod(usedClazz, callbackInfo.method, parameterTypes);
-                if (callbackInfo.className == null && !methods.contains(method)){
+                if (callbackInfo.className == null && !methods.contains(method)) {
                     methods.add(method);
-                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)){
+                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)) {
                     methods.add(method);
                 } else {
                     // check for a private method on the declared class
@@ -411,7 +410,7 @@ public class InterceptorBindingBuilder {
      */
     private Method getMethod(Class<?> clazz, final String methodName, final Class<?>... parameterTypes) throws NoSuchMethodException {
         NoSuchMethodException original = null;
-        while (clazz != null){
+        while (clazz != null) {
             try {
                 final Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
                 return SetAccessible.on(method);
@@ -465,11 +464,11 @@ public class InterceptorBindingBuilder {
             return Type.EXPLICIT_ORDERING;
         }
 
-        if ((level == Level.CLASS  || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
+        if ((level == Level.CLASS || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
             return Type.SAME_AND_LOWER_EXCLUSION;
         }
 
-        if ((level == Level.CLASS  || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors) {
+        if ((level == Level.CLASS || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors) {
             return Type.SAME_LEVEL_EXCLUSION;
         }
 

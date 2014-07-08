@@ -115,7 +115,7 @@ public class CmpJarBuilder {
      * a CONTAINER persistence type.
      *
      * @return true if the application uses container managed beans,
-     *         false if none are found.
+     * false if none are found.
      */
     private boolean hasCmpBeans() {
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -181,21 +181,21 @@ public class CmpJarBuilder {
 
             // generate the implementation class
             final Cmp2Generator cmp2Generator = new Cmp2Generator(cmpImplClass,
-                                                                  beanClass,
-                                                                  entityBeanInfo.primKeyField,
-                                                                  primKeyClass,
-                                                                  entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
+                beanClass,
+                entityBeanInfo.primKeyField,
+                primKeyClass,
+                entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
 
             // we need to have a complete set of the defined CMR fields available for the 
             // generation process as well. 
             for (final CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
                 final EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
                 final CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
-                                                       cmrFieldInfo.fieldType,
-                                                       CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
-                                                       roleSource.local,
-                                                       cmrFieldInfo.mappedBy.fieldName,
-                                                       cmrFieldInfo.synthetic);
+                    cmrFieldInfo.fieldType,
+                    CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
+                    roleSource.local,
+                    cmrFieldInfo.mappedBy.fieldName,
+                    cmrFieldInfo.synthetic);
                 cmp2Generator.addCmrField(cmrField);
             }
             bytes = cmp2Generator.generate();

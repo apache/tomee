@@ -60,9 +60,9 @@ public class ObserverFailed {
     @Override
     public String toString() {
         return "ObserverFailed{" +
-                "observer=" + observer.getClass().getName() +
-                ", method='" + method.toString() + "'" +
-                ", throwable=" + throwable.getClass().getName() +
-                "} " + event;
+            "observer=" + observer.getClass().getName() +
+            ", method='" + method.toString() + "'" +
+            ", throwable=" + throwable.getClass().getName() +
+            "} " + event;
     }
 }

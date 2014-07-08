@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ConfigProperty$JAXB
-        extends JAXBObject<ConfigProperty> {
+    extends JAXBObject<ConfigProperty> {
 
 
     public ConfigProperty$JAXB() {
         super(ConfigProperty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "config-propertyType".intern()), Text$JAXB.class);
     }
 
-    public static ConfigProperty readConfigProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ConfigProperty readConfigProperty(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConfigProperty(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public static void writeConfigProperty(final XoXMLStreamWriter writer, final ConfigProperty configProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, configProperty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ConfigProperty configProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, configProperty, context);
     }
 
-    public final static ConfigProperty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ConfigProperty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class ConfigProperty$JAXB
             context = new RuntimeContext();
         }
 
-        ConfigProperty configProperty = new ConfigProperty();
+        final ConfigProperty configProperty = new ConfigProperty();
         context.beforeUnmarshal(configProperty, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("config-propertyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ConfigProperty.class);
@@ -83,10 +83,10 @@ public class ConfigProperty$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, configProperty);
                 configProperty.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class ConfigProperty$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("config-property-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyName
-                String configPropertyNameRaw = elementReader.getElementAsString();
+                final String configPropertyNameRaw = elementReader.getElementAsString();
 
-                String configPropertyName;
+                final String configPropertyName;
                 try {
                     configPropertyName = Adapters.collapsedStringAdapterAdapter.unmarshal(configPropertyNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -118,12 +118,12 @@ public class ConfigProperty$JAXB
                 configProperty.configPropertyName = configPropertyName;
             } else if (("config-property-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyType
-                String configPropertyTypeRaw = elementReader.getElementAsString();
+                final String configPropertyTypeRaw = elementReader.getElementAsString();
 
-                String configPropertyType;
+                final String configPropertyType;
                 try {
                     configPropertyType = Adapters.collapsedStringAdapterAdapter.unmarshal(configPropertyTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -131,12 +131,12 @@ public class ConfigProperty$JAXB
                 configProperty.configPropertyType = configPropertyType;
             } else if (("config-property-value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyValue
-                String configPropertyValueRaw = elementReader.getElementAsString();
+                final String configPropertyValueRaw = elementReader.getElementAsString();
 
-                String configPropertyValue;
+                final String configPropertyValue;
                 try {
                     configPropertyValue = Adapters.collapsedStringAdapterAdapter.unmarshal(configPropertyValueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -144,15 +144,15 @@ public class ConfigProperty$JAXB
                 configProperty.configPropertyValue = configPropertyValue;
             } else if (("config-property-ignore" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyIgnore
-                Boolean configPropertyIgnore = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean configPropertyIgnore = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 configProperty.configPropertyIgnore = configPropertyIgnore;
             } else if (("config-property-supports-dynamic-updates" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertySupportsDynamicUpdates
-                Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 configProperty.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
             } else if (("config-property-confidential" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyConfidential
-                Boolean configPropertyConfidential = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean configPropertyConfidential = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 configProperty.configPropertyConfidential = configPropertyConfidential;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-name"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-type"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-value"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-ignore"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-supports-dynamic-updates"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-confidential"));
@@ -161,7 +161,7 @@ public class ConfigProperty$JAXB
         if (descriptions != null) {
             try {
                 configProperty.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, ConfigProperty.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -171,13 +171,13 @@ public class ConfigProperty$JAXB
         return configProperty;
     }
 
-    public final ConfigProperty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ConfigProperty read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ConfigProperty configProperty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ConfigProperty configProperty, RuntimeContext context)
+        throws Exception {
         if (configProperty == null) {
             writer.writeXsiNil();
             return;
@@ -187,7 +187,7 @@ public class ConfigProperty$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ConfigProperty.class != configProperty.getClass()) {
             context.unexpectedSubclass(writer, configProperty, ConfigProperty.class);
             return;
@@ -197,12 +197,12 @@ public class ConfigProperty$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = configProperty.id;
+        final String idRaw = configProperty.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(configProperty, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -212,11 +212,11 @@ public class ConfigProperty$JAXB
         Text[] descriptions = null;
         try {
             descriptions = configProperty.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(configProperty, "descriptions", ConfigProperty.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -228,11 +228,11 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyName
-        String configPropertyNameRaw = configProperty.configPropertyName;
+        final String configPropertyNameRaw = configProperty.configPropertyName;
         String configPropertyName = null;
         try {
             configPropertyName = Adapters.collapsedStringAdapterAdapter.marshal(configPropertyNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(configProperty, "configPropertyName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (configPropertyName != null) {
@@ -244,11 +244,11 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyType
-        String configPropertyTypeRaw = configProperty.configPropertyType;
+        final String configPropertyTypeRaw = configProperty.configPropertyType;
         String configPropertyType = null;
         try {
             configPropertyType = Adapters.collapsedStringAdapterAdapter.marshal(configPropertyTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(configProperty, "configPropertyType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (configPropertyType != null) {
@@ -260,11 +260,11 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyValue
-        String configPropertyValueRaw = configProperty.configPropertyValue;
+        final String configPropertyValueRaw = configProperty.configPropertyValue;
         String configPropertyValue = null;
         try {
             configPropertyValue = Adapters.collapsedStringAdapterAdapter.marshal(configPropertyValueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(configProperty, "configPropertyValue", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (configPropertyValue != null) {
@@ -274,7 +274,7 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyIgnore
-        Boolean configPropertyIgnore = configProperty.configPropertyIgnore;
+        final Boolean configPropertyIgnore = configProperty.configPropertyIgnore;
         if (configPropertyIgnore != null) {
             writer.writeStartElement(prefix, "config-property-ignore", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(configPropertyIgnore));
@@ -282,7 +282,7 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertySupportsDynamicUpdates
-        Boolean configPropertySupportsDynamicUpdates = configProperty.configPropertySupportsDynamicUpdates;
+        final Boolean configPropertySupportsDynamicUpdates = configProperty.configPropertySupportsDynamicUpdates;
         if (configPropertySupportsDynamicUpdates != null) {
             writer.writeStartElement(prefix, "config-property-supports-dynamic-updates", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(configPropertySupportsDynamicUpdates));
@@ -290,7 +290,7 @@ public class ConfigProperty$JAXB
         }
 
         // ELEMENT: configPropertyConfidential
-        Boolean configPropertyConfidential = configProperty.configPropertyConfidential;
+        final Boolean configPropertyConfidential = configProperty.configPropertyConfidential;
         if (configPropertyConfidential != null) {
             writer.writeStartElement(prefix, "config-property-confidential", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(configPropertyConfidential));

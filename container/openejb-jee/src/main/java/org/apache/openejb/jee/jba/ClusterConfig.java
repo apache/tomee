@@ -45,11 +45,9 @@ public class ClusterConfig {
 
     /**
      * Gets the value of the partitionName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPartitionName() {
         return partitionName;
@@ -57,23 +55,19 @@ public class ClusterConfig {
 
     /**
      * Sets the value of the partitionName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPartitionName(String value) {
+    public void setPartitionName(final String value) {
         this.partitionName = value;
     }
 
     /**
      * Gets the value of the homeLoadBalancePolicy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHomeLoadBalancePolicy() {
         return homeLoadBalancePolicy;
@@ -81,23 +75,19 @@ public class ClusterConfig {
 
     /**
      * Sets the value of the homeLoadBalancePolicy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHomeLoadBalancePolicy(String value) {
+    public void setHomeLoadBalancePolicy(final String value) {
         this.homeLoadBalancePolicy = value;
     }
 
     /**
      * Gets the value of the beanLoadBalancePolicy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getBeanLoadBalancePolicy() {
         return beanLoadBalancePolicy;
@@ -105,23 +95,19 @@ public class ClusterConfig {
 
     /**
      * Sets the value of the beanLoadBalancePolicy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setBeanLoadBalancePolicy(String value) {
+    public void setBeanLoadBalancePolicy(final String value) {
         this.beanLoadBalancePolicy = value;
     }
 
     /**
      * Gets the value of the sessionStateManagerJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSessionStateManagerJndiName() {
         return sessionStateManagerJndiName;
@@ -129,13 +115,11 @@ public class ClusterConfig {
 
     /**
      * Sets the value of the sessionStateManagerJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSessionStateManagerJndiName(String value) {
+    public void setSessionStateManagerJndiName(final String value) {
         this.sessionStateManagerJndiName = value;
     }
 

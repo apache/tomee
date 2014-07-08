@@ -30,7 +30,7 @@ public class BmpHandleTests extends BasicBmpTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
         ejbHome = (BasicBmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicBmpHome.class);
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
@@ -48,11 +48,11 @@ public class BmpHandleTests extends BasicBmpTestClient{
     public void test01_getEJBObject(){
 
         try{
-            EJBObject object = ejbHandle.getEJBObject();
+            final EJBObject object = ejbHandle.getEJBObject();
             assertNotNull( "The EJBObject is null", object );
             // Wait until isIdentical is working.
             //assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -68,11 +68,11 @@ public class BmpHandleTests extends BasicBmpTestClient{
             try{
                 ejbObject.businessMethod("Should throw an exception");
                 assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
+            } catch (final Exception e){
                 assertTrue( true );
                 return;
             }
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         } finally{
             ejbObject  = null;

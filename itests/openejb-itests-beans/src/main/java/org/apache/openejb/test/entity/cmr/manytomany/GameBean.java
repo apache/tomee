@@ -28,36 +28,40 @@ import javax.ejb.RemoveException;
 public abstract class GameBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getName();
+
     public abstract void setName(String name);
 
     public abstract Integer getRating();
+
     public abstract void setRating(Integer rating);
 
     // CMR
     public abstract Set<PlatformLocal> getPlatforms();
+
     public abstract void setPlatforms(Set<PlatformLocal> platforms);
-    
-    public Integer ejbCreate(Integer id)  throws CreateException {
+
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public Integer ejbCreate(GamePk gamePk)  throws CreateException {
+    public Integer ejbCreate(final GamePk gamePk) throws CreateException {
         setId(gamePk.id);
         setName(gamePk.name);
         return null;
     }
 
-    public void ejbPostCreate(GamePk gamePk) {
+    public void ejbPostCreate(final GamePk gamePk) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

@@ -107,7 +107,7 @@ public class SunConversion implements DynamicDeployer {
             for (final Web web : sunApplication.getWeb()) {
                 final String webUri = web.getWebUri();
                 for (final WebModule webModule : appModule.getWebModules()) {
-                    if (webUri.equals(webModule.getModuleId()))  {
+                    if (webUri.equals(webModule.getModuleId())) {
                         webModule.setContextRoot(web.getContextRoot());
                         break;
                     }
@@ -121,7 +121,7 @@ public class SunConversion implements DynamicDeployer {
                 }
 
                 // map ejb-refs
-                final Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
+                final Map<String, org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
 
                 // map ejb-ref jndi name declaration to deploymentId
                 for (final EjbRef ref : sunApplication.getEjbRef()) {
@@ -149,7 +149,7 @@ public class SunConversion implements DynamicDeployer {
                 }
 
                 // map resource-env-refs and message-destination-refs
-                final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+                final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
                 resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
                 resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
@@ -200,7 +200,7 @@ public class SunConversion implements DynamicDeployer {
                     refName = normalize(refName);
                     final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
                         for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
@@ -247,14 +247,14 @@ public class SunConversion implements DynamicDeployer {
         Object altDD = appModule.getAltDDs().get("sun-application.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplication.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbSun.unmarshal(SunApplication.class, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplication.class, IO.read((URL)altDD));
+                altDD = JaxbSun.unmarshal(SunApplication.class, IO.read((URL) altDD));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
@@ -269,14 +269,14 @@ public class SunConversion implements DynamicDeployer {
         Object altDD = clientModule.getAltDDs().get("sun-application-client.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplicationClient.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbSun.unmarshal(SunApplicationClient.class, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplicationClient.class, IO.read((URL)altDD));
+                altDD = JaxbSun.unmarshal(SunApplicationClient.class, IO.read((URL) altDD));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
@@ -291,14 +291,14 @@ public class SunConversion implements DynamicDeployer {
         Object altDD = webModule.getAltDDs().get("sun-web.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbSun.unmarshal(SunWebApp.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbSun.unmarshal(SunWebApp.class, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunWebApp.class, IO.read((URL)altDD));
+                altDD = JaxbSun.unmarshal(SunWebApp.class, IO.read((URL) altDD));
             } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
@@ -314,14 +314,14 @@ public class SunConversion implements DynamicDeployer {
         Object altDD = ejbModule.getAltDDs().get("sun-ejb-jar.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunEjbJar.class, IO.read((URL)altDD));
+                altDD = JaxbSun.unmarshal(SunEjbJar.class, IO.read((URL) altDD));
             } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
@@ -337,14 +337,14 @@ public class SunConversion implements DynamicDeployer {
         Object altDD = ejbModule.getAltDDs().get("sun-cmp-mappings.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String)altDD).getBytes()));
+                altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String) altDD).getBytes()));
             } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunCmpMappings.class, IO.read((URL)altDD));
+                altDD = JaxbSun.unmarshal(SunCmpMappings.class, IO.read((URL) altDD));
             } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
@@ -371,7 +371,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        final Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
+        final Map<String, org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
 
         // map ejb-ref jndi name declaration to deploymentId
         for (final EjbRef ref : sunApplicationClient.getEjbRef()) {
@@ -390,7 +390,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
         resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
         resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
@@ -431,7 +431,7 @@ public class SunConversion implements DynamicDeployer {
             refName = normalize(refName);
             final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
                 for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
@@ -487,7 +487,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        final Map<String,JndiReference> refMap = new TreeMap<String,JndiReference>();
+        final Map<String, JndiReference> refMap = new TreeMap<String, JndiReference>();
         refMap.putAll(webApp.getEjbRefMap());
         refMap.putAll(webApp.getEjbLocalRefMap());
 
@@ -507,7 +507,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
         resEnvMap.putAll(webApp.getResourceRefMap());
         resEnvMap.putAll(webApp.getResourceEnvRefMap());
         resEnvMap.putAll(webApp.getMessageDestinationRefMap());
@@ -549,7 +549,7 @@ public class SunConversion implements DynamicDeployer {
             refName = normalize(refName);
             final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
                 for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
@@ -629,8 +629,8 @@ public class SunConversion implements DynamicDeployer {
     }
 
     public void convertModule(final EjbModule ejbModule, final EntityMappings entityMappings) {
-        final Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
-        if (entityMappings != null ) {
+        final Map<String, EntityData> entities = new TreeMap<String, EntityData>();
+        if (entityMappings != null) {
             for (final Entity entity : entityMappings.getEntity()) {
                 entities.put(entity.getDescription(), new EntityData(entity));
             }
@@ -664,7 +664,7 @@ public class SunConversion implements DynamicDeployer {
             return;
         }
 
-        final Map<String,Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String,Map<String, WebserviceEndpoint>>();
+        final Map<String, Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String, Map<String, WebserviceEndpoint>>();
         for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
             final EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
             if (deployment == null) {
@@ -748,7 +748,7 @@ public class SunConversion implements DynamicDeployer {
                     refName = normalize(refName);
                     final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
                         for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
@@ -840,7 +840,7 @@ public class SunConversion implements DynamicDeployer {
             // skip all non-CMP beans
             final EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejb.getEjbName());
             if (!(enterpriseBean instanceof EntityBean) ||
-                    ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
+                ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
                 continue;
             }
             final EntityBean bean = (EntityBean) enterpriseBean;
@@ -1073,7 +1073,7 @@ public class SunConversion implements DynamicDeployer {
         return convertToEjbQl(abstractSchemaName, Collections.<String>emptyList(), queryParams, queryFilter);
     }
 
-    public String convertToEjbQl(final String abstractSchemaName, final Collection<String>  cmpFields, final String queryParams, final String queryFilter) {
+    public String convertToEjbQl(final String abstractSchemaName, final Collection<String> cmpFields, final String queryParams, final String queryFilter) {
         final List<List<String>> variableNames = parseQueryParamters(queryParams);
 
         final StringBuilder ejbQl = new StringBuilder();
@@ -1220,7 +1220,7 @@ public class SunConversion implements DynamicDeployer {
         return tokens;
     }
 
-    private class SunColumnName{
+    private class SunColumnName {
         private final String table;
         private final String column;
 

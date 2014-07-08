@@ -93,7 +93,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
         ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
@@ -128,16 +128,16 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
      */
     public void test01_setSessionContext(){     
         try{
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.JNDI_access_to_java_comp_env );
         
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("setSessionContext");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("setSessionContext");
         
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         
@@ -160,20 +160,20 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
      */
     public void test02_ejbCreate(){    
         try{
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
         
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
         
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -196,20 +196,20 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test03_ejbRemove(){
         try{
         /* TO DO:  This test needs unique functionality to work */
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
     
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -232,20 +232,20 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test04_ejbActivate(){  
         try{
             
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
         
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
  
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -268,20 +268,20 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test05_ejbPassivate(){     
         try{
             
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
         
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
   
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -306,7 +306,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
      */
     public void test06_businessMethod(){
       try{
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_getRollbackOnly );
@@ -315,13 +315,13 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
     
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
         
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         
@@ -347,7 +347,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test07_afterBegin(){
         try{
             
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_getRollbackOnly );
@@ -356,13 +356,13 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("afterBegin");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("afterBegin");
     
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
 
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -388,7 +388,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test08_beforeCompletion(){
         try{
             
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_getRollbackOnly );
@@ -397,13 +397,13 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("beforeCompletion");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("beforeCompletion");
     
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
  
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -426,20 +426,20 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient{
     public void test09_afterCompletion(){    
         try{
             
-        OperationsPolicy policy = new OperationsPolicy();
+        final OperationsPolicy policy = new OperationsPolicy();
         policy.allow( policy.Context_getEJBHome );
         policy.allow( policy.Context_getCallerPrincipal );
         policy.allow( policy.Context_isCallerInRole );
         policy.allow( policy.Context_getEJBObject );
         policy.allow( policy.JNDI_access_to_java_comp_env );
         
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("afterCompletion");
+        final Object expected = policy;
+        final Object actual = ejbObject.getAllowedOperationsReport("afterCompletion");
         
         assertNotNull("The OperationsPolicy is null", actual );
         assertEquals( expected, actual );
  
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

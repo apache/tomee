@@ -132,7 +132,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         }
 
         private static <V> ScheduledFuture<V> newProxy(final AtomicReference<Future<V>> futureHandle) {
-            return ScheduledFuture.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { ScheduledFuture.class }, new ScheduledFutureFacade(futureHandle)));
+            return ScheduledFuture.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ScheduledFuture.class}, new ScheduledFutureFacade(futureHandle)));
         }
     }
 }

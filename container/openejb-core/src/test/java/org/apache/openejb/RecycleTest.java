@@ -29,7 +29,7 @@ import java.util.Properties;
 public class RecycleTest extends TestCase {
 
     public void test() throws Exception {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         InitialContext context = new InitialContext(props);
 

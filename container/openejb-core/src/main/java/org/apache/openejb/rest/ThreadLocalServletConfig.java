@@ -21,7 +21,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.util.Enumeration;
 
-public class ThreadLocalServletConfig extends AbstractRestThreadLocalProxy<ServletConfig>  implements ServletConfig {
+public class ThreadLocalServletConfig extends AbstractRestThreadLocalProxy<ServletConfig> implements ServletConfig {
     protected ThreadLocalServletConfig() {
         super(ServletConfig.class);
     }

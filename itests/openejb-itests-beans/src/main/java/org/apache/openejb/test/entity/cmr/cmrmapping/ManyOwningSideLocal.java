@@ -25,6 +25,8 @@ import javax.ejb.FinderException;
 public interface ManyOwningSideLocal extends EJBLocalObject {
     // CMR
     public OneInverseSideLocal getOneInverseSide();
+
     public void setOneInverseSide(OneInverseSideLocal oneInverseSideLocal);
+
     public void testEJBSelect() throws FinderException;
 }

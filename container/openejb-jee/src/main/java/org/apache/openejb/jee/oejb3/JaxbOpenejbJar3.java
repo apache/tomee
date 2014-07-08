@@ -16,29 +16,29 @@
  */
 package org.apache.openejb.jee.oejb3;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.XMLFilterImpl;
 import org.apache.openejb.jee.JAXBContextFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -46,55 +46,55 @@ import java.io.IOException;
 public class JaxbOpenejbJar3 {
     private static JAXBContext jaxbContext;
 
-    public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshal(type, object, baos);
 
         return new String(baos.toByteArray());
     }
 
-    public static <T> void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
-        JAXBContext ctx2 = getContext(type);
-        Marshaller marshaller = ctx2.createMarshaller();
+    public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
+        final JAXBContext ctx2 = getContext(type);
+        final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
         marshaller.marshal(object, out);
     }
 
-    private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {
+    private static <T> JAXBContext getContext(final Class<T> type) throws JAXBException {
         if (jaxbContext == null) {
             jaxbContext = JAXBContextFactory.newInstance(type);
         }
         return jaxbContext;
     }
 
-    public static <T> T unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
+    public static <T> T unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
-        JAXBContext ctx = getContext(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler(new ValidationEventHandler(){
-            public boolean handleEvent(ValidationEvent validationEvent) {
+        final JAXBContext ctx = getContext(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
 //                System.out.println(validationEvent);
                 return false;
             }
         });
 
 
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+        final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        Object o = unmarshaller.unmarshal(source);
+        final Object o = unmarshaller.unmarshal(source);
         if (o instanceof JAXBElement) {
-            JAXBElement element = (JAXBElement) o;
+            final JAXBElement element = (JAXBElement) o;
             return (T) element.getValue();
         }
         return (T) o;
@@ -103,15 +103,15 @@ public class JaxbOpenejbJar3 {
     public static class NamespaceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public NamespaceFilter(XMLReader xmlReader) {
+        public NamespaceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             return EMPTY_INPUT_SOURCE;
         }
 
-        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
             super.startElement("http://www.openejb.org/openejb-jar/1.1", localName, qname, atts);
         }
     }

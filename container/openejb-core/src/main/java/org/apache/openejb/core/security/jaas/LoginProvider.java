@@ -23,7 +23,6 @@ import java.util.List;
 public interface LoginProvider {
 
     /**
-     *
      * @param user
      * @param password
      * @return It returns the list of groups the authenticated user is part of.

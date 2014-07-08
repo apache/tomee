@@ -153,7 +153,7 @@ public class ScheduleTest extends TestCase {
                 Object ret = null;
                 try {
                     ret = context.proceed();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     throw new Exception(t);
                 } finally {
                     result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);

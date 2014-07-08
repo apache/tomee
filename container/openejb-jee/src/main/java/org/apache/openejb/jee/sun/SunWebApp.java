@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee.sun;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -98,7 +98,7 @@ public class SunWebApp {
         }
     }
 
-    public void setErrorUrl(String value) {
+    public void setErrorUrl(final String value) {
         this.errorUrl = value;
     }
 
@@ -106,7 +106,7 @@ public class SunWebApp {
         return httpservletSecurityProvider;
     }
 
-    public void setHttpservletSecurityProvider(String value) {
+    public void setHttpservletSecurityProvider(final String value) {
         this.httpservletSecurityProvider = value;
     }
 
@@ -114,7 +114,7 @@ public class SunWebApp {
         return contextRoot;
     }
 
-    public void setContextRoot(String value) {
+    public void setContextRoot(final String value) {
         this.contextRoot = value;
     }
 
@@ -143,7 +143,7 @@ public class SunWebApp {
         return sessionConfig;
     }
 
-    public void setSessionConfig(SessionConfig value) {
+    public void setSessionConfig(final SessionConfig value) {
         this.sessionConfig = value;
     }
 
@@ -186,7 +186,7 @@ public class SunWebApp {
         return cache;
     }
 
-    public void setCache(Cache value) {
+    public void setCache(final Cache value) {
         this.cache = value;
     }
 
@@ -194,7 +194,7 @@ public class SunWebApp {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader value) {
+    public void setClassLoader(final ClassLoader value) {
         this.classLoader = value;
     }
 
@@ -202,7 +202,7 @@ public class SunWebApp {
         return jspConfig;
     }
 
-    public void setJspConfig(JspConfig value) {
+    public void setJspConfig(final JspConfig value) {
         this.jspConfig = value;
     }
 
@@ -210,7 +210,7 @@ public class SunWebApp {
         return localeCharsetInfo;
     }
 
-    public void setLocaleCharsetInfo(LocaleCharsetInfo value) {
+    public void setLocaleCharsetInfo(final LocaleCharsetInfo value) {
         this.localeCharsetInfo = value;
     }
 
@@ -218,7 +218,7 @@ public class SunWebApp {
         return parameterEncoding;
     }
 
-    public void setParameterEncoding(ParameterEncoding value) {
+    public void setParameterEncoding(final ParameterEncoding value) {
         this.parameterEncoding = value;
     }
 

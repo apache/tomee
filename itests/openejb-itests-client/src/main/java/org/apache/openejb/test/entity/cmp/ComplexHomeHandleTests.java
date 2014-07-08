@@ -32,7 +32,7 @@ public class ComplexHomeHandleTests extends ComplexCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
         ejbHome = (ComplexCmpHome) PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
@@ -42,9 +42,9 @@ public class ComplexHomeHandleTests extends ComplexCmpTestClient {
     //
     public void test01_getEJBHome() {
         try {
-            EJBHome home = ejbHomeHandle.getEJBHome();
+            final EJBHome home = ejbHomeHandle.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

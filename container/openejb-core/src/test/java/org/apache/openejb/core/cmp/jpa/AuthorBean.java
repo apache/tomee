@@ -34,21 +34,22 @@ import java.util.Set;
 
 public class AuthorBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
+
     static {
         try {
             deploymentInfo = new BeanContext("author", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), Author.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext(), null),
-                    AuthorBean.class,
-                    null,
-                    null,
-                    AuthorHome.class,
-                    Author.class,
-                    null, null,
-                    null,
-                    null,
-                    String.class, 
-                    BeanType.CMP_ENTITY, false);
+                AuthorBean.class,
+                null,
+                null,
+                AuthorHome.class,
+                Author.class,
+                null, null,
+                null,
+                null,
+                String.class,
+                BeanType.CMP_ENTITY, false);
             ((BeanContext) deploymentInfo).createMethodMap();
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             throw new RuntimeException(e);
         }
     }
@@ -62,7 +63,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
     public AuthorBean() {
     }
 
-    public AuthorBean(String name) {
+    public AuthorBean(final String name) {
         this.name = name;
     }
 
@@ -70,7 +71,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -78,7 +79,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
         return booksCmr.get(books);
     }
 
-    public void setBooks(Set books) {
+    public void setBooks(final Set books) {
         booksCmr.set(this.books, books);
     }
 
@@ -93,7 +94,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
         booksCmr.deleted(books);
     }
 
-    public Object OpenEJB_addCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) return null;
 
         if ("books".equals(name)) {
@@ -104,7 +105,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
         throw new IllegalArgumentException("Unknown cmr field " + name + " on entity bean of type " + getClass().getName());
     }
 
-    public void OpenEJB_removeCmr(String name, Object value) {
+    public void OpenEJB_removeCmr(final String name, final Object value) {
         if (deleted) return;
 
         if ("books".equals(name)) {
@@ -130,7 +131,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
     public void ejbStore() {
     }
 
-    public void setEntityContext(EntityContext entityContext) {
+    public void setEntityContext(final EntityContext entityContext) {
     }
 
     public void unsetEntityContext() {

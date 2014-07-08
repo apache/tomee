@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for connection-definitionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="connection-definitionType">
  *   &lt;complexContent>
@@ -51,17 +51,15 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connection-definitionType", propOrder = {
-        "managedConnectionFactoryClass",
-        "configProperty",
-        "connectionFactoryInterface",
-        "connectionFactoryImplClass",
-        "connectionInterface",
-        "connectionImplClass"
+    "managedConnectionFactoryClass",
+    "configProperty",
+    "connectionFactoryInterface",
+    "connectionFactoryImplClass",
+    "connectionInterface",
+    "connectionImplClass"
 })
 public class ConnectionDefinition {
 
@@ -86,7 +84,7 @@ public class ConnectionDefinition {
         return managedConnectionFactoryClass;
     }
 
-    public void setManagedConnectionFactoryClass(String value) {
+    public void setManagedConnectionFactoryClass(final String value) {
         this.managedConnectionFactoryClass = value;
     }
 
@@ -101,7 +99,7 @@ public class ConnectionDefinition {
         return connectionFactoryInterface;
     }
 
-    public void setConnectionFactoryInterface(String value) {
+    public void setConnectionFactoryInterface(final String value) {
         this.connectionFactoryInterface = value;
     }
 
@@ -109,7 +107,7 @@ public class ConnectionDefinition {
         return connectionFactoryImplClass;
     }
 
-    public void setConnectionFactoryImplClass(String value) {
+    public void setConnectionFactoryImplClass(final String value) {
         this.connectionFactoryImplClass = value;
     }
 
@@ -117,7 +115,7 @@ public class ConnectionDefinition {
         return connectionInterface;
     }
 
-    public void setConnectionInterface(String value) {
+    public void setConnectionInterface(final String value) {
         this.connectionInterface = value;
     }
 
@@ -125,7 +123,7 @@ public class ConnectionDefinition {
         return connectionImplClass;
     }
 
-    public void setConnectionImplClass(String value) {
+    public void setConnectionImplClass(final String value) {
         this.connectionImplClass = value;
     }
 
@@ -133,7 +131,7 @@ public class ConnectionDefinition {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

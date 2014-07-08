@@ -24,43 +24,42 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Refers to either another module running in the server, or
- *                 an entry in the server's Repository.  In either case this effectively uses a
- *                 URI.
- * 
- *                 When this is pointing to a repository entry, the URI must have a form
- *                 acceptable to the repository, which is currently a URI consisting of
- *                 Maven-style identifiers separated by slashes (groupId/artifactId/version/type,
- *                 for example, the URI "postgresql/postgresql-8.0-jdbc/313/jar" for a file like
- *                 "repository/postgresql/postgresql-8.0-jdbc-313.jar").
- * 
- *                 When this is pointing to a module, the URI should match the
- *                 module's moduleId.  This also looks
- *                 like a Maven-style URI discussed above.
- * 
- *                 The artifactType element can take either a straight URI (as in the examples
- *                 above), or maven-style identifier fragments (groupId, type, artifactId, and
- *                 version), which it will compose into a URI by adding up the fragments with
- *                 slashes in between.
- * 
- *                 There is a correspondence between the xml format and a URI.  For example, the URI
- * 
- *                 postgresql/postgresql-8.0-jdbc/313/jar
- * 
- *                 corresponds to the xml:
- * 
- *                 <groupId>postgresql</groupId>
- *                 <artifactId>postgresql-8.0-jdbc</artifactId>
- *                 <version>313</version>
- *                 <type>jar</type>
- * 
- *           
- * 
+ * Refers to either another module running in the server, or
+ * an entry in the server's Repository.  In either case this effectively uses a
+ * URI.
+ * <p/>
+ * When this is pointing to a repository entry, the URI must have a form
+ * acceptable to the repository, which is currently a URI consisting of
+ * Maven-style identifiers separated by slashes (groupId/artifactId/version/type,
+ * for example, the URI "postgresql/postgresql-8.0-jdbc/313/jar" for a file like
+ * "repository/postgresql/postgresql-8.0-jdbc-313.jar").
+ * <p/>
+ * When this is pointing to a module, the URI should match the
+ * module's moduleId.  This also looks
+ * like a Maven-style URI discussed above.
+ * <p/>
+ * The artifactType element can take either a straight URI (as in the examples
+ * above), or maven-style identifier fragments (groupId, type, artifactId, and
+ * version), which it will compose into a URI by adding up the fragments with
+ * slashes in between.
+ * <p/>
+ * There is a correspondence between the xml format and a URI.  For example, the URI
+ * <p/>
+ * postgresql/postgresql-8.0-jdbc/313/jar
+ * <p/>
+ * corresponds to the xml:
+ * <p/>
+ * <groupId>postgresql</groupId>
+ * <artifactId>postgresql-8.0-jdbc</artifactId>
+ * <version>313</version>
+ * <type>jar</type>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for artifactType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="artifactType">
  *   &lt;complexContent>
@@ -75,8 +74,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "artifactType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -87,22 +84,20 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ArtifactType {
 
-    @XmlElement(name="groupId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "groupId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected String groupId;
-    @XmlElement(name="artifactId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name = "artifactId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected String artifactId;
-    @XmlElement(name="version", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "version", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected String version;
-    @XmlElement(name="type", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "type", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected String type;
 
     /**
      * Gets the value of the groupId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupId() {
         return groupId;
@@ -110,23 +105,19 @@ public class ArtifactType {
 
     /**
      * Sets the value of the groupId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupId(String value) {
+    public void setGroupId(final String value) {
         this.groupId = value;
     }
 
     /**
      * Gets the value of the artifactId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getArtifactId() {
         return artifactId;
@@ -134,23 +125,19 @@ public class ArtifactType {
 
     /**
      * Sets the value of the artifactId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setArtifactId(String value) {
+    public void setArtifactId(final String value) {
         this.artifactId = value;
     }
 
     /**
      * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVersion() {
         return version;
@@ -158,23 +145,19 @@ public class ArtifactType {
 
     /**
      * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
     /**
      * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getType() {
         return type;
@@ -182,13 +165,11 @@ public class ArtifactType {
 
     /**
      * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

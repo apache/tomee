@@ -17,17 +17,16 @@
 
 package org.apache.openejb.monitoring;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
+import org.apache.openejb.api.jmx.NotificationInfo;
+import org.apache.openejb.api.jmx.NotificationInfos;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -47,17 +46,17 @@ import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-
-import org.apache.openejb.api.internal.Internal;
-import org.apache.openejb.api.jmx.Description;
-import org.apache.openejb.api.jmx.MBean;
-import org.apache.openejb.api.jmx.ManagedAttribute;
-import org.apache.openejb.api.jmx.ManagedOperation;
-import org.apache.openejb.api.jmx.NotificationInfo;
-import org.apache.openejb.api.jmx.NotificationInfos;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.webbeans.config.WebBeansContext;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DynamicMBeanWrapper.class);
@@ -65,6 +64,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<Class<?>, CacheInfo>();
 
     private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<Class<?>, Class<? extends Annotation>>();
+
     static {
         final ClassLoader loader = DynamicMBeanWrapper.class.getClassLoader();
         try {
@@ -135,8 +135,8 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             for (final Method m : annotatedMBean.getMethods()) {
                 final int modifiers = m.getModifiers();
                 if (m.getDeclaringClass().equals(Object.class)
-                        || !Modifier.isPublic(modifiers)
-                        || Modifier.isAbstract(modifiers)) {
+                    || !Modifier.isPublic(modifiers)
+                    || Modifier.isAbstract(modifiers)) {
                     continue;
                 }
 
@@ -144,8 +144,8 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
                     final String methodName = m.getName();
                     String attrName = methodName;
                     if ((attrName.startsWith("get") && m.getParameterTypes().length == 0
-                            || attrName.startsWith("set") && m.getParameterTypes().length == 1)
-                            && attrName.length() > 3) {
+                        || attrName.startsWith("set") && m.getParameterTypes().length == 1)
+                        && attrName.length() > 3) {
                         attrName = attrName.substring(3);
                         if (attrName.length() > 1) {
                             attrName = Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1);
@@ -214,11 +214,11 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             }
 
             info = new MBeanInfo(annotatedMBean.getName(),
-                    description,
-                    attributeInfos.toArray(new MBeanAttributeInfo[attributeInfos.size()]),
-                    null, // default constructor is mandatory
-                    operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
-                    notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
+                description,
+                attributeInfos.toArray(new MBeanAttributeInfo[attributeInfos.size()]),
+                null, // default constructor is mandatory
+                operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
+                notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
 
             if (annotatedMBean.getAnnotation(Internal.class) != null) {
                 CACHE.put(annotatedMBean, new CacheInfo(info, getters, setters, operations));

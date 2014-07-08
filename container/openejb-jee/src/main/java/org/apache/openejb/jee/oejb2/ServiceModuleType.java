@@ -17,21 +17,21 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for serviceModuleType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="serviceModuleType">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "serviceModuleType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -54,18 +52,16 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ServiceModuleType {
 
-    @XmlElement(name="environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
+    @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", required = true)
     protected EnvironmentType environment;
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
 
     /**
      * Gets the value of the environment property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnvironmentType }
-     *     
+     *
+     * @return possible object is
+     * {@link EnvironmentType }
      */
     public EnvironmentType getEnvironment() {
         return environment;
@@ -73,38 +69,34 @@ public class ServiceModuleType {
 
     /**
      * Sets the value of the environment property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnvironmentType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EnvironmentType }
      */
-    public void setEnvironment(EnvironmentType value) {
+    public void setEnvironment(final EnvironmentType value) {
         this.environment = value;
     }
 
     /**
      * Gets the value of the service property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the service property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getService().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link GbeanType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}
-     * 
-     * 
      */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {

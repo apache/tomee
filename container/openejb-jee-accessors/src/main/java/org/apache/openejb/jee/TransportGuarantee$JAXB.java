@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class TransportGuarantee$JAXB
-        extends JAXBEnum<TransportGuarantee> {
+    extends JAXBEnum<TransportGuarantee> {
 
 
     public TransportGuarantee$JAXB() {
         super(TransportGuarantee.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "transport-guaranteeType".intern()));
     }
 
-    public TransportGuarantee parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public TransportGuarantee parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseTransportGuarantee(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, TransportGuarantee transportGuarantee)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final TransportGuarantee transportGuarantee)
+        throws Exception {
         return toStringTransportGuarantee(bean, parameterName, context, transportGuarantee);
     }
 
-    public static TransportGuarantee parseTransportGuarantee(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static TransportGuarantee parseTransportGuarantee(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("NONE".equals(value)) {
             return TransportGuarantee.NONE;
         } else if ("INTEGRAL".equals(value)) {
@@ -54,8 +54,8 @@ public class TransportGuarantee$JAXB
         }
     }
 
-    public static String toStringTransportGuarantee(Object bean, String parameterName, RuntimeContext context, TransportGuarantee transportGuarantee)
-            throws Exception {
+    public static String toStringTransportGuarantee(final Object bean, final String parameterName, final RuntimeContext context, final TransportGuarantee transportGuarantee)
+        throws Exception {
         if (TransportGuarantee.NONE == transportGuarantee) {
             return "NONE";
         } else if (TransportGuarantee.INTEGRAL == transportGuarantee) {

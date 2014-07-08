@@ -102,7 +102,7 @@ public class Deploy {
             help(options);
             return;
         }
-        
+
         // make sure that the modules given on the command line are accessible
         final List<?> modules = line.getArgList();
         for (final Object module : modules) {
@@ -148,7 +148,7 @@ public class Deploy {
                 throw new SystemExitException(-1);
             } catch (final NamingException e) {
                 System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl
-                        + "', check the server logs to ensure it exists and has not been removed.");
+                    + "', check the server logs to ensure it exists and has not been removed.");
                 throw new SystemExitException(-2);
             }
         }
@@ -172,7 +172,7 @@ public class Deploy {
                     }
                     destFile = unpack(file, unpacked);
                 } else {
-                    if (undeploy){
+                    if (undeploy) {
                         undeploy(offline, destFile, path, deployer);
                     }
                     checkDest(destFile, file);
@@ -210,34 +210,34 @@ public class Deploy {
             } catch (final ValidationFailedException e) {
                 System.out.println(messages.format("cmd.deploy.validationFailed", path));
                 int level = 2;
-                if (line.hasOption("debug")){
+                if (line.hasOption("debug")) {
                     level = 3;
                 }
                 final AppValidator appValidator = new AppValidator(level, false, true, false);
                 appValidator.printResults(e);
                 exitCode++;
-                if (!delete(destFile)){
+                if (!delete(destFile)) {
                     System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
                 }
             } catch (final Throwable e) {
                 System.out.println(messages.format("cmd.deploy.failed", path));
                 e.printStackTrace(System.out);
                 exitCode++;
-                if (!delete(destFile)){
+                if (!delete(destFile)) {
                     System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
                 }
             }
         }
 
-        if (exitCode != 0){
+        if (exitCode != 0) {
             throw new SystemExitException(exitCode);
         }
     }
 
     private static void undeploy(final boolean offline, final File dest, final String path, final Deployer deployer) throws UndeployException, DeploymentTerminatedException {
         if (offline) {
-            if (dest.exists()){
-                if (!delete(dest)){
+            if (dest.exists()) {
+                if (!delete(dest)) {
                     throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantDelete.undeploy", dest.getAbsolutePath()));
                 }
             }
@@ -280,7 +280,7 @@ public class Deploy {
             System.out.println("");
         }
         for (final PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {
-            System.out.println("    PersistenceUnit(name=" + persistenceUnitInfo.name + ", provider=" + persistenceUnitInfo.provider+ ")");
+            System.out.println("    PersistenceUnit(name=" + persistenceUnitInfo.name + ", provider=" + persistenceUnitInfo.provider + ")");
             System.out.println("");
         }
     }
@@ -292,7 +292,7 @@ public class Deploy {
     }
 
     private static void checkDest(final File destFile, final File file) throws DeploymentTerminatedException {
-        if (destFile.exists()){
+        if (destFile.exists()) {
             throw new DeploymentTerminatedException(messages.format("cmd.deploy.destExists", file.getAbsolutePath(), destFile.getAbsolutePath()));
         }
     }
@@ -338,7 +338,7 @@ public class Deploy {
 
         return false;
     }
-        
+
     private static File unpack(final File jarFile, final File destinationDir) throws OpenEJBException, DeploymentTerminatedException {
 
         try {
@@ -368,7 +368,7 @@ public class Deploy {
 
     private static void help(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("deploy [options] <file> [<file>...]", "\n"+i18n("cmd.deploy.description"), options, "\n");
+        formatter.printHelp("deploy [options] <file> [<file>...]", "\n" + i18n("cmd.deploy.description"), options, "\n");
     }
 
     private static Option option(final String shortOpt, final String longOpt, final String description) {

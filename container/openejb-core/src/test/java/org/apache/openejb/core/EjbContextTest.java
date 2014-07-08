@@ -90,7 +90,10 @@ public class EjbContextTest extends TestCase {
     public static class MySessionBean implements SessionBean {
 
         private Exception exception;
-        public void ejbCreate() throws CreateException{}
+
+        public void ejbCreate() throws CreateException {
+        }
+
         public void test() throws Exception {
             if (exception != null) throw exception;
         }
@@ -104,10 +107,10 @@ public class EjbContextTest extends TestCase {
         public void ejbRemove() throws EJBException, RemoteException {
         }
 
-        public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
+        public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
             try {
                 sessionContext.getEJBLocalHome();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 exception = e;
             }
         }

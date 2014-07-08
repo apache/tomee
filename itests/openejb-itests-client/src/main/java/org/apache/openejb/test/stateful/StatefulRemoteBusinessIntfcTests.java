@@ -31,7 +31,7 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
     // Test remote interface methods
     //
     public void test00_lookupBusinessInterface() throws Exception {
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeBusinessRemote");
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeBusinessRemote");
         assertNotNull(obj);
         assertTrue("instance of BasicStatefulBusinessRemote", obj instanceof BasicStatefulBusinessRemote);
         businessRemote = (BasicStatefulBusinessRemote) obj;
@@ -39,19 +39,19 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
 
     public void test01_businessMethod(){
         try{
-            String expected = "Success";
-            String actual = businessRemote.businessMethod("sseccuS");
+            final String expected = "Success";
+            final String actual = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
 
         try{
-            Integer expected = new Integer(42);
-            Object actual = businessRemote.echo(expected);
+            final Integer expected = new Integer(42);
+            final Object actual = businessRemote.echo(expected);
             assertEquals(expected, actual);
             assertNotSame("pass by value", expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -63,10 +63,10 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
     public void test02_throwApplicationException(){
         try{
             businessRemote.throwApplicationException();
-        } catch (org.apache.openejb.test.ApplicationException e){
+        } catch (final org.apache.openejb.test.ApplicationException e){
             //Good.  This is the correct behaviour
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
@@ -78,10 +78,10 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
      */
     public void test03_invokeAfterApplicationException(){
         try{
-            String expected = "Success";
-            String actual   = businessRemote.businessMethod("sseccuS");
+            final String expected = "Success";
+            final String actual   = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -90,13 +90,13 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
     public void _test04_throwSystemException(){
         try{
             businessRemote.throwSystemException_NullPointer();
-        } catch (Exception e){
+        } catch (final Exception e){
             //Good, so far.
-            Throwable n = e.getCause();
+            final Throwable n = e.getCause();
             assertNotNull("Nested exception should not be is null", n );
             assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (Throwable e){
+        } catch (final Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
@@ -124,7 +124,7 @@ public class StatefulRemoteBusinessIntfcTests extends StatefulTestClient {
     //=================================
     
     public void test06_testRemove(){
-        Object obj =businessRemote.remove();
+        final Object obj =businessRemote.remove();
         assertNotNull(obj);
     }
 

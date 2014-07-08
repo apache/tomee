@@ -86,10 +86,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
                 // <ejb-name>.name = value
                 if (envEntry.getName().contains(".")) {
                     String name = envEntry.getName();
-                    final String ejbName = name.substring(0,name.indexOf('.'));
-                    name = name.substring(name.indexOf('.')+1);
+                    final String ejbName = name.substring(0, name.indexOf('.'));
+                    name = name.substring(name.indexOf('.') + 1);
                     final EnterpriseBean bean = module.getEjbJar().getEnterpriseBean(ejbName);
-                    if (bean != null){
+                    if (bean != null) {
                         // Set the new property name without the <ejb-name>. prefix
                         envEntry.setName(name);
                         apply(bean, envEntry, bean.getEjbName());
@@ -116,10 +116,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     private void apply(final JndiConsumer bean, final EnvEntry newEntry, final String componentName) {
         EnvEntry entry = bean.getEnvEntryMap().get(newEntry.getName());
-        if(entry == null){
+        if (entry == null) {
             entry = bean.getEnvEntryMap().get("java:comp/env/" + newEntry.getName());
         }
-        if (entry != null){
+        if (entry != null) {
             if (SystemInstance.get().getOptions().get("envprops.override", false)) {
                 log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
                 entry.setEnvEntryValue(newEntry.getEnvEntryValue());
