@@ -58,6 +58,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
@@ -196,7 +197,10 @@ public class CmpJpaConversion implements DynamicDeployer {
             // persistenceUnit.setNonJtaDataSource("java:openejb/Resource/Default Unmanaged JDBC Database");
             // todo paramterize this
             final Properties properties = new Properties();
-            properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
+            final String property = SystemInstance.get().getProperty("openejb.cmp.openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
+            if (property != null && !property.isEmpty()) {
+                properties.setProperty("openjpa.jdbc.SynchronizeMappings", property);
+            }
             // properties.setProperty("openjpa.DataCache", "false");
             properties.setProperty("openjpa.Log", "DefaultLevel=INFO");
             persistenceUnit.setProperties(properties);
