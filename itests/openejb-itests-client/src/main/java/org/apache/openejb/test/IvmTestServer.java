@@ -36,9 +36,6 @@ public class IvmTestServer implements TestServer {
         try{
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-            props.put("My DataSource", "new://Resource?type=DataSource");
-            props.put("My DataSource.JdbcUrl", "jdbc:hsqldb:mem:IvmTestServer;hsqldb.tx=MVCC");
-
             Properties p = new Properties();
             p.putAll(props);
             p.put("openejb.loader", "embed");
