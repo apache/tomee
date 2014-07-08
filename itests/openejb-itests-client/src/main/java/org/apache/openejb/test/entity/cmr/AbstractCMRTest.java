@@ -17,24 +17,23 @@
 package org.apache.openejb.test.entity.cmr;
 
 
-import javax.transaction.SystemException;
+import org.apache.openejb.test.TestManager;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
-import javax.sql.DataSource;
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import java.util.Properties;
-import java.sql.SQLException;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-
-import org.apache.openejb.test.TestManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -44,8 +43,8 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
     protected DataSource ds;
     protected InitialContext initialContext;
 
-    public AbstractCMRTest(final String name){
-        super("Entity.CMR."+name);
+    public AbstractCMRTest(final String name) {
+        super("Entity.CMR." + name);
     }
 
     protected void beginTransaction() throws Exception {
@@ -58,6 +57,8 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
             transactionManager.commit();
         } else if (status != Status.STATUS_NO_TRANSACTION) {
             transactionManager.rollback();
+        } else {
+            throw new IllegalStateException("tx status: " + status);
         }
     }
 
@@ -74,7 +75,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
 
         initialContext = new InitialContext(properties);
 
-        final InitialContext jndiContext = new InitialContext( );
+        final InitialContext jndiContext = new InitialContext();
         transactionManager = (TransactionManager) jndiContext.lookup("java:openejb/TransactionManager");
         try {
             ds = (DataSource) jndiContext.lookup("java:openejb/Resource/My DataSource");
@@ -93,7 +94,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
             resultSet = statement.executeQuery("SELECT * FROM " + table);
             final ResultSetMetaData setMetaData = resultSet.getMetaData();
             final int columnCount = setMetaData.getColumnCount();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 final StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= columnCount; i++) {
                     if (i > 1) {
@@ -117,6 +118,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
         try {
             resultSet.close();
         } catch (final SQLException e) {
+            //Ignore
         }
     }
 
@@ -125,6 +127,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
         try {
             statement.close();
         } catch (final SQLException e) {
+            //Ignore
         }
     }
 
@@ -133,6 +136,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
         try {
             connection.close();
         } catch (final SQLException e) {
+            //Ignore
         }
     }
 }
