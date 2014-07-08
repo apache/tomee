@@ -17,13 +17,12 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.AppContext;
-import org.apache.openejb.DeploymentContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.config.WebBeansContext;
 
-public class AppFinder {
+public final class AppFinder {
     public static <T> T findAppContextOrWeb(final ClassLoader cl, final Transformer<T> transformer) {
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         for (final AppContext appContext : containerSystem.getAppContexts()) {
@@ -41,7 +40,7 @@ public class AppFinder {
         return null;
     }
 
-    public static interface Transformer<T> {
+    public interface Transformer<T> {
         T from(AppContext appCtx);
         T from(WebContext webCtx);
     }
