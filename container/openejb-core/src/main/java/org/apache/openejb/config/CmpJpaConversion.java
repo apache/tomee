@@ -58,6 +58,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
@@ -196,7 +197,10 @@ public class CmpJpaConversion implements DynamicDeployer {
             // persistenceUnit.setNonJtaDataSource("java:openejb/Resource/Default Unmanaged JDBC Database");
             // todo paramterize this
             final Properties properties = new Properties();
-            properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
+            final String property = SystemInstance.get().getProperty("openejb.cmp.openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
+            if (property != null && !property.isEmpty()) {
+                properties.setProperty("openjpa.jdbc.SynchronizeMappings", property);
+            }
             // properties.setProperty("openjpa.DataCache", "false");
             properties.setProperty("openjpa.Log", "DefaultLevel=INFO");
             persistenceUnit.setProperties(properties);
@@ -216,7 +220,9 @@ public class CmpJpaConversion implements DynamicDeployer {
             return appModule.getModuleId();
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            return ejbModule.getModuleId();
+            if (ejbModule.getModuleId() != null) {
+                return ejbModule.getModuleId();
+            }
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }
@@ -290,7 +296,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         final Attributes leftAttributes = leftEntity.getAttributes();
         final Map<String, RelationField> leftRelationships = leftAttributes.getRelationshipFieldMap();
 
-        String leftFieldName = null;
+        final String leftFieldName;
         boolean leftSynthetic = false;
         if (leftRole.getCmrField() != null) {
             leftFieldName = leftRole.getCmrField().getCmrFieldName();
@@ -300,7 +306,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
         final boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
 
-        String rightFieldName = null;
+        final String rightFieldName;
         boolean rightSynthetic = false;
         if (rightRole.getCmrField() != null) {
             rightFieldName = rightRole.getCmrField().getCmrFieldName();
@@ -316,7 +322,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             //
 
             // left
-            OneToOne leftOneToOne = null;
+            final OneToOne leftOneToOne;
             leftOneToOne = new OneToOne();
             leftOneToOne.setName(leftFieldName);
             leftOneToOne.setSyntheticField(leftSynthetic);
@@ -324,7 +330,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             addRelationship(leftOneToOne, leftRelationships, leftAttributes.getOneToOne());
 
             // right
-            OneToOne rightOneToOne = null;
+            final OneToOne rightOneToOne;
             rightOneToOne = new OneToOne();
             rightOneToOne.setName(rightFieldName);
             rightOneToOne.setSyntheticField(rightSynthetic);
@@ -341,7 +347,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             //
 
             // left
-            OneToMany leftOneToMany = null;
+            final OneToMany leftOneToMany;
             leftOneToMany = new OneToMany();
             leftOneToMany.setName(leftFieldName);
             leftOneToMany.setSyntheticField(leftSynthetic);
@@ -350,7 +356,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             addRelationship(leftOneToMany, leftRelationships, leftAttributes.getOneToMany());
 
             // right
-            ManyToOne rightManyToOne = null;
+            final ManyToOne rightManyToOne;
             rightManyToOne = new ManyToOne();
             rightManyToOne.setName(rightFieldName);
             rightManyToOne.setSyntheticField(rightSynthetic);
@@ -366,7 +372,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             //
 
             // left
-            ManyToOne leftManyToOne = null;
+            final ManyToOne leftManyToOne;
             leftManyToOne = new ManyToOne();
             leftManyToOne.setName(leftFieldName);
             leftManyToOne.setSyntheticField(leftSynthetic);
@@ -374,7 +380,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             addRelationship(leftManyToOne, leftRelationships, leftAttributes.getManyToOne());
 
             // right
-            OneToMany rightOneToMany = null;
+            final OneToMany rightOneToMany;
             rightOneToMany = new OneToMany();
             rightOneToMany.setName(rightFieldName);
             rightOneToMany.setSyntheticField(rightSynthetic);
@@ -391,7 +397,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             //
 
             // left
-            ManyToMany leftManyToMany = null;
+            final ManyToMany leftManyToMany;
             leftManyToMany = new ManyToMany();
             leftManyToMany.setName(leftFieldName);
             leftManyToMany.setSyntheticField(leftSynthetic);
@@ -399,7 +405,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             addRelationship(leftManyToMany, leftRelationships, leftAttributes.getManyToMany());
 
             // right
-            ManyToMany rightManyToMany = null;
+            final ManyToMany rightManyToMany;
             rightManyToMany = new ManyToMany();
             rightManyToMany.setName(rightFieldName);
             rightManyToMany.setSyntheticField(rightSynthetic);
@@ -414,7 +420,7 @@ public class CmpJpaConversion implements DynamicDeployer {
     }
 
     private <R extends RelationField> R addRelationship(final R relationship, final Map<String, RelationField> existing, final List<R> relationships) {
-        R r = null;
+        R r;
 
         try {
             r = (R) existing.get(relationship.getKey());
@@ -675,7 +681,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             allFields.add(cmpField.getFieldName());
         }
 
-        Class<?> beanClass = null;
+        final Class<?> beanClass;
 
         try {
             beanClass = classLoader.loadClass(bean.getEjbClass());
@@ -777,7 +783,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             mapping.addField(field);
             primaryKeyFields.add(fieldName);
         } else if (bean.getPrimKeyClass() != null) {
-            Class<?> pkClass = null;
+            final Class<?> pkClass;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
                 MappedSuperclass idclass = null;
@@ -891,10 +897,10 @@ public class CmpJpaConversion implements DynamicDeployer {
             // we have a primary key class.  We need to define the mappings between the key class fields 
             // and the bean's managed fields. 
 
-            Class<?> pkClass = null;
+            final Class<?> pkClass;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
-                MappedSuperclass superclass = null;
+                MappedSuperclass superclass;
                 MappedSuperclass idclass = null;
                 for (final Field pkField : pkClass.getFields()) {
                     final String fieldName = pkField.getName();
@@ -996,7 +1002,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
 
     private static Class loadClass(final ClassLoader classLoader, final String className) {
-        Class ejbClass = null;
+        final Class ejbClass;
         try {
             ejbClass = classLoader.loadClass(className);
         } catch (final ClassNotFoundException e) {

@@ -32,7 +32,6 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.model.wadl.WadlGenerator;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
-import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
@@ -246,7 +245,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-                null, app, null, additionalProviders, configuration);
+            null, app, null, additionalProviders, configuration);
     }
 
     @Override
@@ -257,8 +256,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                           final ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
-        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
+        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy), proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
@@ -320,7 +318,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 instances.add(o);
             }
         }
+
         return instances;
+    }
+
+    private static void addMandatoryProviders(final Collection<Object> instances) {
+        instances.add(EJBAccessExceptionMapper.INSTANCE);
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
@@ -507,29 +510,29 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             // Init and register MBeans
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-                    .set("j2eeType", "JAX-RS")
-                    .set("J2EEServer", "openejb")
-                    .set("J2EEApplication", base)
-                    .set("EndpointType", resource.type)
-                    .set("name", resource.classname);
+                .set("j2eeType", "JAX-RS")
+                .set("J2EEServer", "openejb")
+                .set("J2EEApplication", base)
+                .set("EndpointType", resource.type)
+                .set("name", resource.classname);
 
             final ObjectName jmxObjectName = jmxName.build();
             LocalMBeanServer.registerDynamicWrapperSilently(
-                    new RestServiceMBean(resource),
-                    jmxObjectName);
+                new RestServiceMBean(resource),
+                jmxObjectName);
 
             jmxNames.add(jmxObjectName);
 
             LOGGER.info("     Service URI: "
-                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
-                    + Logs.forceLength(resource.type, 4, false) + " "
-                    + Logs.forceLength(resource.classname, classSize, true));
+                + Logs.forceLength(resource.address, addressSize, true) + " -> "
+                + Logs.forceLength(resource.type, 4, false) + " "
+                + Logs.forceLength(resource.classname, classSize, true));
 
             for (final Logs.LogOperationEndpointInfo log : resource.operations) {
                 LOGGER.info("          "
-                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
-                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
-                        + Logs.forceLength(log.method, resource.methodStrSize, true));
+                    + Logs.forceLength(log.http, resource.methodSize, false) + " "
+                    + Logs.forceLength(log.address, addressSize, true) + " ->      "
+                    + Logs.forceLength(log.method, resource.methodStrSize, true));
             }
 
             resource.operations.clear();
@@ -545,7 +548,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         return factory;
     }
 
-    private void configureFactory(final Collection<Object> additionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
+    private void configureFactory(final Collection<Object> givenAdditionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -562,7 +565,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
                 if (instance == null) {
                     instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
-                            .loadClass(resourceComparator).newInstance();
+                        .loadClass(resourceComparator).newInstance();
                 }
                 factory.setResourceComparator(instance);
             } catch (final Exception e) {
@@ -604,6 +607,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
+        // another property to configure the scanning of providers but this one is consistent with current cxf config
+        // the other one is more generic but need another file
+        final boolean ignoreAutoProviders = "false".equalsIgnoreCase(serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "skip-provider-scanning"));
+        final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
         List<Object> providers = null;
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
@@ -612,7 +619,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         if (providers == null) {
-            providers = new ArrayList<Object>();
+            providers = new ArrayList<Object>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             } else {
@@ -620,10 +627,14 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
-        // add the EJB access exception mapper
-        providers.add(EJBAccessExceptionMapper.INSTANCE);
+        if (!ignoreAutoProviders) {
+            addMandatoryProviders(providers);
+        }
 
-        LOGGER.info("Using providers " + providers);
+        LOGGER.info("Using providers:");
+        for (final Object provider : providers) {
+            LOGGER.info("     " + provider);
+        }
         factory.setProviders(providers);
     }
 
@@ -633,11 +644,9 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        final JSONProvider json = new JSONProvider();
-        // TOMEE-514
-        // json.setSerializeAsArray(true);
-
-        return Arrays.asList((Object) jaxb, json);
+        final List<Object> providers = new ArrayList<Object>(4);
+        providers.add(jaxb);
+        return providers;
     }
 
     private static class ProviderFactory implements ServiceInfos.Factory {
