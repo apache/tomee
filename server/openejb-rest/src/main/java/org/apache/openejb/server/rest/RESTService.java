@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -288,14 +289,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     private void addAppProvidersIfNeeded(AppInfo appInfo, WebAppInfo webApp, ClassLoader classLoader, Collection<Object> additionalProviders) {
         if (useDiscoveredProviders(appInfo)) {
-            for (final String name : webApp.jaxRsProviders) {
-                try {
-                    additionalProviders.add(classLoader.loadClass(name));
-                } catch (final ClassNotFoundException e) {
-                    LOGGER.warning("can't load '" + name + "'", e);
-                }
-            }
-            additionalProviders.addAll(appProviders(appInfo, classLoader));
+            final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
+            jaxRsProviders.addAll(appInfo.jaxRsProviders);
+            additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
         }
     }
 
@@ -547,11 +543,15 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, true);
     }
 
-    private Collection<Object> appProviders(final AppInfo appInfo, final ClassLoader classLoader) {
+    private Collection<Object> appProviders(final Collection<String> jaxRsProviders, final ClassLoader classLoader) {
         final Collection<Object> additionalProviders = new HashSet<Object>();
-        for (final String name : appInfo.jaxRsProviders) {
+        for (final String name : jaxRsProviders) {
             try {
-                additionalProviders.add(classLoader.loadClass(name));
+                final Class<?> providerClass = classLoader.loadClass(name);
+                if (providerClass.getAnnotation(Deprecated.class) != null) {
+                    continue;
+                }
+                additionalProviders.add(providerClass);
             } catch (final ClassNotFoundException e) {
                 LOGGER.warning("can't load '" + name + "'", e);
             }
@@ -584,7 +584,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                     final Collection<Object> providers;
                     if (useDiscoveredProviders(appInfo)) {
-                        providers = appProviders(appInfo, appClassLoader);
+                        providers = appProviders(appInfo.jaxRsProviders, appClassLoader);
                     } else {
                         providers = new ArrayList<Object>();
                     }
