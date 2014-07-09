@@ -42,6 +42,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class StatelessInstanceManagerPoolingTest extends TestCase {
 
+    public static final AtomicInteger instances = new AtomicInteger();
+    public static final AtomicInteger discardedInstances = new AtomicInteger();
+
     public void testStatelessBeanPooling() throws Exception {
 
         final InitialContext ctx = new InitialContext();
@@ -74,7 +77,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         //  -- SET --
 
-        assertEquals(10, CounterBean.instances.get());
+        assertEquals(10, instances.get());
 
         //  -- GO --
 
@@ -84,19 +87,19 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         //  -- DONE --
 
-        assertEquals(10, CounterBean.instances.get());
+        assertEquals(10, instances.get());
 
     }
 
     public void testStatelessBeanRelease() throws Exception {
 
 
-        final CountDownLatch invocations = new CountDownLatch(30);
+        final int count = 10; //Strict pool can starve on more than 10
+        final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
-        final AtomicInteger instances = new AtomicInteger();
-        // Do a business method...
-        final Runnable r = new Runnable() {
+        final Runnable counterBeanLocal = new Runnable() {
             public void run() {
+
                 Object object = null;
                 try {
                     object = ctx.lookup("CounterBeanLocal");
@@ -108,24 +111,22 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
                 try {
                     counter.explode(invocations);
                 } catch (final Exception e) {
-
+                    //Ignore
                 }
             }
         };
 
-        //  -- READY --
-
-        // 30 instances should be created and discarded.
-        for (int i = 0; i < 30; i++) {
-            final Thread t = new Thread(r);
-            t.start();
+        // 'count' instances should be created and discarded.
+        for (int i = 0; i < count; i++) {
+            final Thread thread = new Thread(counterBeanLocal);
+            thread.start();
         }
 
         final boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
-        assertEquals(30, CounterBean.discardedInstances.get());
+        assertEquals(count, discardedInstances.get());
 
     }
 
@@ -170,7 +171,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         // Wait for the other beans timeout
         assertTrue("expected 10 timeouts", timeouts.await(3000, TimeUnit.MILLISECONDS));
 
-        assertEquals(10, CounterBean.instances.get(), 1.1);
+        assertEquals(10, instances.get(), 1.1);
 
         comment("Go!");
 
@@ -217,9 +218,8 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
-        CounterBean.instances.set(0);
+        instances.set(0);
         assembler.createApplication(config.configureApplication(ejbJar));
-
     }
 
 
@@ -228,7 +228,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         void race(CountDownLatch ready, CountDownLatch go);
 
-        void explode(CountDownLatch invocations);
+        void explode(CountDownLatch latch);
     }
 
     @Remote
@@ -243,10 +243,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     @Stateless
     public static class CounterBean implements Counter, RemoteCounter {
 
-        public static AtomicInteger instances = new AtomicInteger();
-        public static AtomicInteger discardedInstances = new AtomicInteger();
 
-        private int count;
+
+        private final int count;
 
         public CounterBean() {
             count = instances.incrementAndGet();
@@ -260,12 +259,12 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             return discardedInstances.get();
         }
 
-        public void explode(final CountDownLatch invocations) {
+        public void explode(final CountDownLatch latch) {
+            discardedInstances.incrementAndGet();
             try {
-                discardedInstances.incrementAndGet();
                 throw new NullPointerException("Test expected this null pointer");
             } finally {
-                invocations.countDown();
+                latch.countDown();
             }
         }
 
