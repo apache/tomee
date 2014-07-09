@@ -19,6 +19,7 @@ package org.apache.openejb.test;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
+import java.util.Random;
 
 /**
  * @version $Rev$ $Date$
@@ -35,8 +36,8 @@ public class IvmTestServer implements TestServer {
         try {
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
-            props.put("My DataSource", "new://Resource?type=DataSource");
-            props.put("My DataSource.JdbcUrl", "jdbc:hsqldb:mem:IvmTestServer;hsqldb.tx=MVCC");
+            props.put("Default JDBC Database", "new://Resource?type=DataSource");
+            props.put("Default JDBC Database.JdbcUrl", "jdbc:hsqldb:mem:" + IvmTestServer.class.getSimpleName() + new Random().nextInt(250) + ";shutdown=true");
 
             final Properties p = new Properties();
             p.putAll(props);

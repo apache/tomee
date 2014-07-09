@@ -28,17 +28,15 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
         System.setProperty("noBanner", "true");
     }
 
-    /**
-     * Has the remote server's instance been already running ?
-     */
-    private boolean serverHasAlreadyBeenStarted = true;
-
+    private boolean serverRunning = false;
+    private Process serverProcess = null;
     private Properties properties;
 
     @Override
     public void init(final Properties props) {
         properties = props;
-        if (props.contains("java.naming.security.principal")) throw new IllegalArgumentException("Not allowed 'java.naming.security.principal'");
+        if (props.contains("java.naming.security.principal"))
+            throw new IllegalArgumentException("Not allowed 'java.naming.security.principal'");
 //        props.put("test.server.class","org.apache.openejb.test.RemoteTestServer");
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "127.0.0.1:4201");
@@ -47,7 +45,7 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
         if (!connect()) {
             try {
                 System.out.println("[] START SERVER");
@@ -59,7 +57,6 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
                 final String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
                 System.out.println("SYSTEM_INFO  = " + systemInfo);
 
-                serverHasAlreadyBeenStarted = false;
 
                 File openejbJar = null;
                 final File lib = new File(home, "lib");
@@ -85,33 +82,35 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 final String[] args = {(isWindows ? "java.exe" : "java"), "-jar", openejbJar.getAbsolutePath(), "start"};
-                final Process server = Runtime.getRuntime().exec(args);
+                this.serverProcess = Runtime.getRuntime().exec(args);
 
                 // Pipe the processes STDOUT to ours
-                final InputStream out = server.getInputStream();
+                final InputStream out = serverProcess.getInputStream();
                 final Thread serverOut = new Thread(new Pipe(out, System.out));
 
                 serverOut.setDaemon(true);
                 serverOut.start();
 
                 // Pipe the processes STDERR to ours
-                final InputStream err = server.getErrorStream();
+                final InputStream err = serverProcess.getErrorStream();
                 final Thread serverErr = new Thread(new Pipe(err, System.err));
 
                 serverErr.setDaemon(true);
                 serverErr.start();
+
+                connect(10);
+
+                serverRunning = true;
+
             } catch (final Exception e) {
                 throw (RuntimeException) new RuntimeException("Cannot start the server.").initCause(e);
             }
-            connect(10);
-        } else {
-            //System.out.println("[] SERVER STARTED");
         }
     }
 
     @Override
-    public void stop() {
-        if (!serverHasAlreadyBeenStarted) {
+    public synchronized void stop() {
+        if (serverRunning) {
             try {
                 System.out.println("[] STOP SERVER");
 
@@ -122,6 +121,14 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
             } catch (final Exception e) {
                 e.printStackTrace();
+            }
+        }
+
+        if (null != serverProcess) {
+            try {
+                serverProcess.waitFor();
+            } catch (final Exception e) {
+                //Ignore
             }
         }
     }
