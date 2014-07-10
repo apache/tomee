@@ -12,7 +12,7 @@ In this case, it is to respond to the user. The `respond` method shows how a Mes
 
 This sequence diagram shows how a message is sent.
 
-<img src="../../images/mdb-flow.png" alt=""/>
+<img src="../../resources/mdb-flow.png" alt=""/>
 
 ## ChatBean
 
