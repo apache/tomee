@@ -173,11 +173,11 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     Apr 17, 2014 2:19:45 PM org.apache.openejb.arquillian.common.Setup findHome
     INFO: Unable to find home in: C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote
     Apr 17, 2014 2:19:45 PM org.apache.openejb.arquillian.common.MavenCache getArtifact
-    INFO: Downloading org.apache.openejb:apache-tomee:1.6.1-SNAPSHOT:zip:webprofile please wait...
+    INFO: Downloading org.apache.openejb:apache-tomee:1.7.0:zip:webprofile please wait...
     Apr 17, 2014 2:19:45 PM org.apache.openejb.arquillian.common.Zips unzip
-    INFO: Extracting 'C:\Users\Andy\.m2\repository\org\apache\openejb\apache-tomee\1.6.1-SNAPSHOT\apache-tomee-1.6.1-SNAPSHOT-webprofile.zip' to 'C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote'
+    INFO: Extracting 'C:\Users\Andy\.m2\repository\org\apache\openejb\apache-tomee\1.7.0\apache-tomee-1.7.0-webprofile.zip' to 'C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote'
     Apr 17, 2014 2:19:47 PM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
-    INFO: Downloaded container to: C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.6.1-SNAPSHOT
+    INFO: Downloaded container to: C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.7.0
     INFO - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: C:\Program Files\Java\jdk1.7.0_45\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\SlikSvn\bin;C:\dev\apache-maven-3.2.1\bin;C:\dev\apache-ant-1.9.3\bin;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Git\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files\TortoiseSVN\bin;.
     INFO - Initializing ProtocolHandler ["http-bio-55243"]
     INFO - Initializing ProtocolHandler ["ajp-bio-55245"]
@@ -188,15 +188,15 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Thu Apr 17 14:19:55 CEST 2014
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.6.1-SNAPSHOT
+    INFO - Version: 4.7.0
     INFO - Build date: 20140417
     INFO - Build time: 01:37
     INFO - ********************************************************************************
-    INFO - openejb.home = C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.6.1-SNAPSHOT
-    INFO - openejb.base = C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.6.1-SNAPSHOT
+    INFO - openejb.home = C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.7.0
+    INFO - openejb.base = C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.7.0
     INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@22c2e2dd
     INFO - Succeeded in installing singleton service
-    INFO - openejb configuration file is 'C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.6.1-SNAPSHOT\conf\tomee.xml'
+    INFO - openejb configuration file is 'C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.7.0\conf\tomee.xml'
     INFO - Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
     INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
     INFO - Configuring Service(id=DatabaseOne, type=Resource, provider-id=Default JDBC Database)
@@ -244,7 +244,7 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
     INFO - Creating Resource(id=UserDatabase)
     INFO - Starting service Catalina
-    INFO - Starting Servlet Engine: Apache Tomcat (TomEE)/7.0.53 (1.6.1-SNAPSHOT)
+    INFO - Starting Servlet Engine: Apache Tomcat (TomEE)/7.0.53 (1.7.0)
     INFO - Starting ProtocolHandler ["http-bio-55243"]
     INFO - Starting ProtocolHandler ["ajp-bio-55245"]
     INFO - Server startup in 288 ms
@@ -263,7 +263,7 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
     INFO - Auto-creating a container for bean org.superbiz.AlternateDataSourceTest: Container(type=MANAGED, id=Default Managed Container)
     INFO - Creating Container(id=Default Managed Container)
-    INFO - Using directory C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.6.1-SNAPSHOT\temp for stateful session passivation
+    INFO - Using directory C:\dev\svn\tomee\examples\datasource-versioning\target\apache-tomee-remote\apache-tomee-webprofile-1.7.0\temp for stateful session passivation
     INFO - Enterprise application "C:\dev\svn\tomee\examples\datasource-versioning\target\arquillian-test-working-dir\0\test" loaded.
     INFO - Assembling app: C:\dev\svn\tomee\examples\datasource-versioning\target\arquillian-test-working-dir\0\test
     INFO - Jndi(name=DataSourceTesterLocalBean) --> Ejb(deployment-id=DataSourceTester)

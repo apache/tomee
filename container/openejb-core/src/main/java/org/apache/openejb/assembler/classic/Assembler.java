@@ -45,7 +45,6 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
-import org.apache.openejb.assembler.classic.event.BeanContextsInitializedEvent;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
@@ -800,10 +799,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
             }
 
-            // before starting everything, give the user the opportunity to hack on the AppContext/BeanContext
-            final SystemInstance systemInstance = SystemInstance.get();
-            systemInstance.fireEvent(new BeanContextsInitializedEvent(appInfo, appContext, allDeployments));
-
             startEjbs(start, allDeployments);
 
             // App Client
@@ -849,6 +844,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // WebApp
+            final SystemInstance systemInstance = SystemInstance.get();
 
             final WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
