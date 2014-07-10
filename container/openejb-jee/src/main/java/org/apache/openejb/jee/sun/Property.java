@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-        "nameElement",
-        "valueElement",
-        "description"
+    "nameElement",
+    "valueElement",
+    "description"
 })
 public class Property {
     @XmlAttribute(required = true)
@@ -43,7 +43,7 @@ public class Property {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -51,7 +51,7 @@ public class Property {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -59,7 +59,7 @@ public class Property {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -72,7 +72,7 @@ public class Property {
         return name;
     }
 
-    private void setNameElement(String value) {
+    private void setNameElement(final String value) {
         this.name = value;
     }
 
@@ -81,7 +81,7 @@ public class Property {
         return value;
     }
 
-    private void setValueElement(String value) {
+    private void setValueElement(final String value) {
         this.value = value;
     }
 }

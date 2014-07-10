@@ -35,7 +35,7 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("AnnotatedFieldInjectionStatelessBean");
+        final Object obj = initialContext.lookup("AnnotatedFieldInjectionStatelessBean");
         ejbHome = (EncStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, EncStatelessHome.class);
         ejbObject = ejbHome.create();
 
@@ -51,7 +51,7 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
         try {
             /*[1] Drop database table */
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw e;
         } finally {
             super.tearDown();
@@ -61,9 +61,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test01_lookupStringEntry() {
         try{
             ejbObject.lookupStringEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -71,9 +71,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test02_lookupDoubleEntry() {
         try{
             ejbObject.lookupDoubleEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -81,9 +81,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test03_lookupLongEntry() {
         try{
             ejbObject.lookupLongEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -91,9 +91,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test04_lookupFloatEntry() {
         try{
             ejbObject.lookupFloatEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -101,9 +101,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test05_lookupIntegerEntry() {
         try{
             ejbObject.lookupIntegerEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -111,9 +111,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test06_lookupShortEntry() {
         try{
             ejbObject.lookupShortEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -121,9 +121,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test07_lookupBooleanEntry() {
         try{
             ejbObject.lookupBooleanEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -131,9 +131,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test08_lookupByteEntry() {
         try{
             ejbObject.lookupByteEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -141,9 +141,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test09_lookupCharacterEntry() {
         try{
             ejbObject.lookupCharacterEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -151,9 +151,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test10_lookupEntityBean() {
         try{
             ejbObject.lookupEntityBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -161,9 +161,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test11_lookupStatefulBean() {
         try{
             ejbObject.lookupStatefulBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -171,9 +171,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test12_lookupStatelessBean() {
         try{
             ejbObject.lookupStatelessBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -181,9 +181,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test13_lookupResource() {
         try{
             ejbObject.lookupResource();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -191,9 +191,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test14_lookupPersistenceUnit() {
         try{
             ejbObject.lookupPersistenceUnit();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -201,9 +201,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test15_lookupPersistenceContext() {
         try{
             ejbObject.lookupPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -211,9 +211,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test18_lookupSessionContext() {
         try{
             ejbObject.lookupSessionContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -221,9 +221,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test19_lookupStatelessBusinessLocal() {
         try{
             ejbObject.lookupStatelessBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -231,9 +231,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test20_lookupStatelessBusinessRemote() {
         try{
             ejbObject.lookupStatelessBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -241,9 +241,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test21_lookupStatefulBusinessLocal() {
         try{
             ejbObject.lookupStatefulBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -251,9 +251,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test22_lookupStatefulBusinessRemote() {
         try{
             ejbObject.lookupStatefulBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -261,9 +261,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test23_lookupJMSConnectionFactory() {
         try{
             ejbObject.lookupJMSConnectionFactory();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -271,9 +271,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test24_lookupStatelessBusinessLocalBean() {
         try{
             ejbObject.lookupStatelessBusinessLocalBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -281,9 +281,9 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     public void test25_lookupStatefulBusinessLocalBean() {
         try{
             ejbObject.lookupStatelessBusinessLocalBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

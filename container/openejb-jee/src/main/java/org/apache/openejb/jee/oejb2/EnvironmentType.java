@@ -18,19 +18,19 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for environmentType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="environmentType">
  *   &lt;complexContent>
@@ -54,8 +54,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "environmentType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
@@ -76,9 +74,9 @@ import javax.xml.bind.annotation.XmlType;
 
 public class EnvironmentType {
 
-    @XmlElement(name="moduleId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "moduleId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ArtifactType moduleId;
-    @XmlElement(name="dependencies", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    @XmlElement(name = "dependencies", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected DependenciesType dependencies;
     @XmlElement(name = "bundle-activator", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected String bundleActivator;
@@ -105,11 +103,9 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the moduleId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ArtifactType }
-     *     
+     *
+     * @return possible object is
+     * {@link ArtifactType }
      */
     public ArtifactType getModuleId() {
         return moduleId;
@@ -117,23 +113,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the moduleId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ArtifactType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ArtifactType }
      */
-    public void setModuleId(ArtifactType value) {
+    public void setModuleId(final ArtifactType value) {
         this.moduleId = value;
     }
 
     /**
      * Gets the value of the dependencies property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DependenciesType }
-     *     
+     *
+     * @return possible object is
+     * {@link DependenciesType }
      */
     public DependenciesType getDependencies() {
         return dependencies;
@@ -141,23 +133,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the dependencies property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DependenciesType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DependenciesType }
      */
-    public void setDependencies(DependenciesType value) {
+    public void setDependencies(final DependenciesType value) {
         this.dependencies = value;
     }
 
     /**
      * Gets the value of the bundleActivator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getBundleActivator() {
         return bundleActivator;
@@ -165,37 +153,33 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the bundleActivator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setBundleActivator(String value) {
+    public void setBundleActivator(final String value) {
         this.bundleActivator = value;
     }
 
     /**
      * Gets the value of the bundleClassPath property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the bundleClassPath property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBundleClassPath().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getBundleClassPath() {
         if (bundleClassPath == null) {
@@ -206,25 +190,23 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the importPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the importPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getImportPackage().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getImportPackage() {
         if (importPackage == null) {
@@ -235,25 +217,23 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the exportPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the exportPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExportPackage().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getExportPackage() {
         if (exportPackage == null) {
@@ -264,25 +244,23 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the requireBundle property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the requireBundle property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRequireBundle().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getRequireBundle() {
         if (requireBundle == null) {
@@ -293,25 +271,23 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the dynamicImportPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the dynamicImportPackage property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDynamicImportPackage().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getDynamicImportPackage() {
         if (dynamicImportPackage == null) {
@@ -322,11 +298,9 @@ public class EnvironmentType {
 
     /**
      * Gets the value of the hiddenClasses property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @return possible object is
+     * {@link ClassFilterType }
      */
     public ClassFilterType getHiddenClasses() {
         return hiddenClasses;
@@ -334,23 +308,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the hiddenClasses property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ClassFilterType }
      */
-    public void setHiddenClasses(ClassFilterType value) {
+    public void setHiddenClasses(final ClassFilterType value) {
         this.hiddenClasses = value;
     }
 
     /**
      * Gets the value of the nonOverridableClasses property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @return possible object is
+     * {@link ClassFilterType }
      */
     public ClassFilterType getNonOverridableClasses() {
         return nonOverridableClasses;
@@ -358,23 +328,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the nonOverridableClasses property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ClassFilterType }
      */
-    public void setNonOverridableClasses(ClassFilterType value) {
+    public void setNonOverridableClasses(final ClassFilterType value) {
         this.nonOverridableClasses = value;
     }
 
     /**
      * Gets the value of the privateClasses property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @return possible object is
+     * {@link ClassFilterType }
      */
     public ClassFilterType getPrivateClasses() {
         return privateClasses;
@@ -382,23 +348,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the privateClasses property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ClassFilterType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ClassFilterType }
      */
-    public void setPrivateClasses(ClassFilterType value) {
+    public void setPrivateClasses(final ClassFilterType value) {
         this.privateClasses = value;
     }
 
     /**
      * Gets the value of the inverseClassloading property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isInverseClassloading() {
         return inverseClassloading != null;
@@ -406,23 +368,19 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the inverseClassloading property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setInverseClassloading(boolean value) {
+    public void setInverseClassloading(final boolean value) {
         this.inverseClassloading = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the suppressDefaultEnvironment property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isSuppressDefaultEnvironment() {
         return suppressDefaultEnvironment != null;
@@ -430,13 +388,11 @@ public class EnvironmentType {
 
     /**
      * Sets the value of the suppressDefaultEnvironment property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setSuppressDefaultEnvironment(boolean value) {
+    public void setSuppressDefaultEnvironment(final boolean value) {
         this.suppressDefaultEnvironment = value ? new EmptyType() : null;
     }
 

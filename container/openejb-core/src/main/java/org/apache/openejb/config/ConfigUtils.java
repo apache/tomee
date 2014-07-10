@@ -96,7 +96,7 @@ public class ConfigUtils {
                     // no-op
                 }
             }
-            
+
             logger.warning("Cannot find the configuration file [" + rawPath + "], Trying conf/openejb.xml instead.");
         }
 
@@ -135,7 +135,7 @@ public class ConfigUtils {
 
                 if (confDir != null && confDir.exists()) {
                     final File config = new File(confDir, "openejb.xml");
-                    logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
+                    logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at " + config.getAbsolutePath());
                     file = createConfig(config);
                 } else {
                     logger.info("Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.");
@@ -152,9 +152,9 @@ public class ConfigUtils {
 
     public static String[] deducePaths(final String path) {
         if (path.endsWith(".xml")) { // try json too, this is just a common way matching our defaults
-            return new String[] { path, path.substring(0, path.length() - "xml".length()) + "json" };
+            return new String[]{path, path.substring(0, path.length() - "xml".length()) + "json"};
         }
-        return new String[] { path };
+        return new String[]{path};
     }
 
     public static File createConfig(final File config) throws IOException {

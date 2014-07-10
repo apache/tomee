@@ -43,9 +43,9 @@ public abstract class AbstractXmlAnnotationFinderTest implements ScanConstants {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         System.setProperty(SCAN_XML_PROPERTY, scanXml());
         finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader,
-                Arrays.asList(
-                        new URL(loader.getResource(scanXml()).toExternalForm().replace(scanXml(), ""))
-                )
+            Arrays.asList(
+                new URL(loader.getResource(scanXml()).toExternalForm().replace(scanXml(), ""))
+            )
         ));
         System.clearProperty("openejb.scan.xml.name");
     }

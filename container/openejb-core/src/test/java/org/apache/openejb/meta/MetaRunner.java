@@ -31,7 +31,7 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class MetaRunner extends BlockJUnit4ClassRunner {
-    public MetaRunner(Class<?> klass) throws InitializationError {
+    public MetaRunner(final Class<?> klass) throws InitializationError {
         super(klass);
     }
 
@@ -39,20 +39,20 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
      * Flags an error if you have annotated a test with both @Test and @Keys. Any method annotated with @Test will be ignored anyways.
      */
     @Override
-    protected void collectInitializationErrors(List<Throwable> errors) {
+    protected void collectInitializationErrors(final List<Throwable> errors) {
         super.collectInitializationErrors(errors);
-        List<FrameworkMethod> methodsAnnotatedWithKeys = getTestClass().getAnnotatedMethods(MetaTest.class);
-        for (FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
+        final List<FrameworkMethod> methodsAnnotatedWithKeys = getTestClass().getAnnotatedMethods(MetaTest.class);
+        for (final FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
             if (frameworkMethod.getAnnotation(Test.class) != null) {
-                String gripe = "The method " + frameworkMethod.getName() + "() can only be annotated with @MetaTest";
+                final String gripe = "The method " + frameworkMethod.getName() + "() can only be annotated with @MetaTest";
                 errors.add(new Exception(gripe));
             }
         }
     }
 
     @Override
-    protected Statement methodBlock(FrameworkMethod method) {
-        Object test;
+    protected Statement methodBlock(final FrameworkMethod method) {
+        final Object test;
         try {
             test = new ReflectiveCallable() {
                 @Override
@@ -60,7 +60,7 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
                     return createTest();
                 }
             }.run();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return new Fail(e);
         }
         Statement statement = new MetaTest.$(method, test);
@@ -75,8 +75,8 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        TestClass testClass = getTestClass();
-        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(MetaTest.class);
+        final TestClass testClass = getTestClass();
+        final List<FrameworkMethod> methods = testClass.getAnnotatedMethods(MetaTest.class);
         return methods;
     }
 }

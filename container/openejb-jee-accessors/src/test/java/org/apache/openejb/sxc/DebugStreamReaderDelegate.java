@@ -24,15 +24,15 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 class DebugStreamReaderDelegate extends StreamReaderDelegate {
-    public DebugStreamReaderDelegate(XMLStreamReader streamReader) {
+    public DebugStreamReaderDelegate(final XMLStreamReader streamReader) {
         super(streamReader);
     }
 
     @Override
-    public Object getProperty(String name) {
+    public Object getProperty(final String name) {
         return super.getProperty(name);
     }
 
@@ -138,7 +138,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) throws XMLStreamException {
+    public int getTextCharacters(final int sourceStart, final char[] target, final int targetStart, final int length) throws XMLStreamException {
         return super.getTextCharacters(sourceStart, target, targetStart, length);
     }
 
@@ -155,14 +155,14 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public String getNamespaceURI(int index) {
+    public String getNamespaceURI(final int index) {
         final String s = super.getNamespaceURI(index);
         System.out.println("getNamespaceURI(int) = " + s);
         return s;
     }
 
     @Override
-    public String getNamespacePrefix(int index) {
+    public String getNamespacePrefix(final int index) {
         final String s = super.getNamespacePrefix(index);
         System.out.println("getNamespacePrefix = " + s);
         return s;
@@ -174,47 +174,47 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public boolean isAttributeSpecified(int index) {
+    public boolean isAttributeSpecified(final int index) {
         return super.isAttributeSpecified(index);
     }
 
     @Override
-    public String getAttributeValue(int index) {
+    public String getAttributeValue(final int index) {
         final String s = super.getAttributeValue(index);
         System.out.println("getAttributeValue = " + s);
         return s;
     }
 
     @Override
-    public String getAttributeType(int index) {
+    public String getAttributeType(final int index) {
         final String s = super.getAttributeType(index);
         System.out.println("getAttributeType = " + s);
         return s;
     }
 
     @Override
-    public String getAttributeLocalName(int index) {
+    public String getAttributeLocalName(final int index) {
         final String s = super.getAttributeLocalName(index);
         System.out.println("getAttributeLocalName = " + s);
         return s;
     }
 
     @Override
-    public String getAttributeNamespace(int index) {
+    public String getAttributeNamespace(final int index) {
         final String s = super.getAttributeNamespace(index);
         System.out.println("getAttributeNamespace = " + s);
         return s;
     }
 
     @Override
-    public String getAttributePrefix(int index) {
+    public String getAttributePrefix(final int index) {
         final String s = super.getAttributePrefix(index);
         System.out.println("getAttributePrefix = " + s);
         return s;
     }
 
     @Override
-    public QName getAttributeName(int index) {
+    public QName getAttributeName(final int index) {
         return super.getAttributeName(index);
     }
 
@@ -224,7 +224,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public String getAttributeValue(String namespaceUri, String localName) {
+    public String getAttributeValue(final String namespaceUri, final String localName) {
         final String s = super.getAttributeValue(namespaceUri, localName);
         System.out.println("getAttributeValue = " + s);
         return s;
@@ -256,7 +256,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public String getNamespaceURI(String prefix) {
+    public String getNamespaceURI(final String prefix) {
         final String s = super.getNamespaceURI(prefix);
         System.out.println("getNamespaceURI(string) = " + s);
         return s;
@@ -278,7 +278,7 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public void require(int type, String namespaceURI, String localName) throws XMLStreamException {
+    public void require(final int type, final String namespaceURI, final String localName) throws XMLStreamException {
         super.require(type, namespaceURI, localName);
     }
 
@@ -317,12 +317,12 @@ class DebugStreamReaderDelegate extends StreamReaderDelegate {
     }
 
     @Override
-    public void setParent(XMLStreamReader reader) {
+    public void setParent(final XMLStreamReader reader) {
         super.setParent(reader);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return super.equals(obj);
     }
 

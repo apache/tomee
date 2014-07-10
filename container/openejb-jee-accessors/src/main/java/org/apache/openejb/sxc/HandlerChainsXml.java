@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.sxc;
 
-import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 import org.apache.openejb.jee.Adapters;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.HandlerChains$JAXB;
 import org.apache.openejb.loader.IO;
+import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamResult;
@@ -33,11 +33,11 @@ import java.net.URL;
  */
 public class HandlerChainsXml {
 
-    public static HandlerChains unmarshal(InputStream inputStream) throws Exception {
+    public static HandlerChains unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new HandlerChains$JAXB(), inputStream);
     }
 
-    public static HandlerChains unmarshal(URL url) throws Exception {
+    public static HandlerChains unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             final XMLStreamReader filter = Sxc.prepareReader(inputStream);
@@ -54,7 +54,7 @@ public class HandlerChainsXml {
         }
     }
 
-    public static void marshal(HandlerChains handlerChains, OutputStream outputStream) throws Exception {
+    public static void marshal(final HandlerChains handlerChains, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new HandlerChains$JAXB(), handlerChains, new StreamResult(outputStream));
     }
 }

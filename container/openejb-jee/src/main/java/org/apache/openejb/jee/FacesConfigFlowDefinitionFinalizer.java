@@ -28,20 +28,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         
- * 
- *          <p class="changed_added_2_2">A <code>MethodExpression</code> that will be invoked when the flow is exited.<p>
- * 
- * 
- * 
- *       
- * 
+ * <p class="changed_added_2_2">A <code>MethodExpression</code> that will be invoked when the flow is exited.<p>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-finalizerType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-finalizerType">
  *   &lt;simpleContent>
@@ -51,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-finalizerType", propOrder = {
@@ -69,18 +63,12 @@ public class FacesConfigFlowDefinitionFinalizer {
     protected java.lang.String id;
 
     /**
+     * <p> EL expressions present within a faces config file
+     * must start with the character sequence of '#{' and
+     * end with '}'.</p>
      *
-     *
-     *        <p> EL expressions present within a faces config file
-     *         must start with the character sequence of '#{' and
-     *         end with '}'.</p>
-     *
-     *
-     *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -89,22 +77,18 @@ public class FacesConfigFlowDefinitionFinalizer {
     /**
      * Sets the value of the value property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -113,12 +97,10 @@ public class FacesConfigFlowDefinitionFinalizer {
     /**
      * Sets the value of the id property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

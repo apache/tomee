@@ -23,23 +23,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>Java class for message-destination-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destination-refType">
  *   &lt;complexContent>
@@ -57,20 +55,18 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-refType", propOrder = {
-        "descriptions",
-        "messageDestinationRefName",
-        "messageDestinationType",
-        "messageDestinationUsage",
-        "messageDestinationLink",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "messageDestinationRefName",
+    "messageDestinationType",
+    "messageDestinationUsage",
+    "messageDestinationLink",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class MessageDestinationRef implements JndiReference {
 
     @XmlTransient
@@ -100,41 +96,41 @@ public class MessageDestinationRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
 
-    public MessageDestinationRef name(String messageDestinationRefName) {
+    public MessageDestinationRef name(final String messageDestinationRefName) {
         this.messageDestinationRefName = messageDestinationRefName;
         return this;
     }
 
-    public MessageDestinationRef type(String messageDestinationType) {
+    public MessageDestinationRef type(final String messageDestinationType) {
         this.messageDestinationType = messageDestinationType;
         return this;
     }
 
-    public MessageDestinationRef type(Class<?> messageDestinationType) {
+    public MessageDestinationRef type(final Class<?> messageDestinationType) {
         return type(messageDestinationType.getName());
     }
 
-    public MessageDestinationRef link(String messageDestinationLink) {
+    public MessageDestinationRef link(final String messageDestinationLink) {
         this.messageDestinationLink = messageDestinationLink;
         return this;
     }
 
-    public MessageDestinationRef mappedName(String mappedName) {
+    public MessageDestinationRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public MessageDestinationRef lookup(String lookupName) {
+    public MessageDestinationRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public MessageDestinationRef injectionTarget(String className, String property) {
+    public MessageDestinationRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         // TODO move this to getKey()
@@ -145,7 +141,7 @@ public class MessageDestinationRef implements JndiReference {
         return this;
     }
 
-    public MessageDestinationRef injectionTarget(Class<?> clazz, String property) {
+    public MessageDestinationRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -154,11 +150,11 @@ public class MessageDestinationRef implements JndiReference {
         return getMessageDestinationType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setMessageDestinationRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setMessageDestinationType(type);
     }
 
@@ -167,7 +163,7 @@ public class MessageDestinationRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -179,7 +175,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationRefName;
     }
 
-    public void setMessageDestinationRefName(String value) {
+    public void setMessageDestinationRefName(final String value) {
         this.messageDestinationRefName = value;
     }
 
@@ -187,7 +183,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationType;
     }
 
-    public void setMessageDestinationType(String value) {
+    public void setMessageDestinationType(final String value) {
         this.messageDestinationType = value;
     }
 
@@ -195,7 +191,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationUsage;
     }
 
-    public void setMessageDestinationUsage(MessageDestinationUsage value) {
+    public void setMessageDestinationUsage(final MessageDestinationUsage value) {
         this.messageDestinationUsage = value;
     }
 
@@ -220,7 +216,7 @@ public class MessageDestinationRef implements JndiReference {
         return messageDestinationLink;
     }
 
-    public void setMessageDestinationLink(String value) {
+    public void setMessageDestinationLink(final String value) {
         this.messageDestinationLink = value;
     }
 
@@ -228,7 +224,7 @@ public class MessageDestinationRef implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -236,7 +232,7 @@ public class MessageDestinationRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -251,19 +247,19 @@ public class MessageDestinationRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "MessageDestinationRef{" +
-                "name='" + messageDestinationRefName + '\'' +
-                ", type='" + messageDestinationType + '\'' +
-                ", usage=" + messageDestinationUsage +
-                ", link='" + messageDestinationLink + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + messageDestinationRefName + '\'' +
+            ", type='" + messageDestinationType + '\'' +
+            ", usage=" + messageDestinationUsage +
+            ", link='" + messageDestinationLink + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

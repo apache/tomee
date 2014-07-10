@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ServletMapping$JAXB
-        extends JAXBObject<ServletMapping> {
+    extends JAXBObject<ServletMapping> {
 
 
     public ServletMapping$JAXB() {
         super(ServletMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "servlet-mappingType".intern()));
     }
 
-    public static ServletMapping readServletMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ServletMapping readServletMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeServletMapping(XoXMLStreamWriter writer, ServletMapping servletMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeServletMapping(final XoXMLStreamWriter writer, final ServletMapping servletMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, servletMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ServletMapping servletMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ServletMapping servletMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, servletMapping, context);
     }
 
-    public final static ServletMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ServletMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class ServletMapping$JAXB
             context = new RuntimeContext();
         }
 
-        ServletMapping servletMapping = new ServletMapping();
+        final ServletMapping servletMapping = new ServletMapping();
         context.beforeUnmarshal(servletMapping, LifecycleCallback.NONE);
 
         List<String> urlPattern = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("servlet-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ServletMapping.class);
@@ -81,10 +81,10 @@ public class ServletMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, servletMapping);
                 servletMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class ServletMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("servlet-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servletName
-                String servletNameRaw = elementReader.getElementAsString();
+                final String servletNameRaw = elementReader.getElementAsString();
 
-                String servletName;
+                final String servletName;
                 try {
                     servletName = Adapters.collapsedStringAdapterAdapter.unmarshal(servletNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,12 +109,12 @@ public class ServletMapping$JAXB
                 servletMapping.servletName = servletName;
             } else if (("url-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: urlPattern
-                String urlPatternItemRaw = elementReader.getElementAsString();
+                final String urlPatternItemRaw = elementReader.getElementAsString();
 
-                String urlPatternItem;
+                final String urlPatternItem;
                 try {
                     urlPatternItem = Adapters.trimStringAdapterAdapter.unmarshal(urlPatternItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, TrimStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -141,13 +141,13 @@ public class ServletMapping$JAXB
         return servletMapping;
     }
 
-    public final ServletMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ServletMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ServletMapping servletMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ServletMapping servletMapping, RuntimeContext context)
+        throws Exception {
         if (servletMapping == null) {
             writer.writeXsiNil();
             return;
@@ -157,7 +157,7 @@ public class ServletMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ServletMapping.class != servletMapping.getClass()) {
             context.unexpectedSubclass(writer, servletMapping, ServletMapping.class);
             return;
@@ -167,23 +167,23 @@ public class ServletMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = servletMapping.id;
+        final String idRaw = servletMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(servletMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: servletName
-        String servletNameRaw = servletMapping.servletName;
+        final String servletNameRaw = servletMapping.servletName;
         String servletName = null;
         try {
             servletName = Adapters.collapsedStringAdapterAdapter.marshal(servletNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(servletMapping, "servletName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (servletName != null) {
@@ -195,13 +195,13 @@ public class ServletMapping$JAXB
         }
 
         // ELEMENT: urlPattern
-        List<String> urlPatternRaw = servletMapping.urlPattern;
+        final List<String> urlPatternRaw = servletMapping.urlPattern;
         if (urlPatternRaw != null) {
-            for (String urlPatternItem : urlPatternRaw) {
+            for (final String urlPatternItem : urlPatternRaw) {
                 String urlPattern = null;
                 try {
                     urlPattern = Adapters.trimStringAdapterAdapter.marshal(urlPatternItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(servletMapping, "urlPattern", TrimStringAdapter.class, List.class, List.class, e);
                 }
                 if (urlPattern != null) {

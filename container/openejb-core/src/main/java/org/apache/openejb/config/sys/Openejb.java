@@ -135,7 +135,7 @@ public class Openejb {
      * Gets the value of the securityService property.
      *
      * @return possible object is
-     *         {@link SecurityService }
+     * {@link SecurityService }
      */
     public SecurityService getSecurityService() {
         return securityService;
@@ -155,7 +155,7 @@ public class Openejb {
      * Gets the value of the transactionManager property.
      *
      * @return possible object is
-     *         {@link TransactionManager }
+     * {@link TransactionManager }
      */
     public TransactionManager getTransactionManager() {
         return transactionManager;
@@ -175,7 +175,7 @@ public class Openejb {
      * Gets the value of the connectionManager property.
      *
      * @return possible object is
-     *         {@link ConnectionManager }
+     * {@link ConnectionManager }
      */
     public ConnectionManager getConnectionManager() {
         return connectionManager;
@@ -195,7 +195,7 @@ public class Openejb {
      * Gets the value of the proxyFactory property.
      *
      * @return possible object is
-     *         {@link ProxyFactory }
+     * {@link ProxyFactory }
      */
     public ProxyFactory getProxyFactory() {
         return proxyFactory;
@@ -264,7 +264,7 @@ public class Openejb {
         }
 
         final List<Connector> connectors = getConnector();
-        if (connectors.size() > 0){
+        if (connectors.size() > 0) {
             for (final Connector connector : connectors) {
                 final Resource resource = new Resource();
                 resource.setJar(connector.getJar());

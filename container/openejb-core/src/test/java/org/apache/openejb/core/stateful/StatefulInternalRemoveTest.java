@@ -60,7 +60,7 @@ public class StatefulInternalRemoveTest extends TestCase {
 
         widgetLocal.widget();
 
-        BeanContext.Removable removable = (BeanContext.Removable) widgetLocal;
+        final BeanContext.Removable removable = (BeanContext.Removable) widgetLocal;
 
         removable.$$remove();
 
@@ -68,17 +68,17 @@ public class StatefulInternalRemoveTest extends TestCase {
             widgetLocal.widget();
 
             fail("The bean should have been removed");
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
             // pass
         }
 
         // Check the lifecycle of the bean
 
-        Lifecycle[] expected = {
-                Lifecycle.CONSTRUCTOR,
-                Lifecycle.POST_CONSTRUCT,
-                Lifecycle.BUSINESS_METHOD,
-                Lifecycle.PRE_DESTROY};
+        final Lifecycle[] expected = {
+            Lifecycle.CONSTRUCTOR,
+            Lifecycle.POST_CONSTRUCT,
+            Lifecycle.BUSINESS_METHOD,
+            Lifecycle.PRE_DESTROY};
 
         assertEquals(join("\n", Arrays.asList(expected)), join("\n", Widget.lifecycle));
     }
@@ -99,9 +99,9 @@ public class StatefulInternalRemoveTest extends TestCase {
         PRE_DESTROY,
     }
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

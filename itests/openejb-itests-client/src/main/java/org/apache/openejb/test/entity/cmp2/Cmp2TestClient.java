@@ -34,7 +34,7 @@ public abstract class Cmp2TestClient extends org.apache.openejb.test.NamedTestCa
     protected Handle ejbHandle;
     protected Object ejbPrimaryKey;
 
-    public Cmp2TestClient(String name) {
+    public Cmp2TestClient(final String name) {
         super("Entity.CMP." + name);
     }
 
@@ -44,7 +44,7 @@ public abstract class Cmp2TestClient extends org.apache.openejb.test.NamedTestCa
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
 

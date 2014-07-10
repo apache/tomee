@@ -36,17 +36,17 @@ import java.util.Set;
 /**
  * This test verifies that no architectural constraints have been violated
  * in the Info Object tree.  Basically those are:
- *
+ * <p/>
  * - Only public fields of basic data types are allowed.
- *
+ * <p/>
  * So this means *no*
  * - methods
  * - constructors
  * - Complex data types (Class, ClassLoader, etc)
- *
+ * <p/>
  * Keeps the Info Objects inline with the concept of a basic AST (Abstract Syntax Tree)
  * which is produced by the ConfigurationFactory and built by the Assembler,
- *
+ * <p/>
  * See http://openejb.apache.org/configuration-and-assembly.html
  *
  * @version $Rev$ $Date$
@@ -60,7 +60,7 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
         validate(OpenEjbConfiguration.class);
     }
 
-    private void validate(Class clazz) throws Exception {
+    private void validate(final Class clazz) throws Exception {
         if (clazz == null) return;
         if (seen.contains(clazz)) return;
 
@@ -68,15 +68,15 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
         seen.add(clazz);
 
-        String simpleName = clazz.getSimpleName();
+        final String simpleName = clazz.getSimpleName();
 
         // Constructors are not allowed in Info objects
-        Constructor[] constructors = clazz.getDeclaredConstructors();
+        final Constructor[] constructors = clazz.getDeclaredConstructors();
         assertEquals("constructors are not allowed: " + simpleName, 1, constructors.length);
         assertEquals("constructors are not allowed: " + simpleName, 0, constructors[0].getParameterTypes().length);
 
         // Methods are not allowed in Info objects
-        Method[] methods = clazz.getDeclaredMethods();
+        final Method[] methods = clazz.getDeclaredMethods();
         assertEquals("methods are not allowed: " + simpleName, 0, methods.length);
 
         // Annotations are not allowed in Info objects
@@ -85,8 +85,8 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
         // We are very picky on fields as well
         // Only certain data types are allowed
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
+        final Field[] fields = clazz.getDeclaredFields();
+        for (final Field field : fields) {
 
             // Only public fields are allowed
             assertTrue("Non-public fields are not allowed: " + simpleName + "." + field.getName(), Modifier.isPublic(field.getModifiers()));
@@ -141,7 +141,7 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
                 continue;
             }
 
-            if(Date.class.isAssignableFrom(type)) {
+            if (Date.class.isAssignableFrom(type)) {
                 continue;
             }
 
@@ -157,12 +157,12 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
         }
     }
 
-    private Class getGenericType(Field field) throws Exception {
-        Type genericType = field.getGenericType();
+    private Class getGenericType(final Field field) throws Exception {
+        final Type genericType = field.getGenericType();
 
         if (genericType instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) genericType;
-            Type firstParamType = parameterizedType.getActualTypeArguments()[0];
+            final ParameterizedType parameterizedType = (ParameterizedType) genericType;
+            final Type firstParamType = parameterizedType.getActualTypeArguments()[0];
             return (Class) firstParamType;
         } else if (genericType instanceof Class) {
             return (Class) genericType;

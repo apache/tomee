@@ -95,10 +95,10 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
     @EJB
     private BasicStatefulBusinessRemote statefulBusinessRemote;
 
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
-        PrintStream printStream = new PrintStream(out);
+        final PrintStream printStream = new PrintStream(out);
 
         String methodName = request.getParameter("method");
         if (methodName == null) {
@@ -107,7 +107,7 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
             try {
                 Method method = getClass().getMethod(methodName);
                 method.invoke(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 // response.setStatus(580);
                 printStream.println("FAILED");
                 e.printStackTrace(printStream);
@@ -116,12 +116,12 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
         printStream.flush();
     }
 
-    public void testAll(PrintStream printStream) {
+    public void testAll(final PrintStream printStream) {
         for (Method method : JndiTestServlet.class.getMethods()) {
             try {
                 method.invoke(this);
                 printStream.println(method.getName() + " PASSED");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 printStream.println(method.getName() + " FAILED");
                 e.printStackTrace(printStream);
                 printStream.flush();
@@ -159,62 +159,62 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
     }
 
     public void lookupStringEntry() {
-        String expected = "1";
+        final String expected = "1";
         Assert.assertNotNull("The String looked up is null", striing);
         Assert.assertEquals(expected, striing);
     }
 
     public void lookupDoubleEntry() {
-        Double expected = 1.0D;
+        final Double expected = 1.0D;
 
         Assert.assertNotNull("The Double looked up is null", doouble);
         Assert.assertEquals(expected, doouble);
     }
 
     public void lookupLongEntry() {
-        Long expected = 1L;
+        final Long expected = 1L;
 
         Assert.assertNotNull("The Long looked up is null", loong);
         Assert.assertEquals(expected, loong);
     }
 
     public void lookupFloatEntry() {
-        Float expected = 1.0F;
+        final Float expected = 1.0F;
 
         Assert.assertNotNull("The Float looked up is null", flooat);
         Assert.assertEquals(expected, flooat);
     }
 
     public void lookupIntegerEntry() {
-        Integer expected = 1;
+        final Integer expected = 1;
 
         Assert.assertNotNull("The Integer looked up is null", inteeger);
         Assert.assertEquals(expected, inteeger);
     }
 
     public void lookupShortEntry() {
-        Short expected = (short) 1;
+        final Short expected = (short) 1;
 
         Assert.assertNotNull("The Short looked up is null", shoort);
         Assert.assertEquals(expected, shoort);
     }
 
     public void lookupBooleanEntry() {
-        Boolean expected = true;
+        final Boolean expected = true;
 
         Assert.assertNotNull("The Boolean looked up is null", booolean);
         Assert.assertEquals(expected, booolean);
     }
 
     public void lookupByteEntry() {
-        Byte expected = (byte) 1;
+        final Byte expected = (byte) 1;
 
         Assert.assertNotNull("The Byte looked up is null", byyte);
         Assert.assertEquals(expected, byyte);
     }
 
     public void lookupCharacterEntry() {
-        Character expected = 'D';
+        final Character expected = 'D';
 
         Assert.assertNotNull("The Character looked up is null", chaaracter);
         Assert.assertEquals(expected, chaaracter);
@@ -229,15 +229,15 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
             testJmsConnection(coonnectionFactory.createConnection());
             testJmsConnection(queueCoonnectionFactory.createConnection());
             testJmsConnection(topicCoonnectionFactory.createConnection());
-        } catch (Exception e){
+        } catch (final Exception e){
             e.printStackTrace();
             Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
         MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
@@ -255,7 +255,7 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
         try {
             // call a do nothing method to assure entity manager actually exists
             em.getFlushMode();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

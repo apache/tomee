@@ -21,14 +21,14 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.quartz.impl.jdbcjobstore.HSQLDBDelegate;
+import org.apache.openejb.quartz.impl.jdbcjobstore.JobStoreCMT;
+import org.apache.openejb.quartz.simpl.SimpleThreadPool;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apache.openejb.quartz.impl.jdbcjobstore.HSQLDBDelegate;
-import org.apache.openejb.quartz.impl.jdbcjobstore.JobStoreCMT;
-import org.apache.openejb.quartz.simpl.SimpleThreadPool;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -61,7 +61,7 @@ public class QuartzPersistenceForEJBTimersTest {
         while (!bean.awaitTimeout()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // no-op
             }
         }
@@ -109,7 +109,7 @@ public class QuartzPersistenceForEJBTimersTest {
             .p("QuartzPersistenceForEJBTimersDB.UserName", "SA")
             .p("QuartzPersistenceForEJBTimersDB.Password", "")
 
-            // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx-.sql for the init script
+                // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx-.sql for the init script
             .p("QuartzPersistenceForEJBTimersDBNoTx", "new://Resource?type=DataSource")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JtaManaged", "false")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDB")

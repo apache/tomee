@@ -45,7 +45,7 @@ public class DeploymentContextOptionsTest extends TestCase {
 
         try { // hack for buildbot
             new ConfigurationImpl(null, null);
-        } catch (ValidationException ve) {
+        } catch (final ValidationException ve) {
             // no-op
         }
     }
@@ -220,11 +220,11 @@ public class DeploymentContextOptionsTest extends TestCase {
         assertOption(SystemInstance.get().getOptions(), "color", "orangeSystem");
     }
 
-    private void assertOption(Options options, final String key, final String value) {
+    private void assertOption(final Options options, final String key, final String value) {
         assertEquals(value, options.get(key, key + " (not set)"));
     }
 
-    private void assertNoOption(Options options, final String key) {
+    private void assertNoOption(final Options options, final String key) {
         final String defaultValue = key + " (not set)";
         assertEquals(defaultValue, options.get(key, defaultValue));
     }

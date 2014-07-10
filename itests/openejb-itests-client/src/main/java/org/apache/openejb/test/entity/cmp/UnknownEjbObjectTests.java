@@ -33,7 +33,7 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
         ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
         ejbObject = ejbHome.createObject("Third Bean");
     }
@@ -43,7 +43,7 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
         if (ejbObject != null) {
             try {
                 ejbObject.remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw e;
             }
         }
@@ -57,7 +57,7 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
         try {
             ejbHandle = ejbObject.getHandle();
             assertNotNull("The Handle is null", ejbHandle);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -66,7 +66,7 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
         try {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
             assertNotNull("The primary key is null", ejbPrimaryKey);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
@@ -75,16 +75,16 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
     public void test03_isIdentical() {
         try {
             assertTrue("The EJBObjects are not equal", ejbObject.isIdentical(ejbObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_getEjbHome() {
         try {
-            EJBHome home = ejbObject.getEJBHome();
+            final EJBHome home = ejbObject.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -98,16 +98,16 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
             try {
                 ejbHome.findByPrimaryKey(ejbPrimaryKey);
                 fail("Entity was not actually removed");
-            } catch (ObjectNotFoundException e) {
+            } catch (final ObjectNotFoundException e) {
             }
 
             // verify the proxy is dead
             try{
                 ejbObject.businessMethod("Should throw an exception");
                 assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
+            } catch (final Exception e){
             }
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         } finally{
             ejbObject = null;

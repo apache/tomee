@@ -56,11 +56,11 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            Set<GameLocal> gameSets = platform.getGames();
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final Set<GameLocal> gameSets = platform.getGames();
             assertEquals(2, gameSets.size());
-            for (Iterator iter = gameSets.iterator(); iter.hasNext();) {
-                GameLocal game = (GameLocal) iter.next();
+            for (final Iterator iter = gameSets.iterator(); iter.hasNext();) {
+                final GameLocal game = (GameLocal) iter.next();
                 if (game.getId().equals(new Integer(11))) {
                     assertEquals("value11", game.getName());
                 } else if (game.getId().equals(new Integer(22))) {
@@ -78,12 +78,12 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(new Integer(1));
             try {
                 platform.setGames(null);
                 fail("expected platform.setGames(null) to throw an IllegalArgumentException");
-            } catch (TransactionRolledbackLocalException e) {
-                Throwable cause = e.getCause();
+            } catch (final TransactionRolledbackLocalException e) {
+                final Throwable cause = e.getCause();
                 assertNotNull("cause is null", cause);
                 assertTrue("cause is not a instance of IllegalArgumentException", cause instanceof IllegalArgumentException);
             }
@@ -96,11 +96,11 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            GameLocal game = findGame(new Integer(22));
-            Set aSet = game.getPlatforms();
+            final GameLocal game = findGame(new Integer(22));
+            final Set aSet = game.getPlatforms();
             assertEquals(3, aSet.size());
-            for (Iterator iter = aSet.iterator(); iter.hasNext();) {
-                PlatformLocal platform = (PlatformLocal) iter.next();
+            for (final Iterator iter = aSet.iterator(); iter.hasNext();) {
+                final PlatformLocal platform = (PlatformLocal) iter.next();
                 if (platform.getId().equals(new Integer(1))) {
                     assertEquals("value1", platform.getName());
                 } else if (platform.getId().equals(new Integer(2))) {
@@ -152,9 +152,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = createPlatform(new Integer(4));
-            GameLocal game = createGame(new Integer(33));
-            Set<GameLocal> gameSets = platform.getGames();
+            final PlatformLocal platform = createPlatform(new Integer(4));
+            final GameLocal game = createGame(new Integer(33));
+            final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
             completeTransaction();
@@ -167,9 +167,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = createPlatform(new Integer(4));
-            GameLocal game = createGame(new Integer(33));
-            Set<PlatformLocal> platformSets = game.getPlatforms();
+            final PlatformLocal platform = createPlatform(new Integer(4));
+            final GameLocal game = createGame(new Integer(33));
+            final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
             completeTransaction();
@@ -182,9 +182,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = createPlatform(new Integer(4));
-            GameLocal game = findGame(new Integer(11));
-            Set<GameLocal> gameSets = platform.getGames();
+            final PlatformLocal platform = createPlatform(new Integer(4));
+            final GameLocal game = findGame(new Integer(11));
+            final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
             completeTransaction();
@@ -197,9 +197,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = createPlatform(new Integer(4));
-            GameLocal game = findGame(new Integer(11));
-            Set<PlatformLocal> platformSets = game.getPlatforms();
+            final PlatformLocal platform = createPlatform(new Integer(4));
+            final GameLocal game = findGame(new Integer(11));
+            final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
             completeTransaction();
@@ -212,9 +212,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            GameLocal game = createGame(new Integer(33));
-            Set<GameLocal> gameSets = platform.getGames();
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final GameLocal game = createGame(new Integer(33));
+            final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
             completeTransaction();
@@ -227,9 +227,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            GameLocal game = createGame(new Integer(33));
-            Set<PlatformLocal> platformSets = game.getPlatforms();
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final GameLocal game = createGame(new Integer(33));
+            final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
             completeTransaction();
@@ -242,7 +242,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(new Integer(1));
             platform.remove();
         } finally {
             completeTransaction();
@@ -254,19 +254,19 @@ public class ManyToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            Set games = platform.getGames();
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final Set games = platform.getGames();
 
             try {
                 games.add(new Object());
                 fail("expected games.add(new Object()) to throw an IllegalArgumentException");
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
             }
 
             try {
                 games.addAll(Arrays.asList(new Object()));
                 fail("expected games.addAll(Arrays.asList(new Object())) to throw an IllegalArgumentException");
-            } catch (IllegalArgumentException expected) {
+            } catch (final IllegalArgumentException expected) {
             }
         } finally {
             completeTransaction();
@@ -279,7 +279,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         Set games;
         GameLocal newGame;
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(new Integer(1));
             newGame = createGame(new Integer(33));
             games = platform.getGames();
         } finally {
@@ -289,8 +289,8 @@ public class ManyToManyTests extends AbstractCMRTest {
         // CMR collections should still be readable
         assertFalse(games.isEmpty());
         assertEquals(2, games.size());
-        for (Iterator iter = games.iterator(); iter.hasNext();) {
-            GameLocal game = (GameLocal) iter.next();
+        for (final Iterator iter = games.iterator(); iter.hasNext();) {
+            final GameLocal game = (GameLocal) iter.next();
             if (game.getId().equals(new Integer(11))) {
                 assertEquals("value11", game.getName());
             } else if (game.getId().equals(new Integer(22))) {
@@ -304,28 +304,28 @@ public class ManyToManyTests extends AbstractCMRTest {
         try {
             games.add(newGame);
             fail("expected games.add(game) to throw an IllegalStateException");
-        } catch (IllegalStateException expected) {
+        } catch (final IllegalStateException expected) {
         }
         try {
             games.addAll(Arrays.asList(newGame));
             fail("expected games.addAll(Arrays.asList(game)) to throw an IllegalStateException");
-        } catch (IllegalStateException expected) {
+        } catch (final IllegalStateException expected) {
         }
         try {
             games.remove(newGame);
             fail("expected games.remove(game) to throw an IllegalStateException");
-        } catch (IllegalStateException expected) {
+        } catch (final IllegalStateException expected) {
         }
         try {
             games.removeAll(Arrays.asList(newGame));
             fail("expected games.removeAll(game) to throw an IllegalStateException");
-        } catch (IllegalStateException expected) {
+        } catch (final IllegalStateException expected) {
         }
-        Iterator iterator = games.iterator();
+        final Iterator iterator = games.iterator();
         try {
             iterator.remove();
             fail("expected iterator.remove() to throw an ConcurrentModificationException");
-        } catch (ConcurrentModificationException expected) {
+        } catch (final ConcurrentModificationException expected) {
         }
     }
 
@@ -335,7 +335,7 @@ public class ManyToManyTests extends AbstractCMRTest {
         Set games;
         GameLocal newGame;
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(new Integer(1));
             newGame = createGame(new Integer(33));
             games = platform.getGames();
         } finally {
@@ -347,8 +347,8 @@ public class ManyToManyTests extends AbstractCMRTest {
             // CMR collections should still be readable
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
-            for (Iterator iter = games.iterator(); iter.hasNext();) {
-                GameLocal game = (GameLocal) iter.next();
+            for (final Iterator iter = games.iterator(); iter.hasNext();) {
+                final GameLocal game = (GameLocal) iter.next();
                 if (game.getId().equals(new Integer(11))) {
                     assertEquals("value11", game.getName());
                 } else if (game.getId().equals(new Integer(22))) {
@@ -362,28 +362,28 @@ public class ManyToManyTests extends AbstractCMRTest {
             try {
                 games.add(newGame);
                 fail("expected games.add(game) to throw an IllegalStateException");
-            } catch (IllegalStateException expected) {
+            } catch (final IllegalStateException expected) {
             }
             try {
                 games.addAll(Arrays.asList(newGame));
                 fail("expected games.addAll(Arrays.asList(game)) to throw an IllegalStateException");
-            } catch (IllegalStateException expected) {
+            } catch (final IllegalStateException expected) {
             }
             try {
                 games.remove(newGame);
                 fail("expected games.remove(game) to throw an IllegalStateException");
-            } catch (IllegalStateException expected) {
+            } catch (final IllegalStateException expected) {
             }
             try {
                 games.removeAll(Arrays.asList(newGame));
                 fail("expected games.removeAll(game) to throw an IllegalStateException");
-            } catch (IllegalStateException expected) {
+            } catch (final IllegalStateException expected) {
             }
-            Iterator iterator = games.iterator();
+            final Iterator iterator = games.iterator();
             try {
                 iterator.remove();
                 fail("expected iterator.remove() to throw an ConcurrentModificationException");
-            } catch (ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException expected) {
             }
         } finally {
             completeTransaction();
@@ -393,15 +393,15 @@ public class ManyToManyTests extends AbstractCMRTest {
     public void testIteratorConcurrentModification() throws Exception {
         resetDB();
         beginTransaction();
-        Set games;
+        final Set games;
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final GameLocal game = findGame(new Integer(11));
             games = platform.getGames();
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
 
-            Iterator iterator = games.iterator();
+            final Iterator iterator = games.iterator();
 
             games.remove(game);
             assertEquals(1, games.size());
@@ -409,7 +409,7 @@ public class ManyToManyTests extends AbstractCMRTest {
             try {
                 iterator.next();
                 fail("expected iterator.next() to throw an ConcurrentModificationException");
-            } catch (ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException expected) {
             }
         } finally {
             completeTransaction();
@@ -419,15 +419,15 @@ public class ManyToManyTests extends AbstractCMRTest {
     public void testIteratorAndRemove() throws Exception {
         resetDB();
         beginTransaction();
-        Set games;
+        final Set games;
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
-            GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = findPlatform(new Integer(1));
+            final GameLocal game = findGame(new Integer(11));
             games = platform.getGames();
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
 
-            Iterator iterator = games.iterator();
+            final Iterator iterator = games.iterator();
 
             assertTrue(games.contains(game));
             platform.remove();
@@ -437,16 +437,16 @@ public class ManyToManyTests extends AbstractCMRTest {
             try {
                 iterator.next();
                 fail("expected iterator.next() to throw an ConcurrentModificationException");
-            } catch (ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException expected) {
             }
         } finally {
             completeTransaction();
         }
     }
 
-    private void assertPlatformDeleted(int platformId) throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
+    private void assertPlatformDeleted(final int platformId) throws Exception {
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
 
         ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE Platforms_id=" + platformId);
         assertTrue(rs.next());
@@ -463,10 +463,10 @@ public class ManyToManyTests extends AbstractCMRTest {
     }
 
     private void assertAllUnlinked() throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform");
+        final ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform");
         assertTrue(rs.next());
         assertEquals(0, rs.getInt(1));
         rs.close();
@@ -475,9 +475,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         c.close();
     }
 
-    private void assertLinked(int platformId, int gameId) throws Exception {
-        Connection c = ds.getConnection();
-        Statement s = c.createStatement();
+    private void assertLinked(final int platformId, final int gameId) throws Exception {
+        final Connection c = ds.getConnection();
+        final Statement s = c.createStatement();
 
         ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM Game_Platform WHERE Platforms_id = " + platformId + " AND Games_id = " + gameId);
         assertTrue(rs.next());
@@ -497,43 +497,43 @@ public class ManyToManyTests extends AbstractCMRTest {
         c.close();
     }
 
-    private GameLocal createGame(int gameId) throws CreateException {
-        GameLocal menu = gameLocalHome.create(gameId);
+    private GameLocal createGame(final int gameId) throws CreateException {
+        final GameLocal menu = gameLocalHome.create(gameId);
         menu.setName("value" + gameId);
         return menu;
     }
 
-    private GameLocal findGame(int gameId) throws FinderException {
+    private GameLocal findGame(final int gameId) throws FinderException {
         return gameLocalHome.findByPrimaryKey(gameId);
     }
 
-    private PlatformLocal createPlatform(int platformId) throws CreateException {
-        PlatformLocal platform = platformLocalHome.create(platformId);
+    private PlatformLocal createPlatform(final int platformId) throws CreateException {
+        final PlatformLocal platform = platformLocalHome.create(platformId);
         platform.setName("value" + platformId);
         return platform;
     }
 
-    private PlatformLocal findPlatform(int platformId) throws FinderException {
+    private PlatformLocal findPlatform(final int platformId) throws FinderException {
         return platformLocalHome.findByPrimaryKey(platformId);
     }
 
     private void resetDB() throws Exception {
-        Connection connection = ds.getConnection();
+        final Connection connection = ds.getConnection();
         Statement statement = null;
         try {
             statement = connection.createStatement();
 
             try {
                 statement.execute("DELETE FROM Game_Platform");
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
             }
             try {
                 statement.execute("DELETE FROM Game");
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
             }
             try {
                 statement.execute("DELETE FROM Platform");
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
             }
         } finally {
             close(statement);
@@ -542,16 +542,16 @@ public class ManyToManyTests extends AbstractCMRTest {
 
         beginTransaction();
         try {
-            PlatformLocal platform1 = createPlatform(1);
+            final PlatformLocal platform1 = createPlatform(1);
             assertNotNull("platform1.getGames() is null", platform1.getGames());
-            PlatformLocal platform2 = createPlatform(2);
+            final PlatformLocal platform2 = createPlatform(2);
             assertNotNull("platform2.getGames() is null", platform2.getGames());
-            PlatformLocal platform3 = createPlatform(3);
+            final PlatformLocal platform3 = createPlatform(3);
             assertNotNull("platform3.getGames() is null", platform3.getGames());
 
-            GameLocal game1 = createGame(11);
+            final GameLocal game1 = createGame(11);
             assertNotNull("game1.getPlatforms() is null", game1.getPlatforms());
-            GameLocal game2 = createGame(22);
+            final GameLocal game2 = createGame(22);
             assertNotNull("game2.getPlatforms() is null", game2.getPlatforms());
 
             platform1.getGames().add(game1);

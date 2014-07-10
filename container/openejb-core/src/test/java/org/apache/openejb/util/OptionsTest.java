@@ -43,44 +43,44 @@ public class OptionsTest extends TestCase {
 
     public void testNoneNone() throws Exception {
         // User specified NONE
-        String userValue = "NONE";
+        final String userValue = "NONE";
 
         properties.setProperty("colors", userValue);
-        
+
         // Default is NONE
-        Set<Colors> colors = options.getAll("colors", Colors.class);
+        final Set<Colors> colors = options.getAll("colors", Colors.class);
 
         assertNotNull(colors);
         assertEquals("size", 0, colors.size());
 
         assertEquals("messages.size", 1, log.messages.size());
         assertEquals("messages level", Info.class, log.messages.get(0).getClass());
-        assertContains(log.messages.get(0).message, "colors="+userValue);
+        assertContains(log.messages.get(0).message, "colors=" + userValue);
     }
 
     public void testNoneAll() throws Exception {
         // User specified ALL
-        String userValue = "ALL";
+        final String userValue = "ALL";
         properties.setProperty("colors", userValue);
 
         // Default is NONE
-        Set<Colors> colors = options.getAll("colors", Colors.class);
+        final Set<Colors> colors = options.getAll("colors", Colors.class);
 
         assertNotNull(colors);
         assertEquals("size", Colors.values().length, colors.size());
 
         assertEquals("messages.size", 1, log.messages.size());
         assertEquals("messages level", Info.class, log.messages.get(0).getClass());
-        assertContains(log.messages.get(0).message, "colors="+userValue);
+        assertContains(log.messages.get(0).message, "colors=" + userValue);
     }
 
     public void testNoneSome() throws Exception {
         // User specified RED
-        String userValue = "red";
+        final String userValue = "red";
         properties.setProperty("colors", userValue);
 
         // Default is NONE
-        Set<Colors> colors = options.getAll("colors", Colors.class);
+        final Set<Colors> colors = options.getAll("colors", Colors.class);
 
         assertNotNull(colors);
         assertEquals("size", 1, colors.size());
@@ -95,7 +95,7 @@ public class OptionsTest extends TestCase {
         // User specified nothing
 
         // Default is NONE
-        Set<Colors> colors = options.getAll("colors", Colors.class);
+        final Set<Colors> colors = options.getAll("colors", Colors.class);
 
         assertNotNull(colors);
         assertEquals("size", 0, colors.size());
@@ -111,7 +111,7 @@ public class OptionsTest extends TestCase {
 
         message = message.substring(message.indexOf("Possible values"));
 
-        for (Colors color : colors) {
+        for (final Colors color : colors) {
             assertContains(message, color.name().toLowerCase());
         }
 
@@ -121,44 +121,44 @@ public class OptionsTest extends TestCase {
 
     public void testAllAll() throws Exception {
         // User specified ALL
-        String userValue = "ALL";
+        final String userValue = "ALL";
 
         properties.setProperty("colors", userValue);
 
         // Default is ALL
-        Set<Colors> colors = options.getAll("colors", Colors.values());
+        final Set<Colors> colors = options.getAll("colors", Colors.values());
 
         assertNotNull(colors);
         assertEquals("size", Colors.values().length, colors.size());
 
         assertEquals("messages.size", 1, log.messages.size());
         assertEquals("messages level", Info.class, log.messages.get(0).getClass());
-        assertContains(log.messages.get(0).message, "colors="+userValue);
+        assertContains(log.messages.get(0).message, "colors=" + userValue);
     }
 
     public void testAllNone() throws Exception {
         // User specified NONE
-        String userValue = "NONE";
+        final String userValue = "NONE";
         properties.setProperty("colors", userValue);
 
         // Default is ALL
-        Set<Colors> colors = options.getAll("colors", Colors.values());
+        final Set<Colors> colors = options.getAll("colors", Colors.values());
 
         assertNotNull(colors);
         assertEquals("size", 0, colors.size());
 
         assertEquals("messages.size", 1, log.messages.size());
         assertEquals("messages level", Info.class, log.messages.get(0).getClass());
-        assertContains(log.messages.get(0).message, "colors="+userValue);
+        assertContains(log.messages.get(0).message, "colors=" + userValue);
     }
 
     public void testAllSome() throws Exception {
         // User specified NONE
-        String userValue = "red";
+        final String userValue = "red";
         properties.setProperty("colors", userValue);
 
         // Default is ALL
-        Set<Colors> colors = options.getAll("colors", Colors.values());
+        final Set<Colors> colors = options.getAll("colors", Colors.values());
 
         assertNotNull(colors);
         assertEquals("size", 1, colors.size());
@@ -173,7 +173,7 @@ public class OptionsTest extends TestCase {
         // User specified nothing
 
         // Default is ALL
-        Set<Colors> colors = options.getAll("colors", Colors.values());
+        final Set<Colors> colors = options.getAll("colors", Colors.values());
 
         assertNotNull(colors);
         assertEquals("size", Colors.values().length, colors.size());
@@ -189,7 +189,7 @@ public class OptionsTest extends TestCase {
 
         message = message.substring(message.indexOf("Possible values"));
 
-        for (Colors color : colors) {
+        for (final Colors color : colors) {
             assertContains(message, color.name().toLowerCase());
         }
 
@@ -197,8 +197,8 @@ public class OptionsTest extends TestCase {
         assertContains(message, "NONE");
     }
 
-    private void assertContains(String message, String expected) {
-        assertTrue("Expected ["+expected+"], actual ["+message+"]", message.contains(expected));
+    private void assertContains(final String message, final String expected) {
+        assertTrue("Expected [" + expected + "], actual [" + message + "]", message.contains(expected));
     }
 
     public void setUp() {
@@ -228,27 +228,27 @@ public class OptionsTest extends TestCase {
             return true;
         }
 
-        public void warning(String message, Throwable t) {
+        public void warning(final String message, final Throwable t) {
             messages.add(new Warning(message));
         }
 
-        public void warning(String message) {
+        public void warning(final String message) {
             messages.add(new Warning(message));
         }
 
-        public void info(String message, Throwable t) {
+        public void info(final String message, final Throwable t) {
             messages.add(new Info(message));
         }
 
-        public void info(String message) {
+        public void info(final String message) {
             messages.add(new Info(message));
         }
 
-        public void debug(String message, Throwable t) {
+        public void debug(final String message, final Throwable t) {
             messages.add(new Debug(message));
         }
 
-        public void debug(String message) {
+        public void debug(final String message) {
             messages.add(new Debug(message));
         }
 
@@ -257,25 +257,25 @@ public class OptionsTest extends TestCase {
     private abstract static class Message {
         private final String message;
 
-        private Message(String message) {
+        private Message(final String message) {
             this.message = message;
         }
     }
 
     private static class Debug extends Message {
-        private Debug(String message) {
+        private Debug(final String message) {
             super(message);
         }
     }
 
     private static class Info extends Message {
-        private Info(String message) {
+        private Info(final String message) {
             super(message);
         }
     }
 
     private static class Warning extends Message {
-        private Warning(String message) {
+        private Warning(final String message) {
             super(message);
         }
     }

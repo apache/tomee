@@ -24,5 +24,6 @@ import javax.ejb.EJBLocalObject;
 public interface OneOwningSideLocal extends EJBLocalObject {
     // CMR
     public OneInverseSideLocal getOneInverseSide();
+
     public void setOneInverseSide(OneInverseSideLocal oneInverseSideLocal);
 }

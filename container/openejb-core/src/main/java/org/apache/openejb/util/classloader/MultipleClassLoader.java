@@ -20,7 +20,6 @@ package org.apache.openejb.util.classloader;
 /**
  * Simply to be able to get rid of the openwebbeans classloader stuff
  * without patching it.
- *
  */
 public class MultipleClassLoader extends ClassLoader implements ClassLoaderComparator {
     private final ClassLoader second;

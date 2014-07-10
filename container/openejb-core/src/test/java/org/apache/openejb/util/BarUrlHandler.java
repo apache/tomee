@@ -25,7 +25,7 @@ import java.net.URLConnection;
  * @version $Revision$ $Date$
  */
 public class BarUrlHandler extends java.net.URLStreamHandler {
-    protected URLConnection openConnection(URL u) throws IOException {
+    protected URLConnection openConnection(final URL u) throws IOException {
         throw new IOException("bar");
     }
 }

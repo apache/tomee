@@ -601,7 +601,7 @@ public class StatefulContainer implements RpcContainer {
                         }
                     } catch (final Throwable t) {
                         final String logMessage = "An unexpected exception occured while invoking the preDestroy method on the Stateful SessionBean instance: "
-                                                  + (null != instance ? instance.bean.getClass().getName() : beanContext.getBeanClass().getName());
+                            + (null != instance ? instance.bean.getClass().getName() : beanContext.getBeanClass().getName());
                         logger.error(logMessage, t);
 
                     } finally {
@@ -984,8 +984,8 @@ public class StatefulContainer implements RpcContainer {
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
         final boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
-                                    callContext.getBeanContext().isSessionSynchronized() &&
-                                    txPolicy.isTransactionActive();
+            callContext.getBeanContext().isSessionSynchronized() &&
+            txPolicy.isTransactionActive();
 
         coordinator.registerSessionSynchronization(instance, callContext.getBeanContext(), callContext.getPrimaryKey(), synchronize);
     }
@@ -1099,7 +1099,7 @@ public class StatefulContainer implements RpcContainer {
                 } catch (final InvalidateReferenceException e) {
                     // exception has alredy been handled
                 } catch (final Exception e) {
-                    final String message = "An unexpected system exception occured while invoking the beforeCompletion method on the SessionSynchronization object";
+                    final String message = "An unexpected system exception occurred while invoking the beforeCompletion method on the SessionSynchronization object";
 
                     // [1] Log the exception or error
                     logger.error(message, e);
@@ -1226,9 +1226,9 @@ public class StatefulContainer implements RpcContainer {
 
                 interceptorStack.invoke();
             } catch (final Throwable e) {
-                logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out Stateful SessionBean instance", e);
+                logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out stateful bean instance", e);
             } finally {
-                logger.info("Removing the timed-out stateful session bean instance " + instance.primaryKey);
+                logger.info(("Removing the timed-out stateful bean instance " + instance.primaryKey) + " : " + (null != instance.bean ? instance.bean.getClass().getName() : "unknown"));
                 ThreadContext.exit(oldContext);
             }
         }

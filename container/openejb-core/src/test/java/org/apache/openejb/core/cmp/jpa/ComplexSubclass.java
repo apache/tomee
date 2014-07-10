@@ -24,7 +24,7 @@ public class ComplexSubclass extends ComplexSuperclass {
     public ComplexSubclass() {
     }
 
-    public ComplexSubclass(String firstId, String secondId) {
+    public ComplexSubclass(final String firstId, final String secondId) {
         super(firstId, secondId);
     }
 }

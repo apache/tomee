@@ -42,11 +42,9 @@ public class IorSecurityConfig {
 
     /**
      * Gets the value of the transportConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransportConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link TransportConfig }
      */
     public TransportConfig getTransportConfig() {
         return transportConfig;
@@ -54,23 +52,19 @@ public class IorSecurityConfig {
 
     /**
      * Sets the value of the transportConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransportConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransportConfig }
      */
-    public void setTransportConfig(TransportConfig value) {
+    public void setTransportConfig(final TransportConfig value) {
         this.transportConfig = value;
     }
 
     /**
      * Gets the value of the asContext property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AsContext }
-     *     
+     *
+     * @return possible object is
+     * {@link AsContext }
      */
     public AsContext getAsContext() {
         return asContext;
@@ -78,23 +72,19 @@ public class IorSecurityConfig {
 
     /**
      * Sets the value of the asContext property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AsContext }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AsContext }
      */
-    public void setAsContext(AsContext value) {
+    public void setAsContext(final AsContext value) {
         this.asContext = value;
     }
 
     /**
      * Gets the value of the sasContext property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SasContext }
-     *     
+     *
+     * @return possible object is
+     * {@link SasContext }
      */
     public SasContext getSasContext() {
         return sasContext;
@@ -102,13 +92,11 @@ public class IorSecurityConfig {
 
     /**
      * Sets the value of the sasContext property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SasContext }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SasContext }
      */
-    public void setSasContext(SasContext value) {
+    public void setSasContext(final SasContext value) {
         this.sasContext = value;
     }
 

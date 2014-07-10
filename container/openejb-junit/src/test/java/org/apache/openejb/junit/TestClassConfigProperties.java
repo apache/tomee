@@ -17,28 +17,25 @@
 
 package org.apache.openejb.junit;
 
-import org.apache.openejb.junit.ContextConfig;
-import org.apache.openejb.junit.Property;
-import org.apache.openejb.junit.TestResource;
-import org.apache.openejb.junit.TestResourceTypes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Hashtable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
-        properties = {
-                @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory"),
-                @Property("junit.test-property=Test String from Properties"),
-                @Property("junit.test-empty-property="),
-                @Property("junit.test-null-property"),
-                @Property(" junit.test-trim-empty-property-key = "),
-                @Property(" junit.test-trim-null-property-key "),
-                @Property(" junit.test-trim-property-key-and-value = trimmed value ")
-        }
+    properties = {
+        @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory"),
+        @Property("junit.test-property=Test String from Properties"),
+        @Property("junit.test-empty-property="),
+        @Property("junit.test-null-property"),
+        @Property(" junit.test-trim-empty-property-key = "),
+        @Property(" junit.test-trim-null-property-key "),
+        @Property(" junit.test-trim-property-key-and-value = trimmed value ")
+    }
 )
 public class TestClassConfigProperties {
     @TestResource(TestResourceTypes.CONTEXT_CONFIG)
@@ -59,8 +56,8 @@ public class TestClassConfigProperties {
         checkProperty("junit.test-trim-property-key-and-value", "trimmed value");
     }
 
-    private void checkProperty(String key, String expected) {
-        String value = contextConfig.get(key);
+    private void checkProperty(final String key, final String expected) {
+        final String value = contextConfig.get(key);
         assertEquals(expected, value);
     }
 }

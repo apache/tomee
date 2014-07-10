@@ -29,7 +29,7 @@ public final class QuickJarsTxtParser {
     public static final String FILE_NAME = "jars.txt";
 
     private QuickJarsTxtParser() {
-         // no-op
+        // no-op
     }
 
     public static ClassLoaderConfigurer parse(final File file) {

@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class JndiServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        ServletOutputStream out = response.getOutputStream();
+        final ServletOutputStream out = response.getOutputStream();
 
         Map<String, Object> bindings = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         try {
@@ -54,16 +54,16 @@ public class JndiServlet extends HttpServlet {
         }
     }
 
-    private void addBindings(String path, Map<String, Object> bindings, Context context) {
+    private void addBindings(final String path, final Map<String, Object> bindings, Context context) {
         try {
             for (NameClassPair pair : Collections.list(context.list(""))) {
-                String name = pair.getName();
+                final String name = pair.getName();
                 String className = pair.getClassName();
                 if ("org.apache.naming.resources.FileDirContext$FileResource".equals(className)) {
                     bindings.put(path + name, "<file>");
                 } else {
                     try {
-                        Object value = context.lookup(name);
+                        final Object value = context.lookup(name);
                         if (value instanceof Context) {
                             Context nextedContext = (Context) value;
                             bindings.put(path + name, "");

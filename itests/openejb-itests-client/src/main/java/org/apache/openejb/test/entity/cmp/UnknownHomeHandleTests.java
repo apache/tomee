@@ -32,7 +32,7 @@ public class UnknownHomeHandleTests extends UnknownCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
         ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
@@ -42,9 +42,9 @@ public class UnknownHomeHandleTests extends UnknownCmpTestClient {
     //
     public void test01_getEJBHome() {
         try {
-            EJBHome home = ejbHomeHandle.getEJBHome();
+            final EJBHome home = ejbHomeHandle.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

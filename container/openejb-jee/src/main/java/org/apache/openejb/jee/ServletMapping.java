@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for servlet-mappingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="servlet-mappingType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "servlet-mappingType", propOrder = {
-        "servletName",
-        "urlPattern"
+    "servletName",
+    "urlPattern"
 })
 public class ServletMapping {
 
@@ -73,7 +71,7 @@ public class ServletMapping {
         return servletName;
     }
 
-    public void setServletName(String value) {
+    public void setServletName(final String value) {
         this.servletName = value;
     }
 
@@ -88,7 +86,7 @@ public class ServletMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * @version $Rev$ $Date$
@@ -39,7 +39,7 @@ public class Jndi {
     public Jndi() {
     }
 
-    public Jndi(String name, String intrface) {
+    public Jndi(final String name, final String intrface) {
         this.name = name;
         this.intrface = intrface;
     }
@@ -48,7 +48,7 @@ public class Jndi {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -56,7 +56,7 @@ public class Jndi {
         return intrface;
     }
 
-    public void setInterface(String value) {
+    public void setInterface(final String value) {
         this.intrface = value;
     }
 

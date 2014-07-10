@@ -17,32 +17,32 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.Locale;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
  */
-public class LocalCollection<V> extends KeyedCollection<String,V> {
+public class LocalCollection<V> extends KeyedCollection<String, V> {
     public LocalCollection() {
     }
 
-    public LocalCollection(KeyExtractor<String, ? super V> keyExtractor) {
+    public LocalCollection(final KeyExtractor<String, ? super V> keyExtractor) {
         super(keyExtractor);
     }
 
-    public LocalCollection(Collection<? extends V> c) {
+    public LocalCollection(final Collection<? extends V> c) {
         super(c);
     }
 
-    public LocalCollection(int initialCapacity) {
+    public LocalCollection(final int initialCapacity) {
         super(initialCapacity);
     }
 
     public V getLocal() {
-        String lang = Locale.getDefault().getLanguage();
-        Map<String,V> map = toMap();
+        final String lang = Locale.getDefault().getLanguage();
+        final Map<String, V> map = toMap();
         return (map.get(lang) != null ? map.get(lang) : map.get(null));
     }
 }

@@ -104,23 +104,34 @@ public class InterceptorData {
         return afterCompletion;
     }
 
-    public Set<Method> getAroundTimeout(){
+    public Set<Method> getAroundTimeout() {
         return aroundTimeout;
     }
 
     public Set<Method> getMethods(final Operation operation) {
-        switch(operation) {
-            case BUSINESS: return getAroundInvoke();
-            case BUSINESS_WS: return getAroundInvoke();
-            case REMOVE: return getAroundInvoke();
-            case POST_CONSTRUCT: return getPostConstruct();
-            case PRE_DESTROY: return getPreDestroy();
-            case ACTIVATE: return getPostActivate();
-            case PASSIVATE: return getPrePassivate();
-            case AFTER_BEGIN: return getAfterBegin();
-            case AFTER_COMPLETION: return getAfterCompletion();
-            case BEFORE_COMPLETION: return getBeforeCompletion();
-            case TIMEOUT: return getAroundTimeout();
+        switch (operation) {
+            case BUSINESS:
+                return getAroundInvoke();
+            case BUSINESS_WS:
+                return getAroundInvoke();
+            case REMOVE:
+                return getAroundInvoke();
+            case POST_CONSTRUCT:
+                return getPostConstruct();
+            case PRE_DESTROY:
+                return getPreDestroy();
+            case ACTIVATE:
+                return getPostActivate();
+            case PASSIVATE:
+                return getPrePassivate();
+            case AFTER_BEGIN:
+                return getAfterBegin();
+            case AFTER_COMPLETION:
+                return getAfterCompletion();
+            case BEFORE_COMPLETION:
+                return getBeforeCompletion();
+            case TIMEOUT:
+                return getAroundTimeout();
         }
         return Collections.EMPTY_SET;
     }
@@ -202,6 +213,6 @@ public class InterceptorData {
     @Override
     public String toString() {
         return "InterceptorData{" +
-                "clazz=" + clazz.getSimpleName() + '}';
+            "clazz=" + clazz.getSimpleName() + '}';
     }
 }

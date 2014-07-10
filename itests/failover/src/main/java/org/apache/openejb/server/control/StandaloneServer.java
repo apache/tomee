@@ -283,10 +283,10 @@ public class StandaloneServer {
                 out = System.out;
                 Pipe.pipe(process.getInputStream(), out);
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             throw new IllegalStateException("Server failed to start in the expected time");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Server did not start correctly", e);
         }
     }
@@ -317,7 +317,7 @@ public class StandaloneServer {
     private void waitForExit() {
         try {
             process.waitFor();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
         process = null;
@@ -343,9 +343,9 @@ public class StandaloneServer {
             final Process command = builder.start();
             Pipe.read(command);
             return command.waitFor();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ServerException(home, Join.join(" ", strings), e);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
         return -1;
@@ -392,7 +392,7 @@ public class StandaloneServer {
                         if (server.process != null) {
                             server.process.destroy();
                         }
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }

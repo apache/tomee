@@ -26,16 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for user-data-constraintType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="user-data-constraintType">
  *   &lt;complexContent>
@@ -49,14 +47,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "user-data-constraintType", propOrder = {
-        "descriptions",
-        "transportGuarantee"
+    "descriptions",
+    "transportGuarantee"
 })
 public class UserDataConstraint {
 
@@ -74,7 +70,7 @@ public class UserDataConstraint {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -86,7 +82,7 @@ public class UserDataConstraint {
         return transportGuarantee;
     }
 
-    public void setTransportGuarantee(TransportGuarantee value) {
+    public void setTransportGuarantee(final TransportGuarantee value) {
         this.transportGuarantee = value;
     }
 
@@ -94,7 +90,7 @@ public class UserDataConstraint {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

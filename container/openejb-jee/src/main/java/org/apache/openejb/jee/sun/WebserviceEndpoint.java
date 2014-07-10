@@ -66,7 +66,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return portComponentName;
     }
 
-    public void setPortComponentName(String value) {
+    public void setPortComponentName(final String value) {
         this.portComponentName = value;
     }
 
@@ -74,7 +74,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return endpointAddressUri;
     }
 
-    public void setEndpointAddressUri(String value) {
+    public void setEndpointAddressUri(final String value) {
         this.endpointAddressUri = value;
     }
 
@@ -89,7 +89,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return transportGuarantee;
     }
 
-    public void setTransportGuarantee(String value) {
+    public void setTransportGuarantee(final String value) {
         this.transportGuarantee = value;
     }
 
@@ -97,7 +97,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return serviceQname;
     }
 
-    public void setServiceQname(ServiceQname value) {
+    public void setServiceQname(final ServiceQname value) {
         this.serviceQname = value;
     }
 
@@ -105,7 +105,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return tieClass;
     }
 
-    public void setTieClass(String value) {
+    public void setTieClass(final String value) {
         this.tieClass = value;
     }
 
@@ -113,7 +113,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return servletImplClass;
     }
 
-    public void setServletImplClass(String value) {
+    public void setServletImplClass(final String value) {
         this.servletImplClass = value;
     }
 
@@ -121,7 +121,7 @@ public class WebserviceEndpoint implements Keyable<String> {
         return debuggingEnabled;
     }
 
-    public void setDebuggingEnabled(String value) {
+    public void setDebuggingEnabled(final String value) {
         this.debuggingEnabled = value;
     }
 }

@@ -80,11 +80,9 @@ public class ProxyFactoryConfig {
 
     /**
      * Gets the value of the clientInterceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ClientInterceptors }
-     *     
+     *
+     * @return possible object is
+     * {@link ClientInterceptors }
      */
     public ClientInterceptors getClientInterceptors() {
         return clientInterceptors;
@@ -92,23 +90,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the clientInterceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ClientInterceptors }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ClientInterceptors }
      */
-    public void setClientInterceptors(ClientInterceptors value) {
+    public void setClientInterceptors(final ClientInterceptors value) {
         this.clientInterceptors = value;
     }
 
     /**
      * Gets the value of the endpointInterceptors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EndpointInterceptors }
-     *     
+     *
+     * @return possible object is
+     * {@link EndpointInterceptors }
      */
     public EndpointInterceptors getEndpointInterceptors() {
         return endpointInterceptors;
@@ -116,23 +110,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the endpointInterceptors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EndpointInterceptors }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EndpointInterceptors }
      */
-    public void setEndpointInterceptors(EndpointInterceptors value) {
+    public void setEndpointInterceptors(final EndpointInterceptors value) {
         this.endpointInterceptors = value;
     }
 
     /**
      * Gets the value of the webClassLoader property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWebClassLoader() {
         return webClassLoader;
@@ -140,23 +130,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the webClassLoader property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWebClassLoader(String value) {
+    public void setWebClassLoader(final String value) {
         this.webClassLoader = value;
     }
 
     /**
      * Gets the value of the activationConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ActivationConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link ActivationConfig }
      */
     public ActivationConfig getActivationConfig() {
         return activationConfig;
@@ -164,23 +150,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the activationConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ActivationConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ActivationConfig }
      */
-    public void setActivationConfig(ActivationConfig value) {
+    public void setActivationConfig(final ActivationConfig value) {
         this.activationConfig = value;
     }
 
     /**
      * Gets the value of the jmsProviderAdapterJNDI property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJMSProviderAdapterJNDI() {
         return jmsProviderAdapterJNDI;
@@ -188,23 +170,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the jmsProviderAdapterJNDI property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJMSProviderAdapterJNDI(String value) {
+    public void setJMSProviderAdapterJNDI(final String value) {
         this.jmsProviderAdapterJNDI = value;
     }
 
     /**
      * Gets the value of the serverSessionPoolFactoryJNDI property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getServerSessionPoolFactoryJNDI() {
         return serverSessionPoolFactoryJNDI;
@@ -212,23 +190,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the serverSessionPoolFactoryJNDI property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setServerSessionPoolFactoryJNDI(String value) {
+    public void setServerSessionPoolFactoryJNDI(final String value) {
         this.serverSessionPoolFactoryJNDI = value;
     }
 
     /**
      * Gets the value of the createJBossMQDestination property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCreateJBossMQDestination() {
         return createJBossMQDestination;
@@ -236,23 +210,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the createJBossMQDestination property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCreateJBossMQDestination(String value) {
+    public void setCreateJBossMQDestination(final String value) {
         this.createJBossMQDestination = value;
     }
 
     /**
      * Gets the value of the minimumSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMinimumSize() {
         return minimumSize;
@@ -260,23 +230,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the minimumSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMinimumSize(String value) {
+    public void setMinimumSize(final String value) {
         this.minimumSize = value;
     }
 
     /**
      * Gets the value of the maximumSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaximumSize() {
         return maximumSize;
@@ -284,23 +250,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the maximumSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaximumSize(String value) {
+    public void setMaximumSize(final String value) {
         this.maximumSize = value;
     }
 
     /**
      * Gets the value of the keepAliveMillis property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getKeepAliveMillis() {
         return keepAliveMillis;
@@ -308,23 +270,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the keepAliveMillis property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setKeepAliveMillis(String value) {
+    public void setKeepAliveMillis(final String value) {
         this.keepAliveMillis = value;
     }
 
     /**
      * Gets the value of the maxMessages property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxMessages() {
         return maxMessages;
@@ -332,23 +290,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the maxMessages property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxMessages(String value) {
+    public void setMaxMessages(final String value) {
         this.maxMessages = value;
     }
 
     /**
      * Gets the value of the mdbConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MDBConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link MDBConfig }
      */
     public MDBConfig getMDBConfig() {
         return mdbConfig;
@@ -356,23 +310,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the mdbConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MDBConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MDBConfig }
      */
-    public void setMDBConfig(MDBConfig value) {
+    public void setMDBConfig(final MDBConfig value) {
         this.mdbConfig = value;
     }
 
     /**
      * Gets the value of the poa property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPoa() {
         return poa;
@@ -380,23 +330,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the poa property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPoa(String value) {
+    public void setPoa(final String value) {
         this.poa = value;
     }
 
     /**
      * Gets the value of the registerEjbsInJnpContext property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRegisterEjbsInJnpContext() {
         return registerEjbsInJnpContext;
@@ -404,23 +350,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the registerEjbsInJnpContext property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRegisterEjbsInJnpContext(String value) {
+    public void setRegisterEjbsInJnpContext(final String value) {
         this.registerEjbsInJnpContext = value;
     }
 
     /**
      * Gets the value of the jnpContext property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJnpContext() {
         return jnpContext;
@@ -428,23 +370,19 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the jnpContext property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJnpContext(String value) {
+    public void setJnpContext(final String value) {
         this.jnpContext = value;
     }
 
     /**
      * Gets the value of the interfaceRepositorySupported property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInterfaceRepositorySupported() {
         return interfaceRepositorySupported;
@@ -452,13 +390,11 @@ public class ProxyFactoryConfig {
 
     /**
      * Sets the value of the interfaceRepositorySupported property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInterfaceRepositorySupported(String value) {
+    public void setInterfaceRepositorySupported(final String value) {
         this.interfaceRepositorySupported = value;
     }
 

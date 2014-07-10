@@ -35,11 +35,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>Java class for persistence-context-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-context-refType">
  *   &lt;complexContent>
@@ -57,21 +57,19 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-refType", propOrder = {
-        "descriptions",
-        "persistenceContextRefName",
-        "persistenceUnitName",
-        "persistenceContextType",
-        "persistenceProperty",
-        "mappedName",
-        "injectionTarget",
-        //TODO lookupName not in schema ??
-        "lookupName"
-        })
+    "descriptions",
+    "persistenceContextRefName",
+    "persistenceUnitName",
+    "persistenceContextType",
+    "persistenceProperty",
+    "mappedName",
+    "injectionTarget",
+    //TODO lookupName not in schema ??
+    "lookupName"
+})
 public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     @XmlTransient
@@ -99,44 +97,44 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     public PersistenceContextRef() {
     }
 
-    public PersistenceContextRef(String persistenceContextRefName, String persistenceUnitName) {
+    public PersistenceContextRef(final String persistenceContextRefName, final String persistenceUnitName) {
         this.persistenceContextRefName = persistenceContextRefName;
         this.persistenceUnitName = persistenceUnitName;
     }
 
-    public PersistenceContextRef(String persistenceContextRefName, String persistenceUnitName, PersistenceContextType persistenceContextType, List<Property> persistenceProperty) {
+    public PersistenceContextRef(final String persistenceContextRefName, final String persistenceUnitName, final PersistenceContextType persistenceContextType, final List<Property> persistenceProperty) {
         this.persistenceContextRefName = persistenceContextRefName;
         this.persistenceUnitName = persistenceUnitName;
         this.persistenceContextType = persistenceContextType;
         this.persistenceProperty = persistenceProperty;
     }
 
-    public PersistenceContextRef name(String persistenceContextRefName) {
+    public PersistenceContextRef name(final String persistenceContextRefName) {
         this.persistenceContextRefName = persistenceContextRefName;
         return this;
     }
 
-    public PersistenceContextRef unit(String persistenceUnit) {
+    public PersistenceContextRef unit(final String persistenceUnit) {
         this.persistenceUnitName = persistenceUnit;
         return this;
     }
 
-    public PersistenceContextRef type(PersistenceContextType persistenceContextType) {
+    public PersistenceContextRef type(final PersistenceContextType persistenceContextType) {
         this.persistenceContextType = persistenceContextType;
         return this;
     }
 
-    public PersistenceContextRef mappedName(String mappedName) {
+    public PersistenceContextRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public PersistenceContextRef lookup(String lookupName) {
+    public PersistenceContextRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public PersistenceContextRef injectionTarget(String className, String property) {
+    public PersistenceContextRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         // TODO move this to getKey()
@@ -147,11 +145,11 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return this;
     }
 
-    public PersistenceContextRef injectionTarget(Class<?> clazz, String property) {
+    public PersistenceContextRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
-    
-    public PersistenceContextRef property(String name, String value) {
+
+    public PersistenceContextRef property(final String name, final String value) {
         getPersistenceProperty().add(new Property(name, value));
         return this;
     }
@@ -161,7 +159,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -170,11 +168,11 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return getPersistenceContextType().name();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setPersistenceContextRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
     @XmlElement(name = "description", required = true)
@@ -182,7 +180,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -194,7 +192,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return persistenceContextRefName;
     }
 
-    public void setPersistenceContextRefName(String value) {
+    public void setPersistenceContextRefName(final String value) {
         this.persistenceContextRefName = value;
     }
 
@@ -202,7 +200,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return persistenceUnitName;
     }
 
-    public void setPersistenceUnitName(String value) {
+    public void setPersistenceUnitName(final String value) {
         this.persistenceUnitName = value;
     }
 
@@ -210,7 +208,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return persistenceContextType;
     }
 
-    public void setPersistenceContextType(PersistenceContextType value) {
+    public void setPersistenceContextType(final PersistenceContextType value) {
         this.persistenceContextType = value;
     }
 
@@ -225,7 +223,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -233,7 +231,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -248,22 +246,22 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public void setPersistenceProperty(List<Property> persistenceProperty) {
+    public void setPersistenceProperty(final List<Property> persistenceProperty) {
         this.persistenceProperty = persistenceProperty;
     }
 
     @Override
     public String toString() {
         return "PersistenceContextRef{" +
-                "name='" + persistenceContextRefName + '\'' +
-                ", unit='" + persistenceUnitName + '\'' +
-                ", context=" + persistenceContextType +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + persistenceContextRefName + '\'' +
+            ", unit='" + persistenceUnitName + '\'' +
+            ", context=" + persistenceContextType +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

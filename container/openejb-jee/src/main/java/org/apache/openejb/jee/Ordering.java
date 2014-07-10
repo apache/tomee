@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for orderingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="orderingType">
  *   &lt;complexContent>
@@ -39,8 +39,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,7 +55,7 @@ public class Ordering {
         return after;
     }
 
-    public void setAfter(OrderingOrdering value) {
+    public void setAfter(final OrderingOrdering value) {
         this.after = value;
     }
 
@@ -65,7 +63,7 @@ public class Ordering {
         return before;
     }
 
-    public void setBefore(OrderingOrdering value) {
+    public void setBefore(final OrderingOrdering value) {
         this.before = value;
     }
 

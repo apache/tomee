@@ -30,13 +30,20 @@ public enum TransactionType {
 
     public static TransactionType get(final TransactionAttributeType type) {
         switch (type) {
-            case REQUIRED: return Required;
-            case REQUIRES_NEW: return RequiresNew;
-            case MANDATORY: return Mandatory;
-            case NEVER: return Never;
-            case NOT_SUPPORTED: return NotSupported;
-            case SUPPORTS: return Supports;
-            default: throw new IllegalArgumentException("Uknown TransactionAttributeType."+ type);
+            case REQUIRED:
+                return Required;
+            case REQUIRES_NEW:
+                return RequiresNew;
+            case MANDATORY:
+                return Mandatory;
+            case NEVER:
+                return Never;
+            case NOT_SUPPORTED:
+                return NotSupported;
+            case SUPPORTS:
+                return Supports;
+            default:
+                throw new IllegalArgumentException("Uknown TransactionAttributeType." + type);
         }
     }
 

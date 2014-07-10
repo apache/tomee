@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.FacesSupportedLocale$JAXB.readFacesSupporte
 import static org.apache.openejb.jee.FacesSupportedLocale$JAXB.writeFacesSupportedLocale;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesLocaleConfig$JAXB
-        extends JAXBObject<FacesLocaleConfig> {
+    extends JAXBObject<FacesLocaleConfig> {
 
 
     public FacesLocaleConfig$JAXB() {
         super(FacesLocaleConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-locale-configType".intern()), FacesDefaultLocale$JAXB.class, FacesSupportedLocale$JAXB.class);
     }
 
-    public static FacesLocaleConfig readFacesLocaleConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesLocaleConfig readFacesLocaleConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesLocaleConfig(XoXMLStreamWriter writer, FacesLocaleConfig facesLocaleConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesLocaleConfig(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLocaleConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesLocaleConfig facesLocaleConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesLocaleConfig, context);
     }
 
-    public final static FacesLocaleConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesLocaleConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,13 +72,13 @@ public class FacesLocaleConfig$JAXB
             context = new RuntimeContext();
         }
 
-        FacesLocaleConfig facesLocaleConfig = new FacesLocaleConfig();
+        final FacesLocaleConfig facesLocaleConfig = new FacesLocaleConfig();
         context.beforeUnmarshal(facesLocaleConfig, LifecycleCallback.NONE);
 
         List<FacesSupportedLocale> supportedLocale = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-locale-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesLocaleConfig.class);
@@ -86,10 +86,10 @@ public class FacesLocaleConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesLocaleConfig);
                 facesLocaleConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -98,14 +98,14 @@ public class FacesLocaleConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("default-locale" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultLocale
-                FacesDefaultLocale defaultLocale = readFacesDefaultLocale(elementReader, context);
+                final FacesDefaultLocale defaultLocale = readFacesDefaultLocale(elementReader, context);
                 facesLocaleConfig.defaultLocale = defaultLocale;
             } else if (("supported-locale" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: supportedLocale
-                FacesSupportedLocale supportedLocaleItem = readFacesSupportedLocale(elementReader, context);
+                final FacesSupportedLocale supportedLocaleItem = readFacesSupportedLocale(elementReader, context);
                 if (supportedLocale == null) {
                     supportedLocale = facesLocaleConfig.supportedLocale;
                     if (supportedLocale != null) {
@@ -128,13 +128,13 @@ public class FacesLocaleConfig$JAXB
         return facesLocaleConfig;
     }
 
-    public final FacesLocaleConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesLocaleConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesLocaleConfig facesLocaleConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesLocaleConfig facesLocaleConfig, RuntimeContext context)
+        throws Exception {
         if (facesLocaleConfig == null) {
             writer.writeXsiNil();
             return;
@@ -144,7 +144,7 @@ public class FacesLocaleConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesLocaleConfig.class != facesLocaleConfig.getClass()) {
             context.unexpectedSubclass(writer, facesLocaleConfig, FacesLocaleConfig.class);
             return;
@@ -154,19 +154,19 @@ public class FacesLocaleConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesLocaleConfig.id;
+        final String idRaw = facesLocaleConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesLocaleConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: defaultLocale
-        FacesDefaultLocale defaultLocale = facesLocaleConfig.defaultLocale;
+        final FacesDefaultLocale defaultLocale = facesLocaleConfig.defaultLocale;
         if (defaultLocale != null) {
             writer.writeStartElement(prefix, "default-locale", "http://java.sun.com/xml/ns/javaee");
             writeFacesDefaultLocale(writer, defaultLocale, context);
@@ -174,9 +174,9 @@ public class FacesLocaleConfig$JAXB
         }
 
         // ELEMENT: supportedLocale
-        List<FacesSupportedLocale> supportedLocale = facesLocaleConfig.supportedLocale;
+        final List<FacesSupportedLocale> supportedLocale = facesLocaleConfig.supportedLocale;
         if (supportedLocale != null) {
-            for (FacesSupportedLocale supportedLocaleItem : supportedLocale) {
+            for (final FacesSupportedLocale supportedLocaleItem : supportedLocale) {
                 if (supportedLocaleItem != null) {
                     writer.writeStartElement(prefix, "supported-locale", "http://java.sun.com/xml/ns/javaee");
                     writeFacesSupportedLocale(writer, supportedLocaleItem, context);

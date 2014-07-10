@@ -26,10 +26,12 @@ import javax.ejb.FinderException;
 public interface PersonLocalHome extends EJBLocalHome {
     // Create
     public PersonLocal create(Integer field1) throws CreateException;
+
     public PersonLocal create(PersonPk primaryKey) throws CreateException;
 
     // Finder
     public PersonLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+
     public PersonLocal findByPrimaryKey(PersonPk primaryKey) throws FinderException;
 
 }

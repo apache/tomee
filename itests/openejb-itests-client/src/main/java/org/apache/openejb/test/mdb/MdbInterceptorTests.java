@@ -35,7 +35,7 @@ public class MdbInterceptorTests extends MdbTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("InterceptorMdbBean");
+        final Destination destination = (Destination) initialContext.lookup("InterceptorMdbBean");
         ejbObject = MdbProxy.newProxyInstance(InterceptorMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
@@ -44,7 +44,7 @@ public class MdbInterceptorTests extends MdbTestClient {
         MdbProxy.destroyProxy(ejbObject);
         try {
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw e;
         } finally {
             super.tearDown();
@@ -54,9 +54,9 @@ public class MdbInterceptorTests extends MdbTestClient {
     public void test01_checkClassLevelBusinessMethodInterception() {
         try{
             ejbObject.checkClassLevelBusinessMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -64,9 +64,9 @@ public class MdbInterceptorTests extends MdbTestClient {
     public void test02_checkMethodLevelBusinessMethodInterception() {
         try{
             ejbObject.checkMethodLevelBusinessMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -74,9 +74,9 @@ public class MdbInterceptorTests extends MdbTestClient {
     public void test03_checkClassLevelCreateMethodInterception() {
         try{
             ejbObject.checkClassLevelCreateMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -84,9 +84,9 @@ public class MdbInterceptorTests extends MdbTestClient {
     public void test04_checkMethodLevelCreateMethodInterception() {
         try{
             ejbObject.checkMethodLevelCreateMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

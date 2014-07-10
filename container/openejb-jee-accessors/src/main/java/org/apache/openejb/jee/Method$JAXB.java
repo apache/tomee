@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Method$JAXB
-        extends JAXBObject<Method> {
+    extends JAXBObject<Method> {
 
 
     public Method$JAXB() {
         super(Method.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "methodType".intern()), Text$JAXB.class, MethodIntf$JAXB.class, MethodParams$JAXB.class);
     }
 
-    public static Method readMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Method readMethod(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethod(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public static void writeMethod(final XoXMLStreamWriter writer, final Method method, final RuntimeContext context)
+        throws Exception {
         _write(writer, method, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Method method, final RuntimeContext context)
+        throws Exception {
         _write(writer, method, context);
     }
 
-    public final static Method _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Method _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,13 +73,13 @@ public class Method$JAXB
             context = new RuntimeContext();
         }
 
-        Method method = new Method();
+        final Method method = new Method();
         context.beforeUnmarshal(method, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Method.class);
@@ -87,10 +87,10 @@ public class Method$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, method);
                 method.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,22 +99,22 @@ public class Method$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("ejb-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbName
-                String ejbNameRaw = elementReader.getElementAsString();
+                final String ejbNameRaw = elementReader.getElementAsString();
 
-                String ejbName;
+                final String ejbName;
                 try {
                     ejbName = Adapters.collapsedStringAdapterAdapter.unmarshal(ejbNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,18 +122,18 @@ public class Method$JAXB
                 method.ejbName = ejbName;
             } else if (("method-intf" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodIntf
-                MethodIntf methodIntf = parseMethodIntf(elementReader, context, elementReader.getElementAsString());
+                final MethodIntf methodIntf = parseMethodIntf(elementReader, context, elementReader.getElementAsString());
                 if (methodIntf != null) {
                     method.methodIntf = methodIntf;
                 }
             } else if (("method-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodName
-                String methodNameRaw = elementReader.getElementAsString();
+                final String methodNameRaw = elementReader.getElementAsString();
 
-                String methodName;
+                final String methodName;
                 try {
                     methodName = Adapters.collapsedStringAdapterAdapter.unmarshal(methodNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -141,7 +141,7 @@ public class Method$JAXB
                 method.methodName = methodName;
             } else if (("method-params" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodParams
-                MethodParams methodParams = readMethodParams(elementReader, context);
+                final MethodParams methodParams = readMethodParams(elementReader, context);
                 method.methodParams = methodParams;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-name"), new QName("http://java.sun.com/xml/ns/javaee", "method-intf"), new QName("http://java.sun.com/xml/ns/javaee", "method-name"), new QName("http://java.sun.com/xml/ns/javaee", "method-params"));
@@ -150,7 +150,7 @@ public class Method$JAXB
         if (descriptions != null) {
             try {
                 method.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Method.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -160,13 +160,13 @@ public class Method$JAXB
         return method;
     }
 
-    public final Method read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Method read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Method method, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Method method, RuntimeContext context)
+        throws Exception {
         if (method == null) {
             writer.writeXsiNil();
             return;
@@ -176,7 +176,7 @@ public class Method$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Method.class != method.getClass()) {
             context.unexpectedSubclass(writer, method, Method.class);
             return;
@@ -186,12 +186,12 @@ public class Method$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = method.id;
+        final String idRaw = method.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(method, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -201,11 +201,11 @@ public class Method$JAXB
         Text[] descriptions = null;
         try {
             descriptions = method.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(method, "descriptions", Method.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -217,11 +217,11 @@ public class Method$JAXB
         }
 
         // ELEMENT: ejbName
-        String ejbNameRaw = method.ejbName;
+        final String ejbNameRaw = method.ejbName;
         String ejbName = null;
         try {
             ejbName = Adapters.collapsedStringAdapterAdapter.marshal(ejbNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(method, "ejbName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (ejbName != null) {
@@ -233,7 +233,7 @@ public class Method$JAXB
         }
 
         // ELEMENT: methodIntf
-        MethodIntf methodIntf = method.methodIntf;
+        final MethodIntf methodIntf = method.methodIntf;
         if (methodIntf != null) {
             writer.writeStartElement(prefix, "method-intf", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringMethodIntf(method, null, context, methodIntf));
@@ -241,11 +241,11 @@ public class Method$JAXB
         }
 
         // ELEMENT: methodName
-        String methodNameRaw = method.methodName;
+        final String methodNameRaw = method.methodName;
         String methodName = null;
         try {
             methodName = Adapters.collapsedStringAdapterAdapter.marshal(methodNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(method, "methodName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (methodName != null) {
@@ -257,7 +257,7 @@ public class Method$JAXB
         }
 
         // ELEMENT: methodParams
-        MethodParams methodParams = method.methodParams;
+        final MethodParams methodParams = method.methodParams;
         if (methodParams != null) {
             writer.writeStartElement(prefix, "method-params", "http://java.sun.com/xml/ns/javaee");
             writeMethodParams(writer, methodParams, context);

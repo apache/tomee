@@ -24,17 +24,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *               Primary Key generation element.
- * 
- *               If this is present, a key generator GBean will be created
- *               and configured to generate IDs for the surrounding object.
- *             
- * 
+ * Primary Key generation element.
+ * <p/>
+ * If this is present, a key generator GBean will be created
+ * and configured to generate IDs for the surrounding object.
+ * <p/>
+ * <p/>
  * <p>Java class for key-generatorType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="key-generatorType">
  *   &lt;complexContent>
@@ -50,8 +49,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "key-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -63,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class KeyGeneratorType {
 
-    @XmlElement(name="uuid", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "uuid", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected EmptyType uuid;
     @XmlElement(name = "sequence-table", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
     protected SequenceTableType sequenceTable;
@@ -76,11 +73,9 @@ public class KeyGeneratorType {
 
     /**
      * Gets the value of the uuid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isUuid() {
         return uuid != null;
@@ -88,23 +83,19 @@ public class KeyGeneratorType {
 
     /**
      * Sets the value of the uuid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setUuid(boolean value) {
+    public void setUuid(final boolean value) {
         this.uuid = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the sequenceTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SequenceTableType }
-     *     
+     *
+     * @return possible object is
+     * {@link SequenceTableType }
      */
     public SequenceTableType getSequenceTable() {
         return sequenceTable;
@@ -112,23 +103,19 @@ public class KeyGeneratorType {
 
     /**
      * Sets the value of the sequenceTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SequenceTableType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SequenceTableType }
      */
-    public void setSequenceTable(SequenceTableType value) {
+    public void setSequenceTable(final SequenceTableType value) {
         this.sequenceTable = value;
     }
 
     /**
      * Gets the value of the autoIncrementTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AutoIncrementTableType }
-     *     
+     *
+     * @return possible object is
+     * {@link AutoIncrementTableType }
      */
     public AutoIncrementTableType getAutoIncrementTable() {
         return autoIncrementTable;
@@ -136,23 +123,19 @@ public class KeyGeneratorType {
 
     /**
      * Sets the value of the autoIncrementTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AutoIncrementTableType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AutoIncrementTableType }
      */
-    public void setAutoIncrementTable(AutoIncrementTableType value) {
+    public void setAutoIncrementTable(final AutoIncrementTableType value) {
         this.autoIncrementTable = value;
     }
 
     /**
      * Gets the value of the sqlGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlGeneratorType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlGeneratorType }
      */
     public SqlGeneratorType getSqlGenerator() {
         return sqlGenerator;
@@ -160,23 +143,19 @@ public class KeyGeneratorType {
 
     /**
      * Sets the value of the sqlGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlGeneratorType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlGeneratorType }
      */
-    public void setSqlGenerator(SqlGeneratorType value) {
+    public void setSqlGenerator(final SqlGeneratorType value) {
         this.sqlGenerator = value;
     }
 
     /**
      * Gets the value of the customGenerator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CustomGeneratorType }
-     *     
+     *
+     * @return possible object is
+     * {@link CustomGeneratorType }
      */
     public CustomGeneratorType getCustomGenerator() {
         return customGenerator;
@@ -184,13 +163,11 @@ public class KeyGeneratorType {
 
     /**
      * Sets the value of the customGenerator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CustomGeneratorType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CustomGeneratorType }
      */
-    public void setCustomGenerator(CustomGeneratorType value) {
+    public void setCustomGenerator(final CustomGeneratorType value) {
         this.customGenerator = value;
     }
 

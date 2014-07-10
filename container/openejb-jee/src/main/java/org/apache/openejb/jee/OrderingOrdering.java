@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for ordering-orderingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ordering-orderingType">
  *   &lt;complexContent>
@@ -41,10 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
- 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ordering-orderingType", propOrder = {
     "name",
@@ -66,7 +64,7 @@ public class OrderingOrdering {
         return others;
     }
 
-    public void setOthers(OrderingOthers value) {
+    public void setOthers(final OrderingOthers value) {
         this.others = value;
     }
 

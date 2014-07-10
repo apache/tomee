@@ -48,7 +48,7 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
     /**
      * A simple dummy business method to concat 2 strings
      */
-    public String concat(String str1, String str2) {
+    public String concat(final String str1, final String str2) {
         return str1.concat(str2);
     }
 
@@ -56,15 +56,15 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
      * A simple dummy busines method to reverse a string
      */
     @Interceptors({MethodInterceptor.class})
-    public String reverse(String str) {
-        StringBuffer b = new StringBuffer(str);
+    public String reverse(final String str) {
+        final StringBuffer b = new StringBuffer(str);
         return b.reverse().toString();
     }
     
     /**
      * @param ctxData the contextData to set
      */
-    private void setContextData(Map<String, Object> ctxData) {
+    private void setContextData(final Map<String, Object> ctxData) {
         SecondStatelessInterceptedBean.contextData.putAll(ctxData);
     }
 
@@ -93,8 +93,8 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
      * @throws Exception runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
      */
     @AroundInvoke
-    public Object inBeanInterceptor(InvocationContext ctx) throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(ctx, "inBeanInterceptor");
+    public Object inBeanInterceptor(final InvocationContext ctx) throws Exception {
+        final Map<String, Object> ctxData = Interceptor.profile(ctx, "inBeanInterceptor");
         setContextData(ctxData);
     
         return ctx.proceed();
@@ -108,7 +108,7 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
      */    
     @PostConstruct
     public void inBeanInterceptorPostConstruct() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostConstruct");
+        final Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPostConstruct");
         setContextData(ctxData);
     }
     
@@ -121,7 +121,7 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
      */    
     @PreDestroy
     public void inBeanInterceptorPreDestroy() throws Exception {
-        Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPreDestroy");
+        final Map<String, Object> ctxData = Interceptor.profile(this, "inBeanInterceptorPreDestroy");
         setContextData(ctxData);
     }
 

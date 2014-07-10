@@ -41,9 +41,9 @@ public class JSonConfigReader {
     public static <T> T read(final Class<T> clazz, final InputStream is) throws OpenEJBException {
         if (Openejb.class.equals(clazz) || Tomee.class.equals(clazz)) {
             final SaxOpenejb handler = read(is, "openejb",
-                    Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
-                            "ProxyFactory", "Connector", "Deployments", "Import", "Service", "SecurityService"),
-                    new SaxOpenejb());
+                Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
+                    "ProxyFactory", "Connector", "Deployments", "Import", "Service", "SecurityService"),
+                new SaxOpenejb());
 
             return clazz.cast(handler.getOpenejb());
         } else if (Resources.class.equals(clazz)) {
@@ -51,8 +51,8 @@ public class JSonConfigReader {
 
             // reuse openejb parser since we use saw logic and not jaxb one
             final Openejb openejb = read(is, "openejb",
-                    Arrays.asList("Resource", "Container", "JndiProvider", "Connector", "Import", "Service"),
-                    new SaxOpenejb()).getOpenejb();
+                Arrays.asList("Resource", "Container", "JndiProvider", "Connector", "Import", "Service"),
+                new SaxOpenejb()).getOpenejb();
 
             resources.getContainer().addAll(openejb.getContainer());
             resources.getResource().addAll(openejb.getResource());

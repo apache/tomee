@@ -31,12 +31,18 @@ import java.util.Properties;
 // in fact all managed method are done through the previous abstraction
 public interface DataSourceCreator {
     DataSource managed(String name, CommonDataSource ds);
+
     DataSource poolManaged(String name, DataSource ds, Properties properties);
+
     DataSource pool(String name, DataSource ds, Properties properties);
+
     DataSource poolManagedWithRecovery(String name, XAResourceWrapper xaResourceWrapper, String driver, Properties properties);
+
     DataSource poolManaged(String name, String driver, Properties properties);
+
     CommonDataSource pool(String name, String driver, Properties properties);
 
     void destroy(Object object) throws Throwable;
+
     ObjectRecipe clearRecipe(Object object);
 }

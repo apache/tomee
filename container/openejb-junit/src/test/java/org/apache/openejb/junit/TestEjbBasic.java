@@ -19,17 +19,18 @@ package org.apache.openejb.junit;
 
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 @ContextConfig(properties = {
-        @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
-        @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
+    @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
+    @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
 })
 @RunWith(OpenEjbRunner.class)
 @LocalClient
@@ -49,10 +50,10 @@ public class TestEjbBasic {
     public void testEjbInvocation() {
         assertNotNull(sampleEjb);
 
-        String object = sampleEjb.concat("Hello", "World");
+        final String object = sampleEjb.concat("Hello", "World");
         assertEquals("Hello World", object);
 
-        double root = sampleEjb.squareroot(81);
+        final double root = sampleEjb.squareroot(81);
         assertEquals(9, root, 0.0);
     }
 
@@ -63,8 +64,7 @@ public class TestEjbBasic {
         try {
             sampleEjb.squareroot(-1);
             fail("Call must fail with exception.");
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
         }
     }
 }

@@ -478,7 +478,7 @@ public class EntityContainer implements RpcContainer {
                     instanceManager.discardInstance(callContext, bean);
                 } catch (final SystemException e1) {
                     logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key " +
-                                 callContext.getPrimaryKey());
+                        callContext.getPrimaryKey());
                 }
             }
             handleSystemException(txPolicy, e, callContext);

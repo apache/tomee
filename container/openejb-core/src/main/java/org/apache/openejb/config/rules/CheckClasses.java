@@ -101,7 +101,7 @@ public class CheckClasses extends ValidationBase {
                 if (beanClass == null) {
                     continue;
                 }
-                
+
                 if (!(bean instanceof RemoteBean)) {
                     continue;
                 }
@@ -116,7 +116,7 @@ public class CheckClasses extends ValidationBase {
                 check_hasDependentClasses(b, b.getEjbClass(), "ejb-class");
                 check_hasInterface(b);
 
-                if (b.getRemote() != null){
+                if (b.getRemote() != null) {
                     checkInterface(b, beanClass, "remote", b.getRemote());
                 }
 
@@ -170,7 +170,7 @@ public class CheckClasses extends ValidationBase {
 
         for (final Class<? extends Annotation> annotation : beanOnlyAnnotations) {
 
-            if (interfce.isAnnotationPresent(annotation)){
+            if (interfce.isAnnotationPresent(annotation)) {
                 warn(b, "interface.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), b.getEjbClass());
             }
 
@@ -196,7 +196,7 @@ public class CheckClasses extends ValidationBase {
             // no-op
         }
 
-        if (b instanceof EntityBean){
+        if (b instanceof EntityBean) {
             fail(b, "noInterfaceDeclared.entity", beanClass.getSimpleName());
             return;
         }
@@ -223,13 +223,21 @@ public class CheckClasses extends ValidationBase {
         try {
             final ClassLoader cl = module.getClassLoader();
             final Class<?> clazz = cl.loadClass(className);
-            for (final Object item : clazz.getFields()) { item.toString(); }
-            for (final Object item : clazz.getMethods()) { item.toString(); }
-            for (final Object item : clazz.getConstructors()) { item.toString(); }
-            for (final Object item : clazz.getAnnotations()) { item.toString(); }
+            for (final Object item : clazz.getFields()) {
+                item.toString();
+            }
+            for (final Object item : clazz.getMethods()) {
+                item.toString();
+            }
+            for (final Object item : clazz.getConstructors()) {
+                item.toString();
+            }
+            for (final Object item : clazz.getAnnotations()) {
+                item.toString();
+            }
             // checking for any declared enum constants
-            for(final Class klass: clazz.getClasses()){
-                if(klass.isEnum()){
+            for (final Class klass : clazz.getClasses()) {
+                if (klass.isEnum()) {
                     klass.toString();
                 }
             }
@@ -264,8 +272,8 @@ public class CheckClasses extends ValidationBase {
         if (beanClass == null) {
             return null;
         }
-        
-        if (beanClass.isInterface() && !isDynamicProxyImpl){
+
+        if (beanClass.isInterface() && !isDynamicProxyImpl) {
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
         }
 
@@ -273,7 +281,7 @@ public class CheckClasses extends ValidationBase {
             return beanClass;
         }
 
-        if (isAbstract(beanClass.getModifiers()) && !isAbstractAllowed(beanClass)){
+        if (isAbstract(beanClass.getModifiers()) && !isAbstractAllowed(beanClass)) {
             fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
         }
 
@@ -377,7 +385,7 @@ public class CheckClasses extends ValidationBase {
             fail(b, "xml." + tag + ".ejbLocalObject", clazz.getName());
 
         } else {
-             if (tag.equals("businessLocal") || tag.equals("businessRemote")) {
+            if (tag.equals("businessLocal") || tag.equals("businessRemote")) {
 
                 return true;
 

@@ -21,9 +21,9 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.MultipleClassLoader;
@@ -89,8 +89,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         final String failoverService = startupObject.getAppInfo().properties.getProperty("org.apache.webbeans.spi.FailOverService",
-                                                                                         SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
-                                                                                                                          null));
+            SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
+                null));
         if (failoverService != null) {
             properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
         }
@@ -256,36 +256,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             return context;
         }
 
-        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        for (final AppContext appContext : containerSystem.getAppContexts()) {
-            final ClassLoader appContextClassLoader = appContext.getClassLoader();
-            if (appContextClassLoader.equals(cl) || (cl != null && cl.equals(appContextClassLoader))) { // CxfContainerLoader is not symmetric
-                context = appContext.getWebBeansContext();
-                break;
-            }
-            for (final WebContext web : appContext.getWebContexts()) {
-                final ClassLoader webClassLoader = web.getClassLoader();
-                if (webClassLoader.equals(cl) || (cl != null && cl.equals(webClassLoader))) {
-                    if (web.getWebbeansContext() != null) { // ear
-                        context = web.getWebbeansContext();
-                        break;
-                    } else { // war
-                        context = appContext.getWebBeansContext();
-                        break;
-                    }
-                }
-            }
-            if (context != null) {
-                break;
-            }
-        }
-
+        context = AppFinder.findAppContextOrWeb(cl, AppFinder.WebBeansContextTransformer.INSTANCE);
         if (context == null) {
             context = contexts.get();
             if (context == null) {
                 // Fallback strategy is to just grab the first AppContext and assume it is the right one
                 // This kind of algorithm could be greatly improved
-                final List<AppContext> appContexts = containerSystem.getAppContexts();
+                final List<AppContext> appContexts = SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts();
                 if (appContexts.size() > 0) {
                     return getWebBeansContext(appContexts);
                 }

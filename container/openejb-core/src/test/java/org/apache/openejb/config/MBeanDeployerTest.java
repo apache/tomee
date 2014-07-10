@@ -70,9 +70,9 @@ public class MBeanDeployerTest {
         ejbModule.setBeans(new Beans());
         ejbModule.setModuleId("mbeans-test");
 
-        for (Class<?> clazz : Arrays.asList(Operation.class, OperationDescription.class,
-                Reader.class, ReaderWriter.class, ReaderDescription.class,
-                Empty.class, Inheritance.class, MBeanDescription.class)) {
+        for (final Class<?> clazz : Arrays.asList(Operation.class, OperationDescription.class,
+            Reader.class, ReaderWriter.class, ReaderDescription.class,
+            Empty.class, Inheritance.class, MBeanDescription.class)) {
             ejbModule.getBeans().addManagedClass(clazz);
             ejbModule.getMbeans().add(clazz.getName());
         }
@@ -93,7 +93,7 @@ public class MBeanDeployerTest {
     @Test
     public void mbeans() throws Exception {
         final Set<String> parsed = new HashSet<String>();
-        for (Object name : appInfo.jmx.values()) {
+        for (final Object name : appInfo.jmx.values()) {
             final ObjectName on = new ObjectName((String) name);
             final String cn = on.getCanonicalName();
             if (cn.contains("name=Empty")) {

@@ -25,15 +25,19 @@ import javax.ejb.EJBLocalObject;
 public interface ArtistLocal extends EJBLocalObject {
     // CMP
     public Integer getId();
+
     public void setId(Integer id);
 
     public String getName();
+
     public void setName(String name);
-    
+
     // CMR
     public Set<SongLocal> getPerformed();
+
     public void setPerformed(Set<SongLocal> performed);
 
     public Set<SongLocal> getComposed();
+
     public void setComposed(Set<SongLocal> composed);
 }

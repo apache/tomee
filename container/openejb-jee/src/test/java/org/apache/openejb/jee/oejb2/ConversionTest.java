@@ -36,17 +36,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConversionTest extends TestCase {
 
     public void testConversion() throws Exception {
-        JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, getInputStream("openejb-jar-2-full.xml"));
-        OpenejbJarType o2 = (OpenejbJarType) element.getValue();
+        final JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, getInputStream("openejb-jar-2-full.xml"));
+        final OpenejbJarType o2 = (OpenejbJarType) element.getValue();
 
-        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
+        final GeronimoEjbJarType g2 = new GeronimoEjbJarType();
 
         g2.setEnvironment(o2.getEnvironment());
         g2.setSecurity(o2.getSecurity());
         g2.getService().addAll(o2.getService());
         g2.getMessageDestination().addAll(o2.getMessageDestination());
 
-        for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : o2.getEnterpriseBeans()) {
             g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
             g2.getPersistenceContextRef().addAll(bean.getPersistenceContextRef());
             g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
@@ -56,22 +56,22 @@ public class ConversionTest extends TestCase {
             g2.getServiceRef().addAll(bean.getServiceRef());
 
             if (bean instanceof RpcBean) {
-                RpcBean rpcBean = (RpcBean) bean;
-                if (rpcBean.getTssLink() != null){
+                final RpcBean rpcBean = (RpcBean) bean;
+                if (rpcBean.getTssLink() != null) {
                     g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
                 }
             }
         }
 
-        JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
-        String result = JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
-        String expected = readContent(getInputStream("geronimo-openejb-converted.xml"));
+        final JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", "ejb-jar"), GeronimoEjbJarType.class, g2);
+        final String result = JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
+        final String expected = readContent(getInputStream("geronimo-openejb-converted.xml"));
 
-        Diff myDiff = new DetailedDiff(new Diff(expected, result));
+        final Diff myDiff = new DetailedDiff(new Diff(expected, result));
         final AtomicInteger differenceNumber = new AtomicInteger(0); // just to get an int wrapper for the test
         myDiff.overrideDifferenceListener(new DifferenceListener() {
             @Override
-            public int differenceFound(Difference difference) {
+            public int differenceFound(final Difference difference) {
                 if (!difference.isRecoverable()) {
                     differenceNumber.incrementAndGet();
                     System.err.println(">>> " + difference.toString());
@@ -80,34 +80,34 @@ public class ConversionTest extends TestCase {
             }
 
             @Override
-            public void skippedComparison(Node node, Node node1) {
+            public void skippedComparison(final Node node, final Node node1) {
                 // no-op
             }
         });
         assertTrue("Files are not similar", myDiff.similar());
     }
 
-    private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
+    private <T> void unmarshalAndMarshal(final Class<T> type, final java.lang.String xmlFileName, final java.lang.String expectedFile) throws Exception {
 
-        Object object = JaxbOpenejbJar2.unmarshal(type, getInputStream(xmlFileName));
+        final Object object = JaxbOpenejbJar2.unmarshal(type, getInputStream(xmlFileName));
 
-        java.lang.String actual = JaxbOpenejbJar2.marshal(type, object);
+        final java.lang.String actual = JaxbOpenejbJar2.marshal(type, object);
 
         if (xmlFileName.equals(expectedFile)) {
-            String sourceXml = readContent(getInputStream(xmlFileName));
+            final String sourceXml = readContent(getInputStream(xmlFileName));
             assertEquals(sourceXml, actual);
         } else {
-            String expected = readContent(getInputStream(expectedFile));
+            final String expected = readContent(getInputStream(expectedFile));
             assertEquals(expected, actual);
         }
     }
 
-    private InputStream getInputStream(String xmlFileName) {
+    private InputStream getInputStream(final String xmlFileName) {
         return getClass().getClassLoader().getResourceAsStream(xmlFileName);
     }
 
     private String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {

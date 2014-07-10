@@ -43,22 +43,22 @@ public class LocalClientNoInjectionTest extends TestCase {
         //avoid linkage error on mac, only used for tests so don't need to add it in Core
         JULLoggerFactory.class.getName();
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
-        Persistence persistence = new Persistence(new org.apache.openejb.jee.jpa.unit.PersistenceUnit("foo-unit"));
+        final Persistence persistence = new Persistence(new org.apache.openejb.jee.jpa.unit.PersistenceUnit("foo-unit"));
         app.addPersistenceModule(new PersistenceModule("root", persistence));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
-        ClientModule clientModule = new ClientModule(null, app.getClassLoader(), app.getJarLocation(), null, null);
+        final ClientModule clientModule = new ClientModule(null, app.getClassLoader(), app.getJarLocation(), null, null);
         clientModule.getLocalClients().add(this.getClass().getName());
 
         app.getClientModules().add(clientModule);
@@ -68,9 +68,9 @@ public class LocalClientNoInjectionTest extends TestCase {
 
     public void test() throws Exception {
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        InitialContext context = new InitialContext(properties);
+        final InitialContext context = new InitialContext(properties);
         context.bind("inject", this);
 
     }
@@ -83,7 +83,7 @@ public class LocalClientNoInjectionTest extends TestCase {
     }
 
     public static class SuperBean implements Everything {
-        public Object echo(Object o) {
+        public Object echo(final Object o) {
             return o;
         }
     }
@@ -91,16 +91,16 @@ public class LocalClientNoInjectionTest extends TestCase {
     public static class Reference implements Serializable {
         private final String value;
 
-        public Reference(String value) {
+        public Reference(final String value) {
             this.value = value;
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Reference value1 = (Reference) o;
+            final Reference value1 = (Reference) o;
 
             if (!value.equals(value1.value)) return false;
 

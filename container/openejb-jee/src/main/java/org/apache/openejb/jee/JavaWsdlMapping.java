@@ -46,7 +46,7 @@ public class JavaWsdlMapping {
     @XmlElement(name = "java-xml-type-mapping")
     protected List<JavaXmlTypeMapping> javaXmlTypeMapping;
     @XmlElement(name = "exception-mapping")
-    protected KeyedCollection<QName,ExceptionMapping> exceptionMapping;
+    protected KeyedCollection<QName, ExceptionMapping> exceptionMapping;
     @XmlElement(name = "service-interface-mapping")
     protected List<ServiceInterfaceMapping> serviceInterfaceMapping;
     @XmlElement(name = "service-endpoint-interface-mapping")
@@ -81,14 +81,14 @@ public class JavaWsdlMapping {
 
     public Collection<ExceptionMapping> getExceptionMapping() {
         if (exceptionMapping == null) {
-            exceptionMapping = new KeyedCollection<QName,ExceptionMapping>();
+            exceptionMapping = new KeyedCollection<QName, ExceptionMapping>();
         }
         return this.exceptionMapping;
     }
 
-    public Map<QName,ExceptionMapping> getExceptionMappingMap() {
+    public Map<QName, ExceptionMapping> getExceptionMappingMap() {
         if (exceptionMapping == null) {
-            exceptionMapping = new KeyedCollection<QName,ExceptionMapping>();
+            exceptionMapping = new KeyedCollection<QName, ExceptionMapping>();
         }
         return this.exceptionMapping.toMap();
     }
@@ -118,7 +118,7 @@ public class JavaWsdlMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -130,7 +130,7 @@ public class JavaWsdlMapping {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 }

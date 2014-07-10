@@ -68,15 +68,15 @@ public abstract class EncCmp2Bean implements EntityBean {
     /**
      * Maps to EncCmpHome.create
      */
-    public Integer ejbCreate(String name) throws CreateException {
+    public Integer ejbCreate(final String name) throws CreateException {
         setId(nextId++);
-        StringTokenizer st = new StringTokenizer(name, " ");
+        final StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
         return null;
     }
 
-    public void ejbPostCreate(String name) {
+    public void ejbPostCreate(final String name) {
     }
 
 
@@ -93,18 +93,18 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupEntityBean() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                BasicCmpHome home = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/cmp_entity"), BasicCmpHome.class);
+                final BasicCmpHome home = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/cmp_entity"), BasicCmpHome.class);
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicCmpObject object = home.createObject("Enc Bean");
+                final BasicCmpObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -112,18 +112,18 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful"), BasicStatefulHome.class);
+                final BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful"), BasicStatefulHome.class);
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatefulObject object = home.createObject("Enc Bean");
+                final BasicStatefulObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -131,84 +131,84 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupStatelessBean() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless"), BasicStatelessHome.class);
+                final BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless"), BasicStatelessHome.class);
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatelessObject object = home.createObject();
+                final BasicStatelessObject object = home.createObject();
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Object o = ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-local");
-                BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
-            Assert.assertNotNull("The EJB BusinessLocal is null", object );
-            } catch (Exception e){
+                final Object o = ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-local");
+                final BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
+                Assert.assertNotNull("The EJB BusinessLocal is null", object);
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
-            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class );
-            Assert.assertNotNull("The EJB BusinessRemote is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class);
+                Assert.assertNotNull("The EJB BusinessRemote is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
-            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
-            Assert.assertNotNull("The EJB BusinessLocal is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class);
+                Assert.assertNotNull("The EJB BusinessLocal is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
-            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class );
-            Assert.assertNotNull("The EJB BusinessRemote is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/cmp/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class);
+                Assert.assertNotNull("The EJB BusinessRemote is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -216,19 +216,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                String expected = new String("1");
-                String actual = (String) ctx.lookup("java:comp/env/entity/cmp/references/String");
+                final String expected = new String("1");
+                final String actual = (String) ctx.lookup("java:comp/env/entity/cmp/references/String");
 
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -236,19 +236,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupDoubleEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Double expected = new Double(1.0D);
-                Double actual = (Double) ctx.lookup("java:comp/env/entity/cmp/references/Double");
+                final Double expected = new Double(1.0D);
+                final Double actual = (Double) ctx.lookup("java:comp/env/entity/cmp/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -256,19 +256,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupLongEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Long expected = new Long(1L);
-                Long actual = (Long) ctx.lookup("java:comp/env/entity/cmp/references/Long");
+                final Long expected = new Long(1L);
+                final Long actual = (Long) ctx.lookup("java:comp/env/entity/cmp/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -276,19 +276,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupFloatEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Float expected = new Float(1.0F);
-                Float actual = (Float) ctx.lookup("java:comp/env/entity/cmp/references/Float");
+                final Float expected = new Float(1.0F);
+                final Float actual = (Float) ctx.lookup("java:comp/env/entity/cmp/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -296,19 +296,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupIntegerEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Integer expected = new Integer(1);
-                Integer actual = (Integer) ctx.lookup("java:comp/env/entity/cmp/references/Integer");
+                final Integer expected = new Integer(1);
+                final Integer actual = (Integer) ctx.lookup("java:comp/env/entity/cmp/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -316,19 +316,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupShortEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Short expected = new Short((short) 1);
-                Short actual = (Short) ctx.lookup("java:comp/env/entity/cmp/references/Short");
+                final Short expected = new Short((short) 1);
+                final Short actual = (Short) ctx.lookup("java:comp/env/entity/cmp/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -336,19 +336,19 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupBooleanEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Boolean expected = new Boolean(true);
-                Boolean actual = (Boolean) ctx.lookup("java:comp/env/entity/cmp/references/Boolean");
+                final Boolean expected = new Boolean(true);
+                final Boolean actual = (Boolean) ctx.lookup("java:comp/env/entity/cmp/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -356,39 +356,39 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupByteEntry() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                Byte expected = new Byte((byte) 1);
-                Byte actual = (Byte) ctx.lookup("java:comp/env/entity/cmp/references/Byte");
+                final Byte expected = new Byte((byte) 1);
+                final Byte actual = (Byte) ctx.lookup("java:comp/env/entity/cmp/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupCharacterEntry() throws TestFailureException{
-        try{
-            try{
-            InitialContext ctx = new InitialContext();
-            Assert.assertNotNull("The InitialContext is null", ctx );
+    public void lookupCharacterEntry() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
+                Assert.assertNotNull("The InitialContext is null", ctx);
 
-            Character expected = new Character('D');
-            Character actual   = (Character)ctx.lookup("java:comp/env/entity/cmp/references/Character");
+                final Character expected = new Character('D');
+                final Character actual = (Character) ctx.lookup("java:comp/env/entity/cmp/references/Character");
 
-            Assert.assertNotNull("The Character looked up is null", actual );
-            Assert.assertEquals(expected, actual );
+                Assert.assertNotNull("The Character looked up is null", actual);
+                Assert.assertEquals(expected, actual);
 
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -396,87 +396,87 @@ public abstract class EncCmp2Bean implements EntityBean {
     public void lookupResource() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
-                InitialContext ctx = new InitialContext();
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
                 Object obj = ctx.lookup("java:comp/env/jms");
                 Assert.assertNotNull("The JMS ConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of ConnectionFactory", obj instanceof ConnectionFactory);
-                ConnectionFactory connectionFactory = (ConnectionFactory) obj;
+                final ConnectionFactory connectionFactory = (ConnectionFactory) obj;
                 testJmsConnection(connectionFactory.createConnection());
 
                 obj = ctx.lookup("java:comp/env/TopicCF");
                 Assert.assertNotNull("The JMS TopicConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of TopicConnectionFactory", obj instanceof TopicConnectionFactory);
-                TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
+                final TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
                 testJmsConnection(topicConnectionFactory.createConnection());
 
                 obj = ctx.lookup("java:comp/env/QueueCF");
                 Assert.assertNotNull("The JMS QueueConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
-                QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
+                final QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
                 testJmsConnection(queueConnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
         connection.close();
     }
 
-    public void lookupPersistenceUnit() throws TestFailureException{
-        try{
-            try{
-                InitialContext ctx = new InitialContext();
+    public void lookupPersistenceUnit() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
-                Assert.assertNotNull("The EntityManagerFactory is null", emf );
+                final EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup("java:comp/env/persistence/TestUnit");
+                Assert.assertNotNull("The EntityManagerFactory is null", emf);
 
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupPersistenceContext() throws TestFailureException{
-        try{
-            try{
-                InitialContext ctx = new InitialContext();
+    public void lookupPersistenceContext() throws TestFailureException {
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                final EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -502,7 +502,7 @@ public abstract class EncCmp2Bean implements EntityBean {
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         ejbContext = ctx;
     }
 

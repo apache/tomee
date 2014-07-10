@@ -33,32 +33,32 @@ import static org.apache.openejb.jee.HandlerChain$JAXB.readHandlerChain;
 import static org.apache.openejb.jee.HandlerChain$JAXB.writeHandlerChain;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class HandlerChains$JAXB
-        extends JAXBObject<HandlerChains> {
+    extends JAXBObject<HandlerChains> {
 
     public HandlerChains$JAXB() {
         super(HandlerChains.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chains".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chainsType".intern()), HandlerChain$JAXB.class);
     }
 
-    public static HandlerChains readHandlerChains(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static HandlerChains readHandlerChains(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeHandlerChains(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public static void writeHandlerChains(final XoXMLStreamWriter writer, final HandlerChains handlerChains, final RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChains, context);
     }
 
-    public void write(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final HandlerChains handlerChains, final RuntimeContext context)
+        throws Exception {
         _write(writer, handlerChains, context);
     }
 
-    public final static HandlerChains _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static HandlerChains _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class HandlerChains$JAXB
             context = new RuntimeContext();
         }
 
-        HandlerChains handlerChains = new HandlerChains();
+        final HandlerChains handlerChains = new HandlerChains();
         context.beforeUnmarshal(handlerChains, LifecycleCallback.NONE);
 
         List<HandlerChain> handlerChain = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("handler-chainsType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, HandlerChains.class);
@@ -83,10 +83,10 @@ public class HandlerChains$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, handlerChains);
                 handlerChains.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,10 +95,10 @@ public class HandlerChains$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("handler-chain" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handlerChain
-                HandlerChain handlerChainItem = readHandlerChain(elementReader, context);
+                final HandlerChain handlerChainItem = readHandlerChain(elementReader, context);
                 if (handlerChain == null) {
                     handlerChain = handlerChains.handlerChain;
                     if (handlerChain != null) {
@@ -121,13 +121,13 @@ public class HandlerChains$JAXB
         return handlerChains;
     }
 
-    public final HandlerChains read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final HandlerChains read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, HandlerChains handlerChains, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final HandlerChains handlerChains, RuntimeContext context)
+        throws Exception {
         if (handlerChains == null) {
             writer.writeXsiNil();
             return;
@@ -146,21 +146,21 @@ public class HandlerChains$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = handlerChains.id;
+        final String idRaw = handlerChains.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(handlerChains, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: handlerChain
-        List<HandlerChain> handlerChain = handlerChains.handlerChain;
+        final List<HandlerChain> handlerChain = handlerChains.handlerChain;
         if (handlerChain != null) {
-            for (HandlerChain handlerChainItem : handlerChain) {
+            for (final HandlerChain handlerChainItem : handlerChain) {
                 if (handlerChainItem != null) {
                     writer.writeStartElementWithAutoPrefix("http://java.sun.com/xml/ns/javaee", "handler-chain");
                     writeHandlerChain(writer, handlerChainItem, context);

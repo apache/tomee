@@ -25,20 +25,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface AttributeOverride {
- *           String name();
- *           Column column();
- *         }
- * 
- *       
- * 
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface AttributeOverride {
+ * String name();
+ * Column column();
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for attribute-override complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="attribute-override">
  *   &lt;complexContent>
@@ -52,8 +50,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "attribute-override", propOrder = {
@@ -71,13 +67,13 @@ public class AttributeOverride implements Field {
     public AttributeOverride() {
     }
 
-    public AttributeOverride(String name) {
+    public AttributeOverride(final String name) {
         // column is required for an attribute override so
         // declare one using the default column name
         this(name, name);
     }
 
-    public AttributeOverride(String name, String columnName) {
+    public AttributeOverride(final String name, final String columnName) {
         this.name = name;
         this.column = new Column(columnName);
     }
@@ -85,10 +81,8 @@ public class AttributeOverride implements Field {
     /**
      * Gets the value of the description property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -97,22 +91,18 @@ public class AttributeOverride implements Field {
     /**
      * Sets the value of the description property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Column }
-     *     
+     *
+     * @return possible object is
+     * {@link Column }
      */
     public Column getColumn() {
         return column;
@@ -120,23 +110,19 @@ public class AttributeOverride implements Field {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Column }
      */
-    public void setColumn(Column value) {
+    public void setColumn(final Column value) {
         this.column = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -144,13 +130,11 @@ public class AttributeOverride implements Field {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for lifecycle-callbackType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="lifecycle-callbackType">
  *   &lt;complexContent>
@@ -42,15 +42,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "lifecycle-callbackType", propOrder = {
-        "lifecycleCallbackClass",
-        "lifecycleCallbackMethod"
-        })
+    "lifecycleCallbackClass",
+    "lifecycleCallbackMethod"
+})
 public class LifecycleCallback implements CallbackMethod {
 
     @XmlElement(name = "lifecycle-callback-class")
@@ -61,17 +59,17 @@ public class LifecycleCallback implements CallbackMethod {
     public LifecycleCallback() {
     }
 
-    public LifecycleCallback(java.lang.reflect.Method method) {
+    public LifecycleCallback(final java.lang.reflect.Method method) {
         this.lifecycleCallbackClass = method.getDeclaringClass().getName();
         this.lifecycleCallbackMethod = method.getName();
     }
 
-    public LifecycleCallback(String lifecycleCallbackClass, String lifecycleCallbackMethod) {
+    public LifecycleCallback(final String lifecycleCallbackClass, final String lifecycleCallbackMethod) {
         this.lifecycleCallbackClass = lifecycleCallbackClass;
         this.lifecycleCallbackMethod = lifecycleCallbackMethod;
     }
 
-    public LifecycleCallback(NamedMethod method) {
+    public LifecycleCallback(final NamedMethod method) {
         this.lifecycleCallbackClass = method.getClassName();
         this.lifecycleCallbackMethod = method.getMethodName();
     }
@@ -80,7 +78,7 @@ public class LifecycleCallback implements CallbackMethod {
         return lifecycleCallbackClass;
     }
 
-    public void setLifecycleCallbackClass(String value) {
+    public void setLifecycleCallbackClass(final String value) {
         this.lifecycleCallbackClass = value;
     }
 
@@ -88,7 +86,7 @@ public class LifecycleCallback implements CallbackMethod {
         return lifecycleCallbackMethod;
     }
 
-    public void setLifecycleCallbackMethod(String value) {
+    public void setLifecycleCallbackMethod(final String value) {
         this.lifecycleCallbackMethod = value;
     }
 

@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class SecurityPermission$JAXB
-        extends JAXBObject<SecurityPermission> {
+    extends JAXBObject<SecurityPermission> {
 
 
     public SecurityPermission$JAXB() {
         super(SecurityPermission.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "security-permissionType".intern()), Text$JAXB.class);
     }
 
-    public static SecurityPermission readSecurityPermission(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static SecurityPermission readSecurityPermission(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeSecurityPermission(XoXMLStreamWriter writer, SecurityPermission securityPermission, RuntimeContext context)
-            throws Exception {
+    public static void writeSecurityPermission(final XoXMLStreamWriter writer, final SecurityPermission securityPermission, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityPermission, context);
     }
 
-    public void write(XoXMLStreamWriter writer, SecurityPermission securityPermission, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final SecurityPermission securityPermission, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityPermission, context);
     }
 
-    public final static SecurityPermission _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static SecurityPermission _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class SecurityPermission$JAXB
             context = new RuntimeContext();
         }
 
-        SecurityPermission securityPermission = new SecurityPermission();
+        final SecurityPermission securityPermission = new SecurityPermission();
         context.beforeUnmarshal(securityPermission, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("security-permissionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, SecurityPermission.class);
@@ -83,10 +83,10 @@ public class SecurityPermission$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, securityPermission);
                 securityPermission.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class SecurityPermission$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("security-permission-spec" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityPermissionSpec
-                String securityPermissionSpecRaw = elementReader.getElementAsString();
+                final String securityPermissionSpecRaw = elementReader.getElementAsString();
 
-                String securityPermissionSpec;
+                final String securityPermissionSpec;
                 try {
                     securityPermissionSpec = Adapters.collapsedStringAdapterAdapter.unmarshal(securityPermissionSpecRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -123,7 +123,7 @@ public class SecurityPermission$JAXB
         if (descriptions != null) {
             try {
                 securityPermission.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, SecurityPermission.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -133,13 +133,13 @@ public class SecurityPermission$JAXB
         return securityPermission;
     }
 
-    public final SecurityPermission read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final SecurityPermission read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, SecurityPermission securityPermission, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final SecurityPermission securityPermission, RuntimeContext context)
+        throws Exception {
         if (securityPermission == null) {
             writer.writeXsiNil();
             return;
@@ -149,7 +149,7 @@ public class SecurityPermission$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (SecurityPermission.class != securityPermission.getClass()) {
             context.unexpectedSubclass(writer, securityPermission, SecurityPermission.class);
             return;
@@ -159,12 +159,12 @@ public class SecurityPermission$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = securityPermission.id;
+        final String idRaw = securityPermission.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(securityPermission, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -174,11 +174,11 @@ public class SecurityPermission$JAXB
         Text[] descriptions = null;
         try {
             descriptions = securityPermission.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(securityPermission, "descriptions", SecurityPermission.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -190,11 +190,11 @@ public class SecurityPermission$JAXB
         }
 
         // ELEMENT: securityPermissionSpec
-        String securityPermissionSpecRaw = securityPermission.securityPermissionSpec;
+        final String securityPermissionSpecRaw = securityPermission.securityPermissionSpec;
         String securityPermissionSpec = null;
         try {
             securityPermissionSpec = Adapters.collapsedStringAdapterAdapter.marshal(securityPermissionSpecRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(securityPermission, "securityPermissionSpec", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (securityPermissionSpec != null) {

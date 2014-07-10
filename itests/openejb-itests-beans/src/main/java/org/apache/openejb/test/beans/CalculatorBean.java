@@ -32,7 +32,7 @@ public class CalculatorBean implements javax.ejb.SessionBean {
     public void ejbCreate() {
     }
 
-    public int add(int a, int b) {
+    public int add(final int a, final int b) {
         return a + b;
     }
 
@@ -41,29 +41,29 @@ public class CalculatorBean implements javax.ejb.SessionBean {
         Connection con = null;
         try {
 
-            javax.sql.DataSource ds =
-                    (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/mydb");
+            final javax.sql.DataSource ds =
+                (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/mydb");
 
             con = ds.getConnection();
 
-            Statement stmt = con.createStatement();
+            final Statement stmt = con.createStatement();
             try {
-                ResultSet rs = stmt.executeQuery("select * from Employees");
+                final ResultSet rs = stmt.executeQuery("select * from Employees");
                 while (rs.next())
                     System.out.println(rs.getString(2));
             } finally {
                 stmt.close();
             }
 
-        } catch (javax.naming.NamingException re) {
+        } catch (final javax.naming.NamingException re) {
             throw new RuntimeException("Using JNDI failed");
-        } catch (java.sql.SQLException se) {
+        } catch (final java.sql.SQLException se) {
             throw new RuntimeException("Getting JDBC data source failed");
         } finally {
             if (con != null) {
                 try {
                     con.close();
-                } catch (SQLException se) {
+                } catch (final SQLException se) {
                     se.printStackTrace();
                 }
             }
@@ -71,7 +71,7 @@ public class CalculatorBean implements javax.ejb.SessionBean {
 
     }
 
-    public int sub(int a, int b) {
+    public int sub(final int a, final int b) {
         return a - b;
     }
 
@@ -87,55 +87,55 @@ public class CalculatorBean implements javax.ejb.SessionBean {
         if (testRemove) testAllowedOperations("ejbRemove");
     }
 
-    public void setSessionContext(javax.ejb.SessionContext cntx) {
+    public void setSessionContext(final javax.ejb.SessionContext cntx) {
         context = cntx;
         if (testSetSessionContext) testAllowedOperations("setSessionContext");
 
     }
 
-    private void testAllowedOperations(String methodName) {
+    private void testAllowedOperations(final String methodName) {
         System.out.println("******************************************************");
         System.out.println("\nTesting Allowed Operations for " + methodName + "() method\n");
         try {
             context.getEJBObject();
             System.out.println("SessionContext.getEJBObject() ......... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getEJBObject() ......... Failed");
         }
         try {
             context.getEJBHome();
             System.out.println("SessionContext.getEJBHome() ........... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getEJBHome() ........... Failed");
         }
         try {
             context.getCallerPrincipal();
             System.out.println("SessionContext.getCallerPrincipal() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getCallerPrincipal() ... Failed");
         }
         try {
             context.isCallerInRole("ROLE");
             System.out.println("SessionContext.isCallerInRole() ....... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.isCallerInRole() ....... Failed");
         }
         try {
             context.getRollbackOnly();
             System.out.println("SessionContext.getRollbackOnly() ...... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getRollbackOnly() ...... Failed");
         }
         try {
             context.setRollbackOnly();
             System.out.println("SessionContext.setRollbackOnly() ...... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.setRollbackOnly() ...... Failed");
         }
         try {
             context.getUserTransaction();
             System.out.println("SessionContext.getUserTransaction() ... Allowed");
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             System.out.println("SessionContext.getUserTransaction() ... Failed");
         }
     }

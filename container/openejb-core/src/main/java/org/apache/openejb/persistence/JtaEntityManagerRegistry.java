@@ -41,7 +41,7 @@ import java.util.Map;
 public class JtaEntityManagerRegistry {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("persistence"), JtaEntityManager.class);
-    
+
     /**
      * Registry of transaction associated entity managers.
      */
@@ -71,13 +71,14 @@ public class JtaEntityManagerRegistry {
      * It is important that a component adds extended scoped entity managers to this registry when the component is
      * entered and removes them when exited.  If this registration is not performed, an IllegalStateException will
      * be thrown when entity manger is fetched.
+     *
      * @param entityManagerFactory the entity manager factory from which an entity manager is required
-     * @param properties the properties passed to the entity manager factory when an entity manager is created
-     * @param extended is the entity manager an extended context
+     * @param properties           the properties passed to the entity manager factory when an entity manager is created
+     * @param extended             is the entity manager an extended context
      * @param unitName
      * @return the new entity manager
      * @throws IllegalStateException if the entity manger is extended and there is not an existing entity manager
-     * instance already registered
+     *                               instance already registered
      */
     @Geronimo
     public EntityManager getEntityManager(final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended, final String unitName) throws IllegalStateException {
@@ -135,10 +136,11 @@ public class JtaEntityManagerRegistry {
     /**
      * Adds the entity managers for the specified component to the registry.  This should be called when the component
      * is entered.
-     * @param deploymentId the id of the component
+     *
+     * @param deploymentId   the id of the component
      * @param entityManagers the entity managers to register
      * @throws EntityManagerAlreadyRegisteredException if an entity manager is already registered with the transaction
-     * for one of the supplied entity manager factories; for EJBs this should be caught and rethown as an EJBException
+     *                                                 for one of the supplied entity manager factories; for EJBs this should be caught and rethown as an EJBException
      */
     public void addEntityManagers(final String deploymentId, final Object primaryKey, final Map<EntityManagerFactory, EntityManagerTracker> entityManagers) throws EntityManagerAlreadyRegisteredException {
         extendedRegistry.get().addEntityManagers(new InstanceId(deploymentId, primaryKey), entityManagers);
@@ -146,6 +148,7 @@ public class JtaEntityManagerRegistry {
 
     /**
      * Removed the registered entity managers for the specified component.
+     *
      * @param deploymentId the id of the component
      * @return EntityManager map we are removing
      */
@@ -155,6 +158,7 @@ public class JtaEntityManagerRegistry {
 
     /**
      * Gets an exiting extended entity manager created by a component down the call stack.
+     *
      * @param entityManagerFactory the entity manager factory from which an entity manager is needed
      * @return the existing entity manager or null if one is not found
      */
@@ -166,6 +170,7 @@ public class JtaEntityManagerRegistry {
      * Notifies the registry that a user transaction has been started or the specified component.  When a transaction
      * is started for a component with registered extended entity managers, the entity managers are enrolled in the
      * transaction.
+     *
      * @param deploymentId the id of the component
      */
     public void transactionStarted(final String deploymentId, final Object primaryKey) {
@@ -174,6 +179,7 @@ public class JtaEntityManagerRegistry {
 
     /**
      * Is a transaction active?
+     *
      * @return true if a transaction is active; false otherwise
      */
     public boolean isTransactionActive() {
@@ -184,10 +190,10 @@ public class JtaEntityManagerRegistry {
 
     private class ExtendedRegistry {
         private final Map<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>> entityManagersByDeploymentId =
-                new HashMap<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>>();
+            new HashMap<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>>();
 
         private void addEntityManagers(final InstanceId instanceId, final Map<EntityManagerFactory, EntityManagerTracker> entityManagers)
-                throws EntityManagerAlreadyRegisteredException {
+            throws EntityManagerAlreadyRegisteredException {
             if (instanceId == null) {
                 throw new NullPointerException("instanceId is null");
             }
@@ -285,7 +291,7 @@ public class JtaEntityManagerRegistry {
 
             final InstanceId that = (InstanceId) o;
             return deploymentId.equals(that.deploymentId) &&
-                    primaryKey.equals(that.primaryKey);
+                primaryKey.equals(that.primaryKey);
 
         }
 

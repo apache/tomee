@@ -30,7 +30,7 @@ public class StatelessPojoLocalJndiTests extends BasicStatelessLocalTestClient {
     public void test01_initialContext(){
         try{
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -40,7 +40,7 @@ public class StatelessPojoLocalJndiTests extends BasicStatelessLocalTestClient {
         	// Here we use the Java casting as what is done while looking-up a local bean
         	ejbLocalHome = (BasicStatelessLocalHome) initialContext.lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
             assertNotNull("The EJBLocalHome is null", ejbLocalHome);
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

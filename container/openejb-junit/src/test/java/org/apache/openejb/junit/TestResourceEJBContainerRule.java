@@ -28,9 +28,9 @@ import javax.sql.DataSource;
 import static org.junit.Assert.assertEquals;
 
 @Properties({
-        @org.apache.openejb.junit.jee.config.Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
-        @org.apache.openejb.junit.jee.config.Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*"),
-        @org.apache.openejb.junit.jee.config.Property(key = "r", value = "new://Resource?type=DataSource")
+    @org.apache.openejb.junit.jee.config.Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
+    @org.apache.openejb.junit.jee.config.Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*"),
+    @org.apache.openejb.junit.jee.config.Property(key = "r", value = "new://Resource?type=DataSource")
 })
 public class TestResourceEJBContainerRule {
     @ClassRule

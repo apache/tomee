@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for concurrent-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="concurrent-methodType">
  *   &lt;complexContent>
@@ -48,8 +48,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +56,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "lock",
     "accessTimeout"
 })
-public class ConcurrentMethod  {
+public class ConcurrentMethod {
 
     @XmlElement(required = true)
     protected NamedMethod method;
@@ -75,7 +73,7 @@ public class ConcurrentMethod  {
         return method;
     }
 
-    public void setMethod(NamedMethod value) {
+    public void setMethod(final NamedMethod value) {
         this.method = value;
     }
 
@@ -83,7 +81,7 @@ public class ConcurrentMethod  {
         return lock;
     }
 
-    public void setLock(ConcurrentLockType value) {
+    public void setLock(final ConcurrentLockType value) {
         this.lock = value;
     }
 
@@ -91,7 +89,7 @@ public class ConcurrentMethod  {
         return accessTimeout;
     }
 
-    public void setAccessTimeout(Timeout value) {
+    public void setAccessTimeout(final Timeout value) {
         this.accessTimeout = value;
     }
 
@@ -99,7 +97,7 @@ public class ConcurrentMethod  {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

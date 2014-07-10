@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A basic type of Authentication which provides a userId and password for
  * connecting to a resource.
- * 
- * 
- * <p>
+ * <p/>
+ * <p/>
+ * <p/>
  * Java class for BasicAuthData complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="BasicAuthData">
  *   &lt;complexContent>
@@ -43,58 +43,50 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BasicAuthData")
 public class BasicAuthData extends AbstractAuthData {
 
-	@XmlAttribute
-	protected String password;
-	@XmlAttribute
-	protected String userId;
+    @XmlAttribute
+    protected String password;
+    @XmlAttribute
+    protected String userId;
 
-	/**
-	 * Gets the value of the password property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getPassword() {
-		return password;
-	}
+    /**
+     * Gets the value of the password property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * Sets the value of the password property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setPassword(String value) {
-		this.password = value;
-	}
+    /**
+     * Sets the value of the password property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setPassword(final String value) {
+        this.password = value;
+    }
 
-	/**
-	 * Gets the value of the userId property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getUserId() {
-		return userId;
-	}
+    /**
+     * Gets the value of the userId property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getUserId() {
+        return userId;
+    }
 
-	/**
-	 * Sets the value of the userId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setUserId(String value) {
-		this.userId = value;
-	}
+    /**
+     * Sets the value of the userId property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setUserId(final String value) {
+        this.userId = value;
+    }
 
 }

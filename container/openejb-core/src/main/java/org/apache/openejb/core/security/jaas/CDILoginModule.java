@@ -37,14 +37,14 @@ import java.util.Set;
 
 /**
  * Usage:
- *
+ * <p/>
  * CDI {
- *  org.apache.openejb.core.security.jaas.CDILoginModule required
- *      delegate="org.apache.openejb.core.security.CDILoginModuleTest$Delegate"
- *      loginModuleAsCdiBean=false
- *      cdiName="xxx";
- *  };
- *
+ * org.apache.openejb.core.security.jaas.CDILoginModule required
+ * delegate="org.apache.openejb.core.security.CDILoginModuleTest$Delegate"
+ * loginModuleAsCdiBean=false
+ * cdiName="xxx";
+ * };
+ * <p/>
  * Note: you can use instead of delegate &lt;appid&gt; to define a delegate by app.
  * Note 2: loginModuleAsCdiBean=true is recommanded only for @Dependent beans
  * Note 3: delegate and cdiName can be used alone

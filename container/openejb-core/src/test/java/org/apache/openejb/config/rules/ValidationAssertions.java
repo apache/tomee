@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.junit.Assert;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.config.ValidationFailedException;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,50 +27,50 @@ import java.util.List;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class ValidationAssertions {
 
-    public static void assertFailures(List<String> expectedKeys, ValidationFailedException e) {
+    public static void assertFailures(final List<String> expectedKeys, final ValidationFailedException e) {
         assertValidation(expectedKeys, e.getFailures());
     }
 
-    public static void assertErrors(List<String> expectedKeys, ValidationFailedException e) {
+    public static void assertErrors(final List<String> expectedKeys, final ValidationFailedException e) {
         assertValidation(expectedKeys, e.getErrors());
     }
 
-    public static void assertWarnings(List<String> expectedKeys, ValidationFailedException e) {
+    public static void assertWarnings(final List<String> expectedKeys, final ValidationFailedException e) {
         assertValidation(expectedKeys, e.getWarnings());
     }
 
-    private static void assertValidation(List<String> expectedKeys, ValidationException[] validations) {
-        List<String> actualKeys = new ArrayList<String>();
-        for (ValidationException validation : validations) {
+    private static void assertValidation(final List<String> expectedKeys, final ValidationException[] validations) {
+        final List<String> actualKeys = new ArrayList<String>();
+        for (final ValidationException validation : validations) {
             actualKeys.add(validation.getMessageKey());
         }
 
         Collections.sort(expectedKeys);
-        
+
         Collections.sort(actualKeys);
 
-        String actual = org.apache.openejb.util.Join.join("\n", actualKeys);
-        String expected = org.apache.openejb.util.Join.join("\n", expectedKeys);
+        final String actual = org.apache.openejb.util.Join.join("\n", actualKeys);
+        final String expected = org.apache.openejb.util.Join.join("\n", expectedKeys);
 
         Assert.assertEquals("Keys do not match", expected, actual);
 
         // Check for the expected keys
-        for (String key : expectedKeys) {
-            Assert.assertTrue("Missing key: "+key, actualKeys.contains(key));
+        for (final String key : expectedKeys) {
+            Assert.assertTrue("Missing key: " + key, actualKeys.contains(key));
         }
 
         Assert.assertEquals("Number of failures don't match", expectedKeys.size(), actualKeys.size());
 
         // Ensure the i18n message is there by checking
         // the key is not in the getMessage() output
-        for (ValidationException validation : validations) {
-            String key = validation.getMessageKey();
+        for (final ValidationException validation : validations) {
+            final String key = validation.getMessageKey();
 
-            for (Integer level : Arrays.asList(1, 2, 3)) {
-                String message = validation.getMessage(level);
+            for (final Integer level : Arrays.asList(1, 2, 3)) {
+                final String message = validation.getMessage(level);
                 Assert.assertFalse("No message text (key=" + key + ", level=" + level + "): " + message, message.contains(key));
                 Assert.assertFalse("Not all parameters substituted (key=" + key + ", level=" + level + "): " + message, message.matches(".*\\{[0-9]\\}.*"));
             }

@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntraVmArtifact implements Externalizable {
-    
+
     private static final Handles staticHandles = new Handles() {
         @Override
         public synchronized int add(final Object obj) {
             return super.add(obj);
         }
+
         @Override
         public synchronized Object get(final int id) {
             return super.get(id);
@@ -70,12 +71,12 @@ public class IntraVmArtifact implements Externalizable {
 
     public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeBoolean(staticArtifact);
-        out.write(instanceHandle);        
+        out.write(instanceHandle);
     }
 
     public void readExternal(final ObjectInput in) throws IOException {
         staticArtifact = in.readBoolean();
-        instanceHandle = in.read();        
+        instanceHandle = in.read();
     }
 
     protected Object readResolve() throws ObjectStreamException {
@@ -89,13 +90,13 @@ public class IntraVmArtifact implements Externalizable {
 
     private static class Handles {
         private List<Object> list = new ArrayList<Object>();
-        
+
         public int add(final Object obj) {
             final int id = list.size();
             list.add(obj);
             return id;
         }
-        
+
         public Object get(final int id) {
             final Object obj = list.get(id);
             // todo WHY?

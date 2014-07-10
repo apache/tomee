@@ -29,12 +29,12 @@ import org.apache.openejb.test.singleton.SingletonTestSuite;
 
 public class ClientTestSuite extends junit.framework.TestCase {
 
-    public ClientTestSuite(String name){
+    public ClientTestSuite(final String name){
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new TestSuite();
+        final TestSuite suite = new TestSuite();
         if (Boolean.getBoolean("openejb.test.servlets")) {
             suite.addTest(ServletTestSuite.suite());
         }

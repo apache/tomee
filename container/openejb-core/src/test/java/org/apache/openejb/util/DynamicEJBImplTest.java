@@ -129,7 +129,7 @@ public class DynamicEJBImplTest {
         try {
             dao.findById(u.getId());
             fail();
-        } catch (EJBException ee) {
+        } catch (final EJBException ee) {
             assertTrue(ee.getCause() instanceof NoResultException);
         }
     }
@@ -265,9 +265,9 @@ public class DynamicEJBImplTest {
     }
 
     @NamedQueries({
-                      @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name"),
-                      @NamedQuery(name = "dynamic-ejb-impl-test.all", query = "SELECT u FROM DynamicEJBImplTest$User AS u")
-                  })
+        @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name"),
+        @NamedQuery(name = "dynamic-ejb-impl-test.all", query = "SELECT u FROM DynamicEJBImplTest$User AS u")
+    })
     @Entity
     public static class User {
 

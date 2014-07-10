@@ -51,7 +51,7 @@ public interface WebCommon extends JndiConsumer {
 
     Collection<Icon> getIcons();
 
-    Map<String,Icon> getIconMap();
+    Map<String, Icon> getIconMap();
 
     Icon getIcon();
 

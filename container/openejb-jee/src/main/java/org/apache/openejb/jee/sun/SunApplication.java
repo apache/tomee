@@ -77,7 +77,7 @@ public class SunApplication {
         return passByReference;
     }
 
-    public void setPassByReference(String value) {
+    public void setPassByReference(final String value) {
         this.passByReference = value;
     }
 
@@ -85,7 +85,7 @@ public class SunApplication {
         return uniqueId;
     }
 
-    public void setUniqueId(String value) {
+    public void setUniqueId(final String value) {
         this.uniqueId = value;
     }
 
@@ -100,7 +100,7 @@ public class SunApplication {
         return realm;
     }
 
-    public void setRealm(String value) {
+    public void setRealm(final String value) {
         this.realm = value;
     }
 
@@ -150,7 +150,7 @@ public class SunApplication {
         return archiveName;
     }
 
-    public void setArchiveName(String archiveName) {
+    public void setArchiveName(final String archiveName) {
         this.archiveName = archiveName;
     }
 
@@ -158,7 +158,7 @@ public class SunApplication {
         return compatibility;
     }
 
-    public void setCompatibility(String compatibility) {
+    public void setCompatibility(final String compatibility) {
         this.compatibility = compatibility;
     }
 }

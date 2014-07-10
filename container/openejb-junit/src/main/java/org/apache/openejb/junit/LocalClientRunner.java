@@ -77,11 +77,11 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
         if (test.has(annotation)) {
             try {
-                final Class[]  types = {annotation, Statement.class, Test.class};
+                final Class[] types = {annotation, Statement.class, Test.class};
                 final Object[] args = {test.get(annotation), statement, test};
                 return clazz.getConstructor(types).newInstance(args);
             } catch (final Exception e) {
-                throw new IllegalStateException("Cannot construct "+ clazz, e);
+                throw new IllegalStateException("Cannot construct " + clazz, e);
             }
         }
         return statement;

@@ -16,18 +16,17 @@
  */
 package org.apache.openejb.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.lang.management.ManagementFactory;
+import org.apache.openejb.api.jmx.ManagedOperation;
+import org.junit.Test;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 
-import org.apache.openejb.api.jmx.ManagedOperation;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestDynamicMBeanWrapper {
     @Test // just to ensure MBeanRegistrationSupport doesn't break anything
@@ -71,6 +70,7 @@ public class TestDynamicMBeanWrapper {
             return "ok";
         }
     }
+
     public static class MyMBean implements MBeanRegistration {
         private static boolean preRegister = false;
         private static boolean postRegister = false;

@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for relationshipsType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="relationshipsType">
  *   &lt;complexContent>
@@ -51,14 +51,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "relationshipsType", propOrder = {
-        "descriptions",
-        "ejbRelation"
-        })
+    "descriptions",
+    "ejbRelation"
+})
 public class Relationships {
 
     @XmlTransient
@@ -75,7 +73,7 @@ public class Relationships {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -94,7 +92,7 @@ public class Relationships {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -43,7 +43,7 @@ import java.net.URI;
 public class BasicInjectionTest extends TestCase {
 
     @Module
-    @Classes(cdi = true, value = { Configuration.class })
+    @Classes(cdi = true, value = {Configuration.class})
     public StatelessBean app() throws Exception {
 
         final StatelessBean bean = new StatelessBean(WidgetBean.class);
@@ -77,7 +77,7 @@ public class BasicInjectionTest extends TestCase {
             if (webLocation == null) throw new IllegalStateException("webLocation");
             if (jmsLocation == null) throw new IllegalStateException("jmsLocation");
         }
-        
+
         public URI getWebLocation() {
             return webLocation;
         }
@@ -98,7 +98,7 @@ public class BasicInjectionTest extends TestCase {
         @Produces
         @Web
         public URI getJmsURI() {
-            return URI.create("web://foo"); 
+            return URI.create("web://foo");
         }
     }
 
@@ -109,9 +109,10 @@ public class BasicInjectionTest extends TestCase {
     public static @interface Jms {
 
     }
+
     @Qualifier
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(value = {ElementType.FIELD,ElementType.METHOD})
+    @Target(value = {ElementType.FIELD, ElementType.METHOD})
     public static @interface Web {
 
     }

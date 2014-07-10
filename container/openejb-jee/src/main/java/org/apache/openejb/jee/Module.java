@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * application_6.xsd
- * 
+ * <p/>
  * <p>Java class for moduleType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="moduleType">
  *   &lt;complexContent>
@@ -50,18 +50,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "moduleType", propOrder = {
-        "connector",
-        "ejb",
-        "java",
-        "web",
-        "altDd"
-        })
+    "connector",
+    "ejb",
+    "java",
+    "web",
+    "altDd"
+})
 public class Module {
 
     protected String connector;
@@ -79,7 +77,7 @@ public class Module {
         return altDd;
     }
 
-    public void setAltDd(String altDd) {
+    public void setAltDd(final String altDd) {
         this.altDd = altDd;
     }
 
@@ -87,7 +85,7 @@ public class Module {
         return connector;
     }
 
-    public void setConnector(String connector) {
+    public void setConnector(final String connector) {
         this.connector = connector;
     }
 
@@ -95,7 +93,7 @@ public class Module {
         return ejb;
     }
 
-    public void setEjb(String ejb) {
+    public void setEjb(final String ejb) {
         this.ejb = ejb;
     }
 
@@ -103,7 +101,7 @@ public class Module {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -111,7 +109,7 @@ public class Module {
         return java;
     }
 
-    public void setJava(String java) {
+    public void setJava(final String java) {
         this.java = java;
     }
 
@@ -119,7 +117,7 @@ public class Module {
         return web;
     }
 
-    public void setWeb(Web web) {
+    public void setWeb(final Web web) {
         this.web = web;
     }
 

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "properties" })
+@XmlType(propOrder = {"properties"})
 @XmlRootElement(name = "pojo-deployment")
 public class PojoDeployment {
 
@@ -45,7 +45,7 @@ public class PojoDeployment {
         return className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         this.className = className;
     }
 

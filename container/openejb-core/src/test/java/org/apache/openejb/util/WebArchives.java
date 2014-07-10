@@ -53,7 +53,7 @@ public class WebArchives {
         File classpath;
         try {
             classpath = File.createTempFile(archiveNamePrefix, ".war");
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final File tmp = new File("tmp");
             if (!tmp.exists() && !tmp.mkdirs()) {
                 throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());

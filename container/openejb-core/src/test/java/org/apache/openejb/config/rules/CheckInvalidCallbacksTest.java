@@ -17,7 +17,6 @@
 package org.apache.openejb.config.rules;
 
 import junit.framework.TestCase;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.SingletonBean;
@@ -40,7 +39,6 @@ import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
 import javax.interceptor.InvocationContext;
-
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
@@ -49,18 +47,18 @@ import java.util.concurrent.Callable;
  */
 @RunWith(ValidationRunner.class)
 public class CheckInvalidCallbacksTest extends TestCase {
-    @Keys({ @Key(value = "ignoredMethodAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.invalidArguments"), @Key("callback.badReturnType"),
-                    @Key("callback.badModifier"), @Key("callback.invalidArguments"), @Key("aroundInvoke.missing"), @Key("callback.missing"),
-                    @Key(value = "callback.sessionSynchronization.invalidUse", count = 2) })
+    @Keys({@Key(value = "ignoredMethodAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.invalidArguments"), @Key("callback.badReturnType"),
+        @Key("callback.badModifier"), @Key("callback.invalidArguments"), @Key("aroundInvoke.missing"), @Key("callback.missing"),
+        @Key(value = "callback.sessionSynchronization.invalidUse", count = 2)})
     public EjbJar test() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
         testBean.addAroundInvoke("wrongMethod");
         testBean.addPostConstruct("wrongMethod");
         ejbJar.addEnterpriseBean(new SingletonBean("TestSingleton", TestBean.class));
         ejbJar.addEnterpriseBean(new StatefulBean("FooStateful", FooBean.class));
         ejbJar.addEnterpriseBean(new StatefulBean("BarStateful", BarBean.class));
-        StatefulBean starBean = ejbJar.addEnterpriseBean(new StatefulBean("StarStateful", StarBean.class));
+        final StatefulBean starBean = ejbJar.addEnterpriseBean(new StatefulBean("StarStateful", StarBean.class));
         starBean.setAfterBeginMethod(new NamedMethod("myAfterBegin"));
         starBean.setBeforeCompletionMethod(new NamedMethod("myBeforeCompletion"));
         starBean.setAfterCompletionMethod(new NamedMethod("myAfterCompletion"));
@@ -69,8 +67,8 @@ public class CheckInvalidCallbacksTest extends TestCase {
 
     @Keys(@Key("aroundInvoke.missing.possibleTypo"))
     public EjbJar test1() {
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
         testBean.addAroundInvoke("foo");
         return ejbJar;
     }
@@ -78,11 +76,11 @@ public class CheckInvalidCallbacksTest extends TestCase {
     @Keys(@Key(value = "callback.sessionbean.invalidusage", count = 6))
     public EjbJar test2() {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean sun = ejbJar.addEnterpriseBean(new StatelessBean("SunStateless", Sun.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean sun = ejbJar.addEnterpriseBean(new StatelessBean("SunStateless", Sun.class));
         sun.setLocalHome(SunLocalHome.class.getName());
         sun.setLocal(SunLocal.class.getName());
-        StatefulBean meteor = ejbJar.addEnterpriseBean(new StatefulBean("MeteorStateful", Meteor.class));
+        final StatefulBean meteor = ejbJar.addEnterpriseBean(new StatefulBean("MeteorStateful", Meteor.class));
         meteor.setLocal(SunLocal.class.getName());
         meteor.setLocalHome(SunLocalHome.class.getName());
         return ejbJar;
@@ -90,7 +88,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
 
     @Keys(@Key(value = "callback.invocationcontext.notallowed", count = 4))
     public EjbJar test3() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(CallbackViolatorBean.class));
         return ejbJar;
     }
@@ -101,25 +99,32 @@ public class CheckInvalidCallbacksTest extends TestCase {
         }
 
         @PostConstruct
-        public void myConstruct() {}
+        public void myConstruct() {
+        }
 
         @PreDestroy
-        public void myDestroy() {}
+        public void myDestroy() {
+        }
 
         @PostActivate
-        public void myActivate() {}
+        public void myActivate() {
+        }
 
         @PrePassivate
-        public void myPassivate() {}
+        public void myPassivate() {
+        }
 
         @AfterBegin
-        public void myAfterBegin() {}
+        public void myAfterBegin() {
+        }
 
         @BeforeCompletion
-        public void beforeCompletion() {}
+        public void beforeCompletion() {
+        }
 
         @AfterCompletion
-        public void afterCompletion(boolean committed) {}
+        public void afterCompletion(final boolean committed) {
+        }
     }
 
     public static class FooBean {
@@ -129,62 +134,81 @@ public class CheckInvalidCallbacksTest extends TestCase {
         }
 
         @PreDestroy
-        public static final void myDestroy() {}
+        public static final void myDestroy() {
+        }
 
         @PostActivate
-        public void myActivate(Object anInvalidArgument) {}
+        public void myActivate(final Object anInvalidArgument) {
+        }
 
         @PrePassivate
-        public void myPassivate() {}
+        public void myPassivate() {
+        }
 
         @AfterBegin
-        public void myAfterBegin() {}
+        public void myAfterBegin() {
+        }
 
         @BeforeCompletion
-        public void beforeCompletion() {}
+        public void beforeCompletion() {
+        }
 
         @AfterCompletion
-        public void afterCompletion(boolean committed) {}
+        public void afterCompletion(final boolean committed) {
+        }
 
         @AfterCompletion
-        public void afterCompletionTypo() {}
+        public void afterCompletionTypo() {
+        }
     }
 
     public static class BarBean implements SessionSynchronization {
         @AfterBegin
-        public void myAfterBegin() {}
+        public void myAfterBegin() {
+        }
 
         @BeforeCompletion
-        public void myBeforeCompletion() {}
+        public void myBeforeCompletion() {
+        }
 
         @AfterCompletion
-        public void myAfterCompletion(boolean committed) {}
+        public void myAfterCompletion(final boolean committed) {
+        }
 
         @Override
-        public void afterBegin() throws EJBException, RemoteException {}
+        public void afterBegin() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void afterCompletion(boolean arg0) throws EJBException, RemoteException {}
+        public void afterCompletion(final boolean arg0) throws EJBException, RemoteException {
+        }
 
         @Override
-        public void beforeCompletion() throws EJBException, RemoteException {}
+        public void beforeCompletion() throws EJBException, RemoteException {
+        }
     }
 
     public static class StarBean implements SessionSynchronization {
-        public void myAfterBegin() {}
+        public void myAfterBegin() {
+        }
 
-        public void myBeforeCompletion() {}
+        public void myBeforeCompletion() {
+        }
 
-        public void myAfterCompletion(boolean committed) {}
-
-        @Override
-        public void afterBegin() throws EJBException, RemoteException {}
-
-        @Override
-        public void afterCompletion(boolean arg0) throws EJBException, RemoteException {}
+        public void myAfterCompletion(final boolean committed) {
+        }
 
         @Override
-        public void beforeCompletion() throws EJBException, RemoteException {}
+        public void afterBegin() throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void afterCompletion(final boolean arg0) throws EJBException, RemoteException {
+        }
+
+        @Override
+        public void beforeCompletion() throws EJBException, RemoteException {
+        }
     }
 
     public static class MoonBean {
@@ -192,92 +216,114 @@ public class CheckInvalidCallbacksTest extends TestCase {
             return null;
         }
 
-        public void foo(String str) {}
+        public void foo(final String str) {
+        }
     }
 
     public static interface SunLocalHome extends EJBLocalHome {
         public SunLocal create() throws CreateException;
     }
 
-    public static interface SunLocal extends EJBLocalObject {}
+    public static interface SunLocal extends EJBLocalObject {
+    }
 
     public class Sun implements SessionBean {
         @PostConstruct
-        public void myPostConstruct() {}
+        public void myPostConstruct() {
+        }
 
         @PreDestroy
-        public void myPreDestroy() {}
+        public void myPreDestroy() {
+        }
+
         @PostConstruct
-        public void ejbCreate() throws CreateException {}
+        public void ejbCreate() throws CreateException {
+        }
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     public class Meteor implements SessionBean {
         @PostConstruct
-        public void myPostConstruct() {}
+        public void myPostConstruct() {
+        }
 
         @PreDestroy
-        public void myPreDestroy() {}
+        public void myPreDestroy() {
+        }
 
-        public void ejbCreate() throws CreateException {}
+        public void ejbCreate() throws CreateException {
+        }
 
         @Override
         @PostActivate
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
         @PrePassivate
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
         @PreDestroy
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
 
         @PostActivate
-        public void myPostActivate() {}
+        public void myPostActivate() {
+        }
 
         @PrePassivate
-        public void myPrePassivate() {}
+        public void myPrePassivate() {
+        }
 
         @AfterBegin
-        public void myAfterBegin() {}
+        public void myAfterBegin() {
+        }
 
         @BeforeCompletion
-        public void beforeCompletion() {}
+        public void beforeCompletion() {
+        }
 
         @AfterCompletion
-        public void afterCompletion(boolean committed) {}
+        public void afterCompletion(final boolean committed) {
+        }
     }
 
     public class CallbackViolatorBean {
         @PostConstruct
-        public void postConstruct(InvocationContext ic) {
+        public void postConstruct(final InvocationContext ic) {
         }
 
         @PreDestroy
-        public void preDestroy(InvocationContext ic) {
+        public void preDestroy(final InvocationContext ic) {
         }
 
         @PrePassivate
-        public void prePassivate(InvocationContext ic) {
+        public void prePassivate(final InvocationContext ic) {
         }
 
         @PostActivate
-        public void postActivate(InvocationContext ic) {
+        public void postActivate(final InvocationContext ic) {
         }
     }
 }

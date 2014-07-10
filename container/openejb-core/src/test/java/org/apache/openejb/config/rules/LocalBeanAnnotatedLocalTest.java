@@ -45,6 +45,7 @@ public class LocalBeanAnnotatedLocalTest {
     @Stateless
     public static class LocalBeanLocal {
         @AroundInvoke
-        public void forceValidationException() {}
+        public void forceValidationException() {
+        }
     }
 }

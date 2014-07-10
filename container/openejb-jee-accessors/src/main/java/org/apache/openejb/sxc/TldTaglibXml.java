@@ -33,11 +33,11 @@ import java.net.URL;
  */
 public class TldTaglibXml {
 
-    public static TldTaglib unmarshal(InputStream inputStream) throws Exception {
+    public static TldTaglib unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new TldTaglib$JAXB(), inputStream);
     }
 
-    public static TldTaglib unmarshal(URL url) throws Exception {
+    public static TldTaglib unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             final XMLStreamReader filter = new TaglibNamespaceFilter(Sxc.prepareReader(inputStream));
@@ -47,7 +47,7 @@ public class TldTaglibXml {
         }
     }
 
-    public static void marshal(TldTaglib taglib, OutputStream outputStream) throws Exception {
+    public static void marshal(final TldTaglib taglib, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new TldTaglib$JAXB(), taglib, new StreamResult(outputStream));
     }
 

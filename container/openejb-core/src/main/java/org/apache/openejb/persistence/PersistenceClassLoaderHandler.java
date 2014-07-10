@@ -21,6 +21,8 @@ import java.lang.instrument.ClassFileTransformer;
 
 public interface PersistenceClassLoaderHandler {
     void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer);
+
     void destroy(String unitId);
+
     ClassLoader getNewTempClassLoader(ClassLoader classLoader);
 }

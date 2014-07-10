@@ -30,7 +30,7 @@ public class Classes {
 
     private static final Map<Class<?>, Class<?>> primitiveWrappers = new HashMap<Class<?>, Class<?>>();
     private static final HashMap<String, Class> primitives = new HashMap<String, Class>();
-    
+
     static {
         primitives.put("boolean", boolean.class);
         primitives.put("byte", byte.class);
@@ -40,7 +40,7 @@ public class Classes {
         primitives.put("long", long.class);
         primitives.put("float", float.class);
         primitives.put("double", double.class);
-        
+
         primitiveWrappers.put(boolean.class, Boolean.class);
         primitiveWrappers.put(byte.class, Byte.class);
         primitiveWrappers.put(char.class, Character.class);
@@ -48,12 +48,12 @@ public class Classes {
         primitiveWrappers.put(float.class, Float.class);
         primitiveWrappers.put(int.class, Integer.class);
         primitiveWrappers.put(long.class, Long.class);
-        primitiveWrappers.put(short.class, Short.class);       
+        primitiveWrappers.put(short.class, Short.class);
     }
 
     public static Class forName(String string, final ClassLoader classLoader) throws ClassNotFoundException {
         int arrayDimentions = 0;
-        while (string.endsWith("[]")){
+        while (string.endsWith("[]")) {
             string = string.substring(0, string.length() - 2);
             arrayDimentions++;
         }
@@ -64,26 +64,26 @@ public class Classes {
             clazz = Class.forName(string, true, classLoader);
         }
 
-        if (arrayDimentions == 0){
+        if (arrayDimentions == 0) {
             return clazz;
         }
         return Array.newInstance(clazz, new int[arrayDimentions]).getClass();
     }
 
-    public static String packageName(final Class clazz){
+    public static String packageName(final Class clazz) {
         return packageName(clazz.getName());
     }
 
-    public static String packageName(final String clazzName){
+    public static String packageName(final String clazzName) {
         final int i = clazzName.lastIndexOf('.');
-        if (i > 0){
+        if (i > 0) {
             return clazzName.substring(0, i);
         } else {
             return "";
         }
     }
 
-    public static List<String> getSimpleNames(final Class... classes){
+    public static List<String> getSimpleNames(final Class... classes) {
         final List<String> list = new ArrayList<String>();
         for (final Class aClass : classes) {
             list.add(aClass.getSimpleName());
@@ -91,9 +91,9 @@ public class Classes {
 
         return list;
     }
-    
+
     public static Class<?> deprimitivize(Class<?> fieldType) {
-        return fieldType = fieldType.isPrimitive() ? primitiveWrappers.get(fieldType): fieldType;
+        return fieldType = fieldType.isPrimitive() ? primitiveWrappers.get(fieldType) : fieldType;
     }
 
     /**

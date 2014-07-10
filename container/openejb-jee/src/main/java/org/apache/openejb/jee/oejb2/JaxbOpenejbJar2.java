@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -31,19 +30,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.apache.openejb.jee.JAXBContextFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
  */
 public class JaxbOpenejbJar2 {
 
-    private static final Map<Class<?>,JAXBContext> contexts = new HashMap<Class<?>,JAXBContext>();
+    private static final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
 
-    private static JAXBContext getContext(Class<?> type) throws JAXBException {
+    private static JAXBContext getContext(final Class<?> type) throws JAXBException {
         JAXBContext jaxbContext = contexts.get(type);
         if (jaxbContext == null) {
             jaxbContext = JAXBContextFactory.newInstance(type);
@@ -52,39 +52,39 @@ public class JaxbOpenejbJar2 {
         return jaxbContext;
     }
 
-    public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         marshal(type, object, out);
 
         return new String(out.toByteArray());
     }
 
-    public static <T>void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
-        JAXBContext ctx2 = getContext(type);
-        Marshaller marshaller = ctx2.createMarshaller();
+    public static <T> void marshal(final Class<T> type, final Object object, final OutputStream out) throws JAXBException {
+        final JAXBContext ctx2 = getContext(type);
+        final Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
         marshaller.marshal(object, out);
     }
 
-    public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    public static <T> Object unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         return unmarshal(type, in, true);
     }
 
-    public static <T>Object unmarshal(Class<T> type, InputStream in, final boolean logErrors) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
+    public static <T> Object unmarshal(final Class<T> type, final InputStream in, final boolean logErrors) throws ParserConfigurationException, SAXException, JAXBException {
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
-        JAXBContext ctx = getContext(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler(new ValidationEventHandler(){
-            public boolean handleEvent(ValidationEvent validationEvent) {
+        final JAXBContext ctx = getContext(type);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
                 if (logErrors) {
                     System.out.println(validationEvent);
                 }
@@ -92,21 +92,21 @@ public class JaxbOpenejbJar2 {
             }
         });
 
-        unmarshaller.setListener(new Unmarshaller.Listener(){
-            public void afterUnmarshal(Object object, Object object1) {
+        unmarshaller.setListener(new Unmarshaller.Listener() {
+            public void afterUnmarshal(final Object object, final Object object1) {
                 super.afterUnmarshal(object, object1);
             }
 
-            public void beforeUnmarshal(Object target, Object parent) {
+            public void beforeUnmarshal(final Object target, final Object parent) {
                 super.beforeUnmarshal(target, parent);
             }
         });
 
 
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+        final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
         return unmarshaller.unmarshal(source, type);
     }

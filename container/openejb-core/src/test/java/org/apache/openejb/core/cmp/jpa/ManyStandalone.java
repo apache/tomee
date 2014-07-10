@@ -32,7 +32,7 @@ public class ManyStandalone {
     public ManyStandalone() {
     }
 
-    public ManyStandalone(long id) {
+    public ManyStandalone(final long id) {
         this.id = id;
     }
 
@@ -44,7 +44,7 @@ public class ManyStandalone {
         return one;
     }
 
-    public void setOne(OneStandalone one) {
+    public void setOne(final OneStandalone one) {
         this.one = one;
     }
 }

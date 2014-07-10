@@ -63,7 +63,7 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
      * @see EncBmpHome#findEmptyCollection()
      */
     public java.util.Collection ejbFindEmptyCollection()
-            throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws javax.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
@@ -75,8 +75,8 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
      * @throws javax.ejb.FinderException
      * @see EncBmpHome#findByPrimaryKey(Integer)
      */
-    public Integer ejbFindByPrimaryKey(Integer primaryKey)
-            throws javax.ejb.FinderException {
+    public Integer ejbFindByPrimaryKey(final Integer primaryKey)
+        throws javax.ejb.FinderException {
         return new Integer(-1);
     }
 
@@ -88,13 +88,13 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
      * @throws javax.ejb.CreateException
      * @see EncBmpHome#create
      */
-    public Integer ejbCreate(String name)
-            throws javax.ejb.CreateException {
+    public Integer ejbCreate(final String name)
+        throws javax.ejb.CreateException {
         return new Integer(-1);
     }
 
-    public void ejbPostCreate(String name)
-            throws javax.ejb.CreateException {
+    public void ejbPostCreate(final String name)
+        throws javax.ejb.CreateException {
     }
 
     //
@@ -109,15 +109,15 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupEntityBean() throws TestFailureException {
         try {
             try {
-                BasicBmpHome home = (BasicBmpHome) ejbContext.lookup("entity/bmp/beanReferences/bmp_entity");
+                final BasicBmpHome home = (BasicBmpHome) ejbContext.lookup("entity/bmp/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicBmpObject object = home.createObject("Enc Bean");
+                final BasicBmpObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -125,15 +125,15 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupStatefulBean() throws TestFailureException {
         try {
             try {
-                BasicStatefulHome home = (BasicStatefulHome) ejbContext.lookup("entity/bmp/beanReferences/stateful");
+                final BasicStatefulHome home = (BasicStatefulHome) ejbContext.lookup("entity/bmp/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatefulObject object = home.createObject("Enc Bean");
+                final BasicStatefulObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -141,67 +141,67 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupStatelessBean() throws TestFailureException {
         try {
             try {
-                BasicStatelessHome home = (BasicStatelessHome) ejbContext.lookup("entity/bmp/beanReferences/stateless");
+                final BasicStatelessHome home = (BasicStatelessHome) ejbContext.lookup("entity/bmp/beanReferences/stateless");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
-                BasicStatelessObject object = home.createObject();
+                final BasicStatelessObject object = home.createObject();
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            try{
-            BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) ejbContext.lookup("entity/bmp/beanReferences/stateless-business-local");
-            Assert.assertNotNull("The EJB BusinessLocal is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            try {
+                final BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) ejbContext.lookup("entity/bmp/beanReferences/stateless-business-local");
+                Assert.assertNotNull("The EJB BusinessLocal is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            try{
-            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) ejbContext.lookup("entity/bmp/beanReferences/stateless-business-remote");
-            Assert.assertNotNull("The EJB BusinessRemote is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            try {
+                final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) ejbContext.lookup("entity/bmp/beanReferences/stateless-business-remote");
+                Assert.assertNotNull("The EJB BusinessRemote is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            try{
-            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ejbContext.lookup("entity/bmp/beanReferences/stateful-business-local");
-            Assert.assertNotNull("The EJB BusinessLocal is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            try {
+                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ejbContext.lookup("entity/bmp/beanReferences/stateful-business-local");
+                Assert.assertNotNull("The EJB BusinessLocal is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            try{
-            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ejbContext.lookup("entity/bmp/beanReferences/stateful-business-remote");
-            Assert.assertNotNull("The EJB BusinessRemote is null", object );
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            try {
+                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ejbContext.lookup("entity/bmp/beanReferences/stateful-business-remote");
+                Assert.assertNotNull("The EJB BusinessRemote is null", object);
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -209,16 +209,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupStringEntry() throws TestFailureException {
         try {
             try {
-                String expected = new String("1");
-                String actual = (String) ejbContext.lookup("entity/bmp/references/String");
+                final String expected = new String("1");
+                final String actual = (String) ejbContext.lookup("entity/bmp/references/String");
 
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -226,16 +226,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupDoubleEntry() throws TestFailureException {
         try {
             try {
-                Double expected = new Double(1.0D);
-                Double actual = (Double) ejbContext.lookup("entity/bmp/references/Double");
+                final Double expected = new Double(1.0D);
+                final Double actual = (Double) ejbContext.lookup("entity/bmp/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -243,16 +243,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupLongEntry() throws TestFailureException {
         try {
             try {
-                Long expected = new Long(1L);
-                Long actual = (Long) ejbContext.lookup("entity/bmp/references/Long");
+                final Long expected = new Long(1L);
+                final Long actual = (Long) ejbContext.lookup("entity/bmp/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -260,16 +260,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupFloatEntry() throws TestFailureException {
         try {
             try {
-                Float expected = new Float(1.0F);
-                Float actual = (Float) ejbContext.lookup("entity/bmp/references/Float");
+                final Float expected = new Float(1.0F);
+                final Float actual = (Float) ejbContext.lookup("entity/bmp/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -277,16 +277,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupIntegerEntry() throws TestFailureException {
         try {
             try {
-                Integer expected = new Integer(1);
-                Integer actual = (Integer) ejbContext.lookup("entity/bmp/references/Integer");
+                final Integer expected = new Integer(1);
+                final Integer actual = (Integer) ejbContext.lookup("entity/bmp/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -294,16 +294,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupShortEntry() throws TestFailureException {
         try {
             try {
-                Short expected = new Short((short) 1);
-                Short actual = (Short) ejbContext.lookup("entity/bmp/references/Short");
+                final Short expected = new Short((short) 1);
+                final Short actual = (Short) ejbContext.lookup("entity/bmp/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -311,16 +311,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupBooleanEntry() throws TestFailureException {
         try {
             try {
-                Boolean expected = new Boolean(true);
-                Boolean actual = (Boolean) ejbContext.lookup("entity/bmp/references/Boolean");
+                final Boolean expected = new Boolean(true);
+                final Boolean actual = (Boolean) ejbContext.lookup("entity/bmp/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -328,16 +328,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupByteEntry() throws TestFailureException {
         try {
             try {
-                Byte expected = new Byte((byte) 1);
-                Byte actual = (Byte) ejbContext.lookup("entity/bmp/references/Byte");
+                final Byte expected = new Byte((byte) 1);
+                final Byte actual = (Byte) ejbContext.lookup("entity/bmp/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -346,16 +346,16 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupCharacterEntry() throws TestFailureException {
         try {
             try {
-                Character expected = new Character('D');
-                Character actual = (Character) ejbContext.lookup("entity/bmp/references/Character");
+                final Character expected = new Character('D');
+                final Character actual = (Character) ejbContext.lookup("entity/bmp/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -363,82 +363,82 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
     public void lookupResource() throws TestFailureException {
         try {
             try {
-                Object obj = ejbContext.lookup("datasource");
+                final Object obj = ejbContext.lookup("datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 Object obj = ejbContext.lookup("jms");
                 Assert.assertNotNull("The JMS ConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of ConnectionFactory", obj instanceof ConnectionFactory);
-                ConnectionFactory connectionFactory = (ConnectionFactory) obj;
+                final ConnectionFactory connectionFactory = (ConnectionFactory) obj;
                 testJmsConnection(connectionFactory.createConnection());
 
                 obj = ejbContext.lookup("TopicCF");
                 Assert.assertNotNull("The JMS TopicConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of TopicConnectionFactory", obj instanceof TopicConnectionFactory);
-                TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
+                final TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
                 testJmsConnection(topicConnectionFactory.createConnection());
 
                 obj = ejbContext.lookup("QueueCF");
                 Assert.assertNotNull("The JMS QueueConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
-                QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
+                final QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
                 testJmsConnection(queueConnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
         connection.close();
     }
 
-    public void lookupPersistenceUnit() throws TestFailureException{
-        try{
-            try{
-                EntityManagerFactory emf = (EntityManagerFactory)ejbContext.lookup("persistence/TestUnit");
-                Assert.assertNotNull("The EntityManagerFactory is null", emf );
+    public void lookupPersistenceUnit() throws TestFailureException {
+        try {
+            try {
+                final EntityManagerFactory emf = (EntityManagerFactory) ejbContext.lookup("persistence/TestUnit");
+                Assert.assertNotNull("The EntityManagerFactory is null", emf);
 
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
-    
-    public void lookupPersistenceContext() throws TestFailureException{
-        try{
-            try{
-                EntityManager em = (EntityManager)ejbContext.lookup("persistence/TestContext");
+
+    public void lookupPersistenceContext() throws TestFailureException {
+        try {
+            try {
+                final EntityManager em = (EntityManager) ejbContext.lookup("persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -463,7 +463,7 @@ public class ContextLookupBmpBean implements javax.ejb.EntityBean {
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) throws EJBException, RemoteException {
+    public void setEntityContext(final EntityContext ctx) throws EJBException, RemoteException {
         ejbContext = ctx;
     }
 

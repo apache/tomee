@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for locale-encoding-mapping-listType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="locale-encoding-mapping-listType">
  *   &lt;complexContent>
@@ -47,13 +47,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "locale-encoding-mapping-listType", propOrder = {
-        "localeEncodingMapping"
+    "localeEncodingMapping"
 })
 public class LocaleEncodingMappingList {
 
@@ -75,7 +73,7 @@ public class LocaleEncodingMappingList {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

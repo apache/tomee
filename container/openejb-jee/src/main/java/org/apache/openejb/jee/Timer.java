@@ -31,11 +31,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for timerType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="timerType">
  *   &lt;complexContent>
@@ -55,8 +55,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "timerType", propOrder = {
@@ -95,7 +93,7 @@ public class Timer {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -107,10 +105,8 @@ public class Timer {
     /**
      * Gets the value of the schedule property.
      *
-     * @return
-     *     possible object is
-     *     {@link TimerSchedule }
-     *
+     * @return possible object is
+     * {@link TimerSchedule }
      */
     public TimerSchedule getSchedule() {
         return schedule;
@@ -119,22 +115,18 @@ public class Timer {
     /**
      * Sets the value of the schedule property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link TimerSchedule }
-     *
+     * @param value allowed object is
+     *              {@link TimerSchedule }
      */
-    public void setSchedule(TimerSchedule value) {
+    public void setSchedule(final TimerSchedule value) {
         this.schedule = value;
     }
 
     /**
      * Gets the value of the start property.
      *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
+     * @return possible object is
+     * {@link XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getStart() {
         return start;
@@ -143,22 +135,18 @@ public class Timer {
     /**
      * Sets the value of the start property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
+     * @param value allowed object is
+     *              {@link XMLGregorianCalendar }
      */
-    public void setStart(XMLGregorianCalendar value) {
+    public void setStart(final XMLGregorianCalendar value) {
         this.start = value;
     }
 
     /**
      * Gets the value of the end property.
      *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
+     * @return possible object is
+     * {@link XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getEnd() {
         return end;
@@ -167,22 +155,18 @@ public class Timer {
     /**
      * Sets the value of the end property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
+     * @param value allowed object is
+     *              {@link XMLGregorianCalendar }
      */
-    public void setEnd(XMLGregorianCalendar value) {
+    public void setEnd(final XMLGregorianCalendar value) {
         this.end = value;
     }
 
     /**
      * Gets the value of the timeoutMethod property.
      *
-     * @return
-     *     possible object is
-     *     {@link NamedMethod }
-     *
+     * @return possible object is
+     * {@link NamedMethod }
      */
     public NamedMethod getTimeoutMethod() {
         return timeoutMethod;
@@ -191,12 +175,10 @@ public class Timer {
     /**
      * Sets the value of the timeoutMethod property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link NamedMethod }
-     *
+     * @param value allowed object is
+     *              {@link NamedMethod }
      */
-    public void setTimeoutMethod(NamedMethod value) {
+    public void setTimeoutMethod(final NamedMethod value) {
         this.timeoutMethod = value;
     }
 
@@ -204,17 +186,15 @@ public class Timer {
         return persistent;
     }
 
-    public void setPersistent(Boolean value) {
+    public void setPersistent(final Boolean value) {
         this.persistent = value;
     }
 
     /**
      * Gets the value of the timezone property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTimezone() {
         return timezone;
@@ -223,22 +203,18 @@ public class Timer {
     /**
      * Sets the value of the timezone property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTimezone(String value) {
+    public void setTimezone(final String value) {
         this.timezone = value;
     }
 
     /**
      * Gets the value of the info property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInfo() {
         return info;
@@ -247,22 +223,18 @@ public class Timer {
     /**
      * Sets the value of the info property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInfo(String value) {
+    public void setInfo(final String value) {
         this.info = value;
     }
 
     /**
      * Gets the value of the id property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -271,12 +243,10 @@ public class Timer {
     /**
      * Sets the value of the id property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 }

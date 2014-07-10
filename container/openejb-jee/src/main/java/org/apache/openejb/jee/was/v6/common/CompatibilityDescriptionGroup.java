@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>
+ * <p/>
  * Java class for CompatibilityDescriptionGroup complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="CompatibilityDescriptionGroup">
  *   &lt;complexContent>
@@ -41,104 +41,90 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CompatibilityDescriptionGroup")
 public class CompatibilityDescriptionGroup extends DescriptionGroup {
 
-	@XmlAttribute
-	protected String description;
-	@XmlAttribute
-	protected String displayName;
-	@XmlAttribute
-	protected String largeIcon;
-	@XmlAttribute
-	protected String smallIcon;
+    @XmlAttribute
+    protected String description;
+    @XmlAttribute
+    protected String displayName;
+    @XmlAttribute
+    protected String largeIcon;
+    @XmlAttribute
+    protected String smallIcon;
 
-	/**
-	 * Gets the value of the description property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the value of the description property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Sets the value of the description property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setDescription(String value) {
-		this.description = value;
-	}
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setDescription(final String value) {
+        this.description = value;
+    }
 
-	/**
-	 * Gets the value of the displayName property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+    /**
+     * Gets the value of the displayName property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	/**
-	 * Sets the value of the displayName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setDisplayName(String value) {
-		this.displayName = value;
-	}
+    /**
+     * Sets the value of the displayName property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setDisplayName(final String value) {
+        this.displayName = value;
+    }
 
-	/**
-	 * Gets the value of the largeIcon property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getLargeIcon() {
-		return largeIcon;
-	}
+    /**
+     * Gets the value of the largeIcon property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getLargeIcon() {
+        return largeIcon;
+    }
 
-	/**
-	 * Sets the value of the largeIcon property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setLargeIcon(String value) {
-		this.largeIcon = value;
-	}
+    /**
+     * Sets the value of the largeIcon property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setLargeIcon(final String value) {
+        this.largeIcon = value;
+    }
 
-	/**
-	 * Gets the value of the smallIcon property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSmallIcon() {
-		return smallIcon;
-	}
+    /**
+     * Gets the value of the smallIcon property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getSmallIcon() {
+        return smallIcon;
+    }
 
-	/**
-	 * Sets the value of the smallIcon property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSmallIcon(String value) {
-		this.smallIcon = value;
-	}
+    /**
+     * Sets the value of the smallIcon property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setSmallIcon(final String value) {
+        this.smallIcon = value;
+    }
 
 }

@@ -22,18 +22,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The java-identifierType defines a Java identifier.
- *         The users of this type should further verify that
- *         the content does not contain Java reserved keywords.
- * 
- *       
- * 
+ * The java-identifierType defines a Java identifier.
+ * The users of this type should further verify that
+ * the content does not contain Java reserved keywords.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for java-identifierType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="java-identifierType">
  *   &lt;simpleContent>
@@ -42,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "java-identifierType")

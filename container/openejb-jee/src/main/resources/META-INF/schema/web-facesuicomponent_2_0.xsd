@@ -1,64 +1,62 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 
 
-
 <xsd:schema
-     targetNamespace="http://java.sun.com/xml/ns/javaee"
-     xmlns:javaee="http://java.sun.com/xml/ns/javaee"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     elementFormDefault="qualified"
-     attributeFormDefault="unqualified"
-     version="2.0">
+    targetNamespace="http://java.sun.com/xml/ns/javaee"
+    xmlns:javaee="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="2.0">
 
   <xsd:annotation>
     <xsd:documentation>
 
       DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-      
+
       Copyright 2003-2009 Sun Microsystems, Inc. All rights reserved.
-      
+
       The contents of this file are subject to the terms of either the
       GNU General Public License Version 2 only ("GPL") or the Common
       Development and Distribution License("CDDL") (collectively, the
-      "License").  You may not use this file except in compliance with
+      "License"). You may not use this file except in compliance with
       the License. You can obtain a copy of the License at
       https://glassfish.dev.java.net/public/CDDL+GPL.html or
-      glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+      glassfish/bootstrap/legal/LICENSE.txt. See the License for the
       specific language governing permissions and limitations under the
       License.
-      
+
       When distributing the software, include this License Header
       Notice in each file and include the License file at
-      glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+      glassfish/bootstrap/legal/LICENSE.txt. Sun designates this
       particular file as subject to the "Classpath" exception as
       provided by Sun in the GPL Version 2 section of the License file
-      that accompanied this code.  If applicable, add the following
+      that accompanied this code. If applicable, add the following
       below the License Header, with the fields enclosed by brackets []
       replaced by your own identifying information:
       "Portions Copyrighted [year] [name of copyright owner]"
-      
+
       Contributor(s):
-      
+
       If you wish your version of this file to be governed by only the
       CDDL or only the GPL Version 2, indicate your decision by adding
       "[Contributor] elects to include this software in this
-      distribution under the [CDDL or GPL Version 2] license."  If you
+      distribution under the [CDDL or GPL Version 2] license." If you
       don't indicate a single choice of license, a recipient has the
       option to distribute your version of this file under either the
       CDDL, the GPL Version 2 or to extend the choice of license to its
-      licensees as provided above.  However, if you add GPL Version 2
+      licensees as provided above. However, if you add GPL Version 2
       code and therefore, elected the GPL Version 2 license, then the
       option applies only if the new code is made subject to such
       option by the copyright holder.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
-    <xsd:annotation>
-        <xsd:documentation>
+  <xsd:annotation>
+    <xsd:documentation>
 
-            <![CDATA[
+      <![CDATA[
 
             The XML Schema for a JavaServer Faces UIComponent (Version 2.0).
 
@@ -106,56 +104,56 @@
 
             ]]>
 
-        </xsd:documentation>
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="javaee_5.xsd"/>
+
+  <!-- **************************************************** -->
+
+  <xsd:element name="attribute" type="javaee:uicomponent-attributeType">
+  </xsd:element>
+
+  <!-- **************************************************** -->
+
+  <xsd:complexType name="uicomponent-attributeType">
+    <xsd:annotation>
+      <xsd:documentation>
+
+        The "attribute" element declares an attribute of this
+        ui component.
+
+      </xsd:documentation>
     </xsd:annotation>
 
-    <xsd:include schemaLocation="javaee_5.xsd"/>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="attribute"
+                   type="javaee:uicomponent-attributeType"/>
+    </xsd:choice>
 
-    <!-- **************************************************** -->
+    <xsd:attribute name="name"
+                   type="xsd:string"
+                   use="required"/>
 
-    <xsd:element name = "attribute" type="javaee:uicomponent-attributeType">
-    </xsd:element>
+    <xsd:attribute name="displayName"
+                   type="xsd:string"
+                   use="optional"/>
 
-    <!-- **************************************************** -->
+    <xsd:attribute name="shortDescription"
+                   type="xsd:string"
+                   use="optional"/>
 
-    <xsd:complexType name="uicomponent-attributeType">
-        <xsd:annotation>
-            <xsd:documentation>
+    <xsd:attribute name="default"
+                   type="xsd:string"
+                   use="optional"/>
 
-                The "attribute" element declares an attribute of this 
-                ui component.
+    <xsd:attribute name="method-signature"
+                   type="xsd:string"
+                   use="optional">
 
-            </xsd:documentation>
-        </xsd:annotation>
-        
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-            <xsd:element name="attribute"
-                         type="javaee:uicomponent-attributeType"/>
-        </xsd:choice>
-
-        <xsd:attribute name="name"
-                       type="xsd:string"
-                       use="required"/>
-
-        <xsd:attribute name="displayName"
-                       type="xsd:string"
-                       use="optional"/>
-
-        <xsd:attribute name="shortDescription"
-                       type="xsd:string"
-                       use="optional"/>
-
-        <xsd:attribute name="default"
-                       type="xsd:string"
-                       use="optional"/>
-
-        <xsd:attribute name="method-signature"
-                       type="xsd:string"
-                       use="optional">
-
-	  <xsd:annotation>
-	      <xsd:documentation>
-                <![CDATA[
+      <xsd:annotation>
+        <xsd:documentation>
+          <![CDATA[
 
 	    Provides the signature of the Java method.  The syntax of
 	    the method-signature element is as follows (taken from
@@ -191,30 +189,30 @@
 	    java.lang.String nickName( java.lang.String, int )
 
                 ]]>
-	      </xsd:documentation>
-	  </xsd:annotation>
+        </xsd:documentation>
+      </xsd:annotation>
 
-        </xsd:attribute>
+    </xsd:attribute>
 
-        <xsd:attribute name="applyTo"
-                       type="xsd:string"
-                       use="optional"/>
+    <xsd:attribute name="applyTo"
+                   type="xsd:string"
+                   use="optional"/>
 
-        <xsd:attribute name="required"
-                       type="xsd:boolean"
-                       use="optional"/>
+    <xsd:attribute name="required"
+                   type="xsd:boolean"
+                   use="optional"/>
 
-        <xsd:attribute name="preferred"
-                       type="xsd:boolean"
-                       use="optional"/>
+    <xsd:attribute name="preferred"
+                   type="xsd:boolean"
+                   use="optional"/>
 
-        <xsd:attribute name="expert"
-                       type="xsd:boolean"
-                       use="optional"/>
+    <xsd:attribute name="expert"
+                   type="xsd:boolean"
+                   use="optional"/>
 
-        
-    </xsd:complexType>
 
-    <!-- **************************************************** -->
+  </xsd:complexType>
+
+  <!-- **************************************************** -->
 
 </xsd:schema>

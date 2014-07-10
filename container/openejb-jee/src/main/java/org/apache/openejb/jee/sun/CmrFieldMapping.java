@@ -41,7 +41,7 @@ public class CmrFieldMapping {
         return cmrFieldName;
     }
 
-    public void setCmrFieldName(String value) {
+    public void setCmrFieldName(final String value) {
         this.cmrFieldName = value;
     }
 
@@ -56,7 +56,7 @@ public class CmrFieldMapping {
         return fetchedWith;
     }
 
-    public void setFetchedWith(FetchedWith value) {
+    public void setFetchedWith(final FetchedWith value) {
         this.fetchedWith = value;
     }
 }

@@ -33,7 +33,7 @@ public class MdbResourceAdapter {
         return resourceAdapterMid;
     }
 
-    public void setResourceAdapterMid(String value) {
+    public void setResourceAdapterMid(final String value) {
         this.resourceAdapterMid = value;
     }
 
@@ -41,7 +41,7 @@ public class MdbResourceAdapter {
         return activationConfig;
     }
 
-    public void setActivationConfig(ActivationConfig value) {
+    public void setActivationConfig(final ActivationConfig value) {
         this.activationConfig = value;
     }
 }

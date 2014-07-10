@@ -17,29 +17,28 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- *                 Indicates that the database automatically populates a primary key
- *                 ID in the listed column(s).  Typically this is used for columns
- *                 with an AUTO_INCREMENT flag or the equivalent.  This only makes
- *                 sense if this key generator is used for an EJB or something else
- *                 with a corresponding database table (not if it's meant to generate
- *                 unique web session IDs or something like that -- see
- *                 auto-increment-tableType for that case).
- *             
- * 
+ * Indicates that the database automatically populates a primary key
+ * ID in the listed column(s).  Typically this is used for columns
+ * with an AUTO_INCREMENT flag or the equivalent.  This only makes
+ * sense if this key generator is used for an EJB or something else
+ * with a corresponding database table (not if it's meant to generate
+ * unique web session IDs or something like that -- see
+ * auto-increment-tableType for that case).
+ * <p/>
+ * <p/>
  * <p>Java class for database-generatedType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="database-generatedType">
  *   &lt;complexContent>
@@ -51,8 +50,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "database-generatedType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -65,25 +62,23 @@ public class DatabaseGeneratedType {
 
     /**
      * Gets the value of the identityColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the identityColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIdentityColumn().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getIdentityColumn() {
         if (identityColumn == null) {

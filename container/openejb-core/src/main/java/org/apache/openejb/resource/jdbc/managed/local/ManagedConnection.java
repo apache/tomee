@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ManagedConnection implements InvocationHandler {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.OPENEJB_RESOURCE_JDBC,ManagedConnection.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
 
     private static final Map<Integer, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<Integer, Map<Transaction, Connection>>();
 
@@ -155,10 +155,10 @@ public class ManagedConnection implements InvocationHandler {
     private Object invokeUnderTransaction(final Connection delegate, final Method method, final Object[] args) throws Exception {
         final String mtdName = method.getName();
         if ("setAutoCommit".equals(mtdName)
-                || "commit".equals(mtdName)
-                || "rollback".equals(mtdName)
-                || "setSavepoint".equals(mtdName)
-                || "setReadOnly".equals(mtdName)) {
+            || "commit".equals(mtdName)
+            || "rollback".equals(mtdName)
+            || "setSavepoint".equals(mtdName)
+            || "setReadOnly".equals(mtdName)) {
             throw forbiddenCall(mtdName);
         }
         if ("close".equals(mtdName)) {

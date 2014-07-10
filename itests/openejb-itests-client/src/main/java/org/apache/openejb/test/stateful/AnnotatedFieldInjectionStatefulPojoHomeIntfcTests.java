@@ -39,7 +39,7 @@ public class AnnotatedFieldInjectionStatefulPojoHomeIntfcTests extends Annotated
         try{
             ejbObject = ejbHome.createObject("BasicStatefulObject");
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

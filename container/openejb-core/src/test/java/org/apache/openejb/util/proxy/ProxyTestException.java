@@ -18,20 +18,20 @@ package org.apache.openejb.util.proxy;
 
 public class ProxyTestException extends Exception {
 
-	public ProxyTestException() {
-		super();
-	}
+    public ProxyTestException() {
+        super();
+    }
 
-	public ProxyTestException(String message, Throwable throwable) {
-		super(message, throwable);
-	}
+    public ProxyTestException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
 
-	public ProxyTestException(String message) {
-		super(message);
-	}
+    public ProxyTestException(final String message) {
+        super(message);
+    }
 
-	public ProxyTestException(Throwable throwable) {
-		super(throwable);
-	}
+    public ProxyTestException(final Throwable throwable) {
+        super(throwable);
+    }
 
 }

@@ -28,12 +28,12 @@ import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.quartz.JobDataMap;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apache.openejb.quartz.JobDataMap;
-import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -131,7 +131,7 @@ public class EjbTimerImplSerializableTest {
             try {
                 field = clazz.getDeclaredField(name);
                 field.setAccessible(true);
-            } catch (NoSuchFieldException ignored) {
+            } catch (final NoSuchFieldException ignored) {
                 // no-op
             }
             clazz = clazz.getSuperclass();

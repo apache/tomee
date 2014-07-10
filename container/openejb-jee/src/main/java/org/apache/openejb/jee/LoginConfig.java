@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for login-configType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="login-configType">
  *   &lt;complexContent>
@@ -48,8 +48,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "login-configType", propOrder = {
@@ -75,17 +73,15 @@ public class LoginConfig {
         return authMethod;
     }
 
-    public void setAuthMethod(String value) {
+    public void setAuthMethod(final String value) {
         this.authMethod = value;
     }
 
     /**
      * Gets the value of the realmName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRealmName() {
         return realmName;
@@ -93,23 +89,19 @@ public class LoginConfig {
 
     /**
      * Sets the value of the realmName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRealmName(String value) {
+    public void setRealmName(final String value) {
         this.realmName = value;
     }
 
     /**
      * Gets the value of the formLoginConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FormLoginConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link FormLoginConfig }
      */
     public FormLoginConfig getFormLoginConfig() {
         return formLoginConfig;
@@ -117,23 +109,19 @@ public class LoginConfig {
 
     /**
      * Sets the value of the formLoginConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FormLoginConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FormLoginConfig }
      */
-    public void setFormLoginConfig(FormLoginConfig value) {
+    public void setFormLoginConfig(final FormLoginConfig value) {
         this.formLoginConfig = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -141,13 +129,11 @@ public class LoginConfig {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

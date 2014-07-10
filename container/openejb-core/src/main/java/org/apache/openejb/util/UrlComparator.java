@@ -44,14 +44,14 @@ public class UrlComparator implements Comparator<URL> {
         return score(b) - score(a);
     }
 
-    private int score(final URL url){
+    private int score(final URL url) {
         final File file = URLs.toFile(url);
         final List<String> filePath = path(file);
         int matches = 0;
 
         final ListIterator<String> a = rootPath.listIterator();
         final ListIterator<String> b = filePath.listIterator();
-        while(a.hasNext() && b.hasNext()) {
+        while (a.hasNext() && b.hasNext()) {
             final String nameA = a.next();
             final String nameB = b.next();
 
@@ -65,13 +65,13 @@ public class UrlComparator implements Comparator<URL> {
         return matches;
     }
 
-    private List<String> path(final File file){
+    private List<String> path(final File file) {
         final ArrayList<String> path = new ArrayList<String>();
         path(file, path);
         return path;
     }
 
-    private void path(final File file, final List<String> path){
+    private void path(final File file, final List<String> path) {
         if (file == null) {
             return;
         }

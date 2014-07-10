@@ -26,12 +26,22 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
@@ -240,7 +250,7 @@ public class JeeTest extends TestCase {
 
         try {
             StaxCompare.compare(expected, actual);
-        } catch (Exception e) {
+        } catch (final Exception e) {
 //            System.out.append(actual);
             writeToTmpFile(bytes, "connector-1.0-example.xml");
             throw e;
@@ -257,7 +267,7 @@ public class JeeTest extends TestCase {
 
     public void testWebServiceHandlers() throws Exception {
         final QName[] expectedServiceNames = {new QName("http://www.helloworld.org", "HelloService", "ns1"), new QName("http://www.bar.org", "HelloService", "bar"),
-                new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null};
+            new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null};
         final InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml");
         try {
             final HandlerChains handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, in);
@@ -304,7 +314,7 @@ public class JeeTest extends TestCase {
 
         try {
             StaxCompare.compare(expected, actual);
-        } catch (Exception e) {
+        } catch (final Exception e) {
 //            System.out.append(actual);
             writeToTmpFile(bytes, sourceXmlFile);
             throw e;
@@ -334,7 +344,7 @@ public class JeeTest extends TestCase {
             File tempFile = null;
             try {
                 tempFile = File.createTempFile("jaxb-output", "xml");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -346,7 +356,7 @@ public class JeeTest extends TestCase {
             out.write(bytes);
             out.close();
             System.out.println("Jaxb output of " + xmlFileName + " written to " + tempFile.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

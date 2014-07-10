@@ -45,6 +45,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
+import org.apache.openejb.assembler.classic.event.BeanContextsInitializedEvent;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
@@ -799,6 +800,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
             }
 
+            // before starting everything, give the user the opportunity to hack on the AppContext/BeanContext
+            final SystemInstance systemInstance = SystemInstance.get();
+            systemInstance.fireEvent(new BeanContextsInitializedEvent(appInfo, appContext, allDeployments));
+
             startEjbs(start, allDeployments);
 
             // App Client
@@ -842,8 +847,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
             }
-
-            final SystemInstance systemInstance = SystemInstance.get();
 
             // WebApp
 
@@ -896,8 +899,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private static List<CommonInfoObject> listCommonInfoObjectsForAppInfo(final AppInfo appInfo) {
         final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>(
-                                appInfo.clients.size() + appInfo.connectors.size() +
-                                appInfo.ejbJars.size() + appInfo.webApps.size());
+            appInfo.clients.size() + appInfo.connectors.size() +
+                appInfo.ejbJars.size() + appInfo.webApps.size());
         for (final ClientInfo clientInfo : appInfo.clients) {
             vfs.add(clientInfo);
         }
@@ -1081,11 +1084,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
 
                     beanContext.set(
-                            BeanContext.ProxyClass.class,
-                            new BeanContext.ProxyClass(
-                                beanContext,
-                                interfaces.toArray(new Class<?>[interfaces.size()])
-                            ));
+                        BeanContext.ProxyClass.class,
+                        new BeanContext.ProxyClass(
+                            beanContext,
+                            interfaces.toArray(new Class<?>[interfaces.size()])
+                        ));
                 }
             }
             // process application exceptions
@@ -2698,7 +2701,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
-
         private static final AtomicBoolean logged = new AtomicBoolean(false);
 
         private final Map<String, List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>>();

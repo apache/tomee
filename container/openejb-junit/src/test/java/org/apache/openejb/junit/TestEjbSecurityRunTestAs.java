@@ -17,21 +17,21 @@
 package org.apache.openejb.junit;
 
 import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.junit.RunTestAs;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.ejbs.SecuredEjbLocal;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 @ContextConfig(properties = {
-        @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
-        @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
+    @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
+    @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
 })
 @RunWith(OpenEjbRunner.class)
 @RunTestAs("RoleA")
@@ -63,8 +63,7 @@ public class TestEjbSecurityRunTestAs {
         try {
             securedEjb.roleB();
             fail("Able to execute a method for which we shouldn't have access.");
-        }
-        catch (EJBAccessException e) {
+        } catch (final EJBAccessException e) {
         }
     }
 
@@ -80,8 +79,7 @@ public class TestEjbSecurityRunTestAs {
         try {
             securedEjb.roleA();
             fail("Able to execute a method for which we shouldn't have access.");
-        }
-        catch (EJBAccessException e) {
+        } catch (final EJBAccessException e) {
         }
     }
 }

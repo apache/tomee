@@ -174,7 +174,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         break;
                     case CHECKED_OUT:
                         return entry.getValue();
-                        // throw new IllegalStateException("The entry " + key + " is already checked-out");
+                    // throw new IllegalStateException("The entry " + key + " is already checked-out");
                     case PASSIVATED:
                         // Entry was passivated between get and lock, we need to load the Entry again
                         // If the cache somehow got corrupted by an entry containing in state PASSIVATED, this remove
@@ -272,7 +272,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     }
 
     public void removeAll(final CacheFilter<V> filter) {
-        for (final Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext();) {
+        for (final Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext(); ) {
             final Entry entry = iterator.next();
 
             entry.lock.lock();
@@ -453,7 +453,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     private void storeEntries(final Map<K, V> entriesToStore) {
         final CacheListener<V> listener = this.getListener();
-        for (final Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
+        for (final Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext(); ) {
             final Map.Entry<K, V> entry = iterator.next();
 
             if (listener != null) {

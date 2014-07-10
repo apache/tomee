@@ -45,7 +45,7 @@ public class ClientModule extends Module implements DeploymentModule {
         this.applicationClient = applicationClient;
         setClassLoader(classLoader);
         this.mainClass = mainClass;
-        
+
         final File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, applicationClient, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
@@ -60,7 +60,7 @@ public class ClientModule extends Module implements DeploymentModule {
     }
 
     public IAnnotationFinder getFinder() {
-        return finder != null ? finder.get(): null;
+        return finder != null ? finder.get() : null;
     }
 
     public void setFinderReference(final AtomicReference<IAnnotationFinder> finder) {
@@ -126,9 +126,9 @@ public class ClientModule extends Module implements DeploymentModule {
     @Override
     public String toString() {
         return "ClientModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                ", mainClass='" + mainClass + '\'' +
-                '}';
+            "moduleId='" + id.getName() + '\'' +
+            ", mainClass='" + mainClass + '\'' +
+            '}';
     }
 
     @Override

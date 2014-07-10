@@ -34,15 +34,15 @@ import java.net.URLClassLoader;
 
 /**
  * Implementation of methods and constructors:
- *
- *  - Ensure all abstract methods were implemented to delegate to the InvocationHandler method
- *  - Ensure all constructors were carried forward to subclass
- *
+ * <p/>
+ * - Ensure all abstract methods were implemented to delegate to the InvocationHandler method
+ * - Ensure all constructors were carried forward to subclass
+ * <p/>
  * Preservation of annotations
- *
- *  - Ensure all annotations from the immediate parent class were copied
- *  - Ensure all annotations from parent constructors and constructor params were copied
- *  - Ensure all annotations from abstract ancestor methods and method params were copied
+ * <p/>
+ * - Ensure all annotations from the immediate parent class were copied
+ * - Ensure all annotations from parent constructors and constructor params were copied
+ * - Ensure all annotations from abstract ancestor methods and method params were copied
  *
  * @version $Rev$ $Date$
  */
@@ -112,7 +112,7 @@ public class DynamicSubclassTest extends Assert {
         private final Method method;
         private final Object[] args;
 
-        public Invocation(Object proxy, Method method, Object[] args) {
+        public Invocation(final Object proxy, final Method method, Object[] args) {
             this.proxy = proxy;
             this.method = method;
             this.args = args;
@@ -136,12 +136,12 @@ public class DynamicSubclassTest extends Assert {
         public Color() {
         }
 
-        public Color(URI uri, long foo) {
+        public Color(final URI uri, final long foo) {
         }
 
         // TODO: check to ensure this method is implemented, issue validation failure if not
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             invocation = new Invocation(proxy, method, args);
             return null;
         }
@@ -169,7 +169,7 @@ public class DynamicSubclassTest extends Assert {
         }
 
         @Oval("blue(long)")
-        public Blue(@Triangle("1") long l) {
+        public Blue(@Triangle("1") final long l) {
         }
 
         @Square("blue")

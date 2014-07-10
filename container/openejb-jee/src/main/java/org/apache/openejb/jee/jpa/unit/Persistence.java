@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee.jpa.unit;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -84,8 +84,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -104,33 +102,31 @@ public class Persistence {
     public Persistence() {
     }
 
-    public Persistence(PersistenceUnit... persistenceUnit) {
-        for (PersistenceUnit unit : persistenceUnit) {
+    public Persistence(final PersistenceUnit... persistenceUnit) {
+        for (final PersistenceUnit unit : persistenceUnit) {
             getPersistenceUnit().add(unit);
         }
     }
 
     /**
      * Gets the value of the persistenceUnit property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the persistenceUnit property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPersistenceUnit().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link PersistenceUnit }
-     * 
-     * 
      */
     public List<PersistenceUnit> getPersistenceUnit() {
         if (persistenceUnit == null) {
@@ -139,22 +135,20 @@ public class Persistence {
         return this.persistenceUnit;
     }
 
-    public PersistenceUnit addPersistenceUnit(PersistenceUnit unit) {
+    public PersistenceUnit addPersistenceUnit(final PersistenceUnit unit) {
         getPersistenceUnit().add(unit);
         return unit;
     }
 
-    public PersistenceUnit addPersistenceUnit(String unitName) {
+    public PersistenceUnit addPersistenceUnit(final String unitName) {
         return addPersistenceUnit(new PersistenceUnit(unitName));
     }
-    
+
     /**
      * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVersion() {
         if (version == null) {
@@ -166,13 +160,11 @@ public class Persistence {
 
     /**
      * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

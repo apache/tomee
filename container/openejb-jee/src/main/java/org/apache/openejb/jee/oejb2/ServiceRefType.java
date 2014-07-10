@@ -17,19 +17,19 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for service-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="service-refType">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -68,11 +66,9 @@ public class ServiceRefType {
 
     /**
      * Gets the value of the serviceRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getServiceRefName() {
         return serviceRefName;
@@ -80,23 +76,19 @@ public class ServiceRefType {
 
     /**
      * Sets the value of the serviceRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setServiceRefName(String value) {
+    public void setServiceRefName(final String value) {
         this.serviceRefName = value;
     }
 
     /**
      * Gets the value of the serviceCompletion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ServiceCompletionType }
-     *     
+     *
+     * @return possible object is
+     * {@link ServiceCompletionType }
      */
     public ServiceCompletionType getServiceCompletion() {
         return serviceCompletion;
@@ -104,37 +96,33 @@ public class ServiceRefType {
 
     /**
      * Sets the value of the serviceCompletion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ServiceCompletionType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ServiceCompletionType }
      */
-    public void setServiceCompletion(ServiceCompletionType value) {
+    public void setServiceCompletion(final ServiceCompletionType value) {
         this.serviceCompletion = value;
     }
 
     /**
      * Gets the value of the port property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the port property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPort().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link PortType }
-     * 
-     * 
      */
     public List<PortType> getPort() {
         if (port == null) {
@@ -145,10 +133,9 @@ public class ServiceRefType {
 
     /**
      * Gets the value of the wsdlFile property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWsdlFile() {
         return wsdlFile;
@@ -156,12 +143,11 @@ public class ServiceRefType {
 
     /**
      * Sets the value of the wsdlFile property.
-     * 
-     * @param wsdlFile
-     *     allowed object is
-     *     {@link String }
+     *
+     * @param wsdlFile allowed object is
+     *                 {@link String }
      */
-    public void setWsdlFile(String wsdlFile) {
+    public void setWsdlFile(final String wsdlFile) {
         this.wsdlFile = wsdlFile;
     }
 }

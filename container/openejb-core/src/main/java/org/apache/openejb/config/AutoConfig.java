@@ -655,11 +655,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             destinationType = Queue.class.getName();
                         }
                         logger.info("Auto-configuring a message driven bean " +
-                                    ejbDeployment.getDeploymentId() +
-                                    " destination " +
-                                    properties.getProperty("destination") +
-                                    " to be destinationType " +
-                                    destinationType);
+                            ejbDeployment.getDeploymentId() +
+                            " destination " +
+                            properties.getProperty("destination") +
+                            " to be destinationType " +
+                            destinationType);
                     }
 
                     if (destinationType != null) {
@@ -954,9 +954,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             resourceRef.setMappedName(resourceInfo.id);
 
             final ResourceRef strictRef = new ResourceRef(OPENEJB_RESOURCE_JNDI_PREFIX + originalId,
-                                                          resourceRef.getResType(),
-                                                          resourceRef.getResAuth(),
-                                                          resourceRef.getResSharingScope());
+                resourceRef.getResType(),
+                resourceRef.getResAuth(),
+                resourceRef.getResSharingScope());
             strictRef.setMappedName(resourceInfo.id);
 
             for (final JndiConsumer consumer : jndiConsumers) {
@@ -1156,9 +1156,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     final AppModule appModule = ejbModule.getAppModule();
                     if (appModule != null) {
                         final String newId = findResourceId(appModule.getModuleId() + '/' + id.replace("java:", "").replaceAll("^comp/env/", ""),
-                                                            refType,
-                                                            new Properties(),
-                                                            appResources);
+                            refType,
+                            new Properties(),
+                            appResources);
                         if (newId != null) { // app scoped resources, try to find it without creating it first
                             id = getResourceId(ejbModule.getModuleId(), newId, refType, appResources);
                         } else {
@@ -1439,10 +1439,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 final String jtaManaged = (String) dataSource.properties.get("JtaManaged");
 
                 logger.warning("PeristenceUnit(name=" +
-                               unit.getName() +
-                               ") invalidly refers to Resource(id=" +
-                               dataSource.id +
-                               ") as both its <jta-data-source> and <non-jta-data-source>.");
+                    unit.getName() +
+                    ") invalidly refers to Resource(id=" +
+                    dataSource.id +
+                    ") as both its <jta-data-source> and <non-jta-data-source>.");
 
                 if ("true".equalsIgnoreCase(jtaManaged)) {
                     nonJtaDataSourceId = null;
@@ -1639,7 +1639,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //
 
             final String deduceJtaFromNonJta = unit.getProperty(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY,
-                                                                SystemInstance.get().getOptions().get(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY, (String) null));
+                SystemInstance.get().getOptions().get(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY, (String) null));
             if (nonJtaDataSourceId != null && jtaDataSourceId == null
                 // hibernate uses the fact that this ds is missing to get a non jta em instead of a JTA one
                 && (!resourceLocal || deduceJtaFromNonJta != null)
@@ -1735,8 +1735,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         if (MAX_IMPLICIT_POOL_SIZE < value) {
                             copy.properties.setProperty(key, Integer.toString(MAX_IMPLICIT_POOL_SIZE));
                             logger.warning("Adjusting " + key + " to " + MAX_IMPLICIT_POOL_SIZE + " for " + copy.id
-                                           + " DataSource to avoid too much network bandwidth usage."
-                                           + " If you want to keep it please define the DataSource explicitely.");
+                                + " DataSource to avoid too much network bandwidth usage."
+                                + " If you want to keep it please define the DataSource explicitely.");
                         }
                     } catch (final NumberFormatException nfe) {
                         // no-op
@@ -1821,10 +1821,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         if (invalidNonJta != null) {
             throw new OpenEJBException("PeristenceUnit " +
-                                       unit.getName() +
-                                       " <non-jta-data-source> points to a jta managed Resource.  Update Resource \"" +
-                                       invalidNonJta +
-                                       "\" to \"JtaManaged=false\", use a different Resource, or delete the <non-jta-data-source> element and a default will be supplied if possible.");
+                unit.getName() +
+                " <non-jta-data-source> points to a jta managed Resource.  Update Resource \"" +
+                invalidNonJta +
+                "\" to \"JtaManaged=false\", use a different Resource, or delete the <non-jta-data-source> element and a default will be supplied if possible.");
         }
 
         // check that jta-data-source does NOT point to a JtaManaged=false datasource
@@ -1835,10 +1835,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         if (invalidJta != null) {
             throw new OpenEJBException("PeristenceUnit " +
-                                       unit.getName() +
-                                       " <jta-data-source> points to a non jta managed Resource.  Update Resource \"" +
-                                       invalidJta +
-                                       "\" to \"JtaManaged=true\", use a different Resource, or delete the <jta-data-source> element and a default will be supplied if possible.");
+                unit.getName() +
+                " <jta-data-source> points to a non jta managed Resource.  Update Resource \"" +
+                invalidJta +
+                "\" to \"JtaManaged=true\", use a different Resource, or delete the <jta-data-source> element and a default will be supplied if possible.");
         }
     }
 
@@ -1906,16 +1906,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         // throw an exception or log an error
         final String shortName = toShortName(resourceId);
         final String message = "No existing resource found while attempting to Auto-link unmapped resource-ref '" +
-                               resourceId +
-                               "' of type '" +
-                               type +
-                               "' for '" +
-                               beanName +
-                               "'.  Looked for Resource(id=" +
-                               resourceId +
-                               ") and Resource(id=" +
-                               shortName +
-                               ")";
+            resourceId +
+            "' of type '" +
+            type +
+            "' for '" +
+            beanName +
+            "'.  Looked for Resource(id=" +
+            resourceId +
+            ") and Resource(id=" +
+            shortName +
+            ")";
         if (!autoCreateResources) {
             throw new OpenEJBException(message);
         }
@@ -2100,14 +2100,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         // throw an exception or log an error
         final String message = "No existing resource found while attempting to Auto-link unmapped resource-env-ref '" +
-                               resourceId +
-                               "' of type '" +
-                               type +
-                               "' for '" +
-                               beanName +
-                               "'.  Looked for Resource(id=" +
-                               resourceId +
-                               ")";
+            resourceId +
+            "' of type '" +
+            type +
+            "' for '" +
+            beanName +
+            "'.  Looked for Resource(id=" +
+            resourceId +
+            ")";
         if (!autoCreateResources) {
             throw new OpenEJBException(message);
         }

@@ -25,26 +25,26 @@ import java.net.URI;
  */
 public class URISupportTest extends TestCase {
     public void test() throws Exception {
-        URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
-        URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
+        final URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
+        final URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
 
-        URI relativeB = URISupport.relativize(absoluteA, absoluteB);
+        final URI relativeB = URISupport.relativize(absoluteA, absoluteB);
 
         assertEquals("../../openejb-core/foo.jar", relativeB.toString());
 
-        URI resolvedB = absoluteA.resolve(relativeB);
+        final URI resolvedB = absoluteA.resolve(relativeB);
         assertTrue(resolvedB.equals(absoluteB));
     }
 
     public void testFragment() throws Exception {
-        URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
-        URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar#foo");
+        final URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
+        final URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar#foo");
 
-        URI relativeB = URISupport.relativize(absoluteA, absoluteB);
+        final URI relativeB = URISupport.relativize(absoluteA, absoluteB);
 
         assertEquals("../../openejb-core/foo.jar#foo", relativeB.toString());
 
-        URI resolvedB = absoluteA.resolve(relativeB);
+        final URI resolvedB = absoluteA.resolve(relativeB);
         assertTrue(resolvedB.equals(absoluteB));
     }
 

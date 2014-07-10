@@ -103,7 +103,7 @@ public class ScriptLoginModule implements LoginModule {
     }
 
     private File getScriptFile(final String path) {
-        if (path == null  || "".equals(path)) {
+        if (path == null || "".equals(path)) {
             final File result = new File(System.getProperty("openejb.home"), "conf/loginscript.js");
             if (result.exists()) {
                 return result;

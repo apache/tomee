@@ -116,7 +116,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                                 final Object obj = context.lookup("openejb/Resource/" + resouceId);
                                 if (!(obj instanceof DataSource)) {
                                     throw new IllegalArgumentException("Resource with id " + resouceId
-                                                                       + " is not a DataSource, but is " + obj.getClass().getName());
+                                        + " is not a DataSource, but is " + obj.getClass().getName());
                                 }
                                 dataSource = (DataSource) obj;
                             } catch (final NamingException e) {
@@ -227,7 +227,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             if (null != throwable) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
-                                                                                                                                                throwable);
+                    throwable);
             } else if (started.get()) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
             } else {

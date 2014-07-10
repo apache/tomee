@@ -17,11 +17,11 @@
 
 package org.apache.openejb.junit;
 
-import java.util.concurrent.Callable;
-
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.testing.ApplicationComposers;
 import org.junit.runners.model.Statement;
+
+import java.util.concurrent.Callable;
 
 public class DeployApplication extends Statement {
     // The TestCase instance

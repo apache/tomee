@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee.bval;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +23,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for beanType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="beanType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "beanType", propOrder = {
@@ -71,10 +69,8 @@ public class BeanType {
     /**
      * Gets the value of the classType property.
      *
-     * @return
-     *     possible object is
-     *     {@link ClassType }
-     *
+     * @return possible object is
+     * {@link ClassType }
      */
     public ClassType getClassType() {
         return classType;
@@ -83,36 +79,32 @@ public class BeanType {
     /**
      * Sets the value of the classType property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link ClassType }
-     *
+     * @param value allowed object is
+     *              {@link ClassType }
      */
-    public void setClassType(ClassType value) {
+    public void setClassType(final ClassType value) {
         this.classType = value;
     }
 
     /**
      * Gets the value of the field property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the field property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getField().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldType }
-     *
-     *
      */
     public List<FieldType> getField() {
         if (field == null) {
@@ -123,25 +115,23 @@ public class BeanType {
 
     /**
      * Gets the value of the getter property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the getter property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGetter().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link GetterType }
-     *
-     *
      */
     public List<GetterType> getGetter() {
         if (getter == null) {
@@ -153,10 +143,8 @@ public class BeanType {
     /**
      * Gets the value of the clazz property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -165,22 +153,18 @@ public class BeanType {
     /**
      * Sets the value of the clazz property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the ignoreAnnotations property.
      *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isIgnoreAnnotations() {
         return ignoreAnnotations;
@@ -189,12 +173,10 @@ public class BeanType {
     /**
      * Sets the value of the ignoreAnnotations property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setIgnoreAnnotations(Boolean value) {
+    public void setIgnoreAnnotations(final Boolean value) {
         this.ignoreAnnotations = value;
     }
 

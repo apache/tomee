@@ -24,5 +24,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transaction {
-    boolean rollback() default false;  
+    boolean rollback() default false;
 }

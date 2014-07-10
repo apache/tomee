@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,15 +25,17 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-factoryType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-factoryType">
  *   &lt;complexContent>
@@ -58,21 +58,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- 5 *
- * 
+ * 5 *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-factoryType", propOrder = {
     "applicationFactory",
-        "exceptionHandlerFactory",
-        "externalContextFactory",
+    "exceptionHandlerFactory",
+    "externalContextFactory",
     "facesContextFactory",
     "partialViewContextFactory",
     "lifecycleFactory",
-        "viewDeclarationLanguageFactory",
-        "tagHandlerDelegateFactory",
+    "viewDeclarationLanguageFactory",
+    "tagHandlerDelegateFactory",
     "renderKitFactory",
-        "visitContextFactory",
+    "visitContextFactory",
     "factoryExtension"
 })
 public class FacesFactory {
@@ -86,7 +85,7 @@ public class FacesFactory {
     @XmlElement(name = "faces-context-factory")
     protected List<java.lang.String> facesContextFactory;
     @XmlElement(name = "partial-view-context-factory")
-    protected List<java.lang.String> partialViewContextFactory;    
+    protected List<java.lang.String> partialViewContextFactory;
     @XmlElement(name = "lifecycle-factory")
     protected List<java.lang.String> lifecycleFactory;
     @XmlElement(name = "view-declaration-language-factory")
@@ -107,25 +106,23 @@ public class FacesFactory {
 
     /**
      * Gets the value of the applicationFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the applicationFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getApplicationFactory().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getApplicationFactory() {
         if (applicationFactory == null) {
@@ -150,25 +147,23 @@ public class FacesFactory {
 
     /**
      * Gets the value of the facesContextFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the facesContextFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFacesContextFactory().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getFacesContextFactory() {
         if (facesContextFactory == null) {
@@ -179,25 +174,23 @@ public class FacesFactory {
 
     /**
      * Gets the value of the lifecycleFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lifecycleFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLifecycleFactory().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getLifecycleFactory() {
         if (lifecycleFactory == null) {
@@ -219,7 +212,7 @@ public class FacesFactory {
         }
         return partialViewContextFactory;
     }
-    
+
     public List<String> getTagHandlerDelegateFactory() {
         if (tagHandlerDelegateFactory == null) {
             tagHandlerDelegateFactory = new ArrayList<String>();
@@ -229,25 +222,23 @@ public class FacesFactory {
 
     /**
      * Gets the value of the renderKitFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the renderKitFactory property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRenderKitFactory().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getRenderKitFactory() {
         if (renderKitFactory == null) {
@@ -265,25 +256,23 @@ public class FacesFactory {
 
     /**
      * Gets the value of the factoryExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the factoryExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFactoryExtension().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesFactoryExtension }
-     * 
-     * 
      */
     public List<FacesFactoryExtension> getFactoryExtension() {
         if (factoryExtension == null) {
@@ -294,11 +283,9 @@ public class FacesFactory {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -306,13 +293,11 @@ public class FacesFactory {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

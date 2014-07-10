@@ -28,11 +28,11 @@ import java.io.OutputStream;
  */
 public class EjbJarXml {
 
-    public static EjbJar unmarshal(InputStream inputStream) throws Exception {
+    public static EjbJar unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new EjbJar$JAXB(), inputStream);
     }
 
-    public static void marshal(EjbJar ejbJar, OutputStream outputStream) throws Exception {
+    public static void marshal(final EjbJar ejbJar, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new EjbJar$JAXB(), ejbJar, new StreamResult(outputStream));
     }
 }

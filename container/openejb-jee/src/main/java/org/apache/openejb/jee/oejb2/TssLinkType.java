@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -46,7 +46,7 @@ public class TssLinkType {
     public TssLinkType() {
     }
 
-    public TssLinkType(String ejbName, String tssName, List<String> jndiName) {
+    public TssLinkType(final String ejbName, final String tssName, final List<String> jndiName) {
         this.ejbName = ejbName;
         this.tssName = tssName;
         this.jndiName = jndiName;
@@ -56,7 +56,7 @@ public class TssLinkType {
         return ejbName;
     }
 
-    public void setEjbName(String ejbName) {
+    public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
@@ -64,12 +64,12 @@ public class TssLinkType {
         return tssName;
     }
 
-    public void setTssName(String tssName) {
+    public void setTssName(final String tssName) {
         this.tssName = tssName;
     }
 
     public List<String> getJndiName() {
-        if (jndiName == null){
+        if (jndiName == null) {
             jndiName = new ArrayList<String>();
         }
         return jndiName;

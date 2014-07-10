@@ -34,8 +34,8 @@ public final class FailOverRouters {
 
     public static PropertiesBuilder datasource(final PropertiesBuilder propertiesBuilder, final String name) {
         return propertiesBuilder
-                .property(name, "new://Resource?type=DataSource")
-                .property(name + ".JdbcUrl", "jdbc:hsqldb:mem:" + name);
+            .property(name, "new://Resource?type=DataSource")
+            .property(name + ".JdbcUrl", "jdbc:hsqldb:mem:" + name);
     }
 
     private FailOverRouters() {

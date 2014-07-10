@@ -23,23 +23,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         
- * 
  * <p class="changed_added_2_2">Identifiy the called flow.</p>
- * 
+ * <p/>
  * <div class="changed_added_2_2">
- * 
+ * <p/>
  * </div>
- * 
- * 
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-flow-call-flow-referenceType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-flow-referenceType">
  *   &lt;complexContent>
@@ -52,8 +48,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-flow-call-flow-referenceType", propOrder = {
@@ -69,11 +63,9 @@ public class FacesConfigFlowDefinitionFlowCallFlowReference {
 
     /**
      * Gets the value of the flowDocumentId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @return possible object is
+     * {@link JavaIdentifier }
      */
     public JavaIdentifier getFlowDocumentId() {
         return flowDocumentId;
@@ -81,23 +73,19 @@ public class FacesConfigFlowDefinitionFlowCallFlowReference {
 
     /**
      * Sets the value of the flowDocumentId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JavaIdentifier }
      */
-    public void setFlowDocumentId(JavaIdentifier value) {
+    public void setFlowDocumentId(final JavaIdentifier value) {
         this.flowDocumentId = value;
     }
 
     /**
      * Gets the value of the flowId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @return possible object is
+     * {@link JavaIdentifier }
      */
     public JavaIdentifier getFlowId() {
         return flowId;
@@ -105,13 +93,11 @@ public class FacesConfigFlowDefinitionFlowCallFlowReference {
 
     /**
      * Sets the value of the flowId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JavaIdentifier }
      */
-    public void setFlowId(JavaIdentifier value) {
+    public void setFlowId(final JavaIdentifier value) {
         this.flowId = value;
     }
 

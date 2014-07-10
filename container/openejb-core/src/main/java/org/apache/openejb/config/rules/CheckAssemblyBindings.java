@@ -50,7 +50,7 @@ public class CheckAssemblyBindings extends ValidationBase {
 
         for (final InterceptorBinding binding : assembly.getInterceptorBinding()) {
             final List<String> interceptorClasses = binding.getInterceptorClass();
-            if (binding.getInterceptorOrder() != null){
+            if (binding.getInterceptorOrder() != null) {
                 interceptorClasses.addAll(binding.getInterceptorOrder().getInterceptorClass());
             }
 
@@ -71,7 +71,7 @@ public class CheckAssemblyBindings extends ValidationBase {
                     fail("MethodPermission", "methodPermission.ejbNameRequired", method.getMethodName(), join(",", permission.getRoleName()));
                 } else if (method.getEjbName().equals("*")) { //NOPMD
                     // no-op. Just continue the loop.
-                } else if (!ejbsByName.containsKey(method.getEjbName())){
+                } else if (!ejbsByName.containsKey(method.getEjbName())) {
                     fail("MethodPermission", "methodPermission.noSuchEjbName", method.getEjbName(), method.getMethodName(), join(",", permission.getRoleName()));
                 }
             }
@@ -83,12 +83,13 @@ public class CheckAssemblyBindings extends ValidationBase {
                     fail("ContainerTransaction", "containerTransaction.ejbNameRequired", method.getMethodName(), transaction.getTransAttribute());
                 } else if (method.getEjbName().equals("*")) { //NOPMD
                     // no-op. Just continue the loop.
-                } else if (!ejbsByName.containsKey(method.getEjbName())){
+                } else if (!ejbsByName.containsKey(method.getEjbName())) {
                     fail("ContainerTransaction", "containerTransaction.noSuchEjbName", method.getEjbName(), method.getMethodName(), transaction.getTransAttribute());
                 }
             }
         }
     }
+
     private void checkUnusedInterceptors(final EjbModule ejbModule) {
         final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
         final Interceptor[] interceptorsArray = ejbModule.getEjbJar().getInterceptors();

@@ -25,16 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for security-permissionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="security-permissionType">
  *   &lt;complexContent>
@@ -48,13 +46,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-permissionType", propOrder = {
-        "descriptions",
-        "securityPermissionSpec"
+    "descriptions",
+    "securityPermissionSpec"
 })
 public class SecurityPermission {
 
@@ -72,7 +68,7 @@ public class SecurityPermission {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -84,7 +80,7 @@ public class SecurityPermission {
         return securityPermissionSpec;
     }
 
-    public void setSecurityPermissionSpec(String value) {
+    public void setSecurityPermissionSpec(final String value) {
         this.securityPermissionSpec = value;
     }
 
@@ -92,7 +88,7 @@ public class SecurityPermission {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

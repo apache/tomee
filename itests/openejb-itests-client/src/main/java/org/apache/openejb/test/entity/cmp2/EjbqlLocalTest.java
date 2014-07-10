@@ -42,7 +42,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         Object obj = initialContext.lookup("client/tests/entity/ejbql/Query");
         queryHome = (QueryHome) PortableRemoteObject.narrow(obj, QueryHome.class);
         obj = initialContext.lookup("client/tests/entity/ejbql/QueryData");
-        QueryDataHome queryDataHome = (QueryDataHome) PortableRemoteObject.narrow(obj, QueryDataHome.class);
+        final QueryDataHome queryDataHome = (QueryDataHome) PortableRemoteObject.narrow(obj, QueryDataHome.class);
 
         queryDataHome.create(0);
         queryDataHome.create(1);
@@ -58,7 +58,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single string field
      */
     public void testSelectSingleStringField() throws Exception {
-        String result = queryHome.selectSingleStringField("2");
+        final String result = queryHome.selectSingleStringField("2");
         assertEquals("2", result);
     }
 
@@ -66,7 +66,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single boolean field
      */
     public void testSelectSingleBooleanField() throws Exception {
-        boolean result = queryHome.selectSingleBooleanField(true);
+        final boolean result = queryHome.selectSingleBooleanField(true);
         assertEquals(true, result);
     }
 
@@ -74,7 +74,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single char field
      */
     public void testSelectSingleCharField() throws Exception {
-        char result = queryHome.selectSingleCharField('2');
+        final char result = queryHome.selectSingleCharField('2');
         assertEquals('2', result);
     }
 
@@ -82,7 +82,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single byte field
      */
     public void testSelectSingleByteField() throws Exception {
-        byte result = queryHome.selectSingleByteField((byte) 2);
+        final byte result = queryHome.selectSingleByteField((byte) 2);
         assertEquals(2, result);
     }
 
@@ -90,7 +90,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single short field
      */
     public void testSelectSingleShortField() throws Exception {
-        short result = queryHome.selectSingleShortField((short) 2);
+        final short result = queryHome.selectSingleShortField((short) 2);
         assertEquals(2, result);
     }
 
@@ -98,7 +98,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single int field
      */
     public void testSelectSingleIntField() throws Exception {
-        int result = queryHome.selectSingleIntField(2);
+        final int result = queryHome.selectSingleIntField(2);
         assertEquals(2, result);
     }
 
@@ -106,7 +106,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single long field
      */
     public void testSelectSingleLongField() throws Exception {
-        long result = queryHome.selectSingleLongField(2);
+        final long result = queryHome.selectSingleLongField(2);
         assertEquals(2, result);
     }
 
@@ -114,7 +114,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single float field
      */
     public void testSelectSingleFloatField() throws Exception {
-        float result = queryHome.selectSingleFloatField(2);
+        final float result = queryHome.selectSingleFloatField(2);
         assertEquals((float) 2.0, result, 1e-15);
     }
 
@@ -122,7 +122,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single double field
      */
     public void testSelectSingleDoubleField() throws Exception {
-        double result = queryHome.selectSingleDoubleField(2);
+        final double result = queryHome.selectSingleDoubleField(2);
         assertEquals(2.0, result, 1e-15);
     }
 
@@ -130,7 +130,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection string field
      */
     public void testSelectCollectionStringField() throws Exception {
-        Collection result = queryHome.selectCollectionStringField();
+        final Collection result = queryHome.selectCollectionStringField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, "0", "1", "2", "3");
@@ -140,7 +140,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection boolean field
      */
     public void testSelectCollectionBooleanField() throws Exception {
-        Collection result = queryHome.selectCollectionBooleanField();
+        final Collection result = queryHome.selectCollectionBooleanField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, true, false);
@@ -150,7 +150,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection char field
      */
     public void testSelectCollectionCharField() throws Exception {
-        Collection result = queryHome.selectCollectionCharField();
+        final Collection result = queryHome.selectCollectionCharField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, '0', '1', '2', '3');
@@ -160,7 +160,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection byte field
      */
     public void testSelectCollectionByteField() throws Exception {
-        Collection result = queryHome.selectCollectionByteField();
+        final Collection result = queryHome.selectCollectionByteField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, (byte) 0, (byte) 1, (byte) 2, (byte) 3);
@@ -170,7 +170,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection short field
      */
     public void testSelectCollectionShortField() throws Exception {
-        Collection result = queryHome.selectCollectionShortField();
+        final Collection result = queryHome.selectCollectionShortField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, (short) 0, (short) 1, (short) 2, (short) 3);
@@ -180,7 +180,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection int field
      */
     public void testSelectCollectionIntField() throws Exception {
-        Collection result = queryHome.selectCollectionIntField();
+        final Collection result = queryHome.selectCollectionIntField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, 0, 1, 2, 3);
@@ -190,7 +190,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection long field
      */
     public void testSelectCollectionLongField() throws Exception {
-        Collection result = queryHome.selectCollectionLongField();
+        final Collection result = queryHome.selectCollectionLongField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, (long) 0, (long) 1, (long) 2, (long) 3);
@@ -200,7 +200,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection float field
      */
     public void testSelectCollectionFloatField() throws Exception {
-        Collection result = queryHome.selectCollectionFloatField();
+        final Collection result = queryHome.selectCollectionFloatField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, (float) 0, (float) 1, (float) 2, (float) 3);
@@ -210,7 +210,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection double field
      */
     public void testSelectCollectionDoubleField() throws Exception {
-        Collection result = queryHome.selectCollectionDoubleField();
+        final Collection result = queryHome.selectCollectionDoubleField();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
         assertCollection(result, 0.0, 1.0, 2.0, 3.0);
@@ -220,10 +220,10 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single local ejb
      */
     public void testSelectSingleLocalEjb() throws Exception {
-        Object result = queryHome.selectSingleLocalEjb(2);
+        final Object result = queryHome.selectSingleLocalEjb(2);
         assertNotNull("result is null", result);
         assertTrue("result should be an instance of QueryDataLocal", result instanceof QueryDataLocal);
-        QueryDataLocal queryData = (QueryDataLocal) result;
+        final QueryDataLocal queryData = (QueryDataLocal) result;
         assertEquals(2, queryData.getIntField());
     }
 
@@ -231,10 +231,10 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a single remote ejb
      */
     public void testSelectSingleRemoteEjb() throws Exception {
-        Object result = queryHome.selectSingleRemoteEjb(2);
+        final Object result = queryHome.selectSingleRemoteEjb(2);
         assertNotNull("result is null", result);
         assertTrue("result should be an instance of QueryDataRemote", result instanceof QueryDataRemote);
-        QueryDataRemote queryData = (QueryDataRemote) result;
+        final QueryDataRemote queryData = (QueryDataRemote) result;
         assertEquals(2, queryData.getIntField());
     }
 
@@ -242,14 +242,14 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection local ejb
      */
     public void testSelectCollectionLocalEjb() throws Exception {
-        Collection result = queryHome.selectCollectionLocalEjb();
+        final Collection result = queryHome.selectCollectionLocalEjb();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
 
-        List<Integer> values = new ArrayList<Integer>();
-        for (Object object : result) {
+        final List<Integer> values = new ArrayList<Integer>();
+        for (final Object object : result) {
             assertTrue("result item should be an instance of QueryDataLocal but is instance of " + Arrays.toString(object.getClass().getInterfaces()), object instanceof QueryDataLocal);
-            QueryDataLocal queryData = (QueryDataLocal) object;
+            final QueryDataLocal queryData = (QueryDataLocal) object;
             values.add(queryData.getIntField());
         }
         assertCollection(values, 0, 1, 2, 3);
@@ -259,21 +259,21 @@ public class EjbqlLocalTest extends Cmp2TestClient {
      * Select a collection remote ejb
      */
     public void testSelectCollectionRemoteEjb() throws Exception {
-        Collection result = queryHome.selectCollectionRemoteEjb();
+        final Collection result = queryHome.selectCollectionRemoteEjb();
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
 
-        List<Integer> values = new ArrayList<Integer>();
-        for (Object object : result) {
+        final List<Integer> values = new ArrayList<Integer>();
+        for (final Object object : result) {
             assertTrue("result item should be an instance of QueryDataRemote", object instanceof QueryDataRemote);
-            QueryDataRemote queryData = (QueryDataRemote) object;
+            final QueryDataRemote queryData = (QueryDataRemote) object;
             values.add(queryData.getIntField());
         }
         assertCollection(values, 0, 1, 2, 3);
     }
 
     @SuppressWarnings({"unchecked"})
-    private static <E> void assertCollection(Collection collection, E... values) {
+    private static <E> void assertCollection(final Collection collection, final E... values) {
         assertEquals(new TreeSet(Arrays.asList(values)), new TreeSet(collection));
     }
 }

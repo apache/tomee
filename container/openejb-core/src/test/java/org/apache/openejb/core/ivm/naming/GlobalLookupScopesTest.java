@@ -49,20 +49,20 @@ public class GlobalLookupScopesTest extends TestCase {
 
         SystemInstance.get().setProperty("openejb.deploymentId.format", "{appId}/{moduleId}/{ejbName}");
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
 
-        AppContext circleApp = createApp("circle", config, assembler);
-        AppContext squareApp = createApp("square", config, assembler);
+        final AppContext circleApp = createApp("circle", config, assembler);
+        final AppContext squareApp = createApp("square", config, assembler);
 
         {
-            BeanContext bean = squareApp.getBeanContexts().get(0);
+            final BeanContext bean = squareApp.getBeanContexts().get(0);
 
-            Context context = bean.getJndiContext();
+            final Context context = bean.getJndiContext();
 
             assertTrue(context.lookup("global/square") instanceof Context);
             assertTrue(context.lookup("global/square/Bean") instanceof Bean);
@@ -78,10 +78,10 @@ public class GlobalLookupScopesTest extends TestCase {
         }
     }
 
-    private AppContext createApp(String name, ConfigurationFactory config, Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
+    private AppContext createApp(final String name, final ConfigurationFactory config, final Assembler assembler) throws OpenEJBException, IOException, javax.naming.NamingException {
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar(name);
+        final EjbJar ejbJar = new EjbJar(name);
         ejbJar.addEnterpriseBean(new SingletonBean(Bean.class));
 
         // Deploy the bean a second time to simulate situations
@@ -89,8 +89,8 @@ public class GlobalLookupScopesTest extends TestCase {
         // are re-declared in a compatible way
         ejbJar.addEnterpriseBean(new SingletonBean("Other", Bean.class));
 
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        AppModule module = new AppModule(ejbModule);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        final AppModule module = new AppModule(ejbModule);
         return assembler.createApplication(config.configureApplication(module));
     }
 
@@ -112,8 +112,8 @@ public class GlobalLookupScopesTest extends TestCase {
         private DataSource yellow;
 
 
-        public Object lookup(String s) throws javax.naming.NamingException {
-            InitialContext context = new InitialContext();
+        public Object lookup(final String s) throws javax.naming.NamingException {
+            final InitialContext context = new InitialContext();
             return context.lookup(s);
         }
     }

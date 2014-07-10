@@ -35,7 +35,9 @@ public class ServiceInfo extends InfoObject {
     public Properties properties;
     public final List<String> constructorArgs = new ArrayList<String>();
 
-    /** Optional **/
+    /**
+     * Optional *
+     */
     public String factoryMethod;
 
 }

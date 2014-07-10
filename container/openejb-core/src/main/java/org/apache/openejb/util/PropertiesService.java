@@ -21,23 +21,22 @@ import java.util.Properties;
 
 /**
  * Manages properties so any property modifications are handled here.
- * 
+ * <p/>
  * It lets us track the properties used and possibly remove some. They are all
  * scattered in many places and it's so hard to keep track of them.
- * 
+ * <p/>
  * The class holds all OpenEJB properties and optionally can amend the
  * environment.
- * 
+ * <p/>
  * The aim of this class is to establish one place to keep the properties and
  * eventually remove the need to set System properties to communicate between
  * parts and possibly yet lay out a foundation for setting them up in JNDI or
  * some other means
- * 
+ * <p/>
  * TODO: Should this class be concerned with concurrency issues?
- * 
- * @org.apache.xbean.XBean element="propertiesService"
- * 
+ *
  * @version $Rev$ $Date$
+ * @org.apache.xbean.XBean element="propertiesService"
  */
 public class PropertiesService {
     private Properties props = new Properties();
@@ -61,13 +60,11 @@ public class PropertiesService {
     /**
      * Set value to a property. Optionally set System property via
      * {@link System#setProperty(String, String)}
-     * 
-     * @param name
-     *            property name
-     * @param value
-     *            property value
+     *
+     * @param name  property name
+     * @param value property value
      * @return previous property value or null if the value hasn't been assigned
-     *         yet
+     * yet
      */
     public String setProperty(final String name, final String value) {
         if (passOn) {
@@ -83,9 +80,8 @@ public class PropertiesService {
     /**
      * ISSUE: It might be of help to differentiate between unavailable property
      * and boolean property set to false
-     * 
-     * @param name
-     *            property name
+     *
+     * @param name property name
      * @return true if property keyed by name is set; false otherwise
      */
     public boolean isSet(final String name) {
@@ -95,7 +91,7 @@ public class PropertiesService {
     public void putAll(final Properties props) {
         props.putAll(props);
     }
-    
+
     public Properties getProperties() {
         return props;
     }

@@ -32,45 +32,45 @@ import java.util.List;
 public class PojoExternalizationTest extends TestCase {
 
     public void _testSpeed() throws Exception {
-        long start = System.currentTimeMillis();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
+        final long start = System.currentTimeMillis();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream(baos);
 
-        Green green = new Green(1);
+        final Green green = new Green(1);
         green.init();
 
-        int count = 20000;
+        final int count = 20000;
 
         for (int i = count; i > 0; i--) {
             out.writeObject(new PojoSerialization(green));
         }
         out.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream in = new ObjectInputStream(bais);
 
         for (int i = count; i > 0; i--) {
-            Green actual = (Green) in.readObject();
+            final Green actual = (Green) in.readObject();
             assertEquals(green, actual);
         }
-        long finish = System.currentTimeMillis();
+        final long finish = System.currentTimeMillis();
         fail("" + (finish - start));
     }
 
     public void test() throws Exception {
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream(baos);
 
-        Green green = new Green(1);
+        final Green green = new Green(1);
         green.init();
 
         out.writeObject(new PojoSerialization(green));
         out.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
-        Green actual = (Green) in.readObject();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream in = new ObjectInputStream(bais);
+        final Green actual = (Green) in.readObject();
 
         assertEquals(green, actual);
     }
@@ -102,7 +102,7 @@ public class PojoExternalizationTest extends TestCase {
             mydouble = 10;
         }
 
-        public Color(int i) {
+        public Color(final int i) {
             mydouble = 20;
         }
 
@@ -139,7 +139,7 @@ public class PojoExternalizationTest extends TestCase {
             aList[1].add("Color.list[1].entryTwo");
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
@@ -171,7 +171,7 @@ public class PojoExternalizationTest extends TestCase {
 
         public int hashCode() {
             int result;
-            long temp;
+            final long temp;
             temp = mydouble != +0.0d ? Double.doubleToLongBits(mydouble) : 0L;
             result = (int) (temp ^ (temp >>> 32));
             result = 29 * result + myfloat != +0.0f ? Float.floatToIntBits(myfloat) : 0;
@@ -212,7 +212,7 @@ public class PojoExternalizationTest extends TestCase {
         public Green() {
         }
 
-        public Green(int i) {
+        public Green(final int i) {
             super(i);
         }
 
@@ -251,7 +251,7 @@ public class PojoExternalizationTest extends TestCase {
             aList[1].add("Green.list[1].entryTwo");
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             if (!super.equals(o)) return false;
@@ -284,7 +284,7 @@ public class PojoExternalizationTest extends TestCase {
 
         public int hashCode() {
             int result = super.hashCode();
-            long temp;
+            final long temp;
             temp = mydouble != +0.0d ? Double.doubleToLongBits(mydouble) : 0L;
             result = 29 * result + (int) (temp ^ (temp >>> 32));
             result = 29 * result + myfloat != +0.0f ? Float.floatToIntBits(myfloat) : 0;

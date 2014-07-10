@@ -24,16 +24,16 @@ public class PersonPk {
     public PersonPk() {
     }
 
-    public PersonPk(Integer id, String name) {
+    public PersonPk(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PersonPk personPk = (PersonPk) o;
+        final PersonPk personPk = (PersonPk) o;
 
         return id.equals(personPk.id) && name.equals(personPk.name);
     }

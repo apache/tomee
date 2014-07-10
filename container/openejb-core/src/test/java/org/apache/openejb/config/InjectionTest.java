@@ -43,14 +43,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class InjectionTest extends TestCase {
 
-    public void testInjections() throws Exception {       
-        InitialContext ctx = new InitialContext();
+    public void testInjections() throws Exception {
+        final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("WidgetBeanLocal");
+        final Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
-        Widget widget = (Widget) object;
+        final Widget widget = (Widget) object;
 
         // injected via annotations
         assertEquals("2", widget.getString());
@@ -58,12 +58,12 @@ public class InjectionTest extends TestCase {
         assertEquals(new Long(4), widget.getLong());
         assertEquals(new Float(5f), widget.getFloat());
         assertEquals(new Integer(6), widget.getInteger());
-        assertEquals(new Short((short)7), widget.getShort());
+        assertEquals(new Short((short) 7), widget.getShort());
         assertEquals(Boolean.FALSE, widget.getBoolean());
         assertEquals(new Character('9'), widget.getCharacter());
         assertEquals(Widget.class, widget.getMyClass());
         assertEquals(TimeUnit.HOURS, widget.getTimeUnit());
-                
+
         // injected via DD
         assertEquals(true, widget.getInjectedBoolean());
         assertEquals(true, widget.lookup("injectedBoolean"));
@@ -75,15 +75,15 @@ public class InjectionTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "10");
         statelessContainerInfo.properties.setProperty("MaxSize", "0");
         statelessContainerInfo.properties.setProperty("StrictPooling", "false");
@@ -91,13 +91,13 @@ public class InjectionTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(WidgetBean.class);
+        final StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
-        
+
         bean.getEnvEntry().add(new EnvEntry(name("myString"), "java.lang.String", "2"));
         bean.getEnvEntry().add(new EnvEntry(name("myDouble"), "java.lang.Double", "3.0"));
         bean.getEnvEntry().add(new EnvEntry(name("myLong"), "java.lang.Long", "4"));
@@ -109,38 +109,49 @@ public class InjectionTest extends TestCase {
         bean.getEnvEntry().add(new EnvEntry(name("myCharacter"), "java.lang.Character", "9"));
         bean.getEnvEntry().add(new EnvEntry(name("myClass"), "java.lang.Class", Widget.class.getName()));
         bean.getEnvEntry().add(new EnvEntry(name("myTimeUnit"), TimeUnit.class.getName(), "HOURS"));
-        
-        EnvEntry entry = new EnvEntry("injectedBoolean", (String) null, "true");
+
+        final EnvEntry entry = new EnvEntry("injectedBoolean", (String) null, "true");
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedBoolean")));
         bean.getEnvEntry().add(entry);
-        
-        ResourceEnvRef resourceEnvRef = new ResourceEnvRef("injectedContext", (String) null);
+
+        final ResourceEnvRef resourceEnvRef = new ResourceEnvRef("injectedContext", (String) null);
         resourceEnvRef.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedContext")));
         bean.getResourceEnvRef().add(resourceEnvRef);
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
-    private String name(String name) {
-      return "java:comp/env/" + WidgetBean.class.getName() + "/" + name;
+    private String name(final String name) {
+        return "java:comp/env/" + WidgetBean.class.getName() + "/" + name;
     }
-    
+
     public static interface Widget {
         String getString();
+
         Double getDouble();
+
         Long getLong();
+
         Float getFloat();
+
         Short getShort();
+
         Integer getInteger();
+
         Boolean getBoolean();
+
         Character getCharacter();
+
         Byte getByte();
+
         Class getMyClass();
+
         TimeUnit getTimeUnit();
-        
+
         Object lookup(String name) throws NamingException;
-        
+
         boolean getInjectedBoolean();
+
         EJBContext getInjectedContext();
     }
 
@@ -151,7 +162,7 @@ public class InjectionTest extends TestCase {
     public static class WidgetBean implements Widget, RemoteWidget {
 
         private SessionContext sessionContext;
-        
+
         @Resource
         private String myString = "1";
 
@@ -178,31 +189,31 @@ public class InjectionTest extends TestCase {
 
         @Resource
         private Character myCharacter = '1';
-        
-        @Resource 
+
+        @Resource
         private Class myClass = Object.class;
-        
+
         @Resource
         private TimeUnit myTimeUnit = TimeUnit.DAYS;
 
         // injected via DD
         private boolean injectedBoolean = false;
-        
+
         // injected via DD
         private EJBContext injectedContext;
-        
-        public WidgetBean() {           
+
+        public WidgetBean() {
         }
 
         @Resource
-        public void setSessionContext(SessionContext sessionContext) {
+        public void setSessionContext(final SessionContext sessionContext) {
             this.sessionContext = sessionContext;
         }
 
-        public Object lookup(String name) throws NamingException {
+        public Object lookup(final String name) throws NamingException {
             return sessionContext.lookup(name);
         }
-        
+
         public Boolean getBoolean() {
             return myBoolean;
         }
@@ -250,7 +261,7 @@ public class InjectionTest extends TestCase {
         public boolean getInjectedBoolean() {
             return injectedBoolean;
         }
-        
+
         public EJBContext getInjectedContext() {
             return injectedContext;
         }

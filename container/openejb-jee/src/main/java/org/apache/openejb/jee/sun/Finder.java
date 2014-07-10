@@ -45,7 +45,7 @@ public class Finder {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -53,7 +53,7 @@ public class Finder {
         return queryParams;
     }
 
-    public void setQueryParams(String value) {
+    public void setQueryParams(final String value) {
         this.queryParams = value;
     }
 
@@ -61,7 +61,7 @@ public class Finder {
         return queryFilter;
     }
 
-    public void setQueryFilter(String value) {
+    public void setQueryFilter(final String value) {
         this.queryFilter = value;
     }
 
@@ -69,7 +69,7 @@ public class Finder {
         return queryVariables;
     }
 
-    public void setQueryVariables(String value) {
+    public void setQueryVariables(final String value) {
         this.queryVariables = value;
     }
 
@@ -77,7 +77,7 @@ public class Finder {
         return queryOrdering;
     }
 
-    public void setQueryOrdering(String value) {
+    public void setQueryOrdering(final String value) {
         this.queryOrdering = value;
     }
 }

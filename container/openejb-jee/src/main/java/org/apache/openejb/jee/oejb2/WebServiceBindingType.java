@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 //@XmlRootElement(name = "web-service-binding", namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0")
 public class WebServiceBindingType {
 
-    @XmlElement(name="ejb-name")
+    @XmlElement(name = "ejb-name")
     protected String ejbName;
 
     @XmlElement(name = "web-service-address")
@@ -52,7 +52,7 @@ public class WebServiceBindingType {
         return ejbName;
     }
 
-    public void setEjbName(String ejbName) {
+    public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
@@ -60,18 +60,18 @@ public class WebServiceBindingType {
         return webServiceAddress;
     }
 
-    public void setWebServiceAddress(String webServiceAddress) {
+    public void setWebServiceAddress(final String webServiceAddress) {
         this.webServiceAddress = webServiceAddress;
     }
 
     public List<String> getWebServiceVirtualHost() {
-        if (webServiceVirtualHost == null){
+        if (webServiceVirtualHost == null) {
             webServiceVirtualHost = new ArrayList<String>();
         }
         return webServiceVirtualHost;
     }
 
-    public void setWebServiceVirtualHost(List<String> webServiceVirtualHost) {
+    public void setWebServiceVirtualHost(final List<String> webServiceVirtualHost) {
         this.webServiceVirtualHost = webServiceVirtualHost;
     }
 
@@ -79,11 +79,11 @@ public class WebServiceBindingType {
         return webServiceSecurity;
     }
 
-    public void setWebServiceSecurity(WebServiceSecurityType webServiceSecurity) {
+    public void setWebServiceSecurity(final WebServiceSecurityType webServiceSecurity) {
         this.webServiceSecurity = webServiceSecurity;
     }
 
-    public void setWebServiceSecurity(org.apache.openejb.jee.oejb2.WebServiceSecurityType webServiceSecurity) {
+    public void setWebServiceSecurity(final org.apache.openejb.jee.oejb2.WebServiceSecurityType webServiceSecurity) {
         if (webServiceSecurity == null) return;
         this.webServiceSecurity = new WebServiceSecurityType(webServiceSecurity);
     }
@@ -91,7 +91,7 @@ public class WebServiceBindingType {
     public boolean containsData() {
         return webServiceAddress != null || getWebServiceVirtualHost().size() > 0 || webServiceSecurity != null;
     }
-    
+
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "web-service-securityType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", propOrder = {
         "securityRealmName",
@@ -116,7 +116,7 @@ public class WebServiceBindingType {
         public WebServiceSecurityType() {
         }
 
-        public WebServiceSecurityType(org.apache.openejb.jee.oejb2.WebServiceSecurityType s) {
+        public WebServiceSecurityType(final org.apache.openejb.jee.oejb2.WebServiceSecurityType s) {
             this.securityRealmName = s.getSecurityRealmName();
             this.realmName = s.getRealmName();
             this.transportGuarantee = s.getTransportGuarantee();
@@ -128,7 +128,7 @@ public class WebServiceBindingType {
             return securityRealmName;
         }
 
-        public void setSecurityRealmName(String value) {
+        public void setSecurityRealmName(final String value) {
             this.securityRealmName = value;
         }
 
@@ -136,7 +136,7 @@ public class WebServiceBindingType {
             return realmName;
         }
 
-        public void setRealmName(String value) {
+        public void setRealmName(final String value) {
             this.realmName = value;
         }
 
@@ -144,7 +144,7 @@ public class WebServiceBindingType {
             return transportGuarantee;
         }
 
-        public void setTransportGuarantee(TransportGuaranteeType value) {
+        public void setTransportGuarantee(final TransportGuaranteeType value) {
             this.transportGuarantee = value;
         }
 
@@ -152,7 +152,7 @@ public class WebServiceBindingType {
             return authMethod;
         }
 
-        public void setAuthMethod(AuthMethodType value) {
+        public void setAuthMethod(final AuthMethodType value) {
             this.authMethod = value;
         }
 

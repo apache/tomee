@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class TimerServiceWrapper implements TimerService {
-    
+
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, TimerServiceWrapper.class);
 
     public Timer createTimer(final Date initialExpiration, final long intervalDuration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
@@ -89,22 +89,22 @@ public class TimerServiceWrapper implements TimerService {
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
-        } else if(beanContext.getEjbTimeout() == null) {
-            
+        } else if (beanContext.getEjbTimeout() == null) {
+
             boolean hasSchedules = false;
-            
-            for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
+
+            for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
                 final Map.Entry<Method, MethodContext> entry = it.next();
                 final MethodContext methodContext = entry.getValue();
                 if (methodContext.getSchedules().size() > 0) {
                     hasSchedules = true;
                 }
             }
-            
+
             if (!hasSchedules) {
                 log.error("This ejb does not support timers " + beanContext.getDeploymentID() + " due to no timeout method nor schedules in methodContext is configured");
             }
-            
+
         }
 
         return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());

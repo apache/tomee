@@ -27,19 +27,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for listenerType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="listenerType">
  *   &lt;complexContent>
@@ -53,16 +51,14 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "listenerType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "listenerClass"
-        })
+    "descriptions",
+    "displayNames",
+    "icon",
+    "listenerClass"
+})
 public class Listener {
 
     @XmlTransient
@@ -83,7 +79,7 @@ public class Listener {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -91,7 +87,7 @@ public class Listener {
         return description.get();
     }
 
-    public void addDescription(Text text) {
+    public void addDescription(final Text text) {
         description.add(text);
     }
 
@@ -100,7 +96,7 @@ public class Listener {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -108,10 +104,10 @@ public class Listener {
         return displayName.get();
     }
 
-    public void addDisplayName(Text text) {
+    public void addDisplayName(final Text text) {
         displayName.add(text);
     }
-    
+
     public Collection<Icon> getIcons() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
@@ -119,7 +115,7 @@ public class Listener {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -134,7 +130,7 @@ public class Listener {
         return listenerClass;
     }
 
-    public void setListenerClass(String value) {
+    public void setListenerClass(final String value) {
         this.listenerClass = value;
     }
 
@@ -142,7 +138,7 @@ public class Listener {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

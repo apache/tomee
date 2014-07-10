@@ -66,7 +66,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
         resources = configuration.facilities.resources;
     }
 
@@ -78,27 +78,27 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", jta managed
      * Existing data source "OrangeUnmanaged", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>OrangeUnamanged</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>OrangeUnamanged</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This is the happy path.
      *
      * @throws Exception
      */
     public void test() throws Exception {
 
-        ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -111,54 +111,54 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * Existing data source "OrangeUnmanaged", not jta managed
      * Existing data source "Lime", jta managed
      * Existing data source "LimeUnmanaged", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>OrangeUnmanaged</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>OrangeUnmanaged</non-jta-data-source>
      * </persistence-unit>
      * <persistence-unit name="lime-unit">
-     *      <jta-data-source>Lime</jta-data-source>
-     *      <non-jta-data-source>LimeUnmanaged</non-jta-data-source>
+     * <jta-data-source>Lime</jta-data-source>
+     * <non-jta-data-source>LimeUnmanaged</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This is the happy path.
      *
      * @throws Exception
      */
     public void testMultiple() throws Exception {
 
-        ResourceInfo orangeJta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo orangeNonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo limeJta = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
-        ResourceInfo limeNonJta = addDataSource("LimeUnmanaged", LimeDriver.class, "jdbc:lime:some:stuff", false);
+        final ResourceInfo orangeJta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo orangeNonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo limeJta = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        final ResourceInfo limeNonJta = addDataSource("LimeUnmanaged", LimeDriver.class, "jdbc:lime:some:stuff", false);
 
         assertSame(orangeJta, resources.get(0));
         assertSame(orangeNonJta, resources.get(1));
         assertSame(limeJta, resources.get(2));
         assertSame(limeNonJta, resources.get(3));
 
-        PersistenceUnit unit1 = new PersistenceUnit("orange-unit");
+        final PersistenceUnit unit1 = new PersistenceUnit("orange-unit");
         unit1.setJtaDataSource("Orange");
         unit1.setNonJtaDataSource("OrangeUnmanaged");
 
-        PersistenceUnit unit2 = new PersistenceUnit("lime-unit");
+        final PersistenceUnit unit2 = new PersistenceUnit("lime-unit");
         unit2.setJtaDataSource("Lime");
         unit2.setNonJtaDataSource("LimeUnmanaged");
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit1, unit2)));
 
         // Create app
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
 
-        PersistenceUnitInfo orangeUnit = appInfo.persistenceUnits.get(0);
-        PersistenceUnitInfo limeUnit = appInfo.persistenceUnits.get(1);
+        final PersistenceUnitInfo orangeUnit = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo limeUnit = appInfo.persistenceUnits.get(1);
 
         assertNotNull(orangeUnit);
 
@@ -173,20 +173,20 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-unit data source and the non-jta-datasource should be null
      *
      * @throws Exception
      */
     public void testFromUnitNameThirdParty() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         //Check results
@@ -196,24 +196,24 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", jta-managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-unit data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromUnitNameJta() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -224,27 +224,27 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", jta-managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-unit data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromUnitNameJtaWithClasspath() throws Exception {
 
-        Resource resource = new Resource("orange-unit", "DataSource");
+        final Resource resource = new Resource("orange-unit", "DataSource");
         resource.setClasspath("foo/bar.jar");
-        ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
+        final ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -259,24 +259,24 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit", non-jta-managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-unit data source and create a new JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromUnitNameNonJta() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("orange-unit", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -287,35 +287,35 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-id", not controlled by us
-     *
+     * <p/>
      * Application contains a web module with id "orange-id"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-id data source and the non-jta-datasource should be null
      *
      * @throws Exception
      */
     public void testFromWebAppIdThirdParty() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
+        final ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, null, "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
-        PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
 
         //Check results
         assertEquals(supplied.id, unitInfo.jtaDataSource);
@@ -324,37 +324,37 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-web", jta managed
-     *
+     * <p/>
      * Application contains a web module with id "orange-id"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-id data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromWebAppIdJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -365,37 +365,37 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-id", non-jta managed
-     *
+     * <p/>
      * Application contains a web module with id "orange-id"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-id data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromWebAppIdNonJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("orange-id", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -406,35 +406,35 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-web", not controlled by us
-     *
+     * <p/>
      * Application contains a web module with root context path as "orange-web"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-web data source and the non-jta-datasource should be null
      *
      * @throws Exception
      */
     public void testFromWebAppContextThirdParty() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
+        final ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
-        PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
+        final PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
 
         //Check results
         assertEquals(supplied.id, unitInfo.jtaDataSource);
@@ -443,37 +443,37 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-web", jta managed
-     *
+     * <p/>
      * Application contains a web module with root context path as "orange-web"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-web data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromWebAppContextJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -484,37 +484,37 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-web", non-jta managed
-     *
+     * <p/>
      * Application contains a web module with root context path as "orange-web"
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The orange-unit app should automatically use orange-web data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromWebAppContextNonJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+        final PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        AppModule app = new AppModule(cl, "orange-app");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        final AppModule app = new AppModule(cl, "orange-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
-        WebApp webApp = new WebApp();
+        final WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
 
         // Create app
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -526,20 +526,20 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit-app", not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The app module id is orange-unit-app. The jta data source should be orange-unit-app and the non-jta-data-source should be null
      *
      * @throws Exception
      */
     public void testFromAppIdThirdParty() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", null);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         //Check results
@@ -549,24 +549,24 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit-app", jta-managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The app module id is orange-unit-app. Use orange-unit-app data source and create a new non-JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromAppIdJta() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "NonJta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -577,24 +577,24 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "orange-unit-app", non-jta-managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit" />
-     *
+     * <p/>
      * The app module id is orange-unit-app. Use orange-unit-app data source and create a new JtaManaged datasource
      *
      * @throws Exception
      */
     public void testFromAppIdNonJta() throws Exception {
-        ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("orange-unit-app", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
         assertNotNull(unitInfo);
 
         // Check results
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
         assertEquals(supplied.id + "Jta", generated.id);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
@@ -606,25 +606,25 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", not controlled by us
      * Existing data source "OrangeUnmanaged", also not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>OrangeUnamanged</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>OrangeUnamanged</non-jta-data-source>
      * </persistence-unit>
      *
      * @throws Exception
      */
     public void testThirdPartyDataSources() throws Exception {
 
-        ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", null);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -635,13 +635,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * Here we should just let them try and get by with
      * just the one data source.
      *
@@ -649,11 +649,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testThirdPartyDataSources2() throws Exception {
 
-        ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
@@ -663,13 +663,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * Here we should just let them try and get by with
      * just the one data source.
      *
@@ -677,11 +677,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testThirdPartyDataSources3() throws Exception {
 
-        ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -691,14 +691,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not controlled by us
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * Here we should just let them try and get by with
      * both jta and non-jta references pointed at the same
      * data source.
@@ -707,11 +707,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testThirdPartyDataSources4() throws Exception {
 
-        ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
+        final ResourceInfo dataSource = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", null);
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit",  "orange", "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
@@ -721,19 +721,19 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * They used the same data source for both the
      * jta-data-source and non-jta-data-source and we
      * can determine the data source will not work as
      * a non-jta-data-source
-     *
+     * <p/>
      * We should generate the missing data source for them
      * based on the one they supplied.
      *
@@ -741,15 +741,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testSameDataSourceForBoth1() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -768,19 +768,19 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * They used the same data source for both the
      * jta-data-source and non-jta-data-source and we
      * can determine the data source will not work as
      * a jta-data-source
-     *
+     * <p/>
      * We should generate the missing data source for them
      * based on the one they supplied.
      *
@@ -788,15 +788,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testSameDataSourceForBoth2() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(generated.id, unitInfo.jtaDataSource);
         assertEquals(supplied.id, unitInfo.nonJtaDataSource);
@@ -815,14 +815,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "OrangeOne", jta managed
      * Existing data source "OrangeTwo", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>OrangeOne</jta-data-source>
-     *      <non-jta-data-source>OrangeOne</non-jta-data-source>
+     * <jta-data-source>OrangeOne</jta-data-source>
+     * <non-jta-data-source>OrangeOne</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * They used the same data source for both the
      * jta-data-source and non-jta-data-source and we
      * can determine the data source will not work as
@@ -836,13 +836,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testSameDataSourceForBoth3() throws Exception {
 
-        ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeOne", "orangeOne");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeOne", "orangeOne");
 
         assertNotNull(unitInfo);
 
@@ -853,14 +853,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "OrangeOne", jta managed
      * Existing data source "OrangeTwo", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>OrangeTwo</jta-data-source>
-     *      <non-jta-data-source>OrangeTwo</non-jta-data-source>
+     * <jta-data-source>OrangeTwo</jta-data-source>
+     * <non-jta-data-source>OrangeTwo</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * They used the same data source for both the
      * jta-data-source and non-jta-data-source and we
      * can determine the data source will not work as
@@ -874,13 +874,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testSameDataSourceForBoth4() throws Exception {
 
-        ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo nonJta = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeTwo", "orangeTwo");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeTwo", "orangeTwo");
 
         assertNotNull(unitInfo);
 
@@ -891,14 +891,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", jta managed
      * Existing data source "OrangeUnmanaged", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>java:foo/bar/baz/Orange</jta-data-source>
-     *      <non-jta-data-source>java:foo/bar/baz/OrangeUnamanged</non-jta-data-source>
+     * <jta-data-source>java:foo/bar/baz/Orange</jta-data-source>
+     * <non-jta-data-source>java:foo/bar/baz/OrangeUnamanged</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * The datasources should be mapped correctly despite the
      * vendor specific prefix.
      *
@@ -906,13 +906,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testShortName() throws Exception {
 
-        ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/orange", "java:foo/bar/baz/orangeUnmanaged");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/orange", "java:foo/bar/baz/orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -923,14 +923,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", jta managed
      * Existing data source "OrangeUnmanaged", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>DoesNotExist</jta-data-source>
-     *      <non-jta-data-source>AlsoDoesNotExist</non-jta-data-source>
+     * <jta-data-source>DoesNotExist</jta-data-source>
+     * <non-jta-data-source>AlsoDoesNotExist</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should automatically hook them up to the configured
      * datasources that do match
      *
@@ -938,13 +938,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testInvalidRefs() throws Exception {
 
-        ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo nonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "DoesNotExist", "AlsoDoesNotExist");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "DoesNotExist", "AlsoDoesNotExist");
 
         assertNotNull(unitInfo);
 
@@ -957,22 +957,22 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "OrangeOne", not jta managed
      * Existing data source "OrangeTwo", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>OrangeOne</jta-data-source>
-     *      <non-jta-data-source>OrangeTwo</non-jta-data-source>
+     * <jta-data-source>OrangeOne</jta-data-source>
+     * <non-jta-data-source>OrangeTwo</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This configuration should be rejected
      *
      * @throws Exception
      */
     public void testJtaRefToContrarilyConfiguredDataSource() throws Exception {
 
-        ResourceInfo nonJta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo nonJta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo nonJta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(nonJta1, resources.get(0));
         assertSame(nonJta2, resources.get(1));
@@ -980,7 +980,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         try {
             addPersistenceUnit("orange-unit", "orangeOne", "orangeTwo");
             fail("Configuration should be rejected");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
@@ -988,22 +988,22 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "OrangeOne", jta managed
      * Existing data source "OrangeTwo", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>OrangeOne</jta-data-source>
-     *      <non-jta-data-source>OrangeTwo</non-jta-data-source>
+     * <jta-data-source>OrangeOne</jta-data-source>
+     * <non-jta-data-source>OrangeTwo</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This configuration should be rejected
      *
      * @throws Exception
      */
     public void testNonJtaRefToContrarilyConfiguredDataSource() throws Exception {
 
-        ResourceInfo jta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo jta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo jta1 = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo jta2 = addDataSource("OrangeTwo", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(jta1, resources.get(0));
         assertSame(jta2, resources.get(1));
@@ -1011,61 +1011,61 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         try {
             addPersistenceUnit("orange-unit", "orangeOne", "orangeTwo");
             fail("Configuration should be rejected");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
 
     /**
      * Existing data source "OrangeOne", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>OrangeOne</jta-data-source>
+     * <jta-data-source>OrangeOne</jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This configuration should be rejected
      *
      * @throws Exception
      */
     public void testJtaRefToContrarilyConfiguredDataSource2() throws Exception {
 
-        ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(jta, resources.get(0));
 
         try {
             addPersistenceUnit("orange-unit", "orangeOne", null);
             fail("Configuration should be rejected");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
 
     /**
      * Existing data source "OrangeOne", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>OrangeOne</non-jta-data-source>
+     * <non-jta-data-source>OrangeOne</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * This configuration should be rejected
      *
      * @throws Exception
      */
     public void testNonJtaRefToContrarilyConfiguredDataSource2() throws Exception {
 
-        ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo jta = addDataSource("OrangeOne", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(jta, resources.get(0));
 
         try {
             addPersistenceUnit("orange-unit", null, "orangeOne");
             fail("Configuration should be rejected");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
@@ -1074,13 +1074,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange" not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should generate a <jta-data-source> based on
      * the <non-jta-data-source>
      *
@@ -1088,14 +1088,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testMissingJtaDataSource() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(supplied.id, unitInfo.nonJtaDataSource);
         assertEquals(generated.id, unitInfo.jtaDataSource);
@@ -1112,13 +1112,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange" jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should generate a <non-jta-data-source> based on
      * the <jta-data-source>
      *
@@ -1126,14 +1126,14 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testMissingNonJtaDataSource() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -1152,13 +1152,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", not jta managed
      * Existing data source "Lime", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should generate a <jta-data-source> based on
      * the <non-jta-data-source>.  We should not select
      * the Lime datasource which is for a different database.
@@ -1167,17 +1167,17 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testInvalidOptionsJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(2);
+        final ResourceInfo generated = resources.get(2);
 
         assertEquals(generated.id, unitInfo.jtaDataSource);
         assertEquals(supplied.id, unitInfo.nonJtaDataSource);
@@ -1194,13 +1194,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", jta managed
      * Existing data source "Lime", non jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should generate a <non-jta-data-source> based on
      * the <jta-data-source>.  We should not select the
      * Lime datasource which is for a different database.
@@ -1209,18 +1209,18 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testInvalidOptionsNonJta() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", false);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
 
-        ResourceInfo generated = resources.get(2);
+        final ResourceInfo generated = resources.get(2);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -1240,13 +1240,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * Existing data source "Orange", not jta managed
      * Existing data source "Lime", jta managed
      * Existing data source "JtaOrange", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     * <non-jta-data-source>Orange</non-jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should select the <jta-data-source> based on
      * the closest match to the <non-jta-data-source>
      *
@@ -1254,15 +1254,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testPossiblyAmbiguousJtaOptions() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
-        ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
-        ResourceInfo goodMatch = addDataSource("JtaOrange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        final ResourceInfo goodMatch = addDataSource("JtaOrange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
         assertSame(goodMatch, resources.get(2));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -1275,13 +1275,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * Existing data source "Orange", jta managed
      * Existing data source "Lime", not jta managed
      * Existing data source "OrangeUnamanged", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
-     *      <jta-data-source>Orange</jta-data-source>
+     * <jta-data-source>Orange</jta-data-source>
      * </persistence-unit>
-     *
+     * <p/>
      * We should select the <non-jta-data-source> based on
      * the closest match to the <jta-data-source>
      *
@@ -1289,15 +1289,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testPossiblyAmbiguousNonJtaOptions() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
-        ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", false);
-        ResourceInfo goodMatch = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo badMatch = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", false);
+        final ResourceInfo goodMatch = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
         assertSame(goodMatch, resources.get(2));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
@@ -1310,15 +1310,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
      * </persistence-unit>
-     *
+     * <p/>
      * The <non-jta-data-source> should be auto linked
      * to the Orange data source
-     *
+     * <p/>
      * We should generate a <jta-data-source> based on
      * the <non-jta-data-source>
      *
@@ -1326,15 +1326,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testEmptyUnitOneAvailableNonJtaDataSource() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
 
         assertNotNull(unitInfo);
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(generated.id, unitInfo.jtaDataSource);
         assertEquals(supplied.id, unitInfo.nonJtaDataSource);
@@ -1350,15 +1350,15 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
      * </persistence-unit>
-     *
+     * <p/>
      * The <jta-data-source> should be auto linked
      * to the Orange data source
-     *
+     * <p/>
      * We should generate a <non-jta-data-source> based on
      * the <jta-data-source>
      *
@@ -1366,16 +1366,16 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      */
     public void testEmptyUnitOneAvailableJtaDataSource() throws Exception {
 
-        ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        final ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
 
         assertNotNull(unitInfo);
 
 
-        ResourceInfo generated = resources.get(1);
+        final ResourceInfo generated = resources.get(1);
 
         assertEquals(supplied.id, unitInfo.jtaDataSource);
         assertEquals(generated.id, unitInfo.nonJtaDataSource);
@@ -1393,17 +1393,17 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     /**
      * Existing data source "Orange", not jta managed
-     *
+     * <p/>
      * Persistence xml like so:
-     *
+     * <p/>
      * <persistence-unit name="orange-unit">
      * </persistence-unit>
-     *
+     * <p/>
      * A set of default data sources should be generated
-     *
+     * <p/>
      * The <non-jta-data-source> should be auto linked
      * to the Default JDBC Database data source
-     *
+     * <p/>
      * The <jta-data-source> should be auto linked
      * to the Default Unmanaged JDBC Database data source
      *
@@ -1413,12 +1413,12 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertEquals(0, resources.size());
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
+        final PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, null);
 
         assertNotNull(unitInfo);
 
-        ResourceInfo jta = resources.get(0);
-        ResourceInfo nonJta = resources.get(1);
+        final ResourceInfo jta = resources.get(0);
+        final ResourceInfo nonJta = resources.get(1);
 
         assertEquals("Default JDBC Database", jta.id);
         assertEquals("Default Unmanaged JDBC Database", nonJta.id);
@@ -1431,17 +1431,17 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     //  Convenience methods
     // --------------------------------------------------------------------------------------------
 
-    private PersistenceUnitInfo addPersistenceUnit(String unitName, String jtaDataSource, String nonJtaDataSource) throws OpenEJBException, IOException, NamingException {
-        PersistenceUnit unit = new PersistenceUnit(unitName);
+    private PersistenceUnitInfo addPersistenceUnit(final String unitName, final String jtaDataSource, final String nonJtaDataSource) throws OpenEJBException, IOException, NamingException {
+        final PersistenceUnit unit = new PersistenceUnit(unitName);
         unit.setJtaDataSource(jtaDataSource);
         unit.setNonJtaDataSource(nonJtaDataSource);
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), unitName + "-app");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), unitName + "-app");
         app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
 
         // Create app
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
         // Check results
@@ -1449,19 +1449,19 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         return appInfo.persistenceUnits.get(0);
     }
 
-    private ResourceInfo addDataSource(String id, Class driver, String url, Boolean managed) throws OpenEJBException {
-        Resource resource = new Resource(id, "DataSource");
+    private ResourceInfo addDataSource(final String id, final Class driver, final String url, final Boolean managed) throws OpenEJBException {
+        final Resource resource = new Resource(id, "DataSource");
         return addDataSource(driver, url, managed, resource);
     }
 
-    private ResourceInfo addDataSource(Class driver, String url, Boolean managed, Resource resource) throws OpenEJBException {
+    private ResourceInfo addDataSource(final Class driver, final String url, final Boolean managed, final Resource resource) throws OpenEJBException {
         resource.getProperties().put("JdbcDriver", driver.getName());
         resource.getProperties().put("JdbcUrl", url);
         resource.getProperties().put("JtaManaged", managed + " ");  // space should be trimmed later, this verifies that.
 
-        ResourceInfo resourceInfo = config.configureService(resource, ResourceInfo.class);
+        final ResourceInfo resourceInfo = config.configureService(resource, ResourceInfo.class);
 
-        if (managed == null){
+        if (managed == null) {
             // Strip out the JtaManaged property so we can mimic
             // datasources that we don't control
             resourceInfo.properties.remove("JtaManaged");
@@ -1472,7 +1472,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     public static class Driver implements java.sql.Driver {
-        public boolean acceptsURL(String url) throws SQLException {
+        public boolean acceptsURL(final String url) throws SQLException {
             return false;
         }
 
@@ -1480,7 +1480,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
             return null;
         }
 
-        public Connection connect(String url, Properties info) throws SQLException {
+        public Connection connect(final String url, final Properties info) throws SQLException {
             return null;
         }
 
@@ -1492,7 +1492,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
             return 0;
         }
 
-        public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+        public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
             return new DriverPropertyInfo[0];
         }
 
@@ -1501,7 +1501,9 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         }
     }
 
-    public static class OrangeDriver extends Driver {}
+    public static class OrangeDriver extends Driver {
+    }
 
-    public static class LimeDriver extends Driver {}
+    public static class LimeDriver extends Driver {
+    }
 }

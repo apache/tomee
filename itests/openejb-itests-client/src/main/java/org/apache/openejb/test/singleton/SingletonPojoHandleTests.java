@@ -26,7 +26,7 @@ public class SingletonPojoHandleTests extends BasicSingletonTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
         ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
@@ -42,10 +42,10 @@ public class SingletonPojoHandleTests extends BasicSingletonTestClient {
     public void test01_getEJBObject() {
 
         try {
-            EJBObject object = ejbHandle.getEJBObject();
+            final EJBObject object = ejbHandle.getEJBObject();
             assertNotNull("The EJBObject is null", object);
             assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -69,7 +69,7 @@ public class SingletonPojoHandleTests extends BasicSingletonTestClient {
             ejbHome.remove(ejbHandle);
             // you can't really remove a singleton handle
             ejbObject.businessMethod("Should not throw an exception");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

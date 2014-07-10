@@ -24,7 +24,7 @@
             <ejb-name>TestBean</ejb-name>
             <after-begin-method>
                 <method-name>afterBegin</method-name>
-            </after-begin-method>      
+            </after-begin-method>
             <before-completion-method>
                 <method-name>beforeCompletion</method-name>
             </before-completion-method>
@@ -33,7 +33,7 @@
                 <method-params>
                     <method-param>boolean</method-param>
                 </method-params>
-            </after-completion-method>                  
+            </after-completion-method>
         </session>
     </enterprise-beans>
 </ejb-jar>

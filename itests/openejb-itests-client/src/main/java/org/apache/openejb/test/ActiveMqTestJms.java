@@ -26,7 +26,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class ActiveMqTestJms implements TestJms {
-    public void init(Properties props) {
+    public void init(final Properties props) {
     }
 
     public ConnectionFactory getConnectionFactory() {

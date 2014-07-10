@@ -34,7 +34,6 @@ public interface BasicSingletonBusinessLocal {
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     public void throwApplicationException() throws ApplicationException;
 
@@ -43,7 +42,6 @@ public interface BasicSingletonBusinessLocal {
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     public void throwSystemException_NullPointer();
 
@@ -63,10 +61,10 @@ public interface BasicSingletonBusinessLocal {
      * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
-    
+
     /**
      * Verify if we can invoke remove() on a singleton session bean as a business method
-     */    
+     */
     public Object remove();
 
 }

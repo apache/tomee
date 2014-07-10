@@ -67,7 +67,7 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
         public PkField(final Field entityBeanField, final Field pkObjectField) {
             entityBeanField.setAccessible(true);
             pkObjectField.setAccessible(true);
-            
+
             this.entityBeanField = entityBeanField;
             this.pkObjectField = pkObjectField;
         }

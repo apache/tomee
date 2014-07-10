@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 
  * This class is the same as {@link JtaQuery} but wraps TypedQuery instead of Query
  */
 public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
@@ -88,7 +87,7 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
     @Override
     public TypedQuery<X> setParameter(final int i, final Calendar calendar,
-            final TemporalType temporalType) {
+                                      final TemporalType temporalType) {
         super.setParameter(i, calendar, temporalType);
         return this;
     }
@@ -107,14 +106,14 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
     @Override
     public TypedQuery<X> setParameter(final Parameter<Calendar> param, final Calendar value,
-            final TemporalType temporalType) {
+                                      final TemporalType temporalType) {
         super.setParameter(param, value, temporalType);
         return this;
     }
 
     @Override
     public TypedQuery<X> setParameter(final Parameter<Date> param, final Date value,
-            final TemporalType temporalType) {
+                                      final TemporalType temporalType) {
         super.setParameter(param, value, temporalType);
         return this;
     }
@@ -127,7 +126,7 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
     @Override
     public TypedQuery<X> setParameter(final String s, final Calendar calendar,
-            final TemporalType temporalType) {
+                                      final TemporalType temporalType) {
         super.setParameter(s, calendar, temporalType);
         return this;
     }

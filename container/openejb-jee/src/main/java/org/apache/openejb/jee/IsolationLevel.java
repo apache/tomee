@@ -22,11 +22,11 @@ import java.sql.Connection;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for isolation-levelType.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="isolation-levelType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -37,7 +37,6 @@ import java.sql.Connection;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 
 @XmlType(name = "isolation-levelType")
@@ -53,11 +52,11 @@ public enum IsolationLevel {
         return name();
     }
 
-    public static IsolationLevel fromValue(java.lang.String v) {
+    public static IsolationLevel fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 
-    public static IsolationLevel fromFlag(int flag) {
+    public static IsolationLevel fromFlag(final int flag) {
         if (flag == Connection.TRANSACTION_READ_UNCOMMITTED) {
             return TRANSACTION_READ_UNCOMMITTED;
         }

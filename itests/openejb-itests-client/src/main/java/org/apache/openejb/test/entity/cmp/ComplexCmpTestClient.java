@@ -22,7 +22,7 @@ public abstract class ComplexCmpTestClient extends CmpTestClient{
     protected ComplexCmpHome   ejbHome;
     protected ComplexCmpObject ejbObject;
 
-    public ComplexCmpTestClient(String name){
+    public ComplexCmpTestClient(final String name){
         super(name);
     }
 }

@@ -26,9 +26,11 @@ import javax.ejb.FinderException;
 public interface ArtistLocalHome extends EJBLocalHome {
     // Create
     public ArtistLocal create(Integer field1) throws CreateException;
+
     public ArtistLocal create(ArtistPk primaryKey) throws CreateException;
 
     // Finder
     public ArtistLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+
     public ArtistLocal findByPrimaryKey(ArtistPk primaryKey) throws FinderException;
 }

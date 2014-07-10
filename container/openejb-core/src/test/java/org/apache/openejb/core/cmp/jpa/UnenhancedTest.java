@@ -80,8 +80,8 @@ public class UnenhancedTest extends TestCase {
         }
 
         if (nonJtaDs != null) {
-            Connection connection = nonJtaDs.getConnection();
-            Statement statement = connection.createStatement();
+            final Connection connection = nonJtaDs.getConnection();
+            final Statement statement = connection.createStatement();
             statement.execute("SHUTDOWN");
             close(statement);
             close(connection);
@@ -184,29 +184,29 @@ public class UnenhancedTest extends TestCase {
         runTest("collection", PersistenceUnitTransactionType.RESOURCE_LOCAL, false);
     }
 
-    private void runTest(String methodName, PersistenceUnitTransactionType transactionType, boolean enhance) throws Exception {
+    private void runTest(final String methodName, final PersistenceUnitTransactionType transactionType, final boolean enhance) throws Exception {
         this.enhance = enhance;
 
-        ClassLoader loader = new FilteredChildFirstClassLoader(getClass().getClassLoader(), "org.apache.openejb.core.cmp.jpa");
+        final ClassLoader loader = new FilteredChildFirstClassLoader(getClass().getClassLoader(), "org.apache.openejb.core.cmp.jpa");
 
-        PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
+        final PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
 
-            public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
-                Instrumentation instrumentation = Agent.getInstrumentation();
+            public void addTransformer(final String unitId, final ClassLoader classLoader, final ClassFileTransformer classFileTransformer) {
+                final Instrumentation instrumentation = Agent.getInstrumentation();
                 if (instrumentation != null) {
                     instrumentation.addTransformer(new ControllableTransformer(classFileTransformer));
                 }
             }
 
-            public void destroy(String unitId) {
+            public void destroy(final String unitId) {
             }
 
-            public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+            public ClassLoader getNewTempClassLoader(final ClassLoader classLoader) {
                 return new TempClassLoader(classLoader);
             }
         };
 
-        PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
+        final PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
         unitInfo.setPersistenceUnitName("CMP");
         unitInfo.setPersistenceProviderClassName(PERSISTENCE_PROVIDER);
         unitInfo.setClassLoader(loader);
@@ -223,7 +223,7 @@ public class UnenhancedTest extends TestCase {
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.ManyStandalone");
 
         // Handle Properties
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents',ForeignKeys=true)");
         properties.setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         properties.setProperty("openjpa.Log", "DefaultLevel=INFO");
@@ -233,12 +233,12 @@ public class UnenhancedTest extends TestCase {
 
         unitInfo.getManagedClassNames().add("org.apache.openejb.core.cmp.jpa.Employee");
 
-        PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
+        final PersistenceProvider persistenceProvider = (PersistenceProvider) getClass().getClassLoader().loadClass(PERSISTENCE_PROVIDER).newInstance();
         entityManagerFactory = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
 
 
         // create the test object (via reflection)
-        Object testObject = loader.loadClass("org.apache.openejb.core.cmp.jpa.UnenhancedUnits").newInstance();
+        final Object testObject = loader.loadClass("org.apache.openejb.core.cmp.jpa.UnenhancedUnits").newInstance();
         set(testObject, "TransactionManager", TransactionManager.class, transactionManager);
         set(testObject, "EntityManagerFactory", EntityManagerFactory.class, entityManagerFactory);
 
@@ -253,8 +253,8 @@ public class UnenhancedTest extends TestCase {
         }
     }
 
-    private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
-        BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + ".createJtaDs");
+    private DataSource createJtaDataSource(final TransactionManager transactionManager) throws Exception {
+        final BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + ".createJtaDs");
         ds.setTransactionManager(transactionManager);
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
@@ -267,7 +267,7 @@ public class UnenhancedTest extends TestCase {
     }
 
     private DataSource createNonJtaDataSource() throws Exception {
-        BasicDataSource ds = new BasicDataSource(getClass().getName() + ".createNonJtaDs");
+        final BasicDataSource ds = new BasicDataSource(getClass().getName() + ".createNonJtaDs");
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
         ds.setUsername("sa");
@@ -278,11 +278,11 @@ public class UnenhancedTest extends TestCase {
         return ds;
     }
 
-    private static void set(Object instance, String parameterName, Class type, Object value) throws Exception {
+    private static void set(final Object instance, final String parameterName, final Class type, final Object value) throws Exception {
         try {
             instance.getClass().getMethod("set" + parameterName, type).invoke(instance, value);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
+        } catch (final InvocationTargetException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             } else if (cause instanceof Error) {
@@ -293,11 +293,11 @@ public class UnenhancedTest extends TestCase {
         }
     }
 
-    private static void invoke(Object instance, String methodName) throws Exception {
+    private static void invoke(final Object instance, final String methodName) throws Exception {
         try {
             instance.getClass().getMethod(methodName).invoke(instance);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
+        } catch (final InvocationTargetException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             } else if (cause instanceof Error) {
@@ -308,23 +308,23 @@ public class UnenhancedTest extends TestCase {
         }
     }
 
-    private static void close(Statement statement) {
+    private static void close(final Statement statement) {
         if (statement == null) {
             return;
         }
         try {
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
-    private static void close(Connection connection) {
+    private static void close(final Connection connection) {
         if (connection == null) {
             return;
         }
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
@@ -332,12 +332,12 @@ public class UnenhancedTest extends TestCase {
         private final ClassFileTransformer transformer;
 
 
-        public ControllableTransformer(ClassFileTransformer transformer) {
+        public ControllableTransformer(final ClassFileTransformer transformer) {
             this.transformer = transformer;
         }
 
 
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
             if (enhance) {
                 return transformer.transform(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
             } else {
@@ -349,18 +349,18 @@ public class UnenhancedTest extends TestCase {
     public class FilteredChildFirstClassLoader extends URLClassLoader {
         protected String packagePrefix;
 
-        public FilteredChildFirstClassLoader(ClassLoader parent, String packagePrefix) {
+        public FilteredChildFirstClassLoader(final ClassLoader parent, final String packagePrefix) {
             super(new URL[0], parent);
             this.packagePrefix = packagePrefix;
         }
 
-        public Class loadClass(String name) throws ClassNotFoundException {
+        public Class loadClass(final String name) throws ClassNotFoundException {
             return loadClass(name, false);
         }
 
-        protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
             // see if we've already loaded it
-            Class c = findLoadedClass(name);
+            final Class c = findLoadedClass(name);
             if (c != null) {
                 return c;
             }
@@ -369,31 +369,31 @@ public class UnenhancedTest extends TestCase {
                 return Class.forName(name, resolve, getParent());
             }
 
-            String resourceName = name.replace('.', '/') + ".class";
-            InputStream in = getResourceAsStream(resourceName);
+            final String resourceName = name.replace('.', '/') + ".class";
+            final InputStream in = getResourceAsStream(resourceName);
             if (in == null) {
                 throw new ClassNotFoundException(name);
             }
 
             // 80% of class files are smaller then 6k
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
+            final ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
 
             // copy the input stream into a byte array
             byte[] bytes = new byte[0];
             try {
-                byte[] buf = new byte[4 * 1024];
-                for (int count = -1; (count = in.read(buf)) >= 0;) {
+                final byte[] buf = new byte[4 * 1024];
+                for (int count = -1; (count = in.read(buf)) >= 0; ) {
                     bout.write(buf, 0, count);
                 }
                 bytes = bout.toByteArray();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new ClassNotFoundException(name, e);
             }
 
             // define the package
-            int packageEndIndex = name.lastIndexOf('.');
+            final int packageEndIndex = name.lastIndexOf('.');
             if (packageEndIndex != -1) {
-                String packageName = name.substring(0, packageEndIndex);
+                final String packageName = name.substring(0, packageEndIndex);
                 if (getPackage(packageName) == null) {
                     definePackage(packageName, null, null, null, null, null, null, null);
                 }
@@ -402,7 +402,7 @@ public class UnenhancedTest extends TestCase {
             // define the class
             try {
                 return defineClass(name, bytes, 0, bytes.length);
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 // possible prohibited package: defer to the parent
                 return super.loadClass(name, resolve);
             }

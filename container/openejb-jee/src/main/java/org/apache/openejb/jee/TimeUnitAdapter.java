@@ -20,21 +20,20 @@
 
 package org.apache.openejb.jee;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev:$ $Date:$
  */
 public class TimeUnitAdapter extends XmlAdapter<String, TimeUnit> {
     @Override
-    public TimeUnit unmarshal(String s) throws Exception {
+    public TimeUnit unmarshal(final String s) throws Exception {
         return TimeUnit.valueOf(s.toUpperCase());
     }
 
     @Override
-    public String marshal(TimeUnit t) throws Exception {
+    public String marshal(final TimeUnit t) throws Exception {
         if (t == TimeUnit.DAYS) return "Days";
         if (t == TimeUnit.HOURS) return "Hours";
         if (t == TimeUnit.MINUTES) return "Minutes";

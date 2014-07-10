@@ -37,12 +37,12 @@ public class ServerContextTest extends TestCase {
 
 
         serverContext.createTransactionManager(new TransactionManagerBuilder()
-                .withDefaultTransactionTimeout(3, TimeUnit.MINUTES)
-                .withBufferSizeKb(1024)
-                .withMaxBuffers(10));
+            .withDefaultTransactionTimeout(3, TimeUnit.MINUTES)
+            .withBufferSizeKb(1024)
+            .withMaxBuffers(10));
 
         serverContext.createSecurityService(new SecurityServiceBuilder()
-                .withDefaultUser("unknown"));
+            .withDefaultUser("unknown"));
 
         serverContext.createContainer(new StatelessContainerBuilder()
                 .withStrictPooling(true)

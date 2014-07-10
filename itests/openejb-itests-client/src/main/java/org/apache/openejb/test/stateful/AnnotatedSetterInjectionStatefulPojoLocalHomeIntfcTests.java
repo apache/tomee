@@ -37,7 +37,7 @@ public class AnnotatedSetterInjectionStatefulPojoLocalHomeIntfcTests extends Ann
     
 	@EJB(name="client/tests/stateful/BasicStatefulPojoHomeLocal",
 		 beanInterface = BasicStatefulLocalHome.class)
-    public void setEjbLocalHome(BasicStatefulLocalHome bslEjbHome) {
+    public void setEjbLocalHome(final BasicStatefulLocalHome bslEjbHome) {
     	ejbLocalHome = bslEjbHome;
     }
     
@@ -48,7 +48,7 @@ public class AnnotatedSetterInjectionStatefulPojoLocalHomeIntfcTests extends Ann
         try{
             ejbLocalObject = ejbLocalHome.create("BasicStatefulLocalObject");
             assertNotNull( "The EJBObject is null", ejbLocalObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }        
     }

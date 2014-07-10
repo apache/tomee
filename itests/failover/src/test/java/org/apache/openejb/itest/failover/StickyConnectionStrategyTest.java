@@ -82,7 +82,7 @@ public class StickyConnectionStrategyTest {
 
         final StandaloneServer root;
         {
-            StandaloneServer root1;
+            final StandaloneServer root1;
             final String name = "root";
             final File home = new File(dir, name);
 
@@ -109,7 +109,7 @@ public class StickyConnectionStrategyTest {
 
 
         final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
-        for (String name : new String[]{"red", "green", "blue"}) {
+        for (final String name : new String[]{"red", "green", "blue"}) {
             final File home = new File(dir, name);
             Files.mkdir(home);
             Zips.unzip(zip, home, true);
@@ -159,7 +159,7 @@ public class StickyConnectionStrategyTest {
 
 
         String previous = null;
-        for (StandaloneServer ignored : servers.values()) {
+        for (final StandaloneServer ignored : servers.values()) {
 
             logger.info("Looping");
 
@@ -195,7 +195,7 @@ public class StickyConnectionStrategyTest {
 
             final String name = bean.name();
             Assert.fail("Server should be destroyed: " + name);
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
         }
@@ -216,7 +216,7 @@ public class StickyConnectionStrategyTest {
         assertEquals(5, bean.sum(2, 3));
     }
 
-    private void invoke(String name, StandaloneServer server) throws NamingException {
+    private void invoke(final String name, final StandaloneServer server) throws NamingException {
         final Properties environment = new Properties();
         environment.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
         environment.put(Context.PROVIDER_URL, "ejbd://localhost:" + server.getServerService("ejbd").getPort() + "/" + name);
@@ -226,13 +226,13 @@ public class StickyConnectionStrategyTest {
         assertEquals(name, bean.name());
     }
 
-    private long invoke(Calculator bean, int max, String expectedName) {
+    private long invoke(final Calculator bean, final int max, final String expectedName) {
 
         long total = 0;
 
         for (int i = 0; i < max; i++) {
             final long start = System.nanoTime();
-            String name = bean.name();
+            final String name = bean.name();
             Assert.assertEquals(expectedName, name);
             total += System.nanoTime() - start;
         }
@@ -240,7 +240,7 @@ public class StickyConnectionStrategyTest {
         return TimeUnit.NANOSECONDS.toMicros(total / max);
     }
 
-    private long invoke(Calculator bean, int max) {
+    private long invoke(final Calculator bean, final int max) {
 
         long total = 0;
 

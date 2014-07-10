@@ -40,33 +40,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesManagedProperty$JAXB
-        extends JAXBObject<FacesManagedProperty> {
+    extends JAXBObject<FacesManagedProperty> {
 
 
     public FacesManagedProperty$JAXB() {
         super(FacesManagedProperty.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-managed-propertyType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesMapEntries$JAXB.class, FacesNullValue$JAXB.class, FacesListEntries$JAXB.class);
     }
 
-    public static FacesManagedProperty readFacesManagedProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesManagedProperty readFacesManagedProperty(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesManagedProperty(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesManagedProperty(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedProperty, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedProperty, context);
     }
 
-    public final static FacesManagedProperty _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesManagedProperty _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -77,7 +77,7 @@ public class FacesManagedProperty$JAXB
             context = new RuntimeContext();
         }
 
-        FacesManagedProperty facesManagedProperty = new FacesManagedProperty();
+        final FacesManagedProperty facesManagedProperty = new FacesManagedProperty();
         context.beforeUnmarshal(facesManagedProperty, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -85,7 +85,7 @@ public class FacesManagedProperty$JAXB
         LocalCollection<Icon> icon = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-managed-propertyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesManagedProperty.class);
@@ -93,10 +93,10 @@ public class FacesManagedProperty$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesManagedProperty);
                 facesManagedProperty.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -105,24 +105,24 @@ public class FacesManagedProperty$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesManagedProperty.icon;
                     if (icon != null) {
@@ -134,12 +134,12 @@ public class FacesManagedProperty$JAXB
                 icon.add(iconItem);
             } else if (("property-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: propertyName
-                String propertyNameRaw = elementReader.getElementAsString();
+                final String propertyNameRaw = elementReader.getElementAsString();
 
-                String propertyName;
+                final String propertyName;
                 try {
                     propertyName = Adapters.collapsedStringAdapterAdapter.unmarshal(propertyNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -147,12 +147,12 @@ public class FacesManagedProperty$JAXB
                 facesManagedProperty.propertyName = propertyName;
             } else if (("property-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: propertyClass
-                String propertyClassRaw = elementReader.getElementAsString();
+                final String propertyClassRaw = elementReader.getElementAsString();
 
-                String propertyClass;
+                final String propertyClass;
                 try {
                     propertyClass = Adapters.collapsedStringAdapterAdapter.unmarshal(propertyClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -160,20 +160,20 @@ public class FacesManagedProperty$JAXB
                 facesManagedProperty.propertyClass = propertyClass;
             } else if (("map-entries" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mapEntries
-                FacesMapEntries mapEntries = readFacesMapEntries(elementReader, context);
+                final FacesMapEntries mapEntries = readFacesMapEntries(elementReader, context);
                 facesManagedProperty.mapEntries = mapEntries;
             } else if (("null-value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nullValue
-                FacesNullValue nullValue = readFacesNullValue(elementReader, context);
+                final FacesNullValue nullValue = readFacesNullValue(elementReader, context);
                 facesManagedProperty.nullValue = nullValue;
             } else if (("value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: value
-                String valueRaw = elementReader.getElementAsString();
+                final String valueRaw = elementReader.getElementAsString();
 
-                String value;
+                final String value;
                 try {
                     value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -181,7 +181,7 @@ public class FacesManagedProperty$JAXB
                 facesManagedProperty.value = value;
             } else if (("list-entries" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: listEntries
-                FacesListEntries listEntries = readFacesListEntries(elementReader, context);
+                final FacesListEntries listEntries = readFacesListEntries(elementReader, context);
                 facesManagedProperty.listEntries = listEntries;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "property-name"), new QName("http://java.sun.com/xml/ns/javaee", "property-class"), new QName("http://java.sun.com/xml/ns/javaee", "map-entries"), new QName("http://java.sun.com/xml/ns/javaee", "null-value"), new QName("http://java.sun.com/xml/ns/javaee", "value"), new QName("http://java.sun.com/xml/ns/javaee", "list-entries"));
@@ -190,14 +190,14 @@ public class FacesManagedProperty$JAXB
         if (descriptions != null) {
             try {
                 facesManagedProperty.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesManagedProperty.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesManagedProperty.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesManagedProperty.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -210,13 +210,13 @@ public class FacesManagedProperty$JAXB
         return facesManagedProperty;
     }
 
-    public final FacesManagedProperty read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesManagedProperty read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesManagedProperty facesManagedProperty, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesManagedProperty facesManagedProperty, RuntimeContext context)
+        throws Exception {
         if (facesManagedProperty == null) {
             writer.writeXsiNil();
             return;
@@ -226,7 +226,7 @@ public class FacesManagedProperty$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesManagedProperty.class != facesManagedProperty.getClass()) {
             context.unexpectedSubclass(writer, facesManagedProperty, FacesManagedProperty.class);
             return;
@@ -236,12 +236,12 @@ public class FacesManagedProperty$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesManagedProperty.id;
+        final String idRaw = facesManagedProperty.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesManagedProperty, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -251,11 +251,11 @@ public class FacesManagedProperty$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesManagedProperty.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesManagedProperty, "descriptions", FacesManagedProperty.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -270,11 +270,11 @@ public class FacesManagedProperty$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesManagedProperty.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesManagedProperty, "displayNames", FacesManagedProperty.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -286,9 +286,9 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesManagedProperty.icon;
+        final LocalCollection<Icon> icon = facesManagedProperty.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -300,11 +300,11 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: propertyName
-        String propertyNameRaw = facesManagedProperty.propertyName;
+        final String propertyNameRaw = facesManagedProperty.propertyName;
         String propertyName = null;
         try {
             propertyName = Adapters.collapsedStringAdapterAdapter.marshal(propertyNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedProperty, "propertyName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (propertyName != null) {
@@ -316,11 +316,11 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: propertyClass
-        String propertyClassRaw = facesManagedProperty.propertyClass;
+        final String propertyClassRaw = facesManagedProperty.propertyClass;
         String propertyClass = null;
         try {
             propertyClass = Adapters.collapsedStringAdapterAdapter.marshal(propertyClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedProperty, "propertyClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (propertyClass != null) {
@@ -330,7 +330,7 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: mapEntries
-        FacesMapEntries mapEntries = facesManagedProperty.mapEntries;
+        final FacesMapEntries mapEntries = facesManagedProperty.mapEntries;
         if (mapEntries != null) {
             writer.writeStartElement(prefix, "map-entries", "http://java.sun.com/xml/ns/javaee");
             writeFacesMapEntries(writer, mapEntries, context);
@@ -338,7 +338,7 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: nullValue
-        FacesNullValue nullValue = facesManagedProperty.nullValue;
+        final FacesNullValue nullValue = facesManagedProperty.nullValue;
         if (nullValue != null) {
             writer.writeStartElement(prefix, "null-value", "http://java.sun.com/xml/ns/javaee");
             writeFacesNullValue(writer, nullValue, context);
@@ -346,11 +346,11 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: value
-        String valueRaw = facesManagedProperty.value;
+        final String valueRaw = facesManagedProperty.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedProperty, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (value != null) {
@@ -360,7 +360,7 @@ public class FacesManagedProperty$JAXB
         }
 
         // ELEMENT: listEntries
-        FacesListEntries listEntries = facesManagedProperty.listEntries;
+        final FacesListEntries listEntries = facesManagedProperty.listEntries;
         if (listEntries != null) {
             writer.writeStartElement(prefix, "list-entries", "http://java.sun.com/xml/ns/javaee");
             writeFacesListEntries(writer, listEntries, context);

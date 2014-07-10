@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for message-destination-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destination-descriptor">
  *   &lt;complexContent>
@@ -51,8 +51,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-descriptor", propOrder = {
@@ -81,11 +79,9 @@ public class MessageDestinationDescriptor {
 
     /**
      * Gets the value of the messageDestinationName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMessageDestinationName() {
         return messageDestinationName;
@@ -93,23 +89,19 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the messageDestinationName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMessageDestinationName(String value) {
+    public void setMessageDestinationName(final String value) {
         this.messageDestinationName = value;
     }
 
     /**
      * Gets the value of the destinationJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationJndiName() {
         return destinationJndiName;
@@ -117,23 +109,19 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the destinationJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationJndiName(String value) {
+    public void setDestinationJndiName(final String value) {
         this.destinationJndiName = value;
     }
 
     /**
      * Gets the value of the initialContextFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInitialContextFactory() {
         return initialContextFactory;
@@ -141,23 +129,19 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the initialContextFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInitialContextFactory(String value) {
+    public void setInitialContextFactory(final String value) {
         this.initialContextFactory = value;
     }
 
     /**
      * Gets the value of the providerUrl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getProviderUrl() {
         return providerUrl;
@@ -165,23 +149,19 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the providerUrl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setProviderUrl(String value) {
+    public void setProviderUrl(final String value) {
         this.providerUrl = value;
     }
 
     /**
      * Gets the value of the destinationResourceLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDestinationResourceLink() {
         return destinationResourceLink;
@@ -189,23 +169,19 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the destinationResourceLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDestinationResourceLink(String value) {
+    public void setDestinationResourceLink(final String value) {
         this.destinationResourceLink = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -213,13 +189,11 @@ public class MessageDestinationDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

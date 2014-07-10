@@ -23,19 +23,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for security-role-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="security-role-refType">
  *   &lt;complexContent>
@@ -50,15 +50,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-role-refType", propOrder = {
-        "descriptions",
-        "roleName",
-        "roleLink"
-        })
+    "descriptions",
+    "roleName",
+    "roleLink"
+})
 public class SecurityRoleRef {
 
 
@@ -77,11 +75,11 @@ public class SecurityRoleRef {
     public SecurityRoleRef() {
     }
 
-    public SecurityRoleRef(String roleName) {
+    public SecurityRoleRef(final String roleName) {
         this.roleName = roleName;
     }
 
-    public SecurityRoleRef(String roleName, String roleLink) {
+    public SecurityRoleRef(final String roleName, final String roleLink) {
         this.roleName = roleName;
         this.roleLink = roleLink;
     }
@@ -91,7 +89,7 @@ public class SecurityRoleRef {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -103,7 +101,7 @@ public class SecurityRoleRef {
         return roleName;
     }
 
-    public void setRoleName(String value) {
+    public void setRoleName(final String value) {
         this.roleName = value;
     }
 
@@ -111,7 +109,7 @@ public class SecurityRoleRef {
         return roleLink;
     }
 
-    public void setRoleLink(String value) {
+    public void setRoleLink(final String value) {
         this.roleLink = value;
     }
 
@@ -119,7 +117,7 @@ public class SecurityRoleRef {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

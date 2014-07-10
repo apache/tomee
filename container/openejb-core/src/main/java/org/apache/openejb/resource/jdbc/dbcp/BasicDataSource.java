@@ -39,7 +39,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-@SuppressWarnings({ "UnusedDeclaration" })
+@SuppressWarnings({"UnusedDeclaration"})
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     private static final ReentrantLock lock = new ReentrantLock();

@@ -27,19 +27,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for persistence-unit-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-unit-refType">
  *   &lt;complexContent>
@@ -55,19 +53,17 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-refType", propOrder = {
-        "descriptions",
-        "persistenceUnitRefName",
-        "persistenceUnitName",
-        "mappedName",
-        "injectionTarget",
-        //TODO lookupName not in schema ??
-        "lookupName"
-        })
+    "descriptions",
+    "persistenceUnitRefName",
+    "persistenceUnitName",
+    "mappedName",
+    "injectionTarget",
+    //TODO lookupName not in schema ??
+    "lookupName"
+})
 public class PersistenceUnitRef implements JndiReference, PersistenceRef {
 
     @XmlTransient
@@ -92,32 +88,32 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
     public PersistenceUnitRef() {
     }
 
-    public PersistenceUnitRef(String persistenceUnitRefName, String persistenceUnitName) {
+    public PersistenceUnitRef(final String persistenceUnitRefName, final String persistenceUnitName) {
         this.persistenceUnitRefName = persistenceUnitRefName;
         this.persistenceUnitName = persistenceUnitName;
     }
 
-    public PersistenceUnitRef name(String persistenceUnitRefName) {
+    public PersistenceUnitRef name(final String persistenceUnitRefName) {
         this.persistenceUnitRefName = persistenceUnitRefName;
         return this;
     }
 
-    public PersistenceUnitRef unit(String persistenceUnit) {
+    public PersistenceUnitRef unit(final String persistenceUnit) {
         this.persistenceUnitName = persistenceUnit;
         return this;
     }
 
-    public PersistenceUnitRef mappedName(String mappedName) {
+    public PersistenceUnitRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public PersistenceUnitRef lookup(String lookupName) {
+    public PersistenceUnitRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public PersistenceUnitRef injectionTarget(String className, String property) {
+    public PersistenceUnitRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.persistenceUnitRefName == null) {
@@ -127,10 +123,10 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return this;
     }
 
-    public PersistenceUnitRef injectionTarget(Class<?> clazz, String property) {
+    public PersistenceUnitRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
-    
+
     public String getName() {
         return getPersistenceUnitRefName();
     }
@@ -139,17 +135,17 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return getPersistenceUnitName();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setPersistenceUnitRefName(name);
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
     @XmlElement(name = "description", required = true)
@@ -157,7 +153,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -169,7 +165,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return persistenceUnitRefName;
     }
 
-    public void setPersistenceUnitRefName(String value) {
+    public void setPersistenceUnitRefName(final String value) {
         this.persistenceUnitRefName = value;
     }
 
@@ -177,7 +173,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return persistenceUnitName;
     }
 
-    public void setPersistenceUnitName(String value) {
+    public void setPersistenceUnitName(final String value) {
         this.persistenceUnitName = value;
     }
 
@@ -185,7 +181,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -193,7 +189,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -208,17 +204,17 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "PersistenceUnitRef{" +
-                "name='" + persistenceUnitRefName + '\'' +
-                ", unit='" + persistenceUnitName + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + persistenceUnitRefName + '\'' +
+            ", unit='" + persistenceUnitName + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

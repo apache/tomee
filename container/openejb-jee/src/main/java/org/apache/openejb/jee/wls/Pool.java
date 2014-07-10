@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for pool complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="pool">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "pool", propOrder = {
@@ -70,11 +68,9 @@ public class Pool {
 
     /**
      * Gets the value of the maxBeansInFreePool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxBeansInFreePool() {
         return maxBeansInFreePool;
@@ -82,23 +78,19 @@ public class Pool {
 
     /**
      * Sets the value of the maxBeansInFreePool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxBeansInFreePool(BigInteger value) {
+    public void setMaxBeansInFreePool(final BigInteger value) {
         this.maxBeansInFreePool = value;
     }
 
     /**
      * Gets the value of the initialBeansInFreePool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getInitialBeansInFreePool() {
         return initialBeansInFreePool;
@@ -106,23 +98,19 @@ public class Pool {
 
     /**
      * Sets the value of the initialBeansInFreePool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setInitialBeansInFreePool(BigInteger value) {
+    public void setInitialBeansInFreePool(final BigInteger value) {
         this.initialBeansInFreePool = value;
     }
 
     /**
      * Gets the value of the idleTimeoutSeconds property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getIdleTimeoutSeconds() {
         return idleTimeoutSeconds;
@@ -130,23 +118,19 @@ public class Pool {
 
     /**
      * Sets the value of the idleTimeoutSeconds property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setIdleTimeoutSeconds(BigInteger value) {
+    public void setIdleTimeoutSeconds(final BigInteger value) {
         this.idleTimeoutSeconds = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -154,13 +138,11 @@ public class Pool {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

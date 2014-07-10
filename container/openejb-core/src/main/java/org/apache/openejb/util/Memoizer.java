@@ -31,13 +31,12 @@ public class Memoizer<K, V> implements Computable<K, V> {
 
     /**
      * Constructs a new <code>Memoizer</code> with the specified cache source.
-     * 
+     *
      * @param c is the cache value source algorithm
-     * @throws NullPointerException
-     *             if c is null
+     * @throws NullPointerException if c is null
      */
     public Memoizer(final Computable<K, V> c) {
-        if(c == null) {
+        if (c == null) {
             throw new NullPointerException("Computable cache value source algorithm may not be null");
         }
         this.c = c;

@@ -24,24 +24,22 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         Defines the settings and mappings for embeddable objects. Is 
- *         allowed to be sparsely populated and used in conjunction with 
- *         the annotations. Alternatively, the metadata-complete attribute 
- *         can be used to indicate that no annotations are to be processed 
- *         in the class. If this is the case then the defaulting rules will 
- *         be recursively applied.
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface Embeddable {}
- * 
- *       
- * 
+ * Defines the settings and mappings for embeddable objects. Is
+ * allowed to be sparsely populated and used in conjunction with
+ * the annotations. Alternatively, the metadata-complete attribute
+ * can be used to indicate that no annotations are to be processed
+ * in the class. If this is the case then the defaulting rules will
+ * be recursively applied.
+ *
+ * @Target({TYPE}) @Retention(RUNTIME)
+ * public @interface Embeddable {}
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for embeddable complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="embeddable">
  *   &lt;complexContent>
@@ -57,8 +55,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embeddable", propOrder = {
@@ -78,11 +74,9 @@ public class Embeddable {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -90,23 +84,19 @@ public class Embeddable {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the attributes property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmbeddableAttributes }
-     *     
+     *
+     * @return possible object is
+     * {@link EmbeddableAttributes }
      */
     public EmbeddableAttributes getAttributes() {
         return attributes;
@@ -114,23 +104,19 @@ public class Embeddable {
 
     /**
      * Sets the value of the attributes property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmbeddableAttributes }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmbeddableAttributes }
      */
-    public void setAttributes(EmbeddableAttributes value) {
+    public void setAttributes(final EmbeddableAttributes value) {
         this.attributes = value;
     }
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -138,23 +124,19 @@ public class Embeddable {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -162,23 +144,19 @@ public class Embeddable {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the metadataComplete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isMetadataComplete() {
         return metadataComplete;
@@ -186,13 +164,11 @@ public class Embeddable {
 
     /**
      * Sets the value of the metadataComplete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 

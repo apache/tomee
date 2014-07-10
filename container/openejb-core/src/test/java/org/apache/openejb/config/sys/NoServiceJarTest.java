@@ -73,7 +73,7 @@ public class NoServiceJarTest extends TestCase {
         try {
             factory.configureService(orange, ResourceInfo.class);
             fail("OpenEJBException should have been thrown");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
@@ -90,7 +90,7 @@ public class NoServiceJarTest extends TestCase {
         try {
             factory.configureService(orange, ResourceInfo.class);
             fail("OpenEJBException should have been thrown");
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // pass
         }
     }
@@ -108,7 +108,7 @@ public class NoServiceJarTest extends TestCase {
             return red;
         }
 
-        public void setRed(int red) {
+        public void setRed(final int red) {
             this.red = red;
         }
 
@@ -116,7 +116,7 @@ public class NoServiceJarTest extends TestCase {
             return green;
         }
 
-        public void setGreen(int green) {
+        public void setGreen(final int green) {
             this.green = green;
         }
 
@@ -124,7 +124,7 @@ public class NoServiceJarTest extends TestCase {
             return blue;
         }
 
-        public void setBlue(int blue) {
+        public void setBlue(final int blue) {
             this.blue = blue;
         }
     }

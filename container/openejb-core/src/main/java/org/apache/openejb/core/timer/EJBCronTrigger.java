@@ -17,9 +17,9 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 
 import javax.ejb.ScheduleExpression;
 import java.io.Serializable;
@@ -41,15 +41,15 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class    EJBCronTrigger extends CronTriggerImpl {
+public class EJBCronTrigger extends CronTriggerImpl {
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, EJBCronTrigger.class);
 
     private static final Pattern INCREMENTS = Pattern.compile("(\\d+|\\*)/(\\d+)*");
 
     private static final Pattern LIST = Pattern.compile("(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-7]+))?(LAST)?" +
-            "(?:,(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-7]+))?(LAST)?)*");
+        "(?:,(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-7]+))?(LAST)?)*");
 
     private static final Pattern WEEKDAY = Pattern.compile("(1ST|2ND|3RD|4TH|5TH|LAST)(SUN|MON|TUE|WED|THU|FRI|SAT)");
     private static final Pattern DAYS_TO_LAST = Pattern.compile("-([0-7]+)");
@@ -85,7 +85,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
     }
 
-    private static final int[] ORDERED_CALENDAR_FIELDS = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND };
+    private static final int[] ORDERED_CALENDAR_FIELDS = {Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND};
 
     private static final Map<Integer, Integer> CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP = new LinkedHashMap<Integer, Integer>();
 
@@ -140,24 +140,21 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
 
         rawValue = expr.getYear() + DELIMITER + expr.getMonth() + DELIMITER + expr.getDayOfMonth() + DELIMITER + expr.getDayOfWeek()
-                    + DELIMITER + expr.getHour() + DELIMITER + expr.getMinute() + DELIMITER + expr.getSecond();
+            + DELIMITER + expr.getHour() + DELIMITER + expr.getMinute() + DELIMITER + expr.getSecond();
     }
 
     /**
      * Computes a set of allowed values for the given field of a calendar based
      * time expression.
      *
-     * @param field
-     *            field type from <code>java.util.Calendar</code>
-     * @param expr
-     *            a time expression
-     * @throws ParseException
-     *             when there is a syntax error in the expression, or its values
-     *             are out of range
+     * @param field field type from <code>java.util.Calendar</code>
+     * @param expr  a time expression
+     * @throws ParseException when there is a syntax error in the expression, or its values
+     *                        are out of range
      */
     protected FieldExpression parseExpression(final int field, String expr) throws ParseException {
 
-        if (expr == null || expr.isEmpty()){
+        if (expr == null || expr.isEmpty()) {
             throw new ParseException(field, expr, "expression can't be null");
         }
 
@@ -190,30 +187,30 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
 
         switch (field) {
-        case Calendar.HOUR_OF_DAY:
-        case Calendar.MINUTE:
-        case Calendar.SECOND:
-            m = INCREMENTS.matcher(expr);
-            if (m.matches()) {
-                return new IncrementExpression(m, field);
-            }
-            break;
+            case Calendar.HOUR_OF_DAY:
+            case Calendar.MINUTE:
+            case Calendar.SECOND:
+                m = INCREMENTS.matcher(expr);
+                if (m.matches()) {
+                    return new IncrementExpression(m, field);
+                }
+                break;
 
-        case Calendar.DAY_OF_MONTH:
-            if (expr.equals(LAST_IDENTIFIER)) {
-                return new DaysFromLastDayExpression();
-            }
+            case Calendar.DAY_OF_MONTH:
+                if (expr.equals(LAST_IDENTIFIER)) {
+                    return new DaysFromLastDayExpression();
+                }
 
-            m = DAYS_TO_LAST.matcher(expr);
-            if (m.matches()) {
-                return new DaysFromLastDayExpression(m);
-            }
+                m = DAYS_TO_LAST.matcher(expr);
+                if (m.matches()) {
+                    return new DaysFromLastDayExpression(m);
+                }
 
-            m = WEEKDAY.matcher(expr);
-            if (m.matches()) {
-                return new WeekdayExpression(m);
-            }
-            break;
+                m = WEEKDAY.matcher(expr);
+                if (m.matches()) {
+                    return new WeekdayExpression(m);
+                }
+                break;
         }
 
         m = LIST.matcher(expr);
@@ -223,27 +220,27 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         throw new ParseException(field, expr, "Unparseable time expression");
     }
-        
+
 
     private void validateExpression(final int field, final String expression) throws ParseException {
 
-        final Matcher rangeMatcher= RANGE.matcher(expression);
-        final Matcher incrementsMatcher= INCREMENTS.matcher(expression);
-        
+        final Matcher rangeMatcher = RANGE.matcher(expression);
+        final Matcher incrementsMatcher = INCREMENTS.matcher(expression);
+
         if (expression.length() > 2 && rangeMatcher.matches()) {
-            
-                validateSingleToken(field, rangeMatcher.group(1));
-                validateSingleToken(field, rangeMatcher.group(2));
-            
+
+            validateSingleToken(field, rangeMatcher.group(1));
+            validateSingleToken(field, rangeMatcher.group(2));
+
         } else if (expression.length() > 2 && incrementsMatcher.matches()) {
-            
+
             validateSingleToken(field, incrementsMatcher.group(1));
             validateSingleToken(field, incrementsMatcher.group(2));
-            
+
         } else {
-            
+
             validateSingleToken(field, expression);
-            
+
         }
 
     }
@@ -326,7 +323,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
 
         // Calculate time to give up scheduling
-        final Calendar stopCalendar = new  GregorianCalendar(timezone);
+        final Calendar stopCalendar = new GregorianCalendar(timezone);
         if (getStartTime() != null) {
             stopCalendar.setTime(getStartTime());
         } else {
@@ -364,7 +361,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
                 return null; // The job will never be run
             }
         }
-        
+
         return calendar.after(stopCalendar) ? calendar.getTime() : null;
 
 
@@ -372,7 +369,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
     @Override
     public Date getFireTimeAfter(final Date afterTime) {
-        log.debug("start to getFireTimeAfter:"+afterTime);
+        log.debug("start to getFireTimeAfter:" + afterTime);
         final Calendar calendar = new GregorianCalendar(timezone);
         // calendar.setLenient(false);
         calendar.setFirstDayOfWeek(Calendar.SUNDAY);
@@ -398,7 +395,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         while (currentFieldIndex <= 6 && calendar.before(stopCalendar)) {
 
-           
+
             final FieldExpression expr = expressions[currentFieldIndex];
             Integer value = expr.getNextValue(calendar);
 
@@ -419,18 +416,18 @@ public class    EJBCronTrigger extends CronTriggerImpl {
                 if (nextDayOfWeek != null) {
                     clonedCalendarDayOfWeek.set(expressions[3].field, nextDayOfWeek);
                     final int newDayOfMonth = clonedCalendarDayOfWeek.get(expressions[2].field);
-                    
+
                     if (value == null) {
                         value = newDayOfMonth;
-                    } else if (clonedCalendarDayOfWeek.get(expressions[1].field)==calendar.get(expressions[1].field)){
+                    } else if (clonedCalendarDayOfWeek.get(expressions[1].field) == calendar.get(expressions[1].field)) {
                         value = Math.min(value, newDayOfMonth);
-                    } 
-                    
+                    }
+
                     //Next valid DayOfWeek might exist in next month.
-                    if(expressions[1].getNextValue(clonedCalendarDayOfWeek)==null){
+                    if (expressions[1].getNextValue(clonedCalendarDayOfWeek) == null) {
                         return null;
                     } else if (value != calendar.get(expressions[2].field)
-                            && clonedCalendarDayOfWeek.get(expressions[1].field) > calendar.get(expressions[1].field)) {
+                        && clonedCalendarDayOfWeek.get(expressions[1].field) > calendar.get(expressions[1].field)) {
                         calendar.set(Calendar.MONTH, clonedCalendarDayOfWeek.get(Calendar.MONTH));
                     }
                 }
@@ -454,12 +451,12 @@ public class    EJBCronTrigger extends CronTriggerImpl {
                     currentFieldIndex = CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.get(maxAffectedFieldType);
                     resetFields(calendar, maxAffectedFieldType, false);
                 }
-                
+
             } else if (value != null) {
-                
+
                 final int oldValue = calendar.get(expr.field);
                 if (oldValue != value) {
-                    
+
                     if (currentFieldIndex == 3 && !(expressions[2] instanceof AsteriskExpression)) {
                         /*
                          *18.2.1.2 Expression Rules, the day has been resolved when dayOfMonth expression
@@ -482,13 +479,14 @@ public class    EJBCronTrigger extends CronTriggerImpl {
             }
         }
 
-        log.debug("end of getFireTimeAfter, result is:"+ (calendar.before(stopCalendar) ? calendar.getTime() : null));
+        log.debug("end of getFireTimeAfter, result is:" + (calendar.before(stopCalendar) ? calendar.getTime() : null));
 
         return calendar.before(stopCalendar) ? calendar.getTime() : null;
     }
 
     /**
      * Update the value of target field by one, and return the max affected field value
+     *
      * @param calendar
      * @param field
      * @return
@@ -512,6 +510,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
     /**
      * reset those sub field values, we need to configure from the end to begin, as getActualMaximun consider other fields' values
+     *
      * @param calendar
      * @param currentField
      * @param max
@@ -582,7 +581,6 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         protected static final Calendar CALENDAR = new GregorianCalendar(Locale.US); // For getting min/max field values
 
-       
 
         protected static int convertValue(final String value, final int field) throws ParseException {
             // If the value begins with a digit, parse it as a number
@@ -605,10 +603,10 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
             // Try converting a textual value to numeric
             switch (field) {
-            case Calendar.MONTH:
-                return MONTHS_MAP.get(value);
-            case Calendar.DAY_OF_WEEK:
-                return WEEKDAYS_MAP.get(value);
+                case Calendar.MONTH:
+                    return MONTHS_MAP.get(value);
+                case Calendar.DAY_OF_WEEK:
+                    return WEEKDAYS_MAP.get(value);
             }
 
             throw new ParseException(field, value, "Unparseable value");
@@ -624,7 +622,7 @@ public class    EJBCronTrigger extends CronTriggerImpl {
             return convertValue(value, field);
         }
 
-        protected boolean isValidResult(final Calendar calendar, final Integer result){
+        protected boolean isValidResult(final Calendar calendar, final Integer result) {
             return result != null && result >= calendar.getActualMinimum(field) && result <= calendar.getActualMaximum(field);
         }
 
@@ -632,24 +630,22 @@ public class    EJBCronTrigger extends CronTriggerImpl {
          * Returns the next allowed value in this calendar for the given
          * field.
          *
-         * @param calendar
-         *            a Calendar where all the more significant fields have
-         *            been filled out
+         * @param calendar a Calendar where all the more significant fields have
+         *                 been filled out
          * @return the next value allowed by this expression, or
-         *         <code>null</code> if none further allowed values are
-         *         found
+         * <code>null</code> if none further allowed values are
+         * found
          */
         public abstract Integer getNextValue(Calendar calendar);
 
         /**
          * Returns the last allowed value in this calendar for the given field.
          *
-         * @param calendar
-         *            a Calendar where all the more significant fields have
-         *            been filled out
+         * @param calendar a Calendar where all the more significant fields have
+         *                 been filled out
          * @return the last value allowed by this expression, or
-         *         <code>null</code> if none further allowed values are
-         *         found
+         * <code>null</code> if none further allowed values are
+         * found
          */
         public abstract Integer getPreviousValue(Calendar calendar);
 
@@ -663,16 +659,15 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         private String startWeekDay;
         private String endWeekDay;
-        
-        
+
+
         private WeekdayExpression startWeekdayExpr;
         private WeekdayExpression endWeekdayExpr;
-        
+
         private DaysFromLastDayExpression startDaysFromLastDayExpr;
         private DaysFromLastDayExpression endDaysFromLastDayExpr;
-        
-        
-        
+
+
         //Indicate if the range expression is for "1st mon - 2nd fri" style range of days of month.
         private boolean isDynamicRangeExpression;
 
@@ -689,61 +684,61 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
 
         public RangeExpression(final Matcher m, final int field) throws ParseException {
-            
+
             super(field);
-            
+
             startWeekDay = m.group(1);
             endWeekDay = m.group(2);
-            
-            
+
+
             if (field == Calendar.DAY_OF_MONTH) {
-                
+
                 final Matcher startWeekDayMatcher = WEEKDAY.matcher(m.group(1));
                 final Matcher endWeekDayMatcher = WEEKDAY.matcher(m.group(2));
-                
+
                 final Matcher startDaysFromLastDayMatcher = DAYS_TO_LAST.matcher(m.group(1));
                 final Matcher endDaysFromLastDayMatcher = DAYS_TO_LAST.matcher(m.group(2));
-                
+
                 if (startWeekDayMatcher.matches()) {
                     startWeekdayExpr = new WeekdayExpression(startWeekDayMatcher);
 
-                } 
-                
+                }
+
                 if (endWeekDayMatcher.matches()) {
                     endWeekdayExpr = new WeekdayExpression(endWeekDayMatcher);
-                } 
-                
+                }
+
                 if (startDaysFromLastDayMatcher.matches()) {
                     startDaysFromLastDayExpr = new DaysFromLastDayExpression(startDaysFromLastDayMatcher);
-                } 
-                
+                }
+
                 if (endDaysFromLastDayMatcher.matches()) {
                     endDaysFromLastDayExpr = new DaysFromLastDayExpression(endDaysFromLastDayMatcher);
-                } 
-                
+                }
+
 
                 if (startWeekdayExpr != null || endWeekdayExpr != null || startDaysFromLastDayExpr != null
-                        || endDaysFromLastDayExpr != null || startWeekDay.equals(LAST_IDENTIFIER)|| endWeekDay.equals(LAST_IDENTIFIER)) {
-                    
+                    || endDaysFromLastDayExpr != null || startWeekDay.equals(LAST_IDENTIFIER) || endWeekDay.equals(LAST_IDENTIFIER)) {
+
                     isDynamicRangeExpression = true;
                     return;
                 }
-                
+
             }
-            
+
             //not a dynamic range expression, go ahead to init start and end values without a calendar
             initStartEndValues(null);
-           
-            
-         }
-        
-        private void initStartEndValues(final Calendar calendar) throws ParseException{
-            
+
+
+        }
+
+        private void initStartEndValues(final Calendar calendar) throws ParseException {
+
             int beginValue;
             int endValue;
-            
-            if(isDynamicRangeExpression){
-                
+
+            if (isDynamicRangeExpression) {
+
                 if (startWeekDay.equals(LAST_IDENTIFIER)) {
                     beginValue = calendar.getActualMaximum(field);
                 } else if (startWeekdayExpr != null) {
@@ -765,10 +760,10 @@ public class    EJBCronTrigger extends CronTriggerImpl {
                 } else {
                     endValue = convertValue(endWeekDay);
                 }
-                
+
             } else {
-                beginValue=convertValue(startWeekDay);
-                endValue=convertValue(endWeekDay);
+                beginValue = convertValue(startWeekDay);
+                endValue = convertValue(endWeekDay);
             }
             
             
@@ -779,31 +774,29 @@ public class    EJBCronTrigger extends CronTriggerImpl {
              * 
              */
             if (field == Calendar.DAY_OF_WEEK) {
-                
+
                 if (beginValue == 8 && endValue == 1 || endValue == 8 && beginValue == 1) {
                     beginValue = 1;
                     endValue = 7;
                 } else {
-                    
-                    
+
+
                     if (beginValue == 8) {
                         beginValue = 1;
                     }
 
                     if (endValue == 8) {
                         endValue = 1;
-                    }           
+                    }
                 }
             }
-            
-            
-            
-            
+
+
             // Try converting a textual value to numeric
             if (endWeekDay.equals(LAST_IDENTIFIER)) {
                 start = -1;
                 end = -1;
-                start2= beginValue;
+                start2 = beginValue;
             } else {
                 if (beginValue > endValue) {
                     start = CALENDAR.getMinimum(field);
@@ -819,39 +812,39 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         @Override
         public Integer getNextValue(final Calendar calendar) {
-            
-            if (isDynamicRangeExpression){
-                
+
+            if (isDynamicRangeExpression) {
+
                 final Integer nextStartWeekday = startWeekdayExpr == null ? start : startWeekdayExpr
-                        .getWeekdayInMonth(calendar);
-                
+                    .getWeekdayInMonth(calendar);
+
                 final Integer nextendWeekday = endWeekdayExpr == null ? end : endWeekdayExpr.
-                        getWeekdayInMonth(calendar);
-                
+                    getWeekdayInMonth(calendar);
+
                 if (nextStartWeekday == null || nextendWeekday == null) {
                     return null;
                 }
-                
+
                 try {
                     initStartEndValues(calendar);
                 } catch (final ParseException e) {
                     return null;
                 }
             }
-            
-            
+
+
             final int currValue = calendar.get(field);
             if (start2 != -1) {
                 if (currValue >= start2) {
-                    return isValidResult(calendar,currValue)?currValue:null;
+                    return isValidResult(calendar, currValue) ? currValue : null;
                 } else if (currValue > end) {
-                    return isValidResult(calendar,start2)?start2:null;
+                    return isValidResult(calendar, start2) ? start2 : null;
                 }
             }
             if (currValue <= start) {
-                return isValidResult(calendar,start)?start:null;
+                return isValidResult(calendar, start) ? start : null;
             } else if (currValue <= end) {
-                return isValidResult(calendar,currValue)?currValue:null;
+                return isValidResult(calendar, currValue) ? currValue : null;
             } else {
                 return null;
             }
@@ -859,44 +852,44 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         @Override
         public Integer getPreviousValue(final Calendar calendar) {
-            
-            if (isDynamicRangeExpression){
+
+            if (isDynamicRangeExpression) {
                 try {
                     initStartEndValues(calendar);
                 } catch (final ParseException e) {
                     return null;
                 }
-             }
-            
-            
+            }
+
+
             final int currValue = calendar.get(field);
             if (start2 != -1) {
                 if (currValue >= start2) {
-                    return isValidResult(calendar,currValue)?currValue:null;
+                    return isValidResult(calendar, currValue) ? currValue : null;
                 }
             }
             if (currValue <= start) {
                 return null;
             } else if (currValue <= end) {
-                return isValidResult(calendar,currValue)?currValue:null;
+                return isValidResult(calendar, currValue) ? currValue : null;
             } else {
-                return isValidResult(calendar,end)?end:null;
+                return isValidResult(calendar, end) ? end : null;
             }
         }
 
-       public List<Integer> getAllValuesInRange(final Calendar calendar){
-           
-           final List<Integer> values=new ArrayList<Integer>();
-           
-           if (isDynamicRangeExpression){
-               try {
-                   initStartEndValues(calendar);
-               } catch (final ParseException e) {
-                  return values;
-               }
+        public List<Integer> getAllValuesInRange(final Calendar calendar) {
+
+            final List<Integer> values = new ArrayList<Integer>();
+
+            if (isDynamicRangeExpression) {
+                try {
+                    initStartEndValues(calendar);
+                } catch (final ParseException e) {
+                    return values;
+                }
             }
-           
-            if (start2==-1) {
+
+            if (start2 == -1) {
                 for (int i = start; i <= end; i++) {
                     values.add(i);
                 }
@@ -909,11 +902,12 @@ public class    EJBCronTrigger extends CronTriggerImpl {
                     values.add(i);
                 }
             }
-            
+
             return values;
-       }
-        
+        }
+
     }
+
     /*
      * Just find that it is hard to keep those ranges in the list are not overlapped.
      * The easy way is to list all the values, also we keep a range expression if user defines a LAST expression, e.g. 12-LAST
@@ -926,7 +920,8 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         private final List<WeekdayExpression> weekDayExpressions = new ArrayList<WeekdayExpression>();
 
-        private final List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<DaysFromLastDayExpression>();;
+        private final List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<DaysFromLastDayExpression>();
+        ;
 
         public ListExpression(final Matcher m, final int field) throws ParseException {
             super(field);
@@ -934,99 +929,99 @@ public class    EJBCronTrigger extends CronTriggerImpl {
         }
 
         private void initialize(final Matcher m) throws ParseException {
-            
+
             for (final String value : m.group().split("[,]")) {
-                
+
                 final Matcher rangeMatcher = RANGE.matcher(value);
                 final Matcher weekDayMatcher = WEEKDAY.matcher(value);
                 final Matcher daysToLastMatcher = DAYS_TO_LAST.matcher(value);
-                
+
                 if (value.equals(LAST_IDENTIFIER)) {
                     daysFromLastDayExpressions.add(new DaysFromLastDayExpression());
                     continue;
-                } else if(daysToLastMatcher.matches()){
+                } else if (daysToLastMatcher.matches()) {
                     daysFromLastDayExpressions.add(new DaysFromLastDayExpression(daysToLastMatcher));
                     continue;
-                } else if (weekDayMatcher.matches()){
+                } else if (weekDayMatcher.matches()) {
                     weekDayExpressions.add(new WeekdayExpression(weekDayMatcher));
                     continue;
                 } else if (rangeMatcher.matches()) {
-                    
-                    final RangeExpression rangeExpression= new RangeExpression(rangeMatcher,field);
-                    
-                    if (rangeExpression.isDynamicRangeExpression()){
-                        weekDayRangeExpressions.add(new RangeExpression(rangeMatcher,field));
+
+                    final RangeExpression rangeExpression = new RangeExpression(rangeMatcher, field);
+
+                    if (rangeExpression.isDynamicRangeExpression()) {
+                        weekDayRangeExpressions.add(new RangeExpression(rangeMatcher, field));
                         continue;
                     }
-                    
+
                     values.addAll(rangeExpression.getAllValuesInRange(null));
-                    
+
                 } else {
                     int individualValue = convertValue(value);
-                    
-                    if(field == Calendar.DAY_OF_WEEK && individualValue == 8){
-                        individualValue = 1;  
+
+                    if (field == Calendar.DAY_OF_WEEK && individualValue == 8) {
+                        individualValue = 1;
                     }
-                    
+
                     values.add(individualValue);
                 }
             }
-            
+
         }
-        
-        private TreeSet<Integer> getNewValuesFromDynamicExpressions(final Calendar calendar){
-            
+
+        private TreeSet<Integer> getNewValuesFromDynamicExpressions(final Calendar calendar) {
+
             final TreeSet<Integer> newValues = new TreeSet<Integer>();
 
-                newValues.addAll(values);
-                
-                for (final RangeExpression weekDayRangeExpression : weekDayRangeExpressions) {
-                    
-                        newValues.addAll(weekDayRangeExpression.getAllValuesInRange(calendar));
+            newValues.addAll(values);
+
+            for (final RangeExpression weekDayRangeExpression : weekDayRangeExpressions) {
+
+                newValues.addAll(weekDayRangeExpression.getAllValuesInRange(calendar));
+            }
+
+            for (final WeekdayExpression weekdayExpression : weekDayExpressions) {
+                final Integer value = weekdayExpression.getNextValue(calendar);
+                if (value != null) {
+                    newValues.add(value);
                 }
-                
-                for (final WeekdayExpression weekdayExpression : weekDayExpressions) {
-                    final Integer value=weekdayExpression.getNextValue(calendar);
-                    if (value != null) {
-                        newValues.add(value);
-                    }
+            }
+
+            for (final DaysFromLastDayExpression daysFromLastDayExpression : daysFromLastDayExpressions) {
+                final Integer value = daysFromLastDayExpression.getNextValue(calendar);
+                if (value != null) {
+                    newValues.add(value);
                 }
-                
-                for (final DaysFromLastDayExpression daysFromLastDayExpression : daysFromLastDayExpressions) {
-                    final Integer value=daysFromLastDayExpression.getNextValue(calendar);
-                    if (value != null) {
-                        newValues.add(value);
-                    }
-                }
-                
+            }
+
 
             return newValues;
-            
+
         }
 
         @Override
         public Integer getNextValue(final Calendar calendar) {
 
-            final TreeSet<Integer> newValues= getNewValuesFromDynamicExpressions(calendar);
+            final TreeSet<Integer> newValues = getNewValuesFromDynamicExpressions(calendar);
 
             final int currValue = calendar.get(field);
 
             final Integer result = newValues.ceiling(currValue);
 
-            return isValidResult(calendar, result)? result : null;
+            return isValidResult(calendar, result) ? result : null;
 
         }
 
         @Override
         public Integer getPreviousValue(final Calendar calendar) {
 
-            final TreeSet<Integer> newValues= getNewValuesFromDynamicExpressions(calendar);
+            final TreeSet<Integer> newValues = getNewValuesFromDynamicExpressions(calendar);
 
             final int currValue = calendar.get(field);
 
-            final Integer result =newValues.floor(currValue);
-            
-            return isValidResult(calendar, result)? result : null;
+            final Integer result = newValues.floor(currValue);
+
+            return isValidResult(calendar, result) ? result : null;
         }
     }
 
@@ -1114,11 +1109,11 @@ public class    EJBCronTrigger extends CronTriggerImpl {
             final Integer nthDay = getWeekdayInMonth(calendar);
             final Integer result = nthDay != null && nthDay >= currDay ? nthDay : null;
 
-            return isValidResult(calendar, result)? result : null;
+            return isValidResult(calendar, result) ? result : null;
         }
-        
-        public Integer getWeekdayInMonth(final Calendar calendar){
-            
+
+        public Integer getWeekdayInMonth(final Calendar calendar) {
+
             final int currDay = calendar.get(Calendar.DAY_OF_MONTH);
             final int currWeekday = calendar.get(Calendar.DAY_OF_WEEK);
             final int maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -1130,11 +1125,11 @@ public class    EJBCronTrigger extends CronTriggerImpl {
             firstWeekday = firstWeekday == 0 ? 7 : firstWeekday;
 
             // Then calculate how many such weekdays there is in this month
-            final int numWeekdays = firstWeekday>=0?(maxDay - firstWeekday) / 7 +1:(maxDay - firstWeekday) / 7;
+            final int numWeekdays = firstWeekday >= 0 ? (maxDay - firstWeekday) / 7 + 1 : (maxDay - firstWeekday) / 7;
 
             // Then calculate the Nth of those days, or the last one if ordinal is null
             final int multiplier = ordinal != null ? ordinal : numWeekdays;
-            final int nthDay = firstWeekday>=0? firstWeekday + (multiplier-1) * 7 : firstWeekday + multiplier * 7;
+            final int nthDay = firstWeekday >= 0 ? firstWeekday + (multiplier - 1) * 7 : firstWeekday + multiplier * 7;
 
             // Return the calculated day, or null if the day is out of range
             return nthDay <= maxDay ? nthDay : null;
@@ -1142,12 +1137,12 @@ public class    EJBCronTrigger extends CronTriggerImpl {
 
         @Override
         public Integer getPreviousValue(final Calendar calendar) {
-            
-              final int currDay = calendar.get(Calendar.DAY_OF_MONTH);
-              final Integer nthDay = getWeekdayInMonth(calendar);
-              final Integer result = nthDay != null && nthDay <= currDay ? nthDay : null;
-              
-              return isValidResult(calendar, result)? result : null;
+
+            final int currDay = calendar.get(Calendar.DAY_OF_MONTH);
+            final Integer nthDay = getWeekdayInMonth(calendar);
+            final Integer result = nthDay != null && nthDay <= currDay ? nthDay : null;
+
+            return isValidResult(calendar, result) ? result : null;
         }
 
     }
@@ -1172,27 +1167,27 @@ public class    EJBCronTrigger extends CronTriggerImpl {
             final int maxValue = calendar.getActualMaximum(field);
             final int value = maxValue - days;
             final Integer result = currValue <= value ? value : null;
-            return isValidResult(calendar, result)? result : null;
+            return isValidResult(calendar, result) ? result : null;
         }
 
         @Override
         public Integer getPreviousValue(final Calendar calendar) {
             final int maxValue = calendar.getActualMaximum(field);
             final Integer result = maxValue - days;
-            return isValidResult(calendar, result)? result : null;
+            return isValidResult(calendar, result) ? result : null;
         }
 
     }
 
     private static class AsteriskExpression extends FieldExpression {
 
-        public AsteriskExpression(final int field){
+        public AsteriskExpression(final int field) {
             super(field);
         }
 
         @Override
         public Integer getNextValue(final Calendar calendar) {
-           return calendar.get(field);
+            return calendar.get(field);
         }
 
         @Override

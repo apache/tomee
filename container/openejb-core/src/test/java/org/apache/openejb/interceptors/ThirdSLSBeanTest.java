@@ -42,11 +42,11 @@ public class ThirdSLSBeanTest extends TestCase {
 
     @Module
     public EjbJar module() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(ThirdSLSBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(ThirdSLSBean.class));
 
-        AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
+        final AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
 
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorOne.class)));
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorTwo.class)));
@@ -59,7 +59,7 @@ public class ThirdSLSBeanTest extends TestCase {
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         assert bean != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("ClassLevelInterceptorOne");
         expected.add("ClassLevelInterceptorTwo");
         expected.add("MethodLevelInterceptorOne");
@@ -67,7 +67,7 @@ public class ThirdSLSBeanTest extends TestCase {
         expected.add("ThirdSLSBean");
         expected.add("businessMethod");
 
-        List<String> actual = bean.businessMethod();
+        final List<String> actual = bean.businessMethod();
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 
@@ -75,13 +75,13 @@ public class ThirdSLSBeanTest extends TestCase {
     public void testMethodWithDefaultAndClassInterceptorsExcluded() throws Exception {
         assert bean != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("MethodLevelInterceptorOne");
         expected.add("MethodLevelInterceptorTwo");
         expected.add("ThirdSLSBean");
         expected.add("anotherBusinessMethod");
 
-        List<String> actual = bean.anotherBusinessMethod();
+        final List<String> actual = bean.anotherBusinessMethod();
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }

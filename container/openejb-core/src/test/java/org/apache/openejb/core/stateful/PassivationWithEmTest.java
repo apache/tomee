@@ -42,8 +42,8 @@ public class PassivationWithEmTest {
     @Test
     public void passivationTest() throws Exception {
         final PassivationWithEm ejb = (PassivationWithEm) SystemInstance.get()
-                .getComponent(ContainerSystem.class).getJNDIContext()
-                .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEm");
+            .getComponent(ContainerSystem.class).getJNDIContext()
+            .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEm");
         for (int i = 0; i < 5; i++) {
             Thread.sleep(400); // wait for passivation
             ejb.nothing();
@@ -53,8 +53,8 @@ public class PassivationWithEmTest {
     @Test
     public void passivationExtendedTest() throws Exception {
         final PassivationWithEmExtended ejb = (PassivationWithEmExtended) SystemInstance.get()
-                .getComponent(ContainerSystem.class).getJNDIContext()
-                .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEmExtended");
+            .getComponent(ContainerSystem.class).getJNDIContext()
+            .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEmExtended");
         for (int i = 0; i < 5; i++) {
             Thread.sleep(400); // wait for passivation
             ejb.nothing();
@@ -71,14 +71,14 @@ public class PassivationWithEmTest {
 
     @Module
     public Persistence persistence() throws Exception {
-        PersistenceUnit unit = new PersistenceUnit("passivation-unit");
+        final PersistenceUnit unit = new PersistenceUnit("passivation-unit");
         unit.addClass(MyEntity.class);
         unit.setTransactionType(TransactionType.JTA);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unit.setExcludeUnlistedClasses(true);
 
-        Persistence persistence = new org.apache.openejb.jee.jpa.unit.Persistence(unit);
+        final Persistence persistence = new org.apache.openejb.jee.jpa.unit.Persistence(unit);
         persistence.setVersion("2.0");
         return persistence;
     }
@@ -107,7 +107,7 @@ public class PassivationWithEmTest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
     }

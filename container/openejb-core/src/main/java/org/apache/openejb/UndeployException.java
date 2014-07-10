@@ -56,7 +56,7 @@ public class UndeployException extends OpenEJBException {
             throwable.printStackTrace(s);
         }
     }
-    
+
     public void printStackTrace(final PrintWriter s) {
         super.printStackTrace(s);
 

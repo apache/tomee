@@ -30,7 +30,7 @@ public class StatelessHomeHandleTests extends BasicStatelessTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
+        final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
         ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
@@ -40,9 +40,9 @@ public class StatelessHomeHandleTests extends BasicStatelessTestClient{
     //
     public void test01_getEJBHome(){
         try{
-            EJBHome home = ejbHomeHandle.getEJBHome();
+            final EJBHome home = ejbHomeHandle.getEJBHome();
             assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

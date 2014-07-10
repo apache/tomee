@@ -82,32 +82,32 @@ public class GeronimoTransactionManagerFactory {
         TransactionLog txLog = null;
         if (txRecovery) {
             SystemInstance.get().setComponent(XAResourceWrapper.class, new GeronimoXAResourceWrapper());
-            
-            xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID: tmId);
+
+            xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID : tmId);
             txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
-                    bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
-                    checksumEnabled,
-                    adler32Checksum,
-                    flushSleepTimeMilliseconds,
-                    logFileDir,
-                    logFileExt,
-                    logFileName,
-                    maxBlocksPerFile,
-                    maxBuffers,
-                    maxLogFiles,
-                    minBuffers,
-                    threadsWaitingForceThreshold,
-                    xidFactory,
-                    SystemInstance.get().getBase().getDirectory("."));
-            ((HOWLLog)txLog).doStart();
+                bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
+                checksumEnabled,
+                adler32Checksum,
+                flushSleepTimeMilliseconds,
+                logFileDir,
+                logFileExt,
+                logFileName,
+                maxBlocksPerFile,
+                maxBuffers,
+                maxLogFiles,
+                minBuffers,
+                threadsWaitingForceThreshold,
+                xidFactory,
+                SystemInstance.get().getBase().getDirectory("."));
+            ((HOWLLog) txLog).doStart();
         }
 
         final GeronimoTransactionManager geronimoTransactionManager = new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-                .set("j2eeType", "TransactionManager");
+            .set("j2eeType", "TransactionManager");
         LocalMBeanServer.registerDynamicWrapperSilently(
-                new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
-                jmxName.build());
+            new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
+            jmxName.build());
 
         return geronimoTransactionManager;
     }

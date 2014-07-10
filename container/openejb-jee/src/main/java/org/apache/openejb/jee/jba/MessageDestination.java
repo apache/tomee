@@ -39,11 +39,9 @@ public class MessageDestination {
 
     /**
      * Gets the value of the messageDestinationName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMessageDestinationName() {
         return messageDestinationName;
@@ -51,23 +49,19 @@ public class MessageDestination {
 
     /**
      * Sets the value of the messageDestinationName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMessageDestinationName(String value) {
+    public void setMessageDestinationName(final String value) {
         this.messageDestinationName = value;
     }
 
     /**
      * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JndiName }
-     *     
+     *
+     * @return possible object is
+     * {@link JndiName }
      */
     public JndiName getJndiName() {
         return jndiName;
@@ -75,13 +69,11 @@ public class MessageDestination {
 
     /**
      * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JndiName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JndiName }
      */
-    public void setJndiName(JndiName value) {
+    public void setJndiName(final JndiName value) {
         this.jndiName = value;
     }
 

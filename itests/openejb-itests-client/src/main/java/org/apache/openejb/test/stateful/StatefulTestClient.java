@@ -26,7 +26,7 @@ import org.apache.openejb.test.TestManager;
 
 public abstract class StatefulTestClient extends TestClient {
     
-    public StatefulTestClient(String name){
+    public StatefulTestClient(final String name){
         super("Stateful."+name);
     }
     
@@ -36,7 +36,7 @@ public abstract class StatefulTestClient extends TestClient {
      */
     protected void setUp() throws Exception {
         
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_test00_CLIENT");
         

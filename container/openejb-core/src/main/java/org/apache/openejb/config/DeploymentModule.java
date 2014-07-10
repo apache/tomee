@@ -37,7 +37,7 @@ public interface DeploymentModule {
     String OPENEJB_MODULENAME_USE_HASH = "openejb.modulename.useHash";
 
     String getModuleId();
-    
+
     URI getModuleUri();
 
     ClassLoader getClassLoader();
@@ -51,9 +51,9 @@ public interface DeploymentModule {
     ValidationContext getValidation();
 
     Set<String> getWatchedResources();
-    
+
     boolean isStandaloneModule();
-    
+
     void setStandaloneModule(boolean isStandalone);
 
     Properties getProperties();

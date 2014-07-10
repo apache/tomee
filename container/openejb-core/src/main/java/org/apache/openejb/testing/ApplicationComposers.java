@@ -109,12 +109,12 @@ public final class ApplicationComposers {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private static final Class[] MODULE_TYPES = {IAnnotationFinder.class, ClassesArchive.class,
-                                                 AppModule.class, WebModule.class, EjbModule.class,
-                                                 Application.class,
-                                                 WebApp.class, EjbJar.class, EnterpriseBean.class,
-                                                 Persistence.class, PersistenceUnit.class,
-                                                 Connector.class, Beans.class,
-                                                 Class[].class
+        AppModule.class, WebModule.class, EjbModule.class,
+        Application.class,
+        WebApp.class, EjbJar.class, EnterpriseBean.class,
+        Persistence.class, PersistenceUnit.class,
+        Connector.class, Beans.class,
+        Class[].class
     };
 
     static {
@@ -221,8 +221,8 @@ public final class ApplicationComposers {
         for (final Method method : classes) {
             final Class<?> returnType = method.getReturnType();
             if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
-                    && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
-                    && !EnterpriseBean.class.isAssignableFrom(returnType)) {
+                && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
+                && !EnterpriseBean.class.isAssignableFrom(returnType)) {
                 errors.add(new Exception("@Classes can't be used on a method returning " + returnType));
             }
         }
@@ -441,7 +441,7 @@ public final class ApplicationComposers {
                     cdiDecorators = classesAnnotation.cdiDecorators();
                     cdiAlternatives = classesAnnotation.cdiAlternatives();
                     cdi = classesAnnotation.cdi() || cdiAlternatives.length > 0
-                            || cdiDecorators.length > 0 || cdiInterceptors.length > 0;
+                        || cdiDecorators.length > 0 || cdiInterceptors.length > 0;
                 } else if (classesAnnotationOld != null) {
                     classes = classesAnnotationOld.value();
                 }
@@ -740,7 +740,9 @@ public final class ApplicationComposers {
                 field.set(inputTestInstance, appModule);
             } else if (Context.class.isAssignableFrom(type)) {
                 field.setAccessible(true);
-                field.set(inputTestInstance, new InitialContext(new Properties() {{ setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName()); }}));
+                field.set(inputTestInstance, new InitialContext(new Properties() {{
+                    setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+                }}));
             } else {
                 throw new IllegalArgumentException("can't find value for type " + type.getName());
             }
@@ -906,7 +908,7 @@ public final class ApplicationComposers {
             serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.FilteredServiceManager");
         } catch (final ClassNotFoundException e) {
             final String msg = "Services filtering requires class 'org.apache.openejb.server.FilteredServiceManager' to be available.  " +
-                               "Make sure you have the openejb-server-*.jar in your classpath.";
+                "Make sure you have the openejb-server-*.jar in your classpath.";
             throw new IllegalStateException(msg, e);
         }
 

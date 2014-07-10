@@ -65,7 +65,7 @@ public class InjectionTest extends TestCase {
         private Blue blue;
 
         @Inject
-        public void setBlue(Blue blue) {
+        public void setBlue(final Blue blue) {
             this.blue = blue;
         }
 
@@ -78,8 +78,7 @@ public class InjectionTest extends TestCase {
 
         private Green green;
 
-        public Blue()
-        {
+        public Blue() {
             "".length();
         }
 
@@ -88,15 +87,14 @@ public class InjectionTest extends TestCase {
         }
 
         @Inject
-        public void setGreen(Green green) {
+        public void setGreen(final Green green) {
             this.green = green;
         }
     }
 
     public static class Green {
 
-        public Green()
-        {
+        public Green() {
             "".length();
         }
     }

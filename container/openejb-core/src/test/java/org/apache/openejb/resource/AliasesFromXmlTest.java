@@ -33,9 +33,9 @@ public class AliasesFromXmlTest {
     @Test
     public void ensureAliasesAreParsed() throws IOException, SAXException, ParserConfigurationException {
         final String xml = "<?xml version=\"1.0\"?>" +
-                "<openejb>" +
-                "   <Resource id=\"foo\" aliases=\"bar\" type=\"DataSource\" />" +
-                "</openejb>";
+            "<openejb>" +
+            "   <Resource id=\"foo\" aliases=\"bar\" type=\"DataSource\" />" +
+            "</openejb>";
 
         final Openejb openejb = JaxbOpenejb.readConfig(new InputSource(new ByteArrayInputStream(xml.getBytes())));
         assertEquals(1, openejb.getResource().size());

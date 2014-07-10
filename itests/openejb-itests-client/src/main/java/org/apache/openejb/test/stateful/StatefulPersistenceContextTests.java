@@ -45,7 +45,7 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
         try {
             /*[1] Drop database table */
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e){
             throw e;
         } finally {
             super.tearDown();
@@ -55,9 +55,9 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
     public void test01_persistenceContext() {
         try{
             ejbObject.testPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -65,9 +65,9 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
     public void test02_extendedPersistenceContext() {
         try{
             ejbObject.testExtendedPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -75,9 +75,9 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
     public void test03_propagatedPersistenceContext() {
         try{
             ejbObject.testPropagatedPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
@@ -85,9 +85,9 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
     public void test04_propogation() {
         try{
             ejbObject.testPropgation();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e){
             throw e.error;
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

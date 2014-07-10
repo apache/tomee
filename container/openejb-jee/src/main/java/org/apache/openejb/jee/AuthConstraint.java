@@ -31,11 +31,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for auth-constraintType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="auth-constraintType">
  *   &lt;complexContent>
@@ -49,14 +49,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "auth-constraintType", propOrder = {
-        "descriptions",
-        "roleName"
+    "descriptions",
+    "roleName"
 })
 public class AuthConstraint {
     @XmlTransient
@@ -73,7 +71,7 @@ public class AuthConstraint {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -92,7 +90,7 @@ public class AuthConstraint {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

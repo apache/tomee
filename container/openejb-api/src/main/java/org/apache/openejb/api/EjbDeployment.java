@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.api;
 
-import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation that matches the <ejb-deployment> element in the openejb-jar.xml file
@@ -30,12 +30,14 @@ public @interface EjbDeployment {
 
     /**
      * The Deployment ID for this bean
+     *
      * @return
      */
     java.lang.String id() default "";
 
     /**
      * The Container ID where the bean should be deployed
+     *
      * @return
      */
     java.lang.String container() default "";

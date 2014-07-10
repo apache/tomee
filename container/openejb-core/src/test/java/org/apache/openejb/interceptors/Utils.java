@@ -25,10 +25,10 @@ import java.util.List;
  */
 public class Utils {
 
-    public static List<String> addClassSimpleName(InvocationContext ic, String classSimpleName) throws Exception {
-        List<String> list = new ArrayList<String>();
+    public static List<String> addClassSimpleName(final InvocationContext ic, final String classSimpleName) throws Exception {
+        final List<String> list = new ArrayList<String>();
         list.add(classSimpleName);
-        List<String> listOfStrings = (List<String>) ic.proceed();
+        final List<String> listOfStrings = (List<String>) ic.proceed();
         if (listOfStrings != null) {
             list.addAll(listOfStrings);
         }

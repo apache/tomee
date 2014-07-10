@@ -31,16 +31,16 @@ public class FilteredTestSuite extends TestSuite {
         return filter(super.getTests());
     }
 
-    public static List<Test> filter(List<Test> tests) {
-        String itest = System.getProperty("itest");
+    public static List<Test> filter(final List<Test> tests) {
+        final String itest = System.getProperty("itest");
 
         if (itest == null) {
             return tests;
         }
 
-        ArrayList<Test> filtered = new ArrayList<Test>();
-        for (Test test : tests) {
-            String simpleName = test.getClass().getSimpleName();
+        final ArrayList<Test> filtered = new ArrayList<Test>();
+        for (final Test test : tests) {
+            final String simpleName = test.getClass().getSimpleName();
             if (simpleName.matches(itest)){
                 filtered.add(test);
             }

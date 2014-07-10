@@ -498,7 +498,7 @@ public class DeploymentsElementTest extends Assert {
     public void invalidDir_notReadable() throws Exception {
 
         if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")
-                && !"root".equals(System.getProperty("user.name", "openejb"))) {
+            && !"root".equals(System.getProperty("user.name", "openejb"))) {
 
             //File.setReadable(false) does nothing on win platforms
 
@@ -556,7 +556,7 @@ public class DeploymentsElementTest extends Assert {
     public void invalidFile_notReadable() throws Exception {
 
         if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")
-                && !"root".equals(System.getProperty("user.name", "openejb"))) {
+            && !"root".equals(System.getProperty("user.name", "openejb"))) {
 
             //File.setReadable(false) does nothing on win platforms
 
@@ -638,7 +638,7 @@ public class DeploymentsElementTest extends Assert {
         public OpenEjbConfiguration init() throws Exception {
             try {
                 IO.writeString(configFile, JaxbOpenejb.marshal(Openejb.class, openejb));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
 

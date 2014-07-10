@@ -24,16 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
- * 
- *       
- * 
+ * public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for cascade-type complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="cascade-type">
  *   &lt;complexContent>
@@ -50,8 +48,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cascade-type", propOrder = {
@@ -79,11 +75,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeAll property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadeAll() {
         return cascadeAll != null;
@@ -91,23 +85,19 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeAll property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadeAll(boolean value) {
+    public void setCascadeAll(final boolean value) {
         this.cascadeAll = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the cascadePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadePersist() {
         return cascadePersist != null;
@@ -115,23 +105,19 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadePersist(boolean value) {
+    public void setCascadePersist(final boolean value) {
         this.cascadePersist = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the cascadeMerge property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadeMerge() {
         return cascadeMerge != null;
@@ -139,23 +125,19 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeMerge property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadeMerge(boolean value) {
+    public void setCascadeMerge(final boolean value) {
         this.cascadeMerge = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the cascadeRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadeRemove() {
         return cascadeRemove != null;
@@ -163,23 +145,19 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadeRemove(boolean value) {
+    public void setCascadeRemove(final boolean value) {
         this.cascadeRemove = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the cascadeRefresh property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadeRefresh() {
         return cascadeRefresh != null;
@@ -187,23 +165,19 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeRefresh property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadeRefresh(boolean value) {
+    public void setCascadeRefresh(final boolean value) {
         this.cascadeRefresh = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the cascadeDetach property.
      *
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadeDetach() {
         return cascadeDetach != null;
@@ -212,12 +186,10 @@ public class CascadeType {
     /**
      * Sets the value of the cascadeDetach property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadeDetach(boolean value) {
+    public void setCascadeDetach(final boolean value) {
         this.cascadeDetach = value ? new EmptyType() : null;
     }
 }

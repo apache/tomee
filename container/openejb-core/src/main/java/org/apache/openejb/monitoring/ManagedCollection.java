@@ -26,7 +26,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface ManagedCollection {
     String description() default "";
+
     String key() default "";
+
     boolean append() default false;
+
     Class<?> type();
 }

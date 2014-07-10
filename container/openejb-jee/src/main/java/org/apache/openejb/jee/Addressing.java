@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for addressingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="addressingType">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +58,7 @@ public class Addressing {
         return enabled;
     }
 
-    public void setEnabled(Boolean value) {
+    public void setEnabled(final Boolean value) {
         this.enabled = value;
     }
 
@@ -68,7 +66,7 @@ public class Addressing {
         return required;
     }
 
-    public void setRequired(Boolean value) {
+    public void setRequired(final Boolean value) {
         this.required = value;
     }
 
@@ -76,7 +74,7 @@ public class Addressing {
         return responses;
     }
 
-    public void setResponses(AddressingResponses value) {
+    public void setResponses(final AddressingResponses value) {
         this.responses = value;
     }
 

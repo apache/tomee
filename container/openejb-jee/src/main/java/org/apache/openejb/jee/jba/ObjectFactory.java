@@ -21,18 +21,17 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.apache.openejb.jee.jba package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.apache.openejb.jee.jba package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -40,14 +39,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.jba
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ResJndiName }
-     * 
      */
     public ResJndiName createResJndiName() {
         return new ResJndiName();
@@ -55,7 +52,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerCacheConf }
-     * 
      */
     public ContainerCacheConf createContainerCacheConf() {
         return new ContainerCacheConf();
@@ -63,7 +59,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceManager }
-     * 
      */
     public ResourceManager createResourceManager() {
         return new ResourceManager();
@@ -71,7 +66,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Bean }
-     * 
      */
     public Bean createBean() {
         return new Bean();
@@ -79,7 +73,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceEnvRef }
-     * 
      */
     public ResourceEnvRef createResourceEnvRef() {
         return new ResourceEnvRef();
@@ -87,7 +80,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Depends }
-     * 
      */
     public Depends createDepends() {
         return new Depends();
@@ -95,7 +87,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListEntity }
-     * 
      */
     public ListEntity createListEntity() {
         return new ListEntity();
@@ -103,7 +94,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerConfiguration }
-     * 
      */
     public ContainerConfiguration createContainerConfiguration() {
         return new ContainerConfiguration();
@@ -111,7 +101,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EndpointInterceptors }
-     * 
      */
     public EndpointInterceptors createEndpointInterceptors() {
         return new EndpointInterceptors();
@@ -119,7 +108,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Interceptor }
-     * 
      */
     public Interceptor createInterceptor() {
         return new Interceptor();
@@ -127,7 +115,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InvokerProxyBinding }
-     * 
      */
     public InvokerProxyBinding createInvokerProxyBinding() {
         return new InvokerProxyBinding();
@@ -135,7 +122,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Jboss }
-     * 
      */
     public Jboss createJboss() {
         return new Jboss();
@@ -143,7 +129,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CacheInvalidationConfig }
-     * 
      */
     public CacheInvalidationConfig createCacheInvalidationConfig() {
         return new CacheInvalidationConfig();
@@ -151,7 +136,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActivationConfigProperty }
-     * 
      */
     public ActivationConfigProperty createActivationConfigProperty() {
         return new ActivationConfigProperty();
@@ -159,7 +143,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InvokerBindings }
-     * 
      */
     public InvokerBindings createInvokerBindings() {
         return new InvokerBindings();
@@ -167,7 +150,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Invoker }
-     * 
      */
     public Invoker createInvoker() {
         return new Invoker();
@@ -175,7 +157,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActivationConfig }
-     * 
      */
     public ActivationConfig createActivationConfig() {
         return new ActivationConfig();
@@ -183,7 +164,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceRef }
-     * 
      */
     public ResourceRef createResourceRef() {
         return new ResourceRef();
@@ -191,7 +171,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransportConfig }
-     * 
      */
     public TransportConfig createTransportConfig() {
         return new TransportConfig();
@@ -199,7 +178,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SasContext }
-     * 
      */
     public SasContext createSasContext() {
         return new SasContext();
@@ -207,7 +185,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoaderRepositoryConfig }
-     * 
      */
     public LoaderRepositoryConfig createLoaderRepositoryConfig() {
         return new LoaderRepositoryConfig();
@@ -215,7 +192,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Partitions }
-     * 
      */
     public Partitions createPartitions() {
         return new Partitions();
@@ -223,7 +199,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbRef }
-     * 
      */
     public EjbRef createEjbRef() {
         return new EjbRef();
@@ -231,7 +206,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InvokerProxyBindings }
-     * 
      */
     public InvokerProxyBindings createInvokerProxyBindings() {
         return new InvokerProxyBindings();
@@ -239,7 +213,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RetryHandlers }
-     * 
      */
     public RetryHandlers createRetryHandlers() {
         return new RetryHandlers();
@@ -247,7 +220,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnterpriseBeans }
-     * 
      */
     public EnterpriseBeans createEnterpriseBeans() {
         return new EnterpriseBeans();
@@ -255,7 +227,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CachePolicyConfOther }
-     * 
      */
     public CachePolicyConfOther createCachePolicyConfOther() {
         return new CachePolicyConfOther();
@@ -263,7 +234,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CachePolicyConf }
-     * 
      */
     public CachePolicyConf createCachePolicyConf() {
         return new CachePolicyConf();
@@ -271,7 +241,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Home }
-     * 
      */
     public Home createHome() {
         return new Home();
@@ -279,7 +248,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDriven }
-     * 
      */
     public MessageDriven createMessageDriven() {
         return new MessageDriven();
@@ -287,7 +255,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbLocalRef }
-     * 
      */
     public EjbLocalRef createEjbLocalRef() {
         return new EjbLocalRef();
@@ -295,7 +262,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClientInterceptors }
-     * 
      */
     public ClientInterceptors createClientInterceptors() {
         return new ClientInterceptors();
@@ -303,7 +269,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Method }
-     * 
      */
     public Method createMethod() {
         return new Method();
@@ -311,7 +276,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClusterConfig }
-     * 
      */
     public ClusterConfig createClusterConfig() {
         return new ClusterConfig();
@@ -319,7 +283,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MDBConfig }
-     * 
      */
     public MDBConfig createMDBConfig() {
         return new MDBConfig();
@@ -327,7 +290,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AssemblyDescriptor }
-     * 
      */
     public AssemblyDescriptor createAssemblyDescriptor() {
         return new AssemblyDescriptor();
@@ -335,7 +297,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResUrl }
-     * 
      */
     public ResUrl createResUrl() {
         return new ResUrl();
@@ -343,7 +304,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerInterceptors }
-     * 
      */
     public ContainerInterceptors createContainerInterceptors() {
         return new ContainerInterceptors();
@@ -351,7 +311,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDestination }
-     * 
      */
     public MessageDestination createMessageDestination() {
         return new MessageDestination();
@@ -359,7 +318,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DLQConfig }
-     * 
      */
     public DLQConfig createDLQConfig() {
         return new DLQConfig();
@@ -367,7 +325,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoaderRepository }
-     * 
      */
     public LoaderRepository createLoaderRepository() {
         return new LoaderRepository();
@@ -375,7 +332,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Invalidable }
-     * 
      */
     public Invalidable createInvalidable() {
         return new Invalidable();
@@ -383,7 +339,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EjbTimeoutIdentity }
-     * 
      */
     public EjbTimeoutIdentity createEjbTimeoutIdentity() {
         return new EjbTimeoutIdentity();
@@ -391,7 +346,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MessageDestinationRef }
-     * 
      */
     public MessageDestinationRef createMessageDestinationRef() {
         return new MessageDestinationRef();
@@ -399,7 +353,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceManagers }
-     * 
      */
     public ResourceManagers createResourceManagers() {
         return new ResourceManagers();
@@ -407,7 +360,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IorSecurityConfig }
-     * 
      */
     public IorSecurityConfig createIorSecurityConfig() {
         return new IorSecurityConfig();
@@ -415,7 +367,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortComponent }
-     * 
      */
     public PortComponent createPortComponent() {
         return new PortComponent();
@@ -423,7 +374,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AsContext }
-     * 
      */
     public AsContext createAsContext() {
         return new AsContext();
@@ -431,7 +381,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecurityIdentity }
-     * 
      */
     public SecurityIdentity createSecurityIdentity() {
         return new SecurityIdentity();
@@ -439,7 +388,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Handler }
-     * 
      */
     public Handler createHandler() {
         return new Handler();
@@ -447,7 +395,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BatchCommitStrategy }
-     * 
      */
     public BatchCommitStrategy createBatchCommitStrategy() {
         return new BatchCommitStrategy();
@@ -455,7 +402,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerPoolConf }
-     * 
      */
     public ContainerPoolConf createContainerPoolConf() {
         return new ContainerPoolConf();
@@ -463,7 +409,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MethodAttributes }
-     * 
      */
     public MethodAttributes createMethodAttributes() {
         return new MethodAttributes();
@@ -471,7 +416,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PrincipalName }
-     * 
      */
     public PrincipalName createPrincipalName() {
         return new PrincipalName();
@@ -479,7 +423,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JndiName }
-     * 
      */
     public JndiName createJndiName() {
         return new JndiName();
@@ -487,7 +430,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Session }
-     * 
      */
     public Session createSession() {
         return new Session();
@@ -495,7 +437,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Entity }
-     * 
      */
     public Entity createEntity() {
         return new Entity();
@@ -503,7 +444,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceRef }
-     * 
      */
     public ServiceRef createServiceRef() {
         return new ServiceRef();
@@ -511,7 +451,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContainerConfigurations }
-     * 
      */
     public ContainerConfigurations createContainerConfigurations() {
         return new ContainerConfigurations();
@@ -519,7 +458,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProxyFactoryConfig }
-     * 
      */
     public ProxyFactoryConfig createProxyFactoryConfig() {
         return new ProxyFactoryConfig();
@@ -527,7 +465,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SecurityRole }
-     * 
      */
     public SecurityRole createSecurityRole() {
         return new SecurityRole();
@@ -535,7 +472,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceName }
-     * 
      */
     public ResourceName createResourceName() {
         return new ResourceName();

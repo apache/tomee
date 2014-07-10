@@ -27,17 +27,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for run-asType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="run-asType">
  *   &lt;complexContent>
@@ -51,14 +49,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "run-asType", propOrder = {
-        "descriptions",
-        "roleName"
-        })
+    "descriptions",
+    "roleName"
+})
 public class RunAs {
 
     @XmlTransient
@@ -75,7 +71,7 @@ public class RunAs {
     public RunAs() {
     }
 
-    public RunAs(String roleName) {
+    public RunAs(final String roleName) {
         this.roleName = roleName;
     }
 
@@ -84,7 +80,7 @@ public class RunAs {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -96,7 +92,7 @@ public class RunAs {
         return roleName;
     }
 
-    public void setRoleName(String value) {
+    public void setRoleName(final String value) {
         this.roleName = value;
     }
 
@@ -104,7 +100,7 @@ public class RunAs {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

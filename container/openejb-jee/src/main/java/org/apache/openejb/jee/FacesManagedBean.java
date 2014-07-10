@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,15 +26,19 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-managed-beanType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-managed-beanType">
  *   &lt;complexContent>
@@ -60,8 +60,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-managed-beanType", propOrder = {
@@ -109,7 +107,7 @@ public class FacesManagedBean {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -122,7 +120,7 @@ public class FacesManagedBean {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -137,7 +135,7 @@ public class FacesManagedBean {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -150,11 +148,9 @@ public class FacesManagedBean {
 
     /**
      * Gets the value of the managedBeanName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getManagedBeanName() {
         return managedBeanName;
@@ -162,23 +158,19 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the managedBeanName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setManagedBeanName(java.lang.String value) {
+    public void setManagedBeanName(final java.lang.String value) {
         this.managedBeanName = value;
     }
 
     /**
      * Gets the value of the managedBeanClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getManagedBeanClass() {
         return managedBeanClass;
@@ -186,23 +178,19 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the managedBeanClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setManagedBeanClass(java.lang.String value) {
+    public void setManagedBeanClass(final java.lang.String value) {
         this.managedBeanClass = value;
     }
 
     /**
      * Gets the value of the managedBeanScope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getManagedBeanScope() {
         return managedBeanScope;
@@ -210,37 +198,33 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the managedBeanScope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setManagedBeanScope(java.lang.String value) {
+    public void setManagedBeanScope(final java.lang.String value) {
         this.managedBeanScope = value;
     }
 
     /**
      * Gets the value of the managedProperty property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the managedProperty property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getManagedProperty().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesManagedProperty }
-     * 
-     * 
      */
     public List<FacesManagedProperty> getManagedProperty() {
         if (managedProperty == null) {
@@ -251,11 +235,9 @@ public class FacesManagedBean {
 
     /**
      * Gets the value of the mapEntries property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesMapEntries }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesMapEntries }
      */
     public FacesMapEntries getMapEntries() {
         return mapEntries;
@@ -263,23 +245,19 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the mapEntries property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesMapEntries }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesMapEntries }
      */
-    public void setMapEntries(FacesMapEntries value) {
+    public void setMapEntries(final FacesMapEntries value) {
         this.mapEntries = value;
     }
 
     /**
      * Gets the value of the listEntries property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesListEntries }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesListEntries }
      */
     public FacesListEntries getListEntries() {
         return listEntries;
@@ -287,37 +265,33 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the listEntries property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesListEntries }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesListEntries }
      */
-    public void setListEntries(FacesListEntries value) {
+    public void setListEntries(final FacesListEntries value) {
         this.listEntries = value;
     }
 
     /**
      * Gets the value of the managedBeanExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the managedBeanExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getManagedBeanExtension().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesManagedBeanExtension }
-     * 
-     * 
      */
     public List<FacesManagedBeanExtension> getManagedBeanExtension() {
         if (managedBeanExtension == null) {
@@ -328,11 +302,9 @@ public class FacesManagedBean {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -340,13 +312,11 @@ public class FacesManagedBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

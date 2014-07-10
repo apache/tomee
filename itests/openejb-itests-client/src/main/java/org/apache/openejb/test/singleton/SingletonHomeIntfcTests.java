@@ -29,7 +29,7 @@ public class SingletonHomeIntfcTests extends BasicSingletonTestClient{
     
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
         ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
     }
     
@@ -40,7 +40,7 @@ public class SingletonHomeIntfcTests extends BasicSingletonTestClient{
         try{
             ejbObject = ejbHome.createObject();
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

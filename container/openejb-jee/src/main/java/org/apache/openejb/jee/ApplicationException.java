@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for application-exceptionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="application-exceptionType">
  *   &lt;complexContent>
@@ -49,16 +49,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "application-exceptionType", propOrder = {
-        "exceptionClass",
-        "rollback",
-        "inherited"
-        })
+    "exceptionClass",
+    "rollback",
+    "inherited"
+})
 public class ApplicationException implements Keyable<String> {
 
     @XmlElement(name = "exception-class", required = true)
@@ -73,12 +71,12 @@ public class ApplicationException implements Keyable<String> {
     public ApplicationException() {
     }
 
-    public ApplicationException(String exceptionClass, boolean rollback) {
+    public ApplicationException(final String exceptionClass, final boolean rollback) {
         this.exceptionClass = exceptionClass;
         this.rollback = rollback;
     }
 
-    public ApplicationException(Class exceptionClass, boolean rollback) {
+    public ApplicationException(final Class exceptionClass, final boolean rollback) {
         this(exceptionClass.getName(), rollback);
     }
 
@@ -86,7 +84,7 @@ public class ApplicationException implements Keyable<String> {
         return exceptionClass;
     }
 
-    public void setExceptionClass(String value) {
+    public void setExceptionClass(final String value) {
         this.exceptionClass = value;
     }
 
@@ -95,10 +93,10 @@ public class ApplicationException implements Keyable<String> {
     }
 
     public boolean isRollback() {
-        return rollback == null? false: rollback;
+        return rollback == null ? false : rollback;
     }
 
-    public void setRollback(Boolean value) {
+    public void setRollback(final Boolean value) {
         this.rollback = value;
     }
 
@@ -107,10 +105,10 @@ public class ApplicationException implements Keyable<String> {
     }
 
     public boolean isInherited() {
-        return inherited == null? true: inherited;
+        return inherited == null ? true : inherited;
     }
 
-    public void setInherited(Boolean inherited) {
+    public void setInherited(final Boolean inherited) {
         this.inherited = inherited;
     }
 
@@ -118,7 +116,7 @@ public class ApplicationException implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -52,7 +52,7 @@ public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
     protected ActiveMQConnectionFactory connectionFactory;
     protected ActiveMQResourceAdapter ra;
-    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "?jms.watchTopicAdvisories=false") ;
+    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "?jms.watchTopicAdvisories=false");
     protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false&persistent=false&cacheTempDestinations=true";
 
     @Override
@@ -87,7 +87,7 @@ public class JmsTest extends TestCase {
         // start the resource adapter
         try {
             ra.start(bootstrapContext);
-        } catch (ResourceAdapterInternalException e) {
+        } catch (final ResourceAdapterInternalException e) {
             throw new OpenEJBException(e);
         }
     }
@@ -197,7 +197,7 @@ public class JmsTest extends TestCase {
                     producer = session.createProducer(requestMessage.getJMSReplyTo());
                     producer.send(responseMessage);
 
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     e.printStackTrace();
                 } finally {
                     MdbUtil.close(producer);

@@ -21,10 +21,10 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for ejb-relationType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-relationType">
  *   &lt;complexContent>
@@ -52,16 +52,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationType", propOrder = {
-        "descriptions",
-        "ejbRelationName",
-        "ejbRelationshipRole"
-        })
+    "descriptions",
+    "ejbRelationName",
+    "ejbRelationshipRole"
+})
 public class EjbRelation {
     @XmlTransient
     protected TextMap description = new TextMap();
@@ -81,7 +79,7 @@ public class EjbRelation {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -93,7 +91,7 @@ public class EjbRelation {
         return ejbRelationName;
     }
 
-    public void setEjbRelationName(String value) {
+    public void setEjbRelationName(final String value) {
         this.ejbRelationName = value;
     }
 
@@ -108,7 +106,7 @@ public class EjbRelation {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

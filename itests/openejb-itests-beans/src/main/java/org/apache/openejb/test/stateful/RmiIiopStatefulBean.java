@@ -28,19 +28,19 @@ import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
-    
+public class RmiIiopStatefulBean implements javax.ejb.SessionBean {
+
     private String name;
     private SessionContext ejbContext;
-    
-    
+
+
     //=============================
     // Home interface methods
     //    
     //    
     // Home interface methods
     //=============================
-    
+
 
     //=============================
     // Remote interface methods
@@ -48,171 +48,171 @@ public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
     /*-------------------------------------------------*/
     /*  String                                         */  
     /*-------------------------------------------------*/
-    
-    public String returnStringObject(String data) {
+
+    public String returnStringObject(final String data) {
         return data;
     }
-    
-    public String[] returnStringObjectArray(String[] data) {
+
+    public String[] returnStringObjectArray(final String[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Character                                      */  
     /*-------------------------------------------------*/
-    
-    public Character returnCharacterObject(Character data) {
+
+    public Character returnCharacterObject(final Character data) {
         return data;
     }
-    
-    public char returnCharacterPrimitive(char data) {
+
+    public char returnCharacterPrimitive(final char data) {
         return data;
     }
-    
-    public Character[] returnCharacterObjectArray(Character[] data) {
+
+    public Character[] returnCharacterObjectArray(final Character[] data) {
         return data;
     }
-    
-    public char[] returnCharacterPrimitiveArray(char[] data) {
+
+    public char[] returnCharacterPrimitiveArray(final char[] data) {
         return data;
     }
     /*-------------------------------------------------*/
     /*  Boolean                                        */  
     /*-------------------------------------------------*/
-    
-    public Boolean returnBooleanObject(Boolean data) {
+
+    public Boolean returnBooleanObject(final Boolean data) {
         return data;
     }
-    
-    public boolean returnBooleanPrimitive(boolean data) {
+
+    public boolean returnBooleanPrimitive(final boolean data) {
         return data;
     }
-    
-    public Boolean[] returnBooleanObjectArray(Boolean[] data) {
+
+    public Boolean[] returnBooleanObjectArray(final Boolean[] data) {
         return data;
     }
-    
-    public boolean[] returnBooleanPrimitiveArray(boolean[] data) {
+
+    public boolean[] returnBooleanPrimitiveArray(final boolean[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Byte                                           */  
     /*-------------------------------------------------*/
-    
-    public Byte returnByteObject(Byte data) {
+
+    public Byte returnByteObject(final Byte data) {
         return data;
     }
-    
-    public byte returnBytePrimitive(byte data) {
+
+    public byte returnBytePrimitive(final byte data) {
         return data;
     }
-    
-    public Byte[] returnByteObjectArray(Byte[] data) {
+
+    public Byte[] returnByteObjectArray(final Byte[] data) {
         return data;
     }
-    
-    public byte[] returnBytePrimitiveArray(byte[] data) {
+
+    public byte[] returnBytePrimitiveArray(final byte[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Short                                          */  
     /*-------------------------------------------------*/
-    
-    public Short returnShortObject(Short data) {
+
+    public Short returnShortObject(final Short data) {
         return data;
     }
-    
-    public short returnShortPrimitive(short data) {
+
+    public short returnShortPrimitive(final short data) {
         return data;
     }
-    
-    public Short[] returnShortObjectArray(Short[] data) {
+
+    public Short[] returnShortObjectArray(final Short[] data) {
         return data;
     }
-    
-    public short[] returnShortPrimitiveArray(short[] data) {
+
+    public short[] returnShortPrimitiveArray(final short[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Integer                                        */  
     /*-------------------------------------------------*/
-    
-    public Integer returnIntegerObject(Integer data) {
+
+    public Integer returnIntegerObject(final Integer data) {
         return data;
     }
-    
-    public int returnIntegerPrimitive(int data) {
+
+    public int returnIntegerPrimitive(final int data) {
         return data;
     }
-    
-    public Integer[] returnIntegerObjectArray(Integer[] data) {
+
+    public Integer[] returnIntegerObjectArray(final Integer[] data) {
         return data;
     }
-    
-    public int[] returnIntegerPrimitiveArray(int[] data) {
+
+    public int[] returnIntegerPrimitiveArray(final int[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Long                                           */  
     /*-------------------------------------------------*/
-    
-    public Long returnLongObject(Long data) {
+
+    public Long returnLongObject(final Long data) {
         return data;
     }
-    
-    public long returnLongPrimitive(long data) {
+
+    public long returnLongPrimitive(final long data) {
         return data;
     }
-    
-    public Long[] returnLongObjectArray(Long[] data) {
+
+    public Long[] returnLongObjectArray(final Long[] data) {
         return data;
     }
-    
-    public long[] returnLongPrimitiveArray(long[] data) {
+
+    public long[] returnLongPrimitiveArray(final long[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Float                                          */  
     /*-------------------------------------------------*/
-    
-    public Float returnFloatObject(Float data) {
+
+    public Float returnFloatObject(final Float data) {
         return data;
     }
-    
-    public float returnFloatPrimitive(float data) {
+
+    public float returnFloatPrimitive(final float data) {
         return data;
     }
-    
-    public Float[] returnFloatObjectArray(Float[] data) {
+
+    public Float[] returnFloatObjectArray(final Float[] data) {
         return data;
     }
-    
-    public float[] returnFloatPrimitiveArray(float[] data) {
+
+    public float[] returnFloatPrimitiveArray(final float[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Double                                         */  
     /*-------------------------------------------------*/
-    
-    public Double returnDoubleObject(Double data) {
+
+    public Double returnDoubleObject(final Double data) {
         return data;
     }
-    
-    public double returnDoublePrimitive(double data) {
+
+    public double returnDoublePrimitive(final double data) {
         return data;
     }
-    
-    public Double[] returnDoubleObjectArray(Double[] data) {
+
+    public Double[] returnDoubleObjectArray(final Double[] data) {
         return data;
     }
-    
-    public double[] returnDoublePrimitiveArray(double[] data) {
+
+    public double[] returnDoublePrimitiveArray(final double[] data) {
         return data;
     }
     
@@ -220,172 +220,172 @@ public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
     /*-------------------------------------------------*/
     /*  EJBHome                                         */  
     /*-------------------------------------------------*/
-    
-    public EJBHome returnEJBHome(EJBHome data) {
+
+    public EJBHome returnEJBHome(final EJBHome data) {
         return data;
     }
-    
-    public EJBHome returnEJBHome() throws javax.ejb.EJBException{
+
+    public EJBHome returnEJBHome() throws javax.ejb.EJBException {
         EJBHome data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        data = (EJBHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            data = (EJBHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException{
-        ObjectGraph data = null; 
+    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException {
+        ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        data = new ObjectGraph(object);
+            final Object object = ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
 
-    public EJBHome[] returnEJBHomeArray(EJBHome[] data) {
+    public EJBHome[] returnEJBHomeArray(final EJBHome[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  EJBObject                                      */  
     /*-------------------------------------------------*/
-    
-    public EJBObject returnEJBObject(EJBObject data) {
+
+    public EJBObject returnEJBObject(final EJBObject data) {
         return data;
     }
-    
-    public EJBObject returnEJBObject() throws javax.ejb.EJBException{
+
+    public EJBObject returnEJBObject() throws javax.ejb.EJBException {
         EncStatefulObject data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        data = home.create("Test01 StatefulBean");
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            data = home.create("Test01 StatefulBean");
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        EncStatefulObject object = home.create("Test02 StatefulBean");
-        data = new ObjectGraph(object);
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            final EncStatefulObject object = home.create("Test02 StatefulBean");
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public EJBObject[] returnEJBObjectArray(EJBObject[] data) {
+
+    public EJBObject[] returnEJBObjectArray(final EJBObject[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  EJBMetaData                                         */  
     /*-------------------------------------------------*/
-    
-    public EJBMetaData returnEJBMetaData(EJBMetaData data) {
+
+    public EJBMetaData returnEJBMetaData(final EJBMetaData data) {
         return data;
     }
-    
-    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException{
+
+    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException {
         EJBMetaData data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        data = home.getEJBMetaData();
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            data = home.getEJBMetaData();
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        EJBMetaData object = home.getEJBMetaData();
-        data = new ObjectGraph(object);
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            final EJBMetaData object = home.getEJBMetaData();
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public EJBMetaData[] returnEJBMetaDataArray(EJBMetaData[] data) {
+
+    public EJBMetaData[] returnEJBMetaDataArray(final EJBMetaData[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Handle                                         */  
     /*-------------------------------------------------*/
-    
-    public Handle returnHandle(Handle data) {
+
+    public Handle returnHandle(final Handle data) {
         return data;
     }
-    
-    public Handle returnHandle() throws javax.ejb.EJBException{
+
+    public Handle returnHandle() throws javax.ejb.EJBException {
         Handle data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        EncStatefulObject object = home.create("Test03 StatefulBean");
-        data = object.getHandle();
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            final EncStatefulObject object = home.create("Test03 StatefulBean");
+            data = object.getHandle();
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncStatefulHome home = (EncStatefulHome)ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
-        EncStatefulObject object = home.create("Test04 StatefulBean");
-        data = new ObjectGraph(object.getHandle());
+            final EncStatefulHome home = (EncStatefulHome) ctx.lookup("java:comp/env/stateful/rmi-iiop/home");
+            final EncStatefulObject object = home.create("Test04 StatefulBean");
+            data = new ObjectGraph(object.getHandle());
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public Handle[] returnHandleArray(Handle[] data) {
+
+    public Handle[] returnHandleArray(final Handle[] data) {
         return data;
     }
     
@@ -394,30 +394,30 @@ public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
     /*  Class                                         */
     /*-------------------------------------------------*/
 
-    public Class returnClass(Class data) {
+    public Class returnClass(final Class data) {
         return data;
     }
 
-    public Class[] returnClassArray(Class[] data) {
+    public Class[] returnClassArray(final Class[] data) {
         return data;
     }
 
     /*-------------------------------------------------*/
     /*  ObjectGraph                                         */  
     /*-------------------------------------------------*/
-    
-    public ObjectGraph returnObjectGraph(ObjectGraph data) {
+
+    public ObjectGraph returnObjectGraph(final ObjectGraph data) {
         return data;
     }
-    
-    public ObjectGraph[] returnObjectGraphArray(ObjectGraph[] data) {
+
+    public ObjectGraph[] returnObjectGraphArray(final ObjectGraph[] data) {
         return data;
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
     }
-    
+
     //    
     // Remote interface methods
     //=============================
@@ -426,28 +426,30 @@ public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
     //================================
     // SessionBean interface methods
     //    
+
     /**
      * Set the associated session context. The container calls this method
      * after the instance creation.
      */
-    public void setSessionContext(SessionContext ctx) throws EJBException,RemoteException {
+    public void setSessionContext(final SessionContext ctx) throws EJBException, RemoteException {
         ejbContext = ctx;
     }
+
     /**
-     * 
      * @param name
-     * @exception javax.ejb.CreateException
+     * @throws javax.ejb.CreateException
      */
-    public void ejbCreate(String name) throws javax.ejb.CreateException{
+    public void ejbCreate(final String name) throws javax.ejb.CreateException {
         this.name = name;
     }
+
     /**
      * A container invokes this method before it ends the life of the session
      * object. This happens as a result of a client's invoking a remove
      * operation, or when a container decides to terminate the session object
      * after a timeout.
      */
-    public void ejbRemove() throws EJBException,RemoteException {
+    public void ejbRemove() throws EJBException, RemoteException {
     }
 
     /**
@@ -455,15 +457,16 @@ public class RmiIiopStatefulBean implements javax.ejb.SessionBean{
      * from its "passive" state. The instance should acquire any resource
      * that it has released earlier in the ejbPassivate() method.
      */
-    public void ejbActivate() throws EJBException,RemoteException {
+    public void ejbActivate() throws EJBException, RemoteException {
         // Should never called.
     }
+
     /**
      * The passivate method is called before the instance enters
      * the "passive" state. The instance should release any resources that
      * it can re-acquire later in the ejbActivate() method.
      */
-    public void ejbPassivate() throws EJBException,RemoteException {
+    public void ejbPassivate() throws EJBException, RemoteException {
         // Should never called.
     }
 

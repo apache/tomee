@@ -37,7 +37,7 @@ public class AnnotatedSetterInjectionSingletonPojoHomeIntfcTests extends Annotat
     
     @EJB(name="client/tests/singleton/BasicSingletonPojoHome",
    	     beanInterface=BasicSingletonHome.class)
-    public void setEjbHome(BasicSingletonHome bsEjbHome) {
+    public void setEjbHome(final BasicSingletonHome bsEjbHome) {
     	ejbHome = bsEjbHome;
     }
     
@@ -48,7 +48,7 @@ public class AnnotatedSetterInjectionSingletonPojoHomeIntfcTests extends Annotat
         try{
             ejbObject = ejbHome.createObject();
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

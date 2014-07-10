@@ -28,12 +28,12 @@ import java.util.Properties;
 public class SystemInstanceTest extends TestCase {
 
     public void testPropertiesInheritance() {
-        Properties system = new Properties();
+        final Properties system = new Properties();
         system.setProperty("color", "red");
         system.setProperty("shape", "round");
         system.setProperty("texture", "matte");
 
-        Properties systemInstance = new Properties(system);
+        final Properties systemInstance = new Properties(system);
         systemInstance.setProperty("color", "orange");
         systemInstance.setProperty("weight", "15");
         systemInstance.setProperty("height", "2");
@@ -45,7 +45,7 @@ public class SystemInstanceTest extends TestCase {
         assertEquals("SystemInstance.getProperty(\"weight\")", "15", systemInstance.getProperty("weight"));
         assertEquals("SystemInstance.getProperty(\"height\")", "2", systemInstance.getProperty("height"));
 
-        ArrayList<?> names = Collections.list(systemInstance.propertyNames());
+        final ArrayList<?> names = Collections.list(systemInstance.propertyNames());
         assertEquals("Names.size()", 5, names.size());
 
         // update "system" and check "systemInstance"

@@ -249,10 +249,10 @@ public class SingletonContainer implements RpcContainer {
                 } else {
                     final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                     final InterceptorStack interceptorStack = new InterceptorStack(instance.bean,
-                                                                                   runMethod,
-                                                                                   callType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
-                                                                                   interceptors,
-                                                                                   instance.interceptors);
+                        runMethod,
+                        callType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
+                        interceptors,
+                        instance.interceptors);
                     returnValue = interceptorStack.invoke(args);
                 }
             } catch (final Throwable e) {// handle reflection exception
@@ -314,22 +314,22 @@ public class SingletonContainer implements RpcContainer {
                 lockAcquired = lock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
             } catch (final InterruptedException e) {
                 throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException("Unable to get " +
-                                                                                              (read ? "read" : "write") +
-                                                                                              " lock within specified time on '" +
-                                                                                              runMethod.getName() +
-                                                                                              "' method for: " +
-                                                                                              instance.bean.getClass().getName()).initCause(e);
+                    (read ? "read" : "write") +
+                    " lock within specified time on '" +
+                    runMethod.getName() +
+                    "' method for: " +
+                    instance.bean.getClass().getName()).initCause(e);
             }
         }
 
         // Did we acquire the lock to the current execution?
         if (!lockAcquired) {
             throw new ConcurrentAccessTimeoutException("Unable to get " +
-                                                       (read ? "read" : "write") +
-                                                       " lock on '" +
-                                                       runMethod.getName() +
-                                                       "' method for: " +
-                                                       instance.bean.getClass().getName());
+                (read ? "read" : "write") +
+                " lock on '" +
+                runMethod.getName() +
+                "' method for: " +
+                instance.bean.getClass().getName());
         }
 
         return lock;

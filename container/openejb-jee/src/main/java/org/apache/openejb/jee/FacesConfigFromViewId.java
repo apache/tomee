@@ -22,39 +22,37 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *        <p><span class="changed_modified_2_2">The</span>
- *        value of from-view-id must contain one of the following
- *         values:</p>
- *         
- *         <ul>
- * 
- *         <li><p>The exact match for a view identifier that is recognized
- *         by the the ViewHandler implementation being used (such as
- *         "/index.jsp" if you are using the default ViewHandler).</p></li>
- *         
- *         <li><p class="changed_added_2_2">The exact match of a flow node id
- *         in the current flow, or a flow id of another flow.</p></li>
- *         
- *          <li><p> A proper prefix of a view identifier, plus a trailing
- *          "*" character.  This pattern indicates that all view
- *          identifiers that match the portion of the pattern up to the
- *          asterisk will match the surrounding rule.  When more than one
- *          match exists, the match with the longest pattern is selected.
- *          </p></li>
- *         
- *         <li><p>An "*" character, which means that this pattern applies
- *         to all view identifiers.  </p></li>
- * 
- *        </ul>
- *         
- *       
- * 
+ * <p><span class="changed_modified_2_2">The</span>
+ * value of from-view-id must contain one of the following
+ * values:</p>
+ * <p/>
+ * <ul>
+ * <p/>
+ * <li><p>The exact match for a view identifier that is recognized
+ * by the the ViewHandler implementation being used (such as
+ * "/index.jsp" if you are using the default ViewHandler).</p></li>
+ * <p/>
+ * <li><p class="changed_added_2_2">The exact match of a flow node id
+ * in the current flow, or a flow id of another flow.</p></li>
+ * <p/>
+ * <li><p> A proper prefix of a view identifier, plus a trailing
+ * "*" character.  This pattern indicates that all view
+ * identifiers that match the portion of the pattern up to the
+ * asterisk will match the surrounding rule.  When more than one
+ * match exists, the match with the longest pattern is selected.
+ * </p></li>
+ * <p/>
+ * <li><p>An "*" character, which means that this pattern applies
+ * to all view identifiers.  </p></li>
+ * <p/>
+ * </ul>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-from-view-idType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-from-view-idType">
  *   &lt;simpleContent>
@@ -64,8 +62,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-from-view-idType")

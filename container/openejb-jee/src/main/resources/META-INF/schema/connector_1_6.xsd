@@ -10,43 +10,43 @@
     <xsd:documentation>
 
       DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-      
+
       Copyright 2003-2009 Sun Microsystems, Inc. All rights reserved.
-      
+
       The contents of this file are subject to the terms of either the
       GNU General Public License Version 2 only ("GPL") or the Common
       Development and Distribution License("CDDL") (collectively, the
-      "License").  You may not use this file except in compliance with
+      "License"). You may not use this file except in compliance with
       the License. You can obtain a copy of the License at
       https://glassfish.dev.java.net/public/CDDL+GPL.html or
-      glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+      glassfish/bootstrap/legal/LICENSE.txt. See the License for the
       specific language governing permissions and limitations under the
       License.
-      
+
       When distributing the software, include this License Header
       Notice in each file and include the License file at
-      glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+      glassfish/bootstrap/legal/LICENSE.txt. Sun designates this
       particular file as subject to the "Classpath" exception as
       provided by Sun in the GPL Version 2 section of the License file
-      that accompanied this code.  If applicable, add the following
+      that accompanied this code. If applicable, add the following
       below the License Header, with the fields enclosed by brackets []
       replaced by your own identifying information:
       "Portions Copyrighted [year] [name of copyright owner]"
-      
+
       Contributor(s):
-      
+
       If you wish your version of this file to be governed by only the
       CDDL or only the GPL Version 2, indicate your decision by adding
       "[Contributor] elects to include this software in this
-      distribution under the [CDDL or GPL Version 2] license."  If you
+      distribution under the [CDDL or GPL Version 2] license." If you
       don't indicate a single choice of license, a recipient has the
       option to distribute your version of this file under either the
       CDDL, the GPL Version 2 or to extend the choice of license to its
-      licensees as provided above.  However, if you add GPL Version 2
+      licensees as provided above. However, if you add GPL Version 2
       code and therefore, elected the GPL Version 2 license, then the
       option applies only if the new code is made subject to such
       option by the copyright holder.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
@@ -54,43 +54,43 @@
     <xsd:documentation>
 
       DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-      
+
       Copyright 2003-2009 Sun Microsystems, Inc. All rights reserved.
-      
+
       The contents of this file are subject to the terms of either the
       GNU General Public License Version 2 only ("GPL") or the Common
       Development and Distribution License("CDDL") (collectively, the
-      "License").  You may not use this file except in compliance with
+      "License"). You may not use this file except in compliance with
       the License. You can obtain a copy of the License at
       https://glassfish.dev.java.net/public/CDDL+GPL.html or
-      glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+      glassfish/bootstrap/legal/LICENSE.txt. See the License for the
       specific language governing permissions and limitations under the
       License.
-      
+
       When distributing the software, include this License Header
       Notice in each file and include the License file at
-      glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+      glassfish/bootstrap/legal/LICENSE.txt. Sun designates this
       particular file as subject to the "Classpath" exception as
       provided by Sun in the GPL Version 2 section of the License file
-      that accompanied this code.  If applicable, add the following
+      that accompanied this code. If applicable, add the following
       below the License Header, with the fields enclosed by brackets []
       replaced by your own identifying information:
       "Portions Copyrighted [year] [name of copyright owner]"
-      
+
       Contributor(s):
-      
+
       If you wish your version of this file to be governed by only the
       CDDL or only the GPL Version 2, indicate your decision by adding
       "[Contributor] elects to include this software in this
-      distribution under the [CDDL or GPL Version 2] license."  If you
+      distribution under the [CDDL or GPL Version 2] license." If you
       don't indicate a single choice of license, a recipient has the
       option to distribute your version of this file under either the
       CDDL, the GPL Version 2 or to extend the choice of license to its
-      licensees as provided above.  However, if you add GPL Version 2
+      licensees as provided above. However, if you add GPL Version 2
       code and therefore, elected the GPL Version 2 license, then the
       option applies only if the new code is made subject to such
       option by the copyright holder.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
@@ -131,23 +131,23 @@
 
       The following conventions apply to all Java EE
       deployment descriptor elements unless indicated otherwise.
-      
+
       - In elements that specify a pathname to a file within the
       same JAR file, relative filenames (i.e., those not
       starting with "/") are considered relative to the root of
-      the JAR file's namespace.  Absolute filenames (i.e., those
+      the JAR file's namespace. Absolute filenames (i.e., those
       starting with "/") also specify names in the root of the
-      JAR file's namespace.  In general, relative names are
-      preferred.  The exception is .war files where absolute
+      JAR file's namespace. In general, relative names are
+      preferred. The exception is .war files where absolute
       names are preferred for consistency with the Servlet API.
-      
+
     </xsd:documentation>
   </xsd:annotation>
 
   <xsd:include schemaLocation="javaee_6.xsd"/>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:element name="connector"
                type="javaee:connectorType">
@@ -161,23 +161,23 @@
         information specific to the implementation of the resource
         adapter library as specified through the element
         resourceadapter.
-        
+
       </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="activationspecType">
     <xsd:annotation>
       <xsd:documentation>
 
         The activationspecType specifies an activation
-        specification.  The information includes fully qualified
+        specification. The information includes fully qualified
         Java class name of an activation specification and a set of
         required configuration property names.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -209,13 +209,13 @@
           <xsd:documentation>
 
             The required-config-property element is deprecated since
-            Connectors 1.6 specification. The resource adapter 
+            Connectors 1.6 specification. The resource adapter
             implementation is recommended to use the @NotNull
             Bean Validation annotation or its XML validation
             descriptor equivalent to indicate that a configuration
             property is required to be specified by the deployer.
-            See the Connectors specification for more information. 
-            
+            See the Connectors specification for more information.
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -229,19 +229,19 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="adminobjectType">
     <xsd:annotation>
       <xsd:documentation>
 
         The adminobjectType specifies information about an
-        administered object.  Administered objects are specific to a
-        messaging style or message provider.  This contains
+        administered object. Administered objects are specific to a
+        messaging style or message provider. This contains
         information on the Java type of the interface implemented by
         an administered object, its Java class name and its
         configuration properties.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -288,7 +288,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="authentication-mechanismType">
     <xsd:annotation>
@@ -300,13 +300,13 @@
         underlying EIS instance. The optional description specifies
         any resource adapter specific requirement for the support of
         security contract and authentication mechanism.
-        
+
         Note that BasicPassword mechanism type should support the
         javax.resource.spi.security.PasswordCredential interface.
         The Kerbv5 mechanism type should support the
         org.ietf.jgss.GSSCredential interface or the deprecated
         javax.resource.spi.security.GenericCredential interface.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -345,7 +345,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="config-property-nameType">
     <xsd:annotation>
@@ -386,7 +386,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="config-property-typeType">
     <xsd:annotation>
@@ -424,7 +424,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="config-propertyType">
     <xsd:annotation>
@@ -433,16 +433,16 @@
         The config-propertyType contains a declaration of a single
         configuration property that may be used for providing
         configuration information.
-        
+
         The declaration consists of an optional description, name,
         type and an optional value of the configuration property. If
         the resource adapter provider does not specify a value than
         the deployer is responsible for providing a valid value for
         a configuration property.
-        
+
         Any bounds or well-defined values of properties should be
         described in the description element.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -479,14 +479,14 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The element config-property-ignore is used to specify 
-            whether the configuration tools must ignore considering the 
+            The element config-property-ignore is used to specify
+            whether the configuration tools must ignore considering the
             configuration property during auto-discovery of
             Configuration properties. See the Connector specification for
             more details. If unspecified, the container must not ignore
             the configuration property during auto-discovery.
             This element must be one of the following, "true" or "false".
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -497,14 +497,14 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The element config-property-supports-dynamic-updates is used to specify 
+            The element config-property-supports-dynamic-updates is used to specify
             whether the configuration property allows its value to be updated, by
             application server's configuration tools, during the lifetime of
             the JavaBean instance. See the Connector specification for
             more details. If unspecified, the container must not dynamically
             reconfigure the property.
             This element must be one of the following, "true" or "false".
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -515,14 +515,14 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The element config-property-confidential is used to specify 
+            The element config-property-confidential is used to specify
             whether the configuration property is confidential and
-            recommends application server's configuration tools to use special 
+            recommends application server's configuration tools to use special
             visual aids for editing them. See the Connector specification for
             more details. If unspecified, the container must not treat the
             property as confidential.
             This element must be one of the following, "true" or "false".
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -532,7 +532,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="connection-definitionType">
     <xsd:annotation>
@@ -543,7 +543,7 @@
         type. This also includes configurable properties for
         ManagedConnectionFactory instances that may be produced out
         of this set.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -659,14 +659,14 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="connectorType">
     <xsd:annotation>
       <xsd:documentation>
 
         The connectorType defines a resource adapter.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -678,12 +678,12 @@
 
             The element module-name specifies the name of the
             resource adapter.
-            
+
             If there is no module-name specified, the module-name
-            is determined as defined in Section EE.8.1.1 and EE.8.1.2 
-            of the Java Platform, Enterprise Edition (Java EE) 
+            is determined as defined in Section EE.8.1.1 and EE.8.1.2
+            of the Java Platform, Enterprise Edition (Java EE)
             Specification, version 6.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -696,11 +696,11 @@
 
             The element vendor-name specifies the name of
             resource adapter provider vendor.
-            
-            If there is no vendor-name specified, the application 
+
+            If there is no vendor-name specified, the application
             server must consider the default "" (empty string) as
             the name of the resource adapter provider vendor.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -714,14 +714,14 @@
             type of the EIS. For example, the type of an EIS can
             be product name of EIS independent of any version
             info.
-            
+
             This helps in identifying EIS instances that can be
             used with this resource adapter.
-            
-            If there is no eis-type specified, the application 
+
+            If there is no eis-type specified, the application
             server must consider the default "" (empty string) as
             the type of the EIS.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -734,12 +734,12 @@
             The element resourceadapter-version specifies a string-based version
             of the resource adapter from the resource adapter
             provider.
-            
-            If there is no resourceadapter-version specified, the application 
+
+            If there is no resourceadapter-version specified, the application
             server must consider the default "" (empty string) as
             the version of the resource adapter.
-            	
-            
+
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -755,10 +755,10 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The element required-work-context specifies a fully qualified class 
-            name that implements WorkContext interface, that the resource adapter 
+            The element required-work-context specifies a fully qualified class
+            name that implements WorkContext interface, that the resource adapter
             requires the application server to support.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -771,11 +771,11 @@
         <xsd:documentation>
 
           The version indicates the version of the schema to be used by the
-          deployment tool. This element doesn't have a default, and the resource adapter 
-          developer/deployer is required to specify it. The element allows the deployment 
+          deployment tool. This element doesn't have a default, and the resource adapter
+          developer/deployer is required to specify it. The element allows the deployment
           tool to choose which schema to validate the descriptor against.
-          	  
-          
+
+
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -784,25 +784,25 @@
       <xsd:annotation>
         <xsd:documentation>
 
-          The metadata-complete attribute defines whether the deployment 
+          The metadata-complete attribute defines whether the deployment
           descriptor for the resource adapter module is complete, or whether
-          the class files available to the module and packaged with the resource 
-          adapter should be examined for annotations that specify deployment 
+          the class files available to the module and packaged with the resource
+          adapter should be examined for annotations that specify deployment
           information.
-          
-          If metadata-complete is set to "true", the deployment tool of the 
-          application server must ignore any annotations that specify deployment 
-          information, which might be present in the class files of the 
-          application.If metadata-complete is not specified or is set to "false", 
-          the deployment tool must examine the class files of the application for 
-          annotations, as specified by this specification. If the 
-          deployment descriptor is not included or is included but not marked 
+
+          If metadata-complete is set to "true", the deployment tool of the
+          application server must ignore any annotations that specify deployment
+          information, which might be present in the class files of the
+          application.If metadata-complete is not specified or is set to "false",
+          the deployment tool must examine the class files of the application for
+          annotations, as specified by this specification. If the
+          deployment descriptor is not included or is included but not marked
           metadata-complete, the deployment tool will process annotations.
-          
-          Application servers must assume that metadata-complete is true for 
-          resource adapter modules with deployment descriptor version 
+
+          Application servers must assume that metadata-complete is true for
+          resource adapter modules with deployment descriptor version
           lower than 1.6.
-          		
+
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -811,7 +811,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="credential-interfaceType">
     <xsd:annotation>
@@ -821,17 +821,17 @@
         interface that the resource adapter implementation
         supports for the representation of the
         credentials. This element(s) that use this type,
-        i.e. credential-interface,  should be used by
+        i.e. credential-interface, should be used by
         application server to find out the Credential
         interface it should use as part of the security
         contract.
-        
+
         The possible values are:
-        
+
         javax.resource.spi.security.PasswordCredential
         org.ietf.jgss.GSSCredential
         javax.resource.spi.security.GenericCredential
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
@@ -844,7 +844,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="inbound-resourceadapterType">
     <xsd:annotation>
@@ -854,7 +854,7 @@
         about an inbound resource adapter. This contains information
         specific to the implementation of the resource adapter
         library as specified through the messageadapter element.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -868,7 +868,7 @@
               The messagelistener-type element content must be
               unique in the messageadapter. Several messagelisteners
               can not use the same messagelistener-type.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:messagelistener"/>
@@ -881,7 +881,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="licenseType">
     <xsd:annotation>
@@ -893,7 +893,7 @@
         and an optional description of the licensing terms
         (examples: duration of license, number of connection
         restrictions). It is used by the license element.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -910,7 +910,7 @@
             license is required to deploy and use the
             resource adapter. This element must be one of
             the following, "true" or "false".
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -920,7 +920,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="messageadapterType">
     <xsd:annotation>
@@ -931,7 +931,7 @@
         contains information specific to the implementation of the
         resource adapter library as specified through the
         messagelistener element.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -944,7 +944,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="messagelistenerType">
     <xsd:annotation>
@@ -955,7 +955,7 @@
         resource adapter. It contains information on the Java type
         of the message listener interface and an activation
         specification.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -985,7 +985,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="outbound-resourceadapterType">
     <xsd:annotation>
@@ -998,32 +998,32 @@
         connection management, level of transaction support
         provided, one or more authentication mechanisms supported
         and additional required security permissions.
-        
+
         If any of the outbound resource adapter elements (transaction-support,
         authentication-mechanism, reauthentication-support) is specified through
-        this element or metadata annotations, and no  connection-definition is 
-        specified as part of this element or through annotations, the 
-        application server must consider this an error and fail deployment. 
-        
+        this element or metadata annotations, and no connection-definition is
+        specified as part of this element or through annotations, the
+        application server must consider this an error and fail deployment.
+
         If there is no authentication-mechanism specified as part of
-        this element or metadata annotations, then the resource adapter does 
-        not support any standard security authentication mechanisms as 
-        part of security contract. The application server ignores the security 
+        this element or metadata annotations, then the resource adapter does
+        not support any standard security authentication mechanisms as
+        part of security contract. The application server ignores the security
         part of the system contracts in this case.
-        
-        If there is no transaction-support specified as part of this element 
-        or metadata annotation, then the application server must consider that 
-        the resource adapter does not support either the resource manager local 
-        or JTA transactions and must consider the transaction support as 
-        NoTransaction. Note that resource adapters may specify the level of 
-        transaction support to be used at runtime for a ManagedConnectionFactory 
+
+        If there is no transaction-support specified as part of this element
+        or metadata annotation, then the application server must consider that
+        the resource adapter does not support either the resource manager local
+        or JTA transactions and must consider the transaction support as
+        NoTransaction. Note that resource adapters may specify the level of
+        transaction support to be used at runtime for a ManagedConnectionFactory
         through the TransactionSupport interface.
-        
+
         If there is no reauthentication-support specified as part of
-        this element or metadata annotation, then the application server must consider 
-        that the resource adapter does not support re-authentication of 
+        this element or metadata annotation, then the application server must consider
+        that the resource adapter does not support re-authentication of
         ManagedConnections.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1044,15 +1044,15 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            	    The element reauthentication-support specifies
-            	    whether the resource adapter implementation supports
-            	    re-authentication of existing Managed- Connection
-            	    instance. Note that this information is for the
-            	    resource adapter implementation and not for the
-            	    underlying EIS instance. This element must have
-            	    either a "true" or "false" value.
-            
-            	  
+            The element reauthentication-support specifies
+            whether the resource adapter implementation supports
+            re-authentication of existing Managed- Connection
+            instance. Note that this information is for the
+            resource adapter implementation and not for the
+            underlying EIS instance. This element must have
+            either a "true" or "false" value.
+
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1062,7 +1062,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="required-config-propertyType">
     <xsd:annotation>
@@ -1098,7 +1098,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="resourceadapterType">
     <xsd:annotation>
@@ -1111,7 +1111,7 @@
         adapter library as specified through the
         outbound-resourceadapter and inbound-resourceadapter
         elements, and an optional set of administered objects.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1128,7 +1128,7 @@
             resource adapter's implementation of connector
             architecture specified contracts. The implementation
             of this class is required to be a JavaBean.
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1147,7 +1147,7 @@
               must be unique in the outbound-resourceadapter.
               Multiple connection-definitions can not use the
               same connectionfactory-type.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:connection-definition"/>
@@ -1168,7 +1168,7 @@
               The adminobject-interface and adminobject-class element content must be
               unique in the resourceadapterType. Several admin objects
               can not use the same adminobject-interface and adminobject-class.
-              
+
             </xsd:documentation>
           </xsd:annotation>
           <xsd:selector xpath="javaee:adminobject"/>
@@ -1186,7 +1186,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="security-permissionType">
     <xsd:annotation>
@@ -1194,14 +1194,14 @@
 
         The security-permissionType specifies a security
         permission that is required by the resource adapter code.
-        
+
         The security permission listed in the deployment descriptor
         are ones that are different from those required by the
         default permission set as specified in the connector
         specification. The optional description can mention specific
         reason that resource adapter requires a given security
         permission.
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
@@ -1219,9 +1219,9 @@
             syntax. Refer to the following URL for Sun's
             implementation of the security permission
             specification:
-            
+
             http://java.sun.com/javase/6/docs/technotes/guides/security/PolicyFiles.html
-            
+
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -1231,7 +1231,7 @@
   </xsd:complexType>
 
 
-<!-- **************************************************** -->
+  <!-- **************************************************** -->
 
   <xsd:complexType name="transaction-supportType">
     <xsd:annotation>
@@ -1240,13 +1240,13 @@
         The transaction-supportType specifies the level of
         transaction support provided by the resource adapter. It is
         used by transaction-support elements.
-        
+
         The value must be one of the following:
-        
+
         NoTransaction
         LocalTransaction
         XATransaction
-        
+
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>

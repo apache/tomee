@@ -31,7 +31,7 @@ public class CheckTowManyInterfaceTest {
 
     @Keys(@Key("too.many.interfaces"))
     public EjbJar testSLSBwithUserTransaction() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TwoManyInterface.class));
         return ejbJar;
     }

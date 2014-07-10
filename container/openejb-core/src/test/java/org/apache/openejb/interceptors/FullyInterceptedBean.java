@@ -34,20 +34,20 @@ public class FullyInterceptedBean extends FullyInterceptedSuperClass implements 
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> businessMethod() {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         list.add("businessMethod");
         return list;
     }
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> methodWithDefaultInterceptorsExcluded() {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         list.add("methodWithDefaultInterceptorsExcluded");
         return list;
     }
 
     @AroundInvoke
-    protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
+    protected Object beanClassBusinessMethodInterceptor(final InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, "beanClassBusinessMethodInterceptor");
     }
 }

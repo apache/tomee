@@ -27,20 +27,23 @@ public abstract class OneInverseSideBean extends AbstractEntityBean {
 
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer primaryKey);
 
     // CMR
     public abstract OneOwningSideLocal getOneOwningSide();
+
     public abstract void setOneOwningSide(OneOwningSideLocal oneOwningSideLocal);
 
     public abstract Set getManyOwningSide();
+
     public abstract void setManyOwningSide(Set set);
 
-    public Integer ejbCreate(Integer id) throws CreateException {
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 }

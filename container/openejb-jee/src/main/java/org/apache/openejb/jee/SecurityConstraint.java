@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for security-constraintType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="security-constraintType">
  *   &lt;complexContent>
@@ -50,16 +50,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-constraintType", propOrder = {
-        "displayName",
-        "webResourceCollection",
-        "authConstraint",
-        "userDataConstraint"
+    "displayName",
+    "webResourceCollection",
+    "authConstraint",
+    "userDataConstraint"
 })
 public class SecurityConstraint {
 
@@ -94,7 +92,7 @@ public class SecurityConstraint {
         return authConstraint;
     }
 
-    public void setAuthConstraint(AuthConstraint value) {
+    public void setAuthConstraint(final AuthConstraint value) {
         this.authConstraint = value;
     }
 
@@ -102,7 +100,7 @@ public class SecurityConstraint {
         return userDataConstraint;
     }
 
-    public void setUserDataConstraint(UserDataConstraint value) {
+    public void setUserDataConstraint(final UserDataConstraint value) {
         this.userDataConstraint = value;
     }
 
@@ -110,7 +108,7 @@ public class SecurityConstraint {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

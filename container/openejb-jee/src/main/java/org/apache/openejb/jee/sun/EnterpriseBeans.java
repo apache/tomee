@@ -55,7 +55,7 @@ public class EnterpriseBeans {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -63,7 +63,7 @@ public class EnterpriseBeans {
         return uniqueId;
     }
 
-    public void setUniqueId(String value) {
+    public void setUniqueId(final String value) {
         this.uniqueId = value;
     }
 
@@ -78,7 +78,7 @@ public class EnterpriseBeans {
         return pmDescriptors;
     }
 
-    public void setPmDescriptors(PmDescriptors value) {
+    public void setPmDescriptors(final PmDescriptors value) {
         this.pmDescriptors = value;
     }
 
@@ -86,7 +86,7 @@ public class EnterpriseBeans {
         return cmpResource;
     }
 
-    public void setCmpResource(CmpResource value) {
+    public void setCmpResource(final CmpResource value) {
         this.cmpResource = value;
     }
 
@@ -99,14 +99,14 @@ public class EnterpriseBeans {
 
     public Collection<WebserviceDescription> getWebserviceDescription() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String,WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
         }
         return this.webserviceDescription;
     }
 
-    public Map<String,WebserviceDescription> getWebserviceDescriptionMap() {
+    public Map<String, WebserviceDescription> getWebserviceDescriptionMap() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String,WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
         }
         return this.webserviceDescription.toMap();
     }

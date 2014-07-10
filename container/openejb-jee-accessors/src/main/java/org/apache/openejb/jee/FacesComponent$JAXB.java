@@ -43,33 +43,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesComponent$JAXB
-        extends JAXBObject<FacesComponent> {
+    extends JAXBObject<FacesComponent> {
 
 
     public FacesComponent$JAXB() {
         super(FacesComponent.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-componentType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesFacet$JAXB.class, FacesAttribute$JAXB.class, FacesProperty$JAXB.class, FacesComponentExtension$JAXB.class);
     }
 
-    public static FacesComponent readFacesComponent(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesComponent readFacesComponent(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesComponent(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesComponent(final XoXMLStreamWriter writer, final FacesComponent facesComponent, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponent, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesComponent facesComponent, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesComponent, context);
     }
 
-    public final static FacesComponent _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesComponent _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -80,7 +80,7 @@ public class FacesComponent$JAXB
             context = new RuntimeContext();
         }
 
-        FacesComponent facesComponent = new FacesComponent();
+        final FacesComponent facesComponent = new FacesComponent();
         context.beforeUnmarshal(facesComponent, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -92,7 +92,7 @@ public class FacesComponent$JAXB
         List<FacesComponentExtension> componentExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-componentType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesComponent.class);
@@ -100,10 +100,10 @@ public class FacesComponent$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesComponent);
                 facesComponent.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -112,24 +112,24 @@ public class FacesComponent$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesComponent.icon;
                     if (icon != null) {
@@ -141,12 +141,12 @@ public class FacesComponent$JAXB
                 icon.add(iconItem);
             } else if (("component-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: componentType
-                String componentTypeRaw = elementReader.getElementAsString();
+                final String componentTypeRaw = elementReader.getElementAsString();
 
-                String componentType;
+                final String componentType;
                 try {
                     componentType = Adapters.collapsedStringAdapterAdapter.unmarshal(componentTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -154,12 +154,12 @@ public class FacesComponent$JAXB
                 facesComponent.componentType = componentType;
             } else if (("component-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: componentClass
-                String componentClassRaw = elementReader.getElementAsString();
+                final String componentClassRaw = elementReader.getElementAsString();
 
-                String componentClass;
+                final String componentClass;
                 try {
                     componentClass = Adapters.collapsedStringAdapterAdapter.unmarshal(componentClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -167,7 +167,7 @@ public class FacesComponent$JAXB
                 facesComponent.componentClass = componentClass;
             } else if (("facet" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: facet
-                FacesFacet facetItem = readFacesFacet(elementReader, context);
+                final FacesFacet facetItem = readFacesFacet(elementReader, context);
                 if (facet == null) {
                     facet = facesComponent.facet;
                     if (facet != null) {
@@ -179,7 +179,7 @@ public class FacesComponent$JAXB
                 facet.add(facetItem);
             } else if (("attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attribute
-                FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
+                final FacesAttribute attributeItem = readFacesAttribute(elementReader, context);
                 if (attribute1 == null) {
                     attribute1 = facesComponent.attribute;
                     if (attribute1 != null) {
@@ -191,7 +191,7 @@ public class FacesComponent$JAXB
                 attribute1.add(attributeItem);
             } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                FacesProperty propertyItem = readFacesProperty(elementReader, context);
+                final FacesProperty propertyItem = readFacesProperty(elementReader, context);
                 if (property == null) {
                     property = facesComponent.property;
                     if (property != null) {
@@ -203,7 +203,7 @@ public class FacesComponent$JAXB
                 property.add(propertyItem);
             } else if (("component-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: componentExtension
-                FacesComponentExtension componentExtensionItem = readFacesComponentExtension(elementReader, context);
+                final FacesComponentExtension componentExtensionItem = readFacesComponentExtension(elementReader, context);
                 if (componentExtension == null) {
                     componentExtension = facesComponent.componentExtension;
                     if (componentExtension != null) {
@@ -222,14 +222,14 @@ public class FacesComponent$JAXB
         if (descriptions != null) {
             try {
                 facesComponent.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesComponent.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesComponent.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesComponent.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -254,13 +254,13 @@ public class FacesComponent$JAXB
         return facesComponent;
     }
 
-    public final FacesComponent read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesComponent read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesComponent facesComponent, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesComponent facesComponent, RuntimeContext context)
+        throws Exception {
         if (facesComponent == null) {
             writer.writeXsiNil();
             return;
@@ -270,7 +270,7 @@ public class FacesComponent$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesComponent.class != facesComponent.getClass()) {
             context.unexpectedSubclass(writer, facesComponent, FacesComponent.class);
             return;
@@ -280,12 +280,12 @@ public class FacesComponent$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesComponent.id;
+        final String idRaw = facesComponent.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesComponent, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -295,11 +295,11 @@ public class FacesComponent$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesComponent.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesComponent, "descriptions", FacesComponent.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -314,11 +314,11 @@ public class FacesComponent$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesComponent.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesComponent, "displayNames", FacesComponent.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -330,9 +330,9 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesComponent.icon;
+        final LocalCollection<Icon> icon = facesComponent.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -344,11 +344,11 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: componentType
-        String componentTypeRaw = facesComponent.componentType;
+        final String componentTypeRaw = facesComponent.componentType;
         String componentType = null;
         try {
             componentType = Adapters.collapsedStringAdapterAdapter.marshal(componentTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesComponent, "componentType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (componentType != null) {
@@ -360,11 +360,11 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: componentClass
-        String componentClassRaw = facesComponent.componentClass;
+        final String componentClassRaw = facesComponent.componentClass;
         String componentClass = null;
         try {
             componentClass = Adapters.collapsedStringAdapterAdapter.marshal(componentClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesComponent, "componentClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (componentClass != null) {
@@ -376,9 +376,9 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: facet
-        List<FacesFacet> facet = facesComponent.facet;
+        final List<FacesFacet> facet = facesComponent.facet;
         if (facet != null) {
-            for (FacesFacet facetItem : facet) {
+            for (final FacesFacet facetItem : facet) {
                 writer.writeStartElement(prefix, "facet", "http://java.sun.com/xml/ns/javaee");
                 if (facetItem != null) {
                     writeFacesFacet(writer, facetItem, context);
@@ -390,9 +390,9 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: attribute
-        List<FacesAttribute> attribute = facesComponent.attribute;
+        final List<FacesAttribute> attribute = facesComponent.attribute;
         if (attribute != null) {
-            for (FacesAttribute attributeItem : attribute) {
+            for (final FacesAttribute attributeItem : attribute) {
                 writer.writeStartElement(prefix, "attribute", "http://java.sun.com/xml/ns/javaee");
                 if (attributeItem != null) {
                     writeFacesAttribute(writer, attributeItem, context);
@@ -404,9 +404,9 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: property
-        List<FacesProperty> property = facesComponent.property;
+        final List<FacesProperty> property = facesComponent.property;
         if (property != null) {
-            for (FacesProperty propertyItem : property) {
+            for (final FacesProperty propertyItem : property) {
                 writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
                 if (propertyItem != null) {
                     writeFacesProperty(writer, propertyItem, context);
@@ -418,9 +418,9 @@ public class FacesComponent$JAXB
         }
 
         // ELEMENT: componentExtension
-        List<FacesComponentExtension> componentExtension = facesComponent.componentExtension;
+        final List<FacesComponentExtension> componentExtension = facesComponent.componentExtension;
         if (componentExtension != null) {
-            for (FacesComponentExtension componentExtensionItem : componentExtension) {
+            for (final FacesComponentExtension componentExtensionItem : componentExtension) {
                 if (componentExtensionItem != null) {
                     writer.writeStartElement(prefix, "component-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesComponentExtension(writer, componentExtensionItem, context);

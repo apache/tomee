@@ -14,7 +14,6 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -41,17 +40,18 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class EJBAccessExceptionMapperTest {
     private static EJBContainer container;
-    private static RESTIsCool service;
+    private static RESTIsCoolOne service;
 
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
-        service = (RESTIsCool) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCool");
+        service = (RESTIsCoolOne) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCoolOne");
     }
 
     @AfterClass
@@ -64,7 +64,7 @@ public class EJBAccessExceptionMapperTest {
 
     @Test
     public void rest() {
-        Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get();
+        final Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejbsecu/rest").get();
         assertEquals(403, response.getStatus());
     }
 
@@ -72,8 +72,8 @@ public class EJBAccessExceptionMapperTest {
     @Singleton
     @RolesAllowed("Something that does not exit at all")
     @Lock(LockType.READ)
-    @Path("/ejb")
-    public static class RESTIsCool {
+    @Path("/ejbsecu")
+    public static class RESTIsCoolOne {
         @EJB
         private SimpleEJB simpleEJB;
         @javax.ws.rs.core.Context
@@ -93,7 +93,7 @@ public class EJBAccessExceptionMapperTest {
 
         @Path("/param")
         @GET
-        public String param(@QueryParam("arg") @DefaultValue("true") String p) {
+        public String param(@QueryParam("arg") @DefaultValue("true") final String p) {
             return p;
         }
 

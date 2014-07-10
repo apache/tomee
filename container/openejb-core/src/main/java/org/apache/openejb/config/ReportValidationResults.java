@@ -78,14 +78,14 @@ public class ReportValidationResults implements DynamicDeployer {
             return appModule;
         }
 
-        if (level != Level.VERBOSE){
+        if (level != Level.VERBOSE) {
             List<Level> levels = Arrays.asList(Level.values());
             levels = levels.subList(level.ordinal() + 1, levels.size());
 
-            logger.info("Set the '"+VALIDATION_LEVEL+"' system property to "+ join(" or ", levels) +" for increased validation details.");
+            logger.info("Set the '" + VALIDATION_LEVEL + "' system property to " + join(" or ", levels) + " for increased validation details.");
         }
 
-        throw  new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
+        throw new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
     }
 
     private void logResults(final ValidationContext context, final Level level) {
@@ -109,9 +109,9 @@ public class ReportValidationResults implements DynamicDeployer {
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
         } else if (context.hasWarnings()) {
             if (context.getWarnings().length == 1) {
-                logger.warning(context.getWarnings().length +" warning for "+context.getModuleType()+"(path="+context.getName()+")");
+                logger.warning(context.getWarnings().length + " warning for " + context.getModuleType() + "(path=" + context.getName() + ")");
             } else {
-                logger.warning(context.getWarnings().length +" warnings for "+context.getModuleType()+"(path="+context.getName()+")");
+                logger.warning(context.getWarnings().length + " warnings for " + context.getModuleType() + "(path=" + context.getName() + ")");
             }
         }
     }

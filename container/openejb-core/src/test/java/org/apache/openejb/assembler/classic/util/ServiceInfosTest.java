@@ -17,10 +17,7 @@
 package org.apache.openejb.assembler.classic.util;
 
 import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;

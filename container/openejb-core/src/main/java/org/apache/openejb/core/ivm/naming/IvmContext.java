@@ -114,11 +114,11 @@ public class IvmContext implements Context, Serializable {
             String path = compositName.substring(index + 1);
             final ParsedName name = new ParsedName(path);
 
-            if (prefix.equals("openejb")){
+            if (prefix.equals("openejb")) {
                 path = name.path();
                 return openejbURLContextFactory.getContext().lookup(path);
-            } else if (prefix.equals("java")){
-                if (name.getComponent().equals("openejb")){
+            } else if (prefix.equals("java")) {
+                if (name.getComponent().equals("openejb")) {
                     path = name.remaining().path();
                     return openejbURLContextFactory.getContext().lookup(path);
                 } else {
@@ -127,7 +127,7 @@ public class IvmContext implements Context, Serializable {
                 }
             } else {
                 // we don't know what the prefix means, throw an exception
-                throw new NamingException("Unknown JNDI name prefix '"+prefix +":'");
+                throw new NamingException("Unknown JNDI name prefix '" + prefix + ":'");
             }
         } else {
             /*
@@ -157,7 +157,7 @@ public class IvmContext implements Context, Serializable {
             }
         }
 
-        if (obj == null){
+        if (obj == null) {
             throw new NameNotFoundException("Name \"" + compositName + "\" not found.");
         }
 
@@ -174,7 +174,7 @@ public class IvmContext implements Context, Serializable {
              */
             obj = ((Reference) obj).getObject();
         } else if (obj instanceof LinkRef) {
-            obj = lookup(((LinkRef)obj).getLinkName());
+            obj = lookup(((LinkRef) obj).getLinkName());
         }
         return obj;
     }
@@ -199,16 +199,16 @@ public class IvmContext implements Context, Serializable {
         throw new NameNotFoundException("Name \"" + compositName + "\" not found.");
     }
 
-    static ObjectFactory [] federatedFactories;
+    static ObjectFactory[] federatedFactories;
 
-    public static ObjectFactory [] getFederatedFactories() throws NamingException {
+    public static ObjectFactory[] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
             final Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
             final String urlPackagePrefixes = getUrlPackagePrefixes();
             if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
             }
-            for (final StringTokenizer tokenizer = new StringTokenizer(urlPackagePrefixes, ":"); tokenizer.hasMoreTokens();) {
+            for (final StringTokenizer tokenizer = new StringTokenizer(urlPackagePrefixes, ":"); tokenizer.hasMoreTokens(); ) {
                 final String urlPackagePrefix = tokenizer.nextToken();
                 final String className = urlPackagePrefix + ".java.javaURLContextFactory";
                 if (className.equals("org.apache.openejb.core.ivm.naming.java.javaURLContextFactory")) {
@@ -228,7 +228,7 @@ public class IvmContext implements Context, Serializable {
                     throw ne;
                 }
             }
-            final Object [] temp = factories.toArray();
+            final Object[] temp = factories.toArray();
             federatedFactories = new ObjectFactory[temp.length];
             System.arraycopy(temp, 0, federatedFactories, 0, federatedFactories.length);
         }
@@ -436,7 +436,7 @@ public class IvmContext implements Context, Serializable {
 
     public String composeName(final String name, final String prefix) throws NamingException {
         final Name result = composeName(new CompositeName(name),
-                                  new CompositeName(prefix));
+            new CompositeName(prefix));
         return result.toString();
     }
 
@@ -570,15 +570,15 @@ public class IvmContext implements Context, Serializable {
         }
     }
 
-    public void tree(final PrintStream out){
+    public void tree(final PrintStream out) {
         mynode.tree("", out);
     }
 
     @Override
     public String toString() {
         return "IvmContext{" +
-                "mynode=" + mynode.getAtomicName() +
-                '}';
+            "mynode=" + mynode.getAtomicName() +
+            '}';
     }
 
     protected Object writeReplace() throws ObjectStreamException {

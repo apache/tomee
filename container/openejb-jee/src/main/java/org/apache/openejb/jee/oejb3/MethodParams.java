@@ -54,11 +54,11 @@ public class MethodParams {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
-    public void addMethodParam(String name) {
+    public void addMethodParam(final String name) {
         getMethodParam().add(name);
     }
 }

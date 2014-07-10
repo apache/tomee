@@ -27,18 +27,16 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for ejb-local-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-local-refType">
  *   &lt;complexContent>
@@ -57,22 +55,20 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-local-refType", propOrder = {
-        "descriptions",
-        "ejbRefName",
-        "ejbRefType",
-        "localHome",
-        "local",
-        "ejbLink",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "ejbRefName",
+    "ejbRefType",
+    "localHome",
+    "local",
+    "ejbLink",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class EjbLocalRef implements EjbReference {
 
     @XmlTransient
@@ -100,12 +96,12 @@ public class EjbLocalRef implements EjbReference {
     public EjbLocalRef() {
     }
 
-    public EjbLocalRef(String ejbRefName, String ejbLink) {
+    public EjbLocalRef(final String ejbRefName, final String ejbLink) {
         this.ejbRefName = ejbRefName;
         this.ejbLink = ejbLink;
     }
 
-    public EjbLocalRef(EjbReference ref) {
+    public EjbLocalRef(final EjbReference ref) {
         this.ejbRefName = ref.getName();
         this.ejbRefType = ref.getEjbRefType();
         this.ejbLink = ref.getEjbLink();
@@ -116,50 +112,50 @@ public class EjbLocalRef implements EjbReference {
         this.localHome = ref.getHome();
     }
 
-    public EjbLocalRef name(String ejbRefName) {
+    public EjbLocalRef name(final String ejbRefName) {
         this.ejbRefName = ejbRefName;
         return this;
     }
 
-    public EjbLocalRef type(EjbRefType ejbRefType) {
+    public EjbLocalRef type(final EjbRefType ejbRefType) {
         this.ejbRefType = ejbRefType;
         return this;
     }
 
-    public EjbLocalRef link(String link) {
+    public EjbLocalRef link(final String link) {
         this.ejbLink = link;
         return this;
     }
 
-    public EjbLocalRef local(String local) {
+    public EjbLocalRef local(final String local) {
         this.local = local;
         return this;
     }
 
-    public EjbLocalRef local(Class<?> local) {
+    public EjbLocalRef local(final Class<?> local) {
         return local(local.getName());
     }
 
-    public EjbLocalRef localHome(String localHome) {
+    public EjbLocalRef localHome(final String localHome) {
         this.localHome = localHome;
         return this;
     }
 
-    public EjbLocalRef localHome(Class<?> localHome) {
+    public EjbLocalRef localHome(final Class<?> localHome) {
         return localHome(localHome.getName());
     }
 
-    public EjbLocalRef mappedName(String mappedName) {
+    public EjbLocalRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public EjbLocalRef lookup(String lookupName) {
+    public EjbLocalRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public EjbLocalRef injectionTarget(String className, String property) {
+    public EjbLocalRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.ejbRefName == null) {
@@ -169,7 +165,7 @@ public class EjbLocalRef implements EjbReference {
         return this;
     }
 
-    public EjbLocalRef injectionTarget(Class<?> clazz, String property) {
+    public EjbLocalRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -178,7 +174,7 @@ public class EjbLocalRef implements EjbReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -187,11 +183,11 @@ public class EjbLocalRef implements EjbReference {
         return getEjbRefType().name();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setEjbRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
 
@@ -200,7 +196,7 @@ public class EjbLocalRef implements EjbReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -225,7 +221,7 @@ public class EjbLocalRef implements EjbReference {
      * <p/>
      * <ejb-ref-name>ejb/Payroll</ejb-ref-name>
      */
-    public void setEjbRefName(String value) {
+    public void setEjbRefName(final String value) {
         this.ejbRefName = value;
     }
 
@@ -233,7 +229,7 @@ public class EjbLocalRef implements EjbReference {
         return ejbRefType;
     }
 
-    public void setEjbRefType(EjbRefType value) {
+    public void setEjbRefType(final EjbRefType value) {
         this.ejbRefType = value;
     }
 
@@ -253,10 +249,10 @@ public class EjbLocalRef implements EjbReference {
         return Type.LOCAL;
     }
 
-    public void setRefType(Type refType) {
+    public void setRefType(final Type refType) {
     }
 
-    public void setLocalHome(String value) {
+    public void setLocalHome(final String value) {
         this.localHome = value;
     }
 
@@ -264,7 +260,7 @@ public class EjbLocalRef implements EjbReference {
         return local;
     }
 
-    public void setLocal(String value) {
+    public void setLocal(final String value) {
         this.local = value;
     }
 
@@ -292,7 +288,7 @@ public class EjbLocalRef implements EjbReference {
      * <p/>
      * <ejb-link>../products/product.jar#ProductEJB</ejb-link>
      */
-    public void setEjbLink(String value) {
+    public void setEjbLink(final String value) {
         this.ejbLink = value;
     }
 
@@ -300,7 +296,7 @@ public class EjbLocalRef implements EjbReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -308,7 +304,7 @@ public class EjbLocalRef implements EjbReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -323,18 +319,18 @@ public class EjbLocalRef implements EjbReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "EjbLocalRef{" +
-                "name='" + ejbRefName + '\'' +
-                ", local=" + local +
-                ", link='" + ejbLink + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + ejbRefName + '\'' +
+            ", local=" + local +
+            ", link='" + ejbLink + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

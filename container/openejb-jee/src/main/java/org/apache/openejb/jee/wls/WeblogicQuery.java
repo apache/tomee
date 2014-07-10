@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for weblogic-query complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-query">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-query", propOrder = {
@@ -94,11 +92,9 @@ public class WeblogicQuery {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
+     *
+     * @return possible object is
+     * {@link Description }
      */
     public Description getDescription() {
         return description;
@@ -106,23 +102,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Description }
      */
-    public void setDescription(Description value) {
+    public void setDescription(final Description value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the queryMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QueryMethod }
-     *     
+     *
+     * @return possible object is
+     * {@link QueryMethod }
      */
     public QueryMethod getQueryMethod() {
         return queryMethod;
@@ -130,23 +122,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the queryMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QueryMethod }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link QueryMethod }
      */
-    public void setQueryMethod(QueryMethod value) {
+    public void setQueryMethod(final QueryMethod value) {
         this.queryMethod = value;
     }
 
     /**
      * Gets the value of the ejbQlQuery property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbQlQuery }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbQlQuery }
      */
     public EjbQlQuery getEjbQlQuery() {
         return ejbQlQuery;
@@ -154,23 +142,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the ejbQlQuery property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbQlQuery }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbQlQuery }
      */
-    public void setEjbQlQuery(EjbQlQuery value) {
+    public void setEjbQlQuery(final EjbQlQuery value) {
         this.ejbQlQuery = value;
     }
 
     /**
      * Gets the value of the sqlQuery property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlQuery }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlQuery }
      */
     public SqlQuery getSqlQuery() {
         return sqlQuery;
@@ -178,23 +162,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the sqlQuery property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlQuery }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlQuery }
      */
-    public void setSqlQuery(SqlQuery value) {
+    public void setSqlQuery(final SqlQuery value) {
         this.sqlQuery = value;
     }
 
     /**
      * Gets the value of the maxElements property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getMaxElements() {
         return maxElements;
@@ -202,23 +182,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the maxElements property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setMaxElements(BigInteger value) {
+    public void setMaxElements(final BigInteger value) {
         this.maxElements = value;
     }
 
     /**
      * Gets the value of the includeUpdates property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getIncludeUpdates() {
         return includeUpdates;
@@ -226,23 +202,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the includeUpdates property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setIncludeUpdates(Boolean value) {
+    public void setIncludeUpdates(final Boolean value) {
         this.includeUpdates = value;
     }
 
     /**
      * Gets the value of the sqlSelectDistinct property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getSqlSelectDistinct() {
         return sqlSelectDistinct;
@@ -250,23 +222,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the sqlSelectDistinct property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setSqlSelectDistinct(Boolean value) {
+    public void setSqlSelectDistinct(final Boolean value) {
         this.sqlSelectDistinct = value;
     }
 
     /**
      * Gets the value of the enableQueryCaching property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableQueryCaching() {
         return enableQueryCaching;
@@ -274,23 +242,19 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the enableQueryCaching property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableQueryCaching(Boolean value) {
+    public void setEnableQueryCaching(final Boolean value) {
         this.enableQueryCaching = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -298,13 +262,11 @@ public class WeblogicQuery {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

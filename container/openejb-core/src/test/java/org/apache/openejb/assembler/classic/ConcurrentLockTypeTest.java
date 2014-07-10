@@ -44,19 +44,19 @@ public class ConcurrentLockTypeTest extends TestCase {
     private Map<Method, MethodAttributeInfo> attributes;
 
     public void test() throws Exception {
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(Color.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Red.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Crimson.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Scarlet.class));
-        List<ContainerConcurrency> declared = ejbJar.getAssemblyDescriptor().getContainerConcurrency();
+        final List<ContainerConcurrency> declared = ejbJar.getAssemblyDescriptor().getContainerConcurrency();
 
         declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "*", "*", "*"));
         declared.add(new ContainerConcurrency(ConcurrentLockType.READ, "*", "Crimson", "*"));
@@ -64,7 +64,7 @@ public class ConcurrentLockTypeTest extends TestCase {
         declared.add(new ContainerConcurrency(ConcurrentLockType.READ, Red.class.getName(), "Scarlet", "red"));
         declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "Scarlet", Scarlet.class.getMethod("scarlet")));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         loadAttributes(ejbJarInfo, "Color");
@@ -114,17 +114,17 @@ public class ConcurrentLockTypeTest extends TestCase {
 
     }
 
-    private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
-        ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+    private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
+        final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext beanContext = system.getBeanContext(deploymentId);
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         attributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
     }
 
-    private void assertAttribute(String attribute, Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
+    private void assertAttribute(final String attribute, final Method method) {
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
         assertEquals(method.toString(), attribute, info.concurrencyAttribute);
     }
 
@@ -146,23 +146,23 @@ public class ConcurrentLockTypeTest extends TestCase {
 
 
         @Lock(WRITE)
-        public void color(Object o) {
+        public void color(final Object o) {
         }
 
-        public void color(String s) {
+        public void color(final String s) {
         }
 
-        public void color(Boolean b) {
+        public void color(final Boolean b) {
         }
 
-        public void color(Integer i) {
+        public void color(final Integer i) {
         }
     }
 
 
     public static class Red extends Color {
 
-        public void color(Object o) {
+        public void color(final Object o) {
             super.color(o);
         }
 
@@ -170,10 +170,10 @@ public class ConcurrentLockTypeTest extends TestCase {
         public void red() {
         }
 
-        public void red(Object o) {
+        public void red(final Object o) {
         }
 
-        public void red(String s) {
+        public void red(final String s) {
         }
 
     }
@@ -185,14 +185,14 @@ public class ConcurrentLockTypeTest extends TestCase {
         public void color() {
         }
 
-        public void color(String s) {
+        public void color(final String s) {
         }
 
         @Lock(WRITE)
         public void crimson() {
         }
 
-        public void crimson(String s) {
+        public void crimson(final String s) {
         }
     }
 
@@ -203,7 +203,7 @@ public class ConcurrentLockTypeTest extends TestCase {
         public void scarlet() {
         }
 
-        public void scarlet(String s) {
+        public void scarlet(final String s) {
         }
     }
 

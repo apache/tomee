@@ -184,7 +184,7 @@ public class RandomConnectionStrategyTest {
 
             final String name = bean.name();
             Assert.fail("Server should be destroyed: " + name);
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
         }
@@ -303,7 +303,7 @@ public class RandomConnectionStrategyTest {
             client.start();
             try {
                 Assert.assertTrue(String.format("services failed to come online: waited %s %s", timeout, unit), await(timeout, unit));
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 Assert.fail("Interrupted");
             } finally {

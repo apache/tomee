@@ -17,8 +17,8 @@
 ## under the License.
 
 =========================================================================
-  - Java EE Schemas
-    License: CDDL
+- Java EE Schemas
+License: CDDL
 -------------------------------------------------------------------------
 
 COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
@@ -403,8 +403,8 @@ herein is intended or shall be deemed to constitute any admission
 of liability.
 
 =========================================================================
-  - W3C Schemas
-    License: W3C Software Notice and License
+- W3C Schemas
+License: W3C Software Notice and License
 -------------------------------------------------------------------------
 
 W3C® SOFTWARE NOTICE AND LICENSE
@@ -421,15 +421,15 @@ with or without modification, for any purpose and without fee or royalty is
 hereby granted, provided that you include the following on ALL copies of the
 software and documentation or portions thereof, including modifications:
 
-  1. The full text of this NOTICE in a location viewable to users of the
-     redistributed or derivative work.
-  2. Any pre-existing intellectual property disclaimers, notices, or terms
-     and conditions. If none exist, the W3C Software Short Notice should be
-     included (hypertext is preferred, text is permitted) within the body
-     of any redistributed or derivative code.
-  3. Notice of any changes or modifications to the files, including the date
-     changes were made. (We recommend you provide URIs to the location from
-     which the code is derived.)
+1. The full text of this NOTICE in a location viewable to users of the
+redistributed or derivative work.
+2. Any pre-existing intellectual property disclaimers, notices, or terms
+and conditions. If none exist, the W3C Software Short Notice should be
+included (hypertext is preferred, text is permitted) within the body
+of any redistributed or derivative code.
+3. Notice of any changes or modifications to the files, including the date
+changes were made. (We recommend you provide URIs to the location from
+which the code is derived.)
 
 THIS SOFTWARE AND DOCUMENTATION IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE
 NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED

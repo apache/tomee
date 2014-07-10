@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class CountingLatchTest extends TestCase {
 
     public void testDown() throws Exception {
-        CountingLatch latch = new CountingLatch();
+        final CountingLatch latch = new CountingLatch();
 
         assertTrue(latch.await(0, TimeUnit.MINUTES));
 

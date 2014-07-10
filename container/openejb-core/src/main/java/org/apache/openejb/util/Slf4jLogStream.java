@@ -21,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *    Log the output to Slf4j
- *
+ * Log the output to Slf4j
  */
 
 public class Slf4jLogStream implements LogStream {
@@ -44,7 +43,7 @@ public class Slf4jLogStream implements LogStream {
 
     @Override
     public void fatal(final String message, final Throwable t) {
-        log.error(message,t);
+        log.error(message, t);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class Slf4jLogStream implements LogStream {
 
     @Override
     public void error(final String message, final Throwable t) {
-        log.error(message,t);
+        log.error(message, t);
     }
 
     @Override
@@ -74,7 +73,7 @@ public class Slf4jLogStream implements LogStream {
 
     @Override
     public void warn(final String message, final Throwable t) {
-        log.warn(message,t);
+        log.warn(message, t);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class Slf4jLogStream implements LogStream {
 
     @Override
     public void info(final String message, final Throwable t) {
-        log.info(message,t);
+        log.info(message, t);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class Slf4jLogStream implements LogStream {
 
     @Override
     public void debug(final String message, final Throwable t) {
-        log.debug(message,t);
+        log.debug(message, t);
     }
 
 }

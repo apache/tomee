@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashSet;
@@ -32,11 +32,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for env-entryType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="env-entryType">
  *   &lt;complexContent>
@@ -53,20 +53,18 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entryType", propOrder = {
-        "descriptions",
-        "envEntryName",
-        "envEntryType",
-        "envEntryValue",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "envEntryName",
+    "envEntryType",
+    "envEntryValue",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class EnvEntry implements JndiReference {
 
     @XmlTransient
@@ -94,46 +92,46 @@ public class EnvEntry implements JndiReference {
     public EnvEntry() {
     }
 
-    public EnvEntry(String envEntryName, String envEntryType, String envEntryValue) {
+    public EnvEntry(final String envEntryName, final String envEntryType, final String envEntryValue) {
         this.setEnvEntryName(envEntryName);
         this.setEnvEntryType(envEntryType);
         this.setEnvEntryValue(envEntryValue);
     }
 
-    public EnvEntry(String envEntryName, Class<?> envEntryType, String envEntryValue) {
+    public EnvEntry(final String envEntryName, final Class<?> envEntryType, final String envEntryValue) {
         this(envEntryName, envEntryType.getName(), envEntryValue);
     }
 
-    public EnvEntry name(String envEntryName) {
+    public EnvEntry name(final String envEntryName) {
         this.setEnvEntryName(envEntryName);
         return this;
     }
 
-    public EnvEntry type(String envEntryType) {
+    public EnvEntry type(final String envEntryType) {
         this.setEnvEntryType(envEntryType);
         return this;
     }
 
-    public EnvEntry type(Class<?> envEntryType) {
+    public EnvEntry type(final Class<?> envEntryType) {
         return type(envEntryType.getName());
     }
 
-    public EnvEntry value(String envEntryValue) {
+    public EnvEntry value(final String envEntryValue) {
         this.setEnvEntryValue(envEntryValue);
         return this;
     }
 
-    public EnvEntry mappedName(String mappedName) {
+    public EnvEntry mappedName(final String mappedName) {
         this.setMappedName(mappedName);
         return this;
     }
 
-    public EnvEntry lookup(String lookupName) {
+    public EnvEntry lookup(final String lookupName) {
         this.setLookupName(lookupName);
         return this;
     }
 
-    public EnvEntry injectionTarget(String className, String property) {
+    public EnvEntry injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.getEnvEntryName() == null) {
@@ -143,7 +141,7 @@ public class EnvEntry implements JndiReference {
         return this;
     }
 
-    public EnvEntry injectionTarget(Class<?> clazz, String property) {
+    public EnvEntry injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -157,17 +155,17 @@ public class EnvEntry implements JndiReference {
         return getEnvEntryType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setEnvEntryName(name);
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setEnvEntryType(type);
     }
 
@@ -176,7 +174,7 @@ public class EnvEntry implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -188,7 +186,7 @@ public class EnvEntry implements JndiReference {
         return envEntryName;
     }
 
-    public void setEnvEntryName(String value) {
+    public void setEnvEntryName(final String value) {
         this.envEntryName = value;
     }
 
@@ -199,7 +197,7 @@ public class EnvEntry implements JndiReference {
         return envEntryType;
     }
 
-    public void setEnvEntryType(String value) {
+    public void setEnvEntryType(final String value) {
         this.envEntryType = value;
     }
 
@@ -207,7 +205,7 @@ public class EnvEntry implements JndiReference {
         return envEntryValue;
     }
 
-    public void setEnvEntryValue(String value) {
+    public void setEnvEntryValue(final String value) {
         this.envEntryValue = value;
     }
 
@@ -215,7 +213,7 @@ public class EnvEntry implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -223,7 +221,7 @@ public class EnvEntry implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -238,18 +236,18 @@ public class EnvEntry implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "EnvEntry{" +
-                "name='" + getEnvEntryName() + '\'' +
-                ", type='" + getEnvEntryType() + '\'' +
-                ", value='" + getEnvEntryValue() + '\'' +
-                ", mappedName='" + getMappedName() + '\'' +
-                ", lookupName='" + getLookupName() + '\'' +
-                '}';
+            "name='" + getEnvEntryName() + '\'' +
+            ", type='" + getEnvEntryType() + '\'' +
+            ", value='" + getEnvEntryValue() + '\'' +
+            ", mappedName='" + getMappedName() + '\'' +
+            ", lookupName='" + getLookupName() + '\'' +
+            '}';
     }
 }

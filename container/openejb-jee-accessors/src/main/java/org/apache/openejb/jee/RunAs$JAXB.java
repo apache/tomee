@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class RunAs$JAXB
-        extends JAXBObject<RunAs> {
+    extends JAXBObject<RunAs> {
 
 
     public RunAs$JAXB() {
         super(RunAs.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "run-asType".intern()), Text$JAXB.class);
     }
 
-    public static RunAs readRunAs(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static RunAs readRunAs(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeRunAs(XoXMLStreamWriter writer, RunAs runAs, RuntimeContext context)
-            throws Exception {
+    public static void writeRunAs(final XoXMLStreamWriter writer, final RunAs runAs, final RuntimeContext context)
+        throws Exception {
         _write(writer, runAs, context);
     }
 
-    public void write(XoXMLStreamWriter writer, RunAs runAs, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final RunAs runAs, final RuntimeContext context)
+        throws Exception {
         _write(writer, runAs, context);
     }
 
-    public final static RunAs _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static RunAs _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class RunAs$JAXB
             context = new RuntimeContext();
         }
 
-        RunAs runAs = new RunAs();
+        final RunAs runAs = new RunAs();
         context.beforeUnmarshal(runAs, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("run-asType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, RunAs.class);
@@ -83,10 +83,10 @@ public class RunAs$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, runAs);
                 runAs.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class RunAs$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: roleName
-                String roleNameRaw = elementReader.getElementAsString();
+                final String roleNameRaw = elementReader.getElementAsString();
 
-                String roleName;
+                final String roleName;
                 try {
                     roleName = Adapters.collapsedStringAdapterAdapter.unmarshal(roleNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -123,7 +123,7 @@ public class RunAs$JAXB
         if (descriptions != null) {
             try {
                 runAs.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, RunAs.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -133,13 +133,13 @@ public class RunAs$JAXB
         return runAs;
     }
 
-    public final RunAs read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final RunAs read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, RunAs runAs, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final RunAs runAs, RuntimeContext context)
+        throws Exception {
         if (runAs == null) {
             writer.writeXsiNil();
             return;
@@ -149,7 +149,7 @@ public class RunAs$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (RunAs.class != runAs.getClass()) {
             context.unexpectedSubclass(writer, runAs, RunAs.class);
             return;
@@ -159,12 +159,12 @@ public class RunAs$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = runAs.id;
+        final String idRaw = runAs.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(runAs, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -174,11 +174,11 @@ public class RunAs$JAXB
         Text[] descriptions = null;
         try {
             descriptions = runAs.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(runAs, "descriptions", RunAs.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -190,11 +190,11 @@ public class RunAs$JAXB
         }
 
         // ELEMENT: roleName
-        String roleNameRaw = runAs.roleName;
+        final String roleNameRaw = runAs.roleName;
         String roleName = null;
         try {
             roleName = Adapters.collapsedStringAdapterAdapter.marshal(roleNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(runAs, "roleName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (roleName != null) {

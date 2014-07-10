@@ -51,23 +51,23 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     public void testBrokerUri() throws Exception {
         final String prefix = ActiveMQFactory.getBrokerMetaFile();
         assertEquals(prefix + "broker:(tcp://localhost:" + brokerPort + ")?persistent=false",
-                getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")"));
+            getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")"));
         assertEquals(prefix + "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=false",
-                getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false"));
+            getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false"));
         assertEquals(prefix + "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=false",
-                getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=true"));
+            getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=true"));
         assertEquals(prefix + "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=false",
-                getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=false"));
+            getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false&persistent=false"));
     }
 
-    private String getBrokerUri(String brokerUri) throws URISyntaxException {
+    private String getBrokerUri(final String brokerUri) throws URISyntaxException {
         final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerUri));
         compositeData.getParameters().put("persistent", "false");
         return ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI();
     }
 
     public void testBrokerDoubleCreate() throws Exception {
-        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri( "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
+        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
         stopBroker(broker);
 
         broker = BrokerFactory.createBroker(new URI(getBrokerUri("broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
@@ -76,15 +76,15 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     public void testNoDataSource() throws Exception {
-        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri(
-                "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
+        final BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri(
+            "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
         assertNotNull("broker is null", broker);
 
-        PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
+        final PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
         assertNotNull("persistenceAdapter is null", persistenceAdapter);
 
         assertTrue("persistenceAdapter should be an instance of MemoryPersistenceAdapter",
-                persistenceAdapter instanceof MemoryPersistenceAdapter);
+            persistenceAdapter instanceof MemoryPersistenceAdapter);
 
         stopBroker(broker);
     }
@@ -107,15 +107,15 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
         BrokerService broker = null;
         try {
             broker = BrokerFactory.createBroker(new URI(getBrokerUri(
-                    "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
+                "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
             assertNotNull("broker is null", broker);
 
-            PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
+            final PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
             assertNotNull("persistenceAdapter is null", persistenceAdapter);
 
             assertTrue("persistenceAdapter should be an instance of JDBCPersistenceAdapter",
-                    persistenceAdapter instanceof JDBCPersistenceAdapter);
-            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter)persistenceAdapter;
+                persistenceAdapter instanceof JDBCPersistenceAdapter);
+            final JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter) persistenceAdapter;
 
             assertSame(dataSource, jdbcPersistenceAdapter.getDataSource());
         } finally {
@@ -149,15 +149,15 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
         BrokerService broker = null;
         try {
             broker = BrokerFactory.createBroker(new URI(getBrokerUri(
-                    "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
+                "broker:(tcp://localhost:" + brokerPort + ")?useJmx=false")));
             assertNotNull("broker is null", broker);
 
-            PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
+            final PersistenceAdapter persistenceAdapter = broker.getPersistenceAdapter();
             assertNotNull("persistenceAdapter is null", persistenceAdapter);
 
             assertTrue("persistenceAdapter should be an instance of JDBCPersistenceAdapter",
-                    persistenceAdapter instanceof JDBCPersistenceAdapter);
-            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter)persistenceAdapter;
+                persistenceAdapter instanceof JDBCPersistenceAdapter);
+            final JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter) persistenceAdapter;
 
             assertSame(dataSource, jdbcPersistenceAdapter.getDataSource());
         } finally {
@@ -169,7 +169,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     public static class MockInitialContextFactory implements InitialContextFactory {
         private static ImmutableContext immutableContext;
 
-        public static void install(Map bindings) throws NamingException {
+        public static void install(final Map bindings) throws NamingException {
             immutableContext = new ImmutableContext(bindings);
             System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
             new InitialContext();
@@ -181,16 +181,16 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
 
-    private void stopBroker(BrokerService broker) throws Exception {
+    private void stopBroker(final BrokerService broker) throws Exception {
         if (broker == null) return;
 
         if (broker.getJmsBridgeConnectors() != null) {
-            for (JmsConnector connector : broker.getJmsBridgeConnectors()) {
+            for (final JmsConnector connector : broker.getJmsBridgeConnectors()) {
                 connector.stop();
             }
         }
-        for (Object o : broker.getTransportConnectors()) {
-            TransportConnector tc = (TransportConnector) o;
+        for (final Object o : broker.getTransportConnectors()) {
+            final TransportConnector tc = (TransportConnector) o;
             tc.stop();
 
         }

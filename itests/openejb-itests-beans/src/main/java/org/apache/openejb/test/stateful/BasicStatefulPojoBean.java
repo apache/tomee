@@ -30,11 +30,11 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicStatefulBusinessRemote {
 
-    public void create(String name) {
+    public void create(final String name) {
     }
 
     @Remove
-    public void removeBean(){
+    public void removeBean() {
     }
 
     /**
@@ -43,18 +43,17 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
      * @return
      * @see org.apache.openejb.test.stateless.BasicStatelessObject#businessMethod
      */
-    public String businessMethod(String text){
-        StringBuffer b = new StringBuffer(text);
+    public String businessMethod(final String text) {
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
-    public Object echo(Object object) {
+    public Object echo(final Object object) {
         return object;
     }
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     public void throwApplicationException() throws ApplicationException {
         throw new ApplicationException("Testing ability to throw Application Exceptions");
@@ -65,7 +64,6 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     public void throwSystemException_NullPointer() {
         throw new NullPointerException("Testing ability to throw System Exceptions");
@@ -73,21 +71,21 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
 
     /**
      * Maps to BasicStatelessObject.getPermissionsReport
-     *
+     * <p/>
      * Returns a report of the bean's
      * runtime permissions
      *
      * @return
      * @see org.apache.openejb.test.stateless.BasicStatelessObject#getPermissionsReport
      */
-    public Properties getPermissionsReport(){
+    public Properties getPermissionsReport() {
         /* TO DO: */
         return null;
     }
 
     /**
      * Maps to BasicStatelessObject.getAllowedOperationsReport
-     *
+     * <p/>
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *
@@ -95,19 +93,19 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
      * @return
      * @see org.apache.openejb.test.stateless.BasicStatelessObject#getAllowedOperationsReport
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName){
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return null;
     }
 
     @Resource
-    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+    public void setSessionContext(final SessionContext ctx) throws EJBException, RemoteException {
     }
-    
+
     public Object remove() {
         return new String("Executed remove() Method");
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
     }
 }

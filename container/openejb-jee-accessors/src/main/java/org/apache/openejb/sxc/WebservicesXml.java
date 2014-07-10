@@ -30,11 +30,11 @@ import java.net.URL;
  */
 public class WebservicesXml {
 
-    public static Webservices unmarshal(InputStream inputStream) throws Exception {
+    public static Webservices unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new Webservices$JAXB(), inputStream);
     }
 
-    public static Webservices unmarshal(URL url) throws Exception {
+    public static Webservices unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             return Sxc.unmarshalJavaee(new Webservices$JAXB(), inputStream);
@@ -43,7 +43,7 @@ public class WebservicesXml {
         }
     }
 
-    public static void marshal(Webservices webservices, OutputStream outputStream) throws Exception {
+    public static void marshal(final Webservices webservices, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new Webservices$JAXB(), webservices, new StreamResult(outputStream));
     }
 }

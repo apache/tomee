@@ -25,7 +25,7 @@ public abstract class BasicSingletonTestClient extends SingletonTestClient{
     protected BasicSingletonHome ejbHome = null;
     protected BasicSingletonObject ejbObject = null;
 
-    public BasicSingletonTestClient(String name){
+    public BasicSingletonTestClient(final String name){
         super(name);
     }
 }

@@ -23,9 +23,10 @@ import java.util.Collection;
 
 public abstract class QueryBean implements EntityBean {
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {
@@ -49,7 +50,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single string field
      */
-    public String ejbHomeSelectSingleStringField(String value) throws FinderException {
+    public String ejbHomeSelectSingleStringField(final String value) throws FinderException {
         return ejbSelectSingleStringField(value);
     }
 
@@ -58,7 +59,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single boolean field
      */
-    public boolean ejbHomeSelectSingleBooleanField(boolean value) throws FinderException {
+    public boolean ejbHomeSelectSingleBooleanField(final boolean value) throws FinderException {
         return ejbSelectSingleBooleanField(value);
     }
 
@@ -67,7 +68,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single char field
      */
-    public char ejbHomeSelectSingleCharField(char value) throws FinderException {
+    public char ejbHomeSelectSingleCharField(final char value) throws FinderException {
         return ejbSelectSingleCharField(value);
     }
 
@@ -76,7 +77,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single byte field
      */
-    public byte ejbHomeSelectSingleByteField(byte value) throws FinderException {
+    public byte ejbHomeSelectSingleByteField(final byte value) throws FinderException {
         return ejbSelectSingleByteField(value);
     }
 
@@ -85,7 +86,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single short field
      */
-    public short ejbHomeSelectSingleShortField(short value) throws FinderException {
+    public short ejbHomeSelectSingleShortField(final short value) throws FinderException {
         return ejbSelectSingleShortField(value);
     }
 
@@ -94,7 +95,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single int field
      */
-    public int ejbHomeSelectSingleIntField(int value) throws FinderException {
+    public int ejbHomeSelectSingleIntField(final int value) throws FinderException {
         return ejbSelectSingleIntField(value);
     }
 
@@ -103,7 +104,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single long field
      */
-    public long ejbHomeSelectSingleLongField(long value) throws FinderException {
+    public long ejbHomeSelectSingleLongField(final long value) throws FinderException {
         return ejbSelectSingleLongField(value);
     }
 
@@ -112,7 +113,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single float field
      */
-    public float ejbHomeSelectSingleFloatField(float value) throws FinderException {
+    public float ejbHomeSelectSingleFloatField(final float value) throws FinderException {
         return ejbSelectSingleFloatField(value);
     }
 
@@ -121,7 +122,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single double field
      */
-    public double ejbHomeSelectSingleDoubleField(double value) throws FinderException {
+    public double ejbHomeSelectSingleDoubleField(final double value) throws FinderException {
         return ejbSelectSingleDoubleField(value);
     }
 
@@ -140,7 +141,7 @@ public abstract class QueryBean implements EntityBean {
      * Select a collection boolean field
      */
     public Collection ejbHomeSelectCollectionBooleanField() throws FinderException {
-         return ejbSelectCollectionBooleanField();
+        return ejbSelectCollectionBooleanField();
     }
 
     public abstract Collection ejbSelectCollectionBooleanField() throws FinderException;
@@ -211,7 +212,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single local ejb
      */
-    public Object ejbHomeSelectSingleLocalEjb(int value) throws FinderException {
+    public Object ejbHomeSelectSingleLocalEjb(final int value) throws FinderException {
         return ejbSelectSingleLocalEjb(value);
     }
 
@@ -220,7 +221,7 @@ public abstract class QueryBean implements EntityBean {
     /**
      * Select a single remote ejb
      */
-    public Object ejbHomeSelectSingleRemoteEjb(int value) throws FinderException {
+    public Object ejbHomeSelectSingleRemoteEjb(final int value) throws FinderException {
         return ejbSelectSingleRemoteEjb(value);
     }
 

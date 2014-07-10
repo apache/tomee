@@ -83,7 +83,7 @@ public class FileUtils {
                 }
             } catch (final SecurityException e) {
                 throw new IOException(
-                        "Permission denied: Cannot create the directory " + dir.getPath() + " : " + e.getMessage());
+                    "Permission denied: Cannot create the directory " + dir.getPath() + " : " + e.getMessage());
             }
         } else if (dir.exists() && !dir.isDirectory()) {
             throw new IOException("The path specified is not a valid directory: " + dir.getPath());

@@ -57,21 +57,22 @@ public class InvokeMethod extends Statement {
     private Object target;
     // These are all the keys defined in org.apache.openejb.config.rules.Messages.properties
     private static Set<String> allKeys;
+
     static {
-        ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
+        final ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
         allKeys = bundle.keySet();
     }
 
-    public InvokeMethod(FrameworkMethod testMethod, Object target) {
+    public InvokeMethod(final FrameworkMethod testMethod, final Object target) {
         this.testMethod = testMethod;
         this.target = target;
     }
 
     @Override
     public void evaluate() throws Throwable {
-        Map<Integer, List<String>> expectedKeys = validateKeys();
+        final Map<Integer, List<String>> expectedKeys = validateKeys();
         setUp();
-        Object obj = testMethod.invokeExplosively(target);
+        final Object obj = testMethod.invokeExplosively(target);
 
         final String outputDescriptors = SystemInstance.get().getProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false");
         try {
@@ -84,11 +85,11 @@ public class InvokeMethod extends Statement {
                 vc = ejbModule.getValidation();
                 assembler.createApplication(config.configureApplication(ejbModule));
             } else if (obj instanceof EjbModule) {
-                EjbModule ejbModule = (EjbModule) obj;
+                final EjbModule ejbModule = (EjbModule) obj;
                 vc = ejbModule.getValidation();
                 assembler.createApplication(config.configureApplication(ejbModule));
             } else if (obj instanceof AppModule) {
-                AppModule appModule = (AppModule) obj;
+                final AppModule appModule = (AppModule) obj;
                 vc = appModule.getValidation();
                 assembler.createApplication(config.configureApplication(appModule));
             }
@@ -101,7 +102,7 @@ public class InvokeMethod extends Statement {
                     fail("A ValidationFailedException should have been thrown");
                 }
             }
-        } catch (ValidationFailedException vfe) {
+        } catch (final ValidationFailedException vfe) {
             if (!isEmpty(expectedKeys)) {
                 if (!expectedKeys.get(KeyType.FAILURE).isEmpty()) {
                     assertFailures(expectedKeys.get(KeyType.FAILURE), vfe);
@@ -113,7 +114,7 @@ public class InvokeMethod extends Statement {
                     assertErrors(expectedKeys.get(KeyType.ERROR), vfe);
                 }
             } else {
-                for (ValidationFailure failure : vfe.getFailures()) {
+                for (final ValidationFailure failure : vfe.getFailures()) {
                     System.out.println("failure = " + failure.getMessageKey());
                 }
                 fail("There should be no validation failures");
@@ -132,22 +133,23 @@ public class InvokeMethod extends Statement {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
     }
 
-    private void tearDown() {}
+    private void tearDown() {
+    }
 
     /**
      * Tests to see if the keys specified in the @Keys annotation are also available in the org.apache.openejb.config.rules.Messages.properties file. If there are any invalid keys,
      * then it throws an exception and causes the test to error out. If all the keys are valid, then it returns those keys. This list of keys can then be compared with all the Keys
      * in org.apache.openejb.config.rules.Messages.properties and one can then find out the "test coverage" of the keys i.e. this tool can be used to find keys for which tests have
      * not yet been written
-     * 
+     *
      * @return
      * @throws Exception
      */
     private Map<Integer, List<String>> validateKeys() throws Exception {
-        Keys annotation = testMethod.getAnnotation(Keys.class);
-        Key[] keys = annotation.value();
-        ArrayList<String> wrongKeys = new ArrayList<String>();
-        for (Key key : keys) {
+        final Keys annotation = testMethod.getAnnotation(Keys.class);
+        final Key[] keys = annotation.value();
+        final ArrayList<String> wrongKeys = new ArrayList<String>();
+        for (final Key key : keys) {
             if (allKeys.contains("1." + key.value())) {
                 continue;
             } else {
@@ -155,22 +157,22 @@ public class InvokeMethod extends Statement {
             }
         }
         if (wrongKeys.isEmpty()) {
-            Map<Integer, List<String>> validKeys = new HashMap<Integer, List<String>>();
-            ArrayList<String> failureKeys = new ArrayList<String>();
-            ArrayList<String> warningKeys = new ArrayList<String>();
-            ArrayList<String> errorKeys = new ArrayList<String>();
-            for (Key key : keys) {
+            final Map<Integer, List<String>> validKeys = new HashMap<Integer, List<String>>();
+            final ArrayList<String> failureKeys = new ArrayList<String>();
+            final ArrayList<String> warningKeys = new ArrayList<String>();
+            final ArrayList<String> errorKeys = new ArrayList<String>();
+            for (final Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
                     switch (key.type()) {
-                    case KeyType.FAILURE:
-                        failureKeys.add(key.value());
-                        break;
-                    case KeyType.WARNING:
-                        warningKeys.add(key.value());
-                        break;
-                    case KeyType.ERROR:
-                        errorKeys.add(key.value());
-                        break;
+                        case KeyType.FAILURE:
+                            failureKeys.add(key.value());
+                            break;
+                        case KeyType.WARNING:
+                            warningKeys.add(key.value());
+                            break;
+                        case KeyType.ERROR:
+                            errorKeys.add(key.value());
+                            break;
                     }
                 }
             }
@@ -179,17 +181,17 @@ public class InvokeMethod extends Statement {
             validKeys.put(KeyType.ERROR, errorKeys);
             return validKeys;
         } else {
-            String commaDelimitedKeys = Join.join(",", wrongKeys);
+            final String commaDelimitedKeys = Join.join(",", wrongKeys);
             throw new Exception("The following keys listed in the @Keys annotation on the method " + testMethod.getName() + "() of " + testMethod.getMethod().getDeclaringClass()
-                    + " are invalid : " + commaDelimitedKeys
-                    + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
+                + " are invalid : " + commaDelimitedKeys
+                + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
         }
     }
 
-    private boolean isEmpty(Map<Integer, List<String>> expectedKeys) {
+    private boolean isEmpty(final Map<Integer, List<String>> expectedKeys) {
         boolean empty = true;
-        Set<Entry<Integer, List<String>>> entrySet = expectedKeys.entrySet();
-        for (Entry<Integer, List<String>> entry : entrySet) {
+        final Set<Entry<Integer, List<String>>> entrySet = expectedKeys.entrySet();
+        for (final Entry<Integer, List<String>> entry : entrySet) {
             empty = entry.getValue().size() == 0;
             if (!empty)
                 return empty;

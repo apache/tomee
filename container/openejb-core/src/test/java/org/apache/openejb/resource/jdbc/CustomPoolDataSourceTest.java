@@ -73,26 +73,26 @@ public class CustomPoolDataSourceTest {
         }
 
         @Override
-        public DataSource pool(String name, DataSource ds, Properties properties) {
+        public DataSource pool(final String name, final DataSource ds, final Properties properties) {
             throw new UnsupportedOperationException();
         }
 
         @Override
         public CommonDataSource pool(final String name, final String driver, final Properties properties) {
             return (CustomDataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { CustomDataSource.class },
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if (method.getName().equals("name")) {
-                                return properties.getProperty("Name");
-                            }
-                            if ("hashCode".equals(method.getName())) {
-                                return properties.hashCode(); // don't care
-                            }
-                            return null;
+                new Class<?>[]{CustomDataSource.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                        if (method.getName().equals("name")) {
+                            return properties.getProperty("Name");
                         }
-                    });
+                        if ("hashCode".equals(method.getName())) {
+                            return properties.hashCode(); // don't care
+                        }
+                        return null;
+                    }
+                });
         }
     }
 

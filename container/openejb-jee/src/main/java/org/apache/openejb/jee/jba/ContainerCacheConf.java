@@ -42,11 +42,9 @@ public class ContainerCacheConf {
 
     /**
      * Gets the value of the cachePolicy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCachePolicy() {
         return cachePolicy;
@@ -54,23 +52,19 @@ public class ContainerCacheConf {
 
     /**
      * Sets the value of the cachePolicy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCachePolicy(String value) {
+    public void setCachePolicy(final String value) {
         this.cachePolicy = value;
     }
 
     /**
      * Gets the value of the cachePolicyConf property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CachePolicyConf }
-     *     
+     *
+     * @return possible object is
+     * {@link CachePolicyConf }
      */
     public CachePolicyConf getCachePolicyConf() {
         return cachePolicyConf;
@@ -78,23 +72,19 @@ public class ContainerCacheConf {
 
     /**
      * Sets the value of the cachePolicyConf property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CachePolicyConf }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CachePolicyConf }
      */
-    public void setCachePolicyConf(CachePolicyConf value) {
+    public void setCachePolicyConf(final CachePolicyConf value) {
         this.cachePolicyConf = value;
     }
 
     /**
      * Gets the value of the cachePolicyConfOther property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CachePolicyConfOther }
-     *     
+     *
+     * @return possible object is
+     * {@link CachePolicyConfOther }
      */
     public CachePolicyConfOther getCachePolicyConfOther() {
         return cachePolicyConfOther;
@@ -102,13 +92,11 @@ public class ContainerCacheConf {
 
     /**
      * Sets the value of the cachePolicyConfOther property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CachePolicyConfOther }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CachePolicyConfOther }
      */
-    public void setCachePolicyConfOther(CachePolicyConfOther value) {
+    public void setCachePolicyConfOther(final CachePolicyConfOther value) {
         this.cachePolicyConfOther = value;
     }
 

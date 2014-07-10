@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +24,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
  * <p>Java class for automatic-key-generation complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="automatic-key-generation">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "automatic-key-generation", propOrder = {
@@ -70,11 +68,9 @@ public class AutomaticKeyGeneration {
 
     /**
      * Gets the value of the generatorType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGeneratorType() {
         return generatorType;
@@ -82,23 +78,19 @@ public class AutomaticKeyGeneration {
 
     /**
      * Sets the value of the generatorType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGeneratorType(String value) {
+    public void setGeneratorType(final String value) {
         this.generatorType = value;
     }
 
     /**
      * Gets the value of the generatorName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGeneratorName() {
         return generatorName;
@@ -106,23 +98,19 @@ public class AutomaticKeyGeneration {
 
     /**
      * Sets the value of the generatorName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGeneratorName(String value) {
+    public void setGeneratorName(final String value) {
         this.generatorName = value;
     }
 
     /**
      * Gets the value of the keyCacheSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is
+     * {@link BigInteger }
      */
     public BigInteger getKeyCacheSize() {
         return keyCacheSize;
@@ -130,23 +118,19 @@ public class AutomaticKeyGeneration {
 
     /**
      * Sets the value of the keyCacheSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BigInteger }
      */
-    public void setKeyCacheSize(BigInteger value) {
+    public void setKeyCacheSize(final BigInteger value) {
         this.keyCacheSize = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -154,13 +138,11 @@ public class AutomaticKeyGeneration {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

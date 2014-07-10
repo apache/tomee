@@ -24,7 +24,7 @@ package org.apache.openejb.test.singleton;
  */
 public abstract class AnnotatedSetterInjectionSingletonTestClient extends BasicSingletonTestClient {
 
-    public AnnotatedSetterInjectionSingletonTestClient(String name) {
+    public AnnotatedSetterInjectionSingletonTestClient(final String name) {
         super("AnnotatedSetterInjectionSingletonTestClient." + name);
     }
     

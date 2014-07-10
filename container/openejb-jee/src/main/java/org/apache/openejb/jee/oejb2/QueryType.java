@@ -17,19 +17,19 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for queryType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="queryType">
  *   &lt;complexContent>
@@ -66,8 +66,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "queryType", propOrder = {
@@ -92,11 +90,9 @@ public class QueryType {
 
     /**
      * Gets the value of the queryMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QueryType.QueryMethod }
-     *     
+     *
+     * @return possible object is
+     * {@link QueryType.QueryMethod }
      */
     public QueryType.QueryMethod getQueryMethod() {
         return queryMethod;
@@ -104,23 +100,19 @@ public class QueryType {
 
     /**
      * Sets the value of the queryMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QueryType.QueryMethod }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link QueryType.QueryMethod }
      */
-    public void setQueryMethod(QueryType.QueryMethod value) {
+    public void setQueryMethod(final QueryType.QueryMethod value) {
         this.queryMethod = value;
     }
 
     /**
      * Gets the value of the resultTypeMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResultTypeMapping() {
         return resultTypeMapping;
@@ -128,23 +120,19 @@ public class QueryType {
 
     /**
      * Sets the value of the resultTypeMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResultTypeMapping(String value) {
+    public void setResultTypeMapping(final String value) {
         this.resultTypeMapping = value;
     }
 
     /**
      * Gets the value of the ejbQl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbQl() {
         return ejbQl;
@@ -152,23 +140,19 @@ public class QueryType {
 
     /**
      * Sets the value of the ejbQl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbQl(String value) {
+    public void setEjbQl(final String value) {
         this.ejbQl = value;
     }
 
     /**
      * Gets the value of the noCacheFlush property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
+     *
+     * @return possible object is
+     * {@link Object }
      */
     public Object getNoCacheFlush() {
         return noCacheFlush;
@@ -176,23 +160,19 @@ public class QueryType {
 
     /**
      * Sets the value of the noCacheFlush property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Object }
      */
-    public void setNoCacheFlush(Object value) {
+    public void setNoCacheFlush(final Object value) {
         this.noCacheFlush = value;
     }
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupName() {
         return groupName;
@@ -200,22 +180,20 @@ public class QueryType {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupName(String value) {
+    public void setGroupName(final String value) {
         this.groupName = value;
     }
 
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     * <p/>
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     * <p/>
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -238,8 +216,6 @@ public class QueryType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -255,11 +231,9 @@ public class QueryType {
 
         /**
          * Gets the value of the methodName property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getMethodName() {
             return methodName;
@@ -267,23 +241,19 @@ public class QueryType {
 
         /**
          * Sets the value of the methodName property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
-        public void setMethodName(String value) {
+        public void setMethodName(final String value) {
             this.methodName = value;
         }
 
         /**
          * Gets the value of the methodParams property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link QueryType.QueryMethod.MethodParams }
-         *     
+         *
+         * @return possible object is
+         * {@link QueryType.QueryMethod.MethodParams }
          */
         public QueryType.QueryMethod.MethodParams getMethodParams() {
             return methodParams;
@@ -291,22 +261,20 @@ public class QueryType {
 
         /**
          * Sets the value of the methodParams property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link QueryType.QueryMethod.MethodParams }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link QueryType.QueryMethod.MethodParams }
          */
-        public void setMethodParams(QueryType.QueryMethod.MethodParams value) {
+        public void setMethodParams(final QueryType.QueryMethod.MethodParams value) {
             this.methodParams = value;
         }
 
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         * <p/>
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         * <p/>
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -318,8 +286,6 @@ public class QueryType {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -332,25 +298,23 @@ public class QueryType {
 
             /**
              * Gets the value of the methodParam property.
-             * 
-             * <p>
+             * <p/>
+             * <p/>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the methodParam property.
-             * 
-             * <p>
+             * <p/>
+             * <p/>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getMethodParam().add(newItem);
              * </pre>
-             * 
-             * 
-             * <p>
+             * <p/>
+             * <p/>
+             * <p/>
              * Objects of the following type(s) are allowed in the list
              * {@link String }
-             * 
-             * 
              */
             public List<String> getMethodParam() {
                 if (methodParam == null) {

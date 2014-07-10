@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MethodParams$JAXB
-        extends JAXBObject<MethodParams> {
+    extends JAXBObject<MethodParams> {
 
 
     public MethodParams$JAXB() {
         super(MethodParams.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "method-paramsType".intern()));
     }
 
-    public static MethodParams readMethodParams(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MethodParams readMethodParams(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMethodParams(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public static void writeMethodParams(final XoXMLStreamWriter writer, final MethodParams methodParams, final RuntimeContext context)
+        throws Exception {
         _write(writer, methodParams, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MethodParams methodParams, final RuntimeContext context)
+        throws Exception {
         _write(writer, methodParams, context);
     }
 
-    public final static MethodParams _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MethodParams _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class MethodParams$JAXB
             context = new RuntimeContext();
         }
 
-        MethodParams methodParams = new MethodParams();
+        final MethodParams methodParams = new MethodParams();
         context.beforeUnmarshal(methodParams, LifecycleCallback.NONE);
 
         List<String> methodParam = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("method-paramsType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MethodParams.class);
@@ -81,10 +81,10 @@ public class MethodParams$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, methodParams);
                 methodParams.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class MethodParams$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("method-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodParam
-                String methodParamItemRaw = elementReader.getElementAsString();
+                final String methodParamItemRaw = elementReader.getElementAsString();
 
-                String methodParamItem;
+                final String methodParamItem;
                 try {
                     methodParamItem = Adapters.collapsedStringAdapterAdapter.unmarshal(methodParamItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -128,13 +128,13 @@ public class MethodParams$JAXB
         return methodParams;
     }
 
-    public final MethodParams read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MethodParams read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MethodParams methodParams, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MethodParams methodParams, RuntimeContext context)
+        throws Exception {
         if (methodParams == null) {
             writer.writeXsiNil();
             return;
@@ -153,25 +153,25 @@ public class MethodParams$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = methodParams.id;
+        final String idRaw = methodParams.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(methodParams, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: methodParam
-        List<String> methodParamRaw = methodParams.methodParam;
+        final List<String> methodParamRaw = methodParams.methodParam;
         if (methodParamRaw != null) {
-            for (String methodParamItem : methodParamRaw) {
+            for (final String methodParamItem : methodParamRaw) {
                 String methodParam = null;
                 try {
                     methodParam = Adapters.collapsedStringAdapterAdapter.marshal(methodParamItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(methodParams, "methodParam", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (methodParam != null) {

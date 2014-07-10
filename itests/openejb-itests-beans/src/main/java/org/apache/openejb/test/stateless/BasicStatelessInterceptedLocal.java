@@ -20,15 +20,14 @@ import java.util.Map;
 import java.util.List;
 
 /**
- *
  * @version $Rev$ $Date$
  */
 public interface BasicStatelessInterceptedLocal {
-    
+
     public String reverse(String str);
-    
+
     public String concat(String str1, String str2);
-    
+
     public Map<String, Object> getContextData();
 
 }

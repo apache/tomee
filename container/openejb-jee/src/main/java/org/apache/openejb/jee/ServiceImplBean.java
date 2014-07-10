@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * javaee_web_services_1_3.xsd
- * 
+ * <p/>
  * <p>Java class for service-impl-beanType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="service-impl-beanType">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-impl-beanType", propOrder = {"ejbLink", "servletLink"})
@@ -64,7 +62,7 @@ public class ServiceImplBean {
         return ejbLink;
     }
 
-    public void setEjbLink(String value) {
+    public void setEjbLink(final String value) {
         this.ejbLink = value;
     }
 
@@ -72,7 +70,7 @@ public class ServiceImplBean {
         return servletLink;
     }
 
-    public void setServletLink(String value) {
+    public void setServletLink(final String value) {
         this.servletLink = value;
     }
 
@@ -80,7 +78,7 @@ public class ServiceImplBean {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

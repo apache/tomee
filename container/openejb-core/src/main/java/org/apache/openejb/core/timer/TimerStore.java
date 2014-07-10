@@ -34,13 +34,13 @@ public interface TimerStore {
     void addTimerData(TimerData timerData) throws TimerStoreException;
 
     TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig)
-            throws TimerStoreException;
+        throws TimerStoreException;
 
     TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig)
-            throws TimerStoreException;
+        throws TimerStoreException;
 
     TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig, boolean auto)
-            throws TimerStoreException;
+        throws TimerStoreException;
 
     void removeTimer(long timerId);
 

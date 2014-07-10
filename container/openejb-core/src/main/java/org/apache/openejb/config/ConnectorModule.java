@@ -41,7 +41,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
     private ID id;
 
     private IAnnotationFinder finder;
-    
+
     public ConnectorModule(final Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
@@ -99,8 +99,8 @@ public class ConnectorModule extends Module implements DeploymentModule {
     @Override
     public String toString() {
         return "ConnectorModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                '}';
+            "moduleId='" + id.getName() + '\'' +
+            '}';
     }
 
     public IAnnotationFinder getFinder() {

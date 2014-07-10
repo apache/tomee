@@ -23,7 +23,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="bill")
+@Table(name = "bill")
 @IdClass(BillPk.class)
 public class Bill implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -38,7 +38,7 @@ public class Bill implements java.io.Serializable {
         return billNumber;
     }
 
-    public void setBillNumber(long number) {
+    public void setBillNumber(final long number) {
         billNumber = number;
     }
 
@@ -47,7 +47,7 @@ public class Bill implements java.io.Serializable {
         return billVersion;
     }
 
-    public void setBillVersion(long version) {
+    public void setBillVersion(final long version) {
         billVersion = version;
     }
 
@@ -56,7 +56,7 @@ public class Bill implements java.io.Serializable {
         return billRevision;
     }
 
-    public void setBillRevision(long revision) {
+    public void setBillRevision(final long revision) {
         billRevision = revision;
     }
 
@@ -64,7 +64,7 @@ public class Bill implements java.io.Serializable {
         return billDescription;
     }
 
-    public void setBillDescription(String description) {
+    public void setBillDescription(final String description) {
         billDescription = description;
     }
 }

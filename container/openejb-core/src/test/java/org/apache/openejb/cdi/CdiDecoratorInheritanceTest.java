@@ -39,7 +39,7 @@ public class CdiDecoratorInheritanceTest extends TestCase {
     }
 
     @Module
-    @Classes(cdi = true, value = { BaseDecorator.class, BaseModuleDecorator.class, ServiceDecorator.class, TheService.class }, cdiDecorators = { ServiceDecorator.class })
+    @Classes(cdi = true, value = {BaseDecorator.class, BaseModuleDecorator.class, ServiceDecorator.class, TheService.class}, cdiDecorators = {ServiceDecorator.class})
     public EjbJar jar() {
         return new EjbJar("cdi-decorator-inheritance");
     }

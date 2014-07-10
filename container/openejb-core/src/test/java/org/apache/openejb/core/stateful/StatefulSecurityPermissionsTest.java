@@ -72,43 +72,43 @@ public class StatefulSecurityPermissionsTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        SecurityServiceInfo securityServiceInfo = config.configureService(SecurityServiceInfo.class);
+        final SecurityServiceInfo securityServiceInfo = config.configureService(SecurityServiceInfo.class);
         securityServiceInfo.className = TestSecurityService.class.getName();
         assembler.createSecurityService(securityServiceInfo);
 
-        TestSecurityService securityService = (TestSecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        final TestSecurityService securityService = (TestSecurityService) SystemInstance.get().getComponent(SecurityService.class);
 
         securityService.login("foo", "Jazz", "Rock", "Reggae", "HipHop");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(Color.class));
-        List<MethodPermission> permissions = ejbJar.getAssemblyDescriptor().getMethodPermission();
+        final List<MethodPermission> permissions = ejbJar.getAssemblyDescriptor().getMethodPermission();
         permissions.add(new MethodPermission("*", "Color", "*", "Foo"));
         permissions.add(new MethodPermission("*", "Color", "create").setUnchecked());
         permissions.add(new MethodPermission("*", "Color", "ejbCreate").setUnchecked());
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
         {
-            ColorLocal color = (ColorLocal) context.lookup("ColorLocal");
+            final ColorLocal color = (ColorLocal) context.lookup("ColorLocal");
 
             assertEquals("Jazz", color.color());
             try {
                 color.color((Object) null);
-            } catch (EJBAccessException e) {
+            } catch (final EJBAccessException e) {
                 assertEquals("Excluded", actual.get());
             }
-            assertEquals("Rock", color.color((String)null));
-            assertEquals("Unchecked", color.color((Boolean)null));
-            assertEquals("Reggae", color.color((Integer)null));
+            assertEquals("Rock", color.color((String) null));
+            assertEquals("Unchecked", color.color((Boolean) null));
+            assertEquals("Reggae", color.color((Integer) null));
         }
 
     }
@@ -124,12 +124,12 @@ public class StatefulSecurityPermissionsTest extends TestCase {
         }
 
         @Init
-        public void ejbCreate(String s){
+        public void ejbCreate(final String s) {
             assertEquals(s, attribute());
         }
 
         @Remove
-        public void ejbRemove(){
+        public void ejbRemove() {
             assertEquals(expected.get(), attribute());
         }
 
@@ -140,22 +140,22 @@ public class StatefulSecurityPermissionsTest extends TestCase {
         }
 
         @DenyAll
-        public String color(Object o) {
+        public String color(final Object o) {
             return attribute();
         }
 
         @RolesAllowed({"Rock"})
-        public String color(String s) {
+        public String color(final String s) {
             return attribute();
         }
 
         @PermitAll
-        public String color(Boolean b) {
+        public String color(final Boolean b) {
             return attribute();
         }
 
         @RolesAllowed({"Reggae"})
-        public String color(Integer i) {
+        public String color(final Integer i) {
             return attribute();
         }
 
@@ -229,37 +229,37 @@ public class StatefulSecurityPermissionsTest extends TestCase {
             super(TestJaccProvider.class.getName());
         }
 
-        public UUID login(String securityRealm, String user, String pass) throws LoginException {
+        public UUID login(final String securityRealm, final String user, final String pass) throws LoginException {
             return null;
         }
 
-        public void login(String user, String... roles) throws LoginException {
-            Set<Principal> set = new HashSet<Principal>();
+        public void login(final String user, final String... roles) throws LoginException {
+            final Set<Principal> set = new HashSet<Principal>();
             set.add(new UserPrincipal(user));
-            for (String role : roles) {
+            for (final String role : roles) {
                 set.add(new GroupPrincipal(role));
             }
-            Subject subject = new Subject(true, set, Collections.EMPTY_SET, Collections.EMPTY_SET);
-            UUID uuid = registerSubject(subject);
+            final Subject subject = new Subject(true, set, Collections.EMPTY_SET, Collections.EMPTY_SET);
+            final UUID uuid = registerSubject(subject);
             associate(uuid);
         }
 
-        public void logout(){
+        public void logout() {
             this.disassociate();
         }
 
         public static class TestJaccProvider extends BasicJaccProvider {
-            protected BasicPolicyConfiguration createPolicyConfiguration(String contextID) {
+            protected BasicPolicyConfiguration createPolicyConfiguration(final String contextID) {
                 return new TestPolicy(contextID);
             }
 
             public static class TestPolicy extends BasicPolicyConfiguration {
 
-                TestPolicy(String contextID) {
+                TestPolicy(final String contextID) {
                     super(contextID);
                 }
 
-                public boolean implies(ProtectionDomain domain, Permission permission) {
+                public boolean implies(final ProtectionDomain domain, final Permission permission) {
 
                     if (excluded != null && excluded.implies(permission)) {
                         actual.set("Excluded");
@@ -271,14 +271,14 @@ public class StatefulSecurityPermissionsTest extends TestCase {
                         return true;
                     }
 
-                    Principal[] principals = domain.getPrincipals();
+                    final Principal[] principals = domain.getPrincipals();
                     if (principals.length == 0) return false;
 
-                    RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
-                    Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
+                    final RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
+                    final Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
-                    for (String role : roles) {
-                        PermissionCollection permissions = rolePermissionsMap.get(role);
+                    for (final String role : roles) {
+                        final PermissionCollection permissions = rolePermissionsMap.get(role);
 
                         if (permissions != null && permissions.implies(permission)) {
                             actual.set(role);

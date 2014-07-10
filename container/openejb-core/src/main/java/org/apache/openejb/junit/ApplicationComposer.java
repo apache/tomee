@@ -17,14 +17,14 @@
 
 package org.apache.openejb.junit;
 
-import java.util.List;
-
 import org.apache.openejb.testing.ApplicationComposers;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -40,7 +40,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
     @Override
     protected List<MethodRule> rules(final Object test) {
         final List<MethodRule> rules = super.rules(test);
-        rules.add(new MethodRule(){
+        rules.add(new MethodRule() {
             public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
                 return new DeployApplication(target, base, delegate);
             }

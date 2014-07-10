@@ -31,7 +31,7 @@ import java.util.TreeSet;
 public class PropertiesTest extends TestCase {
 
     public void testProperties() throws Exception {
-        Properties properties = createProperties();
+        final Properties properties = createProperties();
 
         // empty
         assertTrue(properties.isEmpty());
@@ -156,14 +156,14 @@ public class PropertiesTest extends TestCase {
             properties = createProperties();
             properties.load(new ByteArrayInputStream("a=\\u123".getBytes()));
             fail("Expected IllegalArgumentException due to invalid unicode sequence");
-        } catch (IllegalArgumentException expected) {
+        } catch (final IllegalArgumentException expected) {
         }
 
         try {
             properties = createProperties();
             properties.load(new ByteArrayInputStream("a=\\u123z".getBytes()));
             fail("Expected IllegalArgumentException due to invalid unicode sequence");
-        } catch (IllegalArgumentException expected) {
+        } catch (final IllegalArgumentException expected) {
         }
 
         properties = new SuperProperties();
@@ -328,37 +328,37 @@ public class PropertiesTest extends TestCase {
         return new Properties();
     }
 
-    protected static Properties singletonProperty(String key, String value) {
+    protected static Properties singletonProperty(final String key, final String value) {
         return properties(key, value);
     }
 
-    protected static Properties properties(String... keysAndValues) {
-        Properties properties = new Properties();
-        for (int i = 0; i+1 < keysAndValues.length; i += 2) {
-            String key = keysAndValues[i];
-            String value = keysAndValues[i + 1];
+    protected static Properties properties(final String... keysAndValues) {
+        final Properties properties = new Properties();
+        for (int i = 0; i + 1 < keysAndValues.length; i += 2) {
+            final String key = keysAndValues[i];
+            final String value = keysAndValues[i + 1];
             properties.put(key, value);
         }
         return properties;
     }
 
     @SuppressWarnings({"unchecked"})
-    protected static void assertProperties(Properties expected, Properties actual) {
+    protected static void assertProperties(final Properties expected, final Properties actual) {
         if (expected.equals(actual)) return;
 
-        StringBuilder message = new StringBuilder().append("\n");
+        final StringBuilder message = new StringBuilder().append("\n");
 
-        Set<String> keys = new TreeSet<String>();
+        final Set<String> keys = new TreeSet<String>();
         keys.addAll(new HashSet(expected.keySet()));
         keys.addAll(new HashSet(actual.keySet()));
-        for (String key : keys) {
+        for (final String key : keys) {
             if (!expected.containsKey(key)) {
                 message.append("A ").append(key).append("=").append(actual.get(key)).append("\n");
             } else if (!actual.containsKey(key)) {
                 message.append("R ").append(key).append("=").append(expected.get(key)).append("\n");
             } else {
-                Object expectedValue = expected.get(key);
-                Object actualValue = actual.get(key);
+                final Object expectedValue = expected.get(key);
+                final Object actualValue = actual.get(key);
                 if (expectedValue != expectedValue && (expectedValue == null || !expectedValue.equals(actual))) {
                     message.append("C ").append(key).append("=").append(expectedValue).append("\n");
                     message.append("  ").append(key).append("=").append(actualValue).append("\n");
@@ -370,8 +370,8 @@ public class PropertiesTest extends TestCase {
         fail(message.toString());
     }
 
-    protected String store(Properties properties) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    protected String store(final Properties properties) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
         return new String(out.toByteArray());
     }

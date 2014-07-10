@@ -30,11 +30,11 @@ import java.net.URL;
  */
 public class FacesConfigXml {
 
-    public static FacesConfig unmarshal(InputStream inputStream) throws Exception {
+    public static FacesConfig unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new FacesConfig$JAXB(), inputStream);
     }
 
-    public static FacesConfig unmarshal(URL url) throws Exception {
+    public static FacesConfig unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             return Sxc.unmarshalJavaee(new FacesConfig$JAXB(), inputStream);
@@ -43,7 +43,7 @@ public class FacesConfigXml {
         }
     }
 
-    public static void marshal(FacesConfig facesConfig, OutputStream outputStream) throws Exception {
+    public static void marshal(final FacesConfig facesConfig, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new FacesConfig$JAXB(), facesConfig, new StreamResult(outputStream));
     }
 }

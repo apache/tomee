@@ -37,14 +37,14 @@ public class HandlerResolverImplTest extends TestCase {
     public void setUp() throws Exception {
         new Assembler();
     }
-    
+
     public void testBasic() throws Exception {
-        HandlerChains handlerChains = readHandlerChains("/handlers.xml");
+        final HandlerChains handlerChains = readHandlerChains("/handlers.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());
 
-        List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
-        List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
-        HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
+        final List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
+        final List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
+        final HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
 
         List<Handler> handlers = null;
 
@@ -53,42 +53,42 @@ public class HandlerResolverImplTest extends TestCase {
     }
 
     public void testServiceMatching() throws Exception {
-        HandlerChains handlerChains = readHandlerChains("/handlers_service.xml");
+        final HandlerChains handlerChains = readHandlerChains("/handlers_service.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());
 
-        List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
-        List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
-        HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
+        final List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
+        final List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
+        final HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
 
         List<Handler> handlers = null;
 
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
+        final QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName1));
         assertEquals(1, handlers.size());
 
-        QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
+        final QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName2));
         assertEquals(2, handlers.size());
 
-        QName serviceName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
+        final QName serviceName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName3));
         assertEquals(1, handlers.size());
 
-        QName serviceName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
+        final QName serviceName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName4));
         assertEquals(0, handlers.size());
     }
 
     public void testBindingMatching() throws Exception {
-        HandlerChains handlerChains = readHandlerChains("/handlers_bindings.xml");
+        final HandlerChains handlerChains = readHandlerChains("/handlers_bindings.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());
 
-        List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
-        List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
-        HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
+        final List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
+        final List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
+        final HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
 
         List<Handler> handlers = null;
 
@@ -106,68 +106,68 @@ public class HandlerResolverImplTest extends TestCase {
     }
 
     public void testPortMatching() throws Exception {
-        HandlerChains handlerChains = readHandlerChains("/handlers_port.xml");
+        final HandlerChains handlerChains = readHandlerChains("/handlers_port.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());
 
-        List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
-        List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
-        HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
+        final List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
+        final List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
+        final HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
 
         List<Handler> handlers = null;
 
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
+        final QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName1, null));
         assertEquals(1, handlers.size());
 
-        QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
+        final QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName2, null));
         assertEquals(2, handlers.size());
 
-        QName portName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
+        final QName portName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName3, null));
         assertEquals(1, handlers.size());
 
-        QName portName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
+        final QName portName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName4, null));
         assertEquals(0, handlers.size());
     }
 
     public void testMixedMatching() throws Exception {
-        HandlerChains handlerChains = readHandlerChains("/handlers_mixed.xml");
+        final HandlerChains handlerChains = readHandlerChains("/handlers_mixed.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());
 
-        List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
-        List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
-        HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
+        final List<HandlerChainInfo> handlerChainInfos = ConfigurationFactory.toHandlerChainInfo(handlerChains);
+        final List<HandlerChainData> handlerChainDatas = WsBuilder.toHandlerChainData(handlerChainInfos, getClass().getClassLoader());
+        final HandlerResolverImpl resolver = new HandlerResolverImpl(handlerChainDatas, null, new InitialContext());
 
         List<Handler> handlers = null;
 
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
-        QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
-        String binding1 = "##XML_HTTP";
+        final QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
+        final QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
+        final String binding1 = "##XML_HTTP";
         handlers = resolver.getHandlerChain(new TestPortInfo(binding1, portName1, serviceName1));
         assertEquals(3, handlers.size());
 
-        String binding2 = "##SOAP11_HTTP";
+        final String binding2 = "##SOAP11_HTTP";
         handlers = resolver.getHandlerChain(new TestPortInfo(binding2, portName1, serviceName1));
         assertEquals(2, handlers.size());
 
-        QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
-        QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
+        final QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
+        final QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
         handlers = resolver.getHandlerChain(new TestPortInfo(binding1, portName2, serviceName2));
         assertEquals(1, handlers.size());
     }
 
-    private HandlerChains readHandlerChains(String filePath) throws Exception {
-        URL url = getClass().getResource(filePath);
+    private HandlerChains readHandlerChains(final String filePath) throws Exception {
+        final URL url = getClass().getResource(filePath);
         assertNotNull("Could not find handler chains file " + filePath, url);
-        HandlerChains handlerChains = ReadDescriptors.readHandlerChains(url);
+        final HandlerChains handlerChains = ReadDescriptors.readHandlerChains(url);
         return handlerChains;
     }
 
@@ -177,7 +177,7 @@ public class HandlerResolverImplTest extends TestCase {
         private QName portName;
         private QName serviceName;
 
-        public TestPortInfo(String bindingID, QName portName, QName serviceName) {
+        public TestPortInfo(final String bindingID, final QName portName, final QName serviceName) {
             this.bindingID = bindingID;
             this.portName = portName;
             this.serviceName = serviceName;

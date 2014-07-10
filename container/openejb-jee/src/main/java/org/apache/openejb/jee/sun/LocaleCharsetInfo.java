@@ -41,7 +41,7 @@ public class LocaleCharsetInfo {
         return defaultLocale;
     }
 
-    public void setDefaultLocale(String value) {
+    public void setDefaultLocale(final String value) {
         this.defaultLocale = value;
     }
 
@@ -56,7 +56,7 @@ public class LocaleCharsetInfo {
         return parameterEncoding;
     }
 
-    public void setParameterEncoding(ParameterEncoding value) {
+    public void setParameterEncoding(final ParameterEncoding value) {
         this.parameterEncoding = value;
     }
 }

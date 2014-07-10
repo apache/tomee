@@ -24,22 +24,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface DiscriminatorColumn {
- *           String name() default "DTYPE";
- *           DiscriminatorType discriminatorType() default STRING;
- *           String columnDefinition() default "";
- *           int length() default 31;
- *         }
- * 
- *       
- * 
+ * @Target({TYPE}) @Retention(RUNTIME)
+ * public @interface DiscriminatorColumn {
+ * String name() default "DTYPE";
+ * DiscriminatorType discriminatorType() default STRING;
+ * String columnDefinition() default "";
+ * int length() default 31;
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for discriminator-column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="discriminator-column">
  *   &lt;complexContent>
@@ -52,8 +50,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "discriminator-column")
@@ -70,11 +66,9 @@ public class DiscriminatorColumn {
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -82,23 +76,19 @@ public class DiscriminatorColumn {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setColumnDefinition(String value) {
+    public void setColumnDefinition(final String value) {
         this.columnDefinition = value;
     }
 
     /**
      * Gets the value of the discriminatorType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DiscriminatorType }
-     *     
+     *
+     * @return possible object is
+     * {@link DiscriminatorType }
      */
     public DiscriminatorType getDiscriminatorType() {
         return discriminatorType;
@@ -106,23 +96,19 @@ public class DiscriminatorColumn {
 
     /**
      * Sets the value of the discriminatorType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DiscriminatorType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DiscriminatorType }
      */
-    public void setDiscriminatorType(DiscriminatorType value) {
+    public void setDiscriminatorType(final DiscriminatorType value) {
         this.discriminatorType = value;
     }
 
     /**
      * Gets the value of the length property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getLength() {
         return length;
@@ -130,23 +116,19 @@ public class DiscriminatorColumn {
 
     /**
      * Sets the value of the length property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setLength(Integer value) {
+    public void setLength(final Integer value) {
         this.length = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -154,13 +136,11 @@ public class DiscriminatorColumn {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

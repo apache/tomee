@@ -27,16 +27,16 @@ public class ComplexCmpBeanPk implements Serializable {
     public ComplexCmpBeanPk() {
     }
 
-    public ComplexCmpBeanPk(String firstName, String lastName) {
+    public ComplexCmpBeanPk(final String firstName, final String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ComplexCmpBeanPk that = (ComplexCmpBeanPk) o;
+        final ComplexCmpBeanPk that = (ComplexCmpBeanPk) o;
 
         if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;

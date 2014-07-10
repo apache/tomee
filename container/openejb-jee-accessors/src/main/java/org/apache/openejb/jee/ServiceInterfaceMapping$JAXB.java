@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.PortMapping$JAXB.readPortMapping;
 import static org.apache.openejb.jee.PortMapping$JAXB.writePortMapping;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ServiceInterfaceMapping$JAXB
-        extends JAXBObject<ServiceInterfaceMapping> {
+    extends JAXBObject<ServiceInterfaceMapping> {
 
 
     public ServiceInterfaceMapping$JAXB() {
         super(ServiceInterfaceMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "service-interface-mappingType".intern()), PortMapping$JAXB.class);
     }
 
-    public static ServiceInterfaceMapping readServiceInterfaceMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ServiceInterfaceMapping readServiceInterfaceMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeServiceInterfaceMapping(XoXMLStreamWriter writer, ServiceInterfaceMapping serviceInterfaceMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeServiceInterfaceMapping(final XoXMLStreamWriter writer, final ServiceInterfaceMapping serviceInterfaceMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceInterfaceMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ServiceInterfaceMapping serviceInterfaceMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ServiceInterfaceMapping serviceInterfaceMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceInterfaceMapping, context);
     }
 
-    public final static ServiceInterfaceMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ServiceInterfaceMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,13 +70,13 @@ public class ServiceInterfaceMapping$JAXB
             context = new RuntimeContext();
         }
 
-        ServiceInterfaceMapping serviceInterfaceMapping = new ServiceInterfaceMapping();
+        final ServiceInterfaceMapping serviceInterfaceMapping = new ServiceInterfaceMapping();
         context.beforeUnmarshal(serviceInterfaceMapping, LifecycleCallback.NONE);
 
         List<PortMapping> portMapping = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("service-interface-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ServiceInterfaceMapping.class);
@@ -84,10 +84,10 @@ public class ServiceInterfaceMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, serviceInterfaceMapping);
                 serviceInterfaceMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class ServiceInterfaceMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("service-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceInterface
-                String serviceInterfaceRaw = elementReader.getElementAsString();
+                final String serviceInterfaceRaw = elementReader.getElementAsString();
 
-                String serviceInterface;
+                final String serviceInterface;
                 try {
                     serviceInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(serviceInterfaceRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -112,11 +112,11 @@ public class ServiceInterfaceMapping$JAXB
                 serviceInterfaceMapping.serviceInterface = serviceInterface;
             } else if (("wsdl-service-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlServiceName
-                QName wsdlServiceName = elementReader.getElementAsQName();
+                final QName wsdlServiceName = elementReader.getElementAsQName();
                 serviceInterfaceMapping.wsdlServiceName = wsdlServiceName;
             } else if (("port-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portMapping
-                PortMapping portMappingItem = readPortMapping(elementReader, context);
+                final PortMapping portMappingItem = readPortMapping(elementReader, context);
                 if (portMapping == null) {
                     portMapping = serviceInterfaceMapping.portMapping;
                     if (portMapping != null) {
@@ -139,13 +139,13 @@ public class ServiceInterfaceMapping$JAXB
         return serviceInterfaceMapping;
     }
 
-    public final ServiceInterfaceMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ServiceInterfaceMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ServiceInterfaceMapping serviceInterfaceMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ServiceInterfaceMapping serviceInterfaceMapping, RuntimeContext context)
+        throws Exception {
         if (serviceInterfaceMapping == null) {
             writer.writeXsiNil();
             return;
@@ -155,7 +155,7 @@ public class ServiceInterfaceMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ServiceInterfaceMapping.class != serviceInterfaceMapping.getClass()) {
             context.unexpectedSubclass(writer, serviceInterfaceMapping, ServiceInterfaceMapping.class);
             return;
@@ -165,23 +165,23 @@ public class ServiceInterfaceMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = serviceInterfaceMapping.id;
+        final String idRaw = serviceInterfaceMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(serviceInterfaceMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: serviceInterface
-        String serviceInterfaceRaw = serviceInterfaceMapping.serviceInterface;
+        final String serviceInterfaceRaw = serviceInterfaceMapping.serviceInterface;
         String serviceInterface = null;
         try {
             serviceInterface = Adapters.collapsedStringAdapterAdapter.marshal(serviceInterfaceRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceInterfaceMapping, "serviceInterface", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (serviceInterface != null) {
@@ -193,7 +193,7 @@ public class ServiceInterfaceMapping$JAXB
         }
 
         // ELEMENT: wsdlServiceName
-        QName wsdlServiceName = serviceInterfaceMapping.wsdlServiceName;
+        final QName wsdlServiceName = serviceInterfaceMapping.wsdlServiceName;
         if (wsdlServiceName != null) {
             writer.writeStartElement(prefix, "wsdl-service-name", "http://java.sun.com/xml/ns/javaee");
             writer.writeQName(wsdlServiceName);
@@ -203,9 +203,9 @@ public class ServiceInterfaceMapping$JAXB
         }
 
         // ELEMENT: portMapping
-        List<PortMapping> portMapping = serviceInterfaceMapping.portMapping;
+        final List<PortMapping> portMapping = serviceInterfaceMapping.portMapping;
         if (portMapping != null) {
-            for (PortMapping portMappingItem : portMapping) {
+            for (final PortMapping portMappingItem : portMapping) {
                 if (portMappingItem != null) {
                     writer.writeStartElement(prefix, "port-mapping", "http://java.sun.com/xml/ns/javaee");
                     writePortMapping(writer, portMappingItem, context);

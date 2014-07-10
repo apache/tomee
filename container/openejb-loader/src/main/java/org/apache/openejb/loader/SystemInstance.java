@@ -68,7 +68,7 @@ public final class SystemInstance {
         this.components = new HashMap<Class, Object>();
 
         // import JVM system property config (if a resource/container/... is set through this way)
-        for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()){
+        for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
             final String key = e.getKey().toString();
             if (key.startsWith("sun.")) {
                 continue;
@@ -222,7 +222,7 @@ public final class SystemInstance {
         if (classname != null) {
             try {
                 final T instance = type.cast(Thread.currentThread().getContextClassLoader()
-                                                                .loadClass(classname).newInstance());
+                    .loadClass(classname).newInstance());
                 components.put(type, instance);
                 return instance;
             } catch (final Exception e) {
@@ -248,7 +248,7 @@ public final class SystemInstance {
     public <T> T setComponent(final Class<T> type, final T value) {
         final T removed = (T) components.put(type, value);
 
-        if (removed !=null) {
+        if (removed != null) {
             fireEvent(new ComponentRemoved(type, value));
         }
 
@@ -327,7 +327,7 @@ public final class SystemInstance {
     private static void readSystemProperties(final String prefix) {
         final String completePrefix;
         if (prefix != null && !prefix.isEmpty()) {
-            completePrefix =  prefix + ".";
+            completePrefix = prefix + ".";
         } else {
             completePrefix = "";
         }

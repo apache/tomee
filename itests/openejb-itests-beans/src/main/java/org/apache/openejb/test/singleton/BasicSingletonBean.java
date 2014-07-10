@@ -55,13 +55,13 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
      * @return
      * @see BasicSingletonObject#businessMethod
      */
-    public String businessMethod(String text) {
+    public String businessMethod(final String text) {
         testAllowedOperations("businessMethod");
-        StringBuffer b = new StringBuffer(text);
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
-    public void scheduleTimer(String name) {
+    public void scheduleTimer(final String name) {
         ejbContext.getTimerService().createTimer(1, name);
     }
 
@@ -106,13 +106,13 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
      * @return
      * @see BasicSingletonObject#getAllowedOperationsReport
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName) {
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
     }
-    
-    public String remove(String str){
+
+    public String remove(final String str) {
         return str;
-    }    
+    }
 
     //    
     // Remote interface methods
@@ -126,7 +126,7 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
      * Set the associated session context. The container calls this method
      * after the instance creation.
      */
-    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+    public void setSessionContext(final SessionContext ctx) throws EJBException, RemoteException {
         ejbContext = ctx;
         testAllowedOperations("setSessionContext");
     }
@@ -169,13 +169,13 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
         // Should never called.
     }
 
-    public void ejbTimeout(Timer timer) {
+    public void ejbTimeout(final Timer timer) {
         testAllowedOperations("ejbTimeout");
         try {
-            String name = (String) timer.getInfo();
-            TimerSync timerSync = (TimerSync) ejbContext.lookup("TimerSyncBeanBusinessRemote");
+            final String name = (String) timer.getInfo();
+            final TimerSync timerSync = (TimerSync) ejbContext.lookup("TimerSyncBeanBusinessRemote");
             timerSync.countDown(name);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -184,56 +184,56 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
     // SessionBean interface methods
     //================================
 
-    protected void testAllowedOperations(String methodName) {
-        OperationsPolicy policy = new OperationsPolicy();
+    protected void testAllowedOperations(final String methodName) {
+        final OperationsPolicy policy = new OperationsPolicy();
 
         /*[0] Test getEJBHome /////////////////*/
         try {
             ejbContext.getEJBHome();
             policy.allow(OperationsPolicy.Context_getEJBHome);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[1] Test getCallerPrincipal /////////*/
         try {
             ejbContext.getCallerPrincipal();
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[2] Test isCallerInRole /////////////*/
         try {
             ejbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[3] Test getRollbackOnly ////////////*/
         try {
             ejbContext.getRollbackOnly();
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[4] Test setRollbackOnly ////////////*/
         try {
             ejbContext.setRollbackOnly();
             policy.allow(OperationsPolicy.Context_setRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[5] Test getUserTransaction /////////*/
         try {
             ejbContext.getUserTransaction();
             policy.allow(OperationsPolicy.Context_getUserTransaction);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[6] Test getEJBObject ///////////////*/
         try {
             ejbContext.getEJBObject();
             policy.allow(OperationsPolicy.Context_getEJBObject);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[7] Test Context_getPrimaryKey ///////////////
@@ -243,27 +243,27 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
 
         /*[8] Test JNDI_access_to_java_comp_env ///////////////*/
         try {
-            InitialContext jndiContext = new InitialContext();
+            final InitialContext jndiContext = new InitialContext();
 
-            String actual = (String) jndiContext.lookup("java:comp/env/singleton/references/JNDI_access_to_java_comp_env");
+            final String actual = (String) jndiContext.lookup("java:comp/env/singleton/references/JNDI_access_to_java_comp_env");
 
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-        } catch (IllegalStateException ise) {
-        } catch (NamingException ne) {
+        } catch (final IllegalStateException ise) {
+        } catch (final NamingException ne) {
         }
 
         /*[11] Test lookup /////////*/
         try {
             ejbContext.lookup("singleton/references/JNDI_access_to_java_comp_env");
             policy.allow(OperationsPolicy.Context_lookup);
-        } catch (IllegalArgumentException ise) {
+        } catch (final IllegalArgumentException ise) {
         }
 
         /*[12] Test getTimerService/////////*/
         try {
             ejbContext.getTimerService();
             policy.allow(OperationsPolicy.Context_getTimerService);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         allowedOperationsTable.put(methodName, policy);

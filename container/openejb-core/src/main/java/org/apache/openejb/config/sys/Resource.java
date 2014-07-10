@@ -74,7 +74,7 @@ public class Resource extends AbstractService {
      * Gets the value of the jndi property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getJndi() {
         return jndi;

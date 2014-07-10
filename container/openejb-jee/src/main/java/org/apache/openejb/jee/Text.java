@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "string", propOrder = {
-        "value"
-        })
+    "value"
+})
 public class Text {
     @XmlValue
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -49,7 +49,7 @@ public class Text {
     public Text() {
     }
 
-    public Text(String lang, String value) {
+    public Text(final String lang, final String value) {
         this.value = value;
         this.lang = lang;
     }
@@ -58,7 +58,7 @@ public class Text {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -66,7 +66,7 @@ public class Text {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -74,7 +74,7 @@ public class Text {
         return lang;
     }
 
-    public void setLang(String lang) {
+    public void setLang(final String lang) {
         this.lang = lang;
     }
 }

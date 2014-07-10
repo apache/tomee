@@ -43,7 +43,8 @@ public class PostConstructMetaTest {
 
             @Started
             @PostConstruct
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

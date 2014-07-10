@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.apache.openejb.util.Join.join;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class DaemonThreadFactory implements ThreadFactory {
 
     private final String name;

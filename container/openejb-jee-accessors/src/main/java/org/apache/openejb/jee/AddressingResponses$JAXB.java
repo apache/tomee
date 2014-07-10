@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class AddressingResponses$JAXB
-        extends JAXBEnum<AddressingResponses> {
+    extends JAXBEnum<AddressingResponses> {
 
 
     public AddressingResponses$JAXB() {
         super(AddressingResponses.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "addressing-responsesType".intern()));
     }
 
-    public AddressingResponses parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public AddressingResponses parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseAddressingResponses(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, AddressingResponses addressingResponses)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final AddressingResponses addressingResponses)
+        throws Exception {
         return toStringAddressingResponses(bean, parameterName, context, addressingResponses);
     }
 
-    public static AddressingResponses parseAddressingResponses(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static AddressingResponses parseAddressingResponses(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("ANONYMOUS".equals(value)) {
             return AddressingResponses.ANONYMOUS;
         } else if ("NON_ANONYMOUS".equals(value)) {
@@ -54,8 +54,8 @@ public class AddressingResponses$JAXB
         }
     }
 
-    public static String toStringAddressingResponses(Object bean, String parameterName, RuntimeContext context, AddressingResponses addressingResponses)
-            throws Exception {
+    public static String toStringAddressingResponses(final Object bean, final String parameterName, final RuntimeContext context, final AddressingResponses addressingResponses)
+        throws Exception {
         if (AddressingResponses.ANONYMOUS == addressingResponses) {
             return "ANONYMOUS";
         } else if (AddressingResponses.NON_ANONYMOUS == addressingResponses) {

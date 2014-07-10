@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for welcome-file-listType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="welcome-file-listType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,7 +73,7 @@ public class WelcomeFileList {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

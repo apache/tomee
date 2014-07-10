@@ -23,23 +23,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for resource-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="resource-refType">
  *   &lt;complexContent>
@@ -57,20 +55,18 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-refType", propOrder = {
-        "descriptions",
-        "resRefName",
-        "resType",
-        "resAuth",
-        "resSharingScope",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "resRefName",
+    "resType",
+    "resAuth",
+    "resSharingScope",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class ResourceRef implements JndiReference {
 
     @XmlTransient
@@ -99,12 +95,12 @@ public class ResourceRef implements JndiReference {
     public ResourceRef() {
     }
 
-    public ResourceRef(String resRefName, String resType) {
+    public ResourceRef(final String resRefName, final String resType) {
         this.resRefName = resRefName;
         this.resType = resType;
     }
 
-    public ResourceRef(String resRefName, String resType, ResAuth resAuth, ResSharingScope resSharingScope) {
+    public ResourceRef(final String resRefName, final String resType, final ResAuth resAuth, final ResSharingScope resSharingScope) {
         this.resRefName = resRefName;
         this.resType = resType;
         this.resAuth = resAuth;
@@ -113,32 +109,32 @@ public class ResourceRef implements JndiReference {
 
 //  pbpaste | grep protected | perl -pe 's/.*protected ([^ ]+) ([^ ]+);/public ResourceRef $2($1 $2) { this.$2 = $2; return this; }/'
 
-    public ResourceRef name(String resRefName) {
+    public ResourceRef name(final String resRefName) {
         this.resRefName = resRefName;
         return this;
     }
 
-    public ResourceRef type(String resType) {
+    public ResourceRef type(final String resType) {
         this.resType = resType;
         return this;
     }
 
-    public ResourceRef auth(ResAuth resAuth) {
+    public ResourceRef auth(final ResAuth resAuth) {
         this.resAuth = resAuth;
         return this;
     }
 
-    public ResourceRef mappedName(String mappedName) {
+    public ResourceRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public ResourceRef lookup(String lookupName) {
+    public ResourceRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public ResourceRef injectionTarget(String className, String property) {
+    public ResourceRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         if (this.resRefName == null) {
@@ -148,7 +144,7 @@ public class ResourceRef implements JndiReference {
         return this;
     }
 
-    public ResourceRef injectionTarget(Class<?> clazz, String property) {
+    public ResourceRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -158,7 +154,7 @@ public class ResourceRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -168,11 +164,11 @@ public class ResourceRef implements JndiReference {
         return getResType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setResRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         setResType(type);
     }
 
@@ -182,7 +178,7 @@ public class ResourceRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -194,7 +190,7 @@ public class ResourceRef implements JndiReference {
         return resRefName;
     }
 
-    public void setResRefName(String value) {
+    public void setResRefName(final String value) {
         this.resRefName = value;
     }
 
@@ -202,7 +198,7 @@ public class ResourceRef implements JndiReference {
         return resType;
     }
 
-    public void setResType(String value) {
+    public void setResType(final String value) {
         this.resType = value;
     }
 
@@ -210,7 +206,7 @@ public class ResourceRef implements JndiReference {
         return resAuth;
     }
 
-    public void setResAuth(ResAuth value) {
+    public void setResAuth(final ResAuth value) {
         this.resAuth = value;
     }
 
@@ -218,7 +214,7 @@ public class ResourceRef implements JndiReference {
         return resSharingScope;
     }
 
-    public void setResSharingScope(ResSharingScope value) {
+    public void setResSharingScope(final ResSharingScope value) {
         this.resSharingScope = value;
     }
 
@@ -226,7 +222,7 @@ public class ResourceRef implements JndiReference {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -234,7 +230,7 @@ public class ResourceRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -249,7 +245,7 @@ public class ResourceRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -257,17 +253,17 @@ public class ResourceRef implements JndiReference {
         return origin;
     }
 
-    public void setOrigin(String origin) {
+    public void setOrigin(final String origin) {
         this.origin = origin;
     }
 
     @Override
     public String toString() {
         return "ResourceRef{" +
-                "name='" + resRefName + '\'' +
-                ", type='" + resType + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + resRefName + '\'' +
+            ", type='" + resType + '\'' +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

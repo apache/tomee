@@ -47,7 +47,7 @@ public class ConstraintFieldValue {
         }
     }
 
-    public void setMatchExpr(String value) {
+    public void setMatchExpr(final String value) {
         this.matchExpr = value;
     }
 
@@ -59,7 +59,7 @@ public class ConstraintFieldValue {
         }
     }
 
-    public void setCacheOnMatch(String value) {
+    public void setCacheOnMatch(final String value) {
         this.cacheOnMatch = value;
     }
 
@@ -71,7 +71,7 @@ public class ConstraintFieldValue {
         }
     }
 
-    public void setCacheOnMatchFailure(String value) {
+    public void setCacheOnMatchFailure(final String value) {
         this.cacheOnMatchFailure = value;
     }
 
@@ -79,7 +79,7 @@ public class ConstraintFieldValue {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 }

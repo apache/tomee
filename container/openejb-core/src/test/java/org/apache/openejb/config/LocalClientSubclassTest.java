@@ -23,14 +23,14 @@ import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class LocalClientSubclassTest extends LocalClientTest {
 
     @Override
     public void test() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        InitialContext context = new InitialContext(properties);
+        final InitialContext context = new InitialContext(properties);
         context.bind("inject", this);
 
         assertRefs();

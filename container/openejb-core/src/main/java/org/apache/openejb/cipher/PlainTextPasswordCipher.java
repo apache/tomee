@@ -26,10 +26,8 @@ public class PlainTextPasswordCipher implements PasswordCipher {
     /**
      * Returns the <code>encryptedPassword</code> as plain text string.
      *
-     * @param encryptedPassword
-     *            the encoded password
+     * @param encryptedPassword the encoded password
      * @return String the decoded password
-     *
      * @see org.apache.openejb.cipher.PasswordCipher#decrypt(char[])
      */
     public String decrypt(final char[] encryptedPassword) {
@@ -42,10 +40,8 @@ public class PlainTextPasswordCipher implements PasswordCipher {
     /**
      * Returns the <code>plainPassword</code> as plain text character array.
      *
-     * @param plainPassword
-     *            the plain-text password
+     * @param plainPassword the plain-text password
      * @return the plain-text password as character array
-     *
      * @see org.apache.openejb.cipher.PasswordCipher#encrypt(String)
      */
     public char[] encrypt(final String plainPassword) {

@@ -53,8 +53,7 @@ public class OpenEjbRunner extends Runner {
         this.testClazz = testClazz;
         try {
             delegate = getDelegateRunner(testClazz);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             throw new InitializationError(Arrays.asList(e));
         }
     }
@@ -96,7 +95,7 @@ public class OpenEjbRunner extends Runner {
      * factory class in every test.
      *
      * @param method
-     * @param roleName   Role to execute the context in.
+     * @param roleName Role to execute the context in.
      * @return a new method level context
      */
     public TestContext newTestContext(final Method method, final String roleName) {

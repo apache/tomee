@@ -94,7 +94,6 @@ public class UriResolver {
     }
 
 
-
     private void tryFileSystem(final String baseUriStr, final String uriStr) throws IOException, MalformedURLException {
         final URI relative;
         File uriFile = new File(uriStr);
@@ -111,7 +110,7 @@ public class UriResolver {
             url = relative.toURL();
 
             try {
-                final HttpURLConnection huc = (HttpURLConnection)url.openConnection();
+                final HttpURLConnection huc = (HttpURLConnection) url.openConnection();
 
                 final String host = System.getProperty("http.proxyHost");
                 if (host != null) {
@@ -130,7 +129,7 @@ public class UriResolver {
                         huc.setRequestProperty("Proxy-Authorization", "Basic " + encoded);
                     }
                 }
-                is =  huc.getInputStream();
+                is = huc.getInputStream();
             } catch (final ClassCastException ex) {
                 is = IO.read(url);
             }
@@ -157,11 +156,11 @@ public class UriResolver {
                         uri = base;
                     } else {
                         tryClasspath(base.toString().startsWith("file:")
-                                     ? base.toString().substring(5) : base.toString());
+                            ? base.toString().substring(5) : base.toString());
                     }
                 } catch (final Throwable th) {
                     tryClasspath(base.toString().startsWith("file:")
-                                 ? base.toString().substring(5) : base.toString());
+                        ? base.toString().substring(5) : base.toString());
                 }
             }
         }

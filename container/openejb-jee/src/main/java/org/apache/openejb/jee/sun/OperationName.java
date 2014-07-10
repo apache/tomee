@@ -31,7 +31,7 @@ public class OperationName {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 }

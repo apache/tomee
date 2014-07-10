@@ -39,7 +39,7 @@ public class IvmContextTest {
         try {
             context.lookup("global/foo/Bar");
             fail();
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // ok
         }
 
@@ -47,7 +47,7 @@ public class IvmContextTest {
             final Context subCtx = (Context) context.lookup("global/foo");
             subCtx.lookup("Bar");
             fail();
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // ok
         }
     }
@@ -66,7 +66,7 @@ public class IvmContextTest {
         try {
             context.lookup("global/foo/Bar");
             fail();
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // ok
         }
 
@@ -74,7 +74,7 @@ public class IvmContextTest {
             ((Context) ((Context) context.lookup("global")).lookup("foo"))
                 .lookup("Bar");
             fail();
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // ok
         }
     }

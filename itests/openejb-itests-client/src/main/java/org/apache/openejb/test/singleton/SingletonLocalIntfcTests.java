@@ -24,7 +24,7 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	}
 	 protected void setUp() throws Exception{
 	        super.setUp();
-	        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
+	        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
 	        ejbLocalHome = (BasicSingletonLocalHome)obj;
 	        ejbLocalObject = ejbLocalHome.create();
 	    }
@@ -34,10 +34,10 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	    //
 	    public void test01_businessMethod(){
 	        try{
-	            String expected = "Success";
-	            String actual = ejbLocalObject.businessMethod("sseccuS");
+	            final String expected = "Success";
+	            final String actual = ejbLocalObject.businessMethod("sseccuS");
 	            assertEquals(expected, actual);
-	        } catch (Exception e){
+	        } catch (final Exception e){
 	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
 	        }
 	    }
@@ -49,10 +49,10 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	    public void test02_throwApplicationException(){
 	        try{
 	            ejbLocalObject.throwApplicationException();
-	        } catch (org.apache.openejb.test.ApplicationException e){
+	        } catch (final org.apache.openejb.test.ApplicationException e){
 	            //Good.  This is the correct behaviour
 	            return;
-	        } catch (Throwable e){
+	        } catch (final Throwable e){
 	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
 	        }
 	        fail("An ApplicationException should have been thrown.");
@@ -64,10 +64,10 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	     */
 	    public void test03_invokeAfterApplicationException(){
 	        try{
-	        String expected = "Success";
-	        String actual   = ejbLocalObject.businessMethod("sseccuS");
+	        final String expected = "Success";
+	        final String actual   = ejbLocalObject.businessMethod("sseccuS");
 	        assertEquals(expected, actual);
-	        } catch (Throwable e){
+	        } catch (final Throwable e){
 	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
 	        }
 	    }
@@ -75,13 +75,13 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	    public void test04_throwSystemException(){
 	        try{
 	            ejbLocalObject.throwSystemException_NullPointer();
-	        } catch (EJBException e){
+	        } catch (final EJBException e){
 	            //Good, so far.
 	            
 	            assertNotNull("Nested exception should not be is null", e );
 	            assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+e.getCausedByException().getClass().getName(), (e.getCausedByException() instanceof NullPointerException));
 	            return;
-	        } catch (Throwable e){
+	        } catch (final Throwable e){
 	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
 	        }
 	        fail("An EJBException encapsulating a NullPointerException should have been thrown.");
@@ -96,13 +96,13 @@ public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 	     */
 	    public void test05_invokeAfterSystemException(){
 	        try{
-	            String expected = "Success";
-	            String actual = ejbLocalObject.businessMethod("sseccuS");
+	            final String expected = "Success";
+	            final String actual = ejbLocalObject.businessMethod("sseccuS");
 	            assertEquals(expected, actual);
 	        
-	        } catch (Exception e){
+	        } catch (final Exception e){
 	        	fail("The business method should have been executed.");
-	        } catch (Throwable e){
+	        } catch (final Throwable e){
 	            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
 	        }
 	    }

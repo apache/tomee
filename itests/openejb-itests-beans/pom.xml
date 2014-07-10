@@ -16,12 +16,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.7.0</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-beans</artifactId>
   <packaging>jar</packaging>
@@ -39,35 +41,35 @@
     </dependency>
   </dependencies>
 
-<!--
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <configuration>
-              <tasks>
-                <java classname="org.apache.openjpa.enhance.PCEnhancer">
-                  <arg value="-p" />
-                  <arg value="${basedir}/src/main/resources/META-INF/persistence.xml" />
-                  <classpath>
-                    <path refid="maven.dependency.classpath" />
-                    <path refid="maven.compile.classpath" />
-                  </classpath>
-                </java>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
--->
+  <!--
+    <build>
+      <plugins>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>compile</phase>
+              <configuration>
+                <tasks>
+                  <java classname="org.apache.openjpa.enhance.PCEnhancer">
+                    <arg value="-p" />
+                    <arg value="${basedir}/src/main/resources/META-INF/persistence.xml" />
+                    <classpath>
+                      <path refid="maven.dependency.classpath" />
+                      <path refid="maven.compile.classpath" />
+                    </classpath>
+                  </java>
+                </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  -->
 
 </project>
 

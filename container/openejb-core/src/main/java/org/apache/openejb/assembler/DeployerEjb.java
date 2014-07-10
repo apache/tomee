@@ -173,7 +173,7 @@ public class DeployerEjb implements Deployer {
             AUTO_DEPLOY.set(autoDeploy);
             try {
                 return SystemInstance.get().getComponent(WebAppDeployer.class)
-                                     .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
+                    .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
             } finally {
                 AUTO_DEPLOY.remove();
             }

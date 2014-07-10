@@ -52,7 +52,7 @@ import static org.junit.Assert.assertNotNull;
 public class StatefulConversationScopedTOMEE1138Test {
     @Module
     public Class<?>[] beans() {
-        return new Class<?>[] { MyConversation.class };
+        return new Class<?>[]{MyConversation.class};
     }
 
     @Inject
@@ -140,7 +140,7 @@ public class StatefulConversationScopedTOMEE1138Test {
                     }
 
                     @Override
-                    public ValueExpression setVariable(String variable, ValueExpression expression) {
+                    public ValueExpression setVariable(final String variable, final ValueExpression expression) {
                         return null;
                     }
                 };
@@ -161,7 +161,12 @@ public class StatefulConversationScopedTOMEE1138Test {
     public static class MyConversation implements Serializable {
         private String name = "John";
 
-        public String getName() { return name; }
-        public void setName(final String name) { this.name = name; }
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
     }
 }

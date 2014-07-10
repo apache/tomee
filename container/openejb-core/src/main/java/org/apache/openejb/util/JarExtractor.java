@@ -46,7 +46,7 @@ public class JarExtractor {
      * @param file     Jar file to unpack
      * @param pathname Context path name for web application
      * @throws IllegalArgumentException if this is not a "jar:" URL
-     * @throws IOException      if an input/output error was encountered
+     * @throws IOException              if an input/output error was encountered
      *                                  during expansion
      */
     public static File extract(final File file, final String pathname) throws IOException {
@@ -211,7 +211,7 @@ public class JarExtractor {
      * @throws IOException if an input/output error occurs
      */
     protected static File extract(final InputStream input, final File docBase, final String name)
-            throws IOException {
+        throws IOException {
 
         final File file = new File(docBase, name);
         BufferedOutputStream output = null;

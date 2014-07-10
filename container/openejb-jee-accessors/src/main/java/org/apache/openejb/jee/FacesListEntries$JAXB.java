@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.FacesNullValue$JAXB.readFacesNullValue;
 import static org.apache.openejb.jee.FacesNullValue$JAXB.writeFacesNullValue;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesListEntries$JAXB
-        extends JAXBObject<FacesListEntries> {
+    extends JAXBObject<FacesListEntries> {
 
 
     public FacesListEntries$JAXB() {
         super(FacesListEntries.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-list-entriesType".intern()), FacesNullValue$JAXB.class);
     }
 
-    public static FacesListEntries readFacesListEntries(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesListEntries readFacesListEntries(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesListEntries(XoXMLStreamWriter writer, FacesListEntries facesListEntries, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesListEntries(final XoXMLStreamWriter writer, final FacesListEntries facesListEntries, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesListEntries, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesListEntries facesListEntries, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesListEntries facesListEntries, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesListEntries, context);
     }
 
-    public final static FacesListEntries _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesListEntries _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,13 +70,13 @@ public class FacesListEntries$JAXB
             context = new RuntimeContext();
         }
 
-        FacesListEntries facesListEntries = new FacesListEntries();
+        final FacesListEntries facesListEntries = new FacesListEntries();
         context.beforeUnmarshal(facesListEntries, LifecycleCallback.NONE);
 
         List<Object> nullValueOrValue = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-list-entriesType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesListEntries.class);
@@ -84,10 +84,10 @@ public class FacesListEntries$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                java.lang.String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final java.lang.String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesListEntries);
                 facesListEntries.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -96,15 +96,15 @@ public class FacesListEntries$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("value-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: valueClass
-                java.lang.String valueClassRaw = elementReader.getElementAsString();
+                final java.lang.String valueClassRaw = elementReader.getElementAsString();
 
-                java.lang.String valueClass;
+                final java.lang.String valueClass;
                 try {
                     valueClass = Adapters.collapsedStringAdapterAdapter.unmarshal(valueClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, java.lang.String.class, java.lang.String.class, e);
                     continue;
                 }
@@ -112,7 +112,7 @@ public class FacesListEntries$JAXB
                 facesListEntries.valueClass = valueClass;
             } else if (("value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nullValueOrValue
-                java.lang.String nullValueOrValueItem = elementReader.getElementAsString();
+                final java.lang.String nullValueOrValueItem = elementReader.getElementAsString();
                 if (nullValueOrValue == null) {
                     nullValueOrValue = facesListEntries.nullValueOrValue;
                     if (nullValueOrValue != null) {
@@ -124,7 +124,7 @@ public class FacesListEntries$JAXB
                 nullValueOrValue.add(nullValueOrValueItem);
             } else if (("null-value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nullValueOrValue
-                org.apache.openejb.jee.FacesNullValue nullValueOrValueItem1 = readFacesNullValue(elementReader, context);
+                final org.apache.openejb.jee.FacesNullValue nullValueOrValueItem1 = readFacesNullValue(elementReader, context);
                 if (nullValueOrValue == null) {
                     nullValueOrValue = facesListEntries.nullValueOrValue;
                     if (nullValueOrValue != null) {
@@ -147,13 +147,13 @@ public class FacesListEntries$JAXB
         return facesListEntries;
     }
 
-    public final FacesListEntries read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesListEntries read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesListEntries facesListEntries, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesListEntries facesListEntries, RuntimeContext context)
+        throws Exception {
         if (facesListEntries == null) {
             writer.writeXsiNil();
             return;
@@ -163,7 +163,7 @@ public class FacesListEntries$JAXB
             context = new RuntimeContext();
         }
 
-        java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final java.lang.String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesListEntries.class != facesListEntries.getClass()) {
             context.unexpectedSubclass(writer, facesListEntries, FacesListEntries.class);
             return;
@@ -173,23 +173,23 @@ public class FacesListEntries$JAXB
 
 
         // ATTRIBUTE: id
-        java.lang.String idRaw = facesListEntries.id;
+        final java.lang.String idRaw = facesListEntries.id;
         if (idRaw != null) {
             java.lang.String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesListEntries, "id", CollapsedStringAdapter.class, java.lang.String.class, java.lang.String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: valueClass
-        java.lang.String valueClassRaw = facesListEntries.valueClass;
+        final java.lang.String valueClassRaw = facesListEntries.valueClass;
         java.lang.String valueClass = null;
         try {
             valueClass = Adapters.collapsedStringAdapterAdapter.marshal(valueClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesListEntries, "valueClass", CollapsedStringAdapter.class, java.lang.String.class, java.lang.String.class, e);
         }
         if (valueClass != null) {
@@ -199,16 +199,16 @@ public class FacesListEntries$JAXB
         }
 
         // ELEMENT: nullValueOrValue
-        List<Object> nullValueOrValue = facesListEntries.nullValueOrValue;
+        final List<Object> nullValueOrValue = facesListEntries.nullValueOrValue;
         if (nullValueOrValue != null) {
-            for (Object nullValueOrValueItem : nullValueOrValue) {
+            for (final Object nullValueOrValueItem : nullValueOrValue) {
                 if (nullValueOrValueItem instanceof org.apache.openejb.jee.FacesNullValue) {
-                    org.apache.openejb.jee.FacesNullValue FacesNullValue = ((org.apache.openejb.jee.FacesNullValue) nullValueOrValueItem);
+                    final org.apache.openejb.jee.FacesNullValue FacesNullValue = ((org.apache.openejb.jee.FacesNullValue) nullValueOrValueItem);
                     writer.writeStartElement(prefix, "null-value", "http://java.sun.com/xml/ns/javaee");
                     writeFacesNullValue(writer, FacesNullValue, context);
                     writer.writeEndElement();
                 } else if (nullValueOrValueItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nullValueOrValueItem);
+                    final java.lang.String String = ((java.lang.String) nullValueOrValueItem);
                     writer.writeStartElement(prefix, "value", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(String);
                     writer.writeEndElement();

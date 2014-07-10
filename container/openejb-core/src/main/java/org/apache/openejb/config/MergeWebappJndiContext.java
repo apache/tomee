@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * In a webapp all ejbs will share the JNDI namespace of the servlets
  * This means no private namespace for each EJB.
- *
+ * <p/>
  * To make this happen we merge the JNDI entries of each ejb into
  *
  * @version $Rev$ $Date$
@@ -168,7 +168,7 @@ public class MergeWebappJndiContext implements DynamicDeployer {
 
     private static <R extends JndiReference> boolean isExtendedPersistenceContext(final R b) {
         return b instanceof PersistenceContextRef
-                && PersistenceContextType.EXTENDED.equals(((PersistenceContextRef) b).getPersistenceContextType());
+            && PersistenceContextType.EXTENDED.equals(((PersistenceContextRef) b).getPersistenceContextType());
     }
 
     private <R extends JndiReference> boolean isPrivateReference(final R a) {

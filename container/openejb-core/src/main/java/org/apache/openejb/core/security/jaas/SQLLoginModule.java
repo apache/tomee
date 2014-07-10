@@ -78,7 +78,7 @@ import java.util.Set;
  */
 public class SQLLoginModule implements LoginModule {
     private static Logger log = Logger.getInstance(
-            LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
+        LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     private EnumMap<Option, String> optionsMap = new EnumMap<Option, String>(Option.class);
     private String connectionURL;
@@ -180,7 +180,7 @@ public class SQLLoginModule implements LoginModule {
      * return false.
      *
      * @return true if authentication succeeds, or throw a LoginException such
-     *         as FailedLoginException if authentication fails
+     * as FailedLoginException if authentication fails
      */
     public boolean login() throws LoginException {
         loginSucceeded = false;
@@ -304,7 +304,7 @@ public class SQLLoginModule implements LoginModule {
 
     /**
      * @return true if login succeeded and commit succeeded, or false if login
-     *         failed but commit succeeded.
+     * failed but commit succeeded.
      * @throws LoginException if login succeeded but commit failed.
      */
     public boolean commit() throws LoginException {

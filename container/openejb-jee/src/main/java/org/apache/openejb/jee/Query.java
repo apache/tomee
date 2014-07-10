@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for queryType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="queryType">
  *   &lt;complexContent>
@@ -50,16 +50,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "queryType", propOrder = {
-        "description",
-        "queryMethod",
-        "resultTypeMapping",
-        "ejbQl"
-        })
+    "description",
+    "queryMethod",
+    "resultTypeMapping",
+    "ejbQl"
+})
 public class Query {
 
     protected Text description;
@@ -78,7 +76,7 @@ public class Query {
         return description;
     }
 
-    public void setDescription(Text value) {
+    public void setDescription(final Text value) {
         this.description = value;
     }
 
@@ -86,7 +84,7 @@ public class Query {
         return queryMethod;
     }
 
-    public void setQueryMethod(QueryMethod value) {
+    public void setQueryMethod(final QueryMethod value) {
         this.queryMethod = value;
     }
 
@@ -94,7 +92,7 @@ public class Query {
         return resultTypeMapping;
     }
 
-    public void setResultTypeMapping(ResultTypeMapping value) {
+    public void setResultTypeMapping(final ResultTypeMapping value) {
         this.resultTypeMapping = value;
     }
 
@@ -102,7 +100,7 @@ public class Query {
         return ejbQl;
     }
 
-    public void setEjbQl(String value) {
+    public void setEjbQl(final String value) {
         this.ejbQl = value;
     }
 
@@ -110,7 +108,7 @@ public class Query {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

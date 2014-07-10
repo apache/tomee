@@ -19,26 +19,27 @@ package org.apache.openejb.jee;
 
 /**
  * Not in schema
+ *
  * @version $Revision$ $Date$
  */
 public class StatelessBean extends SessionBean {
-    public StatelessBean(String ejbName, String ejbClass) {
+    public StatelessBean(final String ejbName, final String ejbClass) {
         super(ejbName, ejbClass, SessionType.STATELESS);
     }
 
-    public StatelessBean(Class<?> ejbClass) {
+    public StatelessBean(final Class<?> ejbClass) {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
-    public StatelessBean(String name, Class<?> ejbClass) {
+    public StatelessBean(final String name, final Class<?> ejbClass) {
         this(name, ejbClass.getName());
     }
 
     public StatelessBean() {
-        this(null, (String)null);
+        this(null, (String) null);
     }
 
-    public void setSessionType(SessionType value) {
+    public void setSessionType(final SessionType value) {
     }
 
 }

@@ -21,10 +21,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -127,7 +127,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("xml-reference", "http://geronimo.apache.org/xml/ns/deployment-1.2");
     }
 
-    static final Map<String,List<String>> duplicates = new HashMap<String,List<String>>();
+    static final Map<String, List<String>> duplicates = new HashMap<String, List<String>>();
 
     static {
         duplicates.put("artifactId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
@@ -139,7 +139,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         duplicates.put("table-name", Arrays.asList("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "http://openejb.apache.org/xml/ns/pkgen-2.1"));
     }
 
-    public NamespaceFilter(XMLReader xmlReader) {
+    public NamespaceFilter(final XMLReader xmlReader) {
         super(xmlReader);
     }
 
@@ -151,21 +151,21 @@ public class NamespaceFilter extends XMLFilterImpl {
     }
 
     //String uri, String localName, String qName, Attributes atts
-    public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+    public void startElement(String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
 
-        if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")){
+        if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")) {
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
-        } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
+        } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")) {
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
-        } else if (uri.startsWith("http://openejb.org/xml/ns/openejb-jar-2")){
+        } else if (uri.startsWith("http://openejb.org/xml/ns/openejb-jar-2")) {
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
-        } else if (uri.startsWith("http://openejb.apache.org/xml/ns/pkgen-2")){
+        } else if (uri.startsWith("http://openejb.apache.org/xml/ns/pkgen-2")) {
             uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
-        } else if (uri.startsWith("http://www.openejb.org/xml/ns/pkgen-2")){
+        } else if (uri.startsWith("http://www.openejb.org/xml/ns/pkgen-2")) {
             uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
-        } else if (uri.startsWith("http://openejb.org/xml/ns/pkgen-2")){
+        } else if (uri.startsWith("http://openejb.org/xml/ns/pkgen-2")) {
             uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
-        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/deployment-1")){
+        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/deployment-1")) {
             uri = "http://geronimo.apache.org/xml/ns/deployment-1.2";
         } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/j2ee/application-1")) {
             uri = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2";
@@ -175,17 +175,17 @@ public class NamespaceFilter extends XMLFilterImpl {
             uri = "http://geronimo.apache.org/xml/ns/security-2.0";
         }
 
-        String previousNs = visibleNamespaces.peek();
+        final String previousNs = visibleNamespaces.peek();
 
-        String correctNamespace = ns.get(localName);
-        boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
+        final String correctNamespace = ns.get(localName);
+        final boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
         if (correctable && correctNamespace != null) {
             uri = correctNamespace;
-        } else if (duplicates.containsKey(localName)){
-            List<String> possibleNamespaces = duplicates.get(localName);
-            if (possibleNamespaces.contains(uri)){
+        } else if (duplicates.containsKey(localName)) {
+            final List<String> possibleNamespaces = duplicates.get(localName);
+            if (possibleNamespaces.contains(uri)) {
                 // nothing to modify
-            } else if (possibleNamespaces.contains(previousNs)){
+            } else if (possibleNamespaces.contains(previousNs)) {
                 uri = previousNs;
             } else {
                 uri = possibleNamespaces.get(0);
@@ -198,7 +198,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         super.startElement(uri, localName, qname, atts);
     }
 
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         visibleNamespaces.pop();
         super.endElement(uri, localName, qName);
     }

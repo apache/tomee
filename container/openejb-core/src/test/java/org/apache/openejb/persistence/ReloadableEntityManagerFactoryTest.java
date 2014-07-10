@@ -42,14 +42,14 @@ public class ReloadableEntityManagerFactoryTest {
 
     @Module
     public Persistence persistence() throws Exception {
-        PersistenceUnit unit = new PersistenceUnit("foo-unit");
+        final PersistenceUnit unit = new PersistenceUnit("foo-unit");
         unit.addClass(MyEntity.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unit.getProperties().setProperty("openjpa.DatCache", "false");
         unit.setExcludeUnlistedClasses(true);
 
-        Persistence persistence = new org.apache.openejb.jee.jpa.unit.Persistence(unit);
+        final Persistence persistence = new org.apache.openejb.jee.jpa.unit.Persistence(unit);
         persistence.setVersion("2.0");
         return persistence;
     }
@@ -81,8 +81,8 @@ public class ReloadableEntityManagerFactoryTest {
 
     private void select() {
         emf.createEntityManager()
-                .createQuery("select m from ReloadableEntityManagerFactoryTest$MyEntity m")
-                .getResultList();
+            .createQuery("select m from ReloadableEntityManagerFactoryTest$MyEntity m")
+            .getResultList();
     }
 
     @Entity
@@ -95,7 +95,7 @@ public class ReloadableEntityManagerFactoryTest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
     }

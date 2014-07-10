@@ -91,11 +91,11 @@ public class SingletonInstanceManager {
             final ThreadContext old = ThreadContext.enter(callContext);
             try {
                 getInstance(callContext);
-            } finally{
+            } finally {
                 ThreadContext.exit(old);
             }
         } catch (final OpenEJBException e) {
-            throw new OpenEJBException("Singleton startup failed: "+ beanContext.getDeploymentID(), e);
+            throw new OpenEJBException("Singleton startup failed: " + beanContext.getDeploymentID(), e);
         }
     }
 
@@ -157,7 +157,7 @@ public class SingletonInstanceManager {
         for (final String dependencyId : beanContext.getDependsOn()) {
             final BeanContext dependencyContext = containerSystem.getBeanContext(dependencyId);
             if (dependencyContext == null) {
-                throw new OpenEJBException("Deployment does not exist. Deployment(id='"+dependencyContext+"')");
+                throw new OpenEJBException("Deployment does not exist. Deployment(id='" + dependencyContext + "')");
             }
 
             final Object containerData = dependencyContext.getContainerData();
@@ -178,7 +178,7 @@ public class SingletonInstanceManager {
 
             final InstanceContext context = beanContext.newInstance();
 
-            if (context.getBean() instanceof SessionBean){
+            if (context.getBean() instanceof SessionBean) {
 
                 final Operation originalOperation = callContext.getCurrentOperation();
                 try {
@@ -192,7 +192,7 @@ public class SingletonInstanceManager {
             }
 
             final ReadWriteLock lock;
-            if (beanContext.isBeanManagedConcurrency()){
+            if (beanContext.isBeanManagedConcurrency()) {
                 // Bean-Managed Concurrency
                 lock = new BeanManagedLock();
             } else {
@@ -226,7 +226,7 @@ public class SingletonInstanceManager {
             instance = instanceFuture.get();
         } catch (final InterruptedException e) {
             Thread.interrupted();
-            logger.error("Singleton shutdown failed because the thread was interrupted: "+beanContext.getDeploymentID(), e);
+            logger.error("Singleton shutdown failed because the thread was interrupted: " + beanContext.getDeploymentID(), e);
             return;
         } catch (final ExecutionException e) {
             // Instance was never initialized
@@ -237,7 +237,7 @@ public class SingletonInstanceManager {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(null);
 
-            final Method remove = instance.bean instanceof SessionBean? beanContext.getCreateMethod(): null;
+            final Method remove = instance.bean instanceof SessionBean ? beanContext.getCreateMethod() : null;
 
             final List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
@@ -246,7 +246,7 @@ public class SingletonInstanceManager {
             TransactionType transactionType;
 
             if (beanContext.getComponentType() == BeanType.SINGLETON) {
-                final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
+                final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() - 1).getPreDestroy();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
@@ -256,10 +256,10 @@ public class SingletonInstanceManager {
                     }
                 }
             } else {
-                transactionType = beanContext.isBeanManagedTransaction()? TransactionType.BeanManaged: TransactionType.NotSupported;
+                transactionType = beanContext.isBeanManagedTransaction() ? TransactionType.BeanManaged : TransactionType.NotSupported;
             }
             final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
-            try{
+            try {
                 //Call the chain
                 final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
                 if (bean != null) { // TODO: see if it should be called before or after next call
@@ -270,16 +270,15 @@ public class SingletonInstanceManager {
                 if (instance.creationalContext != null) {
                     instance.creationalContext.release();
                 }
-            } catch(final Throwable e) {
+            } catch (final Throwable e) {
                 //RollBack Transaction
                 EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
-            }
-            finally{
+            } finally {
                 EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
             }
 
         } catch (final Throwable re) {
-            logger.error("Singleton shutdown failed: "+beanContext.getDeploymentID(), re);
+            logger.error("Singleton shutdown failed: " + beanContext.getDeploymentID(), re);
         }
     }
 
@@ -349,7 +348,7 @@ public class SingletonInstanceManager {
             try {
                 server.unregisterMBean(objectName);
             } catch (final Exception e) {
-                logger.error("Unable to unregister MBean "+objectName);
+                logger.error("Unable to unregister MBean " + objectName);
             }
         }
 
@@ -378,7 +377,7 @@ public class SingletonInstanceManager {
 
 
     private static class BeanManagedLock implements ReadWriteLock {
-        private final Lock lock =  new Lock(){
+        private final Lock lock = new Lock() {
             public void lock() {
             }
 

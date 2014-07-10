@@ -30,9 +30,14 @@ public interface Deployment {
     Properties getProperties();
 
     Set<String> list(String type, String state, Set<String> targets) throws DeploymentException;
+
     Set<String> deploy(Set<String> targets, File file) throws DeploymentException;
+
     Set<String> start(Set<String> modules) throws DeploymentException;
+
     Set<String> stop(Set<String> modules) throws DeploymentException;
+
     Set<String> restart(Set<String> modules) throws DeploymentException;
+
     Set<String> undeploy(Set<String> modules) throws DeploymentException;
 }

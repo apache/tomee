@@ -25,7 +25,7 @@ public class ParsedName implements Serializable {
     static final int IS_LESS = -1;
     static final int IS_GREATER = 1;
 
-    String [] components;
+    String[] components;
     int pos;
     int hashcode;
 
@@ -100,7 +100,7 @@ public class ParsedName implements Serializable {
         return compareTo(otherHash);
     }
 
-    public static void main(final String [] args) {
+    public static void main(final String[] args) {
 
         final ParsedName name = new ParsedName("comp/env/jdbc/mydatabase");
         while (name.next()) {
@@ -110,11 +110,11 @@ public class ParsedName implements Serializable {
 
     public ParsedName remaining() {
         final ParsedName name = new ParsedName("");
-        final int next = pos +1;
+        final int next = pos + 1;
         if (next > components.length) {
             return name;
         }
-        
+
         final String[] dest = new String[components.length - next];
         System.arraycopy(components, next, dest, 0, dest.length);
         name.components = dest;
@@ -125,9 +125,9 @@ public class ParsedName implements Serializable {
     @Override
     public String toString() {
         return "ParsedName{" +
-                "path=" + path() +
-                ", component=" + getComponent() +
-                '}';
+            "path=" + path() +
+            ", component=" + getComponent() +
+            '}';
     }
 
     public String path() {

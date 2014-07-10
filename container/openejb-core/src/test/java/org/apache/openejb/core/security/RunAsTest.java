@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 public class RunAsTest {
     @Module
     public Class<?>[] beans() {
-        return new Class<?>[] { MyRunAsBean.class };
+        return new Class<?>[]{MyRunAsBean.class};
     }
 
     @EJB

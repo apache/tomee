@@ -39,7 +39,7 @@ public class EntitiesScanningPackageLimitedTest {
 
     @Module
     public Class<?>[] app() throws Exception {
-        return new Class<?>[]{ SomeSimpleEJb.class, SomeSimpleEntity.class };
+        return new Class<?>[]{SomeSimpleEJb.class, SomeSimpleEntity.class};
     }
 
     @Configuration
@@ -78,7 +78,7 @@ public class EntitiesScanningPackageLimitedTest {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
     }

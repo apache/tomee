@@ -24,6 +24,7 @@ import java.io.File;
 
 public interface WebAppDeployer {
     AppInfo deploy(String host, String contextRoot, File file);
+
     void reload(String appId);
 
     final class Helper {
@@ -33,7 +34,7 @@ public interface WebAppDeployer {
 
         public static boolean isWebApp(final File file) {
             return (file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())
-                        && SystemInstance.get().getComponent(WebAppDeployer.class) != null;
+                && SystemInstance.get().getComponent(WebAppDeployer.class) != null;
         }
     }
 }

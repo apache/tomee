@@ -16,19 +16,17 @@
  */
 package org.apache.openejb.jee.wls;
 
-import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
-
-import javax.xml.bind.JAXBElement;
-
+import junit.framework.TestCase;
+import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.DetailedDiff;
 
-import java.io.InputStream;
+import javax.xml.bind.JAXBElement;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 /**
  * @version $Revision$ $Date$
@@ -43,38 +41,38 @@ public class JaxbWlsTest extends TestCase {
         marshallAndUnmarshall("wls-v81-ejb-jar.xml");
     }
 
-    public void marshallAndUnmarshall(String xmlFile) throws Exception {
+    public void marshallAndUnmarshall(final String xmlFile) throws Exception {
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFile);
-        String expected = readContent(in);
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFile);
+        final String expected = readContent(in);
 
-        Object object = JaxbWls.unmarshal(WeblogicEjbJar.class, new ByteArrayInputStream(expected.getBytes()));
+        final Object object = JaxbWls.unmarshal(WeblogicEjbJar.class, new ByteArrayInputStream(expected.getBytes()));
 
-        JAXBElement element = (JAXBElement) object;
+        final JAXBElement element = (JAXBElement) object;
 
         assertTrue(element.getValue() instanceof WeblogicEjbJar);
 
-        String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
+        final String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
 
         XMLUnit.setIgnoreWhitespace(true);
         try {
-            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            final Diff myDiff = new DetailedDiff(new Diff(expected, actual));
             assertTrue("Files are not similar " + myDiff, myDiff.similar());
-        } catch (AssertionFailedError e) {
+        } catch (final AssertionFailedError e) {
             assertEquals(expected, actual);
             throw e;
         }
     }
 
     private String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {
-            sb.append((char)i);
+            sb.append((char) i);
             i = in.read();
         }
-        String content = sb.toString();
+        final String content = sb.toString();
         return content;
     }
 }

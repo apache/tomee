@@ -37,7 +37,7 @@ public class AppModuleBuilder {
         return this;
     }
 
-    public AppModuleBuilder withAnMdb(MessageDrivenBean mdb) {
+    public AppModuleBuilder withAnMdb(final MessageDrivenBean mdb) {
         openEJBJar.addEjbDeployment(mdb);
         ejbJar.addEnterpriseBean(mdb);
         return this;
@@ -45,7 +45,7 @@ public class AppModuleBuilder {
     }
 
     public AppModule build() {
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 }

@@ -24,33 +24,31 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         These defaults are applied to the persistence unit as a whole 
- *         unless they are overridden by local annotation or XML 
- *         element settings. 
- *         
- *         schema - Used as the schema for all tables, secondary tables, join
- *             tables, collection tables, sequence generators, and table
- *             generators that apply to the persistence unit
- *         catalog - Used as the catalog for all tables, secondary tables, join
- *             tables, collection tables, sequence generators, and table
- *             generators that apply to the persistence unit
- *         delimited-identifiers - Used to treat database identifiers as
- *             delimited identifiers.
- *         access - Used as the access type for all managed classes in
- *             the persistence unit
- *         cascade-persist - Adds cascade-persist to the set of cascade options
- *             in all entity relationships of the persistence unit
- *         entity-listeners - List of default entity listeners to be invoked 
- *             on each entity in the persistence unit. 
- * 
- *       
- * 
+ * These defaults are applied to the persistence unit as a whole
+ * unless they are overridden by local annotation or XML
+ * element settings.
+ * <p/>
+ * schema - Used as the schema for all tables, secondary tables, join
+ * tables, collection tables, sequence generators, and table
+ * generators that apply to the persistence unit
+ * catalog - Used as the catalog for all tables, secondary tables, join
+ * tables, collection tables, sequence generators, and table
+ * generators that apply to the persistence unit
+ * delimited-identifiers - Used to treat database identifiers as
+ * delimited identifiers.
+ * access - Used as the access type for all managed classes in
+ * the persistence unit
+ * cascade-persist - Adds cascade-persist to the set of cascade options
+ * in all entity relationships of the persistence unit
+ * entity-listeners - List of default entity listeners to be invoked
+ * on each entity in the persistence unit.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for persistence-unit-defaults complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-unit-defaults">
  *   &lt;complexContent>
@@ -68,8 +66,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-defaults", propOrder = {
@@ -97,10 +93,8 @@ public class PersistenceUnitDefaults {
     /**
      * Gets the value of the description property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -109,22 +103,18 @@ public class PersistenceUnitDefaults {
     /**
      * Sets the value of the description property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the schema property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSchema() {
         return schema;
@@ -132,23 +122,19 @@ public class PersistenceUnitDefaults {
 
     /**
      * Sets the value of the schema property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 
     /**
      * Gets the value of the catalog property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCatalog() {
         return catalog;
@@ -156,23 +142,19 @@ public class PersistenceUnitDefaults {
 
     /**
      * Sets the value of the catalog property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCatalog(String value) {
+    public void setCatalog(final String value) {
         this.catalog = value;
     }
 
     /**
      * Gets the value of the delimitedIdentifiers property.
      *
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *
+     * @return possible object is
+     * {@link EmptyType }
      */
     public EmptyType getDelimitedIdentifiers() {
         return delimitedIdentifiers;
@@ -181,22 +163,18 @@ public class PersistenceUnitDefaults {
     /**
      * Sets the value of the delimitedIdentifiers property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
-    public void setDelimitedIdentifiers(EmptyType value) {
+    public void setDelimitedIdentifiers(final EmptyType value) {
         this.delimitedIdentifiers = value;
     }
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -204,23 +182,19 @@ public class PersistenceUnitDefaults {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 
     /**
      * Gets the value of the cascadePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isCascadePersist() {
         return cascadePersist != null;
@@ -228,23 +202,19 @@ public class PersistenceUnitDefaults {
 
     /**
      * Sets the value of the cascadePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setCascadePersist(boolean value) {
+    public void setCascadePersist(final boolean value) {
         this.cascadePersist = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the entityListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityListeners }
      */
     public EntityListeners getEntityListeners() {
         return entityListeners;
@@ -252,13 +222,11 @@ public class PersistenceUnitDefaults {
 
     /**
      * Sets the value of the entityListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityListeners }
      */
-    public void setEntityListeners(EntityListeners value) {
+    public void setEntityListeners(final EntityListeners value) {
         this.entityListeners = value;
     }
 

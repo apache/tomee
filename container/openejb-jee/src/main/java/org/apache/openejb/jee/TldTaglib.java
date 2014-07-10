@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -33,11 +33,11 @@ import java.util.Map;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tldTaglibType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tldTaglibType">
  *   &lt;complexContent>
@@ -60,15 +60,13 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlRootElement(name = "taglib")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tldTaglibType", propOrder = {
     "descriptions",
     "displayNames",
-    "icon",      
+    "icon",
     "tlibVersion",
     "jspVersion",
     "shortName",
@@ -115,7 +113,7 @@ public class TldTaglib {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -128,7 +126,7 @@ public class TldTaglib {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -158,7 +156,7 @@ public class TldTaglib {
         return tlibVersion;
     }
 
-    public void setTlibVersion(String value) {
+    public void setTlibVersion(final String value) {
         this.tlibVersion = value;
     }
 
@@ -166,7 +164,7 @@ public class TldTaglib {
         return jspVersion;
     }
 
-    public void setJspVersion(String jspVersion) {
+    public void setJspVersion(final String jspVersion) {
         this.jspVersion = jspVersion;
     }
 
@@ -174,7 +172,7 @@ public class TldTaglib {
         return shortName;
     }
 
-    public void setShortName(String value) {
+    public void setShortName(final String value) {
         this.shortName = value;
     }
 
@@ -182,7 +180,7 @@ public class TldTaglib {
         return uri;
     }
 
-    public void setUri(String value) {
+    public void setUri(final String value) {
         this.uri = value;
     }
 
@@ -190,7 +188,7 @@ public class TldTaglib {
         return validator;
     }
 
-    public void setValidator(Validator value) {
+    public void setValidator(final Validator value) {
         this.validator = value;
     }
 
@@ -233,7 +231,7 @@ public class TldTaglib {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -245,7 +243,7 @@ public class TldTaglib {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 }

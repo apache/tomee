@@ -38,8 +38,8 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 @RunWith(ApplicationComposer.class)
@@ -55,20 +55,20 @@ public class DataSourceDefinitionJndiTest {
 
 
     @DataSourceDefinitions({
-            @DataSourceDefinition(
-                    name = "java:global/foo",
-                    className = "org.hsqldb.jdbc.JDBCDataSource",
-                    user = "sa",
-                    password = "",
-                    url = "jdbc:hsqldb:mem:dsdjt1"
-            ),
-            @DataSourceDefinition(
-                    name = "java:app/foo",
-                    className = "org.hsqldb.jdbc.JDBCDataSource",
-                    user = "sa",
-                    password = "",
-                    url = "jdbc:hsqldb:mem:dsdjt2"
-            )
+        @DataSourceDefinition(
+            name = "java:global/foo",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
+            user = "sa",
+            password = "",
+            url = "jdbc:hsqldb:mem:dsdjt1"
+        ),
+        @DataSourceDefinition(
+            name = "java:app/foo",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
+            user = "sa",
+            password = "",
+            url = "jdbc:hsqldb:mem:dsdjt2"
+        )
     })
     @Stateless
     public static class DatasourceDefinitionsBean {

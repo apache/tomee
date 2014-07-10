@@ -52,13 +52,13 @@ public class StatelessContainerTest extends TestCase {
 
     @Test
     public void testPojoStyleBean() throws Exception {
-        List expected = Arrays.asList(Lifecycle.values());
+        final List expected = Arrays.asList(Lifecycle.values());
 
         {
             WidgetBean.lifecycle.clear();
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = local.getLifecycle();
+            final Stack<Lifecycle> lifecycle = local.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
@@ -69,12 +69,12 @@ public class StatelessContainerTest extends TestCase {
             WidgetBean.lifecycle.clear();
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = localBean.getLifecycle();
+            final Stack<Lifecycle> lifecycle = localBean.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
-            List localBeanExpected = new ArrayList();
+            final List localBeanExpected = new ArrayList();
             localBeanExpected.addAll(expected);
             assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
         }
@@ -83,7 +83,7 @@ public class StatelessContainerTest extends TestCase {
             WidgetBean.lifecycle.clear();
 
             // Do a business method...
-            Stack<Lifecycle> lifecycle = remote.getLifecycle();
+            final Stack<Lifecycle> lifecycle = remote.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertNotSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
@@ -116,9 +116,9 @@ public class StatelessContainerTest extends TestCase {
         return bean;
     }
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();
@@ -145,7 +145,7 @@ public class StatelessContainerTest extends TestCase {
         }
 
         @Resource
-        public void setSessionContext(SessionContext sessionContext) {
+        public void setSessionContext(final SessionContext sessionContext) {
             lifecycle.push(Lifecycle.INJECTION);
         }
 

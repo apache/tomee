@@ -67,7 +67,7 @@ public class ModuleProperties implements DynamicDeployer {
         } else if (o instanceof Properties) {
             module.getProperties().putAll((Properties) o);
         } else if (o != null) {
-            throw new OpenEJBException("Unknown module.properties type: "+o.getClass().getName());
+            throw new OpenEJBException("Unknown module.properties type: " + o.getClass().getName());
         }
     }
 

@@ -61,7 +61,7 @@ public class StatefulUserTransaction implements UserTransaction {
             // is is not a bean method
             return;
         }
-        jtaEntityManagerRegistry.transactionStarted((String)beanContext.getDeploymentID(), primaryKey);
+        jtaEntityManagerRegistry.transactionStarted((String) beanContext.getDeploymentID(), primaryKey);
     }
 
     public void commit() throws HeuristicMixedException, HeuristicRollbackException, IllegalStateException, RollbackException, SecurityException, SystemException {

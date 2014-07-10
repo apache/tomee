@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for init-methodType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="init-methodType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "init-methodType", propOrder = {
-        "createMethod",
-        "beanMethod"
-        })
+    "createMethod",
+    "beanMethod"
+})
 public class InitMethod {
 
     @XmlElement(name = "create-method", required = true)
@@ -70,7 +68,7 @@ public class InitMethod {
     public InitMethod() {
     }
 
-    public InitMethod(java.lang.reflect.Method beanMethod) {
+    public InitMethod(final java.lang.reflect.Method beanMethod) {
         this.beanMethod = new NamedMethod(beanMethod);
     }
 
@@ -78,11 +76,11 @@ public class InitMethod {
         return createMethod;
     }
 
-    public void setCreateMethod(NamedMethod value) {
+    public void setCreateMethod(final NamedMethod value) {
         this.createMethod = value;
     }
 
-    public void setCreateMethod(String methodName) {
+    public void setCreateMethod(final String methodName) {
         this.createMethod = new NamedMethod(methodName);
     }
 
@@ -90,7 +88,7 @@ public class InitMethod {
         return beanMethod;
     }
 
-    public void setBeanMethod(NamedMethod value) {
+    public void setBeanMethod(final NamedMethod value) {
         this.beanMethod = value;
     }
 
@@ -98,7 +96,7 @@ public class InitMethod {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

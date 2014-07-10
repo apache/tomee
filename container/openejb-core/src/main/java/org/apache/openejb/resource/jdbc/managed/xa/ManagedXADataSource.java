@@ -28,7 +28,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ManagedXADataSource extends ManagedDataSource {
-    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[] { Connection.class };
+    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     private final XADataSource xaDataSource;
 

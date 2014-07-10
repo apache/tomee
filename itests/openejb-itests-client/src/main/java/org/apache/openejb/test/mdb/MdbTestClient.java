@@ -30,7 +30,7 @@ public abstract class MdbTestClient extends org.apache.openejb.test.NamedTestCas
     protected ConnectionFactory connectionFactory;
 
 
-    public MdbTestClient(String name) {
+    public MdbTestClient(final String name) {
         super("MDB." + name);
     }
 
@@ -39,13 +39,13 @@ public abstract class MdbTestClient extends org.apache.openejb.test.NamedTestCas
      * This method is called before a test is executed.
      */
     protected void setUp() throws Exception {
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         initialContext = new InitialContext(properties);
         connectionFactory = TestManager.getJms().getConnectionFactory();
     }
 
     protected Connection createConnection() throws JMSException {
-        Connection connection = connectionFactory.createConnection();
+        final Connection connection = connectionFactory.createConnection();
         connection.start();
         return connection;
     }

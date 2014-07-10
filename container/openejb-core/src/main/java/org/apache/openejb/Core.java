@@ -23,57 +23,57 @@ import org.apache.openejb.util.Messages;
 import java.util.concurrent.Semaphore;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class Core {
     static {
         final String[] classes = {
-                "org.slf4j.LoggerFactory",
-                "org.slf4j.impl.StaticLoggerBinder",
+            "org.slf4j.LoggerFactory",
+            "org.slf4j.impl.StaticLoggerBinder",
 
-                "org.apache.openejb.config.sys.JaxbJavaee",
-                "org.apache.bval.jsr303.ApacheValidationProvider",
-                "org.apache.bval.jsr303.ApacheValidatorFactory",
-                "org.apache.bval.jsr303.ConstraintAnnotationAttributes",
-                "org.apache.bval.jsr303.ConstraintDefaults",
-                "org.apache.bval.jsr303.groups.GroupsComputer",
-                "org.apache.bval.jsr303.xml.ValidationMappingParser",
-                "org.apache.bval.util.PrivilegedActions",
-                "org.apache.geronimo.transaction.manager.TransactionManagerImpl",
-                "org.apache.openejb.InterfaceType",
-                "org.apache.openejb.assembler.classic.Assembler",
-                "org.apache.openejb.assembler.classic.AssemblerTool",
-                "org.apache.openejb.cdi.CdiBuilder",
-                "org.apache.openejb.cdi.ThreadSingletonServiceImpl",
-                "org.apache.openejb.config.AppValidator",
-                "org.apache.openejb.config.AnnotationDeployer",
-                "org.apache.openejb.config.AutoConfig",
-                "org.apache.openejb.config.ConfigurationFactory",
-                "org.apache.openejb.config.MBeanDeployer",
-                "org.apache.openejb.config.PersistenceContextAnnFactory",
-                "org.apache.openejb.core.ServerFederation",
-                "org.apache.openejb.core.ivm.EjbHomeProxyHandler$1",
-                "org.apache.openejb.core.ivm.EjbHomeProxyHandler$MethodType",
-                "org.apache.openejb.core.managed.ManagedContainer$MethodType",
-                "org.apache.openejb.loader.FileUtils",
-                "org.apache.openejb.loader.IO",
-                "org.apache.openejb.loader.SystemInstance",
-                "org.apache.openejb.monitoring.StatsInterceptor",
-                "org.apache.openejb.persistence.JtaEntityManagerRegistry",
-                "org.apache.openejb.util.Join",
-                "org.apache.openejb.util.JuliLogStreamFactory",
-                "org.apache.openejb.util.LogCategory",
-                "org.apache.openejb.util.Messages",
-                "org.apache.openejb.util.SafeToolkit",
-                "org.apache.openejb.util.StringTemplate",
-                "org.apache.openejb.util.proxy.ProxyManager",
-                "org.apache.openjpa.enhance.PCRegistry",
-                "org.apache.openjpa.lib.util.Localizer",
-                "org.apache.webbeans.logger.WebBeansLoggerFacade",
-                "org.apache.xbean.naming.reference.SimpleReference",
-                "org.apache.xbean.propertyeditor.PropertyEditors",
-                "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
-                "org.apache.xbean.recipe.ReflectionUtil"
+            "org.apache.openejb.config.sys.JaxbJavaee",
+            "org.apache.bval.jsr303.ApacheValidationProvider",
+            "org.apache.bval.jsr303.ApacheValidatorFactory",
+            "org.apache.bval.jsr303.ConstraintAnnotationAttributes",
+            "org.apache.bval.jsr303.ConstraintDefaults",
+            "org.apache.bval.jsr303.groups.GroupsComputer",
+            "org.apache.bval.jsr303.xml.ValidationMappingParser",
+            "org.apache.bval.util.PrivilegedActions",
+            "org.apache.geronimo.transaction.manager.TransactionManagerImpl",
+            "org.apache.openejb.InterfaceType",
+            "org.apache.openejb.assembler.classic.Assembler",
+            "org.apache.openejb.assembler.classic.AssemblerTool",
+            "org.apache.openejb.cdi.CdiBuilder",
+            "org.apache.openejb.cdi.ThreadSingletonServiceImpl",
+            "org.apache.openejb.config.AppValidator",
+            "org.apache.openejb.config.AnnotationDeployer",
+            "org.apache.openejb.config.AutoConfig",
+            "org.apache.openejb.config.ConfigurationFactory",
+            "org.apache.openejb.config.MBeanDeployer",
+            "org.apache.openejb.config.PersistenceContextAnnFactory",
+            "org.apache.openejb.core.ServerFederation",
+            "org.apache.openejb.core.ivm.EjbHomeProxyHandler$1",
+            "org.apache.openejb.core.ivm.EjbHomeProxyHandler$MethodType",
+            "org.apache.openejb.core.managed.ManagedContainer$MethodType",
+            "org.apache.openejb.loader.FileUtils",
+            "org.apache.openejb.loader.IO",
+            "org.apache.openejb.loader.SystemInstance",
+            "org.apache.openejb.monitoring.StatsInterceptor",
+            "org.apache.openejb.persistence.JtaEntityManagerRegistry",
+            "org.apache.openejb.util.Join",
+            "org.apache.openejb.util.JuliLogStreamFactory",
+            "org.apache.openejb.util.LogCategory",
+            "org.apache.openejb.util.Messages",
+            "org.apache.openejb.util.SafeToolkit",
+            "org.apache.openejb.util.StringTemplate",
+            "org.apache.openejb.util.proxy.ProxyManager",
+            "org.apache.openjpa.enhance.PCRegistry",
+            "org.apache.openjpa.lib.util.Localizer",
+            "org.apache.webbeans.logger.WebBeansLoggerFacade",
+            "org.apache.xbean.naming.reference.SimpleReference",
+            "org.apache.xbean.propertyeditor.PropertyEditors",
+            "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
+            "org.apache.xbean.recipe.ReflectionUtil"
         };
 
         final Thread preloadMessages = new Thread() {
@@ -108,7 +108,7 @@ public class Core {
             // no-op
         }
 
-        final int part = Math.max(1, (int) Math.round(classes.length * 1. /  permits));
+        final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
         for (int i = 0; i < permits; i++) {
             final int current = i;
             final int offset = i * part;
@@ -142,5 +142,6 @@ public class Core {
         }
     }
 
-    public static void warmup() {}
+    public static void warmup() {
+    }
 }

@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.TrackingMode$JAXB.parseTrackingMode;
 import static org.apache.openejb.jee.TrackingMode$JAXB.toStringTrackingMode;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class SessionConfig$JAXB
-        extends JAXBObject<SessionConfig> {
+    extends JAXBObject<SessionConfig> {
 
 
     public SessionConfig$JAXB() {
         super(SessionConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "session-configType".intern()), CookieConfig$JAXB.class, TrackingMode$JAXB.class);
     }
 
-    public static SessionConfig readSessionConfig(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static SessionConfig readSessionConfig(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeSessionConfig(XoXMLStreamWriter writer, SessionConfig sessionConfig, RuntimeContext context)
-            throws Exception {
+    public static void writeSessionConfig(final XoXMLStreamWriter writer, final SessionConfig sessionConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, sessionConfig, context);
     }
 
-    public void write(XoXMLStreamWriter writer, SessionConfig sessionConfig, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final SessionConfig sessionConfig, final RuntimeContext context)
+        throws Exception {
         _write(writer, sessionConfig, context);
     }
 
-    public final static SessionConfig _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static SessionConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,13 +72,13 @@ public class SessionConfig$JAXB
             context = new RuntimeContext();
         }
 
-        SessionConfig sessionConfig = new SessionConfig();
+        final SessionConfig sessionConfig = new SessionConfig();
         context.beforeUnmarshal(sessionConfig, LifecycleCallback.NONE);
 
         List<TrackingMode> trackingMode = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("session-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, SessionConfig.class);
@@ -86,10 +86,10 @@ public class SessionConfig$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, sessionConfig);
                 sessionConfig.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -98,18 +98,18 @@ public class SessionConfig$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("session-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: sessionTimeout
-                Integer sessionTimeout = Integer.valueOf(elementReader.getElementAsString());
+                final Integer sessionTimeout = Integer.valueOf(elementReader.getElementAsString());
                 sessionConfig.sessionTimeout = sessionTimeout;
             } else if (("cookie-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: cookieConfig
-                CookieConfig cookieConfig = readCookieConfig(elementReader, context);
+                final CookieConfig cookieConfig = readCookieConfig(elementReader, context);
                 sessionConfig.cookieConfig = cookieConfig;
             } else if (("tracking-mode" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: trackingMode
-                TrackingMode trackingModeItem = parseTrackingMode(elementReader, context, elementReader.getElementAsString());
+                final TrackingMode trackingModeItem = parseTrackingMode(elementReader, context, elementReader.getElementAsString());
                 if (trackingMode == null) {
                     trackingMode = sessionConfig.trackingMode;
                     if (trackingMode != null) {
@@ -132,13 +132,13 @@ public class SessionConfig$JAXB
         return sessionConfig;
     }
 
-    public final SessionConfig read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final SessionConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, SessionConfig sessionConfig, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final SessionConfig sessionConfig, RuntimeContext context)
+        throws Exception {
         if (sessionConfig == null) {
             writer.writeXsiNil();
             return;
@@ -148,7 +148,7 @@ public class SessionConfig$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (SessionConfig.class != sessionConfig.getClass()) {
             context.unexpectedSubclass(writer, sessionConfig, SessionConfig.class);
             return;
@@ -158,19 +158,19 @@ public class SessionConfig$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = sessionConfig.id;
+        final String idRaw = sessionConfig.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(sessionConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: sessionTimeout
-        Integer sessionTimeout = sessionConfig.sessionTimeout;
+        final Integer sessionTimeout = sessionConfig.sessionTimeout;
         if (sessionTimeout != null) {
             writer.writeStartElement(prefix, "session-timeout", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(sessionTimeout));
@@ -178,7 +178,7 @@ public class SessionConfig$JAXB
         }
 
         // ELEMENT: cookieConfig
-        CookieConfig cookieConfig = sessionConfig.cookieConfig;
+        final CookieConfig cookieConfig = sessionConfig.cookieConfig;
         if (cookieConfig != null) {
             writer.writeStartElement(prefix, "cookie-config", "http://java.sun.com/xml/ns/javaee");
             writeCookieConfig(writer, cookieConfig, context);
@@ -186,9 +186,9 @@ public class SessionConfig$JAXB
         }
 
         // ELEMENT: trackingMode
-        List<TrackingMode> trackingMode = sessionConfig.trackingMode;
+        final List<TrackingMode> trackingMode = sessionConfig.trackingMode;
         if (trackingMode != null) {
-            for (TrackingMode trackingModeItem : trackingMode) {
+            for (final TrackingMode trackingModeItem : trackingMode) {
                 if (trackingModeItem != null) {
                     writer.writeStartElement(prefix, "tracking-mode", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(toStringTrackingMode(sessionConfig, null, context, trackingModeItem));

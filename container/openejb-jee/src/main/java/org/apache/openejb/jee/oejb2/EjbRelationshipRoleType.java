@@ -17,18 +17,18 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Java class for ejb-relationship-roleType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-relationship-roleType">
  *   &lt;complexContent>
@@ -85,8 +85,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationship-roleType", propOrder = {
@@ -111,11 +109,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * Gets the value of the ejbRelationshipRoleName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbRelationshipRoleName() {
         return ejbRelationshipRoleName;
@@ -123,23 +119,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * Sets the value of the ejbRelationshipRoleName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbRelationshipRoleName(String value) {
+    public void setEjbRelationshipRoleName(final String value) {
         this.ejbRelationshipRoleName = value;
     }
 
     /**
      * Gets the value of the relationshipRoleSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRelationshipRoleType.RelationshipRoleSource }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbRelationshipRoleType.RelationshipRoleSource }
      */
     public EjbRelationshipRoleType.RelationshipRoleSource getRelationshipRoleSource() {
         return relationshipRoleSource;
@@ -147,23 +139,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * Sets the value of the relationshipRoleSource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRelationshipRoleType.RelationshipRoleSource }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbRelationshipRoleType.RelationshipRoleSource }
      */
-    public void setRelationshipRoleSource(EjbRelationshipRoleType.RelationshipRoleSource value) {
+    public void setRelationshipRoleSource(final EjbRelationshipRoleType.RelationshipRoleSource value) {
         this.relationshipRoleSource = value;
     }
 
     /**
      * Gets the value of the cmrField property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRelationshipRoleType.CmrField }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbRelationshipRoleType.CmrField }
      */
     public EjbRelationshipRoleType.CmrField getCmrField() {
         return cmrField;
@@ -171,23 +159,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * Sets the value of the cmrField property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRelationshipRoleType.CmrField }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbRelationshipRoleType.CmrField }
      */
-    public void setCmrField(EjbRelationshipRoleType.CmrField value) {
+    public void setCmrField(final EjbRelationshipRoleType.CmrField value) {
         this.cmrField = value;
     }
 
     /**
      * Gets the value of the foreignKeyColumnOnSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isForeignKeyColumnOnSource() {
         return foreignKeyColumnOnSource != null;
@@ -195,23 +179,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * Sets the value of the foreignKeyColumnOnSource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setForeignKeyColumnOnSource(boolean value) {
+    public void setForeignKeyColumnOnSource(final boolean value) {
         this.foreignKeyColumnOnSource = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the roleMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRelationshipRoleType.RoleMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link EjbRelationshipRoleType.RoleMapping }
      */
     public EjbRelationshipRoleType.RoleMapping getRoleMapping() {
         return roleMapping;
@@ -219,22 +199,20 @@ public class EjbRelationshipRoleType {
 
     /**
      * Sets the value of the roleMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRelationshipRoleType.RoleMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EjbRelationshipRoleType.RoleMapping }
      */
-    public void setRoleMapping(EjbRelationshipRoleType.RoleMapping value) {
+    public void setRoleMapping(final EjbRelationshipRoleType.RoleMapping value) {
         this.roleMapping = value;
     }
 
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     * <p/>
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     * <p/>
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -246,8 +224,6 @@ public class EjbRelationshipRoleType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -260,11 +236,9 @@ public class EjbRelationshipRoleType {
 
         /**
          * Gets the value of the cmrFieldName property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getCmrFieldName() {
             return cmrFieldName;
@@ -272,13 +246,11 @@ public class EjbRelationshipRoleType {
 
         /**
          * Sets the value of the cmrFieldName property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
-        public void setCmrFieldName(String value) {
+        public void setCmrFieldName(final String value) {
             this.cmrFieldName = value;
         }
 
@@ -287,9 +259,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     * <p/>
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     * <p/>
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -301,8 +273,6 @@ public class EjbRelationshipRoleType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -315,11 +285,9 @@ public class EjbRelationshipRoleType {
 
         /**
          * Gets the value of the ejbName property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getEjbName() {
             return ejbName;
@@ -327,13 +295,11 @@ public class EjbRelationshipRoleType {
 
         /**
          * Sets the value of the ejbName property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
-        public void setEjbName(String value) {
+        public void setEjbName(final String value) {
             this.ejbName = value;
         }
 
@@ -342,9 +308,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     * <p/>
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     * <p/>
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -367,8 +333,6 @@ public class EjbRelationshipRoleType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -381,25 +345,23 @@ public class EjbRelationshipRoleType {
 
         /**
          * Gets the value of the cmrFieldMapping property.
-         * 
-         * <p>
+         * <p/>
+         * <p/>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the cmrFieldMapping property.
-         * 
-         * <p>
+         * <p/>
+         * <p/>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getCmrFieldMapping().add(newItem);
          * </pre>
-         * 
-         * 
-         * <p>
+         * <p/>
+         * <p/>
+         * <p/>
          * Objects of the following type(s) are allowed in the list
          * {@link EjbRelationshipRoleType.RoleMapping.CmrFieldMapping }
-         * 
-         * 
          */
         public List<EjbRelationshipRoleType.RoleMapping.CmrFieldMapping> getCmrFieldMapping() {
             if (cmrFieldMapping == null) {
@@ -411,9 +373,9 @@ public class EjbRelationshipRoleType {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         * <p/>
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         * <p/>
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -426,8 +388,6 @@ public class EjbRelationshipRoleType {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -443,11 +403,9 @@ public class EjbRelationshipRoleType {
 
             /**
              * Gets the value of the keyColumn property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getKeyColumn() {
                 return keyColumn;
@@ -455,23 +413,19 @@ public class EjbRelationshipRoleType {
 
             /**
              * Sets the value of the keyColumn property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
-            public void setKeyColumn(String value) {
+            public void setKeyColumn(final String value) {
                 this.keyColumn = value;
             }
 
             /**
              * Gets the value of the foreignKeyColumn property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getForeignKeyColumn() {
                 return foreignKeyColumn;
@@ -479,13 +433,11 @@ public class EjbRelationshipRoleType {
 
             /**
              * Sets the value of the foreignKeyColumn property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
-            public void setForeignKeyColumn(String value) {
+            public void setForeignKeyColumn(final String value) {
                 this.foreignKeyColumn = value;
             }
 

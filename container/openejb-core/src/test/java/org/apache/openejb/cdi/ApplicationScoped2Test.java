@@ -47,7 +47,7 @@ public class ApplicationScoped2Test extends TestCase {
         final Green green = createAndMutate(Green.class);
 
         {
-            Green green2 = getInstance(Green.class);
+            final Green green2 = getInstance(Green.class);
 
             assertEquals(green.getMessage(), green2.getMessage());
         }
@@ -57,14 +57,14 @@ public class ApplicationScoped2Test extends TestCase {
         assertEquals(green.getMessage(), blue.getGreen().getMessage());
 
         {
-            Blue blue2 = getInstance(Blue.class);
+            final Blue blue2 = getInstance(Blue.class);
 
             assertEquals(blue.getMessage(), blue2.getMessage());
         }
 
         final BrownLocal brownLocal = createAndMutate(BrownLocal.class);
         {
-            BrownLocal brownLocal2 = getInstance(BrownLocal.class);
+            final BrownLocal brownLocal2 = getInstance(BrownLocal.class);
 
             assertEquals(brownLocal.getMessage(), brownLocal2.getMessage());
         }
@@ -84,9 +84,9 @@ public class ApplicationScoped2Test extends TestCase {
         assertSame(greenA, greenB);
     }
 
-    private <T extends Message> T createAndMutate(Class<T> beanType) {
+    private <T extends Message> T createAndMutate(final Class<T> beanType) {
 
-        T instance = getInstance(beanType);
+        final T instance = getInstance(beanType);
 
         final String prefix = beanType.getSimpleName();
 
@@ -96,13 +96,12 @@ public class ApplicationScoped2Test extends TestCase {
         return instance;
     }
 
-    private <T extends Message> T getInstance(Class<T> beanType) {
+    private <T extends Message> T getInstance(final Class<T> beanType) {
         final Bean<T> bean = (Bean<T>) beanManager.getBeans(beanType).iterator().next();
 
         // This should create the instance and put it in the context
         return (T) beanManager.getReference(bean, beanType, beanManager.createCreationalContext(bean));
     }
-
 
 
     @Module
@@ -139,7 +138,7 @@ public class ApplicationScoped2Test extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
 
@@ -165,14 +164,15 @@ public class ApplicationScoped2Test extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
+
         @Inject
         private Green green;
 
         @Inject
-        public void setBlue(Blue blue) {
+        public void setBlue(final Blue blue) {
             this.blue = blue;
         }
 
@@ -201,7 +201,7 @@ public class ApplicationScoped2Test extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
 
@@ -210,7 +210,7 @@ public class ApplicationScoped2Test extends TestCase {
         }
 
         @Inject
-        public void setGreen(Green green) {
+        public void setGreen(final Green green) {
             this.green = green;
         }
     }
@@ -231,7 +231,7 @@ public class ApplicationScoped2Test extends TestCase {
         }
 
         @Override
-        public void setMessage(String id) {
+        public void setMessage(final String id) {
             this.id = id;
         }
     }

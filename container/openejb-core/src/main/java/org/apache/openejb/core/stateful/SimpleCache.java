@@ -80,14 +80,14 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     private long timeOut = -1;
 
     private ScheduledExecutorService executor;
-    
+
     /**
      * Specifies how often the cache is checked for timed out beans.
      */
     private long frequency = 60 * 1000;
-    
+
     private ScheduledFuture future;
-    
+
     public SimpleCache() {
     }
 
@@ -108,22 +108,22 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             Thread.currentThread().setContextClassLoader(SimpleCache.class.getClassLoader());
             try {
                 future = executor.scheduleWithFixedDelay(new Runnable() {
-                         public void run() {     
-                             processLRU();
-                         }               
-                     }, frequency, frequency, TimeUnit.MILLISECONDS);
+                    public void run() {
+                        processLRU();
+                    }
+                }, frequency, frequency, TimeUnit.MILLISECONDS);
             } finally {
                 Thread.currentThread().setContextClassLoader(loader);
             }
         }
     }
-    
-    public synchronized void destroy() {    
+
+    public synchronized void destroy() {
         if (future != null) {
             future.cancel(false);
         }
     }
-    
+
     private synchronized void initScheduledExecutorService() {
         if (executor == null) {
             executor = Executors.newScheduledThreadPool(1, new ThreadFactory() {
@@ -132,10 +132,10 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     t.setDaemon(true);
                     return t;
                 }
-            });               
+            });
         }
     }
-    
+
     public synchronized CacheListener<V> getListener() {
         return listener;
     }
@@ -200,19 +200,19 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     public void setScheduledExecutorService(final ScheduledExecutorService executor) {
         this.executor = executor;
     }
-    
+
     public ScheduledExecutorService getScheduledExecutorService() {
         return executor;
     }
-    
+
     public void setFrequency(final String frequency) {
         this.frequency = ms(frequency, TimeUnit.SECONDS);
     }
-    
+
     public long getFrequency() {
         return frequency;
     }
-    
+
     public void add(final K key, final V value) {
         // find the existing entry
         Entry entry = cache.get(key);
@@ -267,7 +267,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         // Entry has been removed between get and lock (most likely by undeploying the EJB), simply drop the instance
                         return null;
                 }
-                
+
                 // mark entry as in-use
                 entry.setState(EntryState.CHECKED_OUT);
 
@@ -356,7 +356,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     }
 
     public void removeAll(final CacheFilter<V> filter) {
-        for (final Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext();) {
+        for (final Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext(); ) {
             final Entry entry = iterator.next();
 
             entry.lock.lock();
@@ -535,7 +535,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     private void storeEntries(final Map<K, V> entriesToStore) {
         final CacheListener<V> listener = this.getListener();
-        for (final Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
+        for (final Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext(); ) {
             final Map.Entry<K, V> entry = iterator.next();
 
             if (listener != null) {
@@ -577,15 +577,15 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             this.key = key;
             this.value = value;
             this.state = state;
-            
+
             if (value instanceof Cache.TimeOut) {
                 final Duration duration = ((Cache.TimeOut) value).getTimeOut();
                 this.timeOut = duration != null ? duration.getTime(TimeUnit.MILLISECONDS) : getTimeOut();
             } else {
                 this.timeOut = getTimeOut();
             }
-            
-            lastAccess = System.currentTimeMillis();                                 
+
+            lastAccess = System.currentTimeMillis();
         }
 
         private K getKey() {
@@ -635,5 +635,5 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             }
         }
     }
-    
+
 }

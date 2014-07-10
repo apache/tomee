@@ -31,7 +31,7 @@ public class CommonDataSourceAdapter implements InvocationHandler {
     }
 
     public static DataSource wrap(final CommonDataSource ds) {
-        return DataSource.class.cast(Proxy.newProxyInstance(ds.getClass().getClassLoader(), new Class<?>[] { DataSource.class }, new CommonDataSourceAdapter(ds)));
+        return DataSource.class.cast(Proxy.newProxyInstance(ds.getClass().getClassLoader(), new Class<?>[]{DataSource.class}, new CommonDataSourceAdapter(ds)));
     }
 
     @Override

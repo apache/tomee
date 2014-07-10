@@ -57,7 +57,7 @@ public class ContextLookupMdbPojoBean implements MessageListener {
         try {
             final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
     }
@@ -78,11 +78,11 @@ public class ContextLookupMdbPojoBean implements MessageListener {
 //                    "***************************************\n\n");
             try {
                 message.acknowledge();
-            } catch (JMSException e) {
+            } catch (final JMSException e) {
                 e.printStackTrace();
             }
             mdbInvoker.onMessage(message);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }
@@ -96,10 +96,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
 
                 final BasicBmpObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -112,10 +112,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
 
                 final BasicStatefulObject object = home.createObject("Enc Bean");
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -128,10 +128,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
 
                 final BasicStatelessObject object = home.createObject();
                 Assert.assertNotNull("The EJBObject is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -141,10 +141,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
             try {
                 final BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) getMessageDrivenContext().lookup("stateless/beanReferences/stateless-business-local");
                 Assert.assertNotNull("The EJB BusinessLocal is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -154,10 +154,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
             try {
                 final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) getMessageDrivenContext().lookup("stateless/beanReferences/stateless-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -167,10 +167,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
             try {
                 final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) getMessageDrivenContext().lookup("stateless/beanReferences/stateful-business-local");
                 Assert.assertNotNull("The EJB BusinessLocal is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -180,10 +180,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
             try {
                 final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) getMessageDrivenContext().lookup("stateless/beanReferences/stateful-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -198,10 +198,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The String looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -215,10 +215,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Double looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -232,10 +232,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Long looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -249,10 +249,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Float looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -266,10 +266,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Integer looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -283,10 +283,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Short looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -300,10 +300,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Boolean looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -317,10 +317,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Byte looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -334,10 +334,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertNotNull("The Character looked up is null", actual);
                 Assert.assertEquals(expected, actual);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -348,10 +348,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 final Object obj = getMessageDrivenContext().lookup("datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -376,11 +376,11 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
                 final QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
                 testJmsConnection(queueConnectionFactory.createConnection());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -403,10 +403,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 final EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -424,10 +424,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
                 // lookup using global name
                 final EJBContext ejbCtx = (EJBContext) ctx.lookup("java:comp/EJBContext");
                 Assert.assertNotNull("The MessageDrivenContext got from java:comp/EJBContext is null ", ejbCtx);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
 
@@ -443,10 +443,10 @@ public class ContextLookupMdbPojoBean implements MessageListener {
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -459,7 +459,7 @@ public class ContextLookupMdbPojoBean implements MessageListener {
         MessageDrivenContext ejbContext = null;
         try {
             ejbContext = (MessageDrivenContext) new InitialContext().lookup("java:comp/EJBContext");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

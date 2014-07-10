@@ -22,36 +22,46 @@ import javax.ejb.EntityContext;
 
 public abstract class QueryDataBean implements EntityBean {
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract boolean getBooleanField();
+
     public abstract void setBooleanField(boolean value);
 
     public abstract char getCharField();
+
     public abstract void setCharField(char value);
 
     public abstract byte getByteField();
+
     public abstract void setByteField(byte value);
 
     public abstract short getShortField();
+
     public abstract void setShortField(short value);
 
     public abstract int getIntField();
+
     public abstract void setIntField(int value);
 
     public abstract long getLongField();
+
     public abstract void setLongField(long value);
 
     public abstract float getFloatField();
+
     public abstract void setFloatField(float value);
 
     public abstract double getDoubleField();
+
     public abstract void setDoubleField(double value);
 
     public abstract String getStringField();
+
     public abstract void setStringField(String value);
 
-    public Integer ejbCreate(int value) {
+    public Integer ejbCreate(final int value) {
         setId(value);
         setBooleanField(value == 2);
         setCharField((char) ('0' + value));
@@ -65,10 +75,10 @@ public abstract class QueryDataBean implements EntityBean {
         return null;
     }
 
-    public void ejbPostCreate(int field) {
+    public void ejbPostCreate(final int field) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

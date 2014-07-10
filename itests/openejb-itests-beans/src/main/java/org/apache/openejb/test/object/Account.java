@@ -16,67 +16,69 @@
  */
 package org.apache.openejb.test.object;
 
-public class Account implements java.io.Serializable{
-    
+public class Account implements java.io.Serializable {
+
     private String ssn;
     private String firstName;
     private String lastName;
     private int balance;
 
-    public Account(String ssn, String firstName, String lastName, int balance){
-        this.ssn = ssn;      
+    public Account(final String ssn, final String firstName, final String lastName, final int balance) {
+        this.ssn = ssn;
         this.firstName = firstName.trim();
-        this.lastName = lastName.trim(); 
-        this.balance = balance;     
-    }
-    
-    public Account(){
+        this.lastName = lastName.trim();
+        this.balance = balance;
     }
 
-    public boolean equals(Object object){
-        if ( !(object instanceof Account ) ) return false;
+    public Account() {
+    }
 
-        Account that = (Account)object;
+    public boolean equals(final Object object) {
+        if (!(object instanceof Account)) return false;
+
+        final Account that = (Account) object;
 
         return (this.ssn.equals(that.ssn) &&
-                this.firstName.equals(that.firstName) &&
-                this.lastName.equals(that.lastName) &&
-                this.balance == that.balance);
+            this.firstName.equals(that.firstName) &&
+            this.lastName.equals(that.lastName) &&
+            this.balance == that.balance);
     }
 
 
-    public String getSsn(){
+    public String getSsn() {
         return ssn;
     }
-    
-    public void setSsn(String ssn){
+
+    public void setSsn(final String ssn) {
         this.ssn = ssn;
     }
 
-    public String getFirstName(){
+    public String getFirstName() {
         return firstName;
     }
-    
-    public void setFirstName(String firstName){
-        this.firstName = (firstName != null)? firstName.trim():null;
+
+    public void setFirstName(final String firstName) {
+        this.firstName = (firstName != null) ? firstName.trim() : null;
     }
 
-    public String getLastName(){
+    public String getLastName() {
         return lastName;
     }
-    public void setLastName(String lastName){
-        this.lastName = (lastName != null)? lastName.trim():null;
+
+    public void setLastName(final String lastName) {
+        this.lastName = (lastName != null) ? lastName.trim() : null;
     }
 
-    public int getBalance(){
+    public int getBalance() {
         return balance;
     }
-    public void setBalance(int balance){
+
+    public void setBalance(final int balance) {
         this.balance = balance;
     }
 
 
-    public String toString(){
-        return "["+ssn+"]["+firstName+"]["+lastName+"]["+balance+"]";
+    public String toString() {
+        return "[" + ssn + "][" + firstName + "][" + lastName + "][" + balance + "]";
     }
 }

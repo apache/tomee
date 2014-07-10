@@ -17,9 +17,9 @@
 
 package org.apache.openejb.jee.oejb2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
  * <p>Java class for openejb-jarType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="openejb-jarType">
  *   &lt;complexContent>
@@ -71,8 +71,6 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
@@ -94,7 +92,7 @@ public class OpenejbJarType {
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(PropertiesAdapter.class)
     protected Properties properties;
-    
+
     @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
 
@@ -112,9 +110,9 @@ public class OpenejbJarType {
 
     @XmlElementWrapper(name = "enterprise-beans")
     @XmlElements({
-    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
-    @XmlElement(name = "session", required = true, type = SessionBeanType.class),
-    @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
+        @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
+        @XmlElement(name = "session", required = true, type = SessionBeanType.class),
+        @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
     protected List<EnterpriseBean> enterpriseBeans = new ArrayList<EnterpriseBean>();
 
     @XmlElementWrapper(name = "relationships")
@@ -124,22 +122,20 @@ public class OpenejbJarType {
     @XmlElement(name = "message-destination", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<MessageDestinationType> messageDestination;
 
-    @XmlElementRef(name="security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
+    @XmlElementRef(name = "security", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractSecurityType> security;
 
     @XmlElementRef(name = "service", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractServiceType>> service;
 
-    @XmlElementRef(name="persistence", namespace = "http://java.sun.com/xml/ns/persistence", type = Persistence.class)
+    @XmlElementRef(name = "persistence", namespace = "http://java.sun.com/xml/ns/persistence", type = Persistence.class)
     protected List<Persistence> persistence;
 
     /**
      * Gets the value of the environment property.
      *
-     * @return
-     *     possible object is
-     *     {@link EnvironmentType }
-     *
+     * @return possible object is
+     * {@link EnvironmentType }
      */
     public EnvironmentType getEnvironment() {
         return environment;
@@ -148,22 +144,18 @@ public class OpenejbJarType {
     /**
      * Sets the value of the environment property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link EnvironmentType }
-     *
+     * @param value allowed object is
+     *              {@link EnvironmentType }
      */
-    public void setEnvironment(EnvironmentType value) {
+    public void setEnvironment(final EnvironmentType value) {
         this.environment = value;
     }
 
     /**
      * Gets the value of the cmpConnectionFactory property.
      *
-     * @return
-     *     possible object is
-     *     {@link ResourceLocatorType }
-     *
+     * @return possible object is
+     * {@link ResourceLocatorType }
      */
     public ResourceLocatorType getCmpConnectionFactory() {
         return cmpConnectionFactory;
@@ -172,22 +164,18 @@ public class OpenejbJarType {
     /**
      * Sets the value of the cmpConnectionFactory property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link ResourceLocatorType }
-     *
+     * @param value allowed object is
+     *              {@link ResourceLocatorType }
      */
-    public void setCmpConnectionFactory(ResourceLocatorType value) {
+    public void setCmpConnectionFactory(final ResourceLocatorType value) {
         this.cmpConnectionFactory = value;
     }
 
     /**
      * Gets the value of the ejbQlCompilerFactory property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbQlCompilerFactory() {
         return ejbQlCompilerFactory;
@@ -196,28 +184,24 @@ public class OpenejbJarType {
     /**
      * Sets the value of the ejbQlCompilerFactory property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbQlCompilerFactory(String value) {
+    public void setEjbQlCompilerFactory(final String value) {
         this.ejbQlCompilerFactory = value;
     }
 
     /**
      * Gets the value of the dbSyntaxFactory property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDbSyntaxFactory() {
         return dbSyntaxFactory;
     }
 
-    public void setDbSyntaxFactory(String value) {
+    public void setDbSyntaxFactory(final String value) {
         this.dbSyntaxFactory = value;
     }
 
@@ -225,7 +209,7 @@ public class OpenejbJarType {
         return enforceForeignKeyConstraints != null;
     }
 
-    public void setEnforceForeignKeyConstraints(boolean value) {
+    public void setEnforceForeignKeyConstraints(final boolean value) {
         this.enforceForeignKeyConstraints = value ? new EmptyType() : null;
     }
 
@@ -240,7 +224,7 @@ public class OpenejbJarType {
         return ejbRelation;
     }
 
-    public void setEjbRelation(List<EjbRelationType> ejbRelation) {
+    public void setEjbRelation(final List<EjbRelationType> ejbRelation) {
         this.ejbRelation = ejbRelation;
     }
 
@@ -255,7 +239,7 @@ public class OpenejbJarType {
         return security;
     }
 
-    public void setSecurity(JAXBElement<? extends AbstractSecurityType> security) {
+    public void setSecurity(final JAXBElement<? extends AbstractSecurityType> security) {
         this.security = security;
     }
 
@@ -267,7 +251,7 @@ public class OpenejbJarType {
     }
 
     public List<Persistence> getPersistence() {
-        if (persistence == null){
+        if (persistence == null) {
             persistence = new ArrayList<Persistence>();
         }
         return persistence;

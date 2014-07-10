@@ -33,7 +33,7 @@ public class MdbConnectionFactory {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
@@ -41,7 +41,7 @@ public class MdbConnectionFactory {
         return defaultResourcePrincipal;
     }
 
-    public void setDefaultResourcePrincipal(DefaultResourcePrincipal value) {
+    public void setDefaultResourcePrincipal(final DefaultResourcePrincipal value) {
         this.defaultResourcePrincipal = value;
     }
 }

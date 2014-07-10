@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for activationspecType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="activationspecType">
  *   &lt;complexContent>
@@ -49,15 +49,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activationspecType", propOrder = {
-        "activationSpecClass",
-        "requiredConfigProperty",
-        "configProperty"
+    "activationSpecClass",
+    "requiredConfigProperty",
+    "configProperty"
 })
 public class ActivationSpec {
 
@@ -76,11 +74,11 @@ public class ActivationSpec {
     public ActivationSpec() {
     }
 
-    public ActivationSpec(String activationSpecClass) {
+    public ActivationSpec(final String activationSpecClass) {
         this.activationSpecClass = activationSpecClass;
     }
 
-    public ActivationSpec(Class activationSpecClass) {
+    public ActivationSpec(final Class activationSpecClass) {
         this(activationSpecClass.getName());
     }
 
@@ -88,7 +86,7 @@ public class ActivationSpec {
         return activationSpecClass;
     }
 
-    public void setActivationSpecClass(String value) {
+    public void setActivationSpecClass(final String value) {
         this.activationSpecClass = value;
     }
 
@@ -99,8 +97,8 @@ public class ActivationSpec {
         return this.requiredConfigProperty;
     }
 
-    public RequiredConfigProperty addRequiredConfigProperty(String name) {
-        RequiredConfigProperty property = new RequiredConfigProperty(name);
+    public RequiredConfigProperty addRequiredConfigProperty(final String name) {
+        final RequiredConfigProperty property = new RequiredConfigProperty(name);
         getRequiredConfigProperty().add(property);
         return property;
     }
@@ -116,7 +114,7 @@ public class ActivationSpec {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

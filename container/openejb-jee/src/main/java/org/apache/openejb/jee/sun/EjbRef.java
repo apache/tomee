@@ -33,7 +33,7 @@ public class EjbRef {
         return ejbRefName;
     }
 
-    public void setEjbRefName(String value) {
+    public void setEjbRefName(final String value) {
         this.ejbRefName = value;
     }
 
@@ -41,7 +41,7 @@ public class EjbRef {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 }

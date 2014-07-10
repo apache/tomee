@@ -24,7 +24,7 @@ import junit.framework.TestResult;
 
 public class ResultPrinter extends junit.textui.ResultPrinter {
 
-    public ResultPrinter(PrintStream writer) {
+    public ResultPrinter(final PrintStream writer) {
             super(writer);
     }
 
@@ -32,7 +32,7 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
         return getWriter();
     }
 
-    public void printFailures(TestResult result) {
+    public void printFailures(final TestResult result) {
         if (result.failureCount() != 0) {
             writer().println("\n~~ Failure Results ~~~~~~~~~\n");
             if (result.failureCount() == 1)
@@ -42,16 +42,16 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
             
             int i = 1;
             writer().println("\nFailure Summary:");
-            for (Enumeration e= result.failures(); e.hasMoreElements(); i++) {
-                TestFailure failure= (TestFailure) e.nextElement();
+            for (final Enumeration e= result.failures(); e.hasMoreElements(); i++) {
+                final TestFailure failure= (TestFailure) e.nextElement();
                 writer().println(i + ") " + failure.failedTest());
             }
             i = 1;
             writer().println("\nFailure Details:");
-            for (Enumeration e= result.failures(); e.hasMoreElements(); i++) {
-                TestFailure failure= (TestFailure) e.nextElement();
+            for (final Enumeration e= result.failures(); e.hasMoreElements(); i++) {
+                final TestFailure failure= (TestFailure) e.nextElement();
                 writer().println("\n"+ i + ") " + failure.failedTest());
-                Throwable t= failure.thrownException();
+                final Throwable t= failure.thrownException();
                 if (t.getMessage() != null)
                     writer().println("\t\"" + t.getMessage() + "\"");
                 else {
@@ -65,7 +65,7 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
     /**
      * Prints the header of the report
      */
-    public void printHeader(TestResult result) {
+    public void printHeader(final TestResult result) {
         if (result.wasSuccessful()) {
             writer().println();
             writer().print("OK");
@@ -81,7 +81,7 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
         }
     }
 
-    public void printErrors(TestResult result) {
+    public void printErrors(final TestResult result) {
         if (result.errorCount() != 0) {
             writer().println("\n~~ Error Results ~~~~~~~~~~~\n");
             if (result.errorCount() == 1)
@@ -91,33 +91,33 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
     
             writer().println("\nError Summary:");
             int i = 1;
-            for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
-                TestFailure failure= (TestFailure) e.nextElement();
+            for (final Enumeration e= result.errors(); e.hasMoreElements(); i++) {
+                final TestFailure failure= (TestFailure) e.nextElement();
                 writer().println(i + ") " + failure.failedTest());
             }
             writer().println("\nError Details:");
             i = 1;
-            for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
-                TestFailure failure= (TestFailure)e.nextElement();
+            for (final Enumeration e= result.errors(); e.hasMoreElements(); i++) {
+                final TestFailure failure= (TestFailure)e.nextElement();
                 writer().println(i+") "+failure.failedTest());
-                String trace = getRelevantStackTrace(failure.thrownException());
+                final String trace = getRelevantStackTrace(failure.thrownException());
                 writer().println(trace);
             }
         }
     }
 
-    public String getRelevantStackTrace(Throwable t){
-        StringBuffer trace = new StringBuffer();
+    public String getRelevantStackTrace(final Throwable t){
+        final StringBuffer trace = new StringBuffer();
         
         try{
             // Cut the stack trace after "at junit.framework" is found
             // Return just the first part.
-            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
-            java.io.PrintWriter pw = new java.io.PrintWriter(bos);
+            final java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            final java.io.PrintWriter pw = new java.io.PrintWriter(bos);
             t.printStackTrace(pw);
             pw.close();
     
-            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.StringReader(bos.toString()));
+            final java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.StringReader(bos.toString()));
             String line = reader.readLine();
             while(line != null) {
                 if (line.indexOf("at junit.framework") != -1) break;
@@ -127,7 +127,7 @@ public class ResultPrinter extends junit.textui.ResultPrinter {
                 trace.append(line).append('\n');
                 line = reader.readLine();
             }
-        } catch(Exception e){
+        } catch(final Exception e){
         }
         
         return trace.toString();

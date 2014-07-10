@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for propertyType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="propertyType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "propertyType", propOrder = {
-        "name",
-        "value"
-        })
+    "name",
+    "value"
+})
 public class Property {
 
     @XmlElement(required = true)
@@ -70,7 +68,7 @@ public class Property {
     public Property() {
     }
 
-    public Property(String name, String value) {
+    public Property(final String name, final String value) {
         this.name = name;
         this.value = value;
     }
@@ -79,7 +77,7 @@ public class Property {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -87,7 +85,7 @@ public class Property {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -95,7 +93,7 @@ public class Property {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

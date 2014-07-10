@@ -162,7 +162,7 @@ public class UpdateChecker {
         }
 
         if (current == null) {
-            current  = OpenEjbVersion.get().getVersion();
+            current = OpenEjbVersion.get().getVersion();
         }
 
 
@@ -178,8 +178,8 @@ public class UpdateChecker {
             return "running on the latest version";
         }
         return new StringBuilder("you are using the version ").append(current)
-                .append(", our latest stable version ").append(latest)
-                .append(" is available on ").append(repoUrl).toString();
+            .append(", our latest stable version ").append(latest)
+            .append(" is available on ").append(repoUrl).toString();
     }
 
     public void setRepoUrl(final String repoUrl) {

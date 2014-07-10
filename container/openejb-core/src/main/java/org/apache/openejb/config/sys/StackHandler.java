@@ -56,7 +56,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         if (invalid.size() > 0) {
-            throw new SAXException("Unsupported Attribute(s): "+ Join.join(", ", invalid) +".  Supported Attributes are: "+Join.join(", ", allowed) + ".  If the setting is a configuration property it must be placed inside the element body.");
+            throw new SAXException("Unsupported Attribute(s): " + Join.join(", ", invalid) + ".  Supported Attributes are: " + Join.join(", ", allowed) + ".  If the setting is a configuration property it must be placed inside the element body.");
         }
     }
 
@@ -129,7 +129,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException{
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             if (attributes.getValue("type") != null) {
                 service.setType(attributes.getValue("type"));
             }

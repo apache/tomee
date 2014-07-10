@@ -32,14 +32,14 @@ public class SecondStatelessInterceptedBean implements SecondStatelessIntercepte
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> methodWithDefaultInterceptorsExcluded() {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         list.add("methodWithDefaultInterceptorsExcluded");
         return list;
 
     }
 
     @AroundInvoke
-    protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
+    protected Object beanClassBusinessMethodInterceptor(final InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }

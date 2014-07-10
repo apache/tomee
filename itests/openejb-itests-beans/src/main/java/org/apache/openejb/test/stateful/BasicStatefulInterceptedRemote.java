@@ -21,18 +21,16 @@ import java.util.Map;
 import javax.ejb.Remote;
 
 /**
- * 
- *
  * @version $Rev$ $Date$
  */
 
 @Remote
 public interface BasicStatefulInterceptedRemote {
-    
+
     public String reverse(String str);
-    
+
     public String concat(String str1, String str2);
-    
+
     public Map<String, Object> getContextData();
 
 }

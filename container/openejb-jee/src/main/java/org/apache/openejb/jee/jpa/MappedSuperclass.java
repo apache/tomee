@@ -26,24 +26,22 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         Defines the settings and mappings for a mapped superclass. Is 
- *         allowed to be sparsely populated and used in conjunction with 
- *         the annotations. Alternatively, the metadata-complete attribute 
- *         can be used to indicate that no annotations are to be processed 
- *         If this is the case then the defaulting rules will be recursively 
- *         applied.
- * 
- *         @Target(TYPE) @Retention(RUNTIME)
- *         public @interface MappedSuperclass{}
- * 
- *       
- * 
+ * Defines the settings and mappings for a mapped superclass. Is
+ * allowed to be sparsely populated and used in conjunction with
+ * the annotations. Alternatively, the metadata-complete attribute
+ * can be used to indicate that no annotations are to be processed
+ * If this is the case then the defaulting rules will be recursively
+ * applied.
+ *
+ * @Target(TYPE) @Retention(RUNTIME)
+ * public @interface MappedSuperclass{}
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for mapped-superclass complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="mapped-superclass">
  *   &lt;complexContent>
@@ -70,8 +68,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "mapped-superclass", propOrder = {
@@ -125,17 +121,15 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
     public MappedSuperclass() {
     }
 
-    public MappedSuperclass(String clazz) {
+    public MappedSuperclass(final String clazz) {
         this.clazz = clazz;
     }
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -143,23 +137,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
     /**
      * Gets the value of the idClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IdClass }
-     *     
+     *
+     * @return possible object is
+     * {@link IdClass }
      */
     public IdClass getIdClass() {
         return idClass;
@@ -167,23 +157,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the idClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IdClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IdClass }
      */
-    public void setIdClass(IdClass value) {
+    public void setIdClass(final IdClass value) {
         this.idClass = value;
     }
 
     /**
      * Gets the value of the excludeDefaultListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isExcludeDefaultListeners() {
         return excludeDefaultListeners != null;
@@ -191,23 +177,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the excludeDefaultListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setExcludeDefaultListeners(boolean value) {
+    public void setExcludeDefaultListeners(final boolean value) {
         this.excludeDefaultListeners = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the excludeSuperclassListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link boolean }
      */
     public boolean isExcludeSuperclassListeners() {
         return excludeSuperclassListeners != null;
@@ -215,23 +197,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the excludeSuperclassListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link boolean }
      */
-    public void setExcludeSuperclassListeners(boolean value) {
+    public void setExcludeSuperclassListeners(final boolean value) {
         this.excludeSuperclassListeners = value ? new EmptyType() : null;
     }
 
     /**
      * Gets the value of the entityListeners property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityListeners }
      */
     public EntityListeners getEntityListeners() {
         return entityListeners;
@@ -239,23 +217,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the entityListeners property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityListeners }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityListeners }
      */
-    public void setEntityListeners(EntityListeners value) {
+    public void setEntityListeners(final EntityListeners value) {
         this.entityListeners = value;
     }
 
     /**
      * Gets the value of the prePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @return possible object is
+     * {@link PrePersist }
      */
     public PrePersist getPrePersist() {
         return prePersist;
@@ -263,23 +237,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the prePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PrePersist }
      */
-    public void setPrePersist(PrePersist value) {
+    public void setPrePersist(final PrePersist value) {
         this.prePersist = value;
     }
 
     /**
      * Gets the value of the postPersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @return possible object is
+     * {@link PostPersist }
      */
     public PostPersist getPostPersist() {
         return postPersist;
@@ -287,23 +257,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postPersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostPersist }
      */
-    public void setPostPersist(PostPersist value) {
+    public void setPostPersist(final PostPersist value) {
         this.postPersist = value;
     }
 
     /**
      * Gets the value of the preRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @return possible object is
+     * {@link PreRemove }
      */
     public PreRemove getPreRemove() {
         return preRemove;
@@ -311,23 +277,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the preRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreRemove }
      */
-    public void setPreRemove(PreRemove value) {
+    public void setPreRemove(final PreRemove value) {
         this.preRemove = value;
     }
 
     /**
      * Gets the value of the postRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @return possible object is
+     * {@link PostRemove }
      */
     public PostRemove getPostRemove() {
         return postRemove;
@@ -335,23 +297,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostRemove }
      */
-    public void setPostRemove(PostRemove value) {
+    public void setPostRemove(final PostRemove value) {
         this.postRemove = value;
     }
 
     /**
      * Gets the value of the preUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @return possible object is
+     * {@link PreUpdate }
      */
     public PreUpdate getPreUpdate() {
         return preUpdate;
@@ -359,23 +317,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the preUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreUpdate }
      */
-    public void setPreUpdate(PreUpdate value) {
+    public void setPreUpdate(final PreUpdate value) {
         this.preUpdate = value;
     }
 
     /**
      * Gets the value of the postUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @return possible object is
+     * {@link PostUpdate }
      */
     public PostUpdate getPostUpdate() {
         return postUpdate;
@@ -383,23 +337,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostUpdate }
      */
-    public void setPostUpdate(PostUpdate value) {
+    public void setPostUpdate(final PostUpdate value) {
         this.postUpdate = value;
     }
 
     /**
      * Gets the value of the postLoad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @return possible object is
+     * {@link PostLoad }
      */
     public PostLoad getPostLoad() {
         return postLoad;
@@ -407,23 +357,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the postLoad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostLoad }
      */
-    public void setPostLoad(PostLoad value) {
+    public void setPostLoad(final PostLoad value) {
         this.postLoad = value;
     }
 
     /**
      * Gets the value of the attributes property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Attributes }
-     *     
+     *
+     * @return possible object is
+     * {@link Attributes }
      */
     public Attributes getAttributes() {
         return attributes;
@@ -431,23 +377,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the attributes property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Attributes }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Attributes }
      */
-    public void setAttributes(Attributes value) {
+    public void setAttributes(final Attributes value) {
         this.attributes = value;
     }
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     * {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -455,23 +397,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
-    public void setAccess(AccessType value) {
+    public void setAccess(final AccessType value) {
         this.access = value;
     }
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -479,23 +417,19 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the metadataComplete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isMetadataComplete() {
         return metadataComplete;
@@ -503,18 +437,16 @@ public class MappedSuperclass implements Mapping, Keyable<String> {
 
     /**
      * Sets the value of the metadataComplete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
 
-    public void addField(Field field) {
+    public void addField(final Field field) {
         if (field == null) throw new NullPointerException("field is null");
         if (field instanceof Id) {
             if (attributes == null) attributes = new Attributes();

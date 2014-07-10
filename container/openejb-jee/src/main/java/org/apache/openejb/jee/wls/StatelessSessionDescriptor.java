@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for stateless-session-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="stateless-session-descriptor">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "stateless-session-descriptor", propOrder = {
@@ -68,11 +66,9 @@ public class StatelessSessionDescriptor {
 
     /**
      * Gets the value of the pool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Pool }
-     *     
+     *
+     * @return possible object is
+     * {@link Pool }
      */
     public Pool getPool() {
         return pool;
@@ -80,23 +76,19 @@ public class StatelessSessionDescriptor {
 
     /**
      * Sets the value of the pool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Pool }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Pool }
      */
-    public void setPool(Pool value) {
+    public void setPool(final Pool value) {
         this.pool = value;
     }
 
     /**
      * Gets the value of the timerDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link TimerDescriptor }
      */
     public TimerDescriptor getTimerDescriptor() {
         return timerDescriptor;
@@ -104,23 +96,19 @@ public class StatelessSessionDescriptor {
 
     /**
      * Sets the value of the timerDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TimerDescriptor }
      */
-    public void setTimerDescriptor(TimerDescriptor value) {
+    public void setTimerDescriptor(final TimerDescriptor value) {
         this.timerDescriptor = value;
     }
 
     /**
      * Gets the value of the statelessClustering property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatelessClustering }
-     *     
+     *
+     * @return possible object is
+     * {@link StatelessClustering }
      */
     public StatelessClustering getStatelessClustering() {
         return statelessClustering;
@@ -128,23 +116,19 @@ public class StatelessSessionDescriptor {
 
     /**
      * Sets the value of the statelessClustering property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatelessClustering }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StatelessClustering }
      */
-    public void setStatelessClustering(StatelessClustering value) {
+    public void setStatelessClustering(final StatelessClustering value) {
         this.statelessClustering = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -152,13 +136,11 @@ public class StatelessSessionDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -36,13 +36,13 @@ public abstract class ServletTestClient extends TestClient {
     protected URL serverUrl;
     private final String servletName;
 
-    public ServletTestClient(String servletName) {
+    public ServletTestClient(final String servletName) {
         super("Servlet." + servletName + ".");
         this.servletName = servletName;
-        String serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/tomee/ejb");
+        final String serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/tomee/ejb");
         try {
             serverUrl = new URL(serverUri);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
 
@@ -62,18 +62,18 @@ public abstract class ServletTestClient extends TestClient {
      */
     protected void setUp() throws Exception {
 
-        Properties properties = TestManager.getServer().getContextEnvironment();
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "STATEFUL_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "STATEFUL_test00_CLIENT");
 
         initialContext = new InitialContext(properties);
     }
 
-    protected Object invoke(String methodName) {
+    protected Object invoke(final String methodName) {
         InputStream in = null;
         try {
-            URL url = new URL(serverUrl, "/itests/" + servletName + "?method=" + methodName);
-            URLConnection connection = url.openConnection();
+            final URL url = new URL(serverUrl, "/itests/" + servletName + "?method=" + methodName);
+            final URLConnection connection = url.openConnection();
             connection.connect();
             in = connection.getInputStream();
             String response = readAll(in);
@@ -81,22 +81,22 @@ public abstract class ServletTestClient extends TestClient {
                 response = response.substring("FAILED".length()).trim();
                 fail(response);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                 }
             }
         }
         return null;
     }
 
-    private static String readAll(InputStream in) throws IOException {
+    private static String readAll(final InputStream in) throws IOException {
         // SwizzleStream block read methods are broken so read byte at a time
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         int i = in.read();
         while (i != -1) {
             sb.append((char) i);
@@ -106,16 +106,16 @@ public abstract class ServletTestClient extends TestClient {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected <T> T newServletProxy(Class<T> clazz) {
-        Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new ServletInvocationHandler());
+    protected <T> T newServletProxy(final Class<T> clazz) {
+        final Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new ServletInvocationHandler());
         return (T) proxy;
     }
 
     private class ServletInvocationHandler implements InvocationHandler {
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             if (method.getParameterTypes().length != 0) throw new IllegalArgumentException("ServletProxy only supports no-argument methods: " + method);
 
-            String methodName = method.getName();
+            final String methodName = method.getName();
 
             return ServletTestClient.this.invoke(methodName);
         }

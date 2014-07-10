@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for database-specific-sql complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="database-specific-sql">
  *   &lt;complexContent>
@@ -39,8 +39,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "database-specific-sql", propOrder = {
@@ -56,11 +54,9 @@ public class DatabaseSpecificSql {
 
     /**
      * Gets the value of the databaseType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDatabaseType() {
         return databaseType;
@@ -68,23 +64,19 @@ public class DatabaseSpecificSql {
 
     /**
      * Sets the value of the databaseType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDatabaseType(String value) {
+    public void setDatabaseType(final String value) {
         this.databaseType = value;
     }
 
     /**
      * Gets the value of the sql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSql() {
         return sql;
@@ -92,13 +84,11 @@ public class DatabaseSpecificSql {
 
     /**
      * Sets the value of the sql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSql(String value) {
+    public void setSql(final String value) {
         this.sql = value;
     }
 

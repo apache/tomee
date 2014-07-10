@@ -63,10 +63,10 @@ public class FlushableDataSourceHandlerTest {
     @Configuration
     public Properties configuration() {
         return new PropertiesBuilder()
-                .p("ds", "new://Resource?type=DataSource")
-                .p("ds.flushable", "true")
-                .p("ds.jtaManaged", "false")
-                .build();
+            .p("ds", "new://Resource?type=DataSource")
+            .p("ds.flushable", "true")
+            .p("ds.jtaManaged", "false")
+            .build();
     }
 
     @Module

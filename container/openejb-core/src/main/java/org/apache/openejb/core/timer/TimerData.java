@@ -20,14 +20,14 @@ package org.apache.openejb.core.timer;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.quartz.SchedulerException;
 import org.apache.openejb.quartz.Trigger;
 import org.apache.openejb.quartz.TriggerKey;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.EJBException;
 import javax.ejb.Timer;

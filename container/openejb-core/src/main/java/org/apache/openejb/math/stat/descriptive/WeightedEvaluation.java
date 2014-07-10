@@ -20,8 +20,8 @@ package org.apache.openejb.math.stat.descriptive;
 /**
  * Weighted evaluation for statistics.
  *
- * @since 2.1
  * @version $Revision: 894474 $ $Date: 2009-12-29 12:02:37 -0800 (Tue, 29 Dec 2009) $
+ * @since 2.1
  */
 public interface WeightedEvaluation {
 
@@ -29,7 +29,7 @@ public interface WeightedEvaluation {
      * Returns the result of evaluating the statistic over the input array,
      * using the supplied weights.
      *
-     * @param values input array
+     * @param values  input array
      * @param weights array of weights
      * @return the value of the weighted statistic applied to the input array
      */
@@ -39,10 +39,10 @@ public interface WeightedEvaluation {
      * Returns the result of evaluating the statistic over the specified entries
      * in the input array, using corresponding entries in the supplied weights array.
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights array of weights
-     * @param begin the index of the first element to include
-     * @param length the number of elements to include
+     * @param begin   the index of the first element to include
+     * @param length  the number of elements to include
      * @return the value of the weighted statistic applied to the included array entries
      */
     double evaluate(double[] values, double[] weights, int begin, int length);

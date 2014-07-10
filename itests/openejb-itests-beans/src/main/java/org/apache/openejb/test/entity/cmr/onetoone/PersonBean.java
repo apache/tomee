@@ -25,39 +25,41 @@ import javax.ejb.CreateException;
 import javax.ejb.RemoveException;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public abstract class PersonBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getName();
+
     public abstract void setName(String name);
 
     // CMR
     public abstract LicenseLocal getLicense();
+
     public abstract void setLicense(LicenseLocal license);
 
-    public Integer ejbCreate(Integer id)  throws CreateException {
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public CompoundPK ejbCreate(PersonPk primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final PersonPk primaryKey) throws CreateException {
         setId(primaryKey.id);
         setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(PersonPk primaryKey) {
+    public void ejbPostCreate(final PersonPk primaryKey) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

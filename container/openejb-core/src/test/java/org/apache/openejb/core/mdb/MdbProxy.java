@@ -37,20 +37,20 @@ import java.util.UUID;
 
 public class MdbProxy {
     @SuppressWarnings({"unchecked"})
-    public static <T> T newProxyInstance(Class<T> type, ConnectionFactory connectionFactory, String requestQueueName) throws JMSException {
+    public static <T> T newProxyInstance(final Class<T> type, final ConnectionFactory connectionFactory, final String requestQueueName) throws JMSException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = type.getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
 
-        InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueueName);
-        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
+        final InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueueName);
+        final Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
         return (T) proxy;
     }
 
-    public static void destroyProxy(Object proxy) {
-        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+    public static void destroyProxy(final Object proxy) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         if (handler instanceof MdbProxy) {
-            MdbInvocationHandler mdbInvocationHandler = (MdbInvocationHandler) handler;
+            final MdbInvocationHandler mdbInvocationHandler = (MdbInvocationHandler) handler;
             mdbInvocationHandler.destroy();
         }
     }
@@ -61,7 +61,7 @@ public class MdbProxy {
         private Session session;
         private MessageProducer producer;
 
-        public MdbInvocationHandler(ConnectionFactory connectionFactory, String requestQueueName) throws JMSException {
+        public MdbInvocationHandler(final ConnectionFactory connectionFactory, final String requestQueueName) throws JMSException {
             // open a connection
             connection = connectionFactory.createConnection();
             connection.start();
@@ -70,7 +70,7 @@ public class MdbProxy {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // create the request queue
-            Destination requestQueue = session.createQueue(requestQueueName);
+            final Destination requestQueue = session.createQueue(requestQueueName);
 
             // create a producer which is used to send requests
             producer = session.createProducer(requestQueue);
@@ -94,24 +94,24 @@ public class MdbProxy {
             return producer;
         }
 
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Session session = getSession();
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            final Session session = getSession();
             if (session == null) throw new IllegalStateException("Proxy has been destroyed");
 
             // create request
-            Map<String,Object> request = new TreeMap<String,Object>();
-            String signature = MdbUtil.getSignature(method);
+            final Map<String, Object> request = new TreeMap<String, Object>();
+            final String signature = MdbUtil.getSignature(method);
             request.put("method", signature);
             request.put("args", args);
 
             // create a new temp response queue and consumer
             // this is very inefficient, but eliminates a whole class of errors
-            Destination responseQueue = session.createTemporaryQueue();
+            final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a messages
-            ObjectMessage reqMessage = session.createObjectMessage();
+            final ObjectMessage reqMessage = session.createObjectMessage();
             reqMessage.setJMSReplyTo(responseQueue);
-            String correlationId = UUID.randomUUID().toString();
+            final String correlationId = UUID.randomUUID().toString();
             reqMessage.setJMSCorrelationID(correlationId);
             reqMessage.setObject((Serializable) request);
 
@@ -120,28 +120,30 @@ public class MdbProxy {
 
             // Wait for a message
             // Again this is quite inefficient
-            MessageConsumer consumer = session.createConsumer(responseQueue);
+            final MessageConsumer consumer = session.createConsumer(responseQueue);
             try {
                 // wait for the message
-                Message message = consumer.receive(MAX_RESPONSE_WAIT);
+                final Message message = consumer.receive(MAX_RESPONSE_WAIT);
 
                 // verify message
                 if (message == null) throw new NullPointerException("message is null");
                 if (!correlationId.equals(message.getJMSCorrelationID())) {
                     throw new IllegalStateException("Recieved a response message with the wrong correlation id");
                 }
-                if (!(message instanceof ObjectMessage)) throw new IllegalArgumentException("Expected a ObjectMessage response but got a " + message.getClass().getName());
-                ObjectMessage resMessage = (ObjectMessage) message;
-                Serializable object = resMessage.getObject();
+                if (!(message instanceof ObjectMessage))
+                    throw new IllegalArgumentException("Expected a ObjectMessage response but got a " + message.getClass().getName());
+                final ObjectMessage resMessage = (ObjectMessage) message;
+                final Serializable object = resMessage.getObject();
                 if (object == null) throw new NullPointerException("object in ObjectMessage is null");
                 if (!(object instanceof Map)) {
-                    if (message instanceof ObjectMessage) throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage response but got a " + object.getClass().getName());
+                    if (message instanceof ObjectMessage)
+                        throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage response but got a " + object.getClass().getName());
                 }
-                Map response = (Map) object;
+                final Map response = (Map) object;
 
                 // process results
-                boolean exception = response.containsKey("exception");
-                Object returnValue = response.get("return");
+                final boolean exception = response.containsKey("exception");
+                final Object returnValue = response.get("return");
                 if (exception) {
                     throw (Throwable) returnValue;
                 }

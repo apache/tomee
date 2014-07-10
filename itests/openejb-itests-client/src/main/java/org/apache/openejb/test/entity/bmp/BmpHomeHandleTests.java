@@ -30,7 +30,7 @@ public class BmpHomeHandleTests extends BasicBmpTestClient{
 
     protected void setUp() throws Exception{
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
         ejbHome = (BasicBmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicBmpHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
@@ -40,9 +40,9 @@ public class BmpHomeHandleTests extends BasicBmpTestClient{
     //
     public void test01_getEJBHome(){
         try{
-            EJBHome home = ejbHomeHandle.getEJBHome();
+            final EJBHome home = ejbHomeHandle.getEJBHome();
             assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

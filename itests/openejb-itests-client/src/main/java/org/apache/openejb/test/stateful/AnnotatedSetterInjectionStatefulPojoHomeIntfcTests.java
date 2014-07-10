@@ -37,7 +37,7 @@ public class AnnotatedSetterInjectionStatefulPojoHomeIntfcTests extends Annotate
     
     @EJB(name="client/tests/stateful/BasicStatefulPojoHome",
    	     beanInterface=BasicStatefulHome.class)
-    public void setEjbHome(BasicStatefulHome bsEjbHome) {
+    public void setEjbHome(final BasicStatefulHome bsEjbHome) {
     	ejbHome = bsEjbHome;
     }
     
@@ -48,7 +48,7 @@ public class AnnotatedSetterInjectionStatefulPojoHomeIntfcTests extends Annotate
         try{
             ejbObject = ejbHome.createObject("BasicStatefulObject");
             assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
+        } catch (final Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

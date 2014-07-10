@@ -156,7 +156,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
 
 //        try {
-        if ("beforeDelivery".equals(methodName) && Arrays.deepEquals(new Class[] {Method.class}, parameterTypes)) {
+        if ("beforeDelivery".equals(methodName) && Arrays.deepEquals(new Class[]{Method.class}, parameterTypes)) {
             beforeDelivery((Method) args[0]);
             return null;
         } else if ("afterDelivery".equals(methodName) && parameterTypes.length == 0) {
@@ -311,7 +311,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         try {
             container.release(deployment, instance);
         } finally {
-            instanceFactory.freeInstance((Instance)instance, false);
+            instanceFactory.freeInstance((Instance) instance, false);
             instance = null;
         }
     }

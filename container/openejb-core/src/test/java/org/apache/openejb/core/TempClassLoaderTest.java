@@ -65,7 +65,7 @@ public class TempClassLoaderTest {
     public void testHackEnabled() throws Exception {
         final TempClassLoader tempCL = new TempClassLoader(this.getClass().getClassLoader());
         tempCL.skip(TempClassLoader.Skip.ANNOTATIONS);
-        
+
         Class<?> clazz;
 
         // normal classes should be loaded by the temp class loader

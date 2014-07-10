@@ -24,28 +24,26 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface MapKeyColumn {
- *           String name() default "";
- *           boolean unique() default false;
- *           boolean nullable() default false;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *           String table() default "";
- *           int length() default 255;
- *           int precision() default 0; // decimal precision
- *           int scale() default 0; // decimal scale
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface MapKeyColumn {
+ * String name() default "";
+ * boolean unique() default false;
+ * boolean nullable() default false;
+ * boolean insertable() default true;
+ * boolean updatable() default true;
+ * String columnDefinition() default "";
+ * String table() default "";
+ * int length() default 255;
+ * int precision() default 0; // decimal precision
+ * int scale() default 0; // decimal scale
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for map-key-column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="map-key-column">
  *   &lt;complexContent>
@@ -64,8 +62,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key-column")
@@ -94,11 +90,9 @@ public class MapKeyColumn {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -106,23 +100,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the unique property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isUnique() {
         return unique;
@@ -130,23 +120,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the unique property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setUnique(Boolean value) {
+    public void setUnique(final Boolean value) {
         this.unique = value;
     }
 
     /**
      * Gets the value of the nullable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isNullable() {
         return nullable;
@@ -154,23 +140,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the nullable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setNullable(Boolean value) {
+    public void setNullable(final Boolean value) {
         this.nullable = value;
     }
 
     /**
      * Gets the value of the insertable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isInsertable() {
         return insertable;
@@ -178,23 +160,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the insertable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setInsertable(Boolean value) {
+    public void setInsertable(final Boolean value) {
         this.insertable = value;
     }
 
     /**
      * Gets the value of the updatable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isUpdatable() {
         return updatable;
@@ -202,23 +180,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the updatable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setUpdatable(Boolean value) {
+    public void setUpdatable(final Boolean value) {
         this.updatable = value;
     }
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -226,23 +200,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setColumnDefinition(String value) {
+    public void setColumnDefinition(final String value) {
         this.columnDefinition = value;
     }
 
     /**
      * Gets the value of the table property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTable() {
         return table;
@@ -250,23 +220,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the table property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTable(String value) {
+    public void setTable(final String value) {
         this.table = value;
     }
 
     /**
      * Gets the value of the length property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getLength() {
         return length;
@@ -274,23 +240,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the length property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setLength(Integer value) {
+    public void setLength(final Integer value) {
         this.length = value;
     }
 
     /**
      * Gets the value of the precision property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getPrecision() {
         return precision;
@@ -298,23 +260,19 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the precision property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setPrecision(Integer value) {
+    public void setPrecision(final Integer value) {
         this.precision = value;
     }
 
     /**
      * Gets the value of the scale property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getScale() {
         return scale;
@@ -322,13 +280,11 @@ public class MapKeyColumn {
 
     /**
      * Sets the value of the scale property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setScale(Integer value) {
+    public void setScale(final Integer value) {
         this.scale = value;
     }
 

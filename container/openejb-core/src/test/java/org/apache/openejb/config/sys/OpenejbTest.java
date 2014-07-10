@@ -64,7 +64,7 @@ public class OpenejbTest extends TestCase {
         assertEquals(new String(expected), new String(actual));
     }
 
-    private byte[] bytes(Openejb openejb) throws JAXBException {
+    private byte[] bytes(final Openejb openejb) throws JAXBException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         JaxbOpenejb.marshal(Openejb.class, openejb, out);
 
@@ -72,24 +72,24 @@ public class OpenejbTest extends TestCase {
         return out.toByteArray();
     }
 
-    private Deployments dir(String s) {
+    private Deployments dir(final String s) {
         final Deployments deployments = new Deployments();
         deployments.setDir(s);
         return deployments;
     }
 
-    private Deployments jar(String s) {
+    private Deployments jar(final String s) {
         final Deployments deployments = new Deployments();
         deployments.setFile(s);
         return deployments;
     }
 
-    private Resource fill(Resource resource) {
+    private Resource fill(final Resource resource) {
         resource.setJndi("JNDI." + resource.getId() + i);
         return (Resource) fill((Service) resource);
     }
 
-    private <T extends Service> T fill(T service) {
+    private <T extends Service> T fill(final T service) {
         final String text = service.getId() + "." + i;
         if (service.getJar() == null) service.setJar("JAR." + text);
         if (service.getProvider() == null) service.setProvider("PROVIDER." + text);

@@ -23,19 +23,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for security-roleType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="security-roleType">
  *   &lt;complexContent>
@@ -49,14 +49,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-roleType", propOrder = {
-        "descriptions",
-        "roleName"
-        })
+    "descriptions",
+    "roleName"
+})
 public class SecurityRole {
 
     @XmlTransient
@@ -74,7 +72,7 @@ public class SecurityRole {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -86,7 +84,7 @@ public class SecurityRole {
         return roleName;
     }
 
-    public void setRoleName(String value) {
+    public void setRoleName(final String value) {
         this.roleName = value;
     }
 
@@ -94,7 +92,7 @@ public class SecurityRole {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

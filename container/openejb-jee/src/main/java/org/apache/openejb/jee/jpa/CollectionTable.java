@@ -17,33 +17,31 @@
 
 package org.apache.openejb.jee.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface CollectionTable {
- *           String name() default "";
- *           String catalog() default "";
- *           String schema() default "";
- *           JoinColumn[] joinColumns() default {};
- *           UniqueConstraint[] uniqueConstraints() default {};
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface CollectionTable {
+ * String name() default "";
+ * String catalog() default "";
+ * String schema() default "";
+ * JoinColumn[] joinColumns() default {};
+ * UniqueConstraint[] uniqueConstraints() default {};
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for collection-table complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="collection-table">
  *   &lt;complexContent>
@@ -59,8 +57,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "collection-table", propOrder = {
@@ -82,25 +78,23 @@ public class CollectionTable {
 
     /**
      * Gets the value of the joinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the joinColumn property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJoinColumn().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link org.apache.openejb.jee.jpa.JoinColumn }
-     * 
-     * 
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
@@ -111,25 +105,23 @@ public class CollectionTable {
 
     /**
      * Gets the value of the uniqueConstraint property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the uniqueConstraint property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUniqueConstraint().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link org.apache.openejb.jee.jpa.UniqueConstraint }
-     * 
-     * 
      */
     public List<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
@@ -140,11 +132,9 @@ public class CollectionTable {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -152,23 +142,19 @@ public class CollectionTable {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the catalog property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCatalog() {
         return catalog;
@@ -176,23 +162,19 @@ public class CollectionTable {
 
     /**
      * Sets the value of the catalog property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCatalog(String value) {
+    public void setCatalog(final String value) {
         this.catalog = value;
     }
 
     /**
      * Gets the value of the schema property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSchema() {
         return schema;
@@ -200,13 +182,11 @@ public class CollectionTable {
 
     /**
      * Sets the value of the schema property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 

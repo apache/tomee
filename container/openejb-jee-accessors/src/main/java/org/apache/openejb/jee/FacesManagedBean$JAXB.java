@@ -43,33 +43,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesManagedBean$JAXB
-        extends JAXBObject<FacesManagedBean> {
+    extends JAXBObject<FacesManagedBean> {
 
 
     public FacesManagedBean$JAXB() {
         super(FacesManagedBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-managed-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, FacesManagedProperty$JAXB.class, FacesMapEntries$JAXB.class, FacesListEntries$JAXB.class, FacesManagedBeanExtension$JAXB.class);
     }
 
-    public static FacesManagedBean readFacesManagedBean(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesManagedBean readFacesManagedBean(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesManagedBean(XoXMLStreamWriter writer, FacesManagedBean facesManagedBean, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesManagedBean(final XoXMLStreamWriter writer, final FacesManagedBean facesManagedBean, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedBean, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesManagedBean facesManagedBean, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesManagedBean facesManagedBean, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesManagedBean, context);
     }
 
-    public final static FacesManagedBean _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesManagedBean _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -80,7 +80,7 @@ public class FacesManagedBean$JAXB
             context = new RuntimeContext();
         }
 
-        FacesManagedBean facesManagedBean = new FacesManagedBean();
+        final FacesManagedBean facesManagedBean = new FacesManagedBean();
         context.beforeUnmarshal(facesManagedBean, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -90,7 +90,7 @@ public class FacesManagedBean$JAXB
         List<FacesManagedBeanExtension> managedBeanExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-managed-beanType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesManagedBean.class);
@@ -98,10 +98,10 @@ public class FacesManagedBean$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesManagedBean);
                 facesManagedBean.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -110,24 +110,24 @@ public class FacesManagedBean$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = facesManagedBean.icon;
                     if (icon != null) {
@@ -139,12 +139,12 @@ public class FacesManagedBean$JAXB
                 icon.add(iconItem);
             } else if (("managed-bean-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedBeanName
-                String managedBeanNameRaw = elementReader.getElementAsString();
+                final String managedBeanNameRaw = elementReader.getElementAsString();
 
-                String managedBeanName;
+                final String managedBeanName;
                 try {
                     managedBeanName = Adapters.collapsedStringAdapterAdapter.unmarshal(managedBeanNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -152,12 +152,12 @@ public class FacesManagedBean$JAXB
                 facesManagedBean.managedBeanName = managedBeanName;
             } else if (("managed-bean-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedBeanClass
-                String managedBeanClassRaw = elementReader.getElementAsString();
+                final String managedBeanClassRaw = elementReader.getElementAsString();
 
-                String managedBeanClass;
+                final String managedBeanClass;
                 try {
                     managedBeanClass = Adapters.collapsedStringAdapterAdapter.unmarshal(managedBeanClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -165,12 +165,12 @@ public class FacesManagedBean$JAXB
                 facesManagedBean.managedBeanClass = managedBeanClass;
             } else if (("managed-bean-scope" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedBeanScope
-                String managedBeanScopeRaw = elementReader.getElementAsString();
+                final String managedBeanScopeRaw = elementReader.getElementAsString();
 
-                String managedBeanScope;
+                final String managedBeanScope;
                 try {
                     managedBeanScope = Adapters.collapsedStringAdapterAdapter.unmarshal(managedBeanScopeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -178,7 +178,7 @@ public class FacesManagedBean$JAXB
                 facesManagedBean.managedBeanScope = managedBeanScope;
             } else if (("managed-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedProperty
-                FacesManagedProperty managedPropertyItem = readFacesManagedProperty(elementReader, context);
+                final FacesManagedProperty managedPropertyItem = readFacesManagedProperty(elementReader, context);
                 if (managedProperty == null) {
                     managedProperty = facesManagedBean.managedProperty;
                     if (managedProperty != null) {
@@ -190,15 +190,15 @@ public class FacesManagedBean$JAXB
                 managedProperty.add(managedPropertyItem);
             } else if (("map-entries" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mapEntries
-                FacesMapEntries mapEntries = readFacesMapEntries(elementReader, context);
+                final FacesMapEntries mapEntries = readFacesMapEntries(elementReader, context);
                 facesManagedBean.mapEntries = mapEntries;
             } else if (("list-entries" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: listEntries
-                FacesListEntries listEntries = readFacesListEntries(elementReader, context);
+                final FacesListEntries listEntries = readFacesListEntries(elementReader, context);
                 facesManagedBean.listEntries = listEntries;
             } else if (("managed-bean-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: managedBeanExtension
-                FacesManagedBeanExtension managedBeanExtensionItem = readFacesManagedBeanExtension(elementReader, context);
+                final FacesManagedBeanExtension managedBeanExtensionItem = readFacesManagedBeanExtension(elementReader, context);
                 if (managedBeanExtension == null) {
                     managedBeanExtension = facesManagedBean.managedBeanExtension;
                     if (managedBeanExtension != null) {
@@ -215,14 +215,14 @@ public class FacesManagedBean$JAXB
         if (descriptions != null) {
             try {
                 facesManagedBean.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesManagedBean.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 facesManagedBean.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, FacesManagedBean.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -241,13 +241,13 @@ public class FacesManagedBean$JAXB
         return facesManagedBean;
     }
 
-    public final FacesManagedBean read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesManagedBean read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesManagedBean facesManagedBean, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesManagedBean facesManagedBean, RuntimeContext context)
+        throws Exception {
         if (facesManagedBean == null) {
             writer.writeXsiNil();
             return;
@@ -257,7 +257,7 @@ public class FacesManagedBean$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesManagedBean.class != facesManagedBean.getClass()) {
             context.unexpectedSubclass(writer, facesManagedBean, FacesManagedBean.class);
             return;
@@ -267,12 +267,12 @@ public class FacesManagedBean$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesManagedBean.id;
+        final String idRaw = facesManagedBean.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesManagedBean, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -282,11 +282,11 @@ public class FacesManagedBean$JAXB
         Text[] descriptions = null;
         try {
             descriptions = facesManagedBean.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesManagedBean, "descriptions", FacesManagedBean.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -301,11 +301,11 @@ public class FacesManagedBean$JAXB
         Text[] displayNames = null;
         try {
             displayNames = facesManagedBean.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(facesManagedBean, "displayNames", FacesManagedBean.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -317,9 +317,9 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = facesManagedBean.icon;
+        final LocalCollection<Icon> icon = facesManagedBean.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -331,11 +331,11 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: managedBeanName
-        String managedBeanNameRaw = facesManagedBean.managedBeanName;
+        final String managedBeanNameRaw = facesManagedBean.managedBeanName;
         String managedBeanName = null;
         try {
             managedBeanName = Adapters.collapsedStringAdapterAdapter.marshal(managedBeanNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedBean, "managedBeanName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (managedBeanName != null) {
@@ -347,11 +347,11 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: managedBeanClass
-        String managedBeanClassRaw = facesManagedBean.managedBeanClass;
+        final String managedBeanClassRaw = facesManagedBean.managedBeanClass;
         String managedBeanClass = null;
         try {
             managedBeanClass = Adapters.collapsedStringAdapterAdapter.marshal(managedBeanClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedBean, "managedBeanClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (managedBeanClass != null) {
@@ -363,11 +363,11 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: managedBeanScope
-        String managedBeanScopeRaw = facesManagedBean.managedBeanScope;
+        final String managedBeanScopeRaw = facesManagedBean.managedBeanScope;
         String managedBeanScope = null;
         try {
             managedBeanScope = Adapters.collapsedStringAdapterAdapter.marshal(managedBeanScopeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesManagedBean, "managedBeanScope", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (managedBeanScope != null) {
@@ -379,9 +379,9 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: managedProperty
-        List<FacesManagedProperty> managedProperty = facesManagedBean.managedProperty;
+        final List<FacesManagedProperty> managedProperty = facesManagedBean.managedProperty;
         if (managedProperty != null) {
-            for (FacesManagedProperty managedPropertyItem : managedProperty) {
+            for (final FacesManagedProperty managedPropertyItem : managedProperty) {
                 if (managedPropertyItem != null) {
                     writer.writeStartElement(prefix, "managed-property", "http://java.sun.com/xml/ns/javaee");
                     writeFacesManagedProperty(writer, managedPropertyItem, context);
@@ -391,7 +391,7 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: mapEntries
-        FacesMapEntries mapEntries = facesManagedBean.mapEntries;
+        final FacesMapEntries mapEntries = facesManagedBean.mapEntries;
         if (mapEntries != null) {
             writer.writeStartElement(prefix, "map-entries", "http://java.sun.com/xml/ns/javaee");
             writeFacesMapEntries(writer, mapEntries, context);
@@ -399,7 +399,7 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: listEntries
-        FacesListEntries listEntries = facesManagedBean.listEntries;
+        final FacesListEntries listEntries = facesManagedBean.listEntries;
         if (listEntries != null) {
             writer.writeStartElement(prefix, "list-entries", "http://java.sun.com/xml/ns/javaee");
             writeFacesListEntries(writer, listEntries, context);
@@ -407,9 +407,9 @@ public class FacesManagedBean$JAXB
         }
 
         // ELEMENT: managedBeanExtension
-        List<FacesManagedBeanExtension> managedBeanExtension = facesManagedBean.managedBeanExtension;
+        final List<FacesManagedBeanExtension> managedBeanExtension = facesManagedBean.managedBeanExtension;
         if (managedBeanExtension != null) {
-            for (FacesManagedBeanExtension managedBeanExtensionItem : managedBeanExtension) {
+            for (final FacesManagedBeanExtension managedBeanExtensionItem : managedBeanExtension) {
                 if (managedBeanExtensionItem != null) {
                     writer.writeStartElement(prefix, "managed-bean-extension", "http://java.sun.com/xml/ns/javaee");
                     writeFacesManagedBeanExtension(writer, managedBeanExtensionItem, context);

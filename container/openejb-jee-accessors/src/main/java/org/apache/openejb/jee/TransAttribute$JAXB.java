@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class TransAttribute$JAXB
-        extends JAXBEnum<TransAttribute> {
+    extends JAXBEnum<TransAttribute> {
 
 
     public TransAttribute$JAXB() {
         super(TransAttribute.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "transAttribute".intern()));
     }
 
-    public TransAttribute parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public TransAttribute parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseTransAttribute(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, TransAttribute transAttribute)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final TransAttribute transAttribute)
+        throws Exception {
         return toStringTransAttribute(bean, parameterName, context, transAttribute);
     }
 
-    public static TransAttribute parseTransAttribute(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static TransAttribute parseTransAttribute(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("NotSupported".equals(value)) {
             return TransAttribute.NOT_SUPPORTED;
         } else if ("Supports".equals(value)) {
@@ -60,8 +60,8 @@ public class TransAttribute$JAXB
         }
     }
 
-    public static String toStringTransAttribute(Object bean, String parameterName, RuntimeContext context, TransAttribute transAttribute)
-            throws Exception {
+    public static String toStringTransAttribute(final Object bean, final String parameterName, final RuntimeContext context, final TransAttribute transAttribute)
+        throws Exception {
         if (TransAttribute.NOT_SUPPORTED == transAttribute) {
             return "NotSupported";
         } else if (TransAttribute.SUPPORTS == transAttribute) {

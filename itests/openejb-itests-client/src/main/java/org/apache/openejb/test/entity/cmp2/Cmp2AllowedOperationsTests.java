@@ -141,7 +141,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/allowed_operations/EntityHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp2/allowed_operations/EntityHome");
         ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
@@ -161,7 +161,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     protected void tearDown() throws Exception {
         try {
             ejbObject.remove();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // todo this throws an exception for an unrelated reason....
         }
         super.tearDown();
@@ -204,17 +204,17 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test01_setEntityContext() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -234,17 +234,17 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
         try {
 
             /* TO DO:  This test needs unique functionality to work */
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -269,7 +269,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test03_ejbCreate() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_isCallerInRole);
@@ -277,13 +277,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -310,7 +310,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test04_ejbPostCreate() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -320,13 +320,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -353,7 +353,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test05_ejbRemove() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -363,13 +363,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -394,7 +394,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test08_ejbHome() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -402,13 +402,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
 //        policy.allow( OperationsPolicy.Context_setRollbackOnly );
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -429,19 +429,19 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test10_ejbActivate() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getEJBObject);
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -462,19 +462,19 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void TODO_test11_ejbPassivate() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getEJBObject);
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -501,7 +501,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test12_ejbLoad() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -511,13 +511,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -544,7 +544,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test13_ejbStore() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -554,13 +554,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -587,7 +587,7 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
     public void test14_businessMethod() {
         try {
 
-            OperationsPolicy policy = new OperationsPolicy();
+            final OperationsPolicy policy = new OperationsPolicy();
             policy.allow(OperationsPolicy.Context_getEJBHome);
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
@@ -597,13 +597,13 @@ public class Cmp2AllowedOperationsTests extends BasicCmp2TestClient {
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
 
             assertNotNull("The OperationsPolicy is null", actual);
             assertEquals(expected, actual);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

@@ -31,11 +31,11 @@ import java.util.concurrent.Callable;
  * @version $Rev$ $Date$
  */
 @RunWith(ValidationRunner.class)
-public class CheckUserTransactionRefsTest  {
+public class CheckUserTransactionRefsTest {
 
     @Keys(@Key("userTransactionRef.forbiddenForCmtdBeans"))
     public EjbJar testSLSBwithUserTransaction() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
         return ejbJar;
     }

@@ -16,7 +16,13 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -28,16 +34,16 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resourceadapterType", propOrder = {
-        "managedConnectionFactoryClass",
-        "connectionFactoryInterface",
-        "connectionFactoryImplClass",
-        "connectionInterface",
-        "connectionImplClass",
-        "transactionSupport",
-        "configProperty",
-        "authenticationMechanism",
-        "reauthenticationSupport",
-        "securityPermission"
+    "managedConnectionFactoryClass",
+    "connectionFactoryInterface",
+    "connectionFactoryImplClass",
+    "connectionInterface",
+    "connectionImplClass",
+    "transactionSupport",
+    "configProperty",
+    "authenticationMechanism",
+    "reauthenticationSupport",
+    "securityPermission"
 })
 public class ResourceAdapter10 {
 
@@ -71,7 +77,7 @@ public class ResourceAdapter10 {
         return connectionDefinition.getManagedConnectionFactoryClass();
     }
 
-    public void setManagedConnectionFactoryClass(String value) {
+    public void setManagedConnectionFactoryClass(final String value) {
         connectionDefinition.setManagedConnectionFactoryClass(value);
     }
 
@@ -80,7 +86,7 @@ public class ResourceAdapter10 {
         return connectionDefinition.getConnectionFactoryInterface();
     }
 
-    public void setConnectionFactoryInterface(String value) {
+    public void setConnectionFactoryInterface(final String value) {
         connectionDefinition.setConnectionFactoryInterface(value);
     }
 
@@ -89,7 +95,7 @@ public class ResourceAdapter10 {
         return connectionDefinition.getConnectionFactoryImplClass();
     }
 
-    public void setConnectionFactoryImplClass(String value) {
+    public void setConnectionFactoryImplClass(final String value) {
         connectionDefinition.setConnectionFactoryImplClass(value);
     }
 
@@ -98,7 +104,7 @@ public class ResourceAdapter10 {
         return connectionDefinition.getConnectionInterface();
     }
 
-    public void setConnectionInterface(String value) {
+    public void setConnectionInterface(final String value) {
         connectionDefinition.setConnectionInterface(value);
     }
 
@@ -107,38 +113,38 @@ public class ResourceAdapter10 {
         return connectionDefinition.getConnectionImplClass();
     }
 
-    public void setConnectionImplClass(String value) {
+    public void setConnectionImplClass(final String value) {
         connectionDefinition.setConnectionImplClass(value);
     }
 
-//    @XmlElement(name = "transaction-support")
-     public TransactionSupportType getTransactionSupport() {
-         return transactionSupport;
-     }
+    //    @XmlElement(name = "transaction-support")
+    public TransactionSupportType getTransactionSupport() {
+        return transactionSupport;
+    }
 
-     public void setTransactionSupport(TransactionSupportType value) {
-         transactionSupport = value;
-     }
+    public void setTransactionSupport(final TransactionSupportType value) {
+        transactionSupport = value;
+    }
 
-//     @XmlElement(name = "authentication-mechanism")
-     public List<AuthenticationMechanism> getAuthenticationMechanism() {
-         if (authenticationMechanism == null) {
-             authenticationMechanism = new ArrayList<AuthenticationMechanism>();
-         }
-         return this.authenticationMechanism;
-     }
+    //     @XmlElement(name = "authentication-mechanism")
+    public List<AuthenticationMechanism> getAuthenticationMechanism() {
+        if (authenticationMechanism == null) {
+            authenticationMechanism = new ArrayList<AuthenticationMechanism>();
+        }
+        return this.authenticationMechanism;
+    }
 
-//     @XmlElement(name = "reauthentication-support")
-     public Boolean isReauthenticationSupport() {
-         return reauthenticationSupport;
-     }
+    //     @XmlElement(name = "reauthentication-support")
+    public Boolean isReauthenticationSupport() {
+        return reauthenticationSupport;
+    }
 
-     public void setReauthenticationSupport(Boolean value) {
-         reauthenticationSupport = value;
-     }
+    public void setReauthenticationSupport(final Boolean value) {
+        reauthenticationSupport = value;
+    }
 
 
-//    @XmlElement(name = "security-permission")
+    //    @XmlElement(name = "security-permission")
     public List<SecurityPermission> getSecurityPermission() {
         if (securityPermission == null) {
             securityPermission = new ArrayList<SecurityPermission>();
@@ -150,7 +156,7 @@ public class ResourceAdapter10 {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for multiplicityType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="multiplicityType">
  *   &lt;simpleContent>
@@ -35,11 +35,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 public enum Multiplicity {
-    @XmlEnumValue("One") ONE,
-    @XmlEnumValue("Many") MANY;
+    @XmlEnumValue("One")ONE,
+    @XmlEnumValue("Many")MANY;
 }

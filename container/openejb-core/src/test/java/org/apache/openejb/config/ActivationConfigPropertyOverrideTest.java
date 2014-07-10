@@ -50,24 +50,24 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
      * Test internal method used in ActivationConfigPropertyOverride
      */
     public void testGetOverridesShouldTrimAwayPrefixesCorrectly() {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.put("ENTERPRISEBEAN.mdb.activation.destinationType", "something");
-        Properties properties2 = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
+        final Properties properties2 = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
         assertNotNull(properties2.getProperty("destinationType"));
     }
+
     /**
-     * 
      * System property set should override activationConfigProperty
-     * 
+     *
      * @throws OpenEJBException
      */
     public void testOverrideActivationConfigProperty() throws OpenEJBException {
 
         // set overrides for destinationType and check
         System.setProperty("ENTERPRISEBEAN.mdb.activation.destinationType", "testString");
-        MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "stringToBeOverriden").build();
-        ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
-        AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
+        final MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "stringToBeOverriden").build();
+        final ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
+        final AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
         activationPropertyOverride.deploy(appModule);
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "testString"));
@@ -78,7 +78,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
     /**
      * If activation property was not present initially, then add the specified
      * one.
-     * 
+     *
      * @throws OpenEJBException
      */
     public void testAddActivationConfigPropertyIfNotAlreadyPresent() throws OpenEJBException {
@@ -87,9 +87,9 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         System.setProperty("ENTERPRISEBEAN.mdb.activation.destinationType", "testString");
 
         // deploy with an mdb that has no "destinationType" activationConfigProp
-        MessageDrivenBean mdb = new MdbBuilder().anMdb().build();
-        AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
-        ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
+        final MessageDrivenBean mdb = new MdbBuilder().anMdb().build();
+        final AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
+        final ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
         activationPropertyOverride.deploy(appModule);
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "testString"));
@@ -98,9 +98,9 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         System.clearProperty("ENTERPRISEBEAN.mdb.activation.destinationType");
     }
 
-    private boolean containsActivationKeyValuePair(MessageDrivenBean mdbBeingInspected, String activationPropKey, String activationPropValue) {
+    private boolean containsActivationKeyValuePair(final MessageDrivenBean mdbBeingInspected, final String activationPropKey, final String activationPropValue) {
 
-        for (ActivationConfigProperty activationConfigProp : mdbBeingInspected.getActivationConfig().getActivationConfigProperty()) {
+        for (final ActivationConfigProperty activationConfigProp : mdbBeingInspected.getActivationConfig().getActivationConfigProperty()) {
             if (activationConfigProp.getActivationConfigPropertyName().equals(activationPropKey)) {
                 if (activationConfigProp.getActivationConfigPropertyValue().equals(activationPropValue)) {
                     return true;
@@ -116,9 +116,9 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         }
         System.clearProperty("ENTERPRISEBEAN.mdb.activation.destinationType");
 
-        MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "shouldNotBeOverriddenString").build();
-        AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
-        ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
+        final MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "shouldNotBeOverriddenString").build();
+        final AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
+        final ActivationConfigPropertyOverride activationPropertyOverride = new ActivationConfigPropertyOverride();
         activationPropertyOverride.deploy(appModule);
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "shouldNotBeOverriddenString"));
@@ -185,7 +185,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
 
-        for (String n : properties.stringPropertyNames()) {
+        for (final String n : properties.stringPropertyNames()) {
             systProps.remove(n);
         }
     }
@@ -351,28 +351,28 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
 
     @MessageDriven(activationConfig = {
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
     })
     public static class Orange implements MessageListener {
 
         @Override
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
         }
     }
 
     @MessageDriven(activationConfig = {
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
     })
     public static class Yellow implements MessageListener {
 
         @Override
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
         }
     }
 

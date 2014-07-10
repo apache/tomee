@@ -119,7 +119,7 @@ public class JpaCmpEngine implements CmpEngine {
             if (entityManagerListener == null) {
                 entityManagerListener = new OpenJPALifecycleListener();
             }
-            openjpaEMF.addLifecycleListener(entityManagerListener, (Class[])null);
+            openjpaEMF.addLifecycleListener(entityManagerListener, (Class[]) null);
             return;
         }
 
@@ -193,7 +193,7 @@ public class JpaCmpEngine implements CmpEngine {
             final EntityManager entityManager = getEntityManager(deploymentInfo);
             final Object primaryKey = callContext.getPrimaryKey();
 
-                // Try to load it from the entity manager
+            // Try to load it from the entity manager
             final Object bean = entityManager.find(beanClass, primaryKey);
             // remove the bean
             entityManager.remove(bean);

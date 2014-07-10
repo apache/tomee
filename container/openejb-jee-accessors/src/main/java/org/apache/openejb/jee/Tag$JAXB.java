@@ -43,33 +43,33 @@ import static org.apache.openejb.jee.Variable$JAXB.readVariable;
 import static org.apache.openejb.jee.Variable$JAXB.writeVariable;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Tag$JAXB
-        extends JAXBObject<Tag> {
+    extends JAXBObject<Tag> {
 
 
     public Tag$JAXB() {
         super(Tag.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "tagType".intern()), Text$JAXB.class, Icon$JAXB.class, BodyContent$JAXB.class, Variable$JAXB.class, TldAttribute$JAXB.class, TldExtension$JAXB.class);
     }
 
-    public static Tag readTag(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Tag readTag(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTag(XoXMLStreamWriter writer, Tag tag, RuntimeContext context)
-            throws Exception {
+    public static void writeTag(final XoXMLStreamWriter writer, final Tag tag, final RuntimeContext context)
+        throws Exception {
         _write(writer, tag, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Tag tag, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Tag tag, final RuntimeContext context)
+        throws Exception {
         _write(writer, tag, context);
     }
 
-    public final static Tag _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Tag _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -80,7 +80,7 @@ public class Tag$JAXB
             context = new RuntimeContext();
         }
 
-        Tag tag = new Tag();
+        final Tag tag = new Tag();
         context.beforeUnmarshal(tag, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -91,7 +91,7 @@ public class Tag$JAXB
         List<TldExtension> tagExtension = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("tagType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Tag.class);
@@ -99,10 +99,10 @@ public class Tag$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, tag);
                 tag.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -111,24 +111,24 @@ public class Tag$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = tag.icon;
                     if (icon != null) {
@@ -140,12 +140,12 @@ public class Tag$JAXB
                 icon.add(iconItem);
             } else if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                String nameRaw = elementReader.getElementAsString();
+                final String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -153,12 +153,12 @@ public class Tag$JAXB
                 tag.name = name;
             } else if (("tag-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tagClass
-                String tagClassRaw = elementReader.getElementAsString();
+                final String tagClassRaw = elementReader.getElementAsString();
 
-                String tagClass;
+                final String tagClass;
                 try {
                     tagClass = Adapters.collapsedStringAdapterAdapter.unmarshal(tagClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -166,12 +166,12 @@ public class Tag$JAXB
                 tag.tagClass = tagClass;
             } else if (("tei-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: teiClass
-                String teiClassRaw = elementReader.getElementAsString();
+                final String teiClassRaw = elementReader.getElementAsString();
 
-                String teiClass;
+                final String teiClass;
                 try {
                     teiClass = Adapters.collapsedStringAdapterAdapter.unmarshal(teiClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -179,13 +179,13 @@ public class Tag$JAXB
                 tag.teiClass = teiClass;
             } else if (("body-content" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: bodyContent
-                BodyContent bodyContent = parseBodyContent(elementReader, context, elementReader.getElementAsString());
+                final BodyContent bodyContent = parseBodyContent(elementReader, context, elementReader.getElementAsString());
                 if (bodyContent != null) {
                     tag.bodyContent = bodyContent;
                 }
             } else if (("variable" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: variable
-                Variable variableItem = readVariable(elementReader, context);
+                final Variable variableItem = readVariable(elementReader, context);
                 if (variable == null) {
                     variable = tag.variable;
                     if (variable != null) {
@@ -197,7 +197,7 @@ public class Tag$JAXB
                 variable.add(variableItem);
             } else if (("attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: attribute
-                TldAttribute attributeItem = readTldAttribute(elementReader, context);
+                final TldAttribute attributeItem = readTldAttribute(elementReader, context);
                 if (attribute1 == null) {
                     attribute1 = tag.attribute;
                     if (attribute1 != null) {
@@ -209,12 +209,12 @@ public class Tag$JAXB
                 attribute1.add(attributeItem);
             } else if (("dynamic-attributes" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dynamicAttributes
-                String dynamicAttributesRaw = elementReader.getElementAsString();
+                final String dynamicAttributesRaw = elementReader.getElementAsString();
 
-                String dynamicAttributes;
+                final String dynamicAttributes;
                 try {
                     dynamicAttributes = Adapters.collapsedStringAdapterAdapter.unmarshal(dynamicAttributesRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -222,12 +222,12 @@ public class Tag$JAXB
                 tag.dynamicAttributes = dynamicAttributes;
             } else if (("example" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: example
-                String exampleRaw = elementReader.getElementAsString();
+                final String exampleRaw = elementReader.getElementAsString();
 
-                String example;
+                final String example;
                 try {
                     example = Adapters.collapsedStringAdapterAdapter.unmarshal(exampleRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -235,7 +235,7 @@ public class Tag$JAXB
                 tag.example = example;
             } else if (("tag-extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: tagExtension
-                TldExtension tagExtensionItem = readTldExtension(elementReader, context);
+                final TldExtension tagExtensionItem = readTldExtension(elementReader, context);
                 if (tagExtension == null) {
                     tagExtension = tag.tagExtension;
                     if (tagExtension != null) {
@@ -252,14 +252,14 @@ public class Tag$JAXB
         if (descriptions != null) {
             try {
                 tag.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Tag.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 tag.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Tag.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -281,13 +281,13 @@ public class Tag$JAXB
         return tag;
     }
 
-    public final Tag read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Tag read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Tag tag, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Tag tag, RuntimeContext context)
+        throws Exception {
         if (tag == null) {
             writer.writeXsiNil();
             return;
@@ -297,7 +297,7 @@ public class Tag$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Tag.class != tag.getClass()) {
             context.unexpectedSubclass(writer, tag, Tag.class);
             return;
@@ -307,12 +307,12 @@ public class Tag$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = tag.id;
+        final String idRaw = tag.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tag, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -322,11 +322,11 @@ public class Tag$JAXB
         Text[] descriptions = null;
         try {
             descriptions = tag.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tag, "descriptions", Tag.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -341,11 +341,11 @@ public class Tag$JAXB
         Text[] displayNames = null;
         try {
             displayNames = tag.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(tag, "displayNames", Tag.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -357,9 +357,9 @@ public class Tag$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = tag.icon;
+        final LocalCollection<Icon> icon = tag.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -371,11 +371,11 @@ public class Tag$JAXB
         }
 
         // ELEMENT: name
-        String nameRaw = tag.name;
+        final String nameRaw = tag.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tag, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (name != null) {
@@ -387,11 +387,11 @@ public class Tag$JAXB
         }
 
         // ELEMENT: tagClass
-        String tagClassRaw = tag.tagClass;
+        final String tagClassRaw = tag.tagClass;
         String tagClass = null;
         try {
             tagClass = Adapters.collapsedStringAdapterAdapter.marshal(tagClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tag, "tagClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (tagClass != null) {
@@ -403,11 +403,11 @@ public class Tag$JAXB
         }
 
         // ELEMENT: teiClass
-        String teiClassRaw = tag.teiClass;
+        final String teiClassRaw = tag.teiClass;
         String teiClass = null;
         try {
             teiClass = Adapters.collapsedStringAdapterAdapter.marshal(teiClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tag, "teiClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (teiClass != null) {
@@ -417,7 +417,7 @@ public class Tag$JAXB
         }
 
         // ELEMENT: bodyContent
-        BodyContent bodyContent = tag.bodyContent;
+        final BodyContent bodyContent = tag.bodyContent;
         if (bodyContent != null) {
             writer.writeStartElement(prefix, "body-content", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(toStringBodyContent(tag, null, context, bodyContent));
@@ -427,9 +427,9 @@ public class Tag$JAXB
         }
 
         // ELEMENT: variable
-        List<Variable> variable = tag.variable;
+        final List<Variable> variable = tag.variable;
         if (variable != null) {
-            for (Variable variableItem : variable) {
+            for (final Variable variableItem : variable) {
                 writer.writeStartElement(prefix, "variable", "http://java.sun.com/xml/ns/javaee");
                 if (variableItem != null) {
                     writeVariable(writer, variableItem, context);
@@ -441,9 +441,9 @@ public class Tag$JAXB
         }
 
         // ELEMENT: attribute
-        List<TldAttribute> attribute = tag.attribute;
+        final List<TldAttribute> attribute = tag.attribute;
         if (attribute != null) {
-            for (TldAttribute attributeItem : attribute) {
+            for (final TldAttribute attributeItem : attribute) {
                 writer.writeStartElement(prefix, "attribute", "http://java.sun.com/xml/ns/javaee");
                 if (attributeItem != null) {
                     writeTldAttribute(writer, attributeItem, context);
@@ -455,11 +455,11 @@ public class Tag$JAXB
         }
 
         // ELEMENT: dynamicAttributes
-        String dynamicAttributesRaw = tag.dynamicAttributes;
+        final String dynamicAttributesRaw = tag.dynamicAttributes;
         String dynamicAttributes = null;
         try {
             dynamicAttributes = Adapters.collapsedStringAdapterAdapter.marshal(dynamicAttributesRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tag, "dynamicAttributes", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (dynamicAttributes != null) {
@@ -469,11 +469,11 @@ public class Tag$JAXB
         }
 
         // ELEMENT: example
-        String exampleRaw = tag.example;
+        final String exampleRaw = tag.example;
         String example = null;
         try {
             example = Adapters.collapsedStringAdapterAdapter.marshal(exampleRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(tag, "example", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (example != null) {
@@ -483,9 +483,9 @@ public class Tag$JAXB
         }
 
         // ELEMENT: tagExtension
-        List<TldExtension> tagExtension = tag.tagExtension;
+        final List<TldExtension> tagExtension = tag.tagExtension;
         if (tagExtension != null) {
-            for (TldExtension tagExtensionItem : tagExtension) {
+            for (final TldExtension tagExtensionItem : tagExtension) {
                 if (tagExtensionItem != null) {
                     writer.writeStartElement(prefix, "tag-extension", "http://java.sun.com/xml/ns/javaee");
                     writeTldExtension(writer, tagExtensionItem, context);

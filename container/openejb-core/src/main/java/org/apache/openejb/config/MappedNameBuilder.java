@@ -25,7 +25,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.util.Map;
 
-public class MappedNameBuilder implements DynamicDeployer{
+public class MappedNameBuilder implements DynamicDeployer {
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final OpenejbJar openejbJar = ejbModule.getOpenejbJar();

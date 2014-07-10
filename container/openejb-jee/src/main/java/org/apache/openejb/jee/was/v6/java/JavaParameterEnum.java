@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,14 +19,14 @@ package org.apache.openejb.jee.was.v6.java;
 import javax.xml.bind.annotation.XmlEnum;
 
 /**
- * <p>
+ * <p/>
  * Java class for JavaParameterKind.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * <pre>
  * &lt;simpleType name="JavaParameterKind">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
@@ -37,19 +37,18 @@ import javax.xml.bind.annotation.XmlEnum;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum JavaParameterEnum {
 
-	IN, OUT, INOUT, RETURN;
+    IN, OUT, INOUT, RETURN;
 
-	public String value() {
-		return name();
-	}
+    public String value() {
+        return name();
+    }
 
-	public static JavaParameterEnum fromValue(String v) {
-		return valueOf(v);
-	}
+    public static JavaParameterEnum fromValue(final String v) {
+        return valueOf(v);
+    }
 
 }

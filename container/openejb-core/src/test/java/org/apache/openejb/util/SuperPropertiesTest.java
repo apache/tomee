@@ -103,7 +103,7 @@ public class SuperPropertiesTest extends PropertiesTest {
     }
 
     public void testSynchronization() throws Exception {
-        SuperProperties properties = createProperties();
+        final SuperProperties properties = createProperties();
         properties.setProperty("foo", "bar");
         properties.setComment("foo", "comment");
         assertNotNull(properties.getAttributes("foo"));
@@ -122,26 +122,26 @@ public class SuperPropertiesTest extends PropertiesTest {
     }
 
     public void testLoadStoreLoad() throws Exception {
-        SuperProperties expected = new SuperProperties();
+        final SuperProperties expected = new SuperProperties();
         expected.load(getClass().getResourceAsStream("test.properties"));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         expected.store(out, null);
 
-        SuperProperties actual = createProperties();
+        final SuperProperties actual = createProperties();
         actual.load(new ByteArrayInputStream(out.toByteArray()));
 
         assertProperties(expected, actual);
     }
 
     public void testLoadStoreLoadXml() throws Exception {
-        SuperProperties expected = new SuperProperties();
+        final SuperProperties expected = new SuperProperties();
         expected.load(getClass().getResourceAsStream("test.properties"));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         expected.storeToXML(out, null);
 
-        SuperProperties actual = createProperties();
+        final SuperProperties actual = createProperties();
         actual.loadFromXML(new ByteArrayInputStream(out.toByteArray()));
 
         assertProperties(expected, actual);
@@ -350,23 +350,23 @@ public class SuperPropertiesTest extends PropertiesTest {
     }
 
     protected SuperProperties createProperties() {
-        SuperProperties superProperties = new SuperProperties();
+        final SuperProperties superProperties = new SuperProperties();
         superProperties.setLineSeparator("\n");
         return superProperties;
     }
 
-    protected static Map<String,String> map(String... keysAndValues) {
-        Map<String,String> map = new LinkedHashMap<String,String>();
-        for (int i = 0; i+1 < keysAndValues.length; i += 2) {
-            String key = keysAndValues[i];
-            String value = keysAndValues[i + 1];
+    protected static Map<String, String> map(final String... keysAndValues) {
+        final Map<String, String> map = new LinkedHashMap<String, String>();
+        for (int i = 0; i + 1 < keysAndValues.length; i += 2) {
+            final String key = keysAndValues[i];
+            final String value = keysAndValues[i + 1];
             map.put(key, value);
         }
         return map;
     }
 
-    private String getXml(String key, String value, String comment) {
-        StringBuilder buf = new StringBuilder();
+    private String getXml(final String key, final String value, final String comment) {
+        final StringBuilder buf = new StringBuilder();
         buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         buf.append("<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n");
         buf.append("<properties>\n");

@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Variable$JAXB
-        extends JAXBObject<Variable> {
+    extends JAXBObject<Variable> {
 
 
     public Variable$JAXB() {
         super(Variable.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "variableType".intern()), Text$JAXB.class);
     }
 
-    public static Variable readVariable(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Variable readVariable(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeVariable(XoXMLStreamWriter writer, Variable variable, RuntimeContext context)
-            throws Exception {
+    public static void writeVariable(final XoXMLStreamWriter writer, final Variable variable, final RuntimeContext context)
+        throws Exception {
         _write(writer, variable, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Variable variable, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Variable variable, final RuntimeContext context)
+        throws Exception {
         _write(writer, variable, context);
     }
 
-    public final static Variable _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Variable _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class Variable$JAXB
             context = new RuntimeContext();
         }
 
-        Variable variable = new Variable();
+        final Variable variable = new Variable();
         context.beforeUnmarshal(variable, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("variableType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Variable.class);
@@ -83,10 +83,10 @@ public class Variable$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, variable);
                 variable.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class Variable$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("name-given" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameGiven
-                String nameGivenRaw = elementReader.getElementAsString();
+                final String nameGivenRaw = elementReader.getElementAsString();
 
-                String nameGiven;
+                final String nameGiven;
                 try {
                     nameGiven = Adapters.collapsedStringAdapterAdapter.unmarshal(nameGivenRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -118,12 +118,12 @@ public class Variable$JAXB
                 variable.nameGiven = nameGiven;
             } else if (("name-from-attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: nameFromAttribute
-                String nameFromAttributeRaw = elementReader.getElementAsString();
+                final String nameFromAttributeRaw = elementReader.getElementAsString();
 
-                String nameFromAttribute;
+                final String nameFromAttribute;
                 try {
                     nameFromAttribute = Adapters.collapsedStringAdapterAdapter.unmarshal(nameFromAttributeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -131,12 +131,12 @@ public class Variable$JAXB
                 variable.nameFromAttribute = nameFromAttribute;
             } else if (("variable-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: variableClass
-                String variableClassRaw = elementReader.getElementAsString();
+                final String variableClassRaw = elementReader.getElementAsString();
 
-                String variableClass;
+                final String variableClass;
                 try {
                     variableClass = Adapters.collapsedStringAdapterAdapter.unmarshal(variableClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -144,12 +144,12 @@ public class Variable$JAXB
                 variable.variableClass = variableClass;
             } else if (("declare" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: declare
-                String declareRaw = elementReader.getElementAsString();
+                final String declareRaw = elementReader.getElementAsString();
 
-                String declare;
+                final String declare;
                 try {
                     declare = Adapters.collapsedStringAdapterAdapter.unmarshal(declareRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -157,12 +157,12 @@ public class Variable$JAXB
                 variable.declare = declare;
             } else if (("scope" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: scope
-                String scopeRaw = elementReader.getElementAsString();
+                final String scopeRaw = elementReader.getElementAsString();
 
-                String scope;
+                final String scope;
                 try {
                     scope = Adapters.collapsedStringAdapterAdapter.unmarshal(scopeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -175,7 +175,7 @@ public class Variable$JAXB
         if (descriptions != null) {
             try {
                 variable.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Variable.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -185,13 +185,13 @@ public class Variable$JAXB
         return variable;
     }
 
-    public final Variable read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Variable read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Variable variable, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Variable variable, RuntimeContext context)
+        throws Exception {
         if (variable == null) {
             writer.writeXsiNil();
             return;
@@ -201,7 +201,7 @@ public class Variable$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Variable.class != variable.getClass()) {
             context.unexpectedSubclass(writer, variable, Variable.class);
             return;
@@ -211,12 +211,12 @@ public class Variable$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = variable.id;
+        final String idRaw = variable.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(variable, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -226,11 +226,11 @@ public class Variable$JAXB
         Text[] descriptions = null;
         try {
             descriptions = variable.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(variable, "descriptions", Variable.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -242,11 +242,11 @@ public class Variable$JAXB
         }
 
         // ELEMENT: nameGiven
-        String nameGivenRaw = variable.nameGiven;
+        final String nameGivenRaw = variable.nameGiven;
         String nameGiven = null;
         try {
             nameGiven = Adapters.collapsedStringAdapterAdapter.marshal(nameGivenRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variable, "nameGiven", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (nameGiven != null) {
@@ -256,11 +256,11 @@ public class Variable$JAXB
         }
 
         // ELEMENT: nameFromAttribute
-        String nameFromAttributeRaw = variable.nameFromAttribute;
+        final String nameFromAttributeRaw = variable.nameFromAttribute;
         String nameFromAttribute = null;
         try {
             nameFromAttribute = Adapters.collapsedStringAdapterAdapter.marshal(nameFromAttributeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variable, "nameFromAttribute", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (nameFromAttribute != null) {
@@ -270,11 +270,11 @@ public class Variable$JAXB
         }
 
         // ELEMENT: variableClass
-        String variableClassRaw = variable.variableClass;
+        final String variableClassRaw = variable.variableClass;
         String variableClass = null;
         try {
             variableClass = Adapters.collapsedStringAdapterAdapter.marshal(variableClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variable, "variableClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (variableClass != null) {
@@ -284,11 +284,11 @@ public class Variable$JAXB
         }
 
         // ELEMENT: declare
-        String declareRaw = variable.declare;
+        final String declareRaw = variable.declare;
         String declare = null;
         try {
             declare = Adapters.collapsedStringAdapterAdapter.marshal(declareRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variable, "declare", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (declare != null) {
@@ -298,11 +298,11 @@ public class Variable$JAXB
         }
 
         // ELEMENT: scope
-        String scopeRaw = variable.scope;
+        final String scopeRaw = variable.scope;
         String scope = null;
         try {
             scope = Adapters.collapsedStringAdapterAdapter.marshal(scopeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variable, "scope", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (scope != null) {

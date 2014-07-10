@@ -61,7 +61,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
 
         // no security to run as, just create a normal statement
         if (testSecurity == null ||
-                (testSecurity.authorized().length == 0 && testSecurity.unauthorized().length == 0)) {
+            (testSecurity.authorized().length == 0 && testSecurity.unauthorized().length == 0)) {
             return createUnsecuredStatement(method);
         }
         // security roles specified, create separate statements for them all

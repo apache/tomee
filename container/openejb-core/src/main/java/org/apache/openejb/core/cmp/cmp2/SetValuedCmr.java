@@ -59,7 +59,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     public Set<Proxy> get(final Set<Bean> others) {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
-                    "this entity does not have a cmr field for the relationship");
+                "this entity does not have a cmr field for the relationship");
         }
 
         if (others == null) {
@@ -74,7 +74,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         } catch (final IllegalStateException ignored) {
             // no tx, which is fine
         }
-        
+
         if (cmrSet == null) {
             cmrSet = new CmrSet<Bean, Proxy>(source, sourceProperty, relatedInfo, relatedProperty, others);
             try {
@@ -89,7 +89,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     public void set(final Set<Bean> relatedBeans, final Collection newProxies) {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
-                    "this entity does not have a cmr field for the relationship");
+                "this entity does not have a cmr field for the relationship");
         }
 
         // null can not be set into a cmr field
@@ -108,7 +108,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
         relatedBeans.clear();
 
-        for (final Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext();) {
+        for (final Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext(); ) {
             final Proxy newProxy = (Proxy) iterator.next();
             final Bean newBean = Cmp2Util.<Bean>getEntityBean(newProxy);
 
