@@ -837,7 +837,7 @@ Title: EJB Examples
     <Context>
       <!-- This only works if the context is installed under the correct name -->
       <Realm className="org.apache.catalina.realm.MemoryRealm"
-             pathname="webapps/ejb-examples-1.0-SNAPSHOT/WEB-INF/tomcat-users.xml"/>
+             pathname="webapps/ejb-examples-1.1.0-SNAPSHOT/WEB-INF/tomcat-users.xml"/>
     
       <Environment
           name="context.xml/environment"
