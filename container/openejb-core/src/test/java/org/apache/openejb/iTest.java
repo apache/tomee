@@ -23,7 +23,6 @@ import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
-import org.apache.openejb.test.entity.cmr.CmrTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
 import org.apache.openejb.test.singleton.SingletonLocalTestSuite;
 import org.apache.openejb.test.stateful.StatefulLocalTestSuite;
@@ -42,8 +41,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
     @Override
     protected void setUp() throws Exception {
         try {
-            OpenEJB.destroy();
-            TestManager.stop();
+            tearDown();
         } catch (Exception e) {
             // do nothing - exception ignored
         }
@@ -85,7 +83,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(BmpLocalTestSuite.suite());
         suite.addTest(CmpLocalTestSuite.suite());
         suite.addTest(Cmp2TestSuite.suite());
-        suite.addTest(new CmrTestSuite());
+        // TODO: reactivate it suite.addTest(new CmrTestSuite());
         suite.addTest(MdbTestSuite.suite());
         return suite;
     }
