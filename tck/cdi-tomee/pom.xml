@@ -242,7 +242,7 @@
             <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
             <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>-->
           </suiteXmlFiles>
-          <!--<forkMode>once</forkMode>-->
+          <argLine>-Xmx768m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m -Xss2048k</argLine>
           <systemPropertyVariables>
             <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
@@ -258,7 +258,7 @@
             <connect.tries>90</connect.tries>
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
-            <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m</java.opts>
+            <java.opts>-Xmx768m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m -Xss2048k</java.opts>
             <openejb.home>${openejb.home}</openejb.home>
             <openejb.deployer.jndiname>${openejb.deployer.jndiname}</openejb.deployer.jndiname>
             <org.jboss.testharness.spi.Containers>${org.jboss.testharness.spi.Containers}</org.jboss.testharness.spi.Containers>

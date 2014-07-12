@@ -47,7 +47,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <forkMode>pertest</forkMode>
+          <reuseForks>false</reuseForks>
           <argLine>-javaagent:${basedir}/target/openejb-javaagent-${openejb.version}.jar</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
         </configuration>
