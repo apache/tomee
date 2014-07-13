@@ -307,7 +307,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine> <!-- "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -->
@@ -315,7 +314,7 @@
             -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
             -Dopenejb.descriptors.output.folder=./dump/
-            -Xmx256m -Djava.endorsed.dirs=${openejb.build.endorsed}
+            -Xmx512m -Djava.endorsed.dirs=${openejb.build.endorsed}
           </argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
