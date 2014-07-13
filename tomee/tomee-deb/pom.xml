@@ -114,15 +114,6 @@
                                     <groupId>org.apache.openejb</groupId>
                                     <artifactId>apache-tomee</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>jaxrs</classifier>
-                                    <type>zip</type>
-                                    <outputDirectory>${distribution.workdir}</outputDirectory>
-                                    <destFileName>tomee-jaxrs.zip</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.openejb</groupId>
-                                    <artifactId>apache-tomee</artifactId>
-                                    <version>${project.version}</version>
                                     <classifier>webprofile</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${distribution.workdir}</outputDirectory>
@@ -189,12 +180,6 @@
                                     <classifier>plus</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/work-dir/apache-tomee-jaxrs.deb
-                                    </file>
-                                    <type>deb</type>
-                                    <classifier>jaxrs</classifier>
-                                </artifact>
-                                <artifact>
                                     <file>${project.build.directory}/work-dir/apache-tomee-webprofile.deb
                                     </file>
                                     <type>deb</type>
@@ -205,12 +190,6 @@
                                     </file>
                                     <type>deb</type>
                                     <classifier>plume</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${project.build.directory}/work-dir/apache-libtomee-jaxrs-java.deb
-                                    </file>
-                                    <type>deb</type>
-                                    <classifier>lib-jaxrs</classifier>
                                 </artifact>
                                 <artifact>
                                     <file>${project.build.directory}/work-dir/apache-libtomee-plume-java.deb

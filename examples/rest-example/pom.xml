@@ -86,13 +86,6 @@
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
         <version>${tomee.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>tomee-jaxrs</artifactId>
-            <version>${tomee.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>com.googlecode.t7mp</groupId>
@@ -105,7 +98,7 @@
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
-              <artifactId>tomee-plus-webapp</artifactId>
+              <artifactId>tomee-webapp</artifactId>
               <version>${tomee.version}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>

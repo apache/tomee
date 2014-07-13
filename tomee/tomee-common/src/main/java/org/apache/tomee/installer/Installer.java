@@ -757,7 +757,6 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# Properties for JAS RS\n");
                 systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
-                systemPropertiesWriter.write("# openejb.jaxrs.providers.auto = \n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
 

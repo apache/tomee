@@ -44,14 +44,13 @@
     <module>tomee-myfaces</module>
     <module>tomee-mojarra</module>
     <module>tomee-jdbc</module>
+    <module>tomee-jaxrs</module>
     <module>tomee-webapp</module>
     <module>tomee-webaccess</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-plume-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
-    <module>tomee-jaxrs</module>
-    <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
     <module>tomee-juli</module>

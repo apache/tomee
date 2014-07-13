@@ -93,7 +93,6 @@ class PackageBuilder {
 
     private void createDataStructure(String classifier) {
         def jarsWebprofile = getLibJarNames('webprofile')
-        def jarsJaxrs = getLibJarNames('jaxrs')
         def jarsPlus = getLibJarNames('plus')
         def jarsPlume = getLibJarNames('plume')
         def recurse = { DataBuilder builder, String path, File file ->
@@ -103,8 +102,6 @@ class PackageBuilder {
             }
             if (jarsWebprofile.contains(file.name)) {
                 addSymLink('webprofile')
-            } else if (jarsJaxrs.contains(file.name)) {
-                addSymLink('jaxrs')
             } else if (jarsPlus.contains(file.name)) {
                 addSymLink('plus')
             } else if (jarsPlume.contains(file.name)) {
@@ -186,7 +183,7 @@ class PackageBuilder {
     }
 
     void createPackage() {
-        def classifiers = ['webprofile', 'jaxrs', 'plus', 'plume']
+        def classifiers = ['webprofile', 'plus', 'plume']
         createLibStructure(classifiers)
         classifiers.each { createDataStructure(it) }
         classifiers.each { createControlStructure(it) }

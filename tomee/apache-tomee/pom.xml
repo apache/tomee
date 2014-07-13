@@ -36,7 +36,6 @@
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
     <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>
-    <jaxrs.work-dir>${project.build.directory}/jaxrs-work-dir</jaxrs.work-dir>
   </properties>
 
   <dependencies>
@@ -88,13 +87,6 @@
     <dependency> <!-- to be sure to have it -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency> <!-- to be sure to have it -->
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-jaxrs-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
       <scope>provided</scope>
@@ -196,25 +188,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-tomcat-for-jaxrs</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.tomcat</groupId>
-                  <artifactId>tomcat</artifactId>
-                  <version>${tomcat.version}</version>
-                  <type>zip</type>
-                  <outputDirectory>${jaxrs.work-dir}</outputDirectory>
-                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-          <execution>
             <id>copy-tomcat-for-plus</id>
             <phase>prepare-package</phase>
             <goals>
@@ -294,22 +267,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>execute-jaxrs-installer</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <properties>
-                <tomee.workdir>${jaxrs.work-dir}</tomee.workdir>
-                <tomee.webapp>tomee-jaxrs-webapp</tomee.webapp>
-              </properties>
-              <source>
-                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
-              </source>
-            </configuration>
-          </execution>
-          <execution>
             <id>execute-plus-installer</id>
             <phase>prepare-package</phase>
             <goals>
@@ -358,21 +315,6 @@
               <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
               <finalName>apache-tomee-webprofile-${project.version}</finalName>
-            </configuration>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>jaxrs</id>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/tomee-jaxrs.xml</descriptor>
-              </descriptors>
-              <attach>false</attach>
-              <appendAssemblyId>false</appendAssemblyId>
-              <finalName>apache-tomee-jaxrs-${project.version}</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
@@ -432,16 +374,6 @@
                   <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.tar.gz</file>
                   <type>tar.gz</type>
                   <classifier>webprofile</classifier>
-                </artifact>
-                <artifact>
-                  <file>${project.build.directory}/apache-tomee-jaxrs-${project.version}.zip</file>
-                  <type>zip</type>
-                  <classifier>jaxrs</classifier>
-                </artifact>
-                <artifact>
-                  <file>${project.build.directory}/apache-tomee-jaxrs-${project.version}.tar.gz</file>
-                  <type>tar.gz</type>
-                  <classifier>jaxrs</classifier>
                 </artifact>
                 <artifact>
                   <file>${project.build.directory}/apache-tomee-plus-${project.version}.zip</file>

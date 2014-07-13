@@ -148,8 +148,8 @@ public class ServerListener implements LifecycleListener {
                                 addUrl(ucl, addUrl, f.toURI().toURL());
                             }
 
-                            final File globalJaxrsTxt = SystemInstance.get().getConf(QuickJarsTxtParser.FILE_NAME);
-                            final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(globalJaxrsTxt);
+                            final File globalJarsTxt = SystemInstance.get().getConf(QuickJarsTxtParser.FILE_NAME);
+                            final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(globalJarsTxt);
                             if (configurer != null) {
                                 for (final URL f : configurer.additionalURLs()) {
                                     addUrl(ucl, addUrl, f);

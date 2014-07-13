@@ -313,5 +313,50 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-transport</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-rest</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jaxrs</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 </project>
