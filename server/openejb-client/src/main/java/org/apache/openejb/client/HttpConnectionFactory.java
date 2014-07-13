@@ -64,7 +64,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (params.containsKey("connectTimeout")) {
                 timeout = Integer.parseInt(params.get("connectTimeout"));
             }else{
-                timeout = 1000;
+                timeout = 10000;
             }
 
             httpURLConnection.setConnectTimeout(timeout);
