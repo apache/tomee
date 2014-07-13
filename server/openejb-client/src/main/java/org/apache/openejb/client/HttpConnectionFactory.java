@@ -60,9 +60,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setDoOutput(true);
 
+            final int timeout;
             if (params.containsKey("connectTimeout")) {
-                httpURLConnection.setConnectTimeout(Integer.parseInt(params.get("connectTimeout")));
+                timeout = Integer.parseInt(params.get("connectTimeout"));
+            }else{
+                timeout = 1000;
             }
+
+            httpURLConnection.setConnectTimeout(timeout);
 
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
@@ -78,7 +83,11 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 }
             }
 
-            httpURLConnection.connect();
+            try {
+                httpURLConnection.connect();
+            } catch (final IOException e) {
+                httpURLConnection.connect();
+            }
         }
 
         @Override
