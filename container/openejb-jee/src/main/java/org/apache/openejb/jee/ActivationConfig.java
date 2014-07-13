@@ -32,11 +32,11 @@ import java.util.Properties;
 
 /**
  * ejb-jar_3_1.xsd
- * 
+ * <p/>
  * <p>Java class for activation-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="activation-configType">
  *   &lt;complexContent>
@@ -50,15 +50,13 @@ import java.util.Properties;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-configType", propOrder = {
-        "descriptions",
-        "activationConfigProperty"
-        })
+    "descriptions",
+    "activationConfigProperty"
+})
 public class ActivationConfig {
 
     @XmlTransient
@@ -87,7 +85,7 @@ public class ActivationConfig {
     public void addProperty(final String name, final String value) {
         getActivationConfigProperty().add(new ActivationConfigProperty(name, value));
     }
-    
+
     public List<ActivationConfigProperty> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
             activationConfigProperty = new ArrayList<ActivationConfigProperty>();

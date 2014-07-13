@@ -34,8 +34,8 @@ public class DynamicProxyImplFactory {
     public static boolean isKnownDynamicallyImplemented(final Class<?> clazz) {
         final Annotated<Class<?>> metaClass = new MetaAnnotatedClass(clazz);
         return clazz.isInterface()
-                && (metaClass.getAnnotation(PersistenceContext.class) != null
-                || metaClass.getAnnotation(Proxy.class) != null);
+            && (metaClass.getAnnotation(PersistenceContext.class) != null
+            || metaClass.getAnnotation(Proxy.class) != null);
     }
 
     public static Object newProxy(final BeanContext context, final InvocationHandler invocationHandler) {
@@ -74,7 +74,7 @@ public class DynamicProxyImplFactory {
     }
 
     private static final class Handler implements InvocationHandler {
-        private InvocationHandler handler;
+        private final InvocationHandler handler;
 
         private Handler(final InvocationHandler handler) {
             this.handler = handler;

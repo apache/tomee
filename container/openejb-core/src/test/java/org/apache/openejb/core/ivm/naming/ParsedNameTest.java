@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class ParsedNameTest extends TestCase {
 
     public void testRemaining() {
-        ParsedName name = new ParsedName("one/two/three/four");
+        final ParsedName name = new ParsedName("one/two/three/four");
 
         assertEquals("Name.getComponent()", "one", name.getComponent());
         assertEquals("Name.remaining().path()", "two/three/four", name.remaining().path());

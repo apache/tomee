@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Property$JAXB
-        extends JAXBObject<Property> {
+    extends JAXBObject<Property> {
 
 
     public Property$JAXB() {
         super(Property.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "propertyType".intern()));
     }
 
-    public static Property readProperty(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Property readProperty(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeProperty(XoXMLStreamWriter writer, Property property, RuntimeContext context)
-            throws Exception {
+    public static void writeProperty(final XoXMLStreamWriter writer, final Property property, final RuntimeContext context)
+        throws Exception {
         _write(writer, property, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Property property, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Property property, final RuntimeContext context)
+        throws Exception {
         _write(writer, property, context);
     }
 
-    public final static Property _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Property _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class Property$JAXB
             context = new RuntimeContext();
         }
 
-        Property property = new Property();
+        final Property property = new Property();
         context.beforeUnmarshal(property, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("propertyType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Property.class);
@@ -78,10 +78,10 @@ public class Property$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, property);
                 property.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class Property$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                String nameRaw = elementReader.getElementAsString();
+                final String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class Property$JAXB
                 property.name = name;
             } else if (("value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: value
-                String valueRaw = elementReader.getElementAsString();
+                final String valueRaw = elementReader.getElementAsString();
 
-                String value;
+                final String value;
                 try {
                     value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class Property$JAXB
         return property;
     }
 
-    public final Property read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Property read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Property property, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Property property, RuntimeContext context)
+        throws Exception {
         if (property == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class Property$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Property.class != property.getClass()) {
             context.unexpectedSubclass(writer, property, Property.class);
             return;
@@ -153,23 +153,23 @@ public class Property$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = property.id;
+        final String idRaw = property.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(property, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: name
-        String nameRaw = property.name;
+        final String nameRaw = property.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(property, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (name != null) {
@@ -181,11 +181,11 @@ public class Property$JAXB
         }
 
         // ELEMENT: value
-        String valueRaw = property.value;
+        final String valueRaw = property.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(property, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (value != null) {

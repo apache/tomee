@@ -601,7 +601,7 @@ public class StatefulContainer implements RpcContainer {
                         }
                     } catch (final Throwable t) {
                         final String logMessage = "An unexpected exception occured while invoking the preDestroy method on the Stateful SessionBean instance: "
-                                                  + (null != instance ? instance.bean.getClass().getName() : beanContext.getBeanClass().getName());
+                            + (null != instance ? instance.bean.getClass().getName() : beanContext.getBeanClass().getName());
                         logger.error(logMessage, t);
 
                     } finally {
@@ -984,8 +984,8 @@ public class StatefulContainer implements RpcContainer {
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
         final boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
-                                    callContext.getBeanContext().isSessionSynchronized() &&
-                                    txPolicy.isTransactionActive();
+            callContext.getBeanContext().isSessionSynchronized() &&
+            txPolicy.isTransactionActive();
 
         coordinator.registerSessionSynchronization(instance, callContext.getBeanContext(), callContext.getPrimaryKey(), synchronize);
     }

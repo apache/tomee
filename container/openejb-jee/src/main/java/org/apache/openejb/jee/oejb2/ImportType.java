@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for importType.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="importType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum ImportType {
@@ -45,7 +44,7 @@ public enum ImportType {
     SERVICES("services");
     private final String value;
 
-    ImportType(String v) {
+    ImportType(final String v) {
         value = v;
     }
 
@@ -53,8 +52,8 @@ public enum ImportType {
         return value;
     }
 
-    public static ImportType fromValue(String v) {
-        for (ImportType c: ImportType.values()) {
+    public static ImportType fromValue(final String v) {
+        for (final ImportType c : ImportType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

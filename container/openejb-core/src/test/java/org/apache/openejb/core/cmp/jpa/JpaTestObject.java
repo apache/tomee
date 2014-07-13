@@ -178,7 +178,7 @@ public class JpaTestObject extends org.junit.Assert {
 
         commitTx();
     }
-    
+
     private void employeeTest() throws Exception {
         // get the pk for the inserted row
         int davidPk = -1;
@@ -349,7 +349,7 @@ public class JpaTestObject extends org.junit.Assert {
         entityManager.flush();
         advanced = entityManager.merge(advanced);
 
-        BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
+        final BillPk advancedPk = new BillPk(advanced.getBillNumber(), advanced.getBillVersion(), advanced.getBillRevision());
 
         assertTrue(entityManager.contains(advanced));
 
@@ -416,14 +416,14 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
+        final BasicCmpBean joe = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + joeId).getSingleResult();
         assertTrue(entityManager.contains(joe));
 
         assertEquals(joe.getPrimaryKey(), joeId);
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
+        final BasicCmpBean lloyd = (BasicCmpBean) entityManager.createQuery("select e from BasicCmpBean_Subclass e where e.primaryKey=" + lloydId).getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -525,7 +525,7 @@ public class JpaTestObject extends org.junit.Assert {
         assertEquals(joe.getFirstName(), "Joe");
         assertEquals(joe.getLastName(), "Blow");
 
-        UnknownCmpBean lloyd = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
+        final UnknownCmpBean lloyd = (UnknownCmpBean) entityManager.createQuery("select e from UnknownCmpBean_Subclass e where e.firstName='Lloyd'").getSingleResult();
         assertTrue(entityManager.contains(lloyd));
 
         assertEquals(lloyd.getPrimaryKey(), lloydId);
@@ -541,10 +541,10 @@ public class JpaTestObject extends org.junit.Assert {
         final AuthorBean mcLaughlin = new AuthorBean(MCLAUGHLIN);
         final AuthorBean flanagan = new AuthorBean(FLANAGAN);
 
-        BookBean tiger = new BookBean(TIGER);
-        BookBean javaScript = new BookBean(JAVASCRIPT);
+        final BookBean tiger = new BookBean(TIGER);
+        final BookBean javaScript = new BookBean(JAVASCRIPT);
 
-        BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
+        final BookBean enterpriseApps = new BookBean(ENTERPRISE_APPS);
 
         entityManager.persist(mcLaughlin);
         entityManager.persist(flanagan);
@@ -561,11 +561,11 @@ public class JpaTestObject extends org.junit.Assert {
 
         beginTx();
 
-        BookBean book = entityManager.find(BookBean.class, TIGER);
+        final BookBean book = entityManager.find(BookBean.class, TIGER);
         assertTrue(entityManager.contains(book));
 
         assertEquals(book.getTitle(), TIGER);
-        Set<AuthorBean> authors = book.getAuthors();
+        final Set<AuthorBean> authors = book.getAuthors();
         assertEquals(authors.size(), 2);
 
         commitTx();
@@ -573,7 +573,7 @@ public class JpaTestObject extends org.junit.Assert {
 
     private void link(final String authorName, final String title) throws Exception {
         beginTx();
-        AuthorBean author = entityManager.find(AuthorBean.class, authorName);
+        final AuthorBean author = entityManager.find(AuthorBean.class, authorName);
         assertNotNull("Author not found " + authorName, author);
 
         final BookBean book = entityManager.find(BookBean.class, title);
@@ -732,14 +732,14 @@ public class JpaTestObject extends org.junit.Assert {
             resultSet = statement.executeQuery("SELECT * FROM " + table);
             final ResultSetMetaData setMetaData = resultSet.getMetaData();
             final int columnCount = setMetaData.getColumnCount();
-            while(resultSet.next()) {
-                StringBuilder row = new StringBuilder();
+            while (resultSet.next()) {
+                final StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= columnCount; i++) {
                     if (i > 1) {
                         row.append(", ");
                     }
-                    String name = setMetaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
+                    final String name = setMetaData.getColumnName(i);
+                    final Object value = resultSet.getObject(i);
                     row.append(name).append("=").append(value);
                 }
                 System.out.println(row);
@@ -763,7 +763,7 @@ public class JpaTestObject extends org.junit.Assert {
         if (statement == null) return;
         try {
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 
@@ -771,7 +771,7 @@ public class JpaTestObject extends org.junit.Assert {
         if (connection == null) return;
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
     }
 }

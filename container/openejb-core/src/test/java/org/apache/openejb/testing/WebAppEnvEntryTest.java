@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class WebAppEnvEntryTest {
     @Module
-    @Classes(cdi = true, value = { CdiBean.class })
+    @Classes(cdi = true, value = {CdiBean.class})
     public WebApp war() {
         final WebApp webApp = new WebApp().contextRoot("/myapp");
         webApp.getEnvEntry().add(new EnvEntry("foo", String.class.getName(), "bar"));

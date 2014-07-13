@@ -27,7 +27,7 @@ public class AbstractThreadLocalProxy<T> {
     protected AbstractThreadLocalProxy() {
         // no-op
     }
-    
+
     public T get() {
         return infos.get();
     }

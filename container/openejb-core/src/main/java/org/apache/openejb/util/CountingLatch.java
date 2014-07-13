@@ -22,66 +22,66 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class CountingLatch {
 
-     private final Sync sync;
+    private final Sync sync;
 
     public CountingLatch() {
         this(0);
     }
 
     public CountingLatch(final int count) {
-         this.sync = new Sync(count);
-     }
+        this.sync = new Sync(count);
+    }
 
     public void await() throws InterruptedException {
-         sync.acquireSharedInterruptibly(1);
-     }
+        sync.acquireSharedInterruptibly(1);
+    }
 
-     public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
-         return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
-     }
+    public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
+        return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
+    }
 
-     public void countDown() {
-         sync.releaseShared(-1);
-     }
+    public void countDown() {
+        sync.releaseShared(-1);
+    }
 
-     public void countUp() {
-         sync.releaseShared(1);
-     }
+    public void countUp() {
+        sync.releaseShared(1);
+    }
 
-     public long getCount() {
-         return sync.getCount();
-     }
+    public long getCount() {
+        return sync.getCount();
+    }
 
-     private static final class Sync extends AbstractQueuedSynchronizer {
-         private Sync(final int count) {
-             setState(count);
-         }
+    private static final class Sync extends AbstractQueuedSynchronizer {
+        private Sync(final int count) {
+            setState(count);
+        }
 
-         public boolean tryReleaseShared(final int releases) {
-             while (true) {
-                 final int count = getState();
+        public boolean tryReleaseShared(final int releases) {
+            while (true) {
+                final int count = getState();
 
-                 final int next = count + releases;
+                final int next = count + releases;
 
-                 if (next < 0) {
-                     return false;
-                 }
+                if (next < 0) {
+                    return false;
+                }
 
-                 if (compareAndSetState(count, next)) {
-                     return next == 0;
-                 }
-             }
-         }
+                if (compareAndSetState(count, next)) {
+                    return next == 0;
+                }
+            }
+        }
 
-         public int tryAcquireShared(final int acquires) {
-             return getState() == 0 ? 1: -1;
-         }
+        public int tryAcquireShared(final int acquires) {
+            return getState() == 0 ? 1 : -1;
+        }
 
-         int getCount() {
-             return getState();
-         }
-     }
- }
+        int getCount() {
+            return getState();
+        }
+    }
+}

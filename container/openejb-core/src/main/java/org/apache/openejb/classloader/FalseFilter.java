@@ -19,7 +19,7 @@ package org.apache.openejb.classloader;
 
 import org.apache.xbean.finder.filter.Filter;
 
-public class FalseFilter  implements Filter {
+public class FalseFilter implements Filter {
     public static final FalseFilter INSTANCE = new FalseFilter();
 
     @Override

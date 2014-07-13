@@ -30,7 +30,7 @@ import javax.ejb.EntityBean;
 import java.lang.reflect.Field;
 
 public class Cmp2Util {
-    public static Object getPrimaryKey(final BeanContext beanContext, final EntityBean entity){
+    public static Object getPrimaryKey(final BeanContext beanContext, final EntityBean entity) {
         if (entity == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public class Cmp2Util {
         return entity;
     }
 
-    public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(final BeanContext beanContext, final EntityBean entity){
+    public static <Proxy extends EJBLocalObject> Proxy getEjbProxy(final BeanContext beanContext, final EntityBean entity) {
         if (entity == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class Cmp2Util {
             beanContext = (BeanContext) deploymentInfoField.get(null);
         } catch (final Exception e) {
             throw new IllegalArgumentException("EntityBean class " + type.getName() +
-                    " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?", e);
+                " does not contain a deploymentInfo field.  Is this a generated CMP 2 entity implementation?", e);
         }
         return beanContext;
     }

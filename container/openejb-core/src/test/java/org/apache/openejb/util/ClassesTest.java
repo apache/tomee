@@ -25,32 +25,32 @@ public class ClassesTest extends TestCase {
 
     public void test() throws Exception {
 
-        String[] input = {
-                "java.lang.String", "java.lang.String[]", "java.lang.String[][]",
-                "boolean", "boolean[]", "boolean[][]",
-                "byte", "byte[]", "byte[][]",
-                "short", "short[]", "short[][]",
-                "int", "int[]", "int[][]",
-                "long", "long[]", "long[][]",
-                "float", "float[]", "float[][]",
-                "double", "double[]", "double[][]",
-                "char", "char[]", "char[][]",
+        final String[] input = {
+            "java.lang.String", "java.lang.String[]", "java.lang.String[][]",
+            "boolean", "boolean[]", "boolean[][]",
+            "byte", "byte[]", "byte[][]",
+            "short", "short[]", "short[][]",
+            "int", "int[]", "int[][]",
+            "long", "long[]", "long[][]",
+            "float", "float[]", "float[][]",
+            "double", "double[]", "double[][]",
+            "char", "char[]", "char[][]",
         };
 
-        String[] expected = {
-                "java.lang.String", "[Ljava.lang.String;", "[[Ljava.lang.String;",
-                "boolean", "[Z", "[[Z",
-                "byte", "[B", "[[B",
-                "short", "[S", "[[S",
-                "int", "[I", "[[I",
-                "long", "[J", "[[J",
-                "float", "[F", "[[F",
-                "double", "[D", "[[D",
-                "char", "[C", "[[C",
+        final String[] expected = {
+            "java.lang.String", "[Ljava.lang.String;", "[[Ljava.lang.String;",
+            "boolean", "[Z", "[[Z",
+            "byte", "[B", "[[B",
+            "short", "[S", "[[S",
+            "int", "[I", "[[I",
+            "long", "[J", "[[J",
+            "float", "[F", "[[F",
+            "double", "[D", "[[D",
+            "char", "[C", "[[C",
         };
 
         for (int i = 0; i < input.length; i++) {
-            Class clazz = Classes.forName(input[i], this.getClass().getClassLoader());
+            final Class clazz = Classes.forName(input[i], this.getClass().getClassLoader());
             assertEquals(expected[i], clazz.getName());
         }
     }

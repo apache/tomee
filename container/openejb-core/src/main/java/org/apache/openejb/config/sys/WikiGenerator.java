@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class WikiGenerator {
 
-    private PrintWriter out;
+    private final PrintWriter out;
 
     public static void main(final String[] args) throws Exception {
         System.out.println();

@@ -34,11 +34,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- * 
+ * <p/>
  * <p>Java class for faces-config-referenced-beanType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-referenced-beanType">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-referenced-beanType", propOrder = {
@@ -87,7 +85,7 @@ public class FacesReferencedBean {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -100,7 +98,7 @@ public class FacesReferencedBean {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -115,7 +113,7 @@ public class FacesReferencedBean {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -128,11 +126,9 @@ public class FacesReferencedBean {
 
     /**
      * Gets the value of the referencedBeanName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getReferencedBeanName() {
         return referencedBeanName;
@@ -140,23 +136,19 @@ public class FacesReferencedBean {
 
     /**
      * Sets the value of the referencedBeanName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setReferencedBeanName(java.lang.String value) {
+    public void setReferencedBeanName(final java.lang.String value) {
         this.referencedBeanName = value;
     }
 
     /**
      * Gets the value of the referencedBeanClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getReferencedBeanClass() {
         return referencedBeanClass;
@@ -164,23 +156,19 @@ public class FacesReferencedBean {
 
     /**
      * Sets the value of the referencedBeanClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setReferencedBeanClass(java.lang.String value) {
+    public void setReferencedBeanClass(final java.lang.String value) {
         this.referencedBeanClass = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -188,13 +176,11 @@ public class FacesReferencedBean {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

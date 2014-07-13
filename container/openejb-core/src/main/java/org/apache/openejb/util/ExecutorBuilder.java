@@ -111,12 +111,12 @@ public class ExecutorBuilder {
         }
 
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize
-                , maximumPoolSize
-                , keepAliveTime.getTime()
-                , keepAliveTime.getUnit() != null ? keepAliveTime.getUnit() : TimeUnit.SECONDS
-                , queue
-                , factory
-                , handler
+            , maximumPoolSize
+            , keepAliveTime.getTime()
+            , keepAliveTime.getUnit() != null ? keepAliveTime.getUnit() : TimeUnit.SECONDS
+            , queue
+            , factory
+            , handler
         );
 
         threadPoolExecutor.allowCoreThreadTimeOut(allowCoreThreadTimeout);

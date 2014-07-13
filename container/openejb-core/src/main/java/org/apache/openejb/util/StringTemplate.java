@@ -33,7 +33,7 @@ public class StringTemplate {
     public String apply(final Map<String, String> map) {
         final Matcher matcher = PATTERN.matcher(template);
         final StringBuffer buf = new StringBuffer();
- 
+
         while (matcher.find()) {
             final String key = matcher.group(2);
 

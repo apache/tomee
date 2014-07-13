@@ -46,7 +46,7 @@ public class ProxyInfo {
      * Containers do not know the list of interfaces that should
      * be applied nor do they need to tell the proxy handling
      * code what kind of proxy it should create.
-     * 
+     *
      * @param depInfo
      * @param pk
      */
@@ -67,7 +67,7 @@ public class ProxyInfo {
     }
 
     public Class getInterface() {
-        return mainInterface == null && proxyInterfaces != null && !proxyInterfaces.isEmpty()? proxyInterfaces.get(0): mainInterface;
+        return mainInterface == null && proxyInterfaces != null && !proxyInterfaces.isEmpty() ? proxyInterfaces.get(0) : mainInterface;
     }
 
     public List<Class> getInterfaces() {

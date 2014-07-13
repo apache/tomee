@@ -119,7 +119,7 @@ public class StatefulSessionBeanTest extends TestCase {
         }
 
         @Override
-        public void setSessionContext(final SessionContext sessionContext){
+        public void setSessionContext(final SessionContext sessionContext) {
             calls.add(Call.SetSessionContext);
         }
 

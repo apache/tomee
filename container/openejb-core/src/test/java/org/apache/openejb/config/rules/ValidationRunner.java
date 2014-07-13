@@ -39,7 +39,7 @@ import java.util.List;
  * ValidationFailureException to be thrown, in those scenarios, simply annotate your test with @Keys and do not specify any @Key in it
  */
 public class ValidationRunner extends BlockJUnit4ClassRunner {
-    public ValidationRunner(Class<?> klass) throws InitializationError {
+    public ValidationRunner(final Class<?> klass) throws InitializationError {
         super(klass);
     }
 
@@ -47,20 +47,20 @@ public class ValidationRunner extends BlockJUnit4ClassRunner {
      * Flags an error if you have annotated a test with both @Test and @Keys. Any method annotated with @Test will be ignored anyways.
      */
     @Override
-    protected void collectInitializationErrors(List<Throwable> errors) {
+    protected void collectInitializationErrors(final List<Throwable> errors) {
         super.collectInitializationErrors(errors);
-        List<FrameworkMethod> methodsAnnotatedWithKeys = getTestClass().getAnnotatedMethods(Keys.class);
-        for (FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
+        final List<FrameworkMethod> methodsAnnotatedWithKeys = getTestClass().getAnnotatedMethods(Keys.class);
+        for (final FrameworkMethod frameworkMethod : methodsAnnotatedWithKeys) {
             if (frameworkMethod.getAnnotation(Test.class) != null) {
-                String gripe = "The method " + frameworkMethod.getName() + "() can only be annotated with @Keys";
+                final String gripe = "The method " + frameworkMethod.getName() + "() can only be annotated with @Keys";
                 errors.add(new Exception(gripe));
             }
         }
     }
 
     @Override
-    protected Statement methodBlock(FrameworkMethod method) {
-        Object test;
+    protected Statement methodBlock(final FrameworkMethod method) {
+        final Object test;
         try {
             test = new ReflectiveCallable() {
                 @Override
@@ -68,7 +68,7 @@ public class ValidationRunner extends BlockJUnit4ClassRunner {
                     return createTest();
                 }
             }.run();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return new Fail(e);
         }
         Statement statement = new InvokeMethod(method, test);

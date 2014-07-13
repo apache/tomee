@@ -24,12 +24,12 @@ import java.lang.reflect.Method;
 public class CmpField {
     private final String name;
     private final Type type;
-    private final Method getter; 
+    private final Method getter;
 
     public CmpField(final String name, final Type type, final Method getter) {
         this.name = name;
         this.type = type;
-        this.getter = getter; 
+        this.getter = getter;
     }
 
     public String getName() {
@@ -43,8 +43,8 @@ public class CmpField {
     public String getDescriptor() {
         return type.getDescriptor();
     }
-    
+
     public Method getGetterMethod() {
-        return getter; 
+        return getter;
     }
 }

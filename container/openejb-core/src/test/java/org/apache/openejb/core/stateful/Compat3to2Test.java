@@ -52,36 +52,36 @@ public class Compat3to2Test extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+        final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("PoolSize", "0");
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         statefulContainerInfo.properties.setProperty("Frequency", "0");
         assembler.createContainer(statefulContainerInfo);
 
-        EjbJar ejbJar = new EjbJar();
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
         bean.setHomeAndRemote(TargetHome.class, Target.class);
 
         assembler.createApplication(config.configureApplication(new EjbModule(getClass().getClassLoader(), getClass().getSimpleName(), "test", ejbJar, null)));
 
         calls.clear();
 
-        InitialContext ctx = new InitialContext();
-        TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
+        final InitialContext ctx = new InitialContext();
+        final TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
         assertNotNull(home);
 
-        Target target = home.create("Fuzz");
+        final Target target = home.create("Fuzz");
         assertNotNull(target);
 
-        String name = target.getName();
+        final String name = target.getName();
         assertEquals("Fuzz", name);
 
         target.remove();
@@ -90,8 +90,8 @@ public class Compat3to2Test extends TestCase {
 
     }
 
-    private void assertCalls(Call... expectedCalls) {
-        List expected = Arrays.asList(expectedCalls);
+    private void assertCalls(final Call... expectedCalls) {
+        final List expected = Arrays.asList(expectedCalls);
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
@@ -123,7 +123,7 @@ public class Compat3to2Test extends TestCase {
         }
 
         @Init
-        public void beanCreate(String name) throws CreateException {
+        public void beanCreate(final String name) throws CreateException {
             calls.add(Call.EjbCreate);
             this.name = name;
         }
@@ -157,9 +157,9 @@ public class Compat3to2Test extends TestCase {
         String getName();
     }
 
-    private String join(String delimeter, List items) {
-        StringBuilder sb = new StringBuilder();
-        for (Object item : items) {
+    private String join(final String delimeter, final List items) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

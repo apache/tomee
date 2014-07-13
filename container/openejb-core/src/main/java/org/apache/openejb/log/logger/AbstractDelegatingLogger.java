@@ -30,10 +30,10 @@ import java.util.logging.Logger;
 /**
  * java.util.logging.Logger implementation delegating to another framework.
  * All methods can be used except:
- *   setLevel
- *   addHandler / getHandlers
- *   setParent / getParent
- *   setUseParentHandlers / getUseParentHandlers
+ * setLevel
+ * addHandler / getHandlers
+ * setParent / getParent
+ * setUseParentHandlers / getUseParentHandlers
  *
  * @author gnodet
  */
@@ -59,7 +59,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
     public void log(final Level level, final String msg, final Object param1) {
         if (isLoggable(level)) {
             final LogRecord lr = new LogRecord(level, msg);
-            final Object[] params = {param1 };
+            final Object[] params = {param1};
             lr.setParameters(params);
             doLog(lr);
         }
@@ -95,7 +95,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
             final LogRecord lr = new LogRecord(level, msg);
             lr.setSourceClassName(sourceClass);
             lr.setSourceMethodName(sourceMethod);
-            final Object[] params = {param1 };
+            final Object[] params = {param1};
             lr.setParameters(params);
             doLog(lr);
         }
@@ -136,7 +136,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
             final LogRecord lr = new LogRecord(level, msg);
             lr.setSourceClassName(sourceClass);
             lr.setSourceMethodName(sourceMethod);
-            final Object[] params = {param1 };
+            final Object[] params = {param1};
             lr.setParameters(params);
             doLog(lr, bundleName);
         }
@@ -172,7 +172,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
 
     public void entering(final String sourceClass, final String sourceMethod, final Object param1) {
         if (isLoggable(Level.FINER)) {
-            final Object[] params = { param1 };
+            final Object[] params = {param1};
             logp(Level.FINER, sourceClass, sourceMethod, "ENTRY {0}", params);
         }
     }
@@ -202,7 +202,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
 
     public void exiting(final String sourceClass, final String sourceMethod, final Object result) {
         if (isLoggable(Level.FINER)) {
-            final Object[] params = { result };
+            final Object[] params = {result};
             logp(Level.FINER, sourceClass, sourceMethod, "RETURN {0}", params);
         }
     }
@@ -373,7 +373,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
                 return format;
             }
             if (format.indexOf("{0") >= 0 || format.indexOf("{1") >= 0
-                    || format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
+                || format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
                 return MessageFormat.format(format, parameters);
             }
             return format;
@@ -385,11 +385,9 @@ public abstract class AbstractDelegatingLogger extends Logger {
     /**
      * Load the specified resource bundle
      *
-     * @param resourceBundleName
-     *            the name of the resource bundle to load, cannot be null
+     * @param resourceBundleName the name of the resource bundle to load, cannot be null
      * @return the loaded resource bundle.
-     * @throws MissingResourceException
-     *             If the specified resource bundle can not be loaded.
+     * @throws MissingResourceException If the specified resource bundle can not be loaded.
      */
     static ResourceBundle loadResourceBundle(final String resourceBundleName) {
         // try context class loader to load the resource

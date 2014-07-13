@@ -35,7 +35,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-@SuppressWarnings({ "UnusedDeclaration" })
+@SuppressWarnings({"UnusedDeclaration"})
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
 
     private static final ReentrantLock lock = new ReentrantLock();
@@ -77,7 +77,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     private void setJndiXaDataSource(final String xaDataSource) {
         setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate
-                XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
+            XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
 
         if (getTransactionManager() == null) {
             setTransactionManager(OpenEJB.getTransactionManager());

@@ -32,7 +32,7 @@ public class PersistenceModule implements DeploymentModule {
     private Persistence persistence;
     private final Set<String> watchedResources = new TreeSet<String>();
     private URI uri;
-    private AppModule appModule;
+    private final AppModule appModule;
 
     public PersistenceModule(final String rootUrl, final Persistence persistence) {
         this(null, rootUrl, persistence);
@@ -106,8 +106,8 @@ public class PersistenceModule implements DeploymentModule {
     @Override
     public String toString() {
         return "PersistenceModule{" +
-                "rootUrl='" + rootUrl + '\'' +
-                '}';
+            "rootUrl='" + rootUrl + '\'' +
+            '}';
     }
 
     public boolean isStandaloneModule() {
@@ -115,6 +115,6 @@ public class PersistenceModule implements DeploymentModule {
     }
 
     public void setStandaloneModule(final boolean isStandalone) {
-       //do nothing        
+        //do nothing
     }
 }

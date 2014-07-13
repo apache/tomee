@@ -25,7 +25,7 @@ import javax.interceptor.InvocationContext;
 public class ClassLevelInterceptorTwo {
 
     @AroundInvoke
-    protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
+    protected Object businessMethodInterceptor(final InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 

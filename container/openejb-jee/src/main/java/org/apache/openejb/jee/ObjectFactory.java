@@ -66,7 +66,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Application }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "application")
-    public JAXBElement<Application> createApplication(Application value) {
+    public JAXBElement<Application> createApplication(final Application value) {
         return new JAXBElement<Application>(_Application_QNAME, Application.class, null, value);
     }
 
@@ -74,7 +74,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ApplicationClient }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "application-client")
-    public JAXBElement<ApplicationClient> createApplicationClient(ApplicationClient value) {
+    public JAXBElement<ApplicationClient> createApplicationClient(final ApplicationClient value) {
         return new JAXBElement<ApplicationClient>(_ApplicationClient_QNAME, ApplicationClient.class, null, value);
     }
 
@@ -82,7 +82,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link EjbJar }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-jar")
-    public JAXBElement<EjbJar> createEjbJar(EjbJar value) {
+    public JAXBElement<EjbJar> createEjbJar(final EjbJar value) {
         return new JAXBElement<EjbJar>(_EjbJar_QNAME, EjbJar.class, null, value);
     }
 
@@ -90,7 +90,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relation-name", scope = EjbRelation.class)
-    public JAXBElement<String> createEjbRelationTypeEjbRelationName(String value) {
+    public JAXBElement<String> createEjbRelationTypeEjbRelationName(final String value) {
         return new JAXBElement<String>(_EjbRelationTypeEjbRelationName_QNAME, String.class, EjbRelation.class, value);
     }
 
@@ -98,7 +98,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link EjbRelationshipRole }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "ejb-relationship-role", scope = EjbRelation.class)
-    public JAXBElement<EjbRelationshipRole> createEjbRelationTypeEjbRelationshipRole(EjbRelationshipRole value) {
+    public JAXBElement<EjbRelationshipRole> createEjbRelationTypeEjbRelationshipRole(final EjbRelationshipRole value) {
         return new JAXBElement<EjbRelationshipRole>(_EjbRelationTypeEjbRelationshipRole_QNAME, EjbRelationshipRole.class, EjbRelation.class, value);
     }
 
@@ -106,71 +106,64 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Text }{@code >}}
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "description", scope = EjbRelation.class)
-    public JAXBElement<Text> createEjbRelationTypeDescription(Text value) {
+    public JAXBElement<Text> createEjbRelationTypeDescription(final Text value) {
         return new JAXBElement<Text>(_EjbRelationTypeDescription_QNAME, Text.class, EjbRelation.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "http-method", scope = WebResourceCollection.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createWebResourceCollectionTypeHttpMethod(String value) {
+    public JAXBElement<String> createWebResourceCollectionTypeHttpMethod(final String value) {
         return new JAXBElement<String>(_WebResourceCollectionTypeHttpMethod_QNAME, String.class, WebResourceCollection.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WebApp }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "web-app")
-    public JAXBElement<WebApp> createWebApp(WebApp value) {
+    public JAXBElement<WebApp> createWebApp(final WebApp value) {
         return new JAXBElement<WebApp>(_WebApp_QNAME, WebApp.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TldTaglib }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "taglib")
-    public JAXBElement<TldTaglib> createTldTaglib(TldTaglib value) {
+    public JAXBElement<TldTaglib> createTldTaglib(final TldTaglib value) {
         return new JAXBElement<TldTaglib>(_TldTaglib_QNAME, TldTaglib.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Connector }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "connector")
-    public JAXBElement<Connector> createConnector(Connector value) {
+    public JAXBElement<Connector> createConnector(final Connector value) {
         return new JAXBElement<Connector>(_Connector_QNAME, Connector.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link JavaWsdlMapping }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "java-wsdl-mapping")
-    public JAXBElement<JavaWsdlMapping> createConnector(JavaWsdlMapping value) {
+    public JAXBElement<JavaWsdlMapping> createConnector(final JavaWsdlMapping value) {
         return new JAXBElement<JavaWsdlMapping>(_JavaWsdlMapping_QNAME, JavaWsdlMapping.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Webservices }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "webservices")
-    public JAXBElement<Webservices> createConnector(Webservices value) {
+    public JAXBElement<Webservices> createConnector(final Webservices value) {
         return new JAXBElement<Webservices>(_Webservices_QNAME, Webservices.class, null, value);
     }
-    
+
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FacesConfig }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "faces-config")
-    public JAXBElement<FacesConfig> createFacesConfig(FacesConfig value) {
+    public JAXBElement<FacesConfig> createFacesConfig(final FacesConfig value) {
         return new JAXBElement<FacesConfig>(_FacesConfig_QNAME, FacesConfig.class, null, value);
     }
 }

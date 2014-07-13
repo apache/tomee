@@ -36,14 +36,14 @@ public class JavaLookupTest extends TestCase {
 
     public void test() throws Exception {
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
         assertTrue(context.lookup("java:openejb/TransactionManager") instanceof TransactionManager);
 
         assertTrue(context.lookup("java:comp/TransactionManager") instanceof TransactionManager);
@@ -56,15 +56,15 @@ public class JavaLookupTest extends TestCase {
 
     public void testLinking() throws Exception {
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
-        Context javaContext = (Context) context.lookup("java:");
+        final Context javaContext = (Context) context.lookup("java:");
 
         javaContext.bind("java:TransactionManager", new JndiUrlReference("java:comp/TransactionManager"));
         javaContext.bind("java:TransactionManagerLink", new LinkRef("java:comp/TransactionManager"));

@@ -31,7 +31,7 @@ import javax.ejb.Singleton;
 public class PermitAllWithDenyAllOnClassTest {
     @Module
     public Class<?>[] beans() {
-        return new Class<?>[] { DenyAllow.class, AllowDeny.class };
+        return new Class<?>[]{DenyAllow.class, AllowDeny.class};
     }
 
     @EJB

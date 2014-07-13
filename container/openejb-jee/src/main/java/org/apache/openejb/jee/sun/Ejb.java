@@ -109,7 +109,7 @@ public class Ejb {
     @XmlElement(name = "mdb-resource-adapter")
     protected MdbResourceAdapter mdbResourceAdapter;
     @XmlElement(name = "webservice-endpoint")
-    protected KeyedCollection<String,WebserviceEndpoint> webserviceEndpoint;
+    protected KeyedCollection<String, WebserviceEndpoint> webserviceEndpoint;
     @XmlElement(name = "flush-at-end-of-method")
     protected FlushAtEndOfMethod flushAtEndOfMethod;
     @XmlElement(name = "checkpointed-methods")
@@ -121,7 +121,7 @@ public class Ejb {
         return availabilityEnabled;
     }
 
-    public void setAvailabilityEnabled(String value) {
+    public void setAvailabilityEnabled(final String value) {
         this.availabilityEnabled = value;
     }
 
@@ -129,7 +129,7 @@ public class Ejb {
         return ejbName;
     }
 
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -137,7 +137,7 @@ public class Ejb {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
@@ -180,7 +180,7 @@ public class Ejb {
         return passByReference;
     }
 
-    public void setPassByReference(String value) {
+    public void setPassByReference(final String value) {
         this.passByReference = value;
     }
 
@@ -188,7 +188,7 @@ public class Ejb {
         return cmp;
     }
 
-    public void setCmp(Cmp value) {
+    public void setCmp(final Cmp value) {
         this.cmp = value;
     }
 
@@ -196,7 +196,7 @@ public class Ejb {
         return principal;
     }
 
-    public void setPrincipal(Principal value) {
+    public void setPrincipal(final Principal value) {
         this.principal = value;
     }
 
@@ -204,7 +204,7 @@ public class Ejb {
         return mdbConnectionFactory;
     }
 
-    public void setMdbConnectionFactory(MdbConnectionFactory value) {
+    public void setMdbConnectionFactory(final MdbConnectionFactory value) {
         this.mdbConnectionFactory = value;
     }
 
@@ -212,7 +212,7 @@ public class Ejb {
         return jmsDurableSubscriptionName;
     }
 
-    public void setJmsDurableSubscriptionName(String value) {
+    public void setJmsDurableSubscriptionName(final String value) {
         this.jmsDurableSubscriptionName = value;
     }
 
@@ -220,7 +220,7 @@ public class Ejb {
         return jmsMaxMessagesLoad;
     }
 
-    public void setJmsMaxMessagesLoad(String value) {
+    public void setJmsMaxMessagesLoad(final String value) {
         this.jmsMaxMessagesLoad = value;
     }
 
@@ -228,7 +228,7 @@ public class Ejb {
         return iorSecurityConfig;
     }
 
-    public void setIorSecurityConfig(IorSecurityConfig value) {
+    public void setIorSecurityConfig(final IorSecurityConfig value) {
         this.iorSecurityConfig = value;
     }
 
@@ -236,7 +236,7 @@ public class Ejb {
         return isReadOnlyBean;
     }
 
-    public void setIsReadOnlyBean(String value) {
+    public void setIsReadOnlyBean(final String value) {
         this.isReadOnlyBean = value;
     }
 
@@ -244,7 +244,7 @@ public class Ejb {
         return refreshPeriodInSeconds;
     }
 
-    public void setRefreshPeriodInSeconds(String value) {
+    public void setRefreshPeriodInSeconds(final String value) {
         this.refreshPeriodInSeconds = value;
     }
 
@@ -252,7 +252,7 @@ public class Ejb {
         return commitOption;
     }
 
-    public void setCommitOption(String value) {
+    public void setCommitOption(final String value) {
         this.commitOption = value;
     }
 
@@ -260,7 +260,7 @@ public class Ejb {
         return cmtTimeoutInSeconds;
     }
 
-    public void setCmtTimeoutInSeconds(String value) {
+    public void setCmtTimeoutInSeconds(final String value) {
         this.cmtTimeoutInSeconds = value;
     }
 
@@ -268,7 +268,7 @@ public class Ejb {
         return useThreadPoolId;
     }
 
-    public void setUseThreadPoolId(String value) {
+    public void setUseThreadPoolId(final String value) {
         this.useThreadPoolId = value;
     }
 
@@ -276,7 +276,7 @@ public class Ejb {
         return genClasses;
     }
 
-    public void setGenClasses(GenClasses value) {
+    public void setGenClasses(final GenClasses value) {
         this.genClasses = value;
     }
 
@@ -284,7 +284,7 @@ public class Ejb {
         return beanPool;
     }
 
-    public void setBeanPool(BeanPool value) {
+    public void setBeanPool(final BeanPool value) {
         this.beanPool = value;
     }
 
@@ -292,7 +292,7 @@ public class Ejb {
         return beanCache;
     }
 
-    public void setBeanCache(BeanCache value) {
+    public void setBeanCache(final BeanCache value) {
         this.beanCache = value;
     }
 
@@ -300,20 +300,20 @@ public class Ejb {
         return mdbResourceAdapter;
     }
 
-    public void setMdbResourceAdapter(MdbResourceAdapter value) {
+    public void setMdbResourceAdapter(final MdbResourceAdapter value) {
         this.mdbResourceAdapter = value;
     }
 
     public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
         }
         return this.webserviceEndpoint;
     }
 
-    public Map<String,WebserviceEndpoint> getWebserviceEndpointMap() {
+    public Map<String, WebserviceEndpoint> getWebserviceEndpointMap() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
         }
         return this.webserviceEndpoint.toMap();
     }
@@ -322,7 +322,7 @@ public class Ejb {
         return flushAtEndOfMethod;
     }
 
-    public void setFlushAtEndOfMethod(FlushAtEndOfMethod value) {
+    public void setFlushAtEndOfMethod(final FlushAtEndOfMethod value) {
         this.flushAtEndOfMethod = value;
     }
 
@@ -330,7 +330,7 @@ public class Ejb {
         return checkpointedMethods;
     }
 
-    public void setCheckpointedMethods(String value) {
+    public void setCheckpointedMethods(final String value) {
         this.checkpointedMethods = value;
     }
 
@@ -338,7 +338,7 @@ public class Ejb {
         return checkpointAtEndOfMethod;
     }
 
-    public void setCheckpointAtEndOfMethod(CheckpointAtEndOfMethod value) {
+    public void setCheckpointAtEndOfMethod(final CheckpointAtEndOfMethod value) {
         this.checkpointAtEndOfMethod = value;
     }
 }

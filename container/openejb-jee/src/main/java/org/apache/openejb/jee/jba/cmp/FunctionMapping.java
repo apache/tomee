@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -59,11 +57,9 @@ public class FunctionMapping {
 
     /**
      * Gets the value of the functionName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FunctionName }
-     *     
+     *
+     * @return possible object is
+     * {@link FunctionName }
      */
     public FunctionName getFunctionName() {
         return functionName;
@@ -71,23 +67,19 @@ public class FunctionMapping {
 
     /**
      * Sets the value of the functionName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FunctionName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FunctionName }
      */
-    public void setFunctionName(FunctionName value) {
+    public void setFunctionName(final FunctionName value) {
         this.functionName = value;
     }
 
     /**
      * Gets the value of the functionSql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FunctionSql }
-     *     
+     *
+     * @return possible object is
+     * {@link FunctionSql }
      */
     public FunctionSql getFunctionSql() {
         return functionSql;
@@ -95,13 +87,11 @@ public class FunctionMapping {
 
     /**
      * Sets the value of the functionSql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FunctionSql }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FunctionSql }
      */
-    public void setFunctionSql(FunctionSql value) {
+    public void setFunctionSql(final FunctionSql value) {
         this.functionSql = value;
     }
 

@@ -21,7 +21,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class JndiUrlReference extends Reference {
-    private String jndiName;
+    private final String jndiName;
 
     public JndiUrlReference(final String jndiName) {
         this.jndiName = jndiName;

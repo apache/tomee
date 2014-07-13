@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Validator$JAXB
-        extends JAXBObject<Validator> {
+    extends JAXBObject<Validator> {
 
 
     public Validator$JAXB() {
         super(Validator.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "validatorType".intern()), Text$JAXB.class, ParamValue$JAXB.class);
     }
 
-    public static Validator readValidator(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Validator readValidator(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeValidator(XoXMLStreamWriter writer, Validator validator, RuntimeContext context)
-            throws Exception {
+    public static void writeValidator(final XoXMLStreamWriter writer, final Validator validator, final RuntimeContext context)
+        throws Exception {
         _write(writer, validator, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Validator validator, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Validator validator, final RuntimeContext context)
+        throws Exception {
         _write(writer, validator, context);
     }
 
-    public final static Validator _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Validator _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,14 +72,14 @@ public class Validator$JAXB
             context = new RuntimeContext();
         }
 
-        Validator validator = new Validator();
+        final Validator validator = new Validator();
         context.beforeUnmarshal(validator, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<ParamValue> initParam = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("validatorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Validator.class);
@@ -87,10 +87,10 @@ public class Validator$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, validator);
                 validator.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,22 +99,22 @@ public class Validator$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("validator-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: validatorClass
-                String validatorClassRaw = elementReader.getElementAsString();
+                final String validatorClassRaw = elementReader.getElementAsString();
 
-                String validatorClass;
+                final String validatorClass;
                 try {
                     validatorClass = Adapters.collapsedStringAdapterAdapter.unmarshal(validatorClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,7 +122,7 @@ public class Validator$JAXB
                 validator.validatorClass = validatorClass;
             } else if (("init-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initParam
-                ParamValue initParamItem = readParamValue(elementReader, context);
+                final ParamValue initParamItem = readParamValue(elementReader, context);
                 if (initParam == null) {
                     initParam = validator.initParam;
                     if (initParam != null) {
@@ -139,7 +139,7 @@ public class Validator$JAXB
         if (descriptions != null) {
             try {
                 validator.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Validator.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -152,13 +152,13 @@ public class Validator$JAXB
         return validator;
     }
 
-    public final Validator read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Validator read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Validator validator, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Validator validator, RuntimeContext context)
+        throws Exception {
         if (validator == null) {
             writer.writeXsiNil();
             return;
@@ -168,7 +168,7 @@ public class Validator$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Validator.class != validator.getClass()) {
             context.unexpectedSubclass(writer, validator, Validator.class);
             return;
@@ -178,12 +178,12 @@ public class Validator$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = validator.id;
+        final String idRaw = validator.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(validator, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -193,11 +193,11 @@ public class Validator$JAXB
         Text[] descriptions = null;
         try {
             descriptions = validator.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(validator, "descriptions", Validator.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -209,11 +209,11 @@ public class Validator$JAXB
         }
 
         // ELEMENT: validatorClass
-        String validatorClassRaw = validator.validatorClass;
+        final String validatorClassRaw = validator.validatorClass;
         String validatorClass = null;
         try {
             validatorClass = Adapters.collapsedStringAdapterAdapter.marshal(validatorClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(validator, "validatorClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (validatorClass != null) {
@@ -225,9 +225,9 @@ public class Validator$JAXB
         }
 
         // ELEMENT: initParam
-        List<ParamValue> initParam = validator.initParam;
+        final List<ParamValue> initParam = validator.initParam;
         if (initParam != null) {
-            for (ParamValue initParamItem : initParam) {
+            for (final ParamValue initParamItem : initParam) {
                 if (initParamItem != null) {
                     writer.writeStartElement(prefix, "init-param", "http://java.sun.com/xml/ns/javaee");
                     writeParamValue(writer, initParamItem, context);

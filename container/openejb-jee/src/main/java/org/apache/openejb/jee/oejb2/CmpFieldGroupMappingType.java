@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for cmp-field-group-mappingType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="cmp-field-group-mappingType">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmp-field-group-mappingType", propOrder = {
@@ -57,11 +55,9 @@ public class CmpFieldGroupMappingType {
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupName() {
         return groupName;
@@ -69,23 +65,19 @@ public class CmpFieldGroupMappingType {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupName(String value) {
+    public void setGroupName(final String value) {
         this.groupName = value;
     }
 
     /**
      * Gets the value of the cmpFieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCmpFieldName() {
         return cmpFieldName;
@@ -93,13 +85,11 @@ public class CmpFieldGroupMappingType {
 
     /**
      * Sets the value of the cmpFieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCmpFieldName(String value) {
+    public void setCmpFieldName(final String value) {
         this.cmpFieldName = value;
     }
 

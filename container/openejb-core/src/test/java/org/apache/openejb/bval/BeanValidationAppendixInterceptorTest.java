@@ -64,19 +64,19 @@ public class BeanValidationAppendixInterceptorTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
     }
 
     @Stateless
     public static class ManagerBean implements Manager {
-        public String drive(Person person, int age) {
+        public String drive(final Person person, final int age) {
             return "vroom";
         }
 
-        public Person create(String name) {
-            Person person = new Person();
+        public Person create(final String name) {
+            final Person person = new Person();
             person.setName(name);
             return person;
         }
@@ -84,12 +84,12 @@ public class BeanValidationAppendixInterceptorTest {
 
     @Stateless
     public static class ManagerBean2 implements Manager, ManagerRemote {
-        public String drive(Person person, int age) {
+        public String drive(final Person person, final int age) {
             return "vroom";
         }
 
-        public Person create(String name) {
-            Person person = new Person();
+        public Person create(final String name) {
+            final Person person = new Person();
             person.setName(name);
             return person;
         }
@@ -98,14 +98,14 @@ public class BeanValidationAppendixInterceptorTest {
     @Stateless
     @LocalBean
     public static class ManagerLocalBean {
-        public void foo(@NotNull String bar) {
+        public void foo(@NotNull final String bar) {
             // no-op
         }
     }
 
     @Test
     public void valid() {
-        Person p = mgr.create("foo");
+        final Person p = mgr.create("foo");
         mgr.drive(p, 18);
     }
 
@@ -115,37 +115,37 @@ public class BeanValidationAppendixInterceptorTest {
         try {
             p = mgr.create(null);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
         try {
             mgr.drive(p, 17);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
     }
 
     @Test
     public void validRemote() {
-        Person p = mgrRemote.create(null);
+        final Person p = mgrRemote.create(null);
         mgrRemote.drive(p, 26);
         mgrRemote.drive(p, 17);
     }
 
     @Test
     public void notValidRemote() {
-        Person p = mgrRemote.create("bar");
+        final Person p = mgrRemote.create("bar");
         try {
             mgrRemote.drive(p, 15);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
     }
@@ -156,9 +156,9 @@ public class BeanValidationAppendixInterceptorTest {
         try {
             mgrLB.foo(null);
             fail();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertTrue(e.getCause() instanceof ConstraintViolationException);
-            ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
+            final ConstraintViolationException cvs = (ConstraintViolationException) e.getCause();
             assertEquals(1, cvs.getConstraintViolations().size());
         }
     }
@@ -179,7 +179,7 @@ public class BeanValidationAppendixInterceptorTest {
 
     @Module
     public EjbJar app() throws Exception {
-        EjbJar ejbJar = new EjbJar("bval-interceptor");
+        final EjbJar ejbJar = new EjbJar("bval-interceptor");
 
         final StatelessBean bean1 = new StatelessBean(ManagerBean.class);
         bean1.addBusinessLocal(Manager.class);

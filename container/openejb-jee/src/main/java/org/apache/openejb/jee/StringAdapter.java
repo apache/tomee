@@ -20,11 +20,11 @@ package org.apache.openejb.jee;
  * @version $Rev$ $Date$
  */
 public class StringAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<java.lang.String, java.lang.String> {
-    public String unmarshal(String s) throws Exception {
+    public String unmarshal(final String s) throws Exception {
         return s;
     }
 
-    public String marshal(String s) throws Exception {
+    public String marshal(final String s) throws Exception {
         return s;
     }
 }

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for field-map complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="field-map">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "field-map", propOrder = {
@@ -78,11 +76,9 @@ public class FieldMap {
 
     /**
      * Gets the value of the cmpField property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCmpField() {
         return cmpField;
@@ -90,23 +86,19 @@ public class FieldMap {
 
     /**
      * Sets the value of the cmpField property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCmpField(String value) {
+    public void setCmpField(final String value) {
         this.cmpField = value;
     }
 
     /**
      * Gets the value of the dbmsColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDbmsColumn() {
         return dbmsColumn;
@@ -114,23 +106,19 @@ public class FieldMap {
 
     /**
      * Sets the value of the dbmsColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDbmsColumn(String value) {
+    public void setDbmsColumn(final String value) {
         this.dbmsColumn = value;
     }
 
     /**
      * Gets the value of the dbmsColumnType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDbmsColumnType() {
         return dbmsColumnType;
@@ -138,23 +126,19 @@ public class FieldMap {
 
     /**
      * Sets the value of the dbmsColumnType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDbmsColumnType(String value) {
+    public void setDbmsColumnType(final String value) {
         this.dbmsColumnType = value;
     }
 
     /**
      * Gets the value of the dbmsDefaultValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getDbmsDefaultValue() {
         return dbmsDefaultValue;
@@ -162,23 +146,19 @@ public class FieldMap {
 
     /**
      * Sets the value of the dbmsDefaultValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDbmsDefaultValue(Boolean value) {
+    public void setDbmsDefaultValue(final Boolean value) {
         this.dbmsDefaultValue = value;
     }
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupName() {
         return groupName;
@@ -186,23 +166,19 @@ public class FieldMap {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupName(String value) {
+    public void setGroupName(final String value) {
         this.groupName = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -210,13 +186,11 @@ public class FieldMap {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

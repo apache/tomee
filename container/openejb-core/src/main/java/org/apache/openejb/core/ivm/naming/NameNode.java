@@ -38,6 +38,7 @@ public class NameNode implements Serializable {
     private Object myObject;
     private transient IvmContext myContext;
     private boolean unbound;
+
     public NameNode(final NameNode parent, final ParsedName name, final Object obj, final NameNode parentTree) {
         atomicName = name.getComponent();
         atomicHash = name.getComponentHashCode();
@@ -47,7 +48,7 @@ public class NameNode implements Serializable {
             subTree = new NameNode(this, name, obj, this);
         } else if (obj instanceof Context) {
             myObject = new Federation();
-            ((Federation)myObject).add((Context) obj);
+            ((Federation) myObject).add((Context) obj);
         } else {
             myObject = obj;
         }
@@ -82,7 +83,7 @@ public class NameNode implements Serializable {
                         n = e;
                     }
                 }
-            } else if (!unbound){
+            } else if (!unbound) {
                 return getBinding();
             }
         } else if (compareResult == ParsedName.IS_LESS) {
@@ -101,7 +102,7 @@ public class NameNode implements Serializable {
             name.reset(pos);
             final String nameInContext = name.remaining().path();
             Federation f = null;
-            for (final Context c: (Federation)myObject) {
+            for (final Context c : (Federation) myObject) {
                 try {
                     final Object o = c.lookup(nameInContext);
                     if (o instanceof Context) {
@@ -148,7 +149,7 @@ public class NameNode implements Serializable {
                     } else {
                         myObject = new Federation();
                     }
-                    ((Federation)myObject).add((Context) obj);
+                    ((Federation) myObject).add((Context) obj);
                 } else {
                     if (subTree != null) {
                         throw new NameAlreadyBoundException(name.toString());
@@ -176,19 +177,19 @@ public class NameNode implements Serializable {
         }
     }
 
-    public void tree(final String indent, final PrintStream out){
+    public void tree(final String indent, final PrintStream out) {
         out.println(atomicName + " @ " + atomicHash + (myObject != null ? " [" + myObject + "]" : ""));
 
         if (grtrTree != null) {
-            out.print(indent +" + ");
+            out.print(indent + " + ");
             grtrTree.tree(indent + "    ", out);
         }
         if (lessTree != null) {
-            out.print(indent +" - ");
+            out.print(indent + " - ");
             lessTree.tree(indent + "    ", out);
         }
         if (subTree != null) {
-            out.print(indent +" - ");
+            out.print(indent + " - ");
             subTree.tree(indent + "    ", out);
         }
     }
@@ -214,12 +215,12 @@ public class NameNode implements Serializable {
         // we got rid of the prefix usage in lookup, we could
         // kill this if block and would have more balanced
         // btrees
-        if (node.parent == this){
+        if (node.parent == this) {
             compareResult = ParsedName.IS_EQUAL;
         }
 
         if (compareResult == ParsedName.IS_EQUAL) {
-            if (subTree == null){
+            if (subTree == null) {
                 subTree = node;
                 subTree.parentTree = this;
             } else {
@@ -229,8 +230,7 @@ public class NameNode implements Serializable {
             if (lessTree == null) {
                 lessTree = node;
                 lessTree.parentTree = this;
-            }
-            else{
+            } else {
                 lessTree.bind(node);
             }
         } else {//ParsedName.IS_GREATER ...
@@ -271,9 +271,9 @@ public class NameNode implements Serializable {
     private void unbind(final NameNode node) {
         if (subTree == node) {
             subTree = null;
-        } else if (grtrTree == node){
+        } else if (grtrTree == node) {
             grtrTree = null;
-        } else if (lessTree == node){
+        } else if (lessTree == node) {
             lessTree = null;
         }
         rebalance(this, node);
@@ -310,7 +310,7 @@ public class NameNode implements Serializable {
             return;
         }
 
-        if (!hasChildren() && myObject == null){
+        if (!hasChildren() && myObject == null) {
             parentTree.unbind(this);
         }
     }
@@ -340,10 +340,10 @@ public class NameNode implements Serializable {
         if (grtrTree != null) {
             grtrTree.clearCache();
         }
-        if (lessTree != null){
+        if (lessTree != null) {
             lessTree.clearCache();
         }
-        if (subTree != null){
+        if (subTree != null) {
             subTree.clearCache();
         }
     }
@@ -353,8 +353,7 @@ public class NameNode implements Serializable {
             bind(name, null);
             name.reset();
             return (IvmContext) resolve(name);
-        }
-        catch (final NameNotFoundException exception) {
+        } catch (final NameNotFoundException exception) {
             exception.printStackTrace();
             throw new OpenEJBRuntimeException(exception);
         }
@@ -384,18 +383,21 @@ public class NameNode implements Serializable {
     @Override
     public String toString() {
         return "NameNode{" +
-                "atomicName='" + atomicName + '\'' +
-                ", atomicHash=" + atomicHash +
-                ", lessTree=" + (lessTree != null ? lessTree.atomicName : "null") +
-                ", grtrTree=" + (grtrTree != null ? grtrTree.atomicName : "null") +
-                ", subTree=" + (subTree != null ? subTree.atomicName : "null") +
-                ", parentTree=" + (parentTree != null ? parentTree.atomicName : "null") +
-                ", parent=" + (parent != null ? parent.atomicName : "null") +
-                ", myObject=" + myObject +
-                ", myContext=" + myContext +
-                ", unbound=" + unbound +
-                '}';
+            "atomicName='" + atomicName + '\'' +
+            ", atomicHash=" + atomicHash +
+            ", lessTree=" + (lessTree != null ? lessTree.atomicName : "null") +
+            ", grtrTree=" + (grtrTree != null ? grtrTree.atomicName : "null") +
+            ", subTree=" + (subTree != null ? subTree.atomicName : "null") +
+            ", parentTree=" + (parentTree != null ? parentTree.atomicName : "null") +
+            ", parent=" + (parent != null ? parent.atomicName : "null") +
+            ", myObject=" + myObject +
+            ", myContext=" + myContext +
+            ", unbound=" + unbound +
+            '}';
     }
 
-    private static class Federation extends ArrayList<Context> {};
+    private static class Federation extends ArrayList<Context> {
+    }
+
+    ;
 }

@@ -207,14 +207,14 @@ public class ThreadContext {
     @Override
     public String toString() {
         return "ThreadContext{" +
-               "beanContext=" + beanContext.getId() +
-               ", primaryKey=" + primaryKey +
-               ", data=" + data.size() +
-               ", oldClassLoader=" + oldClassLoader +
-               ", currentOperation=" + currentOperation +
-               ", invokedInterface=" + invokedInterface +
-               ", transactionPolicy=" + transactionPolicy +
-               ", discardInstance=" + discardInstance +
-               '}';
+            "beanContext=" + beanContext.getId() +
+            ", primaryKey=" + primaryKey +
+            ", data=" + data.size() +
+            ", oldClassLoader=" + oldClassLoader +
+            ", currentOperation=" + currentOperation +
+            ", invokedInterface=" + invokedInterface +
+            ", transactionPolicy=" + transactionPolicy +
+            ", discardInstance=" + discardInstance +
+            '}';
     }
 }

@@ -77,7 +77,7 @@ public class EjbJarXmlTest extends TestCase {
         final Diff myDiff = new DetailedDiff(diff);
 
         final AtomicInteger differenceNumber = new AtomicInteger(0); // just to get an int wrapper for the test
-        myDiff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener(){
+        myDiff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener() {
             @Override
             public int differenceFound(final Difference difference) {
                 if (!difference.isRecoverable()) {

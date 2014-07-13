@@ -32,45 +32,45 @@ import javax.persistence.PersistenceContextType;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceContextUsageTest {
-    @Keys( { @Key(value = "persistenceContextExtented.nonStateful"), @Key(value = "persistenceContextRef.noPersistenceUnits", count = 3),
-            @Key(value = "persistenceContextAnnotation.onClassWithNoName"), @Key(value = "persistenceContextAnnotation.onEntityManagerFactory"),
-            @Key(value = "persistenceContextAnnotation.onNonEntityManager") })
+    @Keys({@Key(value = "persistenceContextExtented.nonStateful"), @Key(value = "persistenceContextRef.noPersistenceUnits", count = 3),
+        @Key(value = "persistenceContextAnnotation.onClassWithNoName"), @Key(value = "persistenceContextAnnotation.onEntityManagerFactory"),
+        @Key(value = "persistenceContextAnnotation.onNonEntityManager")})
     public EjbJar wrongUsage() throws OpenEJBException {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "persistenceContextRef.noUnitName"),@Key(value = "persistenceContextRef.noMatches") })
+    @Keys({@Key(value = "persistenceContextRef.noUnitName"), @Key(value = "persistenceContextRef.noMatches")})
     public AppModule noUnitName() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessOne.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        final AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
-        PersistenceUnit pu = new PersistenceUnit("fooUnit");
-        PersistenceUnit pu1 = new PersistenceUnit("fooUnit1");
-        PersistenceUnit pu2 = new PersistenceUnit("fooUnit");
-        org.apache.openejb.jee.jpa.unit.Persistence p = new org.apache.openejb.jee.jpa.unit.Persistence(pu, pu1, pu2);
-        PersistenceModule pm = new PersistenceModule("foo", p);
+        final PersistenceUnit pu = new PersistenceUnit("fooUnit");
+        final PersistenceUnit pu1 = new PersistenceUnit("fooUnit1");
+        final PersistenceUnit pu2 = new PersistenceUnit("fooUnit");
+        final org.apache.openejb.jee.jpa.unit.Persistence p = new org.apache.openejb.jee.jpa.unit.Persistence(pu, pu1, pu2);
+        final PersistenceModule pm = new PersistenceModule("foo", p);
         appModule.addPersistenceModule(pm);
         return appModule;
     }
 
-    @Keys( { @Key(value = "persistenceContextRef.vagueMatches") })
+    @Keys({@Key(value = "persistenceContextRef.vagueMatches")})
     public AppModule vagueMatches() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessTwo.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        final AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
-        PersistenceUnit pu = new PersistenceUnit("fooUnit");
-        org.apache.openejb.jee.jpa.unit.Persistence p = new org.apache.openejb.jee.jpa.unit.Persistence(pu);
-        PersistenceModule pm = new PersistenceModule("foo", p);
+        final PersistenceUnit pu = new PersistenceUnit("fooUnit");
+        final org.apache.openejb.jee.jpa.unit.Persistence p = new org.apache.openejb.jee.jpa.unit.Persistence(pu);
+        final PersistenceModule pm = new PersistenceModule("foo", p);
         appModule.getPersistenceModules().add(pm);
-        PersistenceUnit pu1 = new PersistenceUnit("fooUnit");
-        org.apache.openejb.jee.jpa.unit.Persistence p1 = new org.apache.openejb.jee.jpa.unit.Persistence(pu1);
-        PersistenceModule pm1 = new PersistenceModule("foo1", p1);
+        final PersistenceUnit pu1 = new PersistenceUnit("fooUnit");
+        final org.apache.openejb.jee.jpa.unit.Persistence p1 = new org.apache.openejb.jee.jpa.unit.Persistence(pu1);
+        final PersistenceModule pm1 = new PersistenceModule("foo1", p1);
         appModule.addPersistenceModule(pm1);
         return appModule;
     }
@@ -88,7 +88,7 @@ public class CheckPersistenceContextUsageTest {
     private static class FooStatelessOne {
         @PersistenceContext
         EntityManager em;
-        @PersistenceContext(unitName="wrongName")
+        @PersistenceContext(unitName = "wrongName")
         EntityManager em1;
     }
 

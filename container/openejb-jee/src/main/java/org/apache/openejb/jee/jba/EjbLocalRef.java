@@ -39,11 +39,9 @@ public class EjbLocalRef {
 
     /**
      * Gets the value of the ejbRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbRefName() {
         return ejbRefName;
@@ -51,23 +49,19 @@ public class EjbLocalRef {
 
     /**
      * Sets the value of the ejbRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbRefName(String value) {
+    public void setEjbRefName(final String value) {
         this.ejbRefName = value;
     }
 
     /**
      * Gets the value of the localJndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLocalJndiName() {
         return localJndiName;
@@ -75,13 +69,11 @@ public class EjbLocalRef {
 
     /**
      * Sets the value of the localJndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLocalJndiName(String value) {
+    public void setLocalJndiName(final String value) {
         this.localJndiName = value;
     }
 

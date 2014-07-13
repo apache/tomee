@@ -127,8 +127,8 @@ public class MdbContainer implements RpcContainer {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
-                    beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
-                    messageListenerInterface);
+                beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
+                messageListenerInterface);
         }
 
         // create the activation spec
@@ -137,7 +137,7 @@ public class MdbContainer implements RpcContainer {
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
         }
-        
+
         final Options options = new Options(beanContext.getProperties());
         final int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
@@ -191,7 +191,7 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    private ActivationSpec createActivationSpec(final BeanContext beanContext)throws OpenEJBException {
+    private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
         try {
             // initialize the object recipe
             final ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
@@ -225,11 +225,11 @@ public class MdbContainer implements RpcContainer {
             }
             // also try validating using Bean Validation if there is a Validator available in the context.
             try {
-                final Validator validator = (Validator)beanContext.getJndiContext().lookup("comp/Validator");
+                final Validator validator = (Validator) beanContext.getJndiContext().lookup("comp/Validator");
 
                 final Set generalSet = validator.validate(activationSpec);
                 if (!generalSet.isEmpty()) {
-                    throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet); 
+                    throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet);
                 }
             } catch (final NamingException e) {
                 logger.debug("No Validator bound to JNDI context");
@@ -251,11 +251,11 @@ public class MdbContainer implements RpcContainer {
             timerService.start();
         }
     }
-    
+
     public void stop(final BeanContext info) throws OpenEJBException {
         info.stop();
     }
-    
+
     public void undeploy(final BeanContext beanContext) throws OpenEJBException {
         if (!(beanContext instanceof BeanContext)) {
             return;
@@ -271,7 +271,7 @@ public class MdbContainer implements RpcContainer {
                     try {
                         server.unregisterMBean(objectName);
                     } catch (final Exception e) {
-                        logger.error("Unable to unregister MBean "+objectName);
+                        logger.error("Unable to unregister MBean " + objectName);
                     }
                 }
             }
@@ -351,7 +351,7 @@ public class MdbContainer implements RpcContainer {
 
         // verify the delivery method passed to beforeDeliver is the same method that was invoked
         if (!mdbCallContext.deliveryMethod.getName().equals(method.getName()) ||
-                !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
+            !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
             throw new IllegalStateException("Delivery method specified in beforeDelivery is not the delivery method called");
         }
 
@@ -393,12 +393,12 @@ public class MdbContainer implements RpcContainer {
     }
 
     private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
-            ApplicationException {
+        ApplicationException {
         final Object returnValue;
         try {
             final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
             final InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
-                    interceptors, ((Instance) instance).interceptors);
+                interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
             return returnValue;
         } catch (Throwable e) {

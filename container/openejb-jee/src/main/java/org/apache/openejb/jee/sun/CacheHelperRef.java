@@ -33,7 +33,7 @@ public class CacheHelperRef {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 }

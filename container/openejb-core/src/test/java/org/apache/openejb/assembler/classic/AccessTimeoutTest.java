@@ -40,8 +40,8 @@ public class AccessTimeoutTest extends TestCase {
     private Map<Method, MethodAttributeInfo> attributes;
 
     public void test() throws Exception {
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -49,13 +49,13 @@ public class AccessTimeoutTest extends TestCase {
         //TODO alternative to hack in CidBuilder to initialize if missing
 //        SystemInstance.get().setComponent(ThreadSingletonService.class, new ThreadSingletonServiceImpl(getClass().getClassLoader()));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(Color.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Red.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Crimson.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Scarlet.class));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         loadAttributes(ejbJarInfo, "Color");
@@ -65,19 +65,19 @@ public class AccessTimeoutTest extends TestCase {
         assertAttribute(1, TimeUnit.SECONDS, Color.class.getMethod("color", String.class));
         assertAttribute(1, TimeUnit.SECONDS, Color.class.getMethod("color", Boolean.class));
         assertAttribute(1, TimeUnit.SECONDS, Color.class.getMethod("color", Integer.class));
-        
+
         loadAttributes(ejbJarInfo, "Red");
 
         assertAttribute(2, TimeUnit.SECONDS, Red.class.getMethod("color"));
         assertNullAttribute(Red.class.getMethod("color", Object.class));
         assertAttribute(1, TimeUnit.SECONDS, Red.class.getMethod("color", String.class));
         assertAttribute(1, TimeUnit.SECONDS, Red.class.getMethod("color", Boolean.class));
-        assertAttribute(1, TimeUnit.SECONDS, Red.class.getMethod("color", Integer.class));   
-        
+        assertAttribute(1, TimeUnit.SECONDS, Red.class.getMethod("color", Integer.class));
+
         assertAttribute(1, TimeUnit.MINUTES, Red.class.getMethod("red"));
         assertNullAttribute(Red.class.getMethod("red", Object.class));
         assertNullAttribute(Red.class.getMethod("red", String.class));
-        
+
         loadAttributes(ejbJarInfo, "Crimson");
 
         assertAttribute(1, TimeUnit.HOURS, Crimson.class.getMethod("color"));
@@ -85,11 +85,11 @@ public class AccessTimeoutTest extends TestCase {
         assertAttribute(1, TimeUnit.HOURS, Crimson.class.getMethod("color", String.class));
         assertAttribute(1, TimeUnit.SECONDS, Crimson.class.getMethod("color", Boolean.class));
         assertAttribute(1, TimeUnit.SECONDS, Crimson.class.getMethod("color", Integer.class));
-        
+
         assertAttribute(1, TimeUnit.MINUTES, Crimson.class.getMethod("red"));
         assertNullAttribute(Crimson.class.getMethod("red", Object.class));
         assertNullAttribute(Crimson.class.getMethod("red", String.class));
-        
+
         assertAttribute(2, TimeUnit.HOURS, Crimson.class.getMethod("crimson"));
         assertAttribute(1, TimeUnit.HOURS, Crimson.class.getMethod("crimson", String.class));
 
@@ -100,36 +100,36 @@ public class AccessTimeoutTest extends TestCase {
         assertAttribute(1, TimeUnit.SECONDS, Scarlet.class.getMethod("color", String.class));
         assertAttribute(1, TimeUnit.SECONDS, Scarlet.class.getMethod("color", Boolean.class));
         assertAttribute(1, TimeUnit.SECONDS, Scarlet.class.getMethod("color", Integer.class));
-        
+
         assertAttribute(1, TimeUnit.MINUTES, Scarlet.class.getMethod("red"));
         assertNullAttribute(Scarlet.class.getMethod("red", Object.class));
         assertNullAttribute(Scarlet.class.getMethod("red", String.class));
-        
+
         assertAttribute(2, TimeUnit.DAYS, Scarlet.class.getMethod("scarlet"));
         assertAttribute(1, TimeUnit.DAYS, Scarlet.class.getMethod("scarlet", String.class));
     }
 
-    private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
-        ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+    private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
+        final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext beanContext = system.getBeanContext(deploymentId);
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
     }
 
-    private void assertAttribute(long time, TimeUnit unit, Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);   
-        assertTrue("Null timeout for " + method, info != null && info.accessTimeout != null);        
+    private void assertAttribute(final long time, final TimeUnit unit, final Method method) {
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
+        assertTrue("Null timeout for " + method, info != null && info.accessTimeout != null);
         assertEquals("Timeout time for " + method, time, info.accessTimeout.time);
         assertEquals("Timeout unit for " + method, unit, TimeUnit.valueOf(info.accessTimeout.unit));
     }
-    
-    private void assertNullAttribute(Method method) {
-        MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);        
+
+    private void assertNullAttribute(final Method method) {
+        final MethodConcurrencyInfo info = (MethodConcurrencyInfo) attributes.get(method);
         assertTrue("Non-null timeout for " + method, info == null || info.accessTimeout == null);
     }
-    
+
     @Local
     public static interface ColorLocal {
     }
@@ -148,23 +148,23 @@ public class AccessTimeoutTest extends TestCase {
 
 
         @AccessTimeout(value = 3, unit = TimeUnit.SECONDS)
-        public void color(Object o) {
+        public void color(final Object o) {
         }
 
-        public void color(String s) {
+        public void color(final String s) {
         }
 
-        public void color(Boolean b) {
+        public void color(final Boolean b) {
         }
 
-        public void color(Integer i) {
+        public void color(final Integer i) {
         }
     }
 
 
     public static class Red extends Color {
 
-        public void color(Object o) {
+        public void color(final Object o) {
             super.color(o);
         }
 
@@ -172,10 +172,10 @@ public class AccessTimeoutTest extends TestCase {
         public void red() {
         }
 
-        public void red(Object o) {
+        public void red(final Object o) {
         }
 
-        public void red(String s) {
+        public void red(final String s) {
         }
 
     }
@@ -187,14 +187,14 @@ public class AccessTimeoutTest extends TestCase {
         public void color() {
         }
 
-        public void color(String s) {
+        public void color(final String s) {
         }
 
         @AccessTimeout(value = 2, unit = TimeUnit.HOURS)
         public void crimson() {
         }
 
-        public void crimson(String s) {
+        public void crimson(final String s) {
         }
     }
 
@@ -205,7 +205,7 @@ public class AccessTimeoutTest extends TestCase {
         public void scarlet() {
         }
 
-        public void scarlet(String s) {
+        public void scarlet(final String s) {
         }
     }
 

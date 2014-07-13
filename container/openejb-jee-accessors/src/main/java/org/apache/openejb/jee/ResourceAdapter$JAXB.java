@@ -41,33 +41,33 @@ import static org.apache.openejb.jee.SecurityPermission$JAXB.readSecurityPermiss
 import static org.apache.openejb.jee.SecurityPermission$JAXB.writeSecurityPermission;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ResourceAdapter$JAXB
-        extends JAXBObject<ResourceAdapter> {
+    extends JAXBObject<ResourceAdapter> {
 
 
     public ResourceAdapter$JAXB() {
         super(ResourceAdapter.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "resourceadapterType".intern()), ConfigProperty$JAXB.class, OutboundResourceAdapter$JAXB.class, InboundResourceadapter$JAXB.class, AdminObject$JAXB.class, SecurityPermission$JAXB.class);
     }
 
-    public static ResourceAdapter readResourceAdapter(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ResourceAdapter readResourceAdapter(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeResourceAdapter(XoXMLStreamWriter writer, ResourceAdapter resourceAdapter, RuntimeContext context)
-            throws Exception {
+    public static void writeResourceAdapter(final XoXMLStreamWriter writer, final ResourceAdapter resourceAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, resourceAdapter, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ResourceAdapter resourceAdapter, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ResourceAdapter resourceAdapter, final RuntimeContext context)
+        throws Exception {
         _write(writer, resourceAdapter, context);
     }
 
-    public final static ResourceAdapter _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ResourceAdapter _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -78,7 +78,7 @@ public class ResourceAdapter$JAXB
             context = new RuntimeContext();
         }
 
-        ResourceAdapter resourceAdapter = new ResourceAdapter();
+        final ResourceAdapter resourceAdapter = new ResourceAdapter();
         context.beforeUnmarshal(resourceAdapter, LifecycleCallback.NONE);
 
         List<ConfigProperty> configProperty = null;
@@ -86,7 +86,7 @@ public class ResourceAdapter$JAXB
         List<SecurityPermission> securityPermission = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("resourceadapterType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ResourceAdapter.class);
@@ -94,10 +94,10 @@ public class ResourceAdapter$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, resourceAdapter);
                 resourceAdapter.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,15 +106,15 @@ public class ResourceAdapter$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("resourceadapter-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resourceAdapterClass
-                String resourceAdapterClassRaw = elementReader.getElementAsString();
+                final String resourceAdapterClassRaw = elementReader.getElementAsString();
 
-                String resourceAdapterClass;
+                final String resourceAdapterClass;
                 try {
                     resourceAdapterClass = Adapters.collapsedStringAdapterAdapter.unmarshal(resourceAdapterClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,7 +122,7 @@ public class ResourceAdapter$JAXB
                 resourceAdapter.resourceAdapterClass = resourceAdapterClass;
             } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configProperty
-                ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
+                final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {
                     configProperty = resourceAdapter.configProperty;
                     if (configProperty != null) {
@@ -134,15 +134,15 @@ public class ResourceAdapter$JAXB
                 configProperty.add(configPropertyItem);
             } else if (("outbound-resourceadapter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: outboundResourceAdapter
-                OutboundResourceAdapter outboundResourceAdapter = readOutboundResourceAdapter(elementReader, context);
+                final OutboundResourceAdapter outboundResourceAdapter = readOutboundResourceAdapter(elementReader, context);
                 resourceAdapter.outboundResourceAdapter = outboundResourceAdapter;
             } else if (("inbound-resourceadapter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: inboundResourceAdapter
-                InboundResourceadapter inboundResourceAdapter = readInboundResourceadapter(elementReader, context);
+                final InboundResourceadapter inboundResourceAdapter = readInboundResourceadapter(elementReader, context);
                 resourceAdapter.inboundResourceAdapter = inboundResourceAdapter;
             } else if (("adminobject" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: adminObject
-                AdminObject adminObjectItem = readAdminObject(elementReader, context);
+                final AdminObject adminObjectItem = readAdminObject(elementReader, context);
                 if (adminObject == null) {
                     adminObject = resourceAdapter.adminObject;
                     if (adminObject != null) {
@@ -154,7 +154,7 @@ public class ResourceAdapter$JAXB
                 adminObject.add(adminObjectItem);
             } else if (("security-permission" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityPermission
-                SecurityPermission securityPermissionItem = readSecurityPermission(elementReader, context);
+                final SecurityPermission securityPermissionItem = readSecurityPermission(elementReader, context);
                 if (securityPermission == null) {
                     securityPermission = resourceAdapter.securityPermission;
                     if (securityPermission != null) {
@@ -183,13 +183,13 @@ public class ResourceAdapter$JAXB
         return resourceAdapter;
     }
 
-    public final ResourceAdapter read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ResourceAdapter read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ResourceAdapter resourceAdapter, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ResourceAdapter resourceAdapter, RuntimeContext context)
+        throws Exception {
         if (resourceAdapter == null) {
             writer.writeXsiNil();
             return;
@@ -199,7 +199,7 @@ public class ResourceAdapter$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ResourceAdapter.class != resourceAdapter.getClass()) {
             context.unexpectedSubclass(writer, resourceAdapter, ResourceAdapter.class);
             return;
@@ -209,23 +209,23 @@ public class ResourceAdapter$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = resourceAdapter.id;
+        final String idRaw = resourceAdapter.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(resourceAdapter, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: resourceAdapterClass
-        String resourceAdapterClassRaw = resourceAdapter.resourceAdapterClass;
+        final String resourceAdapterClassRaw = resourceAdapter.resourceAdapterClass;
         String resourceAdapterClass = null;
         try {
             resourceAdapterClass = Adapters.collapsedStringAdapterAdapter.marshal(resourceAdapterClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(resourceAdapter, "resourceAdapterClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (resourceAdapterClass != null) {
@@ -235,9 +235,9 @@ public class ResourceAdapter$JAXB
         }
 
         // ELEMENT: configProperty
-        List<ConfigProperty> configProperty = resourceAdapter.configProperty;
+        final List<ConfigProperty> configProperty = resourceAdapter.configProperty;
         if (configProperty != null) {
-            for (ConfigProperty configPropertyItem : configProperty) {
+            for (final ConfigProperty configPropertyItem : configProperty) {
                 if (configPropertyItem != null) {
                     writer.writeStartElement(prefix, "config-property", "http://java.sun.com/xml/ns/javaee");
                     writeConfigProperty(writer, configPropertyItem, context);
@@ -247,7 +247,7 @@ public class ResourceAdapter$JAXB
         }
 
         // ELEMENT: outboundResourceAdapter
-        OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.outboundResourceAdapter;
+        final OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.outboundResourceAdapter;
         if (outboundResourceAdapter != null) {
             writer.writeStartElement(prefix, "outbound-resourceadapter", "http://java.sun.com/xml/ns/javaee");
             writeOutboundResourceAdapter(writer, outboundResourceAdapter, context);
@@ -255,7 +255,7 @@ public class ResourceAdapter$JAXB
         }
 
         // ELEMENT: inboundResourceAdapter
-        InboundResourceadapter inboundResourceAdapter = resourceAdapter.inboundResourceAdapter;
+        final InboundResourceadapter inboundResourceAdapter = resourceAdapter.inboundResourceAdapter;
         if (inboundResourceAdapter != null) {
             writer.writeStartElement(prefix, "inbound-resourceadapter", "http://java.sun.com/xml/ns/javaee");
             writeInboundResourceadapter(writer, inboundResourceAdapter, context);
@@ -263,9 +263,9 @@ public class ResourceAdapter$JAXB
         }
 
         // ELEMENT: adminObject
-        List<AdminObject> adminObject = resourceAdapter.adminObject;
+        final List<AdminObject> adminObject = resourceAdapter.adminObject;
         if (adminObject != null) {
-            for (AdminObject adminObjectItem : adminObject) {
+            for (final AdminObject adminObjectItem : adminObject) {
                 if (adminObjectItem != null) {
                     writer.writeStartElement(prefix, "adminobject", "http://java.sun.com/xml/ns/javaee");
                     writeAdminObject(writer, adminObjectItem, context);
@@ -275,9 +275,9 @@ public class ResourceAdapter$JAXB
         }
 
         // ELEMENT: securityPermission
-        List<SecurityPermission> securityPermission = resourceAdapter.securityPermission;
+        final List<SecurityPermission> securityPermission = resourceAdapter.securityPermission;
         if (securityPermission != null) {
-            for (SecurityPermission securityPermissionItem : securityPermission) {
+            for (final SecurityPermission securityPermissionItem : securityPermission) {
                 if (securityPermissionItem != null) {
                     writer.writeStartElement(prefix, "security-permission", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityPermission(writer, securityPermissionItem, context);

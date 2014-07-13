@@ -39,7 +39,7 @@ public class EntitiesScanningPackageLimitedTest {
 
     @Module
     public Class<?>[] app() throws Exception {
-        return new Class<?>[]{ SomeSimpleEJb.class, SomeSimpleEntity.class };
+        return new Class<?>[]{SomeSimpleEJb.class, SomeSimpleEntity.class};
     }
 
     @Configuration

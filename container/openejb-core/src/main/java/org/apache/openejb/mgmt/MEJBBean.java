@@ -40,7 +40,7 @@ import java.util.Set;
 @Stateless(name = "MEJB")
 @RemoteHome(ManagementHome.class)
 public class MEJBBean {
-                                         
+
     MBeanServer mbeanServer;
 
     public MEJBBean() {

@@ -42,7 +42,7 @@ public class Cmp {
         return mappingProperties;
     }
 
-    public void setMappingProperties(String value) {
+    public void setMappingProperties(final String value) {
         this.mappingProperties = value;
     }
 
@@ -50,7 +50,7 @@ public class Cmp {
         return isOneOneCmp;
     }
 
-    public void setIsOneOneCmp(String value) {
+    public void setIsOneOneCmp(final String value) {
         this.isOneOneCmp = value;
     }
 
@@ -58,7 +58,7 @@ public class Cmp {
         return oneOneFinders;
     }
 
-    public void setOneOneFinders(OneOneFinders value) {
+    public void setOneOneFinders(final OneOneFinders value) {
         this.oneOneFinders = value;
     }
 
@@ -66,7 +66,7 @@ public class Cmp {
         return prefetchDisabled;
     }
 
-    public void setPrefetchDisabled(PrefetchDisabled value) {
+    public void setPrefetchDisabled(final PrefetchDisabled value) {
         this.prefetchDisabled = value;
     }
 }

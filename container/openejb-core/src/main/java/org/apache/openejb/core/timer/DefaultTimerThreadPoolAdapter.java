@@ -131,9 +131,9 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
             this.executor = timerExecutor.executor;
         } else {
             this.executor = new ExecutorBuilder()
-                    .size(threadCount)
-                    .prefix("EjbTimerPool")
-                    .build(SystemInstance.get().getOptions());
+                .size(threadCount)
+                .prefix("EjbTimerPool")
+                .build(SystemInstance.get().getOptions());
 
             SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
         }

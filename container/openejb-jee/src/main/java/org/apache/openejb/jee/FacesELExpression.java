@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-el-expressionType simple type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;simpleType name="faces-config-el-expressionType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -36,8 +36,6 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-el-expressionType", propOrder = {
@@ -49,18 +47,12 @@ public class FacesELExpression {
     protected java.lang.String value;
 
     /**
-     * 
-     * 
-     *                 EL expressions present within a faces config file
-     *                 must start with the character sequence of '#{' and
-     *                 end with '}'.
-     * 
-     *             
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     * EL expressions present within a faces config file
+     * must start with the character sequence of '#{' and
+     * end with '}'.
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -68,13 +60,11 @@ public class FacesELExpression {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 

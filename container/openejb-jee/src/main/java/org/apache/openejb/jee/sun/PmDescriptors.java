@@ -45,7 +45,7 @@ public class PmDescriptors {
         return pmInuse;
     }
 
-    public void setPmInuse(PmInuse value) {
+    public void setPmInuse(final PmInuse value) {
         this.pmInuse = value;
     }
 }

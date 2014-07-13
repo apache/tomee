@@ -31,6 +31,7 @@ import java.util.Properties;
 
 /**
  * TODO Check for app.properties
+ *
  * @version $Rev$ $Date$
  */
 public class ApplicationProperties implements DynamicDeployer {
@@ -68,7 +69,7 @@ public class ApplicationProperties implements DynamicDeployer {
             } else if (o instanceof Properties) {
                 appModule.getProperties().putAll((Properties) o);
             } else if (o != null) {
-                throw new OpenEJBException("Unknown application.properties type: "+o.getClass().getName());
+                throw new OpenEJBException("Unknown application.properties type: " + o.getClass().getName());
             }
         }
 

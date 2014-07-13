@@ -20,8 +20,10 @@ package org.apache.openejb.junit;
 import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,7 +31,7 @@ import java.util.Hashtable;
 
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
-        configFile = "/META-INF/test-config.properties"
+    configFile = "/META-INF/test-config.properties"
 )
 public class TestClassConfigFile {
     @TestResource(TestResourceTypes.CONTEXT_CONFIG)
@@ -45,8 +47,8 @@ public class TestClassConfigFile {
         checkProperty("junit.test-property", "Test String");
     }
 
-    private void checkProperty(String key, String expected) {
-        String value = contextConfig.get(key);
+    private void checkProperty(final String key, final String expected) {
+        final String value = contextConfig.get(key);
         assertEquals(expected, value);
     }
 }

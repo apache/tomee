@@ -55,7 +55,7 @@ public class OpenEJBTransactionService implements TransactionService {
     @Override
     public Transaction getTransaction() {
         final TransactionManager manager = getTransactionManager();
-        if(manager != null) {
+        if (manager != null) {
             try {
                 return manager.getTransaction();
             } catch (final SystemException e) {
@@ -91,7 +91,7 @@ public class OpenEJBTransactionService implements TransactionService {
         }
 
         TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event,
-                new EventMetadataImpl(observer.getObservedType(), null, qualifiers.toArray(new Annotation[qualifiers.size()])));
+            new EventMetadataImpl(observer.getObservedType(), null, qualifiers.toArray(new Annotation[qualifiers.size()])));
     }
 
     public void setWebBeansContext(final WebBeansContext webBeansContext) {

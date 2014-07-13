@@ -23,13 +23,13 @@ public abstract class AbstractDataSourcePlugin implements DataSourcePlugin {
     public boolean isActive() {
         final SystemInstance systemInstance = SystemInstance.get();
         return "true".equals(systemInstance.getProperty(
-                "openejb.datasource.plugin." + getClass().getSimpleName().replace("DataSourcePlugin", "") + ".activaed",
-                systemInstance.getProperty("openejb.datasource.plugin.activated", "true")));
+            "openejb.datasource.plugin." + getClass().getSimpleName().replace("DataSourcePlugin", "") + ".activaed",
+            systemInstance.getProperty("openejb.datasource.plugin.activated", "true")));
     }
 
     public static boolean isActive(final DataSourcePlugin helper) {
         return helper != null
-                && (!AbstractDataSourcePlugin.class.isInstance(helper)
-                    || AbstractDataSourcePlugin.class.cast(helper).isActive());
+            && (!AbstractDataSourcePlugin.class.isInstance(helper)
+            || AbstractDataSourcePlugin.class.cast(helper).isActive());
     }
 }

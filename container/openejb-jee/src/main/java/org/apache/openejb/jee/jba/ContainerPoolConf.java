@@ -43,11 +43,9 @@ public class ContainerPoolConf {
 
     /**
      * Gets the value of the minimumSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMinimumSize() {
         return minimumSize;
@@ -55,23 +53,19 @@ public class ContainerPoolConf {
 
     /**
      * Sets the value of the minimumSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMinimumSize(String value) {
+    public void setMinimumSize(final String value) {
         this.minimumSize = value;
     }
 
     /**
      * Gets the value of the maximumSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaximumSize() {
         return maximumSize;
@@ -79,23 +73,19 @@ public class ContainerPoolConf {
 
     /**
      * Sets the value of the maximumSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaximumSize(String value) {
+    public void setMaximumSize(final String value) {
         this.maximumSize = value;
     }
 
     /**
      * Gets the value of the strictMaximumSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStrictMaximumSize() {
         return strictMaximumSize;
@@ -103,23 +93,19 @@ public class ContainerPoolConf {
 
     /**
      * Sets the value of the strictMaximumSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setStrictMaximumSize(String value) {
+    public void setStrictMaximumSize(final String value) {
         this.strictMaximumSize = value;
     }
 
     /**
      * Gets the value of the strictTimeout property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStrictTimeout() {
         return strictTimeout;
@@ -127,13 +113,11 @@ public class ContainerPoolConf {
 
     /**
      * Sets the value of the strictTimeout property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setStrictTimeout(String value) {
+    public void setStrictTimeout(final String value) {
         this.strictTimeout = value;
     }
 

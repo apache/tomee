@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 import java.util.concurrent.Callable;
 
 public class LazyObjectReference<T> extends Reference {
-    private Callable<T> creator;
+    private final Callable<T> creator;
     private volatile T instance;
 
     public LazyObjectReference(final Callable<T> creator) {

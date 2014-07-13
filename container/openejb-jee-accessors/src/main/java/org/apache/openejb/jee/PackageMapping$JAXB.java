@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class PackageMapping$JAXB
-        extends JAXBObject<PackageMapping> {
+    extends JAXBObject<PackageMapping> {
 
 
     public PackageMapping$JAXB() {
         super(PackageMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "package-mappingType".intern()));
     }
 
-    public static PackageMapping readPackageMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static PackageMapping readPackageMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writePackageMapping(XoXMLStreamWriter writer, PackageMapping packageMapping, RuntimeContext context)
-            throws Exception {
+    public static void writePackageMapping(final XoXMLStreamWriter writer, final PackageMapping packageMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, packageMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, PackageMapping packageMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final PackageMapping packageMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, packageMapping, context);
     }
 
-    public final static PackageMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static PackageMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class PackageMapping$JAXB
             context = new RuntimeContext();
         }
 
-        PackageMapping packageMapping = new PackageMapping();
+        final PackageMapping packageMapping = new PackageMapping();
         context.beforeUnmarshal(packageMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("package-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, PackageMapping.class);
@@ -78,10 +78,10 @@ public class PackageMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, packageMapping);
                 packageMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class PackageMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("package-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: packageType
-                String packageTypeRaw = elementReader.getElementAsString();
+                final String packageTypeRaw = elementReader.getElementAsString();
 
-                String packageType;
+                final String packageType;
                 try {
                     packageType = Adapters.collapsedStringAdapterAdapter.unmarshal(packageTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class PackageMapping$JAXB
                 packageMapping.packageType = packageType;
             } else if (("namespaceURI" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: namespaceURI
-                String namespaceURIRaw = elementReader.getElementAsString();
+                final String namespaceURIRaw = elementReader.getElementAsString();
 
-                String namespaceURI;
+                final String namespaceURI;
                 try {
                     namespaceURI = Adapters.collapsedStringAdapterAdapter.unmarshal(namespaceURIRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class PackageMapping$JAXB
         return packageMapping;
     }
 
-    public final PackageMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final PackageMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, PackageMapping packageMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final PackageMapping packageMapping, RuntimeContext context)
+        throws Exception {
         if (packageMapping == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class PackageMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (PackageMapping.class != packageMapping.getClass()) {
             context.unexpectedSubclass(writer, packageMapping, PackageMapping.class);
             return;
@@ -153,23 +153,23 @@ public class PackageMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = packageMapping.id;
+        final String idRaw = packageMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(packageMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: packageType
-        String packageTypeRaw = packageMapping.packageType;
+        final String packageTypeRaw = packageMapping.packageType;
         String packageType = null;
         try {
             packageType = Adapters.collapsedStringAdapterAdapter.marshal(packageTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(packageMapping, "packageType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (packageType != null) {
@@ -181,11 +181,11 @@ public class PackageMapping$JAXB
         }
 
         // ELEMENT: namespaceURI
-        String namespaceURIRaw = packageMapping.namespaceURI;
+        final String namespaceURIRaw = packageMapping.namespaceURI;
         String namespaceURI = null;
         try {
             namespaceURI = Adapters.collapsedStringAdapterAdapter.marshal(namespaceURIRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(packageMapping, "namespaceURI", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (namespaceURI != null) {

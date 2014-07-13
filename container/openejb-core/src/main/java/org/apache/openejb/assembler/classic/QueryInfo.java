@@ -22,5 +22,5 @@ public class QueryInfo extends InfoObject {
     public String description;
     public MethodInfo method;
     public String queryStatement;
-    public boolean remoteResultType; 
+    public boolean remoteResultType;
 }

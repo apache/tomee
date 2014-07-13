@@ -19,6 +19,7 @@ package org.apache.openejb.junit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.junit.jee.EJBContainerRunner;
 import org.apache.openejb.junit.jee.config.Properties;
@@ -53,8 +54,10 @@ public class TestWithCdiBean {
         assertNotNull(ejb2);
     }
 
-    public static class CdiBean {}
+    public static class CdiBean {
+    }
 
     @Stateless
-    public static class EjbBean {}
+    public static class EjbBean {
+    }
 }

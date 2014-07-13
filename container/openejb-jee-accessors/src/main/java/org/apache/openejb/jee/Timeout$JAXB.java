@@ -29,33 +29,33 @@ import javax.xml.namespace.QName;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Timeout$JAXB
-        extends JAXBObject<Timeout> {
+    extends JAXBObject<Timeout> {
 
 
     public Timeout$JAXB() {
         super(Timeout.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "access-timeoutType".intern()));
     }
 
-    public static Timeout readTimeout(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Timeout readTimeout(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTimeout(XoXMLStreamWriter writer, Timeout timeout, RuntimeContext context)
-            throws Exception {
+    public static void writeTimeout(final XoXMLStreamWriter writer, final Timeout timeout, final RuntimeContext context)
+        throws Exception {
         _write(writer, timeout, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Timeout timeout, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Timeout timeout, final RuntimeContext context)
+        throws Exception {
         _write(writer, timeout, context);
     }
 
-    public final static Timeout _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Timeout _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -66,12 +66,12 @@ public class Timeout$JAXB
             context = new RuntimeContext();
         }
 
-        Timeout timeout = new Timeout();
+        final Timeout timeout = new Timeout();
         context.beforeUnmarshal(timeout, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("access-timeoutType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Timeout.class);
@@ -79,10 +79,10 @@ public class Timeout$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, timeout);
                 timeout.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -91,19 +91,19 @@ public class Timeout$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timeout
-                Long timeout1 = Long.valueOf(elementReader.getElementAsString());
+                final Long timeout1 = Long.valueOf(elementReader.getElementAsString());
                 timeout.timeout = timeout1;
             } else if (("unit" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: unit
-                String unitRaw = elementReader.getElementAsString();
+                final String unitRaw = elementReader.getElementAsString();
 
-                TimeUnit unit;
+                final TimeUnit unit;
                 try {
                     unit = Adapters.timeUnitAdapterAdapter.unmarshal(unitRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, TimeUnitAdapter.class, TimeUnit.class, TimeUnit.class, e);
                     continue;
                 }
@@ -121,13 +121,13 @@ public class Timeout$JAXB
         return timeout;
     }
 
-    public final Timeout read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Timeout read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Timeout timeout, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Timeout timeout, RuntimeContext context)
+        throws Exception {
         if (timeout == null) {
             writer.writeXsiNil();
             return;
@@ -137,7 +137,7 @@ public class Timeout$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Timeout.class != timeout.getClass()) {
             context.unexpectedSubclass(writer, timeout, Timeout.class);
             return;
@@ -147,29 +147,29 @@ public class Timeout$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = timeout.id;
+        final String idRaw = timeout.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(timeout, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: timeout
-        Long timeout1 = timeout.timeout;
+        final Long timeout1 = timeout.timeout;
         writer.writeStartElement(prefix, "timeout", "http://java.sun.com/xml/ns/javaee");
         writer.writeCharacters(Long.toString(timeout1));
         writer.writeEndElement();
 
         // ELEMENT: unit
-        TimeUnit unitRaw = timeout.unit;
+        final TimeUnit unitRaw = timeout.unit;
         String unit = null;
         try {
             unit = Adapters.timeUnitAdapterAdapter.marshal(unitRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timeout, "unit", TimeUnitAdapter.class, TimeUnit.class, TimeUnit.class, e);
         }
         if (unit != null) {

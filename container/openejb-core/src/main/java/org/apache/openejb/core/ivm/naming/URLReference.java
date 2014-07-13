@@ -23,7 +23,7 @@ import java.net.URL;
 
 public class URLReference extends Reference {
 
-    private String url;
+    private final String url;
 
     public URLReference(final String url) {
         this.url = url;

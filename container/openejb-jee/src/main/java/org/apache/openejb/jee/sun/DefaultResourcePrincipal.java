@@ -33,7 +33,7 @@ public class DefaultResourcePrincipal {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -41,7 +41,7 @@ public class DefaultResourcePrincipal {
         return password;
     }
 
-    public void setPassword(String value) {
+    public void setPassword(final String value) {
         this.password = value;
     }
 }

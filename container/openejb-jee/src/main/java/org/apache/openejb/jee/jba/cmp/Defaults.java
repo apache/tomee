@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -59,8 +59,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -130,11 +128,9 @@ public class Defaults {
 
     /**
      * Gets the value of the datasource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Datasource }
-     *     
+     *
+     * @return possible object is
+     * {@link Datasource }
      */
     public Datasource getDatasource() {
         return datasource;
@@ -142,23 +138,19 @@ public class Defaults {
 
     /**
      * Sets the value of the datasource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Datasource }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Datasource }
      */
-    public void setDatasource(Datasource value) {
+    public void setDatasource(final Datasource value) {
         this.datasource = value;
     }
 
     /**
      * Gets the value of the datasourceMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link DatasourceMapping }
      */
     public DatasourceMapping getDatasourceMapping() {
         return datasourceMapping;
@@ -166,23 +158,19 @@ public class Defaults {
 
     /**
      * Sets the value of the datasourceMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DatasourceMapping }
      */
-    public void setDatasourceMapping(DatasourceMapping value) {
+    public void setDatasourceMapping(final DatasourceMapping value) {
         this.datasourceMapping = value;
     }
 
     /**
      * Gets the value of the createTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @return possible object is
+     * {@link CreateTable }
      */
     public CreateTable getCreateTable() {
         return createTable;
@@ -190,23 +178,19 @@ public class Defaults {
 
     /**
      * Sets the value of the createTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CreateTable }
      */
-    public void setCreateTable(CreateTable value) {
+    public void setCreateTable(final CreateTable value) {
         this.createTable = value;
     }
 
     /**
      * Gets the value of the alterTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AlterTable }
-     *     
+     *
+     * @return possible object is
+     * {@link AlterTable }
      */
     public AlterTable getAlterTable() {
         return alterTable;
@@ -214,23 +198,19 @@ public class Defaults {
 
     /**
      * Sets the value of the alterTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AlterTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AlterTable }
      */
-    public void setAlterTable(AlterTable value) {
+    public void setAlterTable(final AlterTable value) {
         this.alterTable = value;
     }
 
     /**
      * Gets the value of the removeTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @return possible object is
+     * {@link RemoveTable }
      */
     public RemoveTable getRemoveTable() {
         return removeTable;
@@ -238,23 +218,19 @@ public class Defaults {
 
     /**
      * Sets the value of the removeTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RemoveTable }
      */
-    public void setRemoveTable(RemoveTable value) {
+    public void setRemoveTable(final RemoveTable value) {
         this.removeTable = value;
     }
 
     /**
      * Gets the value of the postTableCreate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @return possible object is
+     * {@link PostTableCreate }
      */
     public PostTableCreate getPostTableCreate() {
         return postTableCreate;
@@ -262,23 +238,19 @@ public class Defaults {
 
     /**
      * Sets the value of the postTableCreate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostTableCreate }
      */
-    public void setPostTableCreate(PostTableCreate value) {
+    public void setPostTableCreate(final PostTableCreate value) {
         this.postTableCreate = value;
     }
 
     /**
      * Gets the value of the readOnly property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadOnly }
      */
     public ReadOnly getReadOnly() {
         return readOnly;
@@ -286,23 +258,19 @@ public class Defaults {
 
     /**
      * Sets the value of the readOnly property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadOnly }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadOnly }
      */
-    public void setReadOnly(ReadOnly value) {
+    public void setReadOnly(final ReadOnly value) {
         this.readOnly = value;
     }
 
     /**
      * Gets the value of the readTimeOut property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadTimeOut }
      */
     public ReadTimeOut getReadTimeOut() {
         return readTimeOut;
@@ -310,23 +278,19 @@ public class Defaults {
 
     /**
      * Sets the value of the readTimeOut property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadTimeOut }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadTimeOut }
      */
-    public void setReadTimeOut(ReadTimeOut value) {
+    public void setReadTimeOut(final ReadTimeOut value) {
         this.readTimeOut = value;
     }
 
     /**
      * Gets the value of the rowLocking property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @return possible object is
+     * {@link RowLocking }
      */
     public RowLocking getRowLocking() {
         return rowLocking;
@@ -334,23 +298,19 @@ public class Defaults {
 
     /**
      * Sets the value of the rowLocking property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RowLocking }
      */
-    public void setRowLocking(RowLocking value) {
+    public void setRowLocking(final RowLocking value) {
         this.rowLocking = value;
     }
 
     /**
      * Gets the value of the pkConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link PkConstraint }
      */
     public PkConstraint getPkConstraint() {
         return pkConstraint;
@@ -358,23 +318,19 @@ public class Defaults {
 
     /**
      * Sets the value of the pkConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PkConstraint }
      */
-    public void setPkConstraint(PkConstraint value) {
+    public void setPkConstraint(final PkConstraint value) {
         this.pkConstraint = value;
     }
 
     /**
      * Gets the value of the fkConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FkConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link FkConstraint }
      */
     public FkConstraint getFkConstraint() {
         return fkConstraint;
@@ -382,23 +338,19 @@ public class Defaults {
 
     /**
      * Sets the value of the fkConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FkConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FkConstraint }
      */
-    public void setFkConstraint(FkConstraint value) {
+    public void setFkConstraint(final FkConstraint value) {
         this.fkConstraint = value;
     }
 
     /**
      * Gets the value of the preferredRelationMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreferredRelationMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link PreferredRelationMapping }
      */
     public PreferredRelationMapping getPreferredRelationMapping() {
         return preferredRelationMapping;
@@ -406,23 +358,19 @@ public class Defaults {
 
     /**
      * Sets the value of the preferredRelationMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreferredRelationMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreferredRelationMapping }
      */
-    public void setPreferredRelationMapping(PreferredRelationMapping value) {
+    public void setPreferredRelationMapping(final PreferredRelationMapping value) {
         this.preferredRelationMapping = value;
     }
 
     /**
      * Gets the value of the readAhead property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadAhead }
      */
     public ReadAhead getReadAhead() {
         return readAhead;
@@ -430,23 +378,19 @@ public class Defaults {
 
     /**
      * Sets the value of the readAhead property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadAhead }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadAhead }
      */
-    public void setReadAhead(ReadAhead value) {
+    public void setReadAhead(final ReadAhead value) {
         this.readAhead = value;
     }
 
     /**
      * Gets the value of the listCacheMax property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ListCacheMax }
-     *     
+     *
+     * @return possible object is
+     * {@link ListCacheMax }
      */
     public ListCacheMax getListCacheMax() {
         return listCacheMax;
@@ -454,23 +398,19 @@ public class Defaults {
 
     /**
      * Sets the value of the listCacheMax property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ListCacheMax }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ListCacheMax }
      */
-    public void setListCacheMax(ListCacheMax value) {
+    public void setListCacheMax(final ListCacheMax value) {
         this.listCacheMax = value;
     }
 
     /**
      * Gets the value of the cleanReadAheadOnLoad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CleanReadAheadOnLoad }
-     *     
+     *
+     * @return possible object is
+     * {@link CleanReadAheadOnLoad }
      */
     public CleanReadAheadOnLoad getCleanReadAheadOnLoad() {
         return cleanReadAheadOnLoad;
@@ -478,23 +418,19 @@ public class Defaults {
 
     /**
      * Sets the value of the cleanReadAheadOnLoad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CleanReadAheadOnLoad }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CleanReadAheadOnLoad }
      */
-    public void setCleanReadAheadOnLoad(CleanReadAheadOnLoad value) {
+    public void setCleanReadAheadOnLoad(final CleanReadAheadOnLoad value) {
         this.cleanReadAheadOnLoad = value;
     }
 
     /**
      * Gets the value of the fetchSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FetchSize }
-     *     
+     *
+     * @return possible object is
+     * {@link FetchSize }
      */
     public FetchSize getFetchSize() {
         return fetchSize;
@@ -502,23 +438,19 @@ public class Defaults {
 
     /**
      * Sets the value of the fetchSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FetchSize }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FetchSize }
      */
-    public void setFetchSize(FetchSize value) {
+    public void setFetchSize(final FetchSize value) {
         this.fetchSize = value;
     }
 
     /**
      * Gets the value of the unknownPk property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UnknownPk }
-     *     
+     *
+     * @return possible object is
+     * {@link UnknownPk }
      */
     public UnknownPk getUnknownPk() {
         return unknownPk;
@@ -526,23 +458,19 @@ public class Defaults {
 
     /**
      * Sets the value of the unknownPk property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UnknownPk }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link UnknownPk }
      */
-    public void setUnknownPk(UnknownPk value) {
+    public void setUnknownPk(final UnknownPk value) {
         this.unknownPk = value;
     }
 
     /**
      * Gets the value of the entityCommand property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityCommand }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityCommand }
      */
     public EntityCommand getEntityCommand() {
         return entityCommand;
@@ -550,23 +478,19 @@ public class Defaults {
 
     /**
      * Sets the value of the entityCommand property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityCommand }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityCommand }
      */
-    public void setEntityCommand(EntityCommand value) {
+    public void setEntityCommand(final EntityCommand value) {
         this.entityCommand = value;
     }
 
     /**
      * Gets the value of the qlCompiler property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QlCompiler }
-     *     
+     *
+     * @return possible object is
+     * {@link QlCompiler }
      */
     public QlCompiler getQlCompiler() {
         return qlCompiler;
@@ -574,23 +498,19 @@ public class Defaults {
 
     /**
      * Sets the value of the qlCompiler property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QlCompiler }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link QlCompiler }
      */
-    public void setQlCompiler(QlCompiler value) {
+    public void setQlCompiler(final QlCompiler value) {
         this.qlCompiler = value;
     }
 
     /**
      * Gets the value of the throwRuntimeExceptions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ThrowRuntimeExceptions }
-     *     
+     *
+     * @return possible object is
+     * {@link ThrowRuntimeExceptions }
      */
     public ThrowRuntimeExceptions getThrowRuntimeExceptions() {
         return throwRuntimeExceptions;
@@ -598,13 +518,11 @@ public class Defaults {
 
     /**
      * Sets the value of the throwRuntimeExceptions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ThrowRuntimeExceptions }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ThrowRuntimeExceptions }
      */
-    public void setThrowRuntimeExceptions(ThrowRuntimeExceptions value) {
+    public void setThrowRuntimeExceptions(final ThrowRuntimeExceptions value) {
         this.throwRuntimeExceptions = value;
     }
 

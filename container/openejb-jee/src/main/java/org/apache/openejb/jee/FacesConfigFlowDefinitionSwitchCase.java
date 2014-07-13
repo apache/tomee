@@ -30,18 +30,16 @@ import java.util.List;
 
 
 /**
- * 
- * 
- *          <p class="changed_added_2_2">Defines a case that will
- *          be considered in the <code>&lt;switch&gt;</code>.</p>
- * 
- *         
- *       
- * 
+ * <p class="changed_added_2_2">Defines a case that will
+ * be considered in the <code>&lt;switch&gt;</code>.</p>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-switch-caseType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-switch-caseType">
  *   &lt;complexContent>
@@ -56,8 +54,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-switch-caseType", propOrder = {
@@ -85,25 +81,23 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Description }
-     * 
-     * 
      */
     public List<Description> getDescription() {
         if (description == null) {
@@ -114,25 +108,23 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Gets the value of the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link DisplayName }
-     * 
-     * 
      */
     public List<DisplayName> getDisplayName() {
         if (displayName == null) {
@@ -143,25 +135,23 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Gets the value of the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Icon }
-     * 
-     * 
      */
     public List<Icon> getIcon() {
         if (icon == null) {
@@ -172,11 +162,9 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Gets the value of the if property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesConfigIf }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesConfigIf }
      */
     public FacesConfigIf getIf() {
         return _if;
@@ -184,23 +172,19 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Sets the value of the if property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesConfigIf }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesConfigIf }
      */
-    public void setIf(FacesConfigIf value) {
+    public void setIf(final FacesConfigIf value) {
         this._if = value;
     }
 
     /**
      * Gets the value of the fromOutcome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XmlString }
-     *     
+     *
+     * @return possible object is
+     * {@link XmlString }
      */
     public XmlString getFromOutcome() {
         return fromOutcome;
@@ -208,23 +192,19 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Sets the value of the fromOutcome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XmlString }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XmlString }
      */
-    public void setFromOutcome(XmlString value) {
+    public void setFromOutcome(final XmlString value) {
         this.fromOutcome = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -232,13 +212,11 @@ public class FacesConfigFlowDefinitionSwitchCase {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

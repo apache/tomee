@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class ResAuth$JAXB
-        extends JAXBEnum<ResAuth> {
+    extends JAXBEnum<ResAuth> {
 
 
     public ResAuth$JAXB() {
         super(ResAuth.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "resAuth".intern()));
     }
 
-    public ResAuth parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public ResAuth parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseResAuth(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, ResAuth resAuth)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ResAuth resAuth)
+        throws Exception {
         return toStringResAuth(bean, parameterName, context, resAuth);
     }
 
-    public static ResAuth parseResAuth(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static ResAuth parseResAuth(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Application".equals(value)) {
             return ResAuth.APPLICATION;
         } else if ("Container".equals(value)) {
@@ -52,8 +52,8 @@ public class ResAuth$JAXB
         }
     }
 
-    public static String toStringResAuth(Object bean, String parameterName, RuntimeContext context, ResAuth resAuth)
-            throws Exception {
+    public static String toStringResAuth(final Object bean, final String parameterName, final RuntimeContext context, final ResAuth resAuth)
+        throws Exception {
         if (ResAuth.APPLICATION == resAuth) {
             return "Application";
         } else if (ResAuth.CONTAINER == resAuth) {

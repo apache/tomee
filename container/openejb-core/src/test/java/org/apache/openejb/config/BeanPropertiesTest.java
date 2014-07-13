@@ -51,13 +51,13 @@ public class BeanPropertiesTest extends TestCase {
         {
             final Map<String, String> map = new HashMap<String, String>();
             map.put("META-INF/openejb-jar.xml",
-                    "<openejb-jar>\n" +
-                            "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
-                            "    <properties>\n" +
-                            "      color=orange\n" +
-                            "    </properties>\n" +
-                            "  </ejb-deployment>\n" +
-                            "</openejb-jar>");
+                "<openejb-jar>\n" +
+                    "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
+                    "    <properties>\n" +
+                    "      color=orange\n" +
+                    "    </properties>\n" +
+                    "  </ejb-deployment>\n" +
+                    "</openejb-jar>");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
 
@@ -106,13 +106,13 @@ public class BeanPropertiesTest extends TestCase {
 
             final Map<String, String> map = new HashMap<String, String>();
             map.put("META-INF/openejb-jar.xml",
-                    "<openejb-jar>\n" +
-                            "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
-                            "    <properties>\n" +
-                            "      color=white\n" +
-                            "    </properties>\n" +
-                            "  </ejb-deployment>\n" +
-                            "</openejb-jar>");
+                "<openejb-jar>\n" +
+                    "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
+                    "    <properties>\n" +
+                    "      color=white\n" +
+                    "    </properties>\n" +
+                    "  </ejb-deployment>\n" +
+                    "</openejb-jar>");
             final File app = Archives.fileArchive(map, WidgetBean.class);
 
             assembler.createApplication(config.configureApplication(app));
@@ -135,13 +135,13 @@ public class BeanPropertiesTest extends TestCase {
         {
             final Map<String, String> map = new HashMap<String, String>();
             map.put("META-INF/openejb-jar.xml",
-                    "<openejb-jar>\n" +
-                            "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
-                            "    <properties>\n" +
-                            "      color=white\n" +
-                            "    </properties>\n" +
-                            "  </ejb-deployment>\n" +
-                            "</openejb-jar>");
+                "<openejb-jar>\n" +
+                    "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
+                    "    <properties>\n" +
+                    "      color=white\n" +
+                    "    </properties>\n" +
+                    "  </ejb-deployment>\n" +
+                    "</openejb-jar>");
             map.put("META-INF/module.properties", "WidgetBean.color=orange");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
@@ -166,13 +166,13 @@ public class BeanPropertiesTest extends TestCase {
         {
             final Map<String, String> map = new HashMap<String, String>();
             map.put("META-INF/openejb-jar.xml",
-                    "<openejb-jar>\n" +
-                            "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
-                            "    <properties>\n" +
-                            "      color=white\n" +
-                            "    </properties>\n" +
-                            "  </ejb-deployment>\n" +
-                            "</openejb-jar>");
+                "<openejb-jar>\n" +
+                    "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
+                    "    <properties>\n" +
+                    "      color=white\n" +
+                    "    </properties>\n" +
+                    "  </ejb-deployment>\n" +
+                    "</openejb-jar>");
             map.put("META-INF/application.properties", "WidgetBean.color=orange");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
@@ -198,13 +198,13 @@ public class BeanPropertiesTest extends TestCase {
             final Map<String, String> map = new HashMap<String, String>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"Foo\"/>");
             map.put("META-INF/openejb-jar.xml",
-                    "<openejb-jar>\n" +
-                            "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
-                            "    <properties>\n" +
-                            "      color=white\n" +
-                            "    </properties>\n" +
-                            "  </ejb-deployment>\n" +
-                            "</openejb-jar>");
+                "<openejb-jar>\n" +
+                    "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
+                    "    <properties>\n" +
+                    "      color=white\n" +
+                    "    </properties>\n" +
+                    "  </ejb-deployment>\n" +
+                    "</openejb-jar>");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
 
@@ -219,7 +219,7 @@ public class BeanPropertiesTest extends TestCase {
         assertContexts(containerSystem);
     }
 
-    private void assertContexts(ContainerSystem containerSystem) {
+    private void assertContexts(final ContainerSystem containerSystem) {
         final BeanContext beanContext = containerSystem.getBeanContext("WidgetBean");
         final ModuleContext moduleContext = beanContext.getModuleContext();
         final AppContext appContext = moduleContext.getAppContext();
@@ -255,21 +255,21 @@ public class BeanPropertiesTest extends TestCase {
         }
     }
 
-    private void assertOption(Options options, final String key, final String value) {
+    private void assertOption(final Options options, final String key, final String value) {
         assertEquals(value, options.get(key, key + " (not set)"));
     }
 
-    private void assertNoOption(Options options, final String key) {
+    private void assertNoOption(final Options options, final String key) {
         final String defaultValue = key + " (not set)";
         assertEquals(defaultValue, options.get(key, defaultValue));
     }
 
-    private void assertProperty(Properties properties, final String key, final String value) {
+    private void assertProperty(final Properties properties, final String key, final String value) {
         assertTrue(properties.containsKey(key));
         assertEquals(value, properties.getProperty(key));
     }
 
-    private void assertNoProperty(Properties properties, final String key) {
+    private void assertNoProperty(final Properties properties, final String key) {
         assertFalse(properties.containsKey(key));
     }
 

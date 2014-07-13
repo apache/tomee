@@ -64,7 +64,7 @@ public class VariableMapping {
         return javaVariableName;
     }
 
-    public void setJavaVariableName(String value) {
+    public void setJavaVariableName(final String value) {
         this.javaVariableName = value;
     }
 
@@ -72,7 +72,7 @@ public class VariableMapping {
         return dataMember;
     }
 
-    public void setDataMember(Object value) {
+    public void setDataMember(final Object value) {
         this.dataMember = value;
     }
 
@@ -80,7 +80,7 @@ public class VariableMapping {
         return xmlAttributeName;
     }
 
-    public void setXmlAttributeName(String value) {
+    public void setXmlAttributeName(final String value) {
         this.xmlAttributeName = value;
     }
 
@@ -88,7 +88,7 @@ public class VariableMapping {
         return xmlElementName;
     }
 
-    public void setXmlElementName(String value) {
+    public void setXmlElementName(final String value) {
         this.xmlElementName = value;
     }
 
@@ -96,7 +96,7 @@ public class VariableMapping {
         return xmlWildcard;
     }
 
-    public void setXmlWildcard(Object value) {
+    public void setXmlWildcard(final Object value) {
         this.xmlWildcard = value;
     }
 
@@ -104,7 +104,7 @@ public class VariableMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

@@ -37,14 +37,14 @@ import java.util.Properties;
 public class RedeployTest extends TestCase {
     public void test() throws Exception {
         // create reference to openejb itests
-        File file = JarLocation.jarLocation(BasicStatelessBean.class);
-        if(!file.exists()){
+        final File file = JarLocation.jarLocation(BasicStatelessBean.class);
+        if (!file.exists()) {
             throw new Exception("File not found: " + file);
         }
 
         // These two objects pretty much encompas all the EJB Container
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -54,18 +54,18 @@ public class RedeployTest extends TestCase {
         createAndDestroy(assembler, config, file);
     }
 
-    private void createAndDestroy(Assembler assembler, ConfigurationFactory config, File file) throws Exception {
+    private void createAndDestroy(final Assembler assembler, final ConfigurationFactory config, final File file) throws Exception {
 
         // Deploy the file
         assembler.createApplication(config.configureApplication(file));
 
 
         // Lookup and execute a bean
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        InitialContext ctx = new InitialContext(properties);
-        EncStatefulHome home = (EncStatefulHome) ctx.lookup(AnnotatedFieldInjectionStatefulBean.class.getSimpleName());
-        EncStatefulObject ejbObject = home.create("foo");
+        final InitialContext ctx = new InitialContext(properties);
+        final EncStatefulHome home = (EncStatefulHome) ctx.lookup(AnnotatedFieldInjectionStatefulBean.class.getSimpleName());
+        final EncStatefulObject ejbObject = home.create("foo");
         ejbObject.lookupStringEntry();
 
         // Undeploy the file
@@ -75,14 +75,14 @@ public class RedeployTest extends TestCase {
         try {
             ejbObject.lookupStringEntry();
             fail("Proxy should no longer be valid");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // this should happen
         }
 
         try {
             ctx.lookup(AnnotatedFieldInjectionStatefulBean.class.getSimpleName());
             fail("JNDI References should have been cleaned up");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // this also should happen
         }
     }

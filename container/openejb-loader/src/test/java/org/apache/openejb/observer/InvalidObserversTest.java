@@ -29,7 +29,8 @@ public class InvalidObserversTest extends Assert {
     @Test
     public void noObserverMethods() {
         final ObserverManager observers = new ObserverManager();
-        observers.addObserver(new Object() { });
+        observers.addObserver(new Object() {
+        });
     }
 
     @Test
@@ -133,7 +134,7 @@ public class InvalidObserversTest extends Assert {
             final ObserverManager observers = new ObserverManager();
             observers.addObserver(observer);
             fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // pass
         }
     }

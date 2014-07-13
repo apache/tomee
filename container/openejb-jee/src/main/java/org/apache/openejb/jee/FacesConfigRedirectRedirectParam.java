@@ -28,19 +28,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *        <p> The "redirect-param" element, only valid within
- *         a "redirect" element, contains child "name"
- *         and "value" elements that must be included in the
- *         redirect url when the redirect is performed.</p>
- *         
- *       
- * 
+ * <p> The "redirect-param" element, only valid within
+ * a "redirect" element, contains child "name"
+ * and "value" elements that must be included in the
+ * redirect url when the redirect is performed.</p>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-redirect-redirectParamType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-redirect-redirectParamType">
  *   &lt;complexContent>
@@ -54,8 +52,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-redirect-redirectParamType", propOrder = {
@@ -76,11 +72,9 @@ public class FacesConfigRedirectRedirectParam {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XmlString }
-     *     
+     *
+     * @return possible object is
+     * {@link XmlString }
      */
     public XmlString getName() {
         return name;
@@ -88,23 +82,19 @@ public class FacesConfigRedirectRedirectParam {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XmlString }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XmlString }
      */
-    public void setName(XmlString value) {
+    public void setName(final XmlString value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XmlString }
-     *     
+     *
+     * @return possible object is
+     * {@link XmlString }
      */
     public XmlString getValue() {
         return value;
@@ -112,23 +102,19 @@ public class FacesConfigRedirectRedirectParam {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XmlString }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XmlString }
      */
-    public void setValue(XmlString value) {
+    public void setValue(final XmlString value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -136,13 +122,11 @@ public class FacesConfigRedirectRedirectParam {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

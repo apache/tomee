@@ -40,7 +40,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 
 public class ServiceProviderLoginModule implements LoginModule {
-    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     private Subject subject;
     private CallbackHandler callbackHandler;

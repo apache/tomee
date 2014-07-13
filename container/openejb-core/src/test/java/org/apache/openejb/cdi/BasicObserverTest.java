@@ -60,7 +60,7 @@ public class BasicObserverTest {
 
     public static class SuperHero {
 
-        public void jumpToAction(@Observes Catastrophy catastrophy) {
+        public void jumpToAction(@Observes final Catastrophy catastrophy) {
             catastrophy.getClasses().add(this.getClass());
         }
     }

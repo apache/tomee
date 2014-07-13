@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class Cipher {
 
-    private static Messages messages = new Messages(Cipher.class);
+    private static final Messages messages = new Messages(Cipher.class);
 
     public static void main(final String[] args) throws SystemExitException {
 

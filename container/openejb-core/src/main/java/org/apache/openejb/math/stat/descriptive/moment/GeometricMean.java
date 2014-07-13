@@ -45,15 +45,18 @@ import java.io.Serializable;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- *
  * @version $Revision: 811827 $ $Date: 2009-09-06 08:32:50 -0700 (Sun, 06 Sep 2009) $
  */
 public class GeometricMean extends AbstractStorelessUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = -1238734905303459453L;
 
-    /** Wrapped SumOfLogs instance */
+    /**
+     * Wrapped SumOfLogs instance
+     */
     private StorelessUnivariateStatistic sumOfLogs;
 
     /**
@@ -76,6 +79,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
 
     /**
      * Create a GeometricMean instance using the given SumOfLogs instance
+     *
      * @param sumOfLogs sum of logs instance to use for computation
      */
     public GeometricMean(final SumOfLogs sumOfLogs) {
@@ -129,12 +133,12 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
      *
      * @param values input array containing the values
-     * @param begin first array element to include
+     * @param begin  first array element to include
      * @param length the number of elements to include
      * @return the geometric mean or Double.NaN if length = 0 or
      * any of the values are &lt;= 0.
      * @throws IllegalArgumentException if the input array is null or the array
-     * index parameters are not valid
+     *                                  index parameters are not valid
      */
     @Override
     public double evaluate(
@@ -157,12 +161,12 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
      * otherwise an IllegalStateException will be thrown.</p>
      *
      * @param sumLogImpl the StorelessUnivariateStatistic instance to use
-     * for computing the log sum
+     *                   for computing the log sum
      * @throws IllegalStateException if data has already been added
-     *  (i.e if n > 0)
+     *                               (i.e if n > 0)
      */
     public void setSumLogImpl(
-            final StorelessUnivariateStatistic sumLogImpl) {
+        final StorelessUnivariateStatistic sumLogImpl) {
         checkEmpty();
         this.sumOfLogs = sumLogImpl;
     }
@@ -181,7 +185,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source GeometricMean to copy
-     * @param dest GeometricMean to copy to
+     * @param dest   GeometricMean to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final GeometricMean source, final GeometricMean dest) {
@@ -195,8 +199,8 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
     private void checkEmpty() {
         if (getN() > 0) {
             throw MathRuntimeException.createIllegalStateException(
-                    "{0} values have been added before statistic is configured",
-                    getN());
+                "{0} values have been added before statistic is configured",
+                getN());
         }
     }
 

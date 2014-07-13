@@ -42,8 +42,8 @@ public class TomcatClassPath extends BasicURLClassPath {
     private final ClassLoader commonLoader;
     private final ClassLoader serverLoader;
 
-    private Method addRepositoryMethod;
-    private Method addURLMethod;
+    private final Method addRepositoryMethod;
+    private final Method addURLMethod;
 
     public TomcatClassPath() {
         this(getCommonLoader(getContextClassLoader()));

@@ -43,8 +43,8 @@ public class ComponentRemoved<T> {
     @Override
     public String toString() {
         return "ComponentRemoved{" +
-                "type=" + type +
-                ", component=" + component.getClass().getName() +
-                '}';
+            "type=" + type +
+            ", component=" + component.getClass().getName() +
+            '}';
     }
 }

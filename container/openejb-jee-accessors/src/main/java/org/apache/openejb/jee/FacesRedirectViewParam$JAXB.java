@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesRedirectViewParam$JAXB
-        extends JAXBObject<FacesRedirectViewParam> {
+    extends JAXBObject<FacesRedirectViewParam> {
 
 
     public FacesRedirectViewParam$JAXB() {
         super(FacesRedirectViewParam.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-redirect-viewParamType".intern()));
     }
 
-    public static FacesRedirectViewParam readFacesRedirectViewParam(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesRedirectViewParam readFacesRedirectViewParam(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesRedirectViewParam(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesRedirectViewParam(final XoXMLStreamWriter writer, final FacesRedirectViewParam facesRedirectViewParam, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirectViewParam, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesRedirectViewParam facesRedirectViewParam, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesRedirectViewParam, context);
     }
 
-    public final static FacesRedirectViewParam _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesRedirectViewParam _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class FacesRedirectViewParam$JAXB
             context = new RuntimeContext();
         }
 
-        FacesRedirectViewParam facesRedirectViewParam = new FacesRedirectViewParam();
+        final FacesRedirectViewParam facesRedirectViewParam = new FacesRedirectViewParam();
         context.beforeUnmarshal(facesRedirectViewParam, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-redirect-viewParamType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesRedirectViewParam.class);
@@ -78,10 +78,10 @@ public class FacesRedirectViewParam$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesRedirectViewParam);
                 facesRedirectViewParam.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class FacesRedirectViewParam$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                String nameRaw = elementReader.getElementAsString();
+                final String nameRaw = elementReader.getElementAsString();
 
-                String name;
+                final String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class FacesRedirectViewParam$JAXB
                 facesRedirectViewParam.name = name;
             } else if (("value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: value
-                String valueRaw = elementReader.getElementAsString();
+                final String valueRaw = elementReader.getElementAsString();
 
-                String value;
+                final String value;
                 try {
                     value = Adapters.collapsedStringAdapterAdapter.unmarshal(valueRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class FacesRedirectViewParam$JAXB
         return facesRedirectViewParam;
     }
 
-    public final FacesRedirectViewParam read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesRedirectViewParam read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesRedirectViewParam facesRedirectViewParam, RuntimeContext context)
+        throws Exception {
         if (facesRedirectViewParam == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class FacesRedirectViewParam$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesRedirectViewParam.class != facesRedirectViewParam.getClass()) {
             context.unexpectedSubclass(writer, facesRedirectViewParam, FacesRedirectViewParam.class);
             return;
@@ -153,23 +153,23 @@ public class FacesRedirectViewParam$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesRedirectViewParam.id;
+        final String idRaw = facesRedirectViewParam.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesRedirectViewParam, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: name
-        String nameRaw = facesRedirectViewParam.name;
+        final String nameRaw = facesRedirectViewParam.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesRedirectViewParam, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (name != null) {
@@ -181,11 +181,11 @@ public class FacesRedirectViewParam$JAXB
         }
 
         // ELEMENT: value
-        String valueRaw = facesRedirectViewParam.value;
+        final String valueRaw = facesRedirectViewParam.value;
         String value = null;
         try {
             value = Adapters.collapsedStringAdapterAdapter.marshal(valueRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesRedirectViewParam, "value", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (value != null) {

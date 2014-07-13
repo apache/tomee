@@ -52,11 +52,11 @@ import static org.apache.openejb.util.URLs.toFile;
 /**
  * TLD file urls cached on a per classloader basis.  Helps with sharing TLD
  * files between webapps by placing them in a parent classloader.
- *
+ * <p/>
  * Each webapp will be able to retrieve the cached version of the URLs and
  * therefore only needs to scan its own libraries, the parent libraries will
  * already have been scanned.
- *
+ * <p/>
  * For a tiny bit of performance, we will scan the StandardClassloader at boot
  * in a separate thread so it should be primed in advance of any deployment.
  *
@@ -65,11 +65,11 @@ import static org.apache.openejb.util.URLs.toFile;
 public class TldScanner {
 
     // first cache, it is the faster one but not relevant between temp and runtime phases
-    private static Map<ClassLoader, Set<URL>> cache = new WeakHashMap<ClassLoader, Set<URL>>();
+    private static final Map<ClassLoader, Set<URL>> cache = new WeakHashMap<ClassLoader, Set<URL>>();
 
     // tld by classloader identified by hash on urls (same hash for temp and runtime classloaders)
     // a bit longer to compute but let scanning be reused over temp and runtime classloaders
-    private static Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
+    private static final Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
         if (classLoader == null) {

@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InterceptorOrder$JAXB
-        extends JAXBObject<InterceptorOrder> {
+    extends JAXBObject<InterceptorOrder> {
 
 
     public InterceptorOrder$JAXB() {
         super(InterceptorOrder.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptor-orderType".intern()));
     }
 
-    public static InterceptorOrder readInterceptorOrder(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InterceptorOrder readInterceptorOrder(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInterceptorOrder(XoXMLStreamWriter writer, InterceptorOrder interceptorOrder, RuntimeContext context)
-            throws Exception {
+    public static void writeInterceptorOrder(final XoXMLStreamWriter writer, final InterceptorOrder interceptorOrder, final RuntimeContext context)
+        throws Exception {
         _write(writer, interceptorOrder, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InterceptorOrder interceptorOrder, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InterceptorOrder interceptorOrder, final RuntimeContext context)
+        throws Exception {
         _write(writer, interceptorOrder, context);
     }
 
-    public final static InterceptorOrder _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InterceptorOrder _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class InterceptorOrder$JAXB
             context = new RuntimeContext();
         }
 
-        InterceptorOrder interceptorOrder = new InterceptorOrder();
+        final InterceptorOrder interceptorOrder = new InterceptorOrder();
         context.beforeUnmarshal(interceptorOrder, LifecycleCallback.NONE);
 
         List<String> interceptorClass = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("interceptor-orderType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InterceptorOrder.class);
@@ -81,10 +81,10 @@ public class InterceptorOrder$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, interceptorOrder);
                 interceptorOrder.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class InterceptorOrder$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("interceptor-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: interceptorClass
-                String interceptorClassItemRaw = elementReader.getElementAsString();
+                final String interceptorClassItemRaw = elementReader.getElementAsString();
 
-                String interceptorClassItem;
+                final String interceptorClassItem;
                 try {
                     interceptorClassItem = Adapters.collapsedStringAdapterAdapter.unmarshal(interceptorClassItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -128,13 +128,13 @@ public class InterceptorOrder$JAXB
         return interceptorOrder;
     }
 
-    public final InterceptorOrder read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InterceptorOrder read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InterceptorOrder interceptorOrder, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final InterceptorOrder interceptorOrder, RuntimeContext context)
+        throws Exception {
         if (interceptorOrder == null) {
             writer.writeXsiNil();
             return;
@@ -153,25 +153,25 @@ public class InterceptorOrder$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = interceptorOrder.id;
+        final String idRaw = interceptorOrder.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(interceptorOrder, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: interceptorClass
-        List<String> interceptorClassRaw = interceptorOrder.interceptorClass;
+        final List<String> interceptorClassRaw = interceptorOrder.interceptorClass;
         if (interceptorClassRaw != null) {
-            for (String interceptorClassItem : interceptorClassRaw) {
+            for (final String interceptorClassItem : interceptorClassRaw) {
                 String interceptorClass = null;
                 try {
                     interceptorClass = Adapters.collapsedStringAdapterAdapter.marshal(interceptorClassItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(interceptorOrder, "interceptorClass", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (interceptorClass != null) {

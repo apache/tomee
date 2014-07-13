@@ -24,11 +24,11 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckWrongClassTypeTest {
-    @Keys( { @Key("wrong.class.type"), @Key("noInterfaceDeclared.entity") })
+    @Keys({@Key("wrong.class.type"), @Key("noInterfaceDeclared.entity")})
     public EjbJar wrongClassType() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
-        EntityBean entityBean = new EntityBean();
+        final EjbJar ejbJar = new EjbJar();
+        final EntityBean entityBean = new EntityBean();
         entityBean.setEjbClass(FooEntity.class);
         entityBean.setEjbName("fooEntity");
         entityBean.setPersistenceType(PersistenceType.BEAN);
@@ -36,5 +36,6 @@ public class CheckWrongClassTypeTest {
         return ejbJar;
     }
 
-    private static class FooEntity {}
+    private static class FooEntity {
+    }
 }

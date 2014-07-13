@@ -78,7 +78,7 @@ public enum CmrStyle {
         final String relatedDescriptor = relatedType.getDescriptor();
         if (collectionType != null) {
             return collectionType.getDescriptor() +
-                    "<" + relatedDescriptor + ">";
+                "<" + relatedDescriptor + ">";
         } else {
             return relatedDescriptor;
         }

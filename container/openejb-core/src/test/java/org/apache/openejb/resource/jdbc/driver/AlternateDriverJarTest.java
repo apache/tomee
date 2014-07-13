@@ -53,7 +53,7 @@ public class AlternateDriverJarTest {
         Assert.assertTrue("Failed to find: " + file, file.exists());
 
         p.put("JdbcOne", "new://Resource?type=DataSource&classpath="
-                + file.getAbsolutePath().replace("\\", "/"));
+            + file.getAbsolutePath().replace("\\", "/"));
         p.put("JdbcOne.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
         p.put("JdbcOne.JdbcUrl", "jdbc:derby:memory:JdbcOne;create=true");
         p.put("JdbcOne.UserName", USER);
@@ -64,7 +64,7 @@ public class AlternateDriverJarTest {
         Assert.assertTrue("Failed to find: " + file, file.exists());
 
         p.put("JdbcTwo", "new://Resource?type=DataSource&classpath="
-                + file.getAbsolutePath().replace("\\", "/"));
+            + file.getAbsolutePath().replace("\\", "/"));
         p.put("JdbcTwo.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
         p.put("JdbcTwo.JdbcUrl", "jdbc:derby:memory:JdbcTwo;create=true");
         p.put("JdbcTwo.UserName", USER);
@@ -76,8 +76,8 @@ public class AlternateDriverJarTest {
     @Module
     public EjbJar app() throws Exception {
         return new EjbJar()
-                .enterpriseBean(new SingletonBean(JdbcOne.class).localBean())
-                .enterpriseBean(new SingletonBean(JdbcTwo.class).localBean());
+            .enterpriseBean(new SingletonBean(JdbcOne.class).localBean())
+            .enterpriseBean(new SingletonBean(JdbcTwo.class).localBean());
     }
 
     @EJB

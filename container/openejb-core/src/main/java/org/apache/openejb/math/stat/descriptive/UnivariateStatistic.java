@@ -38,7 +38,7 @@ public interface UnivariateStatistic {
      * in the input array.
      *
      * @param values the input array
-     * @param begin the index of the first element to include
+     * @param begin  the index of the first element to include
      * @param length the number of elements to include
      * @return the value of the statistic applied to the included array entries
      */

@@ -35,6 +35,7 @@ import java.util.Properties;
 public class AssemblerTool {
 
     public static final Map<String, Class> serviceInterfaces = new HashMap<String, Class>();
+
     static {
         serviceInterfaces.put("ProxyFactory", ProxyFactory.class);
         serviceInterfaces.put("SecurityService", SecurityService.class);

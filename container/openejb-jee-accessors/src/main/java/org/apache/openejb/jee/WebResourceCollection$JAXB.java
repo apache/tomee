@@ -33,33 +33,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class WebResourceCollection$JAXB
-        extends JAXBObject<WebResourceCollection> {
+    extends JAXBObject<WebResourceCollection> {
 
 
     public WebResourceCollection$JAXB() {
         super(WebResourceCollection.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-resource-collectionType".intern()), Text$JAXB.class);
     }
 
-    public static WebResourceCollection readWebResourceCollection(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static WebResourceCollection readWebResourceCollection(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeWebResourceCollection(XoXMLStreamWriter writer, WebResourceCollection webResourceCollection, RuntimeContext context)
-            throws Exception {
+    public static void writeWebResourceCollection(final XoXMLStreamWriter writer, final WebResourceCollection webResourceCollection, final RuntimeContext context)
+        throws Exception {
         _write(writer, webResourceCollection, context);
     }
 
-    public void write(XoXMLStreamWriter writer, WebResourceCollection webResourceCollection, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final WebResourceCollection webResourceCollection, final RuntimeContext context)
+        throws Exception {
         _write(writer, webResourceCollection, context);
     }
 
-    public final static WebResourceCollection _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static WebResourceCollection _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -70,7 +70,7 @@ public class WebResourceCollection$JAXB
             context = new RuntimeContext();
         }
 
-        WebResourceCollection webResourceCollection = new WebResourceCollection();
+        final WebResourceCollection webResourceCollection = new WebResourceCollection();
         context.beforeUnmarshal(webResourceCollection, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -79,7 +79,7 @@ public class WebResourceCollection$JAXB
         List<String> httpMethodOmission = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("web-resource-collectionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, WebResourceCollection.class);
@@ -87,10 +87,10 @@ public class WebResourceCollection$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, webResourceCollection);
                 webResourceCollection.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,15 +99,15 @@ public class WebResourceCollection$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("web-resource-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: webResourceName
-                String webResourceNameRaw = elementReader.getElementAsString();
+                final String webResourceNameRaw = elementReader.getElementAsString();
 
-                String webResourceName;
+                final String webResourceName;
                 try {
                     webResourceName = Adapters.collapsedStringAdapterAdapter.unmarshal(webResourceNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -115,19 +115,19 @@ public class WebResourceCollection$JAXB
                 webResourceCollection.webResourceName = webResourceName;
             } else if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("url-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: urlPattern
-                String urlPatternItemRaw = elementReader.getElementAsString();
+                final String urlPatternItemRaw = elementReader.getElementAsString();
 
-                String urlPatternItem;
+                final String urlPatternItem;
                 try {
                     urlPatternItem = Adapters.trimStringAdapterAdapter.unmarshal(urlPatternItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, TrimStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -143,12 +143,12 @@ public class WebResourceCollection$JAXB
                 urlPattern.add(urlPatternItem);
             } else if (("http-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: httpMethod
-                String httpMethodItemRaw = elementReader.getElementAsString();
+                final String httpMethodItemRaw = elementReader.getElementAsString();
 
-                String httpMethodItem;
+                final String httpMethodItem;
                 try {
                     httpMethodItem = Adapters.collapsedStringAdapterAdapter.unmarshal(httpMethodItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -164,12 +164,12 @@ public class WebResourceCollection$JAXB
                 httpMethod.add(httpMethodItem);
             } else if (("http-method-omission" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: httpMethodOmission
-                String httpMethodOmissionItemRaw = elementReader.getElementAsString();
+                final String httpMethodOmissionItemRaw = elementReader.getElementAsString();
 
-                String httpMethodOmissionItem;
+                final String httpMethodOmissionItem;
                 try {
                     httpMethodOmissionItem = Adapters.collapsedStringAdapterAdapter.unmarshal(httpMethodOmissionItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -190,7 +190,7 @@ public class WebResourceCollection$JAXB
         if (descriptions != null) {
             try {
                 webResourceCollection.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, WebResourceCollection.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -209,13 +209,13 @@ public class WebResourceCollection$JAXB
         return webResourceCollection;
     }
 
-    public final WebResourceCollection read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final WebResourceCollection read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, WebResourceCollection webResourceCollection, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final WebResourceCollection webResourceCollection, RuntimeContext context)
+        throws Exception {
         if (webResourceCollection == null) {
             writer.writeXsiNil();
             return;
@@ -225,7 +225,7 @@ public class WebResourceCollection$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (WebResourceCollection.class != webResourceCollection.getClass()) {
             context.unexpectedSubclass(writer, webResourceCollection, WebResourceCollection.class);
             return;
@@ -235,23 +235,23 @@ public class WebResourceCollection$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = webResourceCollection.id;
+        final String idRaw = webResourceCollection.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(webResourceCollection, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: webResourceName
-        String webResourceNameRaw = webResourceCollection.webResourceName;
+        final String webResourceNameRaw = webResourceCollection.webResourceName;
         String webResourceName = null;
         try {
             webResourceName = Adapters.collapsedStringAdapterAdapter.marshal(webResourceNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(webResourceCollection, "webResourceName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (webResourceName != null) {
@@ -266,11 +266,11 @@ public class WebResourceCollection$JAXB
         Text[] descriptions = null;
         try {
             descriptions = webResourceCollection.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(webResourceCollection, "descriptions", WebResourceCollection.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -282,13 +282,13 @@ public class WebResourceCollection$JAXB
         }
 
         // ELEMENT: urlPattern
-        List<String> urlPatternRaw = webResourceCollection.urlPattern;
+        final List<String> urlPatternRaw = webResourceCollection.urlPattern;
         if (urlPatternRaw != null) {
-            for (String urlPatternItem : urlPatternRaw) {
+            for (final String urlPatternItem : urlPatternRaw) {
                 String urlPattern = null;
                 try {
                     urlPattern = Adapters.trimStringAdapterAdapter.marshal(urlPatternItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(webResourceCollection, "urlPattern", TrimStringAdapter.class, List.class, List.class, e);
                 }
                 if (urlPattern != null) {
@@ -302,13 +302,13 @@ public class WebResourceCollection$JAXB
         }
 
         // ELEMENT: httpMethod
-        List<String> httpMethodRaw = webResourceCollection.httpMethod;
+        final List<String> httpMethodRaw = webResourceCollection.httpMethod;
         if (httpMethodRaw != null) {
-            for (String httpMethodItem : httpMethodRaw) {
+            for (final String httpMethodItem : httpMethodRaw) {
                 String httpMethod = null;
                 try {
                     httpMethod = Adapters.collapsedStringAdapterAdapter.marshal(httpMethodItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(webResourceCollection, "httpMethod", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (httpMethod != null) {
@@ -320,13 +320,13 @@ public class WebResourceCollection$JAXB
         }
 
         // ELEMENT: httpMethodOmission
-        List<String> httpMethodOmissionRaw = webResourceCollection.httpMethodOmission;
+        final List<String> httpMethodOmissionRaw = webResourceCollection.httpMethodOmission;
         if (httpMethodOmissionRaw != null) {
-            for (String httpMethodOmissionItem : httpMethodOmissionRaw) {
+            for (final String httpMethodOmissionItem : httpMethodOmissionRaw) {
                 String httpMethodOmission = null;
                 try {
                     httpMethodOmission = Adapters.collapsedStringAdapterAdapter.marshal(httpMethodOmissionItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(webResourceCollection, "httpMethodOmission", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (httpMethodOmission != null) {

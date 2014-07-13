@@ -67,7 +67,7 @@ public class WsdlMessageMapping {
         return wsdlMessage;
     }
 
-    public void setWsdlMessage(QName value) {
+    public void setWsdlMessage(final QName value) {
         this.wsdlMessage = value;
     }
 
@@ -75,7 +75,7 @@ public class WsdlMessageMapping {
         return wsdlMessagePartName;
     }
 
-    public void setWsdlMessagePartName(String value) {
+    public void setWsdlMessagePartName(final String value) {
         this.wsdlMessagePartName = value;
     }
 
@@ -83,7 +83,7 @@ public class WsdlMessageMapping {
         return parameterMode;
     }
 
-    public void setParameterMode(String value) {
+    public void setParameterMode(final String value) {
         this.parameterMode = value;
     }
 
@@ -91,7 +91,7 @@ public class WsdlMessageMapping {
         return soapHeader;
     }
 
-    public void setSoapHeader(Object value) {
+    public void setSoapHeader(final Object value) {
         this.soapHeader = value;
     }
 
@@ -99,7 +99,7 @@ public class WsdlMessageMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

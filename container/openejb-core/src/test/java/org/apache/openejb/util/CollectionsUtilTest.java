@@ -24,11 +24,9 @@ import java.util.List;
 public class CollectionsUtilTest {
 
     @Test
-    public void safeIterationForNullList()
-    {
-        List<String> stringList =null;
-        for(String string: CollectionsUtil.safe(stringList))
-        {
+    public void safeIterationForNullList() {
+        final List<String> stringList = null;
+        for (final String string : CollectionsUtil.safe(stringList)) {
         }
 
         //PASS: No NPE thrown

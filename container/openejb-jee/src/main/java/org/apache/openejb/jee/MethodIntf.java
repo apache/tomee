@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for method-intfType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="method-intfType">
  *   &lt;simpleContent>
@@ -36,26 +36,24 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum MethodIntf {
-    @XmlEnumValue("Home") HOME("Home"),
-    @XmlEnumValue("Remote") REMOTE("Remote"),
-    @XmlEnumValue("LocalHome") LOCALHOME("LocalHome"),
-    @XmlEnumValue("Local") LOCAL("Local"),
-    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT("ServiceEndpoint"),
-    @XmlEnumValue("Timer") TIMER("Timer"),
-    @XmlEnumValue("MessageEndpoint") MESSAGEENDPOINT("MessageEndpoint");
+    @XmlEnumValue("Home")HOME("Home"),
+    @XmlEnumValue("Remote")REMOTE("Remote"),
+    @XmlEnumValue("LocalHome")LOCALHOME("LocalHome"),
+    @XmlEnumValue("Local")LOCAL("Local"),
+    @XmlEnumValue("ServiceEndpoint")SERVICEENDPOINT("ServiceEndpoint"),
+    @XmlEnumValue("Timer")TIMER("Timer"),
+    @XmlEnumValue("MessageEndpoint")MESSAGEENDPOINT("MessageEndpoint");
 
     private final String name;
 
-    private MethodIntf(String name) {
+    private MethodIntf(final String name) {
         this.name = name;
     }
 
     public String toString() {
         return name;
     }
-    
+
 }

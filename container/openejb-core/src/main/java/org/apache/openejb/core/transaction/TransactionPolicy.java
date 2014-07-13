@@ -92,7 +92,7 @@ public interface TransactionPolicy {
      * transaction is completed.
      *
      * @throws ApplicationException if recoverable exception is encountered
-     * @throws SystemException if an unrecoverable exception is encountered
+     * @throws SystemException      if an unrecoverable exception is encountered
      */
     void commit() throws ApplicationException, SystemException;
 
@@ -111,7 +111,7 @@ public interface TransactionPolicy {
      * actual transaction active, the resource associated with the transaction
      * is set; otherwise the resource is scoped to this TransactionPolicy.
      *
-     * @param key the resource key
+     * @param key   the resource key
      * @param value the resource
      */
     void putResource(Object key, Object value);
@@ -144,7 +144,7 @@ public interface TransactionPolicy {
      *
      * @param xaResource the XAResource to enlist
      * @throws SystemException if the xaResource could not be enlisted in the
-     * transaction
+     *                         transaction
      */
     void enlistResource(XAResource xaResource) throws SystemException;
 

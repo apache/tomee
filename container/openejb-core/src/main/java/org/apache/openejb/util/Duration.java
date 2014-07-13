@@ -116,9 +116,9 @@ public class Duration {
     }
 
     private static final class Normalize {
-        private long a;
-        private long b;
-        private TimeUnit base;
+        private final long a;
+        private final long b;
+        private final TimeUnit base;
 
         private Normalize(final Duration a, final Duration b) {
             this.base = lowest(a, b);

@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class IgnoreDefaultTest {
-    private static Assembler assembler = new Assembler();
-    private static ConfigurationFactory configurationFactory = new ConfigurationFactory();
+    private static final Assembler assembler = new Assembler();
+    private static final ConfigurationFactory configurationFactory = new ConfigurationFactory();
 
     @Test
     public void createNormalDs() throws OpenEJBException, NamingException {
@@ -57,7 +57,7 @@ public class IgnoreDefaultTest {
         check(resource.getId(), null, null);
     }
 
-    private void check(String id, String user, String password) throws NamingException {
+    private void check(final String id, final String user, final String password) throws NamingException {
         final DataSource ds = (DataSource) assembler.getContainerSystem().getJNDIContext().lookup("openejb/Resource/" + id);
         assertThat(ds, instanceOf(org.apache.commons.dbcp.BasicDataSource.class));
         assertEquals(user, ((org.apache.commons.dbcp.BasicDataSource) ds).getUsername());

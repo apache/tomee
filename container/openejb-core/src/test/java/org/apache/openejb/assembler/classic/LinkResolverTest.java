@@ -24,12 +24,12 @@ import java.net.URI;
 public class LinkResolverTest extends TestCase {
 
     public void test() throws Exception {
-        LinkResolver<Thing> resolver = new LinkResolver<Thing>();
+        final LinkResolver<Thing> resolver = new LinkResolver<Thing>();
 
         resolver.add("my/module.jar", "one", Thing.ONE);
         resolver.add("some/other.jar", "two", Thing.TWO);
 
-        URI moduleUri = URI.create("my/module.jar");
+        final URI moduleUri = URI.create("my/module.jar");
 
         assertEquals(Thing.ONE, resolver.resolveLink("one", moduleUri));
         assertEquals(Thing.ONE, resolver.resolveLink("module.jar#one", moduleUri));

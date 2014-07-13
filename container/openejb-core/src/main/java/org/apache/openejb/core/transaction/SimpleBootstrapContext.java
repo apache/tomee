@@ -55,7 +55,7 @@ public class SimpleBootstrapContext implements BootstrapContext {
     public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
         // for Geronimo transaction manager, it implements XATerminator, TransactionManager & TransactionSynchronizationRegistry
         if (this.xaTerminator != null && this.xaTerminator instanceof TransactionSynchronizationRegistry) {
-            return (TransactionSynchronizationRegistry)this.xaTerminator;
+            return (TransactionSynchronizationRegistry) this.xaTerminator;
         }
         return null;
     }
@@ -65,7 +65,7 @@ public class SimpleBootstrapContext implements BootstrapContext {
             final GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
             return geronimoWorkManager.isContextSupported(cls);
         }
-        
+
         return false;
     }
 }

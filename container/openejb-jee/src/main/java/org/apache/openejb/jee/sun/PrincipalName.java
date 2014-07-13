@@ -37,7 +37,7 @@ public class PrincipalName {
         return className;
     }
 
-    public void setClassName(String value) {
+    public void setClassName(final String value) {
         this.className = value;
     }
 
@@ -45,7 +45,7 @@ public class PrincipalName {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 }

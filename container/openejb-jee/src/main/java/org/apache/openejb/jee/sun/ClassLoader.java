@@ -44,7 +44,7 @@ public class ClassLoader {
         return extraClassPath;
     }
 
-    public void setExtraClassPath(String value) {
+    public void setExtraClassPath(final String value) {
         this.extraClassPath = value;
     }
 
@@ -56,7 +56,7 @@ public class ClassLoader {
         }
     }
 
-    public void setDelegate(String value) {
+    public void setDelegate(final String value) {
         this.delegate = value;
     }
 
@@ -64,7 +64,7 @@ public class ClassLoader {
         return dynamicReloadInterval;
     }
 
-    public void setDynamicReloadInterval(String value) {
+    public void setDynamicReloadInterval(final String value) {
         this.dynamicReloadInterval = value;
     }
 

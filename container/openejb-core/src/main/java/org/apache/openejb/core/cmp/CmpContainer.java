@@ -730,10 +730,10 @@ public class CmpContainer implements RpcContainer {
             } else {
                 if (results.size() != 1) {
                     throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " +
-                                                      beanContext.getDeploymentID() +
-                                                      " and primarykey = " +
-                                                      args[0] +
-                                                      " Does not exist");
+                        beanContext.getDeploymentID() +
+                        " and primarykey = " +
+                        args[0] +
+                        " Does not exist");
                 }
 
                 // create a new ProxyInfo based on the deployment info and primary key

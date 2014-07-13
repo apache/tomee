@@ -33,7 +33,7 @@ public abstract class Parent {
     }
 
     @ManagedAttribute
-    public void setValue(int v) {
+    public void setValue(final int v) {
         i = v;
     }
 }

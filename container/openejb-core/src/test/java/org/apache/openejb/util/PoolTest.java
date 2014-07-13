@@ -67,7 +67,7 @@ public class PoolTest extends TestCase {
         checkMax(max, entries);
 
         // All entries should be null
-        for (Pool<Bean>.Entry entry : entries) {
+        for (final Pool<Bean>.Entry entry : entries) {
             assertNull(entry);
         }
 
@@ -92,7 +92,7 @@ public class PoolTest extends TestCase {
         for (int i = 1; i <= max; i++) {
             assertTrue("i=" + i + ", max=" + max, pool.add(new Bean()));
 
-            List<Pool<Bean>.Entry> list = drain(pool);
+            final List<Pool<Bean>.Entry> list = drain(pool);
             checkMax(max, list);
             checkMin(Math.min(i, min), list);
             checkEntries(i, list);
@@ -109,7 +109,7 @@ public class PoolTest extends TestCase {
         builder.setMaxSize(1);
         builder.setStrictPooling(false);
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
             }
 
@@ -133,40 +133,40 @@ public class PoolTest extends TestCase {
         assertFalse(pool.push(bean));
 
         assertTrue(bean.discarded > 0);
-        
+
         assertNotNull(pool.pop(0, TimeUnit.MILLISECONDS));
         assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
         assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
 
     }
 
-    private <T> void drainCheckPush(int max, int min, Pool<T> pool) throws InterruptedException {
+    private <T> void drainCheckPush(final int max, final int min, final Pool<T> pool) throws InterruptedException {
         final List<Pool<T>.Entry> list = drain(pool);
         checkMax(max, list);
         checkMin(min, list);
         push(pool, list);
     }
 
-    private <T> void discard(Pool<T> pool, List<Pool<T>.Entry> list) {
-        for (Pool<T>.Entry entry : list) {
+    private <T> void discard(final Pool<T> pool, final List<Pool<T>.Entry> list) {
+        for (final Pool<T>.Entry entry : list) {
             pool.discard(entry);
         }
     }
 
-    private <T> void push(Pool<T> pool, List<Pool<T>.Entry> list) {
-        for (Pool<T>.Entry entry : list) {
+    private <T> void push(final Pool<T> pool, final List<Pool<T>.Entry> list) {
+        for (final Pool<T>.Entry entry : list) {
             if (entry != null && entry.get() instanceof Bean) {
-                Bean bean = (Bean) entry.get();
+                final Bean bean = (Bean) entry.get();
                 bean.push();
             }
             pool.push(entry);
         }
     }
 
-    private void exerciseStrictPool(int max, int min) throws InterruptedException {
+    private void exerciseStrictPool(final int max, final int min) throws InterruptedException {
         Bean.instances.set(0);
-        
-        Pool<String> pool = new Pool<String>(max, min, true);
+
+        final Pool<String> pool = new Pool<String>(max, min, true);
 
         // Fill the pool
         for (int i = 0; i < max; i++) {
@@ -220,22 +220,22 @@ public class PoolTest extends TestCase {
         final CountDownLatch finishingLine = new CountDownLatch(threadCount);
 
         // Do a business method...
-        Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 startingLine.countDown();
                 try {
                     startPistol.await();
 
-                    Pool.Entry entry = pool.pop(1000, MILLISECONDS);
+                    final Pool.Entry entry = pool.pop(1000, MILLISECONDS);
                     Thread.sleep(50);
                     if (entry == null) {
                         pool.push(new Bean());
                     } else {
                         pool.push(entry);
                     }
-                } catch (TimeoutException e) {
+                } catch (final TimeoutException e) {
                     // Simple timeout while waiting on pop()
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 finishingLine.countDown();
@@ -246,7 +246,7 @@ public class PoolTest extends TestCase {
 
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
         for (int i = 0; i < threadCount; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -285,10 +285,10 @@ public class PoolTest extends TestCase {
         builder.setMaxSize(max);
         builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 try {
                     Thread.sleep(pause);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 bean.discard();
@@ -318,9 +318,9 @@ public class PoolTest extends TestCase {
             push(pool, entries);
         }
 
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         assertTrue(pool.close(10, TimeUnit.SECONDS));
-        long time = System.currentTimeMillis() - start;
+        final long time = System.currentTimeMillis() - start;
 
         // All instances should have been removed
         assertEquals(max, discarded.size());
@@ -334,7 +334,6 @@ public class PoolTest extends TestCase {
      * Tests the idle timeout as well as the Thread pool
      * used to invoke the discard/create jobs.
      *
-     * 
      * @throws Exception exception
      */
     public void testIdleTimeout() throws Exception {
@@ -355,7 +354,7 @@ public class PoolTest extends TestCase {
         builder.setIdleTimeout(new Duration(idleTimeout, TimeUnit.MILLISECONDS));
         builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 discard.countDown();
@@ -364,7 +363,7 @@ public class PoolTest extends TestCase {
                     // to execute removes on all the
                     // timed out objects.
                     hold.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
             }
@@ -403,11 +402,11 @@ public class PoolTest extends TestCase {
         // no more, no less
         assertEquals(max - min, discarded.size());
 
-        for (Bean bean : discarded) {
+        for (final Bean bean : discarded) {
             final long inactive = bean.discarded - bean.accessed;
 
             // Actual idle time should not be less than our setting
-            assertTrue("timed out too soon: timeout="+idleTimeout +", idle="+inactive, inactive >= idleTimeout);
+            assertTrue("timed out too soon: timeout=" + idleTimeout + ", idle=" + inactive, inactive >= idleTimeout);
 
             // It shouldn't be too much more either
             assertTrue("timed out too long", inactive < idleTimeout + (sweepInterval * 2));
@@ -441,7 +440,7 @@ public class PoolTest extends TestCase {
         builder.setMaxSize(max);
         builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 discard.countDown();
@@ -450,7 +449,7 @@ public class PoolTest extends TestCase {
             public Bean create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -486,7 +485,7 @@ public class PoolTest extends TestCase {
         // All instances should have been removed
         assertEquals(max, discarded.size());
 
-        for (Bean bean : discarded) {
+        for (final Bean bean : discarded) {
             final long flushTime = bean.discarded - bean.accessed;
 
             // It shouldn't be too much more either
@@ -577,7 +576,7 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setSweepInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 countDown(discard, bean, "discarded");
@@ -586,7 +585,7 @@ public class PoolTest extends TestCase {
             public Bean create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -620,7 +619,7 @@ public class PoolTest extends TestCase {
         // All instances should have been removed
         assertEquals(max, discarded.size());
 
-        for (Bean bean : discarded) {
+        for (final Bean bean : discarded) {
             final long age = bean.discarded - bean.created;
 
             // Actual idle time should not be less than our setting
@@ -696,7 +695,7 @@ public class PoolTest extends TestCase {
         //  -- DONE --
     }
 
-    private void countDown(CountDownLatch discarded, Bean o, String event) {
+    private void countDown(final CountDownLatch discarded, final Bean o, final String event) {
         discarded.countDown();
 //        System.out.format("%1$tH:%1$tM:%1$tS.%1$tL " + event + " %2$s\n", System.currentTimeMillis(), o);
 //        try {
@@ -708,7 +707,7 @@ public class PoolTest extends TestCase {
 
     /**
      * What happens if we fail to create a "min" instance after a flush?
-     *
+     * <p/>
      * The pool should naturally balance itself out by promoting regular instances
      * to "min" instance as things are popped and pushed to and from the pool.
      *
@@ -729,14 +728,14 @@ public class PoolTest extends TestCase {
         builder.setMaxSize(max);
         builder.setSweepInterval(new Duration(poll, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier() {
-            public void discard(Object o, Pool.Event reason) {
+            public void discard(final Object o, final Pool.Event reason) {
                 discarded.countDown();
             }
 
             public Object create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -834,7 +833,7 @@ public class PoolTest extends TestCase {
             checkMax(max, entries);
 
             // though there should be "min" quantities of nulls
-            checkEntries(max-min, entries);
+            checkEntries(max - min, entries);
 
             // Now when we push these back in, the right number
             // of entries should be converted to "min" entries
@@ -854,7 +853,7 @@ public class PoolTest extends TestCase {
             // though there should still be "min" quantities of nulls
             // as we still haven't created any more instances, we just
             // converted some of our instances into "min" entries
-            checkEntries(max-min, entries);
+            checkEntries(max - min, entries);
 
         }
 
@@ -863,7 +862,7 @@ public class PoolTest extends TestCase {
 
     /**
      * What happens if we fail to create a "min" instance after a maxAge expiration?
-     *
+     * <p/>
      * The pool should naturally balance itself out by promoting regular instances
      * to "min" instance as things are popped and pushed to and from the pool.
      *
@@ -886,14 +885,14 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setSweepInterval(new Duration(poll, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean o, Pool.Event reason) {
+            public void discard(final Bean o, final Pool.Event reason) {
                 countDown(discarded, o, "discarded");
             }
 
             public Bean create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -989,7 +988,7 @@ public class PoolTest extends TestCase {
             checkMax(max, entries);
 
             // though there should be "min" quantities of nulls
-            checkEntries(max-min, entries);
+            checkEntries(max - min, entries);
 
             // Now when we push these back in, the right number
             // of entries should be converted to "min" entries
@@ -1009,7 +1008,7 @@ public class PoolTest extends TestCase {
             // though there should still be "min" quantities of nulls
             // as we still haven't created any more instances, we just
             // converted some of our instances into "min" entries
-            checkEntries(max-min, entries);
+            checkEntries(max - min, entries);
 
         }
 
@@ -1020,7 +1019,7 @@ public class PoolTest extends TestCase {
     /**
      * When an item is in use, it should still be flushed
      * upon return to the pool if the pool was flushed
-     *
+     * <p/>
      * Active items should still be flushed the moment they
      * become inactive (returned to the pool).
      *
@@ -1046,14 +1045,14 @@ public class PoolTest extends TestCase {
         builder.setMaxSize(max);
         builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
             }
 
             public Bean create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -1089,7 +1088,7 @@ public class PoolTest extends TestCase {
             // Now call flush
             pool.flush();
 
-            for (Pool<Bean>.Entry entry : entries) {
+            for (final Pool<Bean>.Entry entry : entries) {
                 assertFalse("entry should not be accepted", pool.push(entry));
             }
         }
@@ -1163,7 +1162,7 @@ public class PoolTest extends TestCase {
     /**
      * When an item is in use, it should still be expired
      * upon return to the pool if the item has lived too long
-     *
+     * <p/>
      * Active items that have lived too long should still be
      * expired the moment they become inactive (returned to the pool).
      *
@@ -1185,14 +1184,14 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setSweepInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean, Pool.Event reason) {
+            public void discard(final Bean bean, final Pool.Event reason) {
                 bean.discard();
             }
 
             public Bean create() {
                 try {
                     createInstances.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
                 try {
@@ -1228,7 +1227,7 @@ public class PoolTest extends TestCase {
             // Now wait for max age
             Thread.sleep(maxAge);
 
-            for (Pool<Bean>.Entry entry : entries) {
+            for (final Pool<Bean>.Entry entry : entries) {
                 assertFalse("entry should not be accepted", pool.push(entry));
             }
         }
@@ -1301,7 +1300,7 @@ public class PoolTest extends TestCase {
         //  -- DONE --
     }
 
-    private void await(CountDownLatch latch, int timeout, TimeUnit seconds) throws InterruptedException {
+    private void await(final CountDownLatch latch, final int timeout, final TimeUnit seconds) throws InterruptedException {
         if (!latch.await(timeout, seconds)) {
 //            String path = "<dump-failed>";
 //            try {
@@ -1310,36 +1309,36 @@ public class PoolTest extends TestCase {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-            fail("latch.await timed out: "+ latch);
+            fail("latch.await timed out: " + latch);
         }
     }
 
-    private <T> void checkMax(int max, List<Pool<T>.Entry> entries) {
+    private <T> void checkMax(final int max, final List<Pool<T>.Entry> entries) {
         assertEquals(max, entries.size());
     }
 
-    private <T> void checkMin(int min, List<Pool<T>.Entry> entries) {
+    private <T> void checkMin(final int min, final List<Pool<T>.Entry> entries) {
         assertEquals(min, getMin(entries).size());
     }
 
-    private <T> void checkNull(List<Pool<T>.Entry> entries) {
-        for (Pool<T>.Entry entry : entries) {
+    private <T> void checkNull(final List<Pool<T>.Entry> entries) {
+        for (final Pool<T>.Entry entry : entries) {
             assertNull(entry);
         }
     }
 
-    private <T> List<Pool<T>.Entry> getMin(List<Pool<T>.Entry> entries) {
-        List<Pool<T>.Entry> list = new ArrayList<Pool<T>.Entry>();
+    private <T> List<Pool<T>.Entry> getMin(final List<Pool<T>.Entry> entries) {
+        final List<Pool<T>.Entry> list = new ArrayList<Pool<T>.Entry>();
 
-        for (Pool<T>.Entry entry : entries) {
+        for (final Pool<T>.Entry entry : entries) {
             if (entry != null && entry.hasHardReference()) list.add(entry);
         }
         return list;
     }
 
-    private <T> void checkEntries(int expected, List<Pool<T>.Entry> entries) {
+    private <T> void checkEntries(final int expected, final List<Pool<T>.Entry> entries) {
         int found = 0;
-        for (Pool<T>.Entry entry : entries) {
+        for (final Pool<T>.Entry entry : entries) {
             if (entry == null) continue;
             found++;
             assertNotNull(entry.get());
@@ -1348,17 +1347,17 @@ public class PoolTest extends TestCase {
         assertEquals(expected, found);
     }
 
-    private <T> List<Pool<T>.Entry> drain(Pool<T> pool) throws InterruptedException {
+    private <T> List<Pool<T>.Entry> drain(final Pool<T> pool) throws InterruptedException {
         return drain(pool, 0);
     }
 
-    private <T> List<Pool<T>.Entry> drain(Pool<T> pool, int timeout) throws InterruptedException {
-        List<Pool<T>.Entry> entries = new ArrayList<Pool<T>.Entry>();
+    private <T> List<Pool<T>.Entry> drain(final Pool<T> pool, final int timeout) throws InterruptedException {
+        final List<Pool<T>.Entry> entries = new ArrayList<Pool<T>.Entry>();
         try {
             while (true) {
                 entries.add(pool.pop(timeout, MILLISECONDS));
             }
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             // pool drained
         }
         return entries;
@@ -1368,7 +1367,7 @@ public class PoolTest extends TestCase {
 
         public static AtomicInteger instances = new AtomicInteger();
 
-        private int count;
+        private final int count;
         private final long created;
         private long accessed;
         private long discarded;
@@ -1405,12 +1404,12 @@ public class PoolTest extends TestCase {
         @Override
         public String toString() {
             return "Bean{" +
-                    "" + count +
+                "" + count +
 //                    "count=" + count +
 //                    ", created=" + created +
 //                    ", accessed=" + accessed +
 //                    ", discarded=" + discarded +
-                    '}';
+                '}';
         }
     }
 }

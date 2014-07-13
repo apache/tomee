@@ -230,7 +230,7 @@ public class DeployTimeEnhancer {
         if (dir.isDirectory() && (dir.getAbsolutePath().endsWith("/WEB-INF/classes") || dir.getAbsolutePath().endsWith("/WEB-INF/classes/"))) {
             final File pXmlStd = new File(dir.getParentFile(), "persistence.xml");
             if (pXmlStd.exists()) {
-                return  pXmlStd.getAbsolutePath();
+                return pXmlStd.getAbsolutePath();
             }
 
             final File pXml = new File(dir, META_INF_PERSISTENCE_XML);

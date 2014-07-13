@@ -29,7 +29,7 @@ public class SunConversionTest extends TestCase {
         assertEquals("dir/file.xml", SunConversion.extractSerivceId("file:repo1/dir", "META-INF/wsdl/file.xml"));
         assertEquals("dir/file.xml", SunConversion.extractSerivceId("file:repo1/dir", "WEB-INF/wsdl/file.xml"));
 
-        String x = "file:repo1/dir";
+        final String x = "file:repo1/dir";
         assertEquals("dir", SunConversion.extractServiceId(x));
         assertEquals("dir/file", SunConversion.extractServiceId("file:repo1/dir/file.wsdl"));
         assertEquals("dir/file.xml", SunConversion.extractServiceId("file:repo1/dir/file.xml"));

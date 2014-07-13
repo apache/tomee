@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>Java class for message-destination-usageType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destination-usageType">
  *   &lt;simpleContent>
@@ -36,11 +36,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum MessageDestinationUsage {
-    @XmlEnumValue("Consumes") CONSUMES,
-    @XmlEnumValue("Produces") PRODUCES,
-    @XmlEnumValue("ConsumesProduces") CONSUMES_PRODUCES,
+    @XmlEnumValue("Consumes")CONSUMES,
+    @XmlEnumValue("Produces")PRODUCES,
+    @XmlEnumValue("ConsumesProduces")CONSUMES_PRODUCES,
 }

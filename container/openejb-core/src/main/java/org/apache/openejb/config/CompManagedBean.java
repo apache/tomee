@@ -57,7 +57,7 @@ public class CompManagedBean extends ManagedBean {
         @Override
         public boolean add(final PersistenceContextRef value) {
             if (!PersistenceContextType.EXTENDED.equals(value.getPersistenceContextType())
-                    && !super.contains(value)) {
+                && !super.contains(value)) {
                 return super.add(value);
             }
             return false;
@@ -69,7 +69,7 @@ public class CompManagedBean extends ManagedBean {
         }
 
         private static class NoExtendedMap implements Map<String, PersistenceContextRef> {
-            private Map<String, PersistenceContextRef> delegate;
+            private final Map<String, PersistenceContextRef> delegate;
 
             public NoExtendedMap(final Map<String, PersistenceContextRef> map) {
                 delegate = map;
@@ -103,7 +103,7 @@ public class CompManagedBean extends ManagedBean {
             @Override
             public PersistenceContextRef put(final String key, final PersistenceContextRef value) {
                 if (!PersistenceContextType.EXTENDED.equals(value.getPersistenceContextType())
-                        && !delegate.containsValue(key)) {
+                    && !delegate.containsValue(key)) {
                     return delegate.put(key, value);
                 }
                 return null;

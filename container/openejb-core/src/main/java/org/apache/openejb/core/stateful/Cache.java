@@ -44,8 +44,8 @@ public interface Cache<K, V> {
      * checked-in.
      *
      * @throws IllegalStateException if the entry is already checked out.
-     * @throws Exception if an entry is loaded and the afterLoad method threw an
-     * exception
+     * @throws Exception             if an entry is loaded and the afterLoad method threw an
+     *                               exception
      */
     V checkOut(K key, boolean loadIfNotFound) throws Exception;
 
@@ -65,12 +65,12 @@ public interface Cache<K, V> {
      * Removes all of the entries that match the specified filter.
      */
     void removeAll(CacheFilter<V> filter);
-    
+
     /**
      * Initialize the cache.
      */
     void init();
-    
+
     /**
      * Destroy the cache.
      */
@@ -111,14 +111,14 @@ public interface Cache<K, V> {
          */
         boolean matches(V v);
     }
-    
+
     /**
      * A cache entry can implement this interface
-     * to provide its timeout.     
+     * to provide its timeout.
      */
     interface TimeOut {
-        
+
         Duration getTimeOut();
-        
+
     }
 }

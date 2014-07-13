@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-from-actionType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-from-actionType">
  *   &lt;simpleContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-from-actionType", propOrder = {
@@ -61,18 +59,12 @@ public class FacesFromAction {
     protected java.lang.String id;
 
     /**
-     * 
-     * 
-     *                 EL expressions present within a faces config file
-     *                 must start with the character sequence of '#{' and
-     *                 end with '}'.
-     * 
-     *             
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesELExpression }
-     *     
+     * EL expressions present within a faces config file
+     * must start with the character sequence of '#{' and
+     * end with '}'.
+     *
+     * @return possible object is
+     * {@link FacesELExpression }
      */
     public FacesELExpression getValue() {
         return value;
@@ -80,23 +72,19 @@ public class FacesFromAction {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesELExpression }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesELExpression }
      */
-    public void setValue(FacesELExpression value) {
+    public void setValue(final FacesELExpression value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -104,13 +92,11 @@ public class FacesFromAction {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

@@ -26,7 +26,7 @@ public class Foo {
 
     public static class JAXB {
 
-        public static void setMessage(Foo foo, String message) {
+        public static void setMessage(final Foo foo, final String message) {
             foo.message = message;
         }
     }

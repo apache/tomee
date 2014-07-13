@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<HttpServletRequest>
-        implements HttpServletRequest {
+    implements HttpServletRequest {
 
     protected ThreadLocalHttpServletRequest() {
         super(HttpServletRequest.class);

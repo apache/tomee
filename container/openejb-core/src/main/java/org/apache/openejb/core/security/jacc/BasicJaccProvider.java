@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class BasicJaccProvider extends JaccProvider {
 
-    private Map<String, BasicPolicyConfiguration> configurations = new HashMap<String, BasicPolicyConfiguration>();
+    private final Map<String, BasicPolicyConfiguration> configurations = new HashMap<String, BasicPolicyConfiguration>();
 
     private final java.security.Policy systemPolicy;
 
@@ -65,7 +65,7 @@ public class BasicJaccProvider extends JaccProvider {
     }
 
     public PermissionCollection getPermissions(final CodeSource codesource) {
-        return systemPolicy == null ? null: systemPolicy.getPermissions(codesource);
+        return systemPolicy == null ? null : systemPolicy.getPermissions(codesource);
     }
 
     public void refresh() {
@@ -88,6 +88,6 @@ public class BasicJaccProvider extends JaccProvider {
             }
         }
 
-        return systemPolicy != null ? systemPolicy.implies(domain, permission): false;
+        return systemPolicy != null ? systemPolicy.implies(domain, permission) : false;
     }
 }

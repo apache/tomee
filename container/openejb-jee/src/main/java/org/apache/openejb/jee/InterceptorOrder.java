@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for interceptor-orderType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="interceptor-orderType">
  *   &lt;complexContent>
@@ -49,13 +49,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interceptor-orderType", propOrder = {
-        "interceptorClass"
-        })
+    "interceptorClass"
+})
 public class InterceptorOrder {
 
     @XmlElement(name = "interceptor-class", required = true)
@@ -72,7 +70,7 @@ public class InterceptorOrder {
         return this.interceptorClass;
     }
 
-    public void addInterceptorClass(String className) {
+    public void addInterceptorClass(final String className) {
         getInterceptorClass().add(className);
     }
 
@@ -80,7 +78,7 @@ public class InterceptorOrder {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

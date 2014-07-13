@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ejb-ql-query complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-ql-query">
  *   &lt;complexContent>
@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-ql-query", propOrder = {
@@ -60,11 +58,9 @@ public class EjbQlQuery {
 
     /**
      * Gets the value of the weblogicQl property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getWeblogicQl() {
         return weblogicQl;
@@ -72,23 +68,19 @@ public class EjbQlQuery {
 
     /**
      * Sets the value of the weblogicQl property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setWeblogicQl(String value) {
+    public void setWeblogicQl(final String value) {
         this.weblogicQl = value;
     }
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupName() {
         return groupName;
@@ -96,23 +88,19 @@ public class EjbQlQuery {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupName(String value) {
+    public void setGroupName(final String value) {
         this.groupName = value;
     }
 
     /**
      * Gets the value of the cachingName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CachingName }
-     *     
+     *
+     * @return possible object is
+     * {@link CachingName }
      */
     public CachingName getCachingName() {
         return cachingName;
@@ -120,13 +108,11 @@ public class EjbQlQuery {
 
     /**
      * Sets the value of the cachingName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CachingName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CachingName }
      */
-    public void setCachingName(CachingName value) {
+    public void setCachingName(final CachingName value) {
         this.cachingName = value;
     }
 

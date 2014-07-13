@@ -33,13 +33,13 @@ public interface ContainerSystem {
 
     Container getContainer(Object id);
 
-    Container [] containers();
+    Container[] containers();
 
     WebContext getWebContext(String id);
 
     Context getJNDIContext();
 
     List<AppContext> getAppContexts();
-    
+
     AppContext getAppContext(Object id);
 }

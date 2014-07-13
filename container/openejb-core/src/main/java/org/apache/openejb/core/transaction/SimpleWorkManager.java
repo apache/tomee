@@ -42,7 +42,7 @@ public class SimpleWorkManager implements WorkManager {
     /**
      * All work is performed by this executor
      */
-    private Executor executor;
+    private final Executor executor;
 
     public SimpleWorkManager(final Executor executor) {
         if (executor == null) {

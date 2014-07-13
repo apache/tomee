@@ -19,9 +19,11 @@ package org.apache.openejb.junit;
 
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +68,7 @@ public class TestRunner {
     @Test
     public void testDefaultConfigInjection() {
         assertNotNull(contextConfig);
-        String value = contextConfig.get("org.apache.openejb.junit.default-config");
+        final String value = contextConfig.get("org.apache.openejb.junit.default-config");
         assertEquals("true", value);
     }
 }

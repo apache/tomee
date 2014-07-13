@@ -26,7 +26,7 @@ import java.util.Hashtable;
  * @version $Revision$ $Date$
  */
 public class javaURLContextFactory implements ObjectFactory {
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable environment) throws Exception {
+    public Object getObjectInstance(final Object obj, final Name name, final Context nameCtx, final Hashtable environment) throws Exception {
         return "java";
     }
 }

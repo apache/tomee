@@ -54,7 +54,7 @@ public class TimerImpl implements Timer, Serializable {
 
     public Date getNextTimeout() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        
+
         final Date nextTimeout = timerData.getNextTimeout();
         if (nextTimeout == null) {
             throw new NoMoreTimeoutsException("The timer has no future timeouts");
@@ -69,8 +69,8 @@ public class TimerImpl implements Timer, Serializable {
 
     public TimerHandle getHandle() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        if(!timerData.isPersistent()){
-           throw new IllegalStateException("can't getHandle for a non-persistent timer");
+        if (!timerData.isPersistent()) {
+            throw new IllegalStateException("can't getHandle for a non-persistent timer");
         }
         return new TimerHandleImpl(timerData.getId(), timerData.getDeploymentId());
     }
@@ -84,8 +84,8 @@ public class TimerImpl implements Timer, Serializable {
     }
 
     public boolean isPersistent() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
-       checkState();
-       return timerData.isPersistent();
+        checkState();
+        return timerData.isPersistent();
     }
 
     public boolean isCalendarTimer() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
@@ -104,8 +104,8 @@ public class TimerImpl implements Timer, Serializable {
         if (timerData.isCancelled() && !timerData.isStopped()) {
             throw new NoSuchObjectLocalException("Timer has been cancelled");
         }
-        
-        if (timerData.isExpired()){
+
+        if (timerData.isExpired()) {
             throw new NoSuchObjectLocalException("The timer has expired");
         }
     }

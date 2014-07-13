@@ -37,7 +37,7 @@ public class TransactionSynchronizationRegistryWrapper implements TransactionSyn
 
     public TransactionSynchronizationRegistry getRegistry() {
         final SystemInstance system = SystemInstance.get();
-        if (system != this.system){
+        if (system != this.system) {
             this.registry = system.getComponent(TransactionSynchronizationRegistry.class);
             this.system = system;
         }

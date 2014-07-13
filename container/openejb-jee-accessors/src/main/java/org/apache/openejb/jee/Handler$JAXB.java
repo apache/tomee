@@ -37,33 +37,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Handler$JAXB
-        extends JAXBObject<Handler> {
+    extends JAXBObject<Handler> {
 
 
     public Handler$JAXB() {
         super(Handler.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handlerType".intern()), Text$JAXB.class, Icon$JAXB.class, ParamValue$JAXB.class);
     }
 
-    public static Handler readHandler(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Handler readHandler(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeHandler(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public static void writeHandler(final XoXMLStreamWriter writer, final Handler handler, final RuntimeContext context)
+        throws Exception {
         _write(writer, handler, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Handler handler, final RuntimeContext context)
+        throws Exception {
         _write(writer, handler, context);
     }
 
-    public final static Handler _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Handler _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -74,7 +74,7 @@ public class Handler$JAXB
             context = new RuntimeContext();
         }
 
-        Handler handler = new Handler();
+        final Handler handler = new Handler();
         context.beforeUnmarshal(handler, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -86,7 +86,7 @@ public class Handler$JAXB
         List<String> portName = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("handlerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Handler.class);
@@ -94,10 +94,10 @@ public class Handler$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, handler);
                 handler.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -106,24 +106,24 @@ public class Handler$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = handler.icon;
                     if (icon != null) {
@@ -135,12 +135,12 @@ public class Handler$JAXB
                 icon.add(iconItem);
             } else if (("handler-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handlerName
-                String handlerNameRaw = elementReader.getElementAsString();
+                final String handlerNameRaw = elementReader.getElementAsString();
 
-                String handlerName;
+                final String handlerName;
                 try {
                     handlerName = Adapters.collapsedStringAdapterAdapter.unmarshal(handlerNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -148,12 +148,12 @@ public class Handler$JAXB
                 handler.handlerName = handlerName;
             } else if (("handler-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handlerClass
-                String handlerClassRaw = elementReader.getElementAsString();
+                final String handlerClassRaw = elementReader.getElementAsString();
 
-                String handlerClass;
+                final String handlerClass;
                 try {
                     handlerClass = Adapters.collapsedStringAdapterAdapter.unmarshal(handlerClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -161,7 +161,7 @@ public class Handler$JAXB
                 handler.handlerClass = handlerClass;
             } else if (("init-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initParam
-                ParamValue initParamItem = readParamValue(elementReader, context);
+                final ParamValue initParamItem = readParamValue(elementReader, context);
                 if (initParam == null) {
                     initParam = handler.initParam;
                     if (initParam != null) {
@@ -173,7 +173,7 @@ public class Handler$JAXB
                 initParam.add(initParamItem);
             } else if (("soap-header" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: soapHeader
-                QName soapHeaderItem = elementReader.getElementAsQName();
+                final QName soapHeaderItem = elementReader.getElementAsQName();
                 if (soapHeader == null) {
                     soapHeader = handler.soapHeader;
                     if (soapHeader != null) {
@@ -185,12 +185,12 @@ public class Handler$JAXB
                 soapHeader.add(soapHeaderItem);
             } else if (("soap-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: soapRole
-                String soapRoleItemRaw = elementReader.getElementAsString();
+                final String soapRoleItemRaw = elementReader.getElementAsString();
 
-                String soapRoleItem;
+                final String soapRoleItem;
                 try {
                     soapRoleItem = Adapters.collapsedStringAdapterAdapter.unmarshal(soapRoleItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -206,12 +206,12 @@ public class Handler$JAXB
                 soapRole.add(soapRoleItem);
             } else if (("port-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portName
-                String portNameItemRaw = elementReader.getElementAsString();
+                final String portNameItemRaw = elementReader.getElementAsString();
 
-                String portNameItem;
+                final String portNameItem;
                 try {
                     portNameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(portNameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -232,14 +232,14 @@ public class Handler$JAXB
         if (descriptions != null) {
             try {
                 handler.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Handler.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 handler.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Handler.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -264,13 +264,13 @@ public class Handler$JAXB
         return handler;
     }
 
-    public final Handler read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Handler read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Handler handler, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Handler handler, RuntimeContext context)
+        throws Exception {
         if (handler == null) {
             writer.writeXsiNil();
             return;
@@ -280,7 +280,7 @@ public class Handler$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Handler.class != handler.getClass()) {
             context.unexpectedSubclass(writer, handler, Handler.class);
             return;
@@ -290,12 +290,12 @@ public class Handler$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = handler.id;
+        final String idRaw = handler.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(handler, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -305,11 +305,11 @@ public class Handler$JAXB
         Text[] descriptions = null;
         try {
             descriptions = handler.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(handler, "descriptions", Handler.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -324,11 +324,11 @@ public class Handler$JAXB
         Text[] displayNames = null;
         try {
             displayNames = handler.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(handler, "displayNames", Handler.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -340,9 +340,9 @@ public class Handler$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = handler.icon;
+        final LocalCollection<Icon> icon = handler.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -352,11 +352,11 @@ public class Handler$JAXB
         }
 
         // ELEMENT: handlerName
-        String handlerNameRaw = handler.handlerName;
+        final String handlerNameRaw = handler.handlerName;
         String handlerName = null;
         try {
             handlerName = Adapters.collapsedStringAdapterAdapter.marshal(handlerNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(handler, "handlerName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (handlerName != null) {
@@ -368,11 +368,11 @@ public class Handler$JAXB
         }
 
         // ELEMENT: handlerClass
-        String handlerClassRaw = handler.handlerClass;
+        final String handlerClassRaw = handler.handlerClass;
         String handlerClass = null;
         try {
             handlerClass = Adapters.collapsedStringAdapterAdapter.marshal(handlerClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(handler, "handlerClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (handlerClass != null) {
@@ -384,9 +384,9 @@ public class Handler$JAXB
         }
 
         // ELEMENT: initParam
-        List<ParamValue> initParam = handler.initParam;
+        final List<ParamValue> initParam = handler.initParam;
         if (initParam != null) {
-            for (ParamValue initParamItem : initParam) {
+            for (final ParamValue initParamItem : initParam) {
                 if (initParamItem != null) {
                     writer.writeStartElement(prefix, "init-param", "http://java.sun.com/xml/ns/javaee");
                     writeParamValue(writer, initParamItem, context);
@@ -396,9 +396,9 @@ public class Handler$JAXB
         }
 
         // ELEMENT: soapHeader
-        List<QName> soapHeader = handler.soapHeader;
+        final List<QName> soapHeader = handler.soapHeader;
         if (soapHeader != null) {
-            for (QName soapHeaderItem : soapHeader) {
+            for (final QName soapHeaderItem : soapHeader) {
                 if (soapHeaderItem != null) {
                     writer.writeStartElement(prefix, "soap-header", "http://java.sun.com/xml/ns/javaee");
                     writer.writeQName(soapHeaderItem);
@@ -408,13 +408,13 @@ public class Handler$JAXB
         }
 
         // ELEMENT: soapRole
-        List<String> soapRoleRaw = handler.soapRole;
+        final List<String> soapRoleRaw = handler.soapRole;
         if (soapRoleRaw != null) {
-            for (String soapRoleItem : soapRoleRaw) {
+            for (final String soapRoleItem : soapRoleRaw) {
                 String soapRole = null;
                 try {
                     soapRole = Adapters.collapsedStringAdapterAdapter.marshal(soapRoleItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(handler, "soapRole", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (soapRole != null) {
@@ -426,13 +426,13 @@ public class Handler$JAXB
         }
 
         // ELEMENT: portName
-        List<String> portNameRaw = handler.portName;
+        final List<String> portNameRaw = handler.portName;
         if (portNameRaw != null) {
-            for (String portNameItem : portNameRaw) {
+            for (final String portNameItem : portNameRaw) {
                 String portName = null;
                 try {
                     portName = Adapters.collapsedStringAdapterAdapter.marshal(portNameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(handler, "portName", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (portName != null) {

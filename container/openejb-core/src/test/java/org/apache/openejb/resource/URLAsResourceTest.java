@@ -39,9 +39,9 @@ public class URLAsResourceTest {
     @Configuration
     public Properties config() {
         return new PropertiesBuilder()
-                .p("url", "new://Resource?class-name=java.net.URL&constructor=value")
-                .p("url.value", "http://tomee.apache.org")
-                .build();
+            .p("url", "new://Resource?class-name=java.net.URL&constructor=value")
+            .p("url.value", "http://tomee.apache.org")
+            .build();
     }
 
     @Module

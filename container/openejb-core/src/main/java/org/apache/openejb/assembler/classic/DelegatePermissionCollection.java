@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DelegatePermissionCollection extends PermissionCollection {
     private static final String PERMISSION_COLLECTION_CLASS = "openejb.permission-collection.class";
 
-    private PermissionCollection pc = getPermissionCollection();
+    private final PermissionCollection pc = getPermissionCollection();
 
     @Override
     public void add(final Permission permission) {
@@ -51,10 +51,10 @@ public class DelegatePermissionCollection extends PermissionCollection {
     public static PermissionCollection getPermissionCollection() {
         try {
             return (PermissionCollection) DelegatePermissionCollection.class.getClassLoader()
-                    .loadClass(
-                            SystemInstance.get().getOptions().get(PERMISSION_COLLECTION_CLASS,
-                                    FastPermissionCollection.class.getName()))
-                    .newInstance();
+                .loadClass(
+                    SystemInstance.get().getOptions().get(PERMISSION_COLLECTION_CLASS,
+                        FastPermissionCollection.class.getName()))
+                .newInstance();
         } catch (final Exception cnfe) {
             // return new Permissions(); // the jdk implementation, it seems slow at least for startup up
             return new FastPermissionCollection();

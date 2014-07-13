@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class PersistenceContextAnnFactory {
-    private static boolean useAsm;
+    private static final boolean useAsm;
+
     static {
         boolean isPersistenceContextAnnotationValid = false;
         try {
@@ -230,7 +231,7 @@ public class PersistenceContextAnnFactory {
 
     private static class PersistenceContextVisitor extends AnnotationVisitor {
         private final Map<String, AsmPersistenceContext> contexts;
-        private AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
+        private final AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(final String className, final String memberName, final Map<String, AsmPersistenceContext> contexts) {
             super(Opcodes.ASM5);

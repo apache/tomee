@@ -30,7 +30,7 @@ import java.util.Properties;
 public class ResourceInfoComparatorTest extends TestCase {
 
     public void test() throws Exception {
-        List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
+        final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 
         resources.add(new ResourceInfo());
         resources.get(0).id = "Red";
@@ -61,7 +61,7 @@ public class ResourceInfoComparatorTest extends TestCase {
     }
 
     public void testRealWorld() throws Exception {
-        List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
+        final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 
         resources.add(new ResourceInfo());
         resources.get(0).id = "My DataSource";
@@ -91,7 +91,7 @@ public class ResourceInfoComparatorTest extends TestCase {
     }
 
     public void testRealWorld2() throws Exception {
-        List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
+        final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 
         resources.add(new ResourceInfo());
         resources.get(0).id = "My JMS Connection Factory";

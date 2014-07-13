@@ -27,8 +27,9 @@ import java.lang.reflect.Modifier;
 
 /**
  * Generate concrete implementations of EjbPostCreatexxx
- * methods for a bean class.  This is implemented in a separate  
- * class because it is used by both the CMP1 and CMP2 generators. 
+ * methods for a bean class.  This is implemented in a separate
+ * class because it is used by both the CMP1 and CMP2 generators.
+ *
  * @version $Rev$ $Date$
  */
 public class PostCreateGenerator {
@@ -37,7 +38,7 @@ public class PostCreateGenerator {
 
     /**
      * Constructor for a PostCreateGenerator.
-     * 
+     *
      * @param beanClass The source EJB implementation class (the user
      *                  provided class).
      * @param cw        The ClassWriter instance used for constructing the
@@ -50,11 +51,11 @@ public class PostCreateGenerator {
         this.cw = cw;
     }
 
-    
+
     /**
-     * Generate the ejbPostCreatexxxx methods.  Inorder to 
-     * be considered for generation, there must A) be a 
-     * corresponding ejbCreatexxxx method and B) the 
+     * Generate the ejbPostCreatexxxx methods.  Inorder to
+     * be considered for generation, there must A) be a
+     * corresponding ejbCreatexxxx method and B) the
      * target method must either not exist or exist but be
      * abstract.
      */
@@ -62,8 +63,7 @@ public class PostCreateGenerator {
         // ok, scan the class for the ejbCreate methods and check to see if 
         // we need to provide an ejbPostCreate implementation. 
         for (final Method ejbCreate : beanClass.getMethods()) {
-            if (!ejbCreate.getName().startsWith("ejbCreate")) 
-            {
+            if (!ejbCreate.getName().startsWith("ejbCreate")) {
                 continue;
             }
 
@@ -80,15 +80,14 @@ public class PostCreateGenerator {
     }
 
     /**
-     * Test whether a class provides a concrete implementation 
-     * of a class with the given name and parameter types. 
-     * 
+     * Test whether a class provides a concrete implementation
+     * of a class with the given name and parameter types.
+     *
      * @param beanClass The source implementation class.
      * @param name      The required method name.
      * @param args      The list of argument types.
-     * 
-     * @return true if the method exists and is NOT abstract.  Returns 
-     *         false if the method is not found or IS abstract.
+     * @return true if the method exists and is NOT abstract.  Returns
+     * false if the method is not found or IS abstract.
      */
     private boolean hasMethod(final Class beanClass, final String name, final Class... args) {
         try {
@@ -100,14 +99,13 @@ public class PostCreateGenerator {
     }
 
     /**
-     * Generate an ejbPostCreatexxxx method corresponding 
-     * to an ejbCreatexxxx method definition.  These provided 
-     * methods are just empty stubs. 
-     * 
-     * @param ejbPostCreateName
-     *                  The name we're creating under.
-     * @param ejbCreate The matching ejbCreate method.  The post create method
-     *                  will match this one in terms of method signature.
+     * Generate an ejbPostCreatexxxx method corresponding
+     * to an ejbCreatexxxx method definition.  These provided
+     * methods are just empty stubs.
+     *
+     * @param ejbPostCreateName The name we're creating under.
+     * @param ejbCreate         The matching ejbCreate method.  The post create method
+     *                          will match this one in terms of method signature.
      */
     public void createEjbPostCreate(final String ejbPostCreateName, final Method ejbCreate) {
         final String methodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getArgumentTypes(ejbCreate));

@@ -31,20 +31,20 @@ import java.util.Set;
 /**
  * @version $Revision$ $Date$
  */
-public class Index<K,V> extends AbstractMap<K,V> {
+public class Index<K, V> extends AbstractMap<K, V> {
 
-    private final IndexEntry<K,V>[] entries;
-    private final LinkedHashMap<K,Integer> keyIndicies;
+    private final IndexEntry<K, V>[] entries;
+    private final LinkedHashMap<K, Integer> keyIndicies;
     private final IndexEntrySet entrySet;
     private IndexValueList<V> indexValueList;
 
-    public Index(final Map<K,V> map) {
+    public Index(final Map<K, V> map) {
         entries = new IndexEntry[map.size()];
-        keyIndicies = new LinkedHashMap<K,Integer>(map.size());
+        keyIndicies = new LinkedHashMap<K, Integer>(map.size());
 
         int i = 0;
         for (final Entry<K, V> entry : map.entrySet()) {
-            entries[i] = new IndexEntry<K,V>(entry);
+            entries[i] = new IndexEntry<K, V>(entry);
             keyIndicies.put(entry.getKey(), new Integer(i));
             i++;
         }
@@ -54,10 +54,10 @@ public class Index<K,V> extends AbstractMap<K,V> {
 
     public Index(final List<K> keys) {
         entries = new IndexEntry[keys.size()];
-        keyIndicies = new LinkedHashMap<K,Integer>(keys.size());
+        keyIndicies = new LinkedHashMap<K, Integer>(keys.size());
         for (int i = 0; i < keys.size(); i++) {
             final K key = keys.get(i);
-            entries[i] = new IndexEntry<K,V>(key, null);
+            entries[i] = new IndexEntry<K, V>(key, null);
             keyIndicies.put(key, new Integer(i));
         }
 
@@ -66,10 +66,10 @@ public class Index<K,V> extends AbstractMap<K,V> {
 
     public Index(final K[] keys) {
         entries = new IndexEntry[keys.length];
-        keyIndicies = new LinkedHashMap<K,Integer>(keys.length);
+        keyIndicies = new LinkedHashMap<K, Integer>(keys.length);
         for (int i = 0; i < keys.length; i++) {
             final K key = keys[i];
-            entries[i] = new IndexEntry<K,V>(key, null);
+            entries[i] = new IndexEntry<K, V>(key, null);
             keyIndicies.put(key, new Integer(i));
         }
 
@@ -83,7 +83,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         return indexValueList;
     }
 
-    public Set<Entry<K,V>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         return entrySet;
     }
 
@@ -105,7 +105,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         if (index < 0 || index >= entries.length) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
-        final IndexEntry<K,V> entry = entries[index];
+        final IndexEntry<K, V> entry = entries[index];
         final V oldValue = entry.getValue();
         entry.setValue(value);
         return oldValue;
@@ -117,7 +117,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
             throw new IllegalArgumentException("Index does not contain this key and new entries cannot be added: " + (K) key);
         }
 
-        final IndexEntry<K,V> entry = entries[i];
+        final IndexEntry<K, V> entry = entries[i];
         final V oldValue = entry.getValue();
         entry.setValue(value);
         return oldValue;
@@ -141,7 +141,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
             return null;
         }
 
-        final IndexEntry<K,V> entryMetadata = entries[i];
+        final IndexEntry<K, V> entryMetadata = entries[i];
         final V value = entryMetadata.getValue();
         return value;
     }
@@ -180,7 +180,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         return values;
     }
 
-    private static final class IndexEntry<K,V> implements Map.Entry<K,V> {
+    private static final class IndexEntry<K, V> implements Map.Entry<K, V> {
         private final K key;
         private V value;
 
@@ -213,6 +213,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         public Iterator iterator() {
             return new Iterator() {
                 private int index;
+
                 public boolean hasNext() {
                     return index < entries.length;
                 }

@@ -23,12 +23,12 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidMethodPermissionsTest {
-    @Keys( { @Key("methodPermission.ejbNameRequired"), @Key("methodPermission.noSuchEjbName") })
+    @Keys({@Key("methodPermission.ejbNameRequired"), @Key("methodPermission.noSuchEjbName")})
     public EjbJar test() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        MethodPermission permission = new MethodPermission(new Method((String) null, (String) null));
+        final EjbJar ejbJar = new EjbJar();
+        final MethodPermission permission = new MethodPermission(new Method((String) null, (String) null));
         ejbJar.getAssemblyDescriptor().getMethodPermission().add(permission);
-        MethodPermission permission1 = new MethodPermission(new Method("wrongEjbName", "wrongMethodName"));
+        final MethodPermission permission1 = new MethodPermission(new Method("wrongEjbName", "wrongMethodName"));
         ejbJar.getAssemblyDescriptor().getMethodPermission().add(permission1);
         return ejbJar;
     }

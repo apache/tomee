@@ -61,7 +61,7 @@ public class StatefulDecoratorInjectionTest {
             orange.someBusinessMethod();
 
             fail("call should not be allowed");
-        } catch (AccessDeniedException e) {
+        } catch (final AccessDeniedException e) {
             // ok
         }
     }
@@ -122,7 +122,7 @@ public class StatefulDecoratorInjectionTest {
 
         private final Principal principal;
 
-        public AccessDeniedException(Principal principal) {
+        public AccessDeniedException(final Principal principal) {
             this.principal = principal;
         }
 

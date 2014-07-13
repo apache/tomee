@@ -24,12 +24,12 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidContainerTransactionTest {
-    @Keys( { @Key("containerTransaction.ejbNameRequired"), @Key("containerTransaction.noSuchEjbName") })
+    @Keys({@Key("containerTransaction.ejbNameRequired"), @Key("containerTransaction.noSuchEjbName")})
     public EjbJar test() throws Exception {
-        EjbJar ejbJar = new EjbJar();
-        ContainerTransaction tx = new ContainerTransaction(TransAttribute.REQUIRED, new Method((String) null, (String) null));
+        final EjbJar ejbJar = new EjbJar();
+        final ContainerTransaction tx = new ContainerTransaction(TransAttribute.REQUIRED, new Method((String) null, (String) null));
         ejbJar.getAssemblyDescriptor().getContainerTransaction().add(tx);
-        ContainerTransaction tx1 = new ContainerTransaction(TransAttribute.REQUIRED, new Method("wrongEjbName", "wrongMethodName"));
+        final ContainerTransaction tx1 = new ContainerTransaction(TransAttribute.REQUIRED, new Method("wrongEjbName", "wrongMethodName"));
         ejbJar.getAssemblyDescriptor().getContainerTransaction().add(tx1);
         return ejbJar;
     }

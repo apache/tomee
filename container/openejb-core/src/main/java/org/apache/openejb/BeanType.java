@@ -23,15 +23,15 @@ package org.apache.openejb;
 public enum BeanType {
     STATEFUL, STATELESS, SINGLETON, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN, MANAGED;
 
-    public boolean isEntity(){
+    public boolean isEntity() {
         return this == CMP_ENTITY || this == BMP_ENTITY;
     }
 
-    public boolean isSession(){
+    public boolean isSession() {
         return this == STATEFUL || this == STATELESS || this == SINGLETON || this == MANAGED;
     }
 
-    public boolean isCdiCompatible(){
+    public boolean isCdiCompatible() {
         return isSession() || isMessageDriven();
     }
 

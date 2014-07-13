@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for portType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="portType">
  *   &lt;complexContent>
@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "portType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -68,11 +66,9 @@ public class PortType {
 
     /**
      * Gets the value of the portName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPortName() {
         return portName;
@@ -80,23 +76,19 @@ public class PortType {
 
     /**
      * Sets the value of the portName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPortName(String value) {
+    public void setPortName(final String value) {
         this.portName = value;
     }
 
     /**
      * Gets the value of the protocol property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getProtocol() {
         return protocol;
@@ -104,23 +96,19 @@ public class PortType {
 
     /**
      * Sets the value of the protocol property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setProtocol(String value) {
+    public void setProtocol(final String value) {
         this.protocol = value;
     }
 
     /**
      * Gets the value of the host property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHost() {
         return host;
@@ -128,23 +116,19 @@ public class PortType {
 
     /**
      * Sets the value of the host property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHost(String value) {
+    public void setHost(final String value) {
         this.host = value;
     }
 
     /**
      * Gets the value of the port property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getPort() {
         return port;
@@ -152,23 +136,19 @@ public class PortType {
 
     /**
      * Sets the value of the port property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
-    public void setPort(Integer value) {
+    public void setPort(final Integer value) {
         this.port = value;
     }
 
     /**
      * Gets the value of the uri property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getUri() {
         return uri;
@@ -176,23 +156,19 @@ public class PortType {
 
     /**
      * Sets the value of the uri property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setUri(String value) {
+    public void setUri(final String value) {
         this.uri = value;
     }
 
     /**
      * Gets the value of the credentialsName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCredentialsName() {
         return credentialsName;
@@ -200,13 +176,11 @@ public class PortType {
 
     /**
      * Sets the value of the credentialsName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCredentialsName(String value) {
+    public void setCredentialsName(final String value) {
         this.credentialsName = value;
     }
 

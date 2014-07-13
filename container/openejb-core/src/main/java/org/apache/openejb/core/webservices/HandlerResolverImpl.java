@@ -79,8 +79,8 @@ public class HandlerResolverImpl implements HandlerResolver {
 
     private List<Handler> buildHandlers(final PortInfo portInfo, final HandlerChainData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) ||
-                !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
-                !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
+            !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
+            !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
             return Collections.emptyList();
         }
 
@@ -119,10 +119,10 @@ public class HandlerResolverImpl implements HandlerResolver {
             try { // old way
                 final Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
                 final InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
-                        injections,
-                        handler.getPostConstruct(),
-                        handler.getPreDestroy(),
-                        unwrap(context));
+                    injections,
+                    handler.getPostConstruct(),
+                    handler.getPreDestroy(),
+                    unwrap(context));
                 processor.createInstance();
                 processor.postConstruct();
                 final Handler handlerInstance = processor.getInstance();

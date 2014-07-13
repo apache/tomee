@@ -38,7 +38,7 @@ public class SunCmpMapping {
         return schema;
     }
 
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 

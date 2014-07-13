@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -58,8 +58,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -103,11 +101,9 @@ public class OptimisticLocking {
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GroupName }
-     *     
+     *
+     * @return possible object is
+     * {@link GroupName }
      */
     public GroupName getGroupName() {
         return groupName;
@@ -115,23 +111,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GroupName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link GroupName }
      */
-    public void setGroupName(GroupName value) {
+    public void setGroupName(final GroupName value) {
         this.groupName = value;
     }
 
     /**
      * Gets the value of the modifiedStrategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ModifiedStrategy }
-     *     
+     *
+     * @return possible object is
+     * {@link ModifiedStrategy }
      */
     public ModifiedStrategy getModifiedStrategy() {
         return modifiedStrategy;
@@ -139,23 +131,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the modifiedStrategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ModifiedStrategy }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ModifiedStrategy }
      */
-    public void setModifiedStrategy(ModifiedStrategy value) {
+    public void setModifiedStrategy(final ModifiedStrategy value) {
         this.modifiedStrategy = value;
     }
 
     /**
      * Gets the value of the readStrategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReadStrategy }
-     *     
+     *
+     * @return possible object is
+     * {@link ReadStrategy }
      */
     public ReadStrategy getReadStrategy() {
         return readStrategy;
@@ -163,23 +151,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the readStrategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReadStrategy }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ReadStrategy }
      */
-    public void setReadStrategy(ReadStrategy value) {
+    public void setReadStrategy(final ReadStrategy value) {
         this.readStrategy = value;
     }
 
     /**
      * Gets the value of the versionColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link VersionColumn }
-     *     
+     *
+     * @return possible object is
+     * {@link VersionColumn }
      */
     public VersionColumn getVersionColumn() {
         return versionColumn;
@@ -187,23 +171,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the versionColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link VersionColumn }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link VersionColumn }
      */
-    public void setVersionColumn(VersionColumn value) {
+    public void setVersionColumn(final VersionColumn value) {
         this.versionColumn = value;
     }
 
     /**
      * Gets the value of the timestampColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TimestampColumn }
-     *     
+     *
+     * @return possible object is
+     * {@link TimestampColumn }
      */
     public TimestampColumn getTimestampColumn() {
         return timestampColumn;
@@ -211,23 +191,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the timestampColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TimestampColumn }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TimestampColumn }
      */
-    public void setTimestampColumn(TimestampColumn value) {
+    public void setTimestampColumn(final TimestampColumn value) {
         this.timestampColumn = value;
     }
 
     /**
      * Gets the value of the keyGeneratorFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link KeyGeneratorFactory }
-     *     
+     *
+     * @return possible object is
+     * {@link KeyGeneratorFactory }
      */
     public KeyGeneratorFactory getKeyGeneratorFactory() {
         return keyGeneratorFactory;
@@ -235,23 +211,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the keyGeneratorFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link KeyGeneratorFactory }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link KeyGeneratorFactory }
      */
-    public void setKeyGeneratorFactory(KeyGeneratorFactory value) {
+    public void setKeyGeneratorFactory(final KeyGeneratorFactory value) {
         this.keyGeneratorFactory = value;
     }
 
     /**
      * Gets the value of the fieldType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldType }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldType }
      */
     public FieldType getFieldType() {
         return fieldType;
@@ -259,23 +231,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the fieldType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldType }
      */
-    public void setFieldType(FieldType value) {
+    public void setFieldType(final FieldType value) {
         this.fieldType = value;
     }
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldName }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldName }
      */
     public FieldName getFieldName() {
         return fieldName;
@@ -283,23 +251,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the fieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldName }
      */
-    public void setFieldName(FieldName value) {
+    public void setFieldName(final FieldName value) {
         this.fieldName = value;
     }
 
     /**
      * Gets the value of the columnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @return possible object is
+     * {@link ColumnName }
      */
     public ColumnName getColumnName() {
         return columnName;
@@ -307,23 +271,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the columnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ColumnName }
      */
-    public void setColumnName(ColumnName value) {
+    public void setColumnName(final ColumnName value) {
         this.columnName = value;
     }
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -331,23 +291,19 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -355,13 +311,11 @@ public class OptimisticLocking {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 

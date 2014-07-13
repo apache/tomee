@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for ejb-relationship-roleType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-relationship-roleType">
  *   &lt;complexContent>
@@ -54,19 +54,17 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationship-roleType", propOrder = {
-        "descriptions",
-        "ejbRelationshipRoleName",
-        "multiplicity",
-        "cascadeDelete",
-        "relationshipRoleSource",
-        "cmrField"
-        })
+    "descriptions",
+    "ejbRelationshipRoleName",
+    "multiplicity",
+    "cascadeDelete",
+    "relationshipRoleSource",
+    "cmrField"
+})
 public class EjbRelationshipRole {
 
     @XmlTransient
@@ -91,7 +89,7 @@ public class EjbRelationshipRole {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -103,7 +101,7 @@ public class EjbRelationshipRole {
         return ejbRelationshipRoleName;
     }
 
-    public void setEjbRelationshipRoleName(String value) {
+    public void setEjbRelationshipRoleName(final String value) {
         this.ejbRelationshipRoleName = value;
     }
 
@@ -111,7 +109,7 @@ public class EjbRelationshipRole {
         return multiplicity;
     }
 
-    public void setMultiplicity(Multiplicity value) {
+    public void setMultiplicity(final Multiplicity value) {
         this.multiplicity = value;
     }
 
@@ -119,7 +117,7 @@ public class EjbRelationshipRole {
         return cascadeDelete != null;
     }
 
-    public void setCascadeDelete(boolean value) {
+    public void setCascadeDelete(final boolean value) {
         this.cascadeDelete = value ? new Empty() : null;
     }
 
@@ -127,7 +125,7 @@ public class EjbRelationshipRole {
         return relationshipRoleSource;
     }
 
-    public void setRelationshipRoleSource(RelationshipRoleSource value) {
+    public void setRelationshipRoleSource(final RelationshipRoleSource value) {
         this.relationshipRoleSource = value;
     }
 
@@ -135,7 +133,7 @@ public class EjbRelationshipRole {
         return cmrField;
     }
 
-    public void setCmrField(CmrField value) {
+    public void setCmrField(final CmrField value) {
         this.cmrField = value;
     }
 
@@ -143,7 +141,7 @@ public class EjbRelationshipRole {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

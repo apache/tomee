@@ -43,8 +43,8 @@ public class ComponentAdded<T> {
     @Override
     public String toString() {
         return "ComponentAdded{" +
-                "type=" + type +
-                ", component=" + component.getClass().getName() +
-                '}';
+            "type=" + type +
+            ", component=" + component.getClass().getName() +
+            '}';
     }
 }

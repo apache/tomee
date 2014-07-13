@@ -137,8 +137,8 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
             final RegistryId that = (RegistryId) o;
 
             return containerId.equals(that.containerId) &&
-                    deploymentId.equals(that.deploymentId) &&
-                    !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
+                deploymentId.equals(that.deploymentId) &&
+                !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
         }
 
         public int hashCode() {

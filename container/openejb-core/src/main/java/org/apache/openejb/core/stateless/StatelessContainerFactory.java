@@ -51,8 +51,8 @@ public class StatelessContainerFactory {
      * Alias for AccessTimeout
      * backwards compatibility
      *
-     * @deprecated use AccessTimeout
      * @param accessTimeout Duration
+     * @deprecated use AccessTimeout
      */
     @Deprecated
     public void setTimeOut(final Duration accessTimeout) {
@@ -60,7 +60,6 @@ public class StatelessContainerFactory {
     }
 
     /**
-     *
      * @param accessTimeout Duration
      */
     public void setAccessTimeout(final Duration accessTimeout) {
@@ -76,8 +75,8 @@ public class StatelessContainerFactory {
     }
 
     /**
-     * @deprecated use MaxSize
      * @param max int
+     * @deprecated use MaxSize
      */
     @Deprecated
     public void setPoolSize(final int max) {

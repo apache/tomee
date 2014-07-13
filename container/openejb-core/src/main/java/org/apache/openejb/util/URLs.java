@@ -93,5 +93,6 @@ public final class URLs {
         return URI.create(uri.replace(" ", "%20").replace("#", "%23"));
     }
 
-    private URLs() { }
+    private URLs() {
+    }
 }

@@ -26,13 +26,13 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
     private Integer id;
     private String name;
     private ExampleBBean_BBean License;
-    private SingleValuedCmr<ExampleBBean_BBean, LicenseLocal> bCmr = new SingleValuedCmr<ExampleBBean_BBean, LicenseLocal>(this, "b", ExampleBBean_BBean.class, "a");
+    private final SingleValuedCmr<ExampleBBean_BBean, LicenseLocal> bCmr = new SingleValuedCmr<ExampleBBean_BBean, LicenseLocal>(this, "b", ExampleBBean_BBean.class, "a");
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
 
@@ -40,7 +40,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -48,7 +48,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         return bCmr.get(License);
     }
 
-    public void setLicense(LicenseLocal license) {
+    public void setLicense(final LicenseLocal license) {
         this.License = bCmr.set(this.License, license);
     }
 
@@ -65,12 +65,12 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         bCmr.set(License, null);
     }
 
-    public Object OpenEJB_addCmr(String name, Object bean) {
+    public Object OpenEJB_addCmr(final String name, final Object bean) {
         if (deleted) {
             return null;
         }
 
-        Object oldValue;
+        final Object oldValue;
         if ("b".equals(name)) {
             oldValue = License;
             License = (ExampleBBean_BBean) bean;
@@ -80,7 +80,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
         return oldValue;
     }
 
-    public void OpenEJB_removeCmr(String name, Object bean) {
+    public void OpenEJB_removeCmr(final String name, final Object bean) {
         if (deleted) {
             return;
         }

@@ -29,33 +29,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class VariableMapping$JAXB
-        extends JAXBObject<VariableMapping> {
+    extends JAXBObject<VariableMapping> {
 
 
     public VariableMapping$JAXB() {
         super(VariableMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "variable-mappingType".intern()));
     }
 
-    public static VariableMapping readVariableMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static VariableMapping readVariableMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeVariableMapping(XoXMLStreamWriter writer, VariableMapping variableMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeVariableMapping(final XoXMLStreamWriter writer, final VariableMapping variableMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, variableMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, VariableMapping variableMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final VariableMapping variableMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, variableMapping, context);
     }
 
-    public final static VariableMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static VariableMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -66,12 +66,12 @@ public class VariableMapping$JAXB
             context = new RuntimeContext();
         }
 
-        VariableMapping variableMapping = new VariableMapping();
+        final VariableMapping variableMapping = new VariableMapping();
         context.beforeUnmarshal(variableMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("variable-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, VariableMapping.class);
@@ -79,10 +79,10 @@ public class VariableMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, variableMapping);
                 variableMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -91,15 +91,15 @@ public class VariableMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("java-variable-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: javaVariableName
-                String javaVariableNameRaw = elementReader.getElementAsString();
+                final String javaVariableNameRaw = elementReader.getElementAsString();
 
-                String javaVariableName;
+                final String javaVariableName;
                 try {
                     javaVariableName = Adapters.collapsedStringAdapterAdapter.unmarshal(javaVariableNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -107,16 +107,16 @@ public class VariableMapping$JAXB
                 variableMapping.javaVariableName = javaVariableName;
             } else if (("data-member" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: dataMember
-                Element dataMember = elementReader.getElementAsDomElement();
+                final Element dataMember = elementReader.getElementAsDomElement();
                 variableMapping.dataMember = dataMember;
             } else if (("xml-attribute-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: xmlAttributeName
-                String xmlAttributeNameRaw = elementReader.getElementAsString();
+                final String xmlAttributeNameRaw = elementReader.getElementAsString();
 
-                String xmlAttributeName;
+                final String xmlAttributeName;
                 try {
                     xmlAttributeName = Adapters.collapsedStringAdapterAdapter.unmarshal(xmlAttributeNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -124,12 +124,12 @@ public class VariableMapping$JAXB
                 variableMapping.xmlAttributeName = xmlAttributeName;
             } else if (("xml-element-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: xmlElementName
-                String xmlElementNameRaw = elementReader.getElementAsString();
+                final String xmlElementNameRaw = elementReader.getElementAsString();
 
-                String xmlElementName;
+                final String xmlElementName;
                 try {
                     xmlElementName = Adapters.collapsedStringAdapterAdapter.unmarshal(xmlElementNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -137,7 +137,7 @@ public class VariableMapping$JAXB
                 variableMapping.xmlElementName = xmlElementName;
             } else if (("xml-wildcard" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: xmlWildcard
-                Element xmlWildcard = elementReader.getElementAsDomElement();
+                final Element xmlWildcard = elementReader.getElementAsDomElement();
                 variableMapping.xmlWildcard = xmlWildcard;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "java-variable-name"), new QName("http://java.sun.com/xml/ns/javaee", "data-member"), new QName("http://java.sun.com/xml/ns/javaee", "xml-attribute-name"), new QName("http://java.sun.com/xml/ns/javaee", "xml-element-name"), new QName("http://java.sun.com/xml/ns/javaee", "xml-wildcard"));
@@ -149,13 +149,13 @@ public class VariableMapping$JAXB
         return variableMapping;
     }
 
-    public final VariableMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final VariableMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, VariableMapping variableMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final VariableMapping variableMapping, RuntimeContext context)
+        throws Exception {
         if (variableMapping == null) {
             writer.writeXsiNil();
             return;
@@ -165,7 +165,7 @@ public class VariableMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (VariableMapping.class != variableMapping.getClass()) {
             context.unexpectedSubclass(writer, variableMapping, VariableMapping.class);
             return;
@@ -175,23 +175,23 @@ public class VariableMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = variableMapping.id;
+        final String idRaw = variableMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(variableMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: javaVariableName
-        String javaVariableNameRaw = variableMapping.javaVariableName;
+        final String javaVariableNameRaw = variableMapping.javaVariableName;
         String javaVariableName = null;
         try {
             javaVariableName = Adapters.collapsedStringAdapterAdapter.marshal(javaVariableNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variableMapping, "javaVariableName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (javaVariableName != null) {
@@ -203,7 +203,7 @@ public class VariableMapping$JAXB
         }
 
         // ELEMENT: dataMember
-        Object dataMember = variableMapping.dataMember;
+        final Object dataMember = variableMapping.dataMember;
         if (dataMember != null) {
             writer.writeStartElement(prefix, "data-member", "http://java.sun.com/xml/ns/javaee");
             writer.writeDomElement(((Element) dataMember), false);
@@ -211,11 +211,11 @@ public class VariableMapping$JAXB
         }
 
         // ELEMENT: xmlAttributeName
-        String xmlAttributeNameRaw = variableMapping.xmlAttributeName;
+        final String xmlAttributeNameRaw = variableMapping.xmlAttributeName;
         String xmlAttributeName = null;
         try {
             xmlAttributeName = Adapters.collapsedStringAdapterAdapter.marshal(xmlAttributeNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variableMapping, "xmlAttributeName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (xmlAttributeName != null) {
@@ -225,11 +225,11 @@ public class VariableMapping$JAXB
         }
 
         // ELEMENT: xmlElementName
-        String xmlElementNameRaw = variableMapping.xmlElementName;
+        final String xmlElementNameRaw = variableMapping.xmlElementName;
         String xmlElementName = null;
         try {
             xmlElementName = Adapters.collapsedStringAdapterAdapter.marshal(xmlElementNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(variableMapping, "xmlElementName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (xmlElementName != null) {
@@ -239,7 +239,7 @@ public class VariableMapping$JAXB
         }
 
         // ELEMENT: xmlWildcard
-        Object xmlWildcard = variableMapping.xmlWildcard;
+        final Object xmlWildcard = variableMapping.xmlWildcard;
         if (xmlWildcard != null) {
             writer.writeStartElement(prefix, "xml-wildcard", "http://java.sun.com/xml/ns/javaee");
             writer.writeDomElement(((Element) xmlWildcard), false);

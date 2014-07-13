@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -73,11 +71,9 @@ public class Property {
 
     /**
      * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PropertyName }
-     *     
+     *
+     * @return possible object is
+     * {@link PropertyName }
      */
     public PropertyName getPropertyName() {
         return propertyName;
@@ -85,23 +81,19 @@ public class Property {
 
     /**
      * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PropertyName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PropertyName }
      */
-    public void setPropertyName(PropertyName value) {
+    public void setPropertyName(final PropertyName value) {
         this.propertyName = value;
     }
 
     /**
      * Gets the value of the columnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @return possible object is
+     * {@link ColumnName }
      */
     public ColumnName getColumnName() {
         return columnName;
@@ -109,23 +101,19 @@ public class Property {
 
     /**
      * Sets the value of the columnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ColumnName }
      */
-    public void setColumnName(ColumnName value) {
+    public void setColumnName(final ColumnName value) {
         this.columnName = value;
     }
 
     /**
      * Gets the value of the notNull property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NotNull }
-     *     
+     *
+     * @return possible object is
+     * {@link NotNull }
      */
     public NotNull getNotNull() {
         return notNull;
@@ -133,23 +121,19 @@ public class Property {
 
     /**
      * Sets the value of the notNull property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NotNull }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link NotNull }
      */
-    public void setNotNull(NotNull value) {
+    public void setNotNull(final NotNull value) {
         this.notNull = value;
     }
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -157,23 +141,19 @@ public class Property {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -181,13 +161,11 @@ public class Property {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 

@@ -28,7 +28,7 @@ import java.io.Serializable;
 
 public class OpenEJBCommonsLog implements Log, Serializable {
     private transient Logger logger;
-    private String category;
+    private final String category;
 
     public OpenEJBCommonsLog(final String category) {
         this.category = category;

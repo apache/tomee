@@ -33,12 +33,12 @@ public class ProviderManagerTest extends TestCase {
     public void testRegister() throws Exception {
         final ProviderManager manager = new ProviderManager(new ProviderLoader() {
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
                 return null;
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
+            public List<ServiceProvider> load(final String namespace) {
                 return null;
             }
         });
@@ -107,7 +107,7 @@ public class ProviderManagerTest extends TestCase {
 
         final ProviderManager manager = new ProviderManager(new ProviderLoader() {
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
                 if ("color".equalsIgnoreCase(id.getName())) {
                     final ServiceProvider color = new ServiceProvider(Color.class, "Color", "Resource");
                     color.getProperties().setProperty("red", "0");
@@ -136,7 +136,7 @@ public class ProviderManagerTest extends TestCase {
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
+            public List<ServiceProvider> load(final String namespace) {
                 return null;
             }
         });
@@ -185,7 +185,7 @@ public class ProviderManagerTest extends TestCase {
 
         final ProviderManager manager = new ProviderManager(new ProviderLoader() {
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
                 if ("color".equalsIgnoreCase(id.getName())) {
                     final ServiceProvider color = new ServiceProvider(Color.class, "Color", "Resource");
                     color.getProperties().setProperty("red", "0");
@@ -214,8 +214,8 @@ public class ProviderManagerTest extends TestCase {
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
-                List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+            public List<ServiceProvider> load(final String namespace) {
+                final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
                 list.add(load(new ID(namespace, "color")));
                 list.add(load(new ID(namespace, "red")));
                 list.add(load(new ID(namespace, "orange")));
@@ -276,7 +276,7 @@ public class ProviderManagerTest extends TestCase {
 
         final ProviderManager manager = new ProviderManager(new ProviderLoader() {
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
                 if ("color".equalsIgnoreCase(id.getName())) {
                     final ServiceProvider color = new ServiceProvider(Color.class, "Color", "Resource");
                     color.setParent("Orange");
@@ -306,7 +306,7 @@ public class ProviderManagerTest extends TestCase {
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
+            public List<ServiceProvider> load(final String namespace) {
                 return null;
             }
         });
@@ -316,7 +316,7 @@ public class ProviderManagerTest extends TestCase {
         try {
             manager.get("dEFAUlT", "orAngE");
             fail("ProviderCircularReferenceException should have been thrown");
-        } catch (ProviderCircularReferenceException e) {
+        } catch (final ProviderCircularReferenceException e) {
             // pass
         }
     }
@@ -325,7 +325,7 @@ public class ProviderManagerTest extends TestCase {
 
         final ProviderManager manager = new ProviderManager(new ProviderLoader() {
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
                 if ("color".equalsIgnoreCase(id.getName())) {
                     final ServiceProvider color = new ServiceProvider();
                     color.setClassName(Color.class.getName());
@@ -362,8 +362,8 @@ public class ProviderManagerTest extends TestCase {
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
-                List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+            public List<ServiceProvider> load(final String namespace) {
+                final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
                 list.add(load(new ID(namespace, "color")));
                 list.add(load(new ID(namespace, "red")));
                 list.add(load(new ID(namespace, "orange")));
@@ -438,7 +438,7 @@ public class ProviderManagerTest extends TestCase {
             return red;
         }
 
-        public void setRed(int red) {
+        public void setRed(final int red) {
             this.red = red;
         }
 
@@ -446,7 +446,7 @@ public class ProviderManagerTest extends TestCase {
             return green;
         }
 
-        public void setGreen(int green) {
+        public void setGreen(final int green) {
             this.green = green;
         }
 
@@ -454,7 +454,7 @@ public class ProviderManagerTest extends TestCase {
             return blue;
         }
 
-        public void setBlue(int blue) {
+        public void setBlue(final int blue) {
             this.blue = blue;
         }
     }

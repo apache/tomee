@@ -20,11 +20,11 @@ package org.apache.openejb.junit.context;
 import org.junit.runners.model.Statement;
 
 public class ContextWrapperStatement extends Statement {
-    private TestContext testContext;
+    private final TestContext testContext;
 
-    private Statement junitStatement;
+    private final Statement junitStatement;
 
-    private Object testObj;
+    private final Object testObj;
 
     public ContextWrapperStatement(final TestContext testContext, final Statement junitStatement, final Object testObj) {
         this.testContext = testContext;

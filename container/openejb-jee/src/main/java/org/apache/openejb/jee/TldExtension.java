@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for tld-extensionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tld-extensionType">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-extensionType", propOrder = {"extensionElement"})
@@ -73,7 +71,7 @@ public class TldExtension {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -81,7 +79,7 @@ public class TldExtension {
         return namespace;
     }
 
-    public void setNamespace(String value) {
+    public void setNamespace(final String value) {
         this.namespace = value;
     }
 }

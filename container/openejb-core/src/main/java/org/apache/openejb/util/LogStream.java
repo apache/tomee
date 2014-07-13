@@ -20,22 +20,32 @@ package org.apache.openejb.util;
 public interface LogStream {
 
     boolean isFatalEnabled();
+
     void fatal(String message);
+
     void fatal(String message, Throwable t);
 
     boolean isErrorEnabled();
+
     void error(String message);
+
     void error(String message, Throwable t);
 
     boolean isWarnEnabled();
+
     void warn(String message);
+
     void warn(String message, Throwable t);
 
     boolean isInfoEnabled();
+
     void info(String message);
+
     void info(String message, Throwable t);
 
     boolean isDebugEnabled();
+
     void debug(String message);
+
     void debug(String message, Throwable t);
 }

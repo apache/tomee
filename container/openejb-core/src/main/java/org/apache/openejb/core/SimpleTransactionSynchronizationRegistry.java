@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class SimpleTransactionSynchronizationRegistry implements TransactionSynchronizationRegistry {
     private final TransactionManager transactionManager;
-    private final Map<Transaction,Map<Object,Object>> transactionResources = new HashMap<Transaction,Map<Object,Object>>();
+    private final Map<Transaction, Map<Object, Object>> transactionResources = new HashMap<Transaction, Map<Object, Object>>();
 
     public SimpleTransactionSynchronizationRegistry(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -62,8 +62,8 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
             } catch (final Exception e) {
                 throw new IllegalStateException("No transaction active", e);
             }
-            resources = new HashMap<Object,Object>();
-            transactionResources.put(transaction,resources);
+            resources = new HashMap<Object, Object>();
+            transactionResources.put(transaction, resources);
         }
 
         resources.put(key, value);
@@ -108,6 +108,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
             throw new IllegalStateException("No transaction active", e);
         }
     }
+
     private Transaction getActiveTransaction() {
         try {
             final Transaction transaction = transactionManager.getTransaction();

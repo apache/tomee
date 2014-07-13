@@ -75,15 +75,15 @@ public class TimerServiceImpl implements TimerService {
     }
 
     public Timer createCalendarTimer(final ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
-        
+
         return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), new TimerConfig(null, true));
     }
 
     public Timer createCalendarTimer(final ScheduleExpression scheduleExpression, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), timerConfig);
     }
-    
-    private ScheduleExpression copy(final ScheduleExpression scheduleExpression){
+
+    private ScheduleExpression copy(final ScheduleExpression scheduleExpression) {
         final ScheduleExpression scheduleExpressionCopy = new ScheduleExpression();
         scheduleExpressionCopy.year(scheduleExpression.getYear());
         scheduleExpressionCopy.month(scheduleExpression.getMonth());
@@ -95,7 +95,7 @@ public class TimerServiceImpl implements TimerService {
         scheduleExpressionCopy.start(scheduleExpression.getStart());
         scheduleExpressionCopy.end(scheduleExpression.getEnd());
         scheduleExpressionCopy.timezone(scheduleExpression.getTimezone());
-        
+
         return scheduleExpressionCopy;
     }
 }

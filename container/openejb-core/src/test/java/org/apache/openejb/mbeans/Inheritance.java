@@ -22,7 +22,9 @@ import javax.management.ManagedOperation;
 
 @MBean
 public class Inheritance extends Parent {
-	@ManagedOperation @Description("just an op") public String returnValue() {
-		return "yes - no";
-	}
+    @ManagedOperation
+    @Description("just an op")
+    public String returnValue() {
+        return "yes - no";
+    }
 }

@@ -35,52 +35,52 @@ import java.io.StringReader;
  */
 public class StaxCompare {
 
-    public static void compare(String a, String b) throws Exception {
-        StringBuilder message = new StringBuilder();
-        XMLInputFactory factory = XMLInputFactory.newInstance();
+    public static void compare(final String a, final String b) throws Exception {
+        final StringBuilder message = new StringBuilder();
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        XMLEventReader rA = factory.createXMLEventReader(new StringReader(a));
-        XMLEventReader rB = factory.createXMLEventReader(new StringReader(b));
+        final XMLEventReader rA = factory.createXMLEventReader(new StringReader(a));
+        final XMLEventReader rB = factory.createXMLEventReader(new StringReader(b));
         if (!compare(rA, rB, message)) {
             throw new Exception(message.toString());
         }
     }
 
-    public static boolean compare(XMLEventReader a, XMLEventReader b, StringBuilder message) {
+    public static boolean compare(final XMLEventReader a, final XMLEventReader b, final StringBuilder message) {
         XMLEvent eventA;
         XMLEvent eventB;
         int eventType;
         try {
-        while ((eventA = nextInterestingEvent(a)) != null & (eventB = nextInterestingEvent(b)) != null) {
+            while ((eventA = nextInterestingEvent(a)) != null & (eventB = nextInterestingEvent(b)) != null) {
                 if ((eventType = eventA.getEventType()) != eventB.getEventType()) {
                     message.append("events of different types: ").append(eventA).append(", ").append(eventB);
                     return false;
                 }
 
                 if (eventType == XMLStreamConstants.START_ELEMENT) {
-                    StartElement startA = eventA.asStartElement();
-                    StartElement startB = eventB.asStartElement();
+                    final StartElement startA = eventA.asStartElement();
+                    final StartElement startB = eventB.asStartElement();
                     if (!startA.getName().getLocalPart().equals(startB.getName().getLocalPart())) {
                         message.append("Different elements ").append(startA.getName()).append(", ").append(startB.getName()).append(" at location ").append(eventA.getLocation());
                         return false;
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    EndElement endA = eventA.asEndElement();
-                    EndElement endB = eventB.asEndElement();
+                    final EndElement endA = eventA.asEndElement();
+                    final EndElement endB = eventB.asEndElement();
                     if (!endA.getName().getLocalPart().equals(endB.getName().getLocalPart())) {
                         message.append("Different elements ").append(endA.getName()).append(", ").append(endB.getName()).append(" at location ").append(eventA.getLocation());
                         return false;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    Characters endA = eventA.asCharacters();
-                    Characters endB = eventB.asCharacters();
+                    final Characters endA = eventA.asCharacters();
+                    final Characters endB = eventB.asCharacters();
                     if (!endA.getData().equals(endB.getData())) {
                         message.append("Different content ").append(endA.getData()).append(", ").append(endB.getData()).append(" at location ").append(eventA.getLocation());
                         return false;
                     }
                 }
 
-        }
+            }
             if (eventA != null) {
                 message.append("A is longer: ").append(eventA.getLocation());
                 return false;
@@ -89,17 +89,17 @@ public class StaxCompare {
                 message.append("B is longer: ").append(eventB.getLocation());
                 return false;
             }
-        } catch (XMLStreamException e) {
+        } catch (final XMLStreamException e) {
             message.append("Exception processing ").append(e.getMessage());
             return false;
         }
         return true;
     }
 
-    private static XMLEvent nextInterestingEvent(XMLEventReader r) throws XMLStreamException {
+    private static XMLEvent nextInterestingEvent(final XMLEventReader r) throws XMLStreamException {
         do {
-            XMLEvent e = r.nextEvent();
-            int t = e.getEventType();
+            final XMLEvent e = r.nextEvent();
+            final int t = e.getEventType();
             if (t == XMLStreamConstants.START_ELEMENT || t == XMLStreamConstants.END_ELEMENT || t == XMLStreamConstants.ATTRIBUTE) {
                 return e;
             }

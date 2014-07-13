@@ -870,7 +870,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static class StringSource implements Source {
-        private byte[] bytes;
+        private final byte[] bytes;
 
         public StringSource(final String content) {
             bytes = content.getBytes();

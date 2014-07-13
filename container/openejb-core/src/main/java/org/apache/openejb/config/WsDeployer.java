@@ -105,7 +105,7 @@ public class WsDeployer implements DynamicDeployer {
                     } else {
                         logger.error("The service-ref " + serviceRef.getName() + " must define service-qname because the wsdl-file " + serviceRef.getWsdlFile() + " constain more then one service definitions " + serviceQNames);
                     }
-                } catch(final Exception e) {
+                } catch (final Exception e) {
                     logger.error("Unable to read wsdl file " + serviceRef.getWsdlFile());
                 }
             }
@@ -207,7 +207,7 @@ public class WsDeployer implements DynamicDeployer {
                     }
                     if (portComponent.getWsdlService() == null) {
                         final Definition definition = getWsdl(webModule, webserviceDescription.getWsdlFile());
-                        if (definition != null && definition.getServices().size() ==  1) {
+                        if (definition != null && definition.getServices().size() == 1) {
                             final QName serviceQName = (QName) definition.getServices().keySet().iterator().next();
                             portComponent.setWsdlService(serviceQName);
                         } else {
@@ -219,7 +219,7 @@ public class WsDeployer implements DynamicDeployer {
                     }
                     configMtomAnnotation(clazz, portComponent);
                     if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
-                            SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
+                        SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
                         portComponent.setEnableMtom(true);
                     }
 
@@ -305,7 +305,7 @@ public class WsDeployer implements DynamicDeployer {
                 webservices = new Webservices();
                 ejbModule.setWebservices(webservices);
             }
-            
+
             webserviceDescription = webservices.getWebserviceDescriptionMap().get(JaxWsUtils.getServiceName(ejbClass));
             if (webserviceDescription == null) {
                 webserviceDescription = new WebserviceDescription();
@@ -340,10 +340,10 @@ public class WsDeployer implements DynamicDeployer {
                 }
                 configMtomAnnotation(ejbClass, portComponent);
                 if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
-                        SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
+                    SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
                     portComponent.setEnableMtom(true);
                 }
-                
+
             }
 
             // default portId == deploymentId
@@ -369,7 +369,7 @@ public class WsDeployer implements DynamicDeployer {
                 }
                 if (portComponent.getWsdlService() == null) {
                     final Definition definition = getWsdl(ejbModule, webserviceDescription.getWsdlFile());
-                    if (definition != null && definition.getServices().size() ==  1) {
+                    if (definition != null && definition.getServices().size() == 1) {
                         final QName serviceQName = (QName) definition.getServices().keySet().iterator().next();
                         portComponent.setWsdlService(serviceQName);
                     } else {

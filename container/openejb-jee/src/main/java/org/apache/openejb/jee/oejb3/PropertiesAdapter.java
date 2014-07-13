@@ -25,21 +25,21 @@ import java.io.ByteArrayOutputStream;
  * @version $Rev$ $Date$
  */
 public class PropertiesAdapter extends XmlAdapter<String, Properties> {
-    public Properties unmarshal(String s) throws Exception {
-        Properties properties = new Properties();
-        ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes());
+    public Properties unmarshal(final String s) throws Exception {
+        final Properties properties = new Properties();
+        final ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes());
         properties.load(in);
         return properties;
     }
 
-    public String marshal(Properties properties) throws Exception {
+    public String marshal(final Properties properties) throws Exception {
         if (properties == null) return null;
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
 
         // First comment is added by properties.store() 
-        String string = new String(out.toByteArray());
+        final String string = new String(out.toByteArray());
         return string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
     }
 }

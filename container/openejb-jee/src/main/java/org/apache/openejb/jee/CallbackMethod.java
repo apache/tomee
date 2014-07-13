@@ -21,5 +21,6 @@ package org.apache.openejb.jee;
  */
 public interface CallbackMethod {
     String getClassName();
+
     String getMethodName();
 }

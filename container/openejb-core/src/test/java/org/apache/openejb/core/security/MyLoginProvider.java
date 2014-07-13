@@ -25,7 +25,7 @@ import java.util.List;
 public class MyLoginProvider implements LoginProvider {
 
     @Override
-    public List<String> authenticate(String user, String password) throws FailedLoginException {
+    public List<String> authenticate(final String user, final String password) throws FailedLoginException {
         if ("paul".equals(user)) {
             return Arrays.asList("rockstar", "beatle");
         }

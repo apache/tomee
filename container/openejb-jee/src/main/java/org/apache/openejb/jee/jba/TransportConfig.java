@@ -51,11 +51,9 @@ public class TransportConfig {
 
     /**
      * Gets the value of the integrity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIntegrity() {
         return integrity;
@@ -63,23 +61,19 @@ public class TransportConfig {
 
     /**
      * Sets the value of the integrity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIntegrity(String value) {
+    public void setIntegrity(final String value) {
         this.integrity = value;
     }
 
     /**
      * Gets the value of the confidentiality property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConfidentiality() {
         return confidentiality;
@@ -87,23 +81,19 @@ public class TransportConfig {
 
     /**
      * Sets the value of the confidentiality property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConfidentiality(String value) {
+    public void setConfidentiality(final String value) {
         this.confidentiality = value;
     }
 
     /**
      * Gets the value of the establishTrustInTarget property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEstablishTrustInTarget() {
         return establishTrustInTarget;
@@ -111,23 +101,19 @@ public class TransportConfig {
 
     /**
      * Sets the value of the establishTrustInTarget property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEstablishTrustInTarget(String value) {
+    public void setEstablishTrustInTarget(final String value) {
         this.establishTrustInTarget = value;
     }
 
     /**
      * Gets the value of the establishTrustInClient property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEstablishTrustInClient() {
         return establishTrustInClient;
@@ -135,23 +121,19 @@ public class TransportConfig {
 
     /**
      * Sets the value of the establishTrustInClient property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEstablishTrustInClient(String value) {
+    public void setEstablishTrustInClient(final String value) {
         this.establishTrustInClient = value;
     }
 
     /**
      * Gets the value of the detectMisordering property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDetectMisordering() {
         return detectMisordering;
@@ -159,23 +141,19 @@ public class TransportConfig {
 
     /**
      * Sets the value of the detectMisordering property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDetectMisordering(String value) {
+    public void setDetectMisordering(final String value) {
         this.detectMisordering = value;
     }
 
     /**
      * Gets the value of the detectReplay property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDetectReplay() {
         return detectReplay;
@@ -183,13 +161,11 @@ public class TransportConfig {
 
     /**
      * Sets the value of the detectReplay property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDetectReplay(String value) {
+    public void setDetectReplay(final String value) {
         this.detectReplay = value;
     }
 

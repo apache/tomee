@@ -33,7 +33,7 @@ public class OneStandalone {
     public OneStandalone() {
     }
 
-    public OneStandalone(long id) {
+    public OneStandalone(final long id) {
         this.id = id;
     }
 
@@ -45,7 +45,7 @@ public class OneStandalone {
         return many;
     }
 
-    public void setMany(Collection<ManyStandalone> many) {
+    public void setMany(final Collection<ManyStandalone> many) {
         this.many = many;
     }
 }

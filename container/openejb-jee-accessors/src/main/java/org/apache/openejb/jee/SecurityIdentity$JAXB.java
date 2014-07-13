@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class SecurityIdentity$JAXB
-        extends JAXBObject<SecurityIdentity> {
+    extends JAXBObject<SecurityIdentity> {
 
 
     public SecurityIdentity$JAXB() {
         super(SecurityIdentity.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "security-identityType".intern()), Text$JAXB.class, Empty$JAXB.class, RunAs$JAXB.class);
     }
 
-    public static SecurityIdentity readSecurityIdentity(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static SecurityIdentity readSecurityIdentity(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeSecurityIdentity(XoXMLStreamWriter writer, SecurityIdentity securityIdentity, RuntimeContext context)
-            throws Exception {
+    public static void writeSecurityIdentity(final XoXMLStreamWriter writer, final SecurityIdentity securityIdentity, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityIdentity, context);
     }
 
-    public void write(XoXMLStreamWriter writer, SecurityIdentity securityIdentity, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final SecurityIdentity securityIdentity, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityIdentity, context);
     }
 
-    public final static SecurityIdentity _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static SecurityIdentity _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,13 +73,13 @@ public class SecurityIdentity$JAXB
             context = new RuntimeContext();
         }
 
-        SecurityIdentity securityIdentity = new SecurityIdentity();
+        final SecurityIdentity securityIdentity = new SecurityIdentity();
         context.beforeUnmarshal(securityIdentity, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("security-identityType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, SecurityIdentity.class);
@@ -87,10 +87,10 @@ public class SecurityIdentity$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, securityIdentity);
                 securityIdentity.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,21 +99,21 @@ public class SecurityIdentity$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("use-caller-identity" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: useCallerIdentity
-                Empty useCallerIdentity = readEmpty(elementReader, context);
+                final Empty useCallerIdentity = readEmpty(elementReader, context);
                 securityIdentity.useCallerIdentity = useCallerIdentity;
             } else if (("run-as" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: runAs
-                RunAs runAs = readRunAs(elementReader, context);
+                final RunAs runAs = readRunAs(elementReader, context);
                 securityIdentity.runAs = runAs;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "use-caller-identity"), new QName("http://java.sun.com/xml/ns/javaee", "run-as"));
@@ -122,7 +122,7 @@ public class SecurityIdentity$JAXB
         if (descriptions != null) {
             try {
                 securityIdentity.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, SecurityIdentity.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -132,13 +132,13 @@ public class SecurityIdentity$JAXB
         return securityIdentity;
     }
 
-    public final SecurityIdentity read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final SecurityIdentity read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, SecurityIdentity securityIdentity, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final SecurityIdentity securityIdentity, RuntimeContext context)
+        throws Exception {
         if (securityIdentity == null) {
             writer.writeXsiNil();
             return;
@@ -148,7 +148,7 @@ public class SecurityIdentity$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (SecurityIdentity.class != securityIdentity.getClass()) {
             context.unexpectedSubclass(writer, securityIdentity, SecurityIdentity.class);
             return;
@@ -158,12 +158,12 @@ public class SecurityIdentity$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = securityIdentity.id;
+        final String idRaw = securityIdentity.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(securityIdentity, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -173,11 +173,11 @@ public class SecurityIdentity$JAXB
         Text[] descriptions = null;
         try {
             descriptions = securityIdentity.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(securityIdentity, "descriptions", SecurityIdentity.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -189,7 +189,7 @@ public class SecurityIdentity$JAXB
         }
 
         // ELEMENT: useCallerIdentity
-        Empty useCallerIdentity = securityIdentity.useCallerIdentity;
+        final Empty useCallerIdentity = securityIdentity.useCallerIdentity;
         if (useCallerIdentity != null) {
             writer.writeStartElement(prefix, "use-caller-identity", "http://java.sun.com/xml/ns/javaee");
             writeEmpty(writer, useCallerIdentity, context);
@@ -197,7 +197,7 @@ public class SecurityIdentity$JAXB
         }
 
         // ELEMENT: runAs
-        RunAs runAs = securityIdentity.runAs;
+        final RunAs runAs = securityIdentity.runAs;
         if (runAs != null) {
             writer.writeStartElement(prefix, "run-as", "http://java.sun.com/xml/ns/javaee");
             writeRunAs(writer, runAs, context);

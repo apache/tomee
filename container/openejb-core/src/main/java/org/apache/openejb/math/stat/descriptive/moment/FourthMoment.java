@@ -51,12 +51,16 @@ import java.io.Serializable;
  *
  * @version $Revision: 811685 $ $Date: 2009-09-05 10:36:48 -0700 (Sat, 05 Sep 2009) $
  */
-public class FourthMoment extends ThirdMoment implements Serializable{
+public class FourthMoment extends ThirdMoment implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1233990447117157611L;
 
-    /** fourth moment of values that have been added */
+    /**
+     * fourth moment of values that have been added
+     */
     protected double m4;
 
     /**
@@ -73,15 +77,15 @@ public class FourthMoment extends ThirdMoment implements Serializable{
      *
      * @param original the {@code FourthMoment} instance to copy
      */
-     public FourthMoment(final FourthMoment original) {
-         super();
-         copy(original, this);
-     }
+    public FourthMoment(final FourthMoment original) {
+        super();
+        copy(original, this);
+    }
 
     /**
      * {@inheritDoc}
      */
-     @Override
+    @Override
     public void increment(final double d) {
         if (n < 1) {
             m4 = 0.0;
@@ -98,7 +102,7 @@ public class FourthMoment extends ThirdMoment implements Serializable{
         final double n0 = n;
 
         m4 = m4 - 4.0 * nDev * prevM3 + 6.0 * nDevSq * prevM2 +
-            (n0 * n0 - 3 * (n0 -1)) * nDevSq * nDevSq * (n0 - 1) * n0;
+            (n0 * n0 - 3 * (n0 - 1)) * nDevSq * nDevSq * (n0 - 1) * n0;
     }
 
     /**
@@ -133,7 +137,7 @@ public class FourthMoment extends ThirdMoment implements Serializable{
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source FourthMoment to copy
-     * @param dest FourthMoment to copy to
+     * @param dest   FourthMoment to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final FourthMoment source, final FourthMoment dest) {

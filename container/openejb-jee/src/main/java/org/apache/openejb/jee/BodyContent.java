@@ -21,11 +21,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for body-contentType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="body-contentType">
  *   &lt;simpleContent>
@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlEnum
@@ -58,7 +56,7 @@ public enum BodyContent {
     }
 
     public static BodyContent fromValue(final String v) {
-        for (BodyContent c : values()) {
+        for (final BodyContent c : values()) {
             if (c.value.equals(v)) {
                 return c;
             }

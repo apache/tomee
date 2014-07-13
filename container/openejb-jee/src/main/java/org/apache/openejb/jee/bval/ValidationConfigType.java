@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for validation-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="validation-configType">
  *   &lt;complexContent>
@@ -50,8 +50,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "validation-configType", namespace = "http://jboss.org/xml/ns/javax/validation/configuration", propOrder = {
@@ -84,10 +82,8 @@ public class ValidationConfigType {
     /**
      * Gets the value of the defaultProvider property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDefaultProvider() {
         return defaultProvider;
@@ -96,22 +92,18 @@ public class ValidationConfigType {
     /**
      * Sets the value of the defaultProvider property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setDefaultProvider(String value) {
+    public void setDefaultProvider(final String value) {
         this.defaultProvider = value;
     }
 
     /**
      * Gets the value of the messageInterpolator property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMessageInterpolator() {
         return messageInterpolator;
@@ -120,22 +112,18 @@ public class ValidationConfigType {
     /**
      * Sets the value of the messageInterpolator property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMessageInterpolator(String value) {
+    public void setMessageInterpolator(final String value) {
         this.messageInterpolator = value;
     }
 
     /**
      * Gets the value of the traversableResolver property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTraversableResolver() {
         return traversableResolver;
@@ -144,22 +132,18 @@ public class ValidationConfigType {
     /**
      * Sets the value of the traversableResolver property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTraversableResolver(String value) {
+    public void setTraversableResolver(final String value) {
         this.traversableResolver = value;
     }
 
     /**
      * Gets the value of the constraintValidatorFactory property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConstraintValidatorFactory() {
         return constraintValidatorFactory;
@@ -168,36 +152,32 @@ public class ValidationConfigType {
     /**
      * Sets the value of the constraintValidatorFactory property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConstraintValidatorFactory(String value) {
+    public void setConstraintValidatorFactory(final String value) {
         this.constraintValidatorFactory = value;
     }
 
     /**
      * Gets the value of the constraintMapping property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the constraintMapping property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConstraintMapping().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
-     *
      */
     public List<JAXBElement<String>> getConstraintMapping() {
         if (constraintMapping == null) {
@@ -208,25 +188,23 @@ public class ValidationConfigType {
 
     /**
      * Gets the value of the property property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link PropertyType }
-     *
-     *
      */
     public List<PropertyType> getProperty() {
         if (property == null) {

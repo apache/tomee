@@ -30,13 +30,12 @@ public class CheckIncorrectPropertyNameTest {
 
 
     @Keys({@Key(value = "incorrect.property.name", type = KeyType.WARNING)})
-    public AppModule testSystemPropertyNames()
-    {
+    public AppModule testSystemPropertyNames() {
         //SystemInstance.get().setProperty("java.persistence.provider", "test");
-        SystemInstance.get().setProperty("javax.naming.referral","test");
-        EjbJar ejbJar=new EjbJar();
+        SystemInstance.get().setProperty("javax.naming.referral", "test");
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(org.apache.openejb.test.annotated.Green.class));
-        AppModule appModule = new AppModule(new EjbModule(ejbJar));
+        final AppModule appModule = new AppModule(new EjbModule(ejbJar));
         return appModule;
     }
 }
@@ -46,7 +45,7 @@ class Green {
 
     // need to add this @AroundInvoke to cause validation to fail. Validation does not
     // fail on warnings, which causes this framework to not work properly
-     @AroundInvoke
+    @AroundInvoke
     public void sayCheese() {
     }
 }

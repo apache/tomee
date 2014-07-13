@@ -25,7 +25,7 @@ import javax.persistence.EntityManager;
  */
 public class PersistenceContextReference extends Reference {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public PersistenceContextReference(final EntityManager em) {
         this.em = em;

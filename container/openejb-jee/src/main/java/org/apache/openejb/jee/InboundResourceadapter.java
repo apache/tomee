@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for inbound-resourceadapterType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="inbound-resourceadapterType">
  *   &lt;complexContent>
@@ -44,12 +44,10 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "inbound-resourceadapterType", propOrder = {
-        "messageAdapter"
+    "messageAdapter"
 })
 public class InboundResourceadapter {
 
@@ -64,7 +62,7 @@ public class InboundResourceadapter {
         return messageAdapter;
     }
 
-    public MessageAdapter setMessageAdapter(MessageAdapter value) {
+    public MessageAdapter setMessageAdapter(final MessageAdapter value) {
         this.messageAdapter = value;
         return messageAdapter;
     }
@@ -73,7 +71,7 @@ public class InboundResourceadapter {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

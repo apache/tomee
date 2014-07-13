@@ -60,7 +60,7 @@ public class Cache {
         }
     }
 
-    public void setMaxEntries(String value) {
+    public void setMaxEntries(final String value) {
         this.maxEntries = value;
     }
 
@@ -72,7 +72,7 @@ public class Cache {
         }
     }
 
-    public void setTimeoutInSeconds(String value) {
+    public void setTimeoutInSeconds(final String value) {
         this.timeoutInSeconds = value;
     }
 
@@ -84,7 +84,7 @@ public class Cache {
         }
     }
 
-    public void setEnabled(String value) {
+    public void setEnabled(final String value) {
         this.enabled = value;
     }
 
@@ -99,7 +99,7 @@ public class Cache {
         return defaultHelper;
     }
 
-    public void setDefaultHelper(DefaultHelper value) {
+    public void setDefaultHelper(final DefaultHelper value) {
         this.defaultHelper = value;
     }
 

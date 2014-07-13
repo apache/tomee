@@ -52,37 +52,38 @@ public class TimeoutAroundTest extends TestCase {
 
     private static final List<Call> result = new ArrayList<Call>();
 
-    public void test(){}
+    public void test() {
+    }
 
     public void _testTimeoutAround() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
-        AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
+        final EjbJar ejbJar = new EjbJar();
+        final AssemblyDescriptor assemblyDescriptor = ejbJar.getAssemblyDescriptor();
 
         //Configure AroundTimeout by deployment plan
-        Interceptor interceptorA = new Interceptor(SimpleInterceptorA.class);
+        final Interceptor interceptorA = new Interceptor(SimpleInterceptorA.class);
         interceptorA.getAroundTimeout().add(new org.apache.openejb.jee.AroundTimeout(SimpleInterceptorA.class.getName(), "interceptorTimeoutAround"));
         ejbJar.addInterceptor(interceptorA);
 
         //Configure AroundTimeout by annotation
-        Interceptor interceptorB = new Interceptor(SimpleInterceptorB.class);
+        final Interceptor interceptorB = new Interceptor(SimpleInterceptorB.class);
         ejbJar.addInterceptor(interceptorB);
 
         //Override AroundTimeout annotation by deployment plan
-        Interceptor interceptorC = new Interceptor(SimpleInterceptorC.class);
+        final Interceptor interceptorC = new Interceptor(SimpleInterceptorC.class);
         interceptorC.getAroundTimeout().add(new org.apache.openejb.jee.AroundTimeout(SimpleInterceptorC.class.getName(), "interceptorTimeoutAround"));
         ejbJar.addInterceptor(interceptorC);
 
         //Configure aroundTimeout by deployment plan
-        StatelessBean subBeanA = new StatelessBean(SubBeanA.class);
+        final StatelessBean subBeanA = new StatelessBean(SubBeanA.class);
         subBeanA.addAroundTimeout("beanTimeoutAround");
         ejbJar.addEnterpriseBean(subBeanA);
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanA, interceptorA));
@@ -90,29 +91,29 @@ public class TimeoutAroundTest extends TestCase {
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanA, interceptorC));
 
         //Configure aroundTimeout by annotation
-        StatelessBean subBeanB = new StatelessBean(SubBeanB.class);
+        final StatelessBean subBeanB = new StatelessBean(SubBeanB.class);
         ejbJar.addEnterpriseBean(subBeanB);
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanB, interceptorA));
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanB, interceptorB));
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanB, interceptorC));
 
         //Override aroundTimeout annotation by deployment plan
-        StatelessBean subBeanC = new StatelessBean(SubBeanC.class);
+        final StatelessBean subBeanC = new StatelessBean(SubBeanC.class);
         subBeanC.addAroundTimeout("beanTimeoutAround");
         ejbJar.addEnterpriseBean(subBeanC);
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanC, interceptorA));
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanC, interceptorB));
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanC, interceptorC));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
-        List<Call> expectedResult = Arrays.asList(Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.BEAN_BEFORE_AROUNDTIMEOUT,
-                Call.BEAN_TIMEOUT, Call.BEAN_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT);
+        final List<Call> expectedResult = Arrays.asList(Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT, Call.BEAN_BEFORE_AROUNDTIMEOUT,
+            Call.BEAN_TIMEOUT, Call.BEAN_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT, Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT);
 
         {
-            BeanInterface beanA = (BeanInterface) context.lookup("SubBeanALocal");
+            final BeanInterface beanA = (BeanInterface) context.lookup("SubBeanALocal");
             beanA.simpleMethod();
             Thread.sleep(5000L);
             assertEquals(expectedResult, result);
@@ -120,7 +121,7 @@ public class TimeoutAroundTest extends TestCase {
         }
 
         {
-            BeanInterface beanB = (BeanInterface) context.lookup("SubBeanBLocal");
+            final BeanInterface beanB = (BeanInterface) context.lookup("SubBeanBLocal");
             beanB.simpleMethod();
             Thread.sleep(5000L);
             assertEquals(expectedResult, result);
@@ -128,7 +129,7 @@ public class TimeoutAroundTest extends TestCase {
         }
 
         {
-            BeanInterface beanC = (BeanInterface) context.lookup("SubBeanCLocal");
+            final BeanInterface beanC = (BeanInterface) context.lookup("SubBeanCLocal");
             beanC.simpleMethod();
             Thread.sleep(5000L);
             assertEquals(expectedResult, result);
@@ -157,20 +158,20 @@ public class TimeoutAroundTest extends TestCase {
     public static class SubBeanA extends BaseBean implements TimedObject {
 
         @Override
-        public void ejbTimeout(Timer arg0) {
+        public void ejbTimeout(final Timer arg0) {
             result.add(Call.BEAN_TIMEOUT);
         }
 
-        public Object beanTimeoutAround(InvocationContext context) throws Exception {
+        public Object beanTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
             return ret;
         }
 
-        @Schedule(info = "badValue", year="1970")
-        public void scheduleBeanA(javax.ejb.Timer timer) {
+        @Schedule(info = "badValue", year = "1970")
+        public void scheduleBeanA(final javax.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
@@ -181,21 +182,21 @@ public class TimeoutAroundTest extends TestCase {
     public static class SubBeanB extends BaseBean implements TimedObject {
 
         @Override
-        public void ejbTimeout(Timer arg0) {
+        public void ejbTimeout(final Timer arg0) {
             result.add(Call.BEAN_TIMEOUT);
         }
 
         @AroundTimeout
-        public Object beanTimeoutAround(InvocationContext context) throws Exception {
+        public Object beanTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
             return ret;
         }
 
-        @Schedule(info = "badValue", year="1970")
-        public void scheduleBeanB(javax.ejb.Timer timer) {
+        @Schedule(info = "badValue", year = "1970")
+        public void scheduleBeanB(final javax.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
@@ -206,20 +207,20 @@ public class TimeoutAroundTest extends TestCase {
     public static class SubBeanC extends BaseBean implements TimedObject {
 
         @Override
-        public void ejbTimeout(Timer arg0) {
+        public void ejbTimeout(final Timer arg0) {
             result.add(Call.BEAN_TIMEOUT);
         }
 
-        public Object beanTimeoutAround(InvocationContext context) throws Exception {
+        public Object beanTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
             return ret;
         }
 
-        @Schedule(info = "badValue", year="1970")
-        public void scheduleBeanC(javax.ejb.Timer timer) {
+        @Schedule(info = "badValue", year = "1970")
+        public void scheduleBeanC(final javax.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
@@ -227,10 +228,10 @@ public class TimeoutAroundTest extends TestCase {
 
     public static class SimpleInterceptorA {
 
-        public Object interceptorTimeoutAround(InvocationContext context) throws Exception {
+        public Object interceptorTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT);
             return ret;
         }
@@ -239,10 +240,10 @@ public class TimeoutAroundTest extends TestCase {
     public static class SimpleInterceptorB {
 
         @AroundTimeout
-        public Object interceptorTimeoutAround(InvocationContext context) throws Exception {
+        public Object interceptorTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT);
             return ret;
         }
@@ -252,10 +253,10 @@ public class TimeoutAroundTest extends TestCase {
     public static class SimpleInterceptorC {
 
 
-        public Object interceptorTimeoutAround(InvocationContext context) throws Exception {
+        public Object interceptorTimeoutAround(final InvocationContext context) throws Exception {
             assertNotNull(context.getTimer());
             result.add(Call.INTERCEPTOR_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
+            final Object ret = context.proceed();
             result.add(Call.INTERCEPTOR_AFTER_AROUNDTIMEOUT);
             return ret;
         }

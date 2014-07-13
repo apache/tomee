@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for constraint-definitionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="constraint-definitionType">
  *   &lt;complexContent>
@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "constraint-definitionType", propOrder = {
@@ -60,10 +58,8 @@ public class ConstraintDefinitionType {
     /**
      * Gets the value of the validatedBy property.
      *
-     * @return
-     *     possible object is
-     *     {@link ValidatedByType }
-     *
+     * @return possible object is
+     * {@link ValidatedByType }
      */
     public ValidatedByType getValidatedBy() {
         return validatedBy;
@@ -72,22 +68,18 @@ public class ConstraintDefinitionType {
     /**
      * Sets the value of the validatedBy property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link ValidatedByType }
-     *
+     * @param value allowed object is
+     *              {@link ValidatedByType }
      */
-    public void setValidatedBy(ValidatedByType value) {
+    public void setValidatedBy(final ValidatedByType value) {
         this.validatedBy = value;
     }
 
     /**
      * Gets the value of the annotation property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getAnnotation() {
         return annotation;
@@ -96,12 +88,10 @@ public class ConstraintDefinitionType {
     /**
      * Sets the value of the annotation property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setAnnotation(String value) {
+    public void setAnnotation(final String value) {
         this.annotation = value;
     }
 

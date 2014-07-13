@@ -34,8 +34,8 @@ public class Messages {
 
     private ResourceBundle messages;
     private Map<String, MessageFormat> formats;
-    private Locale locale;
-    private String resourceName;
+    private final Locale locale;
+    private final String resourceName;
 
     public Messages(final Class clazz) {
         this(packageName(clazz));

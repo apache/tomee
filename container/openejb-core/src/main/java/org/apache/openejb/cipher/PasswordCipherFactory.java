@@ -36,7 +36,7 @@ public class PasswordCipherFactory {
      * optionally set.
      */
     public static PasswordCipher getPasswordCipher(final String passwordCipherClass) {
-        PasswordCipher cipher;
+        final PasswordCipher cipher;
         try {
             cipher = doInternalPasswordCipher(PasswordCipher.class, passwordCipherClass);
 
@@ -51,7 +51,7 @@ public class PasswordCipherFactory {
         return cipher;
     }
 
-    private static <T extends PasswordCipher> T doInternalPasswordCipher(final Class<T> intf, final String passwordCipherClass){
+    private static <T extends PasswordCipher> T doInternalPasswordCipher(final Class<T> intf, final String passwordCipherClass) {
         // Load the password cipher class
         Class<? extends T> pwdCipher;
 
@@ -63,8 +63,8 @@ public class PasswordCipherFactory {
 
         } catch (final Throwable t) {
             final String message =
-                    "Password cipher '" + passwordCipherClass +
-                            "' not found in META-INF/org.apache.openejb.cipher.PasswordCipher.";
+                "Password cipher '" + passwordCipherClass +
+                    "' not found in META-INF/org.apache.openejb.cipher.PasswordCipher.";
             throw new PasswordCipherException(message, t);
         }
         pwdCipher = impls.get(passwordCipherClass);

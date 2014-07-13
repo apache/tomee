@@ -31,21 +31,21 @@ public class TextMap {
     protected Map<String, String> string = new LinkedHashMap<String, String>();
 
     public Text[] toArray() {
-        List<Text> list = new ArrayList<Text>();
-        for (Map.Entry<String, String> entry : string.entrySet()) {
+        final List<Text> list = new ArrayList<Text>();
+        for (final Map.Entry<String, String> entry : string.entrySet()) {
             list.add(new Text(entry.getKey(), entry.getValue()));
         }
         return list.toArray(new Text[]{});
     }
 
-    public void set(Text[] text) {
+    public void set(final Text[] text) {
         string.clear();
-        for (Text t : text) {
+        for (final Text t : text) {
             string.put(t.getLang(), t.getValue());
         }
     }
 
-    public void add(Text text) {
+    public void add(final Text text) {
         if (!string.containsKey(text.getLang())) {
             string.put(text.getLang(), text.getValue());
         }
@@ -55,8 +55,8 @@ public class TextMap {
         return getLocal(string);
     }
 
-    private String getLocal(Map<String, ?> map) {
-        String lang = Locale.getDefault().getLanguage();
+    private String getLocal(final Map<String, ?> map) {
+        final String lang = Locale.getDefault().getLanguage();
         return (String) (map.get(lang) != null ? map.get(lang) : map.get(null));
     }
 

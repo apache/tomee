@@ -49,7 +49,7 @@ public class ManagedExecutorServiceTest {
 
     @Module
     public Class<?>[] bean() {
-        return new Class<?>[]{ ExecutorFacade.class, CdiExecutorFacade.class, RequestBean.class, MyCallable.class };
+        return new Class<?>[]{ExecutorFacade.class, CdiExecutorFacade.class, RequestBean.class, MyCallable.class};
     }
 
     private ThreadContext ctx;
@@ -161,7 +161,7 @@ public class ManagedExecutorServiceTest {
     @RequestScoped
     public static class RequestBean {
         private static int ID = 0;
-        private int id = ID++;
+        private final int id = ID++;
 
         public int getId() {
             return id;

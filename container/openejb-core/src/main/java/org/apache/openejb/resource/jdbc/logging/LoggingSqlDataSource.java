@@ -25,9 +25,9 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 public class LoggingSqlDataSource implements InvocationHandler {
-    private static final Class<?>[] INTERFACES = new Class<?>[]{ Connection.class };
+    private static final Class<?>[] INTERFACES = new Class<?>[]{Connection.class};
 
-    private CommonDataSource delegate;
+    private final CommonDataSource delegate;
 
     public LoggingSqlDataSource(final CommonDataSource ds) {
         delegate = ds;
@@ -44,7 +44,7 @@ public class LoggingSqlDataSource implements InvocationHandler {
 
         if ("getConnection".equals(method.getName())) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(),
-                    INTERFACES, new LoggingSqlConnection((Connection) result));
+                INTERFACES, new LoggingSqlConnection((Connection) result));
         }
         return result;
     }

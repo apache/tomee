@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p>
+ * <p/>
  * Java class for AcknowledgeMode.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * <pre>
  * &lt;simpleType name="AcknowledgeMode">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
@@ -36,31 +36,30 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum AcknowledgeModeEnum {
 
-	@XmlEnumValue("AutoAcknowledge")
-	AUTO_ACKNOWLEDGE("AutoAcknowledge"), @XmlEnumValue("DupsOkAcknowledge")
-	DUPS_OK_ACKNOWLEDGE("DupsOkAcknowledge");
-	private final String value;
+    @XmlEnumValue("AutoAcknowledge")
+    AUTO_ACKNOWLEDGE("AutoAcknowledge"), @XmlEnumValue("DupsOkAcknowledge")
+    DUPS_OK_ACKNOWLEDGE("DupsOkAcknowledge");
+    private final String value;
 
-	AcknowledgeModeEnum(String v) {
-		value = v;
-	}
+    AcknowledgeModeEnum(final String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static AcknowledgeModeEnum fromValue(String v) {
-		for (AcknowledgeModeEnum c : AcknowledgeModeEnum.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v.toString());
-	}
+    public static AcknowledgeModeEnum fromValue(final String v) {
+        for (final AcknowledgeModeEnum c : AcknowledgeModeEnum.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v.toString());
+    }
 
 }

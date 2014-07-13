@@ -44,7 +44,7 @@ public final class SimpleJSonParser {
             } else if (current == ']') {
                 return array;
             } else if (current == '"') {
-                final StringBuilder b =  new StringBuilder();
+                final StringBuilder b = new StringBuilder();
                 do {
                     read = is.read();
                     current = (char) read;
@@ -61,7 +61,7 @@ public final class SimpleJSonParser {
                     return value;
                 }
             } else if (current != ':' && current != '=' && current != ',' && !isWhiteSpace(current)) {
-                final StringBuilder b =  new StringBuilder().append(current);
+                final StringBuilder b = new StringBuilder().append(current);
                 do {
                     read = is.read();
                     current = (char) read;

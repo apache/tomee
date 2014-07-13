@@ -89,7 +89,7 @@ public class RoutedDataSource implements DataSource {
             return null;
         }
         return (T) Reflections.invokeByReflection(getTargetDataSource(), "unwrap",
-                new Class<?>[]{Class.class}, new Object[]{iface});
+            new Class<?>[]{Class.class}, new Object[]{iface});
     }
 
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
@@ -104,7 +104,7 @@ public class RoutedDataSource implements DataSource {
             return false;
         }
         return (Boolean) Reflections.invokeByReflection(getTargetDataSource(), "isWrapperFor",
-                new Class<?>[]{Class.class}, new Object[]{iface});
+            new Class<?>[]{Class.class}, new Object[]{iface});
     }
 
     public Connection getConnection() throws SQLException {
@@ -112,7 +112,7 @@ public class RoutedDataSource implements DataSource {
     }
 
     public Connection getConnection(final String username, final String password)
-            throws SQLException {
+        throws SQLException {
         return getTargetDataSource().getConnection(username, password);
     }
 

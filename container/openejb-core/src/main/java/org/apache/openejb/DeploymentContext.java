@@ -31,7 +31,7 @@ public class DeploymentContext {
     private final String id;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
     private final Properties properties = new SuperProperties().caseInsensitive(true);
-    private Options options;
+    private final Options options;
 
     public DeploymentContext(final String id, final Options parent) {
         this.id = id;
@@ -44,7 +44,7 @@ public class DeploymentContext {
 
     @SuppressWarnings({"unchecked"})
     public <T> T get(final Class<T> type) {
-        return (T)data.get(type);
+        return (T) data.get(type);
     }
 
     @SuppressWarnings({"unchecked"})

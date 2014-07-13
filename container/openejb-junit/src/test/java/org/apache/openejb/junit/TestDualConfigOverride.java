@@ -21,9 +21,11 @@ import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.Property;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,14 +35,13 @@ import java.util.Hashtable;
  * Here we test class level dual config, with method level overrides. We check some
  * properties in all tests (even when not in it's config), to ensure overrides work
  * properly, and also that context sharing doesn't happen.
- *
  */
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
-        configFile = "/META-INF/test-config.properties",
-        properties = {
-                @Property("junit.test-property-override=New Class Property Value")
-        }
+    configFile = "/META-INF/test-config.properties",
+    properties = {
+        @Property("junit.test-property-override=New Class Property Value")
+    }
 )
 public class TestDualConfigOverride {
     @TestResource(TestResourceTypes.CONTEXT_CONFIG)
@@ -63,7 +64,7 @@ public class TestDualConfigOverride {
 
     @Test
     @ContextConfig(
-            configFile = "/META-INF/test-config-method.properties"
+        configFile = "/META-INF/test-config-method.properties"
     )
     public void testMethodFileOverride() {
         assertNotNull(contextConfig);
@@ -78,10 +79,10 @@ public class TestDualConfigOverride {
 
     @Test
     @ContextConfig(
-            properties = {
-                    @Property("junit.test-property-override3=New Method Property Value 3"),
-                    @Property("junit.test-new-method-property=New Method Property Value")
-            }
+        properties = {
+            @Property("junit.test-property-override3=New Method Property Value 3"),
+            @Property("junit.test-new-method-property=New Method Property Value")
+        }
     )
     public void testMethodPropertiesOverride() {
         assertNotNull(contextConfig);
@@ -96,11 +97,11 @@ public class TestDualConfigOverride {
 
     @Test
     @ContextConfig(
-            configFile = "/META-INF/test-config-method.properties",
-            properties = {
-                    @Property("junit.test-property-override2=New Method Property Value 2"),
-                    @Property("junit.test-new-method-property=New Method Property Value")
-            }
+        configFile = "/META-INF/test-config-method.properties",
+        properties = {
+            @Property("junit.test-property-override2=New Method Property Value 2"),
+            @Property("junit.test-new-method-property=New Method Property Value")
+        }
     )
     public void testMethodDualOverride() {
         assertNotNull(contextConfig);
@@ -113,8 +114,8 @@ public class TestDualConfigOverride {
         checkProperty("junit.test-new-method-property", "New Method Property Value");
     }
 
-    private void checkProperty(String key, String expected) {
-        String value = contextConfig.get(key);
+    private void checkProperty(final String key, final String expected) {
+        final String value = contextConfig.get(key);
         assertEquals(expected, value);
     }
 }

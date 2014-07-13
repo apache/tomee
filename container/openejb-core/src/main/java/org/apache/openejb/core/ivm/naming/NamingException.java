@@ -23,7 +23,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 public class NamingException extends javax.naming.NamingException {
-    private OpenEJBException delegate;
+    private final OpenEJBException delegate;
 
     public NamingException(final String message, final OpenEJBException delegateArg) {
         super(message);

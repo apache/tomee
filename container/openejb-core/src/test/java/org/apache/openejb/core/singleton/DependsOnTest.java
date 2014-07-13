@@ -54,8 +54,8 @@ public class DependsOnTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -63,14 +63,14 @@ public class DependsOnTest extends TestCase {
 
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
-        
-        StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
+
+        final StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainer.properties.setProperty("MinSize", "1");
         assembler.createContainer(statelessContainer);
 
         actual.clear();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new StatelessBean(Two.class));
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
@@ -85,7 +85,7 @@ public class DependsOnTest extends TestCase {
         actual.clear();
 
         // startup and trigger @PreDestroy
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
 
@@ -96,8 +96,8 @@ public class DependsOnTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -105,10 +105,10 @@ public class DependsOnTest extends TestCase {
 
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
-        
+
         actual.clear();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new SingletonBean(Two.class)).setInitOnStartup(false);
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
@@ -123,19 +123,19 @@ public class DependsOnTest extends TestCase {
         actual.clear();
 
         // startup and trigger @PreDestroy
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
 
         assertEquals(expected(one, two, three, four), actual);
     }
-    
+
     public void testNoSuchEjb() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -145,7 +145,7 @@ public class DependsOnTest extends TestCase {
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
@@ -155,8 +155,8 @@ public class DependsOnTest extends TestCase {
         try {
             config.configureApplication(ejbJar);
             fail("Validation should have found a circular reference");
-        } catch (ValidationFailedException e) {
-            ValidationFailure[] failures = e.getFailures();
+        } catch (final ValidationFailedException e) {
+            final ValidationFailure[] failures = e.getFailures();
             assertEquals(1, failures.length);
             assertEquals("dependsOn.noSuchEjb", failures[0].getMessageKey());
         }
@@ -166,8 +166,8 @@ public class DependsOnTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -177,7 +177,7 @@ public class DependsOnTest extends TestCase {
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
@@ -187,14 +187,14 @@ public class DependsOnTest extends TestCase {
         try {
             config.configureApplication(ejbJar);
             fail("Validation should have found a circular reference");
-        } catch (ValidationFailedException e) {
-            ValidationFailure[] failures = e.getFailures();
+        } catch (final ValidationFailedException e) {
+            final ValidationFailure[] failures = e.getFailures();
             assertEquals(1, failures.length);
             assertEquals("dependsOn.circuit", failures[0].getMessageKey());
         }
     }
 
-    private List<String> expected(String... strings) {
+    private List<String> expected(final String... strings) {
         return Arrays.asList(strings);
     }
 

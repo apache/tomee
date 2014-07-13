@@ -25,21 +25,19 @@ import java.util.List;
 
 
 /**
- * 
- * 
- *        <p class="changed_added_2_2">Any view that matches any of the
- *        url-patterns in this element may only be reached from another JSF
- *        view in the same web application. Because the runtime is aware of
- *        which views are protected, any navigation from an unprotected
- *        view to a protected view is automatically subject to
- *        protection.</p>
- *         
- *       
- * 
+ * <p class="changed_added_2_2">Any view that matches any of the
+ * url-patterns in this element may only be reached from another JSF
+ * view in the same web application. Because the runtime is aware of
+ * which views are protected, any navigation from an unprotected
+ * view to a protected view is automatically subject to
+ * protection.</p>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-protected-viewsType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-protected-viewsType">
  *   &lt;complexContent>
@@ -51,8 +49,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-protected-viewsType", propOrder = {
@@ -65,25 +61,23 @@ public class FacesConfigProtectedViews {
 
     /**
      * Gets the value of the urlPattern property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the urlPattern property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUrlPattern().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link UrlPattern }
-     * 
-     * 
      */
     public List<UrlPattern> getUrlPattern() {
         if (urlPattern == null) {

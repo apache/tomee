@@ -25,7 +25,7 @@ public class Line {
     public static final String LINE_CHAR = "-";
     public static final char EMPTY_CHAR = ' ';
 
-    private String[] columns;
+    private final String[] columns;
     private String cr = System.getProperty("line.separator");
 
     public Line(final String... columns) {

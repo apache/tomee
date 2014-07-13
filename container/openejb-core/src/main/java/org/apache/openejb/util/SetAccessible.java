@@ -36,7 +36,7 @@ public class SetAccessible implements PrivilegedAction {
         return object;
     }
 
-    public static <T extends AccessibleObject> T on(final T object){
+    public static <T extends AccessibleObject> T on(final T object) {
         return (T) AccessController.doPrivileged(new SetAccessible(object));
     }
 }

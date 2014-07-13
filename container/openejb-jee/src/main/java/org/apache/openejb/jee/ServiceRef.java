@@ -38,11 +38,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- * 
+ * <p/>
  * <p>Java class for service-refType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="service-refType">
  *   &lt;complexContent>
@@ -67,27 +67,25 @@ import java.util.Set;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-refType", propOrder = {
-        "descriptions",
-        "displayNames",
-        "icon",
-        "serviceRefName",
-        "serviceInterface",
-        "serviceRefType",
-        "wsdlFile",
-        "jaxrpcMappingFile",
-        "serviceQname",
-        "portComponentRef",
-        "handler",
-        "handlerChains",
-        "mappedName",
-        "injectionTarget",
-        "lookupName"
-        })
+    "descriptions",
+    "displayNames",
+    "icon",
+    "serviceRefName",
+    "serviceInterface",
+    "serviceRefType",
+    "wsdlFile",
+    "jaxrpcMappingFile",
+    "serviceQname",
+    "portComponentRef",
+    "handler",
+    "handlerChains",
+    "mappedName",
+    "injectionTarget",
+    "lookupName"
+})
 public class ServiceRef implements JndiReference {
 
     @XmlTransient
@@ -125,46 +123,46 @@ public class ServiceRef implements JndiReference {
     @XmlID
     protected String id;
 
-    public ServiceRef name(String serviceRefName) {
+    public ServiceRef name(final String serviceRefName) {
         this.serviceRefName = serviceRefName;
         return this;
     }
 
-    public ServiceRef type(String serviceRefType) {
+    public ServiceRef type(final String serviceRefType) {
         this.serviceRefType = serviceRefType;
         return this;
     }
 
-    public ServiceRef type(Class<?> serviceRefType) {
+    public ServiceRef type(final Class<?> serviceRefType) {
         return type(serviceRefType.getName());
     }
 
-    public ServiceRef wsdl(String wsdlFile) {
+    public ServiceRef wsdl(final String wsdlFile) {
         this.wsdlFile = wsdlFile;
         return this;
     }
 
-    public ServiceRef qname(QName serviceQname) {
+    public ServiceRef qname(final QName serviceQname) {
         this.serviceQname = serviceQname;
         return this;
     }
 
-    public ServiceRef jaxrpcMappingFile(String jaxrpcMappingFile) {
+    public ServiceRef jaxrpcMappingFile(final String jaxrpcMappingFile) {
         this.jaxrpcMappingFile = jaxrpcMappingFile;
         return this;
     }
 
-    public ServiceRef mappedName(String mappedName) {
+    public ServiceRef mappedName(final String mappedName) {
         this.mappedName = mappedName;
         return this;
     }
 
-    public ServiceRef lookup(String lookupName) {
+    public ServiceRef lookup(final String lookupName) {
         this.lookupName = lookupName;
         return this;
     }
 
-    public ServiceRef injectionTarget(String className, String property) {
+    public ServiceRef injectionTarget(final String className, final String property) {
         getInjectionTarget().add(new InjectionTarget(className, property));
 
         // TODO move this to getKey()
@@ -175,7 +173,7 @@ public class ServiceRef implements JndiReference {
         return this;
     }
 
-    public ServiceRef injectionTarget(Class<?> clazz, String property) {
+    public ServiceRef injectionTarget(final Class<?> clazz, final String property) {
         return injectionTarget(clazz.getName(), property);
     }
 
@@ -184,7 +182,7 @@ public class ServiceRef implements JndiReference {
     }
 
     public String getKey() {
-        String name = getName();
+        final String name = getName();
         if (name == null || name.startsWith("java:")) return name;
         return "java:comp/env/" + name;
     }
@@ -193,11 +191,11 @@ public class ServiceRef implements JndiReference {
         return getServiceRefType();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setServiceRefName(name);
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
     }
 
     @XmlElement(name = "description", required = true)
@@ -205,7 +203,7 @@ public class ServiceRef implements JndiReference {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -218,7 +216,7 @@ public class ServiceRef implements JndiReference {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -233,7 +231,7 @@ public class ServiceRef implements JndiReference {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -248,7 +246,7 @@ public class ServiceRef implements JndiReference {
         return serviceRefName;
     }
 
-    public void setServiceRefName(String value) {
+    public void setServiceRefName(final String value) {
         this.serviceRefName = value;
     }
 
@@ -256,7 +254,7 @@ public class ServiceRef implements JndiReference {
         return serviceInterface;
     }
 
-    public void setServiceInterface(String value) {
+    public void setServiceInterface(final String value) {
         this.serviceInterface = value;
     }
 
@@ -264,7 +262,7 @@ public class ServiceRef implements JndiReference {
         return serviceRefType;
     }
 
-    public void setServiceRefType(String value) {
+    public void setServiceRefType(final String value) {
         this.serviceRefType = value;
     }
 
@@ -272,7 +270,7 @@ public class ServiceRef implements JndiReference {
         return wsdlFile;
     }
 
-    public void setWsdlFile(String value) {
+    public void setWsdlFile(final String value) {
         this.wsdlFile = value;
     }
 
@@ -280,7 +278,7 @@ public class ServiceRef implements JndiReference {
         return jaxrpcMappingFile;
     }
 
-    public void setJaxrpcMappingFile(String value) {
+    public void setJaxrpcMappingFile(final String value) {
         this.jaxrpcMappingFile = value;
     }
 
@@ -294,7 +292,7 @@ public class ServiceRef implements JndiReference {
     /**
      * Sets the value of the serviceQname property.
      */
-    public void setServiceQname(QName value) {
+    public void setServiceQname(final QName value) {
         this.serviceQname = value;
     }
 
@@ -309,7 +307,7 @@ public class ServiceRef implements JndiReference {
         return handlerChains;
     }
 
-    public void setHandlerChains(HandlerChains value) {
+    public void setHandlerChains(final HandlerChains value) {
         this.handlerChains = value;
     }
 
@@ -319,12 +317,12 @@ public class ServiceRef implements JndiReference {
         }
         return this.handler;
     }
-    
+
     public HandlerChains getAllHandlers() {
         // convert the handlers to handler chain
         if (handlerChains == null && handler != null) {
-            HandlerChains handlerChains = new HandlerChains();
-            HandlerChain handlerChain = new HandlerChain();
+            final HandlerChains handlerChains = new HandlerChains();
+            final HandlerChain handlerChain = new HandlerChain();
             handlerChain.getHandler().addAll(handler);
             handlerChains.getHandlerChain().add(handlerChain);
             return handlerChains;
@@ -332,12 +330,12 @@ public class ServiceRef implements JndiReference {
             return handlerChains;
         }
     }
-    
+
     public String getMappedName() {
         return mappedName;
     }
 
-    public void setMappedName(String value) {
+    public void setMappedName(final String value) {
         this.mappedName = value;
     }
 
@@ -345,7 +343,7 @@ public class ServiceRef implements JndiReference {
         return lookupName;
     }
 
-    public void setLookupName(String lookupName) {
+    public void setLookupName(final String lookupName) {
         this.lookupName = lookupName;
     }
 
@@ -360,20 +358,20 @@ public class ServiceRef implements JndiReference {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     @Override
     public String toString() {
         return "ServiceRef{" +
-                "name='" + serviceRefName + '\'' +
-                ", interface='" + serviceInterface + '\'' +
-                ", type='" + serviceRefType + '\'' +
-                ", wsdl='" + wsdlFile + '\'' +
-                ", qname=" + serviceQname +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
-                '}';
+            "name='" + serviceRefName + '\'' +
+            ", interface='" + serviceInterface + '\'' +
+            ", type='" + serviceRefType + '\'' +
+            ", wsdl='" + wsdlFile + '\'' +
+            ", qname=" + serviceQname +
+            ", mappedName='" + mappedName + '\'' +
+            ", lookupName='" + lookupName + '\'' +
+            '}';
     }
 }

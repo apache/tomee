@@ -23,7 +23,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="bill")
+@Table(name = "bill")
 @IdClass(BillPk.class)
 public class Bill implements java.io.Serializable {
     private static final long serialVersionUID = 1L;

@@ -40,13 +40,13 @@ import javax.naming.InitialContext;
 public class TimerContainerTest extends TestCase {
 
     public void testTimerServiceInjection() throws Exception {
-        InitialContext ctx = new InitialContext();
+        final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("WidgetBeanLocal");
+        final Object object = ctx.lookup("WidgetBeanLocal");
 
         assertTrue("instanceof widget", object instanceof Widget);
 
-        Widget widget = (Widget) object;
+        final Widget widget = (Widget) object;
 
         // Do a business method...
         assertTrue("Timer was not injected", widget.isTimerSet());
@@ -57,15 +57,15 @@ public class TimerContainerTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "10");
         statelessContainerInfo.properties.setProperty("MaxSize", "0");
         statelessContainerInfo.properties.setProperty("StrictPooling", "false");
@@ -73,11 +73,11 @@ public class TimerContainerTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(WidgetBean.class);
+        final StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         assembler.createApplication(config.configureApplication(ejbJar));
@@ -101,7 +101,7 @@ public class TimerContainerTest extends TestCase {
         }
 
         @Resource
-        public void setSessionContext(SessionContext sessionContext) {
+        public void setSessionContext(final SessionContext sessionContext) {
         }
 
         public boolean isTimerSet() {

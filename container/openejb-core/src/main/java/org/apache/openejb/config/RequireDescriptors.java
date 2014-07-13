@@ -19,7 +19,7 @@ package org.apache.openejb.config;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public enum RequireDescriptors {
     EJB, CLIENT;
 

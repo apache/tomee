@@ -37,34 +37,34 @@ public class OpenejbLookupTest extends TestCase {
 
     public void testPlainInitialContext() throws Exception {
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        Context context = new InitialContext();
+        final Context context = new InitialContext();
 
         assertOpenejbUrlLookups(context);
     }
 
     public void testLocalInitialContext() throws Exception {
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         assembler.createApplication(config.configureApplication(ejbJar));
-        
-        Properties properties = new Properties();
+
+        final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         Context context = new InitialContext(properties);
@@ -80,7 +80,7 @@ public class OpenejbLookupTest extends TestCase {
 
 
         // Test that an EJB can lookup items from openejb:
-        FooLocal fooLocal = (FooLocal) context.lookup("FooBeanLocal");
+        final FooLocal fooLocal = (FooLocal) context.lookup("FooBeanLocal");
 
         fooLocal.test();
     }

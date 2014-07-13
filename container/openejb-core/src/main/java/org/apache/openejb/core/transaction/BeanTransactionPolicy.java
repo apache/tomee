@@ -40,9 +40,9 @@ public interface BeanTransactionPolicy extends TransactionPolicy {
      * suspended or if there is a problem it will be rolled back.
      *
      * @return the syspended transaction token or null if no transaction was
-     *         active
+     * active
      * @throws SystemException if there was a problem suspending the
-     * transaction
+     *                         transaction
      */
     SuspendedTransaction suspendUserTransaction() throws SystemException;
 

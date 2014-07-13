@@ -33,8 +33,8 @@ import java.util.Set;
 public class ObjectMap extends AbstractMap<String, Object> {
 
     private final Object object;
-    private Map<String, Entry<String, Object>> attributes;
-    private Set<Entry<String, Object>> entries;
+    private final Map<String, Entry<String, Object>> attributes;
+    private final Set<Entry<String, Object>> entries;
 
     public ObjectMap(final Object object) {
         this(object.getClass(), object);

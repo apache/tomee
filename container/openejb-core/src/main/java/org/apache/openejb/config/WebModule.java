@@ -171,8 +171,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
     }
 
     public void setContextRoot(final String contextRoot) {
-        if (webApp != null)  {
-            webApp.setContextRoot(contextRoot); }
+        if (webApp != null) {
+            webApp.setContextRoot(contextRoot);
+        }
         this.contextRoot = contextRoot;
     }
 
@@ -200,9 +201,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
     @Override
     public String toString() {
         return "WebModule{" +
-               "moduleId='" + id.getName() + '\'' +
-               ", contextRoot='" + contextRoot + '\'' +
-               '}';
+            "moduleId='" + id.getName() + '\'' +
+            ", contextRoot='" + contextRoot + '\'' +
+            '}';
     }
 
     @Override

@@ -119,12 +119,12 @@ public class ServiceClasspathTest extends Assert {
 
         final PrintStream out = new PrintStream(IO.write(xml));
         out.println("<openejb>\n" +
-                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\" class-name=\"org.superbiz.foo.Orange\" classpath=\"" + jar.getAbsolutePath() + "\">\n" +
-                "    red = FF\n" +
-                "    green = 99\n" +
-                "    blue = 00\n" +
-                "  </Resource>\n" +
-                "</openejb>");
+            "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\" class-name=\"org.superbiz.foo.Orange\" classpath=\"" + jar.getAbsolutePath() + "\">\n" +
+            "    red = FF\n" +
+            "    green = 99\n" +
+            "    blue = 00\n" +
+            "  </Resource>\n" +
+            "</openejb>");
         out.close();
 
 
@@ -156,14 +156,14 @@ public class ServiceClasspathTest extends Assert {
 
         final PrintStream out = new PrintStream(IO.write(xml));
         out.println("<openejb>\n" +
-                "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\"" +
-                "           class-name=\"org.superbiz.foo.Orange\"" +
-                "           classpath=\"${openejb.home}/" + jar.getName() + "\">\n" +
-                "    red = FF\n" +
-                "    green = 99\n" +
-                "    blue = 00\n" +
-                "  </Resource>\n" +
-                "</openejb>");
+            "  <Resource id=\"Orange\" type=\"org.superbiz.foo.Orange\"" +
+            "           class-name=\"org.superbiz.foo.Orange\"" +
+            "           classpath=\"${openejb.home}/" + jar.getName() + "\">\n" +
+            "    red = FF\n" +
+            "    green = 99\n" +
+            "    blue = 00\n" +
+            "  </Resource>\n" +
+            "</openejb>");
         out.close();
 
 
@@ -198,19 +198,19 @@ public class ServiceClasspathTest extends Assert {
 
         final PrintStream out = new PrintStream(IO.write(json));
         out.println("{\n" +
-                "    \"resources\":{\n" +
-                "        \"Orange\":{\n" +
-                "            \"type\":\"org.superbiz.foo.Orange\",\n" +
-                "            \"class-name\":\"org.superbiz.foo.Orange\",\n" +
-                "            \"classpath\":\"" + jar.getAbsolutePath() + "\",\n" +
-                "            \"properties\":{\n" +
-                "                \"red\":\"FF\",\n" +
-                "                \"green\":\"99\",\n" +
-                "                \"blue\":\"00\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }\n" +
-                "}\n");
+            "    \"resources\":{\n" +
+            "        \"Orange\":{\n" +
+            "            \"type\":\"org.superbiz.foo.Orange\",\n" +
+            "            \"class-name\":\"org.superbiz.foo.Orange\",\n" +
+            "            \"classpath\":\"" + jar.getAbsolutePath() + "\",\n" +
+            "            \"properties\":{\n" +
+            "                \"red\":\"FF\",\n" +
+            "                \"green\":\"99\",\n" +
+            "                \"blue\":\"00\"\n" +
+            "            }\n" +
+            "        }\n" +
+            "    }\n" +
+            "}\n");
         out.close();
 
 
@@ -331,12 +331,12 @@ public class ServiceClasspathTest extends Assert {
 
                 final byte[] bytes = to.toByteArray();
                 return add(name, bytes);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        public Archive add(final String name, byte[] bytes) {
+        public Archive add(final String name, final byte[] bytes) {
             entries.put(name, bytes);
             return this;
         }
@@ -376,11 +376,11 @@ public class ServiceClasspathTest extends Assert {
 
                 final File file = new File(classpath, key);
 
-                File d = file.getParentFile();
+                final File d = file.getParentFile();
 
                 if (!d.exists()) assertTrue(d.getAbsolutePath(), d.mkdirs());
 
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+                final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 
                 out.write(entry.getValue());
 

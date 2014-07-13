@@ -21,7 +21,6 @@ import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.util.MathUtils;
 
 /**
- *
  * Abstract implementation of the {@link StorelessUnivariateStatistic} interface.
  * <p>
  * Provides default <code>evaluate()</code> and <code>incrementAll(double[])<code>
@@ -49,6 +48,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      * input array.</p>
      * <p>
      * If the array is null, an IllegalArgumentException is thrown.</p>
+     *
      * @param values input array
      * @return the value of the statistic applied to the input array
      * @see UnivariateStatistic#evaluate(double[])
@@ -76,8 +76,9 @@ public abstract class AbstractStorelessUnivariateStatistic
      * <p>
      * If the array is null or the index parameters are not valid, an
      * IllegalArgumentException is thrown.</p>
+     *
      * @param values the input array
-     * @param begin the index of the first element to include
+     * @param begin  the index of the first element to include
      * @param length the number of elements to include
      * @return the value of the statistic applied to the included array entries
      * @see UnivariateStatistic#evaluate(double[], int, int)
@@ -135,9 +136,9 @@ public abstract class AbstractStorelessUnivariateStatistic
      * <p>
      * Throws IllegalArgumentException if the input values array is null.</p>
      *
-     * @param values  array holding values to add
-     * @param begin   index of the first array element to add
-     * @param length  number of array elements to add
+     * @param values array holding values to add
+     * @param begin  index of the first array element to add
+     * @param length number of array elements to add
      * @throws IllegalArgumentException if values is null
      * @see StorelessUnivariateStatistic#incrementAll(double[], int, int)
      */
@@ -154,20 +155,21 @@ public abstract class AbstractStorelessUnivariateStatistic
      * Returns true iff <code>object</code> is an
      * <code>AbstractStorelessUnivariateStatistic</code> returning the same
      * values as this for <code>getResult()</code> and <code>getN()</code>
+     *
      * @param object object to test equality against.
      * @return true if object returns the same value as this
      */
     @Override
     public boolean equals(final Object object) {
-        if (object == this ) {
+        if (object == this) {
             return true;
         }
-       if (!(object instanceof AbstractStorelessUnivariateStatistic)) {
+        if (!(object instanceof AbstractStorelessUnivariateStatistic)) {
             return false;
         }
         final AbstractStorelessUnivariateStatistic stat = (AbstractStorelessUnivariateStatistic) object;
         return MathUtils.equals(stat.getResult(), this.getResult()) &&
-               MathUtils.equals(stat.getN(), this.getN());
+            MathUtils.equals(stat.getN(), this.getN());
     }
 
     /**
@@ -177,7 +179,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      */
     @Override
     public int hashCode() {
-        return 31* (31 + MathUtils.hash(getResult())) + MathUtils.hash(getN());
+        return 31 * (31 + MathUtils.hash(getResult())) + MathUtils.hash(getN());
     }
 
 }

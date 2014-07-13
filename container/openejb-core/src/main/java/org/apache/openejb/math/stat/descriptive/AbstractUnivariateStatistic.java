@@ -67,7 +67,7 @@ public abstract class AbstractUnivariateStatistic
      * </ul></p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return true if the parameters are valid and designate a subarray of positive length
      * @throws IllegalArgumentException if the indices are invalid or the array is null
@@ -83,17 +83,17 @@ public abstract class AbstractUnivariateStatistic
 
         if (begin < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "start position cannot be negative ({0})", begin);
+                "start position cannot be negative ({0})", begin);
         }
 
         if (length < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "length cannot be negative ({0})", length);
+                "length cannot be negative ({0})", length);
         }
 
         if (begin + length > values.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "subarray ends after array end");
+                "subarray ends after array end");
         }
 
         if (length == 0) {
@@ -114,21 +114,21 @@ public abstract class AbstractUnivariateStatistic
      * positive length and the weights array contains legitimate values.</li>
      * <li>throws <code>IllegalArgumentException</code> if any of the following are true:
      * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
-     *     <li>the start and length arguments do not determine a valid array</li></ul>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
+     * <li>the start and length arguments do not determine a valid array</li></ul>
      * </li>
      * <li>returns <code>false</li> if the array is non-null, but
      * <code>length</code> is 0.
      * </ul></p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
-     * @param begin index of the first array element to include
-     * @param length the number of elements to include
+     * @param begin   index of the first array element to include
+     * @param length  the number of elements to include
      * @return true if the parameters are valid and designate a subarray of positive length
      * @throws IllegalArgumentException if the indices are invalid or the array is null
      * @since 2.1
@@ -143,24 +143,24 @@ public abstract class AbstractUnivariateStatistic
             throw MathRuntimeException.createIllegalArgumentException("input weights array is null");
         }
 
-        if (weights.length !=  values.length) {
+        if (weights.length != values.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "Different number of weights and values");
+                "Different number of weights and values");
         }
 
         boolean containsPositiveWeight = false;
         for (int i = begin; i < begin + length; i++) {
             if (Double.isNaN(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "NaN weight at index {0}", i);
+                    "NaN weight at index {0}", i);
             }
             if (Double.isInfinite(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "Infinite weight at index {0}", i);
+                    "Infinite weight at index {0}", i);
             }
             if (weights[i] < 0) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "negative weight {0} at index {1} ", weights[i], i);
+                    "negative weight {0} at index {1} ", weights[i], i);
             }
             if (!containsPositiveWeight && weights[i] > 0.0) {
                 containsPositiveWeight = true;
@@ -169,7 +169,7 @@ public abstract class AbstractUnivariateStatistic
 
         if (!containsPositiveWeight) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "weight array must contain at least one non-zero value");
+                "weight array must contain at least one non-zero value");
         }
 
         return test(values, begin, length);

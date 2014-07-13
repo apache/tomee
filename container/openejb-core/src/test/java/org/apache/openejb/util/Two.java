@@ -26,9 +26,10 @@ import java.io.ObjectOutput;
  * @version $Revision$ $Date$
  */
 public class Two implements Externalizable {
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(final ObjectOutput out) throws IOException {
     }
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     }
 
     public String toString() {

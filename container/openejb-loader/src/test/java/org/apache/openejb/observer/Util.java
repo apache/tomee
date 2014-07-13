@@ -45,7 +45,7 @@ public class Util {
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
-    static void assertEvent(List<String> observed, String... expected) {
+    static void assertEvent(final List<String> observed, final String... expected) {
         assertEquals(join(expected), join(observed));
     }
 
@@ -56,23 +56,23 @@ public class Util {
             final String className = stackTrace[i].getClassName();
 
             final Class<?> clazz = Util.class.getClassLoader().loadClass(className);
-            for (Method method : clazz.getDeclaredMethods()) {
+            for (final Method method : clazz.getDeclaredMethods()) {
                 if (methodName.endsWith(method.getName())) {
                     return method;
                 }
             }
 
             throw new NoSuchMethodException(methodName);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static String description(Object event) {
+    static String description(final Object event) {
         if (event instanceof ObserverFailed) {
-            ObserverFailed observerFailed = (ObserverFailed) event;
+            final ObserverFailed observerFailed = (ObserverFailed) event;
             return "ObserverFailed{" + observerFailed.getMethod().getName() + "}";
         }
         if (event instanceof BeforeEvent) {

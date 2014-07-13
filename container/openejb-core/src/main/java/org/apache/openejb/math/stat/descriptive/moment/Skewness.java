@@ -40,18 +40,22 @@ import java.io.Serializable;
  */
 public class Skewness extends AbstractStorelessUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1231857578996691352L;
 
-    /** Third moment on which this statistic is based */
+    /**
+     * Third moment on which this statistic is based
+     */
     protected ThirdMoment moment;
 
-     /**
+    /**
      * Determines whether or not this statistic can be incremented or cleared.
      * <p>
      * Statistics based on (constructed from) external moments cannot
      * be incremented or cleared.</p>
-    */
+     */
     protected boolean incMoment;
 
     /**
@@ -64,6 +68,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
 
     /**
      * Constructs a Skewness with an external moment
+     *
      * @param m3 external moment
      */
     public Skewness(final ThirdMoment m3) {
@@ -109,8 +114,8 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
             return 0.0d;
         } else {
             final double n0 = moment.getN();
-            return  n0 * moment.m3 /
-            ((n0 - 1) * (n0 -2) * Math.sqrt(variance) * variance);
+            return n0 * moment.m3 /
+                ((n0 - 1) * (n0 - 2) * Math.sqrt(variance) * variance);
         }
     }
 
@@ -140,21 +145,21 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
      *
      * @param values the input array
-     * @param begin the index of the first array element to include
+     * @param begin  the index of the first array element to include
      * @param length the number of elements to include
      * @return the skewness of the values or Double.NaN if length is less than
      * 3
      * @throws IllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                  parameters are not valid
      */
     @Override
-    public double evaluate(final double[] values,final int begin,
-            final int length) {
+    public double evaluate(final double[] values, final int begin,
+                           final int length) {
 
         // Initialize the skewness
         double skew = Double.NaN;
 
-        if (test(values, begin, length) && length > 2 ){
+        if (test(values, begin, length) && length > 2) {
             final Mean mean = new Mean();
             // Get the mean and the standard deviation
             final double m = mean.evaluate(values, begin, length);
@@ -166,7 +171,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
             double accum2 = 0.0;
             for (int i = begin; i < begin + length; i++) {
                 final double d = values[i] - m;
-                accum  += d * d;
+                accum += d * d;
                 accum2 += d;
             }
             final double variance = (accum - accum2 * accum2 / length) / (length - 1);
@@ -202,7 +207,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source Skewness to copy
-     * @param dest Skewness to copy to
+     * @param dest   Skewness to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final Skewness source, final Skewness dest) {

@@ -36,11 +36,11 @@ import java.util.Map;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for ejb-jarType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-jarType">
  *   &lt;complexContent>
@@ -61,23 +61,21 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlRootElement(name = "ejb-jar")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-jarType", propOrder = {
-        "moduleName",
-        "descriptions",
-        "displayNames",
-        "icon",
-        "enterpriseBeans",
-        "interceptors",
-        "relationships",
-        "assemblyDescriptor",
-        "ejbClientJar"
-        })
+    "moduleName",
+    "descriptions",
+    "displayNames",
+    "icon",
+    "enterpriseBeans",
+    "interceptors",
+    "relationships",
+    "assemblyDescriptor",
+    "ejbClientJar"
+})
 public class EjbJar implements NamedModule {
     @XmlElement(name = "module-name")
     protected String moduleName;
@@ -88,7 +86,7 @@ public class EjbJar implements NamedModule {
     @XmlElement(name = "icon", required = true)
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
     @XmlTransient
-    protected Map<String,EnterpriseBean> enterpriseBeans = new LinkedHashMap<String,EnterpriseBean>();
+    protected Map<String, EnterpriseBean> enterpriseBeans = new LinkedHashMap<String, EnterpriseBean>();
 
     protected Interceptors interceptors;
     protected Relationships relationships;
@@ -109,7 +107,7 @@ public class EjbJar implements NamedModule {
     public EjbJar() {
     }
 
-    public EjbJar(String id) {
+    public EjbJar(final String id) {
         this.id = id;
     }
 
@@ -117,7 +115,7 @@ public class EjbJar implements NamedModule {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -126,7 +124,7 @@ public class EjbJar implements NamedModule {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -139,7 +137,7 @@ public class EjbJar implements NamedModule {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -154,7 +152,7 @@ public class EjbJar implements NamedModule {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -167,52 +165,52 @@ public class EjbJar implements NamedModule {
 
     @XmlElementWrapper(name = "enterprise-beans")
     @XmlElements({
-    @XmlElement(name = "message-driven", required = true, type = MessageDrivenBean.class),
-    @XmlElement(name = "session", required = true, type = SessionBean.class),
-    @XmlElement(name = "entity", required = true, type = EntityBean.class)})
+        @XmlElement(name = "message-driven", required = true, type = MessageDrivenBean.class),
+        @XmlElement(name = "session", required = true, type = SessionBean.class),
+        @XmlElement(name = "entity", required = true, type = EntityBean.class)})
     public EnterpriseBean[] getEnterpriseBeans() {
         return enterpriseBeans.values().toArray(new EnterpriseBean[enterpriseBeans.size()]);
     }
 
-    public void setEnterpriseBeans(EnterpriseBean[] v) {
+    public void setEnterpriseBeans(final EnterpriseBean[] v) {
         enterpriseBeans.clear();
-        for (EnterpriseBean e : v) {
+        for (final EnterpriseBean e : v) {
             defaultName(e);
             enterpriseBeans.put(e.getEjbName(), e);
         }
     }
 
-    private void defaultName(EnterpriseBean e) {
+    private void defaultName(final EnterpriseBean e) {
         if (e.getEjbName() == null) {
             e.setEjbName("@NULL@" + e.hashCode());
         }
     }
 
-    public <T extends EnterpriseBean> T addEnterpriseBean(T bean){
+    public <T extends EnterpriseBean> T addEnterpriseBean(final T bean) {
         defaultName(bean);
         enterpriseBeans.put(bean.getEjbName(), bean);
         return bean;
     }
 
-    public <T extends EnterpriseBean> EjbJar enterpriseBean(T bean) {
+    public <T extends EnterpriseBean> EjbJar enterpriseBean(final T bean) {
         addEnterpriseBean(bean);
         return this;
     }
 
-    public EnterpriseBean removeEnterpriseBean(EnterpriseBean bean){
+    public EnterpriseBean removeEnterpriseBean(final EnterpriseBean bean) {
         return removeEnterpriseBean(bean.getEjbName());
     }
 
-    public EnterpriseBean removeEnterpriseBean(String name){
-        EnterpriseBean bean = enterpriseBeans.remove(name);
+    public EnterpriseBean removeEnterpriseBean(final String name) {
+        final EnterpriseBean bean = enterpriseBeans.remove(name);
         return bean;
     }
 
-    public EnterpriseBean getEnterpriseBean(String ejbName){
+    public EnterpriseBean getEnterpriseBean(final String ejbName) {
         return enterpriseBeans.get(ejbName);
     }
 
-    public Map<String,EnterpriseBean> getEnterpriseBeansByEjbName() {
+    public Map<String, EnterpriseBean> getEnterpriseBeansByEjbName() {
         return enterpriseBeans;
     }
 
@@ -221,12 +219,12 @@ public class EjbJar implements NamedModule {
         return interceptors.getInterceptor();
     }
 
-    public Interceptor addInterceptor(Interceptor interceptor) {
+    public Interceptor addInterceptor(final Interceptor interceptor) {
         if (interceptors == null) interceptors = new Interceptors();
         return interceptors.addInterceptor(interceptor);
     }
 
-    public Interceptor getInterceptor(String className) {
+    public Interceptor getInterceptor(final String className) {
         if (interceptors == null) return null;
         return interceptors.getInterceptor(className);
     }
@@ -235,18 +233,18 @@ public class EjbJar implements NamedModule {
         return relationships;
     }
 
-    public void setRelationships(Relationships value) {
+    public void setRelationships(final Relationships value) {
         this.relationships = value;
     }
 
     public AssemblyDescriptor getAssemblyDescriptor() {
-        if (assemblyDescriptor == null){
+        if (assemblyDescriptor == null) {
             assemblyDescriptor = new AssemblyDescriptor();
         }
         return assemblyDescriptor;
     }
 
-    public void setAssemblyDescriptor(AssemblyDescriptor value) {
+    public void setAssemblyDescriptor(final AssemblyDescriptor value) {
         this.assemblyDescriptor = value;
     }
 
@@ -254,7 +252,7 @@ public class EjbJar implements NamedModule {
         return ejbClientJar;
     }
 
-    public void setEjbClientJar(String value) {
+    public void setEjbClientJar(final String value) {
         this.ejbClientJar = value;
     }
 
@@ -262,7 +260,7 @@ public class EjbJar implements NamedModule {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -270,7 +268,7 @@ public class EjbJar implements NamedModule {
         return metadataComplete != null && metadataComplete;
     }
 
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
@@ -282,7 +280,7 @@ public class EjbJar implements NamedModule {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

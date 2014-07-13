@@ -42,7 +42,7 @@ public class TransportConfig {
         return integrity;
     }
 
-    public void setIntegrity(String value) {
+    public void setIntegrity(final String value) {
         this.integrity = value;
     }
 
@@ -50,7 +50,7 @@ public class TransportConfig {
         return confidentiality;
     }
 
-    public void setConfidentiality(String value) {
+    public void setConfidentiality(final String value) {
         this.confidentiality = value;
     }
 
@@ -58,7 +58,7 @@ public class TransportConfig {
         return establishTrustInTarget;
     }
 
-    public void setEstablishTrustInTarget(String value) {
+    public void setEstablishTrustInTarget(final String value) {
         this.establishTrustInTarget = value;
     }
 
@@ -66,7 +66,7 @@ public class TransportConfig {
         return establishTrustInClient;
     }
 
-    public void setEstablishTrustInClient(String value) {
+    public void setEstablishTrustInClient(final String value) {
         this.establishTrustInClient = value;
     }
 }

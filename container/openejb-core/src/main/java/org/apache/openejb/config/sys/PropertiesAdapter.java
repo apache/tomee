@@ -47,6 +47,6 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
             string = string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
         }
 
-        return string; 
+        return string;
     }
 }

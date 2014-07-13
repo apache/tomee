@@ -23,22 +23,20 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
- * 
- *         The url-patternType contains the url pattern of the mapping.
- *         It must follow the rules specified in Section 11.2 of the
- *         Servlet API Specification. This pattern is assumed to be in
- *         URL-decoded form and must not contain CR(#xD) or LF(#xA).
- *         If it contains those characters, the container must inform
- *         the developer with a descriptive error message.
- *         The container must preserve all characters including whitespaces.
- * 
- *       
- * 
+ * The url-patternType contains the url pattern of the mapping.
+ * It must follow the rules specified in Section 11.2 of the
+ * Servlet API Specification. This pattern is assumed to be in
+ * URL-decoded form and must not contain CR(#xD) or LF(#xA).
+ * If it contains those characters, the container must inform
+ * the developer with a descriptive error message.
+ * The container must preserve all characters including whitespaces.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for url-patternType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="url-patternType">
  *   &lt;simpleContent>
@@ -47,8 +45,6 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "url-patternType", propOrder = {
@@ -62,10 +58,8 @@ public class UrlPattern {
     /**
      * Gets the value of the value property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -74,12 +68,10 @@ public class UrlPattern {
     /**
      * Sets the value of the value property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 

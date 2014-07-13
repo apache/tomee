@@ -40,47 +40,47 @@ import java.util.logging.SimpleFormatter;
 /**
  * Implementation of <b>Handler</b> that appends log messages to a file
  * named {prefix}{date}{suffix} in a configured directory.
- *
+ * <p/>
  * <p>The following configuration properties are available:</p>
- *
+ * <p/>
  * <ul>
- *   <li><code>directory</code> - The directory where to create the log file.
- *    If the path is not absolute, it is relative to the current working
- *    directory of the application. The Apache Tomcat configuration files usually
- *    specify an absolute path for this property,
- *    <code>${catalina.base}/logs</code>
- *    Default value: <code>logs</code></li>
- *   <li><code>rotatable</code> - If <code>true</code>, the log file will be
- *    rotated on the first write past midnight and the filename will be
- *    <code>{prefix}{date}{suffix}</code>, where date is yyyy-MM-dd. If <code>false</code>,
- *    the file will not be rotated and the filename will be <code>{prefix}{suffix}</code>.
- *    Default value: <code>true</code></li>
- *   <li><code>prefix</code> - The leading part of the log file name.
- *    Default value: <code>juli.</code></li>
- *   <li><code>suffix</code> - The trailing part of the log file name. Default value: <code>.log</code></li>
- *   <li><code>bufferSize</code> - Configures buffering. The value of <code>0</code>
- *    uses system default buffering (typically an 8K buffer will be used). A
- *    value of <code>&lt;0</code> forces a writer flush upon each log write. A
- *    value <code>&gt;0</code> uses a BufferedOutputStream with the defined
- *    value but note that the system default buffering will also be
- *    applied. Default value: <code>-1</code></li>
- *   <li><code>encoding</code> - Character set used by the log file. Default value:
- *    empty string, which means to use the system default character set.</li>
- *   <li><code>level</code> - The level threshold for this Handler. See the
- *    <code>java.util.logging.Level</code> class for the possible levels.
- *    Default value: <code>ALL</code></li>
- *   <li><code>filter</code> - The <code>java.util.logging.Filter</code>
- *    implementation class name for this Handler. Default value: unset</li>
- *   <li><code>formatter</code> - The <code>java.util.logging.Formatter</code>
- *    implementation class name for this Handler. Default value:
- *    <code>java.util.logging.SimpleFormatter</code></li>
+ * <li><code>directory</code> - The directory where to create the log file.
+ * If the path is not absolute, it is relative to the current working
+ * directory of the application. The Apache Tomcat configuration files usually
+ * specify an absolute path for this property,
+ * <code>${catalina.base}/logs</code>
+ * Default value: <code>logs</code></li>
+ * <li><code>rotatable</code> - If <code>true</code>, the log file will be
+ * rotated on the first write past midnight and the filename will be
+ * <code>{prefix}{date}{suffix}</code>, where date is yyyy-MM-dd. If <code>false</code>,
+ * the file will not be rotated and the filename will be <code>{prefix}{suffix}</code>.
+ * Default value: <code>true</code></li>
+ * <li><code>prefix</code> - The leading part of the log file name.
+ * Default value: <code>juli.</code></li>
+ * <li><code>suffix</code> - The trailing part of the log file name. Default value: <code>.log</code></li>
+ * <li><code>bufferSize</code> - Configures buffering. The value of <code>0</code>
+ * uses system default buffering (typically an 8K buffer will be used). A
+ * value of <code>&lt;0</code> forces a writer flush upon each log write. A
+ * value <code>&gt;0</code> uses a BufferedOutputStream with the defined
+ * value but note that the system default buffering will also be
+ * applied. Default value: <code>-1</code></li>
+ * <li><code>encoding</code> - Character set used by the log file. Default value:
+ * empty string, which means to use the system default character set.</li>
+ * <li><code>level</code> - The level threshold for this Handler. See the
+ * <code>java.util.logging.Level</code> class for the possible levels.
+ * Default value: <code>ALL</code></li>
+ * <li><code>filter</code> - The <code>java.util.logging.Filter</code>
+ * implementation class name for this Handler. Default value: unset</li>
+ * <li><code>formatter</code> - The <code>java.util.logging.Formatter</code>
+ * implementation class name for this Handler. Default value:
+ * <code>java.util.logging.SimpleFormatter</code></li>
  * </ul>
  *
  * @version $Id: FileHandler.java 1162172 2011-08-26 17:12:33Z markt $
  */
 
 public class FileHandler
-        extends Handler {
+    extends Handler {
 
 
     // ------------------------------------------------------------ Constructor
@@ -158,7 +158,7 @@ public class FileHandler
     /**
      * Format and publish a <tt>LogRecord</tt>.
      *
-     * @param  record  description of the log event
+     * @param record description of the log event
      */
     @Override
     public void publish(final LogRecord record) {
@@ -204,13 +204,13 @@ public class FileHandler
             }
 
             try {
-                if (writer!=null) {
+                if (writer != null) {
                     writer.write(result);
                     if (bufferSize < 0) {
                         writer.flush();
                     }
                 } else {
-                    reportError("FileHandler is closed or not yet initialized, unable to log ["+result+"]", null, ErrorManager.WRITE_FAILURE);
+                    reportError("FileHandler is closed or not yet initialized, unable to log [" + result + "]", null, ErrorManager.WRITE_FAILURE);
                 }
             } catch (final Exception e) {
                 reportError(null, e, ErrorManager.WRITE_FAILURE);
@@ -370,7 +370,7 @@ public class FileHandler
         final File dir = new File(directory);
         if (!dir.mkdirs() && !dir.isDirectory()) {
             reportError("Unable to create [" + dir + "]", null,
-                    ErrorManager.OPEN_FAILURE);
+                ErrorManager.OPEN_FAILURE);
             writer = null;
             return;
         }
@@ -379,20 +379,20 @@ public class FileHandler
         writerLock.writeLock().lock();
         try {
             final File pathname = new File(dir.getAbsoluteFile(), prefix
-                    + (rotatable ? date : "") + suffix);
+                + (rotatable ? date : "") + suffix);
             final File parent = pathname.getParentFile();
             if (!parent.mkdirs() && !parent.isDirectory()) {
                 reportError("Unable to create [" + parent + "]", null,
-                        ErrorManager.OPEN_FAILURE);
+                    ErrorManager.OPEN_FAILURE);
                 writer = null;
                 return;
             }
             final String encoding = getEncoding();
             final FileOutputStream fos = new FileOutputStream(pathname, true);
-            final OutputStream os = bufferSize>0?new BufferedOutputStream(fos,bufferSize):fos;
+            final OutputStream os = bufferSize > 0 ? new BufferedOutputStream(fos, bufferSize) : fos;
             writer = new PrintWriter(
-                    encoding != null ? new OutputStreamWriter(os, encoding)
-                            : new OutputStreamWriter(os), false);
+                encoding != null ? new OutputStreamWriter(os, encoding)
+                    : new OutputStreamWriter(os), false);
             writer.write(getFormatter().getHead(this));
         } catch (final Exception e) {
             reportError(null, e, ErrorManager.OPEN_FAILURE);

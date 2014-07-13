@@ -147,7 +147,7 @@ public abstract class JaxbOpenejb {
             for (final String p : paths) {
                 try {
                     final Enumeration<URL> resources = loader.getResources(p);
-                    if (resources != null){
+                    if (resources != null) {
                         sources.addAll(Collections.list(resources));
                     }
                 } catch (final IOException e) {
@@ -268,7 +268,7 @@ public abstract class JaxbOpenejb {
 
     public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
 
-    private static Map<Class, JAXBContext> jaxbContexts = new HashMap<Class, JAXBContext>();
+    private static final Map<Class, JAXBContext> jaxbContexts = new HashMap<Class, JAXBContext>();
 
     public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -428,14 +428,14 @@ public abstract class JaxbOpenejb {
             }
 
             provider = new ServiceProvider();
-            provider.setId(att.getValue("","id"));
+            provider.setId(att.getValue("", "id"));
             provider.setService(att.getValue("", "service"));
             provider.setFactoryName(att.getValue("", "factory-name"));
             provider.setConstructor(att.getValue("", "constructor"));
             provider.setClassName(att.getValue("", "class-name"));
             provider.setParent(att.getValue("", "parent"));
             final String typesString = att.getValue("", "types");
-            if (typesString != null){
+            if (typesString != null) {
                 final ListAdapter listAdapter = new ListAdapter();
                 final List<String> types = listAdapter.unmarshal(typesString);
                 provider.getTypes().addAll(types);

@@ -36,11 +36,9 @@ public class SasContext {
 
     /**
      * Gets the value of the callerPropagation property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCallerPropagation() {
         return callerPropagation;
@@ -48,13 +46,11 @@ public class SasContext {
 
     /**
      * Sets the value of the callerPropagation property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCallerPropagation(String value) {
+    public void setCallerPropagation(final String value) {
         this.callerPropagation = value;
     }
 

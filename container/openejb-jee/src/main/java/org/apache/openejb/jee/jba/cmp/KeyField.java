@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +55,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -83,11 +81,9 @@ public class KeyField {
 
     /**
      * Gets the value of the fieldName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FieldName }
-     *     
+     *
+     * @return possible object is
+     * {@link FieldName }
      */
     public FieldName getFieldName() {
         return fieldName;
@@ -95,11 +91,9 @@ public class KeyField {
 
     /**
      * Sets the value of the fieldName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FieldName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FieldName }
      */
     public void setFieldName(final FieldName value) {
         this.fieldName = value;
@@ -107,11 +101,9 @@ public class KeyField {
 
     /**
      * Gets the value of the columnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @return possible object is
+     * {@link ColumnName }
      */
     public ColumnName getColumnName() {
         return columnName;
@@ -119,11 +111,9 @@ public class KeyField {
 
     /**
      * Sets the value of the columnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ColumnName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ColumnName }
      */
     public void setColumnName(final ColumnName value) {
         this.columnName = value;
@@ -131,11 +121,9 @@ public class KeyField {
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -143,11 +131,9 @@ public class KeyField {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
     public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
@@ -155,11 +141,9 @@ public class KeyField {
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -167,11 +151,9 @@ public class KeyField {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
     public void setSqlType(final SqlType value) {
         this.sqlType = value;
@@ -179,25 +161,23 @@ public class KeyField {
 
     /**
      * Gets the value of the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Property }
-     * 
-     * 
      */
     public List<Property> getProperty() {
         if (property == null) {
@@ -208,11 +188,9 @@ public class KeyField {
 
     /**
      * Gets the value of the dbindex property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Dbindex }
-     *     
+     *
+     * @return possible object is
+     * {@link Dbindex }
      */
     public Dbindex getDbindex() {
         return dbindex;
@@ -220,11 +198,9 @@ public class KeyField {
 
     /**
      * Sets the value of the dbindex property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Dbindex }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Dbindex }
      */
     public void setDbindex(final Dbindex value) {
         this.dbindex = value;

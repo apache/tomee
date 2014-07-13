@@ -69,7 +69,7 @@ public class GetTimerTest {
         private TimerService timerService;
 
         private Timer timer = null;
-        private Semaphore sema = new Semaphore(0);
+        private final Semaphore sema = new Semaphore(0);
 
         @Timeout
         public void timeout(final Timer timer) {

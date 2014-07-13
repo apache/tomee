@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.WebserviceDescription$JAXB.readWebserviceDe
 import static org.apache.openejb.jee.WebserviceDescription$JAXB.writeWebserviceDescription;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Webservices$JAXB
-        extends JAXBObject<Webservices> {
+    extends JAXBObject<Webservices> {
 
 
     public Webservices$JAXB() {
         super(Webservices.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "webservices".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "webservicesType".intern()), Text$JAXB.class, Icon$JAXB.class, WebserviceDescription$JAXB.class);
     }
 
-    public static Webservices readWebservices(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Webservices readWebservices(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeWebservices(XoXMLStreamWriter writer, Webservices webservices, RuntimeContext context)
-            throws Exception {
+    public static void writeWebservices(final XoXMLStreamWriter writer, final Webservices webservices, final RuntimeContext context)
+        throws Exception {
         _write(writer, webservices, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Webservices webservices, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Webservices webservices, final RuntimeContext context)
+        throws Exception {
         _write(writer, webservices, context);
     }
 
-    public final static Webservices _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Webservices _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,7 +73,7 @@ public class Webservices$JAXB
             context = new RuntimeContext();
         }
 
-        Webservices webservices = new Webservices();
+        final Webservices webservices = new Webservices();
         context.beforeUnmarshal(webservices, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -82,7 +82,7 @@ public class Webservices$JAXB
         KeyedCollection<String, WebserviceDescription> webserviceDescription = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("webservicesType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Webservices.class);
@@ -90,10 +90,10 @@ public class Webservices$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, webservices);
                 webservices.id = id;
             } else if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
@@ -105,24 +105,24 @@ public class Webservices$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = webservices.icon;
                     if (icon != null) {
@@ -134,7 +134,7 @@ public class Webservices$JAXB
                 icon.add(iconItem);
             } else if (("webservice-description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: webserviceDescription
-                WebserviceDescription webserviceDescriptionItem = readWebserviceDescription(elementReader, context);
+                final WebserviceDescription webserviceDescriptionItem = readWebserviceDescription(elementReader, context);
                 if (webserviceDescription == null) {
                     webserviceDescription = webservices.webserviceDescription;
                     if (webserviceDescription != null) {
@@ -151,14 +151,14 @@ public class Webservices$JAXB
         if (descriptions != null) {
             try {
                 webservices.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Webservices.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 webservices.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Webservices.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -174,13 +174,13 @@ public class Webservices$JAXB
         return webservices;
     }
 
-    public final Webservices read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Webservices read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Webservices webservices, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Webservices webservices, RuntimeContext context)
+        throws Exception {
         if (webservices == null) {
             writer.writeXsiNil();
             return;
@@ -190,7 +190,7 @@ public class Webservices$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Webservices.class != webservices.getClass()) {
             context.unexpectedSubclass(writer, webservices, Webservices.class);
             return;
@@ -200,24 +200,24 @@ public class Webservices$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = webservices.id;
+        final String idRaw = webservices.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(webservices, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ATTRIBUTE: version
-        String versionRaw = webservices.version;
+        final String versionRaw = webservices.version;
         if (versionRaw != null) {
             String version = null;
             try {
                 version = Adapters.collapsedStringAdapterAdapter.marshal(versionRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(webservices, "version", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "version", version);
@@ -227,11 +227,11 @@ public class Webservices$JAXB
         Text[] descriptions = null;
         try {
             descriptions = webservices.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(webservices, "descriptions", Webservices.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -246,11 +246,11 @@ public class Webservices$JAXB
         Text[] displayNames = null;
         try {
             displayNames = webservices.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(webservices, "displayNames", Webservices.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -262,9 +262,9 @@ public class Webservices$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = webservices.icon;
+        final LocalCollection<Icon> icon = webservices.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -276,9 +276,9 @@ public class Webservices$JAXB
         }
 
         // ELEMENT: webserviceDescription
-        KeyedCollection<String, WebserviceDescription> webserviceDescription = webservices.webserviceDescription;
+        final KeyedCollection<String, WebserviceDescription> webserviceDescription = webservices.webserviceDescription;
         if (webserviceDescription != null) {
-            for (WebserviceDescription webserviceDescriptionItem : webserviceDescription) {
+            for (final WebserviceDescription webserviceDescriptionItem : webserviceDescription) {
                 if (webserviceDescriptionItem != null) {
                     writer.writeStartElement(prefix, "webservice-description", "http://java.sun.com/xml/ns/javaee");
                     writeWebserviceDescription(writer, webserviceDescriptionItem, context);

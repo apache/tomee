@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
 
-public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy<HttpServletResponse>  implements HttpServletResponse {
+public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy<HttpServletResponse> implements HttpServletResponse {
     protected ThreadLocalHttpServletResponse() {
         super(HttpServletResponse.class);
     }

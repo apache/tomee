@@ -250,16 +250,16 @@ public class StatelessInvocationStatsTest extends TestCase {
 
         // Grab invocation mbean operations
         final MBeanParameterInfo[] invocationParameters1 = {
-                new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
-                new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
+            new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
+            new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
         final MBeanParameterInfo[] invocationParameters2 = {
-                new MBeanParameterInfo("p1", "int", "")};
+            new MBeanParameterInfo("p1", "int", "")};
 
         final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
         expectedOperations.add(new MBeanOperationInfo(
-                "FilterAttributes",
-                "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
-                invocationParameters1, "void", MBeanOperationInfo.UNKNOWN));
+            "FilterAttributes",
+            "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
+            invocationParameters1, "void", MBeanOperationInfo.UNKNOWN));
 
         for (final String s : methods) {
             expectedOperations.add(new MBeanOperationInfo(s + ".setSampleSize", "", invocationParameters2, "void", MBeanOperationInfo.UNKNOWN));
@@ -319,17 +319,17 @@ public class StatelessInvocationStatsTest extends TestCase {
         for (final MBeanAttributeInfo info : invocationsMBeanInfo.getAttributes()) {
 //            System.out.println("//" + info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
             if (info.getName().equals("waitSecs().GeometricMean")
-                    || info.getName().equals("waitSecs().Max")
-                    || info.getName().equals("waitSecs().Mean")
-                    || info.getName().equals("waitSecs().Min")
-                    || info.getName().equals("waitSecs().Percentile01")
-                    || info.getName().equals("waitSecs().Percentile10")
-                    || info.getName().equals("waitSecs().Percentile25")
-                    || info.getName().equals("waitSecs().Percentile50")
-                    || info.getName().equals("waitSecs().Percentile75")
-                    || info.getName().equals("waitSecs().Percentile90")
-                    || info.getName().equals("waitSecs().Percentile99")
-                    || info.getName().equals("waitSecs().Sum")) {
+                || info.getName().equals("waitSecs().Max")
+                || info.getName().equals("waitSecs().Mean")
+                || info.getName().equals("waitSecs().Min")
+                || info.getName().equals("waitSecs().Percentile01")
+                || info.getName().equals("waitSecs().Percentile10")
+                || info.getName().equals("waitSecs().Percentile25")
+                || info.getName().equals("waitSecs().Percentile50")
+                || info.getName().equals("waitSecs().Percentile75")
+                || info.getName().equals("waitSecs().Percentile90")
+                || info.getName().equals("waitSecs().Percentile99")
+                || info.getName().equals("waitSecs().Sum")) {
                 final Double actual = (Double) (server.getAttribute(invocationsName, info.getName()));
                 assertTrue("Expected: " + actual + " >= 999", actual >= 999);
             }
@@ -414,7 +414,7 @@ public class StatelessInvocationStatsTest extends TestCase {
             try {
                 startingLine.countDown();
                 startPistol.await(60, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 throw new RuntimeException(e);
             }

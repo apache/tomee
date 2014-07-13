@@ -83,7 +83,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     public Object[] getParameters() {
         //TODO Need to figure out what is going on with afterCompletion call back here ?
         if (Operation.POST_CONSTRUCT.equals(operation) || Operation.PRE_DESTROY.equals(operation)) {
-        //if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION) && !operation.equals(Operation.TIMEOUT)) {
+            //if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION) && !operation.equals(Operation.TIMEOUT)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
         return this.parameters;
@@ -91,12 +91,12 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     private String getIllegalParameterAccessMessage() {
         String m = "Callback methods cannot access parameters.";
-        m += "  Callback Type: "+operation;
-        if (method!= null){
+        m += "  Callback Type: " + operation;
+        if (method != null) {
             m += ", Target Method: " + method.getName();
         }
-        if (target != null){
-            m += ", Target Bean: "+target.getClass().getName();
+        if (target != null) {
+            m += ", Target Bean: " + target.getClass().getName();
         }
         return m;
     }
@@ -120,14 +120,14 @@ public class ReflectionInvocationContext implements InvocationContext {
                     throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
                         ", but got a parameter that is null");
                 }
-            } else {            
+            } else {
                 //check that types are applicable
                 final Class<?> actual = Classes.deprimitivize(parameterType);
-                final Class<?> given  = Classes.deprimitivize(parameter.getClass());
+                final Class<?> given = Classes.deprimitivize(parameter.getClass());
 
                 if (!actual.isAssignableFrom(given)) {
                     throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
-                            ", but got a parameter of type " + parameter.getClass().getName());
+                        ", but got a parameter of type " + parameter.getClass().getName());
                 }
             }
         }
@@ -186,8 +186,9 @@ public class ReflectionInvocationContext implements InvocationContext {
             this.method = method;
             this.args = args;
         }
+
         public Object invoke() throws Exception {
-            
+
             final Object value = method.invoke(target, args);
             return value;
         }
@@ -206,7 +207,7 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     private static class InterceptorInvocation extends Invocation {
         public InterceptorInvocation(final Object target, final Method method, final InvocationContext invocationContext) {
-            super(target, method, new Object[] {invocationContext});
+            super(target, method, new Object[]{invocationContext});
         }
     }
 
@@ -243,6 +244,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     /**
      * Business method interceptors can only throw exception allowed by the target business method.
      * Lifecycle interceptors can only throw RuntimeException.
+     *
      * @param e the invocation target exception of a reflection method invoke
      * @return the cause of the exception
      * @throws AssertionError if the cause is not an Exception or Error.
@@ -261,8 +263,8 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public String toString() {
-        final String methodName = method != null ? method.getName(): null;
+        final String methodName = method != null ? method.getName() : null;
 
-        return "InvocationContext(operation=" + operation + ", target="+target.getClass().getName()+", method="+methodName+")";
+        return "InvocationContext(operation=" + operation + ", target=" + target.getClass().getName() + ", method=" + methodName + ")";
     }
 }

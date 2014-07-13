@@ -54,7 +54,7 @@ public class TestNGAppComposerTest {
         public boolean ejb() {
             try {
                 return OpenEJB.getTransactionManager().getTransaction() != null;
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 return false;
             }
         }

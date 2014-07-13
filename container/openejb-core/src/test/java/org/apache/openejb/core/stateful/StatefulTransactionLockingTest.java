@@ -55,13 +55,13 @@ public class StatefulTransactionLockingTest extends TestCase {
     protected void setUp() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-        
-        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+
+        final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("AccessTimeout", "0 milliseconds");
 
         // containers
@@ -69,7 +69,7 @@ public class StatefulTransactionLockingTest extends TestCase {
 
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(BlueStatelessBean.class));
         ejbJar.addEnterpriseBean(new StatefulBean(RedStatefulBean.class));
         ejbJar.addEnterpriseBean(new StatefulBean(LegacyStatefulBean.class));
@@ -81,9 +81,9 @@ public class StatefulTransactionLockingTest extends TestCase {
         final BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
         final RedStateful redStateful = (RedStateful) new InitialContext().lookup("RedStatefulBeanLocal");
 
-        Tx tx1 = new Tx(new RunTransaction(blueStateless, redStateful));
-        Tx tx2 = new Tx(new RunTransaction(blueStateless, redStateful));
-        Tx tx3 = new Tx(new RunTransaction(blueStateless, redStateful));
+        final Tx tx1 = new Tx(new RunTransaction(blueStateless, redStateful));
+        final Tx tx2 = new Tx(new RunTransaction(blueStateless, redStateful));
+        final Tx tx3 = new Tx(new RunTransaction(blueStateless, redStateful));
 
         tx1.thread.start();
         tx2.thread.start();
@@ -103,7 +103,7 @@ public class StatefulTransactionLockingTest extends TestCase {
 
         // give it a second to commit
         Thread.sleep(1000);
-        
+
         // Now we should be able to cleanly enlist the stateful bean in a new transaction
         tx3.begin.countDown();
 
@@ -112,29 +112,29 @@ public class StatefulTransactionLockingTest extends TestCase {
     }
 
     public void testLeavingTransaction() throws Exception {
-        BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
-        RedStateful redStateful = (RedStateful) new InitialContext().lookup("RedStatefulBeanLocal");
+        final BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
+        final RedStateful redStateful = (RedStateful) new InitialContext().lookup("RedStatefulBeanLocal");
 
         blueStateless.leaveTransaction1(redStateful);
-        
+
         blueStateless.leaveTransaction2(redStateful);
     }
 
     public void testNestingTransaction() throws Exception {
-        BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
-        RedStateful redStateful = (RedStateful) new InitialContext().lookup("RedStatefulBeanLocal");
+        final BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
+        final RedStateful redStateful = (RedStateful) new InitialContext().lookup("RedStatefulBeanLocal");
 
         blueStateless.nestingTransaction(redStateful);
     }
 
     public void testCreatedInTransaction() throws Exception {
-        BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
+        final BlueStateless blueStateless = (BlueStateless) new InitialContext().lookup("BlueStatelessBeanLocal");
         blueStateless.testCreatedInTransaction(new Tx(new RunTransaction(null, null)));
     }
 
     public void testLegacyRemoveOutOfTransaction() throws Exception {
-        LegacyHome home = (LegacyHome) new InitialContext().lookup("LegacyStatefulBeanRemoteHome");
-        LegacyObject legacyObject = home.create();
+        final LegacyHome home = (LegacyHome) new InitialContext().lookup("LegacyStatefulBeanRemoteHome");
+        final LegacyObject legacyObject = home.create();
 
         legacyObject.txRequired();
         legacyObject.remove();
@@ -147,7 +147,7 @@ public class StatefulTransactionLockingTest extends TestCase {
         private final CountDownLatch fail = new CountDownLatch(1);
         private final Thread thread;
 
-        public Tx(TxRunnable runnable) {
+        public Tx(final TxRunnable runnable) {
             runnable.tx = this;
             this.thread = new Thread(runnable);
         }
@@ -156,12 +156,12 @@ public class StatefulTransactionLockingTest extends TestCase {
     public abstract static class TxRunnable implements Runnable {
         protected Tx tx;
     }
-    
+
     public static class RunTransaction extends TxRunnable {
         private final BlueStateless blueStateless;
         private final RedStateful redStateful;
 
-        public RunTransaction(BlueStateless blueStateless, RedStateful redStateful) {
+        public RunTransaction(final BlueStateless blueStateless, final RedStateful redStateful) {
             this.blueStateless = blueStateless;
             this.redStateful = redStateful;
         }
@@ -169,7 +169,7 @@ public class StatefulTransactionLockingTest extends TestCase {
         public void run() {
             try {
                 blueStateless.runTransaction(redStateful, tx);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -179,7 +179,7 @@ public class StatefulTransactionLockingTest extends TestCase {
     public static class BlueStatelessBean implements BlueStateless {
 
         @TransactionAttribute(REQUIRED)
-        public void runTransaction(RedStateful stateful, Tx tx) throws Exception {
+        public void runTransaction(final RedStateful stateful, final Tx tx) throws Exception {
 
             try {
                 tx.begin.await();
@@ -193,13 +193,13 @@ public class StatefulTransactionLockingTest extends TestCase {
                 stateful.txRequired();
 
                 tx.commit.await();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 tx.fail.countDown();
             }
         }
 
         @TransactionAttribute(REQUIRED)
-        public void leaveTransaction1(RedStateful stateful) throws Exception {
+        public void leaveTransaction1(final RedStateful stateful) throws Exception {
             stateful.txRequired();
             stateful.txNotSupported();
             stateful.txRequired();
@@ -208,7 +208,7 @@ public class StatefulTransactionLockingTest extends TestCase {
         }
 
         @TransactionAttribute(REQUIRED)
-        public void leaveTransaction2(RedStateful stateful) throws Exception {
+        public void leaveTransaction2(final RedStateful stateful) throws Exception {
             stateful.txNotSupported();
             stateful.txRequired();
             stateful.txNotSupported();
@@ -216,7 +216,7 @@ public class StatefulTransactionLockingTest extends TestCase {
         }
 
         @TransactionAttribute(REQUIRED)
-        public void nestingTransaction(RedStateful stateful) throws Exception {
+        public void nestingTransaction(final RedStateful stateful) throws Exception {
             stateful.txRequired();
             stateful.txRequiresNew();
             stateful.txRequired();
@@ -225,8 +225,8 @@ public class StatefulTransactionLockingTest extends TestCase {
         }
 
         @TransactionAttribute(REQUIRED)
-        public void testCreatedInTransaction(Tx tx) throws Exception {
-            RedStateful targetBean = (RedStateful) new InitialContext().lookup("java:comp/env/red");
+        public void testCreatedInTransaction(final Tx tx) throws Exception {
+            final RedStateful targetBean = (RedStateful) new InitialContext().lookup("java:comp/env/red");
             targetBean.txRequired();
             targetBean.txRequired();
             targetBean.txRequired();
@@ -240,24 +240,27 @@ public class StatefulTransactionLockingTest extends TestCase {
         void runTransaction(RedStateful redStateful, Tx tx) throws Exception;
 
         void leaveTransaction1(RedStateful redStateful) throws Exception;
+
         void leaveTransaction2(RedStateful redStateful) throws Exception;
 
         void nestingTransaction(RedStateful stateful) throws Exception;
 
     }
 
-    
 
     public static class RedStatefulBean implements RedStateful {
 
         @TransactionAttribute(REQUIRED)
-        public void txRequired() {}
+        public void txRequired() {
+        }
 
         @TransactionAttribute(REQUIRES_NEW)
-        public void txRequiresNew() {}
+        public void txRequiresNew() {
+        }
 
         @TransactionAttribute(NOT_SUPPORTED)
-        public void txNotSupported() {}
+        public void txNotSupported() {
+        }
     }
 
     public static interface RedStateful {
@@ -284,7 +287,7 @@ public class StatefulTransactionLockingTest extends TestCase {
         public void ejbRemove() throws EJBException, RemoteException {
         }
 
-        public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
+        public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
         }
     }
 

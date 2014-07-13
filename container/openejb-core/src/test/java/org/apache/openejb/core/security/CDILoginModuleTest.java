@@ -102,7 +102,7 @@ public class CDILoginModuleTest {
                                final Map<String, ?> sharedState, final Map<String, ?> options) {
             final NameCallback nameCallback = new NameCallback("whatever");
             try {
-                callbackHandler.handle(new Callback[] {nameCallback});
+                callbackHandler.handle(new Callback[]{nameCallback});
             } catch (final Exception e) {
                 // no-op
             }

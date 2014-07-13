@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 public class WebAppInjectionResolver extends InjectionResolver {
-    private WebappWebBeansContext context;
+    private final WebappWebBeansContext context;
 
     public WebAppInjectionResolver(final WebappWebBeansContext ctx) {
         super(ctx);

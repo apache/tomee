@@ -14,6 +14,5 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value=javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class,type=String.class)
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://java.sun.com/xml/ns/persistence", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.apache.openejb.jee.jpa.unit;
+@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value = javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class, type = String.class)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://java.sun.com/xml/ns/persistence", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.openejb.jee.jpa.unit;

@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class Instance {
     public final Object bean;
-    public final Map<String,Object> interceptors;
+    public final Map<String, Object> interceptors;
     public final CreationalContext creationalContext;
 
     public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {

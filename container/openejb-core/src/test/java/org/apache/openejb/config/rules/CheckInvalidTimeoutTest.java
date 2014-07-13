@@ -26,41 +26,49 @@ import javax.ejb.Timeout;
 //@RunWith(ValidationRunner.class)
 public class CheckInvalidTimeoutTest extends TestCase {
 
-    public void testNothing() {}
+    public void testNothing() {
+    }
 
-    @Keys( { @Key(value = "timeout.badReturnType"), @Key("timeout.invalidArguments"), @Key("timeout.tooManyMethods") , @Key("timeout.missing.possibleTypo")})
+    @Keys({@Key(value = "timeout.badReturnType"), @Key("timeout.invalidArguments"), @Key("timeout.tooManyMethods"), @Key("timeout.missing.possibleTypo")})
     public EjbJar _test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
-        StatelessBean barBean = new StatelessBean(BarBean.class);
+        final StatelessBean barBean = new StatelessBean(BarBean.class);
         barBean.setTimeoutMethod(new NamedMethod("foo", "java.lang.String"));
         ejbJar.addEnterpriseBean(barBean);
         return ejbJar;
     }
-// A case where the class has the method with wrong signature annotated with @Timeout
+
+    // A case where the class has the method with wrong signature annotated with @Timeout
     // timeout.badReturnType
     // timeout.invalidArguments
     public static class TestBean {
         @Timeout
-        public Object bar(Object m) {
+        public Object bar(final Object m) {
             return null;
         }
     }
-// A case where the class has more than one method annotated with @Timeout
+
+    // A case where the class has more than one method annotated with @Timeout
     // timeout.tooManyMethods
     public static class FooBean {
         @Timeout
-        public void foo(javax.ejb.Timer timer) {}
+        public void foo(final javax.ejb.Timer timer) {
+        }
+
         @Timeout
-        public void bar(javax.ejb.Timer timer) {}
+        public void bar(final javax.ejb.Timer timer) {
+        }
     }
+
     //  A case where incorrect timeout method is configured in the deployment descriptor
     // timeout.missing.possibleTypo
     public static class BarBean {
 
-        public void foo(javax.ejb.Timer timer) {}
+        public void foo(final javax.ejb.Timer timer) {
+        }
     }
 
 }

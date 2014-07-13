@@ -89,7 +89,7 @@ public class InterfaceTransactionTest extends TestCase {
         public boolean isInTransaction() {
             try {
                 return Status.STATUS_ACTIVE == OpenEJB.getTransactionManager().getStatus();
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 throw new EJBException(e);
             }
         }

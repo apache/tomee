@@ -181,20 +181,20 @@ public class JndiEncInfoBuilder {
 
             if (ref.getRefType() == EjbReference.Type.LOCAL) {
                 insert(
-                        toLocal(info),
-                        appInfo.globalJndiEnc.ejbLocalReferences,
-                        appInfo.appJndiEnc.ejbLocalReferences,
-                        moduleJndiEnc.ejbLocalReferences,
-                        compJndiEnc.ejbLocalReferences
+                    toLocal(info),
+                    appInfo.globalJndiEnc.ejbLocalReferences,
+                    appInfo.appJndiEnc.ejbLocalReferences,
+                    moduleJndiEnc.ejbLocalReferences,
+                    compJndiEnc.ejbLocalReferences
                 );
 
             } else {
                 insert(
-                        info,
-                        appInfo.globalJndiEnc.ejbReferences,
-                        appInfo.appJndiEnc.ejbReferences,
-                        moduleJndiEnc.ejbReferences,
-                        compJndiEnc.ejbReferences
+                    info,
+                    appInfo.globalJndiEnc.ejbReferences,
+                    appInfo.appJndiEnc.ejbReferences,
+                    moduleJndiEnc.ejbReferences,
+                    compJndiEnc.ejbReferences
                 );
             }
         }
@@ -222,11 +222,11 @@ public class JndiEncInfoBuilder {
             info.location = buildLocationInfo(ref);
             info.targets.addAll(buildInjectionInfos(ref));
             insert(
-                    info,
-                    appInfo.globalJndiEnc.serviceRefs,
-                    appInfo.appJndiEnc.serviceRefs,
-                    moduleJndiEnc.serviceRefs,
-                    compJndiEnc.serviceRefs
+                info,
+                appInfo.globalJndiEnc.serviceRefs,
+                appInfo.appJndiEnc.serviceRefs,
+                moduleJndiEnc.serviceRefs,
+                compJndiEnc.serviceRefs
             );
 
             if (SystemInstance.get().hasProperty("openejb.geronimo")) {
@@ -282,11 +282,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(contextRef));
 
             insert(
-                    info,
-                    appInfo.globalJndiEnc.persistenceContextRefs,
-                    appInfo.appJndiEnc.persistenceContextRefs,
-                    moduleJndiEnc.persistenceContextRefs,
-                    compJndiEnc.persistenceContextRefs
+                info,
+                appInfo.globalJndiEnc.persistenceContextRefs,
+                appInfo.appJndiEnc.persistenceContextRefs,
+                moduleJndiEnc.persistenceContextRefs,
+                compJndiEnc.persistenceContextRefs
             );
         }
     }
@@ -312,11 +312,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(res));
 
             insert(
-                    info,
-                    appInfo.globalJndiEnc.resourceRefs,
-                    appInfo.appJndiEnc.resourceRefs,
-                    moduleJndiEnc.resourceRefs,
-                    compJndiEnc.resourceRefs
+                info,
+                appInfo.globalJndiEnc.resourceRefs,
+                appInfo.appJndiEnc.resourceRefs,
+                moduleJndiEnc.resourceRefs,
+                compJndiEnc.resourceRefs
             );
         }
     }
@@ -331,11 +331,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(res));
 
             insert(
-                    info,
-                    appInfo.globalJndiEnc.resourceEnvRefs,
-                    appInfo.appJndiEnc.resourceEnvRefs,
-                    moduleJndiEnc.resourceEnvRefs,
-                    compJndiEnc.resourceEnvRefs
+                info,
+                appInfo.globalJndiEnc.resourceEnvRefs,
+                appInfo.appJndiEnc.resourceEnvRefs,
+                moduleJndiEnc.resourceEnvRefs,
+                compJndiEnc.resourceEnvRefs
             );
         }
         for (final MessageDestinationRef res : item.getMessageDestinationRef()) {
@@ -347,11 +347,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(res));
 
             insert(
-                    info,
-                    appInfo.globalJndiEnc.resourceEnvRefs,
-                    appInfo.appJndiEnc.resourceEnvRefs,
-                    moduleJndiEnc.resourceEnvRefs,
-                    compJndiEnc.resourceEnvRefs
+                info,
+                appInfo.globalJndiEnc.resourceEnvRefs,
+                appInfo.appJndiEnc.resourceEnvRefs,
+                moduleJndiEnc.resourceEnvRefs,
+                compJndiEnc.resourceEnvRefs
             );
         }
     }
@@ -372,11 +372,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(env));
 
             insert(
-                    info,
-                    appInfo.globalJndiEnc.envEntries,
-                    appInfo.appJndiEnc.envEntries,
-                    moduleJndiEnc.envEntries,
-                    compJndiEnc.envEntries
+                info,
+                appInfo.globalJndiEnc.envEntries,
+                appInfo.appJndiEnc.envEntries,
+                moduleJndiEnc.envEntries,
+                compJndiEnc.envEntries
             );
         }
     }
@@ -463,10 +463,10 @@ public class JndiEncInfoBuilder {
             final List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
             for (final EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
                 if (interfaceClassName.equals(enterpriseBean.ejbClass)
-                        || interfaceClassName.equals(enterpriseBean.local)
-                        || interfaceClassName.equals(enterpriseBean.remote)
-                        || enterpriseBean.businessLocal.contains(interfaceClassName)
-                        || enterpriseBean.businessRemote.contains(interfaceClassName)) {
+                    || interfaceClassName.equals(enterpriseBean.local)
+                    || interfaceClassName.equals(enterpriseBean.remote)
+                    || enterpriseBean.businessLocal.contains(interfaceClassName)
+                    || enterpriseBean.businessRemote.contains(interfaceClassName)) {
                     return enterpriseBean;
                 }
             }
@@ -556,10 +556,14 @@ public class JndiEncInfoBuilder {
             // Could have used EjbResolver.Type.valueOf(..)
             // but this protects against an renaming
             switch (ref.getRefType()) {
-                case LOCAL: return EjbResolver.Type.LOCAL;
-                case REMOTE: return EjbResolver.Type.REMOTE;
-                case UNKNOWN: return EjbResolver.Type.UNKNOWN;
-                default: return EjbResolver.Type.UNKNOWN;
+                case LOCAL:
+                    return EjbResolver.Type.LOCAL;
+                case REMOTE:
+                    return EjbResolver.Type.REMOTE;
+                case UNKNOWN:
+                    return EjbResolver.Type.UNKNOWN;
+                default:
+                    return EjbResolver.Type.UNKNOWN;
             }
         }
     }

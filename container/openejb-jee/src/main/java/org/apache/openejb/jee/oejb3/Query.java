@@ -40,7 +40,7 @@ public class Query {
         return description;
     }
 
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -48,7 +48,7 @@ public class Query {
         return queryMethod;
     }
 
-    public void setQueryMethod(QueryMethod value) {
+    public void setQueryMethod(final QueryMethod value) {
         this.queryMethod = value;
     }
 
@@ -56,7 +56,7 @@ public class Query {
         return objectQl;
     }
 
-    public void setObjectQl(String value) {
+    public void setObjectQl(final String value) {
         this.objectQl = value;
     }
 

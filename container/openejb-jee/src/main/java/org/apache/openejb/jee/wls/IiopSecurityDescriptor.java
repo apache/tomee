@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for iiop-security-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="iiop-security-descriptor">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "iiop-security-descriptor", propOrder = {
@@ -69,11 +67,9 @@ public class IiopSecurityDescriptor {
 
     /**
      * Gets the value of the transportRequirements property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransportRequirements }
-     *     
+     *
+     * @return possible object is
+     * {@link TransportRequirements }
      */
     public TransportRequirements getTransportRequirements() {
         return transportRequirements;
@@ -81,23 +77,19 @@ public class IiopSecurityDescriptor {
 
     /**
      * Sets the value of the transportRequirements property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransportRequirements }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransportRequirements }
      */
-    public void setTransportRequirements(TransportRequirements value) {
+    public void setTransportRequirements(final TransportRequirements value) {
         this.transportRequirements = value;
     }
 
     /**
      * Gets the value of the clientAuthentication property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClientAuthentication() {
         return clientAuthentication;
@@ -105,23 +97,19 @@ public class IiopSecurityDescriptor {
 
     /**
      * Sets the value of the clientAuthentication property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClientAuthentication(String value) {
+    public void setClientAuthentication(final String value) {
         this.clientAuthentication = value;
     }
 
     /**
      * Gets the value of the identityAssertion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIdentityAssertion() {
         return identityAssertion;
@@ -129,23 +117,19 @@ public class IiopSecurityDescriptor {
 
     /**
      * Sets the value of the identityAssertion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIdentityAssertion(String value) {
+    public void setIdentityAssertion(final String value) {
         this.identityAssertion = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -153,13 +137,11 @@ public class IiopSecurityDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

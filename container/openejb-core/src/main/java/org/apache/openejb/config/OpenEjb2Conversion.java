@@ -272,8 +272,8 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 }
                 for (final ActivationConfigPropertyType propertyType : activationConfigType.getActivationConfigProperty()) {
                     final ActivationConfigProperty property = new ActivationConfigProperty(
-                                                                                              propertyType.getActivationConfigPropertyName(),
-                                                                                              propertyType.getActivationConfigPropertyValue());
+                        propertyType.getActivationConfigPropertyName(),
+                        propertyType.getActivationConfigPropertyValue());
                     activationConfig.getActivationConfigProperty().add(property);
                 }
             }

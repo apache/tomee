@@ -67,7 +67,7 @@ public class ServiceProviderLoginModuleTest extends TestCase {
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
 
     }
@@ -77,7 +77,7 @@ public class ServiceProviderLoginModuleTest extends TestCase {
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
 
     }

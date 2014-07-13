@@ -32,7 +32,7 @@ public class LoginConfig {
         return authMethod;
     }
 
-    public void setAuthMethod(String value) {
+    public void setAuthMethod(final String value) {
         this.authMethod = value;
     }
 
@@ -40,7 +40,7 @@ public class LoginConfig {
         return realm;
     }
 
-    public void setRealm(String value) {
+    public void setRealm(final String value) {
         this.realm = value;
     }
 }

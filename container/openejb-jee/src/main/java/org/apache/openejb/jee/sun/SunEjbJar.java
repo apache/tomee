@@ -47,7 +47,7 @@ public class SunEjbJar {
         return enterpriseBeans;
     }
 
-    public void setEnterpriseBeans(EnterpriseBeans value) {
+    public void setEnterpriseBeans(final EnterpriseBeans value) {
         this.enterpriseBeans = value;
     }
 }

@@ -30,25 +30,27 @@ import java.net.URL;
  */
 public class AppPathsTest extends TestCase {
 
-    public void test() {}
+    public void test() {
+    }
 
     /**
      * Seems like this may not be a feature that can be supported on
      * all platforms.  Seems to work on the mac VM, but not the linux vm.
+     *
      * @throws Exception
      */
     public void _testMixedCaseMetaInf() throws Exception {
-        Assembler assmbler = new Assembler();
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final Assembler assmbler = new Assembler();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URL resource = AppPathsTest.class.getClassLoader().getResource("mixedcase");
-        File file = URLs.toFile(resource);
+        final URL resource = AppPathsTest.class.getClassLoader().getResource("mixedcase");
+        final File file = URLs.toFile(resource);
 
-        AppInfo appInfo = factory.configureApplication(file);
+        final AppInfo appInfo = factory.configureApplication(file);
         assertNotNull(appInfo);
         assertEquals(1, appInfo.ejbJars.size());
 
-        EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
+        final EjbJarInfo ejbJar = appInfo.ejbJars.get(0);
 
         // was the footest.ejb-jar.xml picked up
         assertEquals("EjbJar.enterpriseBeans", 1, ejbJar.enterpriseBeans.size());
@@ -56,7 +58,7 @@ public class AppPathsTest extends TestCase {
 
     public class OrangeBean implements OrangeLocal {
 
-        public int echo(int i) {
+        public int echo(final int i) {
             return i;
         }
     }

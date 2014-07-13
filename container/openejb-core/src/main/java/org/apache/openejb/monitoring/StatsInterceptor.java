@@ -56,7 +56,7 @@ public class StatsInterceptor {
     private final AtomicLong invocations = new AtomicLong();
     private final AtomicLong invocationTime = new AtomicLong();
 
-    private Monitor monitor;
+    private final Monitor monitor;
     private final boolean enabled;
 
     public StatsInterceptor(final Class<?> componentClass) {
@@ -175,9 +175,9 @@ public class StatsInterceptor {
     private Object record(final InvocationContext invocationContext, final Method callback) throws Exception {
         invocations.incrementAndGet();
 
-        final Stats stats = enabled ? stats(invocationContext, callback): null;
+        final Stats stats = enabled ? stats(invocationContext, callback) : null;
         final long start = System.nanoTime();
-        try{
+        try {
             return invocationContext.proceed();
         } finally {
             long time = System.nanoTime() - start;
@@ -194,7 +194,7 @@ public class StatsInterceptor {
     }
 
     private Stats stats(final InvocationContext invocationContext, final Method callback) {
-        final Method method = callback == null? invocationContext.getMethod(): callback;
+        final Method method = callback == null ? invocationContext.getMethod() : callback;
 
         Stats stats = map.get(method);
         if (stats == null) {

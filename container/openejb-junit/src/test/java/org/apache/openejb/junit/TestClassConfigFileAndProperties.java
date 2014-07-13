@@ -21,8 +21,10 @@ import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.Property;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,12 +32,12 @@ import java.util.Hashtable;
 
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
-        configFile = "/META-INF/test-config.properties",
-        properties = {
-                @Property("junit.test-property-override=New Value"),
-                @Property("junit.test-property-file-untrimmed=New Trimmed Value"),
-                @Property(" junit.test-property-file-trimmed = New Untrimmed Value ")
-        }
+    configFile = "/META-INF/test-config.properties",
+    properties = {
+        @Property("junit.test-property-override=New Value"),
+        @Property("junit.test-property-file-untrimmed=New Trimmed Value"),
+        @Property(" junit.test-property-file-trimmed = New Untrimmed Value ")
+    }
 )
 public class TestClassConfigFileAndProperties {
     @TestResource(TestResourceTypes.CONTEXT_CONFIG)
@@ -54,8 +56,8 @@ public class TestClassConfigFileAndProperties {
         checkProperty("junit.test-property-file-trimmed", "New Untrimmed Value");
     }
 
-    private void checkProperty(String key, String expected) {
-        String value = contextConfig.get(key);
+    private void checkProperty(final String key, final String expected) {
+        final String value = contextConfig.get(key);
         assertEquals(expected, value);
     }
 }

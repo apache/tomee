@@ -44,7 +44,7 @@ import static org.junit.Assert.assertThat;
 public class ProducedExtendedEmTest {
     @Module
     public Class<?>[] app() throws Exception {
-        return new Class<?>[] { EntityManagerProducer.class, A.class };
+        return new Class<?>[]{EntityManagerProducer.class, A.class};
     }
 
     @Module
@@ -97,10 +97,10 @@ public class ProducedExtendedEmTest {
 
     @Test
     @Ignore("will be done thanks to OWB new impl")
-    public void checkEm()  {
+    public void checkEm() {
         try {
             a.getDelegateClassName();
-        } catch (EJBException ee) {
+        } catch (final EJBException ee) {
             assertNotNull(ee);
             assertThat(ee.getCause(), instanceOf(IllegalStateException.class));
         }

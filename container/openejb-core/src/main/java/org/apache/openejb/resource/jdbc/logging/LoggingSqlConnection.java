@@ -27,9 +27,9 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public class LoggingSqlConnection implements InvocationHandler {
-    private static final Class<?>[] INTERFACES_STATEMENT = new Class<?>[] { Statement.class };
-    private static final Class<?>[] INTERFACES_PREPARED = new Class<?>[] { PreparedStatement.class };
-    private static final Class<?>[] INTERFACES_CALLABLE = new Class<?>[] { CallableStatement.class };
+    private static final Class<?>[] INTERFACES_STATEMENT = new Class<?>[]{Statement.class};
+    private static final Class<?>[] INTERFACES_PREPARED = new Class<?>[]{PreparedStatement.class};
+    private static final Class<?>[] INTERFACES_CALLABLE = new Class<?>[]{CallableStatement.class};
 
     private final Connection delegate;
 
@@ -50,17 +50,17 @@ public class LoggingSqlConnection implements InvocationHandler {
 
         if ("createStatement".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_STATEMENT,
-                    new LoggingSqlStatement((Statement) result));
+                new LoggingSqlStatement((Statement) result));
         }
 
         if ("prepareStatement".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_PREPARED,
-                    new LoggingPreparedSqlStatement((PreparedStatement) result, (String) args[0]));
+                new LoggingPreparedSqlStatement((PreparedStatement) result, (String) args[0]));
         }
 
         if ("prepareCall".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_CALLABLE,
-                    new LoggingCallableSqlStatement((CallableStatement) result, (String) args[0]));
+                new LoggingCallableSqlStatement((CallableStatement) result, (String) args[0]));
         }
 
         return result;

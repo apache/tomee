@@ -23,13 +23,14 @@ import javax.sql.DataSource;
 
 /**
  * The Router interface is responsible for providing the target data source to the ${@link RoutedDataSource}}.
- *
+ * <p/>
  * $Rev:$
  */
 public interface Router {
 
     /**
      * Used by ${@link RoutedDataSource} to get the active data source.
+     *
      * @return the data source to delegate to
      */
     DataSource getDataSource();

@@ -30,7 +30,10 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface NotificationInfo {
     String[] types() default {};
+
     Description description() default @Description(value = "");
+
     Class<? extends Notification> notificationClass() default Notification.class;
+
     String[] descriptorFields() default {};
 }

@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesNullValue$JAXB
-        extends JAXBObject<FacesNullValue> {
+    extends JAXBObject<FacesNullValue> {
 
 
     public FacesNullValue$JAXB() {
         super(FacesNullValue.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-null-valueType".intern()));
     }
 
-    public static FacesNullValue readFacesNullValue(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesNullValue readFacesNullValue(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesNullValue(XoXMLStreamWriter writer, FacesNullValue facesNullValue, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesNullValue(final XoXMLStreamWriter writer, final FacesNullValue facesNullValue, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesNullValue, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesNullValue facesNullValue, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesNullValue facesNullValue, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesNullValue, context);
     }
 
-    public final static FacesNullValue _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesNullValue _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class FacesNullValue$JAXB
             context = new RuntimeContext();
         }
 
-        FacesNullValue facesNullValue = new FacesNullValue();
+        final FacesNullValue facesNullValue = new FacesNullValue();
         context.beforeUnmarshal(facesNullValue, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-null-valueType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesNullValue.class);
@@ -78,10 +78,10 @@ public class FacesNullValue$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, facesNullValue);
                 facesNullValue.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,7 +90,7 @@ public class FacesNullValue$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             context.unexpectedElement(elementReader);
         }
 
@@ -99,13 +99,13 @@ public class FacesNullValue$JAXB
         return facesNullValue;
     }
 
-    public final FacesNullValue read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesNullValue read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesNullValue facesNullValue, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesNullValue facesNullValue, RuntimeContext context)
+        throws Exception {
         if (facesNullValue == null) {
             writer.writeXsiNil();
             return;
@@ -124,12 +124,12 @@ public class FacesNullValue$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = facesNullValue.id;
+        final String idRaw = facesNullValue.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(facesNullValue, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);

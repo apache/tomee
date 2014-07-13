@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JUnit4Runner extends BlockJUnit4ClassRunner {
-    private OpenEjbRunner runner;
+    private final OpenEjbRunner runner;
 
     public JUnit4Runner(final OpenEjbRunner runner, final Class<?> testClazz) throws InitializationError {
         super(testClazz);
@@ -61,7 +61,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
 
         // no security to run as, just create a normal statement
         if (testSecurity == null ||
-                (testSecurity.authorized().length == 0 && testSecurity.unauthorized().length == 0)) {
+            (testSecurity.authorized().length == 0 && testSecurity.unauthorized().length == 0)) {
             return createUnsecuredStatement(method);
         }
         // security roles specified, create separate statements for them all
@@ -161,7 +161,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
     }
 
     public static class MultiStatementExecutor extends Statement {
-        private List<Statement> statements = new ArrayList<Statement>();
+        private final List<Statement> statements = new ArrayList<Statement>();
 
         @Override
         public void evaluate() throws Throwable {

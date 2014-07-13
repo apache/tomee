@@ -32,7 +32,7 @@ public class ObserverListTest {
     public void noDuplicates() {
         final ObserverManager observers = new ObserverManager();
         final Object observer = new Object() {
-            public void observe(@Observes Object o) {
+            public void observe(@Observes final Object o) {
             }
         };
 
@@ -51,19 +51,19 @@ public class ObserverListTest {
     public void observerAddAndRemoveEvents() {
 
         final Object observer = new Object() {
-            public void observe(@Observes Object o) {
+            public void observe(@Observes final Object o) {
             }
         };
 
         final List<String> invoked = new ArrayList<String>();
         final ObserverManager observers = new ObserverManager();
         observers.addObserver(new Object() {
-            public void observe(@Observes ObserverAdded o) {
+            public void observe(@Observes final ObserverAdded o) {
                 invoked.add(o.getClass().getSimpleName());
                 Assert.assertSame(observer, o.getObserver());
             }
 
-            public void observe(@Observes ObserverRemoved o) {
+            public void observe(@Observes final ObserverRemoved o) {
                 invoked.add(o.getClass().getSimpleName());
                 Assert.assertSame(observer, o.getObserver());
             }
@@ -77,10 +77,10 @@ public class ObserverListTest {
         observers.removeObserver(observer);
 
         assertEvent(invoked,
-                "ObserverAdded",
-                "ObserverRemoved",
-                "ObserverAdded",
-                "ObserverRemoved"
+            "ObserverAdded",
+            "ObserverRemoved",
+            "ObserverAdded",
+            "ObserverRemoved"
         );
     }
 

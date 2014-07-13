@@ -38,7 +38,7 @@ public class EjbJarBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private final Properties props;
-    private AppContext context;
+    private final AppContext context;
 
     public EjbJarBuilder(final Properties props, final AppContext context) {
         this.props = props;
@@ -59,7 +59,7 @@ public class EjbJarBuilder {
         final InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
         final MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
-        
+
         for (final EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(moduleContext.getClassLoader());

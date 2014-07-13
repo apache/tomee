@@ -52,7 +52,7 @@ public class CmpResource {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
@@ -60,7 +60,7 @@ public class CmpResource {
         return defaultResourcePrincipal;
     }
 
-    public void setDefaultResourcePrincipal(DefaultResourcePrincipal value) {
+    public void setDefaultResourcePrincipal(final DefaultResourcePrincipal value) {
         this.defaultResourcePrincipal = value;
     }
 
@@ -75,7 +75,7 @@ public class CmpResource {
         return createTablesAtDeploy;
     }
 
-    public void setCreateTablesAtDeploy(String value) {
+    public void setCreateTablesAtDeploy(final String value) {
         this.createTablesAtDeploy = value;
     }
 
@@ -83,7 +83,7 @@ public class CmpResource {
         return dropTablesAtUndeploy;
     }
 
-    public void setDropTablesAtUndeploy(String value) {
+    public void setDropTablesAtUndeploy(final String value) {
         this.dropTablesAtUndeploy = value;
     }
 
@@ -91,7 +91,7 @@ public class CmpResource {
         return databaseVendorName;
     }
 
-    public void setDatabaseVendorName(String value) {
+    public void setDatabaseVendorName(final String value) {
         this.databaseVendorName = value;
     }
 
@@ -99,7 +99,7 @@ public class CmpResource {
         return schemaGeneratorProperties;
     }
 
-    public void setSchemaGeneratorProperties(SchemaGeneratorProperties value) {
+    public void setSchemaGeneratorProperties(final SchemaGeneratorProperties value) {
         this.schemaGeneratorProperties = value;
     }
 }

@@ -66,11 +66,9 @@ public class CachePolicyConf {
 
     /**
      * Gets the value of the minCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMinCapacity() {
         return minCapacity;
@@ -78,23 +76,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the minCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMinCapacity(String value) {
+    public void setMinCapacity(final String value) {
         this.minCapacity = value;
     }
 
     /**
      * Gets the value of the maxCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxCapacity() {
         return maxCapacity;
@@ -102,23 +96,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the maxCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxCapacity(String value) {
+    public void setMaxCapacity(final String value) {
         this.maxCapacity = value;
     }
 
     /**
      * Gets the value of the removerPeriod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRemoverPeriod() {
         return removerPeriod;
@@ -126,23 +116,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the removerPeriod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRemoverPeriod(String value) {
+    public void setRemoverPeriod(final String value) {
         this.removerPeriod = value;
     }
 
     /**
      * Gets the value of the maxBeanLife property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxBeanLife() {
         return maxBeanLife;
@@ -150,23 +136,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the maxBeanLife property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxBeanLife(String value) {
+    public void setMaxBeanLife(final String value) {
         this.maxBeanLife = value;
     }
 
     /**
      * Gets the value of the overagerPeriod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getOveragerPeriod() {
         return overagerPeriod;
@@ -174,23 +156,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the overagerPeriod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setOveragerPeriod(String value) {
+    public void setOveragerPeriod(final String value) {
         this.overagerPeriod = value;
     }
 
     /**
      * Gets the value of the maxBeanAge property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxBeanAge() {
         return maxBeanAge;
@@ -198,23 +176,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the maxBeanAge property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxBeanAge(String value) {
+    public void setMaxBeanAge(final String value) {
         this.maxBeanAge = value;
     }
 
     /**
      * Gets the value of the resizerPeriod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResizerPeriod() {
         return resizerPeriod;
@@ -222,23 +196,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the resizerPeriod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResizerPeriod(String value) {
+    public void setResizerPeriod(final String value) {
         this.resizerPeriod = value;
     }
 
     /**
      * Gets the value of the maxCacheMissPeriod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxCacheMissPeriod() {
         return maxCacheMissPeriod;
@@ -246,23 +216,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the maxCacheMissPeriod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxCacheMissPeriod(String value) {
+    public void setMaxCacheMissPeriod(final String value) {
         this.maxCacheMissPeriod = value;
     }
 
     /**
      * Gets the value of the minCacheMissPeriod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMinCacheMissPeriod() {
         return minCacheMissPeriod;
@@ -270,23 +236,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the minCacheMissPeriod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMinCacheMissPeriod(String value) {
+    public void setMinCacheMissPeriod(final String value) {
         this.minCacheMissPeriod = value;
     }
 
     /**
      * Gets the value of the cacheLoadFactor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCacheLoadFactor() {
         return cacheLoadFactor;
@@ -294,23 +256,19 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the cacheLoadFactor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCacheLoadFactor(String value) {
+    public void setCacheLoadFactor(final String value) {
         this.cacheLoadFactor = value;
     }
 
     /**
      * Gets the value of the flushEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getFlushEnabled() {
         return flushEnabled;
@@ -318,13 +276,11 @@ public class CachePolicyConf {
 
     /**
      * Sets the value of the flushEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setFlushEnabled(String value) {
+    public void setFlushEnabled(final String value) {
         this.flushEnabled = value;
     }
 

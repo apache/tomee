@@ -44,7 +44,7 @@ public class ConfUtils {
 
             final File loginConfig = ConfUtils.install(resource, name);
 
-            if (loginConfig != null){
+            if (loginConfig != null) {
                 resource = loginConfig.toURI().toURL();
             }
         } catch (final IOException e) {

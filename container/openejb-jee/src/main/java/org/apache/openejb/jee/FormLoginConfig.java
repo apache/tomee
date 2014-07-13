@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for form-login-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="form-login-configType">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "form-login-configType", propOrder = {
@@ -69,7 +67,7 @@ public class FormLoginConfig {
         return formLoginPage;
     }
 
-    public void setFormLoginPage(String value) {
+    public void setFormLoginPage(final String value) {
         this.formLoginPage = value;
     }
 
@@ -77,7 +75,7 @@ public class FormLoginConfig {
         return formErrorPage;
     }
 
-    public void setFormErrorPage(String value) {
+    public void setFormErrorPage(final String value) {
         this.formErrorPage = value;
     }
 
@@ -85,7 +83,7 @@ public class FormLoginConfig {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

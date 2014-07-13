@@ -31,10 +31,10 @@ import java.net.URI;
 public class ConfigureServiceTest extends TestCase {
 
     public void testConfigureService() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
         // We should be able to create a default definition
-        StatelessSessionContainerInfo defaultStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo defaultStatelessContainer = factory.configureService(StatelessSessionContainerInfo.class);
         assertNotNull(defaultStatelessContainer);
         assertNotNull(defaultStatelessContainer.id);
         assertNotNull(defaultStatelessContainer.className);
@@ -42,8 +42,8 @@ public class ConfigureServiceTest extends TestCase {
         assertNotNull(defaultStatelessContainer.properties);
 
         // We should be able to create one of these with a different name
-        Container container = new Container("My Stateless Container");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
+        final Container container = new Container("My Stateless Container");
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("My Stateless Container", myStatelessContainer.id);
@@ -54,12 +54,12 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureService2() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
         // We should be able to create one of these with a different name
 
-        Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
+        final Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -71,12 +71,12 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureServiceOverriddenProperty() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
+        final Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
         container.getProperties().setProperty("myProperty", "Cheese is good");
 
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -88,11 +88,11 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureServiceAddedProperty() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
+        final Container container = new Container("MyContainer", "STATELESS", "org.acme#CheddarContainer");
         container.getProperties().setProperty("anotherProperty", "Cheese is good");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -106,25 +106,25 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureByType() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        Container container = new Container("MyContainer", "STATELESS", null);
+        final Container container = new Container("MyContainer", "STATELESS", null);
         container.getProperties().setProperty("anotherProperty", "Cheese is good");
-        ContainerInfo myStatelessContainer = factory.configureService(container,  ContainerInfo.class);
+        final ContainerInfo myStatelessContainer = factory.configureService(container, ContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("org.apache.openejb.core.stateless.StatelessContainerFactory", myStatelessContainer.className);
     }
 
     public void testConfigureServiceAddedPropertyViaURI() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer");
+        final URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer");
 
-        Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
+        final Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
 
         container.getProperties().setProperty("anotherProperty", "Cheese is good");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -138,14 +138,14 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureServiceAddedPropertyViaURI2() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer&myProperty=Queso");
+        final URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer&myProperty=Queso");
 
-        Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
+        final Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
 
         container.getProperties().setProperty("anotherProperty", "Cheese is good");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -159,12 +159,12 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testConfigureServiceAddedPropertyViaURI_Unencoded() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        Container container = (Container) factory.toConfigDeclaration("MyContainer", "new://Container?type=STATELESS&provider=org.acme#CheddarContainer");
+        final Container container = (Container) factory.toConfigDeclaration("MyContainer", "new://Container?type=STATELESS&provider=org.acme#CheddarContainer");
 
         container.getProperties().setProperty("anotherProperty", "Cheese is good");
-        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container, StatelessSessionContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
         assertEquals("MyContainer", myStatelessContainer.id);
@@ -178,9 +178,9 @@ public class ConfigureServiceTest extends TestCase {
     }
 
     public void testQueue() throws Exception {
-        ConfigurationFactory factory = new ConfigurationFactory();
+        final ConfigurationFactory factory = new ConfigurationFactory();
 
-        ResourceInfo resourceInfo = factory.configureService(new Resource("myQueue", "Queue"), ResourceInfo.class);
+        final ResourceInfo resourceInfo = factory.configureService(new Resource("myQueue", "Queue"), ResourceInfo.class);
 
         assertNotNull(resourceInfo);
         assertEquals("myQueue", resourceInfo.id);

@@ -17,44 +17,44 @@
 package org.apache.openejb.util.proxy;
 
 public class ProxyTestObject {
-	private String info;
+    private String info;
 
-	public ProxyTestObject() {
-		super();
-	}
+    public ProxyTestObject() {
+        super();
+    }
 
-	public ProxyTestObject(String info) {
-		this.info = info;
-	}
+    public ProxyTestObject(final String info) {
+        this.info = info;
+    }
 
-	public String getInfo() {
-		return info;
-	}
+    public String getInfo() {
+        return info;
+    }
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
+    public void setInfo(final String info) {
+        this.info = info;
+    }
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((info == null) ? 0 : info.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((info == null) ? 0 : info.hashCode());
+        return result;
+    }
 
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProxyTestObject other = (ProxyTestObject) obj;
-		if (info == null) {
-			if (other.info != null)
-				return false;
-		} else if (!info.equals(other.info))
-			return false;
-		return true;
-	}
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final ProxyTestObject other = (ProxyTestObject) obj;
+        if (info == null) {
+            if (other.info != null)
+                return false;
+        } else if (!info.equals(other.info))
+            return false;
+        return true;
+    }
 }

@@ -71,6 +71,7 @@ public class TestDynamicMBeanWrapper {
             return "ok";
         }
     }
+
     public static class MyMBean implements MBeanRegistration {
         private static boolean preRegister = false;
         private static boolean postRegister = false;

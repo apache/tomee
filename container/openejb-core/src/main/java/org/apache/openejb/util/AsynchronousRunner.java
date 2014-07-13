@@ -52,12 +52,11 @@ public class AsynchronousRunner {
     /**
      * A {@link Callable} implementation which just delegates the execution using
      * {@link Method#invoke(Object, Object[])}
-     *
-         */
+     */
     private class MethodInvoker implements Callable<Object> {
-        private Object object;
-        private Method method;
-        private Object[] arguments;
+        private final Object object;
+        private final Method method;
+        private final Object[] arguments;
 
         public MethodInvoker(final Object object, final Method method, final Object[] arguments) {
             this.object = object;

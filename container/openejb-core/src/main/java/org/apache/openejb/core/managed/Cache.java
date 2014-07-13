@@ -42,8 +42,8 @@ public interface Cache<K, V> {
      * checked-in.
      *
      * @throws IllegalStateException if the entry is already checked out.
-     * @throws Exception if an entry is loaded and the afterLoad method threw an
-     * exception
+     * @throws Exception             if an entry is loaded and the afterLoad method threw an
+     *                               exception
      */
     V checkOut(K key) throws Exception;
 

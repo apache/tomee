@@ -36,11 +36,9 @@ public class EjbTimeoutIdentity {
 
     /**
      * Gets the value of the runAsPrincipal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRunAsPrincipal() {
         return runAsPrincipal;
@@ -48,13 +46,11 @@ public class EjbTimeoutIdentity {
 
     /**
      * Sets the value of the runAsPrincipal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRunAsPrincipal(String value) {
+    public void setRunAsPrincipal(final String value) {
         this.runAsPrincipal = value;
     }
 

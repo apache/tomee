@@ -42,7 +42,7 @@ public class InterceptorsMetaTest {
     @Retention(RetentionPolicy.RUNTIME)
     public static @interface CasualLogging {
     }
-    
+
     @Interceptors({LogInvokeTime.class, LogArguments.class, LogReturnValue.class})
     @Metatype
     @Target({ElementType.METHOD, ElementType.TYPE})
@@ -81,7 +81,7 @@ public class InterceptorsMetaTest {
     public static class BaseInterceptor {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             return context.proceed();
         }
     }

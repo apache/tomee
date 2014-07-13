@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for multipart-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="multipart-configType">
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +66,7 @@ public class MultipartConfig {
         return location;
     }
 
-    public void setLocation(String value) {
+    public void setLocation(final String value) {
         this.location = value;
     }
 
@@ -76,7 +74,7 @@ public class MultipartConfig {
         return maxFileSize;
     }
 
-    public void setMaxFileSize(long value) {
+    public void setMaxFileSize(final long value) {
         this.maxFileSize = value;
     }
 
@@ -84,7 +82,7 @@ public class MultipartConfig {
         return maxRequestSize;
     }
 
-    public void setMaxRequestSize(long value) {
+    public void setMaxRequestSize(final long value) {
         this.maxRequestSize = value;
     }
 
@@ -92,7 +90,7 @@ public class MultipartConfig {
         return fileSizeThreshold;
     }
 
-    public void setFileSizeThreshold(int value) {
+    public void setFileSizeThreshold(final int value) {
         this.fileSizeThreshold = value;
     }
 

@@ -21,7 +21,10 @@ import java.util.Map;
 
 public interface PersistenceContextAnn {
     String name();
+
     String unitName();
+
     String type();
-    Map<String,String> properties();
+
+    Map<String, String> properties();
 }

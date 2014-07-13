@@ -37,13 +37,13 @@ public class Servlet {
     @XmlElement(name = "principal-name")
     protected PrincipalName principalName;
     @XmlElement(name = "webservice-endpoint")
-    protected KeyedCollection<String,WebserviceEndpoint> webserviceEndpoint;
+    protected KeyedCollection<String, WebserviceEndpoint> webserviceEndpoint;
 
     public ServletName getServletName() {
         return servletName;
     }
 
-    public void setServletName(ServletName value) {
+    public void setServletName(final ServletName value) {
         this.servletName = value;
     }
 
@@ -51,20 +51,20 @@ public class Servlet {
         return principalName;
     }
 
-    public void setPrincipalName(PrincipalName value) {
+    public void setPrincipalName(final PrincipalName value) {
         this.principalName = value;
     }
 
     public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
         }
         return this.webserviceEndpoint;
     }
 
-    public Map<String,WebserviceEndpoint> getWebserviceEndpointMap() {
+    public Map<String, WebserviceEndpoint> getWebserviceEndpointMap() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
         }
         return this.webserviceEndpoint.toMap();
     }

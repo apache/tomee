@@ -23,11 +23,11 @@ import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Exists for documentation purposes
- *
+ * <p/>
  * Event guidelines:
- *  - Fields should be final
- *  - Avoid logic
- *  - Implement toString()
+ * - Fields should be final
+ * - Avoid logic
+ * - Implement toString()
  *
  * @version $Rev$ $Date$
  */

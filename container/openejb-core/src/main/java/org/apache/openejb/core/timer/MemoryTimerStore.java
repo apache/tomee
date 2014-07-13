@@ -47,8 +47,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MemoryTimerStore implements TimerStore {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
-    private final Map<Long,TimerData> taskStore = new ConcurrentHashMap<Long,TimerData>();
-    private final Map<Transaction,TimerDataView> tasksByTransaction = new ConcurrentHashMap<Transaction, TimerDataView>();
+    private final Map<Long, TimerData> taskStore = new ConcurrentHashMap<Long, TimerData>();
+    private final Map<Transaction, TimerDataView> tasksByTransaction = new ConcurrentHashMap<Transaction, TimerDataView>();
     private final AtomicLong counter = new AtomicLong(0);
 
     private final TransactionManager transactionManager;
@@ -97,7 +97,7 @@ public class MemoryTimerStore implements TimerStore {
 
     @Override
     public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig, final boolean auto)
-            throws TimerStoreException {
+        throws TimerStoreException {
         final long id = counter.incrementAndGet();
         final TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression, auto);
         getTasks().addTimerData(timerData);
@@ -106,7 +106,7 @@ public class MemoryTimerStore implements TimerStore {
 
     @Override
     public TimerData createIntervalTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig)
-            throws TimerStoreException {
+        throws TimerStoreException {
         final long id = counter.incrementAndGet();
         final TimerData timerData = new IntervalTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, initialExpiration, intervalDuration);
         getTasks().addTimerData(timerData);
@@ -159,7 +159,7 @@ public class MemoryTimerStore implements TimerStore {
     }
 
     private interface TimerDataView {
-        Map<Long,TimerData> getTasks();
+        Map<Long, TimerData> getTasks();
 
         void addTimerData(TimerData timerData);
 
@@ -168,8 +168,8 @@ public class MemoryTimerStore implements TimerStore {
 
     private class LiveTimerDataView implements TimerDataView {
         @Override
-        public Map<Long,TimerData> getTasks() {
-            return new TreeMap<Long,TimerData>(taskStore);
+        public Map<Long, TimerData> getTasks() {
+            return new TreeMap<Long, TimerData>(taskStore);
         }
 
         @Override
@@ -184,7 +184,7 @@ public class MemoryTimerStore implements TimerStore {
     }
 
     private class TxTimerDataView implements Synchronization, TimerDataView {
-        private final Map<Long,TimerData> add = new TreeMap<Long,TimerData>();
+        private final Map<Long, TimerData> add = new TreeMap<Long, TimerData>();
         private final Set<Long> remove = new TreeSet<Long>();
         private final Lock lock = new ReentrantLock();
         private final RuntimeException concurentException;
@@ -223,7 +223,7 @@ public class MemoryTimerStore implements TimerStore {
         }
 
         @Override
-        public Map<Long,TimerData> getTasks() {
+        public Map<Long, TimerData> getTasks() {
             checkThread();
             final TreeMap<Long, TimerData> allTasks = new TreeMap<Long, TimerData>();
             allTasks.putAll(taskStore);

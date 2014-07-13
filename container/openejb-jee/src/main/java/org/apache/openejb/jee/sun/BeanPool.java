@@ -45,7 +45,7 @@ public class BeanPool {
         return steadyPoolSize;
     }
 
-    public void setSteadyPoolSize(String value) {
+    public void setSteadyPoolSize(final String value) {
         this.steadyPoolSize = value;
     }
 
@@ -53,7 +53,7 @@ public class BeanPool {
         return resizeQuantity;
     }
 
-    public void setResizeQuantity(String value) {
+    public void setResizeQuantity(final String value) {
         this.resizeQuantity = value;
     }
 
@@ -61,7 +61,7 @@ public class BeanPool {
         return maxPoolSize;
     }
 
-    public void setMaxPoolSize(String value) {
+    public void setMaxPoolSize(final String value) {
         this.maxPoolSize = value;
     }
 
@@ -69,7 +69,7 @@ public class BeanPool {
         return poolIdleTimeoutInSeconds;
     }
 
-    public void setPoolIdleTimeoutInSeconds(String value) {
+    public void setPoolIdleTimeoutInSeconds(final String value) {
         this.poolIdleTimeoutInSeconds = value;
     }
 
@@ -77,7 +77,7 @@ public class BeanPool {
         return maxWaitTimeInMillis;
     }
 
-    public void setMaxWaitTimeInMillis(String value) {
+    public void setMaxWaitTimeInMillis(final String value) {
         this.maxWaitTimeInMillis = value;
     }
 }

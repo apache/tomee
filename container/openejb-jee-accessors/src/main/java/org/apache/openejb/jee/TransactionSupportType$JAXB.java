@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class TransactionSupportType$JAXB
-        extends JAXBEnum<TransactionSupportType> {
+    extends JAXBEnum<TransactionSupportType> {
 
 
     public TransactionSupportType$JAXB() {
         super(TransactionSupportType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "transactionSupportType".intern()));
     }
 
-    public TransactionSupportType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public TransactionSupportType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseTransactionSupportType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, TransactionSupportType transactionSupportType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final TransactionSupportType transactionSupportType)
+        throws Exception {
         return toStringTransactionSupportType(bean, parameterName, context, transactionSupportType);
     }
 
-    public static TransactionSupportType parseTransactionSupportType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static TransactionSupportType parseTransactionSupportType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("NoTransaction".equals(value)) {
             return TransactionSupportType.NO_TRANSACTION;
         } else if ("LocalTransaction".equals(value)) {
@@ -54,8 +54,8 @@ public class TransactionSupportType$JAXB
         }
     }
 
-    public static String toStringTransactionSupportType(Object bean, String parameterName, RuntimeContext context, TransactionSupportType transactionSupportType)
-            throws Exception {
+    public static String toStringTransactionSupportType(final Object bean, final String parameterName, final RuntimeContext context, final TransactionSupportType transactionSupportType)
+        throws Exception {
         if (TransactionSupportType.NO_TRANSACTION == transactionSupportType) {
             return "NoTransaction";
         } else if (TransactionSupportType.LOCAL_TRANSACTION == transactionSupportType) {

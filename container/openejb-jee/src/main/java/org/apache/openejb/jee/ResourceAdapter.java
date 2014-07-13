@@ -24,11 +24,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for resourceadapterType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="resourceadapterType">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resourceadapterType", propOrder = {
@@ -80,19 +78,19 @@ public class ResourceAdapter {
     public ResourceAdapter() {
     }
 
-    public ResourceAdapter(String resourceAdapterClass) {
+    public ResourceAdapter(final String resourceAdapterClass) {
         this.resourceAdapterClass = resourceAdapterClass;
     }
 
-    public ResourceAdapter(Class resourceAdapterClass) {
+    public ResourceAdapter(final Class resourceAdapterClass) {
         this(resourceAdapterClass.getName());
     }
 
-    public static ResourceAdapter newResourceAdapter(ResourceAdapter10 source) {
-        ResourceAdapter resourceAdapter = new ResourceAdapter();
+    public static ResourceAdapter newResourceAdapter(final ResourceAdapter10 source) {
+        final ResourceAdapter resourceAdapter = new ResourceAdapter();
         resourceAdapter.getSecurityPermission().addAll(source.getSecurityPermission());
         resourceAdapter.setId(source.getId());
-        OutboundResourceAdapter outboundResourceAdapter = new OutboundResourceAdapter();
+        final OutboundResourceAdapter outboundResourceAdapter = new OutboundResourceAdapter();
         outboundResourceAdapter.getAuthenticationMechanism().addAll(source.getAuthenticationMechanism());
         outboundResourceAdapter.setTransactionSupport(source.getTransactionSupport());
         outboundResourceAdapter.setReauthenticationSupport(source.isReauthenticationSupport());
@@ -105,7 +103,7 @@ public class ResourceAdapter {
         return resourceAdapterClass;
     }
 
-    public void setResourceAdapterClass(String value) {
+    public void setResourceAdapterClass(final String value) {
         this.resourceAdapterClass = value;
     }
 
@@ -120,7 +118,7 @@ public class ResourceAdapter {
         return outboundResourceAdapter;
     }
 
-    public OutboundResourceAdapter setOutboundResourceAdapter(OutboundResourceAdapter value) {
+    public OutboundResourceAdapter setOutboundResourceAdapter(final OutboundResourceAdapter value) {
         this.outboundResourceAdapter = value;
         return outboundResourceAdapter;
     }
@@ -129,7 +127,7 @@ public class ResourceAdapter {
         return inboundResourceAdapter;
     }
 
-    public InboundResourceadapter setInboundResourceAdapter(InboundResourceadapter value) {
+    public InboundResourceadapter setInboundResourceAdapter(final InboundResourceadapter value) {
         this.inboundResourceAdapter = value;
         return inboundResourceAdapter;
     }
@@ -152,7 +150,7 @@ public class ResourceAdapter {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

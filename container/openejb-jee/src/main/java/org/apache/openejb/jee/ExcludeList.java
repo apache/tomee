@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for exclude-listType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="exclude-listType">
  *   &lt;complexContent>
@@ -50,14 +50,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "exclude-listType", propOrder = {
-        "descriptions",
-        "method"
+    "descriptions",
+    "method"
 })
 public class ExcludeList {
 
@@ -75,7 +73,7 @@ public class ExcludeList {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -90,7 +88,7 @@ public class ExcludeList {
         return this.method;
     }
 
-    public void addMethod(Method method) {
+    public void addMethod(final Method method) {
         getMethod().add(method);
     }
 
@@ -98,7 +96,7 @@ public class ExcludeList {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

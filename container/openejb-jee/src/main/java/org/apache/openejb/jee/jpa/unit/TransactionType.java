@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * <p>Java class for persistence-unit-transaction-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="persistence-unit-transaction-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlEnum;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum TransactionType {
@@ -44,7 +43,7 @@ public enum TransactionType {
         return name();
     }
 
-    public static TransactionType fromValue(String v) {
+    public static TransactionType fromValue(final String v) {
         return valueOf(v);
     }
 

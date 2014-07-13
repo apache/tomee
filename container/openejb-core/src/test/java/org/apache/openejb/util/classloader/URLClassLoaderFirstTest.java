@@ -43,7 +43,7 @@ public class URLClassLoaderFirstTest {
                 return super.getResource(name);
             }
         };
-        final URLClassLoader tmpLoader = new URLClassLoaderFirst(new URL[] { JarLocation.jarLocation(WSDLException.class).toURI().toURL() }, parent);
+        final URLClassLoader tmpLoader = new URLClassLoaderFirst(new URL[]{JarLocation.jarLocation(WSDLException.class).toURI().toURL()}, parent);
 
         SystemInstance.get().setComponent(ParentClassLoaderFinder.class, new ParentClassLoaderFinder() {
             @Override

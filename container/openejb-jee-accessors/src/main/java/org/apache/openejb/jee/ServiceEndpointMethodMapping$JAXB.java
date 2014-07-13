@@ -36,33 +36,33 @@ import static org.apache.openejb.jee.WsdlReturnValueMapping$JAXB.readWsdlReturnV
 import static org.apache.openejb.jee.WsdlReturnValueMapping$JAXB.writeWsdlReturnValueMapping;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ServiceEndpointMethodMapping$JAXB
-        extends JAXBObject<ServiceEndpointMethodMapping> {
+    extends JAXBObject<ServiceEndpointMethodMapping> {
 
 
     public ServiceEndpointMethodMapping$JAXB() {
         super(ServiceEndpointMethodMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "service-endpoint-method-mappingType".intern()), MethodParamPartsMapping$JAXB.class, WsdlReturnValueMapping$JAXB.class);
     }
 
-    public static ServiceEndpointMethodMapping readServiceEndpointMethodMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ServiceEndpointMethodMapping readServiceEndpointMethodMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeServiceEndpointMethodMapping(XoXMLStreamWriter writer, ServiceEndpointMethodMapping serviceEndpointMethodMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeServiceEndpointMethodMapping(final XoXMLStreamWriter writer, final ServiceEndpointMethodMapping serviceEndpointMethodMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceEndpointMethodMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ServiceEndpointMethodMapping serviceEndpointMethodMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ServiceEndpointMethodMapping serviceEndpointMethodMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceEndpointMethodMapping, context);
     }
 
-    public final static ServiceEndpointMethodMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ServiceEndpointMethodMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -73,13 +73,13 @@ public class ServiceEndpointMethodMapping$JAXB
             context = new RuntimeContext();
         }
 
-        ServiceEndpointMethodMapping serviceEndpointMethodMapping = new ServiceEndpointMethodMapping();
+        final ServiceEndpointMethodMapping serviceEndpointMethodMapping = new ServiceEndpointMethodMapping();
         context.beforeUnmarshal(serviceEndpointMethodMapping, LifecycleCallback.NONE);
 
         List<MethodParamPartsMapping> methodParamPartsMapping = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("service-endpoint-method-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ServiceEndpointMethodMapping.class);
@@ -87,10 +87,10 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, serviceEndpointMethodMapping);
                 serviceEndpointMethodMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,15 +99,15 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("java-method-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: javaMethodName
-                String javaMethodNameRaw = elementReader.getElementAsString();
+                final String javaMethodNameRaw = elementReader.getElementAsString();
 
-                String javaMethodName;
+                final String javaMethodName;
                 try {
                     javaMethodName = Adapters.collapsedStringAdapterAdapter.unmarshal(javaMethodNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -115,12 +115,12 @@ public class ServiceEndpointMethodMapping$JAXB
                 serviceEndpointMethodMapping.javaMethodName = javaMethodName;
             } else if (("wsdl-operation" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlOperation
-                String wsdlOperationRaw = elementReader.getElementAsString();
+                final String wsdlOperationRaw = elementReader.getElementAsString();
 
-                String wsdlOperation;
+                final String wsdlOperation;
                 try {
                     wsdlOperation = Adapters.collapsedStringAdapterAdapter.unmarshal(wsdlOperationRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -128,11 +128,11 @@ public class ServiceEndpointMethodMapping$JAXB
                 serviceEndpointMethodMapping.wsdlOperation = wsdlOperation;
             } else if (("wrapped-element" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wrappedElement
-                Element wrappedElement = elementReader.getElementAsDomElement();
+                final Element wrappedElement = elementReader.getElementAsDomElement();
                 serviceEndpointMethodMapping.wrappedElement = wrappedElement;
             } else if (("method-param-parts-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodParamPartsMapping
-                MethodParamPartsMapping methodParamPartsMappingItem = readMethodParamPartsMapping(elementReader, context);
+                final MethodParamPartsMapping methodParamPartsMappingItem = readMethodParamPartsMapping(elementReader, context);
                 if (methodParamPartsMapping == null) {
                     methodParamPartsMapping = serviceEndpointMethodMapping.methodParamPartsMapping;
                     if (methodParamPartsMapping != null) {
@@ -144,7 +144,7 @@ public class ServiceEndpointMethodMapping$JAXB
                 methodParamPartsMapping.add(methodParamPartsMappingItem);
             } else if (("wsdl-return-value-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlReturnValueMapping
-                WsdlReturnValueMapping wsdlReturnValueMapping = readWsdlReturnValueMapping(elementReader, context);
+                final WsdlReturnValueMapping wsdlReturnValueMapping = readWsdlReturnValueMapping(elementReader, context);
                 serviceEndpointMethodMapping.wsdlReturnValueMapping = wsdlReturnValueMapping;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "java-method-name"), new QName("http://java.sun.com/xml/ns/javaee", "wsdl-operation"), new QName("http://java.sun.com/xml/ns/javaee", "wrapped-element"), new QName("http://java.sun.com/xml/ns/javaee", "method-param-parts-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "wsdl-return-value-mapping"));
@@ -159,13 +159,13 @@ public class ServiceEndpointMethodMapping$JAXB
         return serviceEndpointMethodMapping;
     }
 
-    public final ServiceEndpointMethodMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ServiceEndpointMethodMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ServiceEndpointMethodMapping serviceEndpointMethodMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ServiceEndpointMethodMapping serviceEndpointMethodMapping, RuntimeContext context)
+        throws Exception {
         if (serviceEndpointMethodMapping == null) {
             writer.writeXsiNil();
             return;
@@ -175,7 +175,7 @@ public class ServiceEndpointMethodMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ServiceEndpointMethodMapping.class != serviceEndpointMethodMapping.getClass()) {
             context.unexpectedSubclass(writer, serviceEndpointMethodMapping, ServiceEndpointMethodMapping.class);
             return;
@@ -185,23 +185,23 @@ public class ServiceEndpointMethodMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = serviceEndpointMethodMapping.id;
+        final String idRaw = serviceEndpointMethodMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(serviceEndpointMethodMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: javaMethodName
-        String javaMethodNameRaw = serviceEndpointMethodMapping.javaMethodName;
+        final String javaMethodNameRaw = serviceEndpointMethodMapping.javaMethodName;
         String javaMethodName = null;
         try {
             javaMethodName = Adapters.collapsedStringAdapterAdapter.marshal(javaMethodNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceEndpointMethodMapping, "javaMethodName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (javaMethodName != null) {
@@ -213,11 +213,11 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // ELEMENT: wsdlOperation
-        String wsdlOperationRaw = serviceEndpointMethodMapping.wsdlOperation;
+        final String wsdlOperationRaw = serviceEndpointMethodMapping.wsdlOperation;
         String wsdlOperation = null;
         try {
             wsdlOperation = Adapters.collapsedStringAdapterAdapter.marshal(wsdlOperationRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceEndpointMethodMapping, "wsdlOperation", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (wsdlOperation != null) {
@@ -229,7 +229,7 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // ELEMENT: wrappedElement
-        Object wrappedElement = serviceEndpointMethodMapping.wrappedElement;
+        final Object wrappedElement = serviceEndpointMethodMapping.wrappedElement;
         if (wrappedElement != null) {
             writer.writeStartElement(prefix, "wrapped-element", "http://java.sun.com/xml/ns/javaee");
             writer.writeDomElement(((Element) wrappedElement), false);
@@ -237,9 +237,9 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // ELEMENT: methodParamPartsMapping
-        List<MethodParamPartsMapping> methodParamPartsMapping = serviceEndpointMethodMapping.methodParamPartsMapping;
+        final List<MethodParamPartsMapping> methodParamPartsMapping = serviceEndpointMethodMapping.methodParamPartsMapping;
         if (methodParamPartsMapping != null) {
-            for (MethodParamPartsMapping methodParamPartsMappingItem : methodParamPartsMapping) {
+            for (final MethodParamPartsMapping methodParamPartsMappingItem : methodParamPartsMapping) {
                 if (methodParamPartsMappingItem != null) {
                     writer.writeStartElement(prefix, "method-param-parts-mapping", "http://java.sun.com/xml/ns/javaee");
                     writeMethodParamPartsMapping(writer, methodParamPartsMappingItem, context);
@@ -249,7 +249,7 @@ public class ServiceEndpointMethodMapping$JAXB
         }
 
         // ELEMENT: wsdlReturnValueMapping
-        WsdlReturnValueMapping wsdlReturnValueMapping = serviceEndpointMethodMapping.wsdlReturnValueMapping;
+        final WsdlReturnValueMapping wsdlReturnValueMapping = serviceEndpointMethodMapping.wsdlReturnValueMapping;
         if (wsdlReturnValueMapping != null) {
             writer.writeStartElement(prefix, "wsdl-return-value-mapping", "http://java.sun.com/xml/ns/javaee");
             writeWsdlReturnValueMapping(writer, wsdlReturnValueMapping, context);

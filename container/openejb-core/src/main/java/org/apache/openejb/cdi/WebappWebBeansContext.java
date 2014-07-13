@@ -19,11 +19,12 @@ package org.apache.openejb.cdi;
 
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
 public class WebappWebBeansContext extends WebBeansContext {
-    private WebBeansContext parent;
+    private final WebBeansContext parent;
     private BeanManagerImpl bm;
 
     public WebappWebBeansContext(final Map<Class<?>, Object> services, final Properties properties, final WebBeansContext webBeansContext) {
