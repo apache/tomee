@@ -19,7 +19,6 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.log.ConsoleColorHandler;
 import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.logger.WebBeansLoggerFacade;
@@ -55,7 +54,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
             System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
             if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
-                consoleHandlerClazz = ConsoleColorHandler.class.getName();
+                consoleHandlerClazz = org.apache.openejb.log.ConsoleColorHandler.class.getName();
             } else {
                 consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
             }
