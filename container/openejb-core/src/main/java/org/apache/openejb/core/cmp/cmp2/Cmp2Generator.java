@@ -140,7 +140,7 @@ public class Cmp2Generator implements Opcodes {
         // The class writer will be used for all generator activies, while the 
         // postCreateGenerator will be used to add the ejbPostCreatexxxx methods as a 
         // last step. 
-        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
 
