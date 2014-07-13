@@ -246,7 +246,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgs>
-            <arg>-Djava.endorsed.dirs=${openejb.build.endorsed}</arg>
             <arg>-Xlint:path</arg>
           </compilerArgs>
         </configuration>
@@ -314,7 +313,7 @@
             -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
             -Dopenejb.descriptors.output.folder=./dump/
-            -Xmx512m -Djava.endorsed.dirs=${openejb.build.endorsed}
+            -Xmx512m
           </argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
