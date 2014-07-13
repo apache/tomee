@@ -45,7 +45,7 @@ public class Cmp1Generator implements Opcodes {
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
 
-        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
