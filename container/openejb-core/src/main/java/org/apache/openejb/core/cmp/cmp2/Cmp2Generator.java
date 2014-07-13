@@ -194,7 +194,7 @@ public class Cmp2Generator implements Opcodes {
 
         // private transient boolean deleted;
         {
-            final FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, DELETED, "Z", null, null);
+            final FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT + ACC_VOLATILE, DELETED, "Z", null, null);
             fv.visitEnd();
         }
 
