@@ -333,41 +333,6 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    private void copyClasses(final File sourceJar, final File destinationJar, final String pattern) {
-        if (sourceJar == null) {
-            throw new NullPointerException("sourceJar");
-        }
-        if (destinationJar == null) {
-            throw new NullPointerException("destinationJar");
-        }
-        if (pattern == null) {
-            throw new NullPointerException("pattern");
-        }
-
-        if (destinationJar.exists()) {
-            return;
-        }
-
-        try {
-            final ZipInputStream source = new ZipInputStream(IO.read(sourceJar));
-            final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
-            final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
-            for (ZipEntry entry; (entry = source.getNextEntry()) != null; ) {
-                final String entryName = entry.getName();
-                if (!entryName.matches(pattern)) {
-                    continue;
-                }
-                destination.putNextEntry(new ZipEntry(entryName));
-                IO.copy(source, destination);
-            }
-            IO.close(source);
-            IO.close(destination);
-            IO.copy(destinationBuffer.toByteArray(), destinationJar);
-        } catch (final IOException e) {
-            alerts.addError(e.getMessage());
-        }
-    }
-
     private void removeJar(final File jar) {
         if (jar.exists()) {
             if (!jar.delete()) {
@@ -375,11 +340,6 @@ public class Installer implements InstallerInterface {
             }
             alerts.addInfo("Please restart the server or delete manually " + jar.getName());
         }
-    }
-
-    private void removeTomcatLibJar(final String name) {
-        final File jar = new File(paths.getCatalinaLibDir(), name);
-        removeJar(jar);
     }
 
     public void installListener() {
