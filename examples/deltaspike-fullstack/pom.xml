@@ -46,7 +46,7 @@
         <artifactId>openjpa-maven-plugin</artifactId>
         <version>2.3.0</version>
         <configuration>
-          <classes>**/org/superbiz/deltaspike/domain/*.class</classes>
+          <includes>org/superbiz/deltaspike/domain/*.class</includes>
         </configuration>
         <executions>
           <execution>
