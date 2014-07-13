@@ -42,8 +42,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     private final ClassLoader commonLoader;
     private final ClassLoader serverLoader;
 
-    private Method addRepositoryMethod;
-    private Method addURLMethod;
+    private final Method addRepositoryMethod;
 
     public TomcatClassPath() {
         this(getCommonLoader(getContextClassLoader()));
@@ -53,13 +52,8 @@ public class TomcatClassPath extends BasicURLClassPath {
         this.commonLoader = classLoader;
         try {
             addRepositoryMethod = getAddRepositoryMethod();
-        } catch (final Exception tomcat4Exception) {
-
-            try {
-                addURLMethod = getAddURLMethod();
-            } catch (final Exception tomcat5Exception) {
-                throw new LoaderRuntimeException("Failed accessing classloader for Tomcat 5 or 6", tomcat5Exception);
-            }
+        } catch (final Exception e) {
+            throw new IllegalStateException("Ensure you use the right tomcat version");
         }
 
         final ClassLoader serverLoader = getServerLoader(getContextClassLoader());
@@ -143,12 +137,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             classLoader = serverLoader;
         }
 
-        if (addRepositoryMethod != null) {
-            final String path = jar.toExternalForm();
-            addRepositoryMethod.invoke(classLoader, path);
-        } else {
-            addURLMethod.invoke(classLoader, jar);
-        }
+        addRepositoryMethod.invoke(classLoader, jar.toExternalForm());
     }
 
     private boolean useServerClassLoader(final URL jar) {
@@ -219,23 +208,6 @@ public class TomcatClassPath extends BasicURLClassPath {
             Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "rebuild", e);
         }
 
-    }
-
-    private Method getAddURLMethod() throws Exception {
-        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            @Override
-            public Method run() {
-                Method method = null;
-                try {
-                    final Class clazz = URLClassLoader.class;
-                    method = clazz.getDeclaredMethod("addURL", URL.class);
-                    method.setAccessible(true);
-                } catch (final Exception e2) {
-                    e2.printStackTrace();
-                }
-                return method;
-            }
-        });
     }
 
     private Method getAddRepositoryMethod() throws Exception {
