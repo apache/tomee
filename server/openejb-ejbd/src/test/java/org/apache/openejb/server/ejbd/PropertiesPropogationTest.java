@@ -113,6 +113,9 @@ public class PropertiesPropogationTest extends TestCase {
         // The openejb.client.color property should have been propogated
         assertTrue(properties.containsKey("openejb.client.color"));
         assertEquals("red", properties.getProperty("openejb.client.color"));
+
+        serviceDaemon.stop();
+        OpenEJB.destroy();
     }
 
     @Remote

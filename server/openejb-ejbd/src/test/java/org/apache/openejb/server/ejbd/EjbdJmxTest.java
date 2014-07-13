@@ -61,5 +61,8 @@ public class EjbdJmxTest {
         for (MBeanAttributeInfo info : beanInfo.getAttributes()) {
             System.out.println(info);
         }
+
+        service.stop();
+        OpenEJB.destroy();
     }
 }

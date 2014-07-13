@@ -108,6 +108,9 @@ public class UberInterfaceTest extends TestCase {
             assertEquals(reference, local.echo(reference));
             assertSame(reference, local.echo(reference)); // pass by reference
         }
+
+        serviceDaemon.stop();
+        OpenEJB.destroy();
     }
 
     @Local

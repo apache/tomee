@@ -35,6 +35,8 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -76,8 +78,10 @@ public class MultithreadTest {
         //  -- READY --
 
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
+        final Collection<Thread> threads = new ArrayList<>(30);
         for (int i = 0; i < 30; i++) {
             final Thread t = new Thread(r);
+            threads.add(t);
             t.start();
         }
 
@@ -98,6 +102,9 @@ public class MultithreadTest {
 
         assertEquals(10, CounterBean.instances.get());
 
+        for (final Thread t : threads) {
+            t.join(1000);
+        }
     }
 
     @Test
@@ -120,8 +127,10 @@ public class MultithreadTest {
         //  -- READY --
 
         // 30 instances should be created and discarded.
+        final Collection<Thread> threads = new ArrayList<>(30);
         for (int i = 0; i < 30; i++) {
             final Thread t = new Thread(r);
+            threads.add(t);
             t.start();
         }
 
@@ -129,6 +138,10 @@ public class MultithreadTest {
         final int count = CounterBean.discardedInstances.get();
         assertTrue("Timeout after 10s. CountDownLatch: " + count + " of 30 invocations", success);
         assertEquals(30, CounterBean.discardedInstances.get());
+
+        for (final Thread t : threads) {
+            t.join(1000);
+        }
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
@@ -159,8 +172,10 @@ public class MultithreadTest {
 
         comment("On your mark!");
 
+        final Collection<Thread> threads = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final Thread t = new Thread(r);
+            threads.add(t);
             t.start();
         }
 
@@ -182,6 +197,10 @@ public class MultithreadTest {
         comment("Go!");
 
         startPistol.countDown(); // go
+
+        for (final Thread t : threads) {
+            t.join(1000);
+        }
     }
 
     @After

@@ -32,6 +32,8 @@ import javax.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -136,23 +138,29 @@ public class KeepAilveTest extends TestCase {
             final int threads = 1;
             final CountDownLatch latch = new CountDownLatch(threads);
 
+            final Collection<Thread> th = new ArrayList<>(threads);
             for (int i = 0; i < threads; i++) {
                 final Client client = new Client(latch, i, port);
-                thread(client, false);
+                th.add(thread(client, false));
             }
 
             final boolean await = latch.await(60, TimeUnit.SECONDS);
             assertTrue(await);
+
+            for (final Thread t : th) {
+                t.join(1000);
+            }
         } finally {
             serviceDaemon.stop();
             OpenEJB.destroy();
         }
     }
 
-    public static void thread(final Runnable runnable, final boolean daemon) {
+    public static Thread thread(final Runnable runnable, final boolean daemon) {
         final Thread thread = new Thread(runnable);
         thread.setDaemon(daemon);
         thread.start();
+        return thread;
     }
 
     public static class Client implements Runnable {

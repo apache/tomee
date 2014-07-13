@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import org.apache.openejb.server.ServiceManager;
 import org.junit.Assert;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
@@ -49,8 +50,8 @@ public class Server2ServerEjbRefTest extends TestCase {
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
 
-        final int blue = server();
-        final int orange = server();
+        final ServiceDaemon blue = server();
+        final ServiceDaemon orange = server();
 
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -58,7 +59,7 @@ public class Server2ServerEjbRefTest extends TestCase {
         final JndiProvider jndiProvider = new JndiProvider("orange");
         final Properties p = jndiProvider.getProperties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        p.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + orange);
+        p.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + orange.getPort());
 
         final JndiContextInfo contextInfo = config.configureService(jndiProvider, JndiContextInfo.class);
         assembler.createExternalContext(contextInfo);
@@ -84,16 +85,19 @@ public class Server2ServerEjbRefTest extends TestCase {
             // Lets look it up the normal way to be sure it can work
             final Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-            properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + blue);
+            properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + blue.getPort());
             final InitialContext initialContext = new InitialContext(properties);
             final BlueRemote blueBeanRemote = (BlueRemote) initialContext.lookup("BlueBeanRemote");
             assertNotNull(blueBeanRemote);
             blueBeanRemote.hasOrangeRemote();
         }
 
+        blue.stop();
+        orange.stop();
+        OpenEJB.destroy();
     }
 
-    private int server() throws Exception {
+    private ServiceDaemon server() throws Exception {
         final EjbServer ejbServer = new EjbServer();
         ejbServer.init(new Properties());
 
@@ -101,7 +105,7 @@ public class Server2ServerEjbRefTest extends TestCase {
         final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
-        return serviceDaemon.getPort();
+        return serviceDaemon;
     }
 
     public static class OrangeBean implements OrangeRemote {

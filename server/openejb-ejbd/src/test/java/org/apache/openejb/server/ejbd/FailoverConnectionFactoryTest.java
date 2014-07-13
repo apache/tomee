@@ -90,6 +90,9 @@ public class FailoverConnectionFactoryTest extends TestCase {
         remote.echo("foo");
 
         assertTrue(TestConnectionStrategy.called.get());
+
+        serviceDaemon.stop();
+        OpenEJB.destroy();
     }
 
     @Remote

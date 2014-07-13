@@ -158,6 +158,8 @@ public class FailoverTest extends TestCase {
 
         assertEquals(Host.RED, target.getHost());
 
+        red.stop();
+        OpenEJB.destroy();
     }
 
     private TargetRemote getBean(final ServerService server) throws NamingException, IOException, OpenEJBException {

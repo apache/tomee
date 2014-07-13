@@ -115,6 +115,9 @@ public class AppClientTest extends TestCase {
         assertTrue(global instanceof OrangeBusinessRemote);
         OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
         assertEquals("nap", globalOrangeBusinessRemote.echo("pan"));
+
+        serviceDaemon.stop();
+        OpenEJB.destroy();
     }
 
     public static interface OrangeHome extends EJBHome {

@@ -120,7 +120,6 @@ public class StaticFailoverTest extends TestCase {
         System.out.println(counter.hit());
         System.out.println(counter.hit());
         System.out.println(counter.hit());
-
     }
 
     @Override

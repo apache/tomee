@@ -49,6 +49,7 @@ public class ZEjbdTest {
     public Properties configuration() {
         final Properties configuration = new Properties();
         configuration.setProperty("ejbd.gzip", "true");
+        configuration.setProperty("openejb.client.connection.socket.read", "1000");
         return configuration;
     }
 
@@ -85,7 +86,7 @@ public class ZEjbdTest {
         final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
         final Context ctx = new InitialContext(new Properties() {{
             setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-            setProperty(Context.PROVIDER_URL, scheme + "://localhost:" + port);
+            setProperty(Context.PROVIDER_URL, scheme + "://localhost:" + port + "?connectTimeout=1000&readTimeout=1000");
         }});
         assertEquals("hello", ((AppClientTest.OrangeBusinessRemote) ctx.lookup("OrangeRemote")).echo("olleh"));
     }
