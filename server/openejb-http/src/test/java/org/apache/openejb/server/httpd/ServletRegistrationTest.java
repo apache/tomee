@@ -18,10 +18,10 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,7 +37,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices({ "httpejbd" })
+@EnableServices("httpejbd")
 @RunWith(ApplicationComposer.class)
 public class ServletRegistrationTest {
     @Module

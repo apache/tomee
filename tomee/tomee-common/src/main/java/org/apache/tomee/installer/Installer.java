@@ -99,7 +99,6 @@ public class Installer implements InstallerInterface {
         installJavaagent();
         installConfigFiles();
 
-        removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
         addTomEEJuli();
 
@@ -184,7 +183,6 @@ public class Installer implements InstallerInterface {
         commentDeploymentDir();
         installConfigFiles();
 
-        removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
         addTomEEJuli(); // before moveLibs
         moveLibs();
@@ -264,8 +262,6 @@ public class Installer implements InstallerInterface {
         if (!endorsed.mkdir()) {
             alerts.addWarning("can't create endorsed directory");
         }
-
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
 
         final File jaxbApi = paths.findOpenEJBJar("geronimo-jaxb_2.2_spec");
         copyClasses(paths.getJavaEEAPIJar(), jaxbApi, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*",
