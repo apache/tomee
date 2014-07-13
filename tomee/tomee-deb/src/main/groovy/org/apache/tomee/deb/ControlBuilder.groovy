@@ -87,9 +87,6 @@ class ControlBuilder {
             case 'plume':
                 this.priority = 3
                 break
-            case 'jaxrs':
-                this.priority = 2
-                break
             default:
                 this.priority = 1
         }

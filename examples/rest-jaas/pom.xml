@@ -57,7 +57,6 @@
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>
           </systemVariables>
           <context>ROOT</context>
-          <tomeeClassifier>jaxrs</tomeeClassifier>
         </configuration>
       </plugin>
       <plugin>

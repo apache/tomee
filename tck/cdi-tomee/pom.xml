@@ -66,13 +66,6 @@
       <!--<artifactId>apache-tomee</artifactId>-->
       <!--<type>zip</type>-->
       <!--<version>${tomee.version}</version>-->
-      <!--<classifier>jaxrs</classifier>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.apache.openejb</groupId>-->
-      <!--<artifactId>apache-tomee</artifactId>-->
-      <!--<type>zip</type>-->
-      <!--<version>${tomee.version}</version>-->
       <!--<classifier>plus</classifier>-->
     <!--</dependency>-->
     <!--<dependency>-->
@@ -301,22 +294,6 @@
       </activation>
       <properties>
         <tomee.classifier>webprofile</tomee.classifier>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>apache-tomee</artifactId>
-          <type>zip</type>
-          <version>${tomee.version}</version>
-          <classifier>${tomee.classifier}</classifier>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>jaxrs</id>
-      <properties>
-        <tomee.classifier>jaxrs</tomee.classifier>
       </properties>
       <dependencies>
         <dependency>

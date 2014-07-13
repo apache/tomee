@@ -38,13 +38,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-jaxrs-webapp</artifactId>
+      <artifactId>tomee-webapp</artifactId>
       <version>${tomee.version}</version>
       <type>war</type>
     </dependency>
   </dependencies>
 
   <properties>
-    <profile-under-test>jaxrs</profile-under-test>
+    <profile-under-test>webprofile</profile-under-test>
   </properties>
 </project>

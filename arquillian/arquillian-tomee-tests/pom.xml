@@ -193,7 +193,6 @@
                   <source>
                     // goal: manage the profile-under-test property
                     // -> set to webprofile use all distributions
-                    // -> set to jaxrs just jaxrs, plus and plume should be used
                     // -> set to plus use only plus
                     // -> set to plume use only plume
                     def props = project.properties
@@ -202,11 +201,9 @@
 
                     props['skip.embedded'] = 'true'
                     props['skip.remote.webprofile'] = 'true'
-                    props['skip.remote.jaxrs'] = 'true'
                     props['skip.remote.plus'] = 'true'
                     props['skip.remote.plume'] = 'true'
                     props['skip.webapp.webprofile'] = 'true'
-                    props['skip.webapp.jaxrs'] = 'true'
                     props['skip.webapp.plus'] = 'true'
                     props['skip.webapp.plume'] = 'true'
 
@@ -217,16 +214,6 @@
                         props['skip.embedded'] = 'false'
                         props['skip.remote.webprofile'] = 'false'
                         props['skip.webapp.webprofile'] = 'false'
-                        props['skip.remote.jaxrs'] = 'false'
-                        props['skip.webapp.jaxrs'] = 'false'
-                        props['skip.remote.plus'] = 'false'
-                        props['skip.webapp.plus'] = 'false'
-                        props['skip.remote.plume'] = 'false'
-                        props['skip.webapp.plume'] = 'false'
-                      } else if ("jaxrs" == minProfile) {
-                        props['skip.embedded'] = 'false'
-                        props['skip.remote.jaxrs'] = 'false'
-                        props['skip.webapp.jaxrs'] = 'false'
                         props['skip.remote.plus'] = 'false'
                         props['skip.webapp.plus'] = 'false'
                         props['skip.remote.plume'] = 'false'
@@ -243,12 +230,10 @@
                     println("Embedded adapter activated ? " + !Boolean.parseBoolean(props['skip.embedded']))
                     println("Remote webprofile adapter activated ? " +
                         !Boolean.parseBoolean(props['skip.remote.webprofile']))
-                    println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
                     println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
                     println("Remote plume adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plume']))
                     println("Webapp weprofile adapter activated ? " +
                         !Boolean.parseBoolean(props['skip.webapp.webprofile']))
-                    println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
                     println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
                     println("Webapp plume adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plume']))
                   </source>
@@ -287,23 +272,6 @@
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.classifier>webprofile</tomee.classifier>
-                    <arquillian.launch>tomee-remote</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-remote-jaxrs</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.remote.jaxrs}</skip>
-                  <systemPropertyVariables>
-                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.classifier>jaxrs</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -355,23 +323,6 @@
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-jaxrs</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.webapp.jaxrs}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-jaxrs-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -455,13 +406,6 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
           <version>${tomee.version}</version>
-          <classifier>jaxrs</classifier>
-          <type>zip</type>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>apache-tomee</artifactId>
-          <version>${tomee.version}</version>
           <classifier>plus</classifier>
           <type>zip</type>
         </dependency>
@@ -476,12 +420,6 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-webapp</artifactId>
-          <version>${tomee.version}</version>
-          <type>war</type>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>tomee-jaxrs-webapp</artifactId>
           <version>${tomee.version}</version>
           <type>war</type>
         </dependency>
@@ -547,23 +485,6 @@
                 </configuration>
               </execution>
               <execution>
-                <id>test-tomee-remote-jaxrs</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${maven.test.skip}</skip>
-                  <systemPropertyVariables>
-                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.classifier>jaxrs</tomee.classifier>
-                    <arquillian.launch>tomee-remote</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
                 <id>test-tomee-remote-plus</id>
                 <phase>test</phase>
                 <goals>
@@ -612,23 +533,6 @@
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-jaxrs</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${maven.test.skip}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-jaxrs-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>

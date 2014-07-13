@@ -80,9 +80,6 @@
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>${version.tomee}</version>
-        <configuration>
-          <tomeeClassifier>jaxrs</tomeeClassifier>
-        </configuration>
       </plugin>
     </plugins>
   </build>
