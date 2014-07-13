@@ -334,6 +334,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <reuseForks>false</reuseForks> <!-- to be removed when all test lifecycles are fixed -->
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
